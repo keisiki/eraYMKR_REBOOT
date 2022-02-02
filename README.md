@@ -1,3 +1,15 @@
+
+# eraYMKR_REBOOT
+
+> 이어지는 개발의 의지
+
+## 변경 사항
+
+>* 홍룡동 신캐가 추가되었습니다
+>* uEmuera에서 오버플로우로 구슬이 사라지는 버그를 수정하였습니다 
+
+# ↓ original readme
+
 # eraTHYMKR
 
 > This description is written by korean
