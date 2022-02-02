@@ -1,0 +1,61 @@
+﻿;================================================
+;아들, 딸 전용 함수
+;================================================
+@MOTHER(ARG)
+#FUNCTION
+;ARG가 노예의 엄마인지 판정
+;CFLAG:3105 = 친모의 고유번호
+;CFLAG:3106 = 유모의 고유 번호
+;CFLAG:3109 = 캐릭터의 고유 번호
+
+RETURNF (CFLAG:3105 == CFLAG:ARG:3109 || CFLAG:3106 == CFLAG:ARG:3109)
+
+@FATHER(ARG)
+#FUNCTION
+;ARG가 노예의 아빠인지 판정
+;CFLAG:3107 = 친부의 고유 번호
+;CFLAG:3109 = 캐릭터의 고유 번호
+
+RETURNF (CFLAG:3107 == CFLAG:ARG:3109)
+
+@CHILD(ARG, ARG:1)
+#FUNCTION
+;ARG가 ARG:1의 자녀인지 판정
+;CFLAG:3105 = 친모의 고유번호
+;CFLAG:3106 = 유모의 고유 번호
+;CFLAG:3107 = 친부의 고유 번호
+;CFLAG:3109 = 캐릭터의 고유 번호
+
+RETURNF (CFLAG:ARG:3105 == CFLAG:(ARG:1):3109 || CFLAG:ARG:3106 == CFLAG:(ARG:1):3109 || CFLAG:ARG:3107 == CFLAG:(ARG:1):3109)
+
+;--------------------------------------------------
+;대상이 주인의 자식인지 아닌지를 판정하는 식중함수
+;--------------------------------------------------
+;ARG＝판정하는 캐릭터
+;0을 반환했을 경우＝주인의 자식이 아님, 1을 반환했을 경우＝주인의 딸, 2를 반환했을 경우＝주인의 아들
+@CHECK_MASTERS_CHILD(ARG)
+#FUNCTION
+IF (NO:ARG == 148 || NO:ARG == 149) && (CFLAG:ARG:3107 == CFLAG:MASTER:3109 || CFLAG:ARG:3105 == CFLAG:MASTER:3109 || CFLAG:ARG:3106 == CFLAG:MASTER:3109)
+    RETURNF (TALENT:ARG:120) ? 2 # 1
+ELSE
+    RETURNF 0
+ENDIF
+
+;--------------------------------------------------
+;대상에게 있어 주인이 아버지인가 어머니인가를 판정하는 식중함수
+;대상이 주인의 자식일 것이 필요 조건
+;--------------------------------------------------
+;ARG＝판정하는 캐릭터
+;0을 반환했을 경우＝주인의 자식이 아님, 1을 반환했을 경우＝아버지, 2를 반환했을 경우＝어머니
+@CHECK_MASTER_IS_DAD_OR_MOM(ARG)
+#FUNCTION
+;아버지
+IF (NO:ARG == 148 || NO:ARG == 149) && CFLAG:ARG:3107 == CFLAG:MASTER:3109
+    RETURNF 1
+;어머니
+ELSEIF (NO:ARG == 148 || NO:ARG == 149) && (CFLAG:ARG:3105 == CFLAG:MASTER:3109 || CFLAG:ARG:3106 == CFLAG:MASTER:3109)
+    RETURNF 2
+;필요 조건을 만족시키지 못했을 때
+ELSE
+    RETURNF 0
+ENDIF

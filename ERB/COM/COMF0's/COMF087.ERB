@@ -1,0 +1,250 @@
+﻿;=============================================================================
+;유두확장주사
+;=============================================================================
+;………………………………………………
+;실행 판정
+;………………………………………………
+@COM_ABLE87
+;개별 설정 커맨드 필터
+SIF DITEMTYPE:999:87 > 0
+    RETURN 0
+;강력 아이템·커맨드 무효시는 안 됨
+SIF (FLAG:13 & 2) == 0
+    RETURN 0
+;주사계 커맨드를 유효하게 하지 않으면 안 됨
+SIF (FLAG:15 & 64) == 0
+    RETURN 0
+;인체개조를 유효하게 하지 않으면 안 됨
+SIF (FLAG:14 & 512) == 0
+    RETURN 0
+;주인이 금단의 지식이 없으면 불가
+SIF TALENT:MASTER:56 == 0
+    RETURN 0
+;남자라면 안됨
+SIF TALENT:120
+    RETURN 0
+;절벽이면 안됨
+SIF TALENT:110
+    RETURN 0
+;확장유두라면 안됨
+SIF TALENT:2
+    RETURN 0
+;약물내성이라면 안 됨
+SIF TALENT:44
+    RETURN 0
+;기계라면 안 됨
+SIF TALENT:206
+    RETURN 0
+;기교 3 이하의 ASSI의 경우 주사할 수 없다(바늘 다루기라면 OK)
+IF ASSIPLAY
+    SIF ABL:ASSI:12 <= 3 && TALENT:ASSI:53 == 0
+        RETURN 0
+ENDIF
+;주사 세트와 유두확장제를 가지고 있거나, 아이템 없음 설정이 아니면 안 됨
+SIF (ITEM:53 == 0 || ITEM:71 == 0) && NOITEM == 0
+    RETURN 0
+;수면중은 불가
+SIF EQUIP:14
+    RETURN 0
+;B계 장착도구 사용중은 불가
+SIF TEQUIP:35 || TEQUIP:36
+    RETURN 0
+;한증과 암반 욕 이외의00목욕탕 입욕 중에는 불가
+SIF TEQUIP:55 && TEQUIP:55 != 12 && TEQUIP:55 != 15
+    RETURN 0
+;훈도시 착용중의 경우는 안 됨
+SIF TEQUIP:59 == 17
+    RETURN 0
+;웨딩 드레스·고스로리 착용중의 경우는 안 됨
+SIF TEQUIP:59 == 19 || TEQUIP:59 == 20
+    RETURN 0
+;알몸 앞치마, 학교수영복 플레이 중에는 불가
+SIF TEQUIP:59 == 1 || TEQUIP:59 == 2
+    RETURN 0
+;촉수 조교 중에는 불가
+SIF TEQUIP:90
+    RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;커맨드 본체
+;--------------------------------------------------
+@COM87
+PRINTL 유두확장주사
+COM_NAME = 유두확장주사
+CALL TRAIN_MESSAGE_COM087
+
+DOWNBASE:0 += 500
+DOWNBASE:1 += 1000
+
+SOURCE:3 = 500
+SOURCE:26 = 2000
+SOURCE:31 = 3000
+SOURCE:25 = 3000
+
+;유두확장제 사용
+IF NOITEM == 0
+    ITEM:71 -= 1
+    SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:71
+        CALL FILL_PLURAL_ITEM, 71
+ENDIF
+
+;ABL:순종을 본다
+IF ABL:10 == 0
+    TIMES SOURCE:31 , 2.00
+ELSEIF ABL:10 == 1
+    TIMES SOURCE:31 , 1.80
+ELSEIF ABL:10 == 2
+    TIMES SOURCE:31 , 1.50
+ELSEIF ABL:10 == 3
+    TIMES SOURCE:31 , 1.20
+ELSEIF ABL:10 == 4
+    TIMES SOURCE:31 , 1.00
+ELSE
+    TIMES SOURCE:31 , 0.80
+ENDIF
+
+;ABL:B감각을 본다
+IF ABL:3 == 0
+    TIMES SOURCE:3 , 0.50
+ELSEIF ABL:3 == 1
+    TIMES SOURCE:3 , 1.00
+ELSEIF ABL:3 == 2
+    TIMES SOURCE:3 , 1.50
+ELSEIF ABL:3 == 3
+    TIMES SOURCE:3 , 2.00
+    EX:3 += RAND:1
+ELSEIF ABL:3 == 4
+    TIMES SOURCE:3 , 2.50
+ELSE
+    TIMES SOURCE:3 , 3.00
+ENDIF
+
+;ABL:마조끼를 본다
+IF ABL:21 == 0
+    TIMES DOWNBASE:0 , 1.20
+ELSEIF ABL:21 == 1
+    TIMES DOWNBASE:0 , 1.10
+ELSEIF ABL:21 == 2
+    TIMES DOWNBASE:0 , 1.00
+ELSEIF ABL:21 == 3
+    TIMES DOWNBASE:0 , 0.90
+ELSEIF ABL:21 == 4
+    TIMES DOWNBASE:0 , 0.80
+ELSE
+    TIMES DOWNBASE:0 , 0.70
+ENDIF
+
+;PALAM:고통을 본다
+IF PALAM:16 < PALAMLV:1
+    SOURCE:20 = 3000
+ELSEIF PALAM:16 < PALAMLV:2
+    SOURCE:20 = 3300
+ELSEIF PALAM:16 < PALAMLV:3
+    SOURCE:20 = 3600
+ELSEIF PALAM:16 < PALAMLV:4
+    SOURCE:20 = 4000
+ELSE
+    SOURCE:20 = 4500
+ENDIF
+
+;반항적
+SIF TALENT:11
+    TIMES SOURCE:20 , 1.10
+;저항
+SIF TALENT:34
+    TIMES SOURCE:20 , 1.10
+;겁쟁이
+SIF TALENT:10
+    TIMES DOWNBASE:0 , 1.30
+;음유
+IF TALENT:174
+    TIMES SOURCE:3 , 1.50
+    TIMES SOURCE:31 , 1.50
+    TIMES SOURCE:25 , 0.50
+ENDIF
+;B민감
+IF TALENT:106
+    IF ABL:3 <= 3
+        TIMES SOURCE:3 , 1.80
+    ELSEIF ABL:3 == 4
+        TIMES SOURCE:3 , 2.00
+        EX:3 += RAND:2
+    ELSE
+        TIMES SOURCE:3 , 2.20
+        EX:3 += RAND:3
+    ENDIF
+;B둔감
+ELSEIF TALENT:107
+    IF ABL:3 <= 3
+        TIMES SOURCE:3 , 0.70
+        EX:3 -= (EX:3 > 1) ?  1 # 0
+    ELSEIF ABL:3 == 4
+        TIMES SOURCE:3 , 0.75
+        EX:3 -= (EX:3 > 1) ?  1 # 0
+    ELSE
+        TIMES SOURCE:3 , 0.80
+    ENDIF
+ENDIF
+
+;조교자에게 바늘 다루기
+SIF TALENT:PLAYER:53
+    TIMES SOURCE:20 , 0.90
+;조교자에게 유치
+SIF TALENT:PLAYER:131
+    TIMES SOURCE:20 , 1.20
+
+;레이센이나 에이린에 의한 사용
+IF TEQUIP:90 == 0
+    SIF NO:PLAYER == 28
+        TIMES SOURCE:20 , 0.70
+    SIF NO:PLAYER == 29
+        TIMES SOURCE:20 , 0.50
+ENDIF
+
+;확장유두, 모유체질 획득
+TALENT:2 = 1
+IF TALENT:134 == 0
+    TALENT:134 = 1
+ENDIF
+
+IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+    TCVAR:12 += 2
+ELSEIF TALENT:120 && TALENT:PLAYER:120
+    TCVAR:13 += 2
+ENDIF
+
+;약물 경험
+TCVAR:40 += 3
+
+;이상 경험
+TCVAR:50 += 1
+
+;주인 경험 플래그
+SIF ASSIPLAY == 0 && ABL:21 >= 3
+    TFLAG:50 += 1
+
+RETURN 1
+
+;--------------------------------------------------
+;조교시 메시지
+;--------------------------------------------------
+@TRAIN_MESSAGE_COM087
+CALL KOJO_TRAIN_MESSAGE_COM
+SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+    RETURN 0
+
+PRINTL
+PRINTFORM %CALLNAME:TARGET%의 
+SIF TALENT:106
+    PRINT 심히 예민한 
+PRINTL 유두 끝에 주사바늘을 꽂았다….
+PRINTL
+PRINTFORM %CALLNAME:TARGET%의 
+IF TALENT:111
+    PRINT 작은
+ELSEIF TALENT:112 || TALENT:113
+    PRINT 풍만한
+ENDIF
+PRINTL  가슴의 유두에 조금씩 변화가 일어나더니
+PRINTW 유두구가 벌어지고 유선이 신축성을 얻어 모유를 흘려대는 구멍이 되었다.

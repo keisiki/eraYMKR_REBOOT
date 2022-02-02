@@ -1,0 +1,4087 @@
+﻿;-------------------------------------------------
+;※마음대로 안녕! (가명) ver.  0.98에서 변환한 파일입니다※
+;(RR1317 계열용 구문을 YM용 구문에 치환한 것입니다)
+;-------------------------------------------------
+;대사　by □(′∀`) 노
+;-------------------------------------------------
+;-------------------------------------------------
+;-------------------------------------------------
+;메모
+;　유메미는 교수라고는 부르지 않는, 유메미 님, 주인님과
+;　기본남 말, 「」다용, 정사 장면이 개그 밖에라면
+;　마리사 대사을 유용해도 좋을 정도
+;　
+;--------------------------------------------------
+;대사 파일의 존재 판정(X2를 캐릭터 번호에 치환)
+;--------------------------------------------------
+;대사의 존재 판정(YM판)
+@TRY_107
+RETURN 1
+
+@EVENTTRAIN
+#PRI
+SIF FLAG:11 == 0
+    FLAG:11 = 2
+
+@EVENTEND
+#LATER
+
+;--------------------------------------------------
+;EVENTTRAIN 관계(X1를 캐릭터 번호에 치환)
+;조교 개시시의 대사 CFLAG 201~219를 사용
+;-------------------------------------------------
+@EVENTTRAIN
+SIF FLAG:11 <= 0
+    RETURN 0
+SIF NO != 107
+    RETURN 0
+
+;유메미의 조수가 아닌 모드 철거지 조수 모드가 아닌은 희생이 되었던 것이다…
+
+;--------------------------------------------------
+;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, X1를 주인의 캐릭터 번호에 치환)
+;--------------------------------------------------
+;IF NO:MASTER == Y1
+;    CALL LES_EVENTTRAIN_KX1_MY1
+;    RETURN 0
+;ENDIF
+;IF ASSI > 0 && ASSIPLAY
+;    IF NO:ASSI == Y1
+;        CALL LES_EVENTTRAIN_KX1_MY1
+;        RETURN 0
+;    ENDIF
+;ENDIF
+;--------------------------------------------------
+;간이 조수 말의 발동시에 첫조교시 말을 스킵(Y1를 조수의 캐릭터 번호로 한다)
+;복수인 있으려면 , SIF NO:ASSI == Y1 || NO:ASSI == Z1와 추가해 나간다
+;--------------------------------------------------
+;IF CFLAG:5001 == 0 && ASSI > 0
+;    SIF NO:ASSI == Y1
+;        CFLAG:5001 =1
+;ENDIF
+;-------------------------------------------------
+;첫조교시 CFLAG5001
+;-------------------------------------------------
+IF CFLAG:5001 == 0
+    DRAWLINE
+    PRINTFORMW 「이크, 움직이지 마」
+    PRINTFORMW 방에 들어가자, 소녀는 당신을 향해 「뭔가」를 들이댔다.
+    PRINTFORMW 「이건 작아도 필살의 무기라구, 자, 얌전하게 날 여기에서 내보내라」
+    PRINTFORMW 당신은 그녀의 말을 신경쓰지 않고, 천천히 그녀에게 접근한다.
+    PRINTFORMW 「이봐, 이봐, 이게 뭔지 몰라? 이걸로 맞으면 끝이라구?」
+    PRINTFORMW 그게 뭔지, 당신은 물론 알고 있다.
+    PRINTFORMW 당신은 소녀에게, 「해 보라」는 듯이 도발한다.
+    PRINTFORMW 「겨, 경고는 했다구, 네가 자초한 거야! …아, 어?」
+    PRINTFORMW 방아쇠를 당겨도 어떤 반응도 없다. 당신은 소녀의 눈앞에서,
+    PRINTFORMW 이전에 빼둔 「총알」을 심술궂게 흩뿌린다.
+    PRINTFORMW 「아, 아, 아…」
+    PRINTFORMW 믿던 무기가 사라진 소녀의 얼굴에 절망의 색이 떠오른다.
+    PRINTFORMW 절망의 시간은 아직 시작하기도 전이건만.
+    CFLAG:5001 = 1
+    RETURN 1
+    
+;-------------------------------------------------
+;조교 개시시(1회만) CFLAG5001
+;-------------------------------------------------
+;굴복 각인 Lv1
+ELSEIF CFLAG:5001 < 2 && MARK:2 == 1
+    DRAWLINE
+    PRINTFORMW 「…또 왔나? 할 거면 빨리 하고, 빨리 돌아가라」
+    CFLAG:5001 = 2
+    RETURN 1
+    
+;굴복 각인 Lv2
+ELSEIF CFLAG:5001 < 3 && MARK:2 == 2
+    DRAWLINE
+    PRINTFORMW 「…오늘은 오지 않았으면 했는데」
+    PRINTFORMW 「(큰일이네, 이대로는 언젠가…)
+    CFLAG:5001 = 3
+    RETURN 1
+    
+;굴복 각인 Lv3
+ELSEIF CFLAG:5001 < 4 && MARK:2 == 3 && !TALENT:150
+    DRAWLINE
+    PRINTFORMW 「저항할 생각은 없어, 빨리 옷을 벗게 해 줘」
+    PRINTFORMW 「그리고… 기분 좋게 해라」
+    CFLAG:5001 = 4
+    RETURN 1
+    
+;연모
+ELSEIF CFLAG:5001 < 5 && TALENT:150
+    DRAWLINE
+    PRINTFORMW 「오, 왔군, 중요한 얘기가 있으니까 거기에 앉아 줘」
+    PRINTFORMW 치유리는 침대 위로 당신을 부른다.
+    PRINTFORMW 「실은, 나, 네가 좋아진 것 같아」
+    PRINTFORMW 「희한하지, 이런 곳에 묶여서, 자유를 빼앗기고,
+    PRINTFORMW 상식적으로 죽을 만큼 싫어서 눈도 마주치기 싫은 게 당연한 건데…」
+    PRINTFORMW 치유리는 침대에 나란히 앉은 당신의 손을 강하게 꽉 쥐었다.
+    PRINTFORMW 「마치 스톡홀름 신드롬이군… 강의로 들었을 땐 그런 게 어딨나 싶었는데…
+    PRINTFORMW 그래도, 좋아진 걸 어떡해」
+    PRINTFORMW 「난 11살 때 대학, 13살 때 대학원을 졸업했어.
+    PRINTFORMW 그 후엔 쭉 유메미 님의 조수 생활을 해서… 그, 뭐야,
+    PRINTFORMW 연애란 걸 해 본 적이 없어서, 그러니까…
+    PRINTFORMW 주인님은 이런 경험이 풍부하겠지? 확실히 에스코트 부탁한다구」
+    
+    ;주인이 작은 몸집의 경우, 뺨에 얼굴을 댄다
+    PRINTFORMW 치유리는 당신의 \@ TALENT:MASTER:128 ? 뺨 # 가슴 \@에 얼굴을 댔다…
+    
+    ;거만함을 소지하고 있는 경우, 지울 수가 있습니다.
+    IF TALENT:15
+        PRINTFORML ---------
+        PRINTFORML ------
+        PRINTFORMW ---
+        PRINTFORMW 치유리는 「건방진」 자신을 고치려는 것 같다.
+        PRINTL 어떻게 합니까?
+        PRINTL [0] 지금 그대로인 네가 좋다(건방짐이 남습니다)
+        PRINTL [1] 그 마음을 지지한다(건방짐을 소거합니다)
+        PRINTL [2] 솔직한 너를 만나고 싶다(건방짐을 소거하고 솔직해집니다)
+        $INPUT_LOOP
+        INPUT
+        IF RESULT == 0
+            PRINTFORMW ―치유리는 다시 생각했다. ―
+        ELSEIF RESULT == 1
+            PRINTFORMW ―치유리는 건방진 자신을 바꾸기로 했다. ―
+            TALENT:15 = 0
+        ELSEIF RESULT == 2
+            PRINTFORMW ―치유리는 솔직해질 수 있도록 노력했다. ―
+            TALENT:13 = 1
+            TALENT:15 = 0
+        ELSE
+            GOTO INPUT_LOOP
+        ENDIF
+    ENDIF
+    CFLAG:5001 = 5
+    RETURN 1
+    
+;친애를 소지
+ELSEIF CFLAG:5001 < 6 && TALENT:152
+    DRAWLINE
+    PRINTFORMW 「오, 주인님. 기다리고 있었다구」
+    PRINTFORMW 그렇게 말하며, 치유리는 당신에게 바짝 다가온다.
+    PRINTFORMW 「이렇게 다른 사람을 좋아하게 되는 건, 평생 없을 줄 알았다구」
+    PRINTFORMW 「주인님은 정말로 죄가 많은 사람이다. 자, 오늘도 즐기자구」
+    CFLAG:5001 = 6
+    RETURN 1
+    
+;조수의 유무를 체크(없는 경우는 2회째 이후에 난다)
+ELSEIF ASSI < 0 
+    CALL K107_KOJO2
+
+;-------------------------------------------------
+;간이 조수 말(Y1를 조수의 캐릭터 번호에 치환, X1를 캐릭터 번호로 변경한다) CFLAG5002
+;교섭을 하는 캐릭터를 늘리는 경우는, 카피＆페이스트를 해, CFLAG의 수를 5003, 5004로 늘린다
+;-------------------------------------------------
+;조수
+ELSEIF NO:ASSI == 108
+    DRAWLINE
+    ;처음
+    IF CFLAG:5002 == 0
+        ;연모＋연모시 처음상(함락 이벤트)이 발생이 끝난 상태
+        ;-라도 좋지만 YM의 일상등으로 만나고 있다고(면) 파라독스가 나오는 예감
+        ;기본적으로 일상이라든지는 무시해 주었으면 해요
+        IF TALENT:150 && CFLAG:5001 >= 5
+            PRINTFORMW 「유메미 님? 어째서 여기에 있냐구?」
+            PRINTFORMW 『어머나, 치유리도 잡혔어? 기우구나, 난 지금, 이 사람의 조수야.
+            PRINTFORMW 내가 있는 이상, 도망칠 생각하지 않는 게 좋아』
+            PRINTFORMW 「도망칠 필요가 있냐구? 나는 이미 주인님의 물건이거든」
+            PRINTFORMW 『뭐야, 너도 저속해졌구나. 역시 훌륭한 솜씨야』
+            PRINTFORMW 『그것보다, 오늘은 내가 조수를 하니까, 각오해 둬』
+            PRINTFORMW 「이런 게 어딨어, 다시 그 때로 돌아간 셈이잖아~」
+        ;그 이외 연모가 아닌 살아난-와 생각하게 해 두어?
+        ELSE
+            PRINTFORMW 「유메미 님? 유메미 님 맞지!
+            PRINTFORMW 유메미 님이라면 나같은 건 내버리고 갈 줄 알았는데,
+            PRINTFORMW 왔구나! 믿고 있어서 다행이라구」
+            PRINTFORMW 『…나에 대한 네 평가는 잘~ 알았어,
+            PRINTFORMW 예전보다 엄격하게 교육할 거니까 각오해』
+            PRINTFORMW 「어, 그게 무슨 소리냐구?」
+            PRINTFORMW 『어머나, 너 정도 되면서 어떻게 된 건지 모르는 거니?』
+            PRINTFORMW 「이, 이럴 수가… 유메미 님이…」
+            ;유메미 님을 농락 하다는…→굴복 업이라든지 있어도 좋을지도
+        ENDIF
+        CFLAG:5002 = 1
+    ;2회째 이후
+    ELSEIF CFLAG:5002 == 1 && FLAG:11 ==2
+        LOCAL = RAND:3
+        ;연모
+        IF TALENT:150
+            IF LOCAL == 0
+                PRINTFORMW 「아, 주인님… 유메미 님도 왔어?」
+                PRINTFORMW 『왜 싫다는 표정을 지어?』 콱
+                PRINTFORMW 「아파, 유메미 님 너무하다구」
+                PRINTFORMW 『나야말로 치유리 빼고 주인님과 만나고 싶거든, 정말』
+                PRINTFORMW 「참 죄 많은 사람이라구」
+            ELSEIF LOCAL == 1
+                PRINTFORMW 「여어, 주인님의 어떤 점에서 매력을 느꼈어?」
+                PRINTFORMW 『(여전히 반말이네) …그러게, 어떤 점이었더라?』
+                PRINTFORMW 「어이가 없어서(땀」
+                PRINTFORMW 『한마디로 말하자면 대단하다고 할까… 음』
+                PRINTFORMW 『그리고, 내가 몰랐던 세계를 많이 알고 있어서?』
+                PRINTFORMW 「아이구, 변함없이 학자다워서 다행이라구」
+            ELSE
+                PRINTFORMW 『자, 치유리, 오늘도 힘차게 가자』
+                PRINTFORMW 「모처럼 주인님이랑 즐거운 시간을 보내려는데, 왜 유메미 님도 함께냐구?」
+                PRINTFORMW 『왜냐니』콱콱
+                PRINTFORMW 고통의 구슬+100 (거짓말)
+                PRINTFORMW 『자, 궁시렁거리지 말고 빨리 준비해』
+                PRINTFORMW 「젠장~ 정말로 예전이랑 변함없다구~」
+            ENDIF
+        ;그 이외
+        ELSE
+            IF LOCAL == 0
+                PRINTFORMW 「근데 이런 형태로 재회한다고는 생각하지 않았다구」
+                PRINTFORMW 『그렇구나, 어쩌면 입장이 바뀐 채로 만났을지도 모르겠네』
+                PRINTFORMW 「그럴 리가, 난 절대 저속해지지 않을 거야」
+                PRINTFORMW 『어머나, 아직 반항적이구나, 조교가 부족한 것일까』
+                PRINTFORMW 「충분하고 부족하고가 문제가 아냐,
+                PRINTFORMW 비록 유메미 님이 상대라도, 그것만은 허락할 수 없어」
+            ELSEIF LOCAL == 1
+                PRINTFORMW 『자, 오늘도 울게 해 줄게』
+                PRINTFORMW 「아휴, 학문 연구를 하고 있을 때보다 활기가 넘치네」
+                PRINTFORMW 『어머나, 이것도 하나의 학문이야』
+                PRINTFORMW 「무슨 소리냐구」
+                PRINTFORMW 『치유리의 신체를 구석구석까지 연구해 나가는 학문이야』
+                PRINTFORMW 「연구하지 않아도, 내 몸을 가장 잘 아는 건 나라구」
+                PRINTFORMW 『어머, 과연 그럴까…』
+            ELSE
+                PRINTFORMW 『자, 치유리, 오늘도 엄격하게 하겠어』
+                PRINTFORMW 「교수가 조수로 전락하다니, 유메미 님도 맛이 갔다구」
+                PRINTFORMW 『어머나, 난 전락한 게 아냐,
+                PRINTFORMW 예전보다 충만하고 만족감을 느끼는걸』
+                PRINTFORMW 『치유리도 알게 될 거야, 아니, 알게 해 줄 거야』
+            ENDIF
+        ENDIF
+    ENDIF
+    RETURN 1
+
+;말이 있는 조수가 없는 경우는, 통상의 2회째 이후의 말에 난다
+ELSE
+    CALL K107_KOJO2
+ENDIF
+
+;-------------------------------------------------
+;조교 개시시(2번째 이후, X1를 캐릭터 번호로 변경한다) CFLAG 없음 
+;-------------------------------------------------
+@K107_KOJO2
+SIF FLAG:11 != 2
+    RETURN 0
+
+DRAWLINE
+
+;반발 각인 Lv3
+IF MARK:9 == 3
+    PRINTFORMW 방에 들어간 순간, 긴장된 분위기를 피부로 느꼈다.
+    PRINTFORMW 치유리는 말 없이 앉아 있지만, 그 눈에는 살기가 깃들어 있다.
+    PRINTFORMW 만약 무기를 빼앗지 않았다면, 생각만 해도 오싹거린다…
+
+;반발 각인 Lv2
+ELSEIF MARK:9 == 2
+    PRINTFORMW 「난 절대 네게 굴하지 않을 거야!」
+    PRINTFORMW 앙칼진 목소리를 들은체 만체 하고, 치유리의 옷을 벗겨냈다.
+
+;공포 각인 Lv3+연모 소유 없음 연모 있는 경우, 공포는 극복
+ELSEIF MARK:8 == 3 && !TALENT:150
+    PRINTFORMW 당신이 문을 열자, 치유리는 어깨를 움츠리고 조심조심 이쪽을 보았다.
+    PRINTFORMW 「…아픈 거랑, 무서운 건 하지 말아 줄래?」
+
+;굴복 각인 Lv0
+ELSEIF MARK:2 == 0
+    LOCAL = RAND:3
+    IF LOCAL == 0
+        PRINTFORMW 「젠장, 무기만 있으면 도망갈 수 있는데…」
+        PRINTFORMW 치유리는 분함에 이를 갈고 있다.
+    ELSEIF LOCAL == 1
+        PRINTFORMW 「지루하구나…」
+        PRINTFORMW 치유리는 멍하니 벽을 바라보고 있던 것 같다.
+    ELSE
+        PRINTFORMW 「왔군, 변태 자식」
+        PRINTFORMW 치유리는 경계심을 세우고 있다.
+    ENDIF
+
+;굴복 각인 Lv1
+ELSEIF MARK:2 == 1
+    LOCAL = RAND:3
+    IF LOCAL == 2
+        PRINTFORMW 「몸은 어쩔 수 없으니까 만지든지 해도, 마음은 결코 꺾을 수 없을걸!」
+        PRINTFORMW 즉, 이 다음은 맘대로 해도 좋다는 것이다. 당신은 힐쭉 웃었다.
+    ELSEIF LOCAL == 1
+        PRINTFORMW 「윽, 또 왔는가…」
+        PRINTFORMW 치유리는 싫은 듯한 표정을 띄우고 있다.
+    ELSE
+        PRINTFORMW 「이, 이 벽을 깨면…」
+        PRINTFORMW 치유리는 원망스러운 듯이 벽을 응시하고 있다…
+    ENDIF
+
+;굴복 각인 Lv2
+ELSEIF MARK:2 == 2
+    PRINTFORMW 「나, 난 너같은 녀석에게 지지 않을 거야」
+    PRINTFORMW 아직 저항할 기력은 있는 것 같지만, 앞으로 얼마 안 남았는지도 모른다.
+
+;굴복 각인 Lv3＋연모 없음
+ELSEIF MARK:2 == 3 && !TALENT:150
+    LOCAL = RAND:5
+    IF LOCAL == 0
+        PRINTFORMW 「오, 왔나」
+        PRINTFORMW 치유리는 완전히 저항할 기력을 잃은 것 같다.
+        PRINTFORMW 오히려, 주어지는 쾌락에 기대를 걸고 있는 것처럼 보인다.
+    ELSEIF LOCAL == 1
+        PRINTFORMW 「우왓, 아가씨의 방에 갑자기 들어 오지 마!」
+        PRINTFORMW 치유리는 얼굴을 새빨갛게 하며 항의했다.
+    ELSEIF LOCAL == 2
+        PRINTFORMW 「여어, 지저분한 방이지만 쉬어 가도 좋아」
+        PRINTFORMW 확실히 지저분하다. 치유리가 오기 전엔 그렇지도 않았는데…
+    ELSEIF LOCAL == 3
+        PRINTFORMW 「정들면 고향, 지옥도 거처라지. 의외로 나쁘지 않군」
+    ELSE
+        PRINTFORMW 「오늘은 뭘 하지? 할 수 있으면 기분 좋고 아프지 않은 걸로 부탁해」
+    ENDIF
+
+;연모
+ELSE
+    LOCAL = RAND:4
+    IF LOCAL == 0
+        PRINTFORMW 문을 열고 방을 보니 치유리가 안 보인다.
+        PRINTFORMW 주위를 뒤져보니 문과 벽 사이에 치유리가 있었다.
+        PRINTFORMW 「하하하… 발 소리가 들리지 않을까 귀를 곤두세우고 있다 보니까…」
+        PRINTFORMW 서로 쓴웃음을 지으며, 조교 준비를 시작하기로 했다.
+    ELSEIF LOCAL == 1
+        IF TALENT:MASTER:120
+            PRINTFORMW 「기다리고 있었다구, 슬슬 올 줄 알았어. …잘난 듯한가」
+            PRINTFORMW 「왜 이렇게 늦었어, 몸이 쑤셔서 달래는 데에 애 먹었어. …변태 같은데」
+            PRINTFORMW 「달~ 링, 만나고 싶었어! …내 캐릭터가 아닌데」
+            PRINTFORMW 「어서 와, 오늘도 함께 즐기자구. …응, 괜찮은 것 같아」
+            PRINTFORMW 문의 저 편에서 치유리가 필사적으로 뭔가를 중얼거리고 있다…
+            PRINTFORMW 당신이 신경쓰지 않고 문을 열자, 치유리는 몸을 펄썩거렸다.
+            PRINTFORMW 「어, 어서 와, 오, 오늘도 함께 즐기자구!」
+        ELSE
+            PRINTFORMW 「이상하다구, 유메미 님과 지냈을 땐 이런 기분은 들지 않았는데」
+            PRINTFORMW 치유리는 어렴풋이 붉은 빛을 띤 얼굴로 당신에게 기댄다.
+            PRINTFORMW 「같은 여자인데 어째서 다른 걸까, 주인님에겐 특별한 매력이 있는 걸까?」
+        ENDIF
+    ELSEIF LOCAL == 2
+        PRINTFORMW 「여어, 내 어디 쯤이 좋아?」
+        PRINTFORMW 그러면서 치유리는 몸을 펼치고 당신에게 드러낸다.
+        PRINTFORMW 당신이 쓴웃음을 지으며, 그 「부분」을 가리키자,
+        PRINTFORMW 치유리는 살짝 뺨을 붉혔다.
+        PRINTFORMW 「어휴, 대책 없는 변태구나, 그래도 정말 좋아」
+    ELSE
+        PRINTFORMW 「오, 예상대로다」
+        PRINTFORMW 치유리는 이미 옷을 벗고 기다리고 있던 것 같다.
+        PRINTFORMW 「자, 즐기자구 주인님, 오늘은 몇 번 가 버리게 해 줄까?」
+    ENDIF
+ENDIF
+
+RETURN 1
+
+
+;-------------------------------------------------
+;EVENTEND 관계(X1를 캐릭터 번호에 치환)
+;조교 종료시의 대사
+;-------------------------------------------------
+@EVENTEND
+SIF FLAG:11 <= 0
+    RETURN 0
+SIF NO != 107
+    RETURN 0
+;--------------------------------------------------
+;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, X1를 주인의 캐릭터 번호에 치환)
+;--------------------------------------------------
+;IF NO:MASTER == Y1
+;    CALL LES_EVENTEND_KX1_MY1
+;    RETURN 0
+;ENDIF
+;IF ASSI > 0 && ASSIPLAY
+;    SIF NO:ASSI == Y1
+;    CALL LES_EVENTEND_KX1_MY1
+;    RETURN 0
+;ENDIF
+;--------------------------------------------------
+;조교 종료시의 대사 CFLAG 211~220을 사용
+;--------------------------------------------------
+;체력 분기에 도착해, 1000을 기준으로 하는지, 기력을 기준으로 할까로 분기 하고 싶은 곳
+
+DRAWLINE
+
+;반발 각인 Lv3
+IF MARK:9 == 3
+    IF RAND:2
+        PRINTFORMW 「당장 꺼져!」
+        PRINTFORMW 문을 여는 당신의 등 뒤로 치유리의 욕소리가 울려 퍼졌다.
+    ELSE
+        PRINTFORMW 「두 번 다시 오지 마, 병신아!」
+        PRINTFORMW 문을 차는 소리가 복도에 울렸다.
+    ENDIF
+
+;공포 각인 Lv3
+ELSEIF MARK:8 == 3 && FLAG:11 == 2 && !TALENT:150 
+    PRINTFORMW 치유리는 떨리는 양 어깨를 팔로 누르며 필사적으로 공포와 싸우고 있다…
+
+;굴복 각인 Lv1 이하
+ELSEIF MARK:2 <= 1
+    PRINTFORMW 「같이 자는 건 아니지? 어서 나가라」
+
+;굴복 각인 Lv2
+ELSEIF MARK:2 == 2
+    ;체력 500 미만(강제 종료)
+    IF BASE:0 < 500
+        PRINTFORMW 「겨, 겨우 끝났나…」
+        PRINTFORMW 치유리는 숨을 헐떡이며 그대로 마루에 넘어지고 말았다.
+    ;체력 500이상
+    ELSE
+        PRINTFORMW 「오늘은 이 정도인가… 다행이라구」
+        PRINTFORMW 치유리는 천천히 침대에 앉았다.
+    ENDIF
+
+;굴복 각인 Lv3
+ELSEIF MARK:2 == 3 && !TALENT:150
+    ;체력 500 미만
+    IF BASE:0 < 500
+        PRINTFORMW 「다음에도 노력할 거니까… 오늘은 이걸로 봐 줬으면 한다구…」
+        PRINTFORMW 당신은 조교의 성과를 실감하며, 방을 뒤로 했다.
+    ;체력 500이상
+    ELSE
+        PRINTFORMW 「아직 난 할 수 있을 것 같은데… 이걸로 끝이야?」
+        PRINTFORMW 어딘지 부족한 치유리의 모습에, 당신은 조교의 성과를 확신했다.
+    ENDIF
+
+;연모＋기력 1200이상 대부분 아무것도 하지 않았던 경우
+ELSEIF BASE:1 >= 1200
+    PRINTFORMW 「얼굴을 보여 준 것만으로도 기쁘지만」
+    PRINTFORMW 「거의 아무것도 안 하고 돌아가는 \@ TALENT:MASTER:120 ? 남 # 여 \@자를 어떻게 봐야 할까?」
+
+;연모＋체력 500 미만
+ELSEIF BASE:0 < 500
+    PRINTFORMW 「아… 아쉽다, 내 체력이 좀 더 있으면…
+    PRINTFORMW 쭉 함께 있을 수 있을 텐데…」
+    PRINTFORMW 기진맥진한 치유리에게 위로의 말을 걸고 방을 뒤로 했다.
+
+;연모(기존 조건문으론 종료 구상이 출력되지 않는 경우가 존재함. 또한 구조 간소화를 위해 체력 2000 미만 조건문을 제외함. T)
+ELSE
+    PRINTFORMW 「아직 난 할 수 있는데, 돌아갈 거야?」
+    PRINTFORMW 치유리는 볼록 뺨을 부풀리고 있다. 불만인가 보다…
+ENDIF
+
+RETURN 1
+
+;--------------------------------------------------
+;@KOJO_MESSAGE_COM 관계(X1를 캐릭터 번호에 치환)
+;커멘드 실행시에 출력됩니다
+;--------------------------------------------------
+@KOJO_MESSAGE_COM_107
+;조수가 조교했을 때에 말을 스킵 한다(기호에 응해 사용하는, 줄머리의 것;을 지우면(자) 스킵 하게 된다)
+;SIF ASSI > 0 && ASSIPLAY
+;    RETURN 0 
+;볼 개그 착용시에는 말을 스킵 한다(OFF라고 구를 차지해 마구 말한다)
+SIF TEQUIP:42
+    RETURN 0
+;--------------------------------------------------
+;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, X1를 주인의 캐릭터 번호에 치환)
+;--------------------------------------------------
+;IF NO:MASTER == Y1
+;    CALL LES_MESSAGE_COM_KX1_MY1
+;    RETURN 0
+;ENDIF
+;IF ASSI > 0 && ASSIPLAY
+;    IF NO:ASSI == Y1
+;        CALL LES_MESSAGE_COM_KX1_MY1
+;        RETURN 0
+;    ENDIF
+;ENDIF
+;-------------------------------------------------
+;커멘드 실행시의 대사 CFLAG 301~400을 사용
+;-------------------------------------------------
+;-------------------------------------------------
+;애무 CFLAG9000
+;-------------------------------------------------
+IF SELECTCOM == 0
+    ;처음
+    IF CFLAG:9000 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「헤헤, 확실히 기분 좋게 해 줄 거지?」
+        ;굴복 각인 Lv2 이상
+        ELSEIF MARK:2 >= 2
+            PRINTFORMW 치유리의 몸에 손을 뻗은 뒤, 저항이 없는 걸 깨달았다.
+            PRINTFORMW 「난폭하게 하지 않는다면… 별로 저항하진 않는다구?」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「옷 벗기고 뭘 하려는 거냐구?」
+            PRINTFORMW 「우왓, 손 대지 마, 그, 그만둬!」
+        ENDIF
+        CFLAG:9000 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9000 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「응… 끄읏… 으응…」
+            PRINTFORMW 당신의 꼼꼼한 애무에 치유리는 무심코 몸을 비튼다.
+            CFLAG:9000 = 5
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:9000 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「이거다… 이 쾌감… 못 참겠다구…」
+            CFLAG:9000 = 4
+        ;굴복 각인 Lv2
+        ELSEIF MARK:2 == 2 && (CFLAG:9000 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「아끄읏… 안 돼… 기분 좋아…」
+            CFLAG:9000 = 3
+        ;그 이외
+        ELSEIF MARK:2 <= 1 && (CFLAG:9000 <= 1 || FLAG:11 == 2)
+            PRINTFORMW 「그렇게 끈적한 움직임으로 손 대지 마!」
+            CFLAG:9000 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;쿤닐링구스 CFLAG9001
+;-------------------------------------------------
+;쿤닐링구스
+IF SELECTCOM == 1 && TEQUIP:56 == 0
+    ;처음
+    IF CFLAG:9001 == 0
+        ;굴복 각인 Lv2 이상
+        IF MARK:2 >= 2
+            PRINTFORMW 커닐링구스를 한다고 하자, 치유리는 저항도 없이 그 몸을 맡겼다.
+            PRINTFORMW 「…빠는 걸 참는 거지? 그렇다면 간단한 일이라구」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「그런 곳을 빤다니 제정신 박힌 인간이 할 짓이 아냐」
+            PRINTFORMW 「무슨 소린지 몰라? 그만두라고!」
+        ENDIF
+        CFLAG:9001 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9001 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「좀 더 세게… 내가 말라 버릴 때까지 훌쩍거렸으면 좋다구…」
+            PRINTFORMW 「그래… 쮸릅쮸릅 야릇한 소리를 내면서 훌쩍거려!」
+            CFLAG:9001 = 4
+        ;굴복 각인 Lv2 이상
+        ELSEIF MARK:2 >= 2 && (CFLAG:9001 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「그, 그렇게 소리를 내지 않아도 되잖아? 부, 부끄러워!」
+            CFLAG:9001 = 3
+        ;그 이외
+        ELSEIF CFLAG:9001 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「어이… 거기는 오줌도 나온다구? 그만둬…」
+            CFLAG:9001 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;어널 애무 CFLAG9002
+;-------------------------------------------------
+IF SELECTCOM == 2
+    ;처음
+    IF CFLAG:9002 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「좋아, 내 몸은 주인님 거니까」
+            PRINTFORMW 「엉덩이든 뭐든, 맘껏 써」
+        ;연모가 아니다
+        ELSE
+            PRINTFORMW 「거긴 별로 깨끗하지 않은데? 꺅, 그러니까, 깨끗하지 않다고」
+            PRINTFORMW 「더러우니까 손대지 말라고, 말하는 거잖아~!!」
+        ENDIF
+        CFLAG:9002 = 1
+    ;2회째 이후
+    ELSE
+        LOCAL = PALAM:10 + UP:10
+        ;연모+윤활 Lv2 이상
+        IF TALENT:150 && LOCAL >= PALAMLV:2 && (CFLAG:9002 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「항문으로 느끼는 인간은 변태라고 생각하고 있었다구」
+            PRINTFORMW 「지금은 이 쾌감을 모르는 인간은 불쌍하게 느껴진다구」
+            CFLAG:9002 = 5
+        ;연모+윤활 Lv2 미만
+        ELSEIF TALENT:150 && (CFLAG:9002 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「아야야, 아파! 갑자기 하는 건 곤란해, 애무나 로션을 부탁할게, 주인님」
+            CFLAG:9002 = 4
+        ;윤활 Lv2 이상＋A감각 Lv3 이상
+        ELSEIF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9002 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「끄읏… 이런 곳으로 느끼는 변태가 된 건가?」
+            CFLAG:9002 = 3
+        ;그 이외
+        ELSEIF CFLAG:9002 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「그러니까 손대지 말라고! 이런 곳으로 느낄 리가 없잖아?」
+            CFLAG:9002 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;자위 CFLAG9007
+;샤워 자위 CFLAG8801
+;-------------------------------------------------
+;통상 자위(샤워 없음)
+;어쩐지 매우 분기가 복잡
+IF SELECTCOM == 7 && !TEQUIP:54
+    ;처음
+    IF CFLAG:9007 == 0
+        ;연모가 아니다
+        IF !TALENT:150
+            PRINT 「스스로 하라고? 
+            ;자위 경험으로 분기, 자위 커멘드 하지 않아도 해?
+            IF !EXP:10
+                PRINTFORMW 어떻게 하면 되냐구?」
+                PRINTFORMW 「스스로… 가슴에 손대거나 클리토리스를 만지거나…」
+                ;남자일까 없는가 남자의 주제에 여자의 자위~동성의~라고 하는 욕소리
+                PRINTFORMW 「\@ TALENT:MASTER:120 ? 남자 주제에 엄청 자세하다… # 그렇게 자세하다는 건 너도 많이 하는 거야? \@
+                PRINTFORMW 뭐, \@ TALENT:MASTER:120 ? 여 # 같은 여 \@자가 하는 걸 보고 흥분하는 변태니까 당연한가」
+            ELSE
+                PRINTFORMW 아, 알았어…
+                PRINTFORMW 어휴, 넌 남의 자위나 보고 흥분하는 변태군」
+            ENDIF
+        ELSE
+            PRINTFORMW 「내 자위를 보고 싶어? 좋아, 다름아닌 주인님의 명령이잖아」
+            PRINTFORMW 치유리는 손재주 있게 손가락 끝으로 유두와 음핵을 문지르고 돌린다.
+            PRINTFORMW 「주인님, 어때? 내가 스스로 하는 거… 응끗!」
+        ENDIF
+        CFLAG:9007 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋자위 중독 Lv3 이상
+        IF TALENT:150 && ABL:30 >= 3 && (CFLAG:9007 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「주인님 앞에서 자위하는 것도 나쁘지 않다구」
+            PRINTFORMW 「내 부끄러운 곳을… 전~ 부, 보일 수 있으니까」
+            CFLAG:9007 = 5
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:9007 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「알았다구, 별로 익숙하지 않아서 만족할진 모르는데…」
+            PRINTFORMW 「으끄읏… 보고 있어? 내… 혼자서 하는… 야한 짓…」
+            CFLAG:9007 = 4
+        ;자위 중독 Lv3 이상
+        ELSEIF ABL:30 >= 3 && (CFLAG:9007 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「스스로 하라니… 왜 내가 그런 짓을…」
+            ;약점을 잡고 있는지 어떤지로 분기：약간 YM용
+            IF TALENT:39
+                PRINTFORMW 싫어하는 치유리 귓가에 『항상 방에서 하면서…』라고 속삭였다.
+                PRINTFORMW 「아… 알았어… 하면, 되잖아?」
+            ELSE
+                PRINTFORMW 입으로는 싫어하고 있지만, 자위를 시작하자,
+                PRINTFORMW 치유리 손의 움직임은 점점 빨라진다.
+            ENDIF
+            PRINTFORMW 「끄읏… 손이 멈추지 않아… 하고… 하고 싶지 않은데…」
+            CFLAG:9007 = 3
+        ;그 이외
+        ELSEIF CFLAG:9007 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「젠장… 멀뚱멀뚱 보기나 하고… 언젠가 두고 보자」
+            CFLAG:9007 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+
+;샤워 자위
+;사용했던 적이 없는, 그렇지만 해 보고 싶다
+ELSEIF SELECTCOM == 7
+    ;처음
+    IF CFLAG:8801 == 0
+        ;연모가 아니다
+        IF !TALENT:150
+            PRINTFORMW 「…샤워? 이걸로 여길 씻어?」
+            PRINTFORMW 당신은 샤워기의 분사를 최대로 하고, 자위를 하도록 명령했다.
+            PRINTFORMW 「네 앞에선 모든 게 다 조교의 도구가 되는구나…」
+        ELSE
+            PRINTFORMW 「샤워? 이것으로 주인님의 등을 씻어 줘?」
+            PRINTFORMW 「…출력 최대로 거기에 꽉 대 보라고? 또 재밌는 걸 생각하는군…」
+        ENDIF
+        CFLAG:8801 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋자위 중독 Lv3 이상
+        IF TALENT:150 && ABL:30 >= 3 && (CFLAG:8801 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「좀 더, 더 빨리 할 수 없나~!」
+            PRINTFORMW 치유리는 미친 듯이 수도꼭지를 돌리고 있다…
+            CFLAG:8801 = 5
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:8801 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「애액 처리를 하지 않고 끝나니까 편하군… 방에도 놓고 싶어」
+            CFLAG:8801 = 4
+        ;자위 중독 Lv3 이상
+        ELSEIF ABL:30 >= 3 && (CFLAG:8801 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「하히잇! 물이! 물이 거기에 닿아앗!」
+            CFLAG:8801 = 3
+        ;그 이외
+        ELSEIF CFLAG:8801 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「간지럽기만 하다구…」
+            CFLAG:8801 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;페라되는(뚜껑이든지/남자만) CFLAG9005
+;-------------------------------------------------
+IF SELECTCOM == 5
+    ;처음
+    IF CFLAG:9005 == 0
+        ;연모
+        IF TALENT:150
+                PRINTFORMW 「주인님!? 뭐하냐구! 그건 내… 끄읏!」
+                PRINTFORMW 「그래… 그래서 날 후타나리로…」
+        ;연모가 아니다
+        ELSE
+            ;남자 주인이나 여주인인인가
+            IF !TALENT:MASTER:120
+                PRINTFORMW 「이럴려고 내게 이걸 기르게 했나?」
+                PRINTFORMW 「남자라면 널려 있잖아… 정말, 골때리는군」
+            ELSE
+                PRINTFORMW 「넌 남자로서의 긍지도 없어?」
+                PRINTFORMW 「아니면… 그런 취향인가?」
+            ENDIF
+        ENDIF
+        CFLAG:9005 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9005 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「주인님에게… 봉사 받는 것도… 멋지다구…」
+            CFLAG:9005 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:9005 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「끄으… 이렇게 민감하다니… 안 돼, 참자…」
+            CFLAG:9005 = 3
+        ;그 이외
+        ELSEIF CFLAG:9005 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「다람쥐처럼 볼이 빵빵하구만… 나 참」
+            CFLAG:9005 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;가슴 애무 CFLAG9003
+;-------------------------------------------------
+;연모가 없는 상태로 가슴을 손대었을 때, 의 가슴이 크고, 여주인인인 경우
+;의 분기를 다방면…의미가 거의! (；_；) 만들고 나서 눈치챘어!
+;아―, 재어셈블(assemble) 하고 싶다
+
+IF SELECTCOM == 3
+    ;처음
+    ;빈유인가 어떤가로 분기 하고 싶다
+    IF CFLAG:9003 == 0
+        ;연모
+        IF TALENT:150
+            IF TALENT:111 || TALENT:110
+                PRINTFORMW 「이런 작은 가슴이라도 좋다면 얼마든지 만져 줘」
+                PRINTFORMW 「…(버스트 업이라든지 시험해 볼까)」
+            ELSE
+                PRINTFORMW 「주인님의 기호에 맞을지 어떨지 모르는데…
+                PRINTFORMW 내 가슴으로 만족한다면 얼마든지 만져 줘」
+            ENDIF
+        ;그 이외
+        ELSE
+            ;가 빈유나 절벽이다.
+            IF TALENT:111 || TALENT:110
+                PRINTFORMW 「이런 작은 가슴을 만져서 뭐가 즐겁지?」
+            ;가 보통 이상의 가슴을 가지고 있는 경우
+            ELSE
+                ;마스터가 남자일까 경우
+                IF TALENT:MASTER:120
+                    PRINTFORMW 「남자는 왜 가슴을 좋아하지? 마더 콤플렉스인가?」
+                ;마스터가 남자 이외의 경우, 다방면 분기
+                ELSE
+                    PRINTFORMW 「만질려면 네 거나 만져! 갖고 있잖아?」
+                    ;마스터가 절벽이나 빈유인가 어떤가로 분기
+                    IF TALENT:MASTER:110 || TALENT:MASTER:111
+                        ;가 반발을 가지지 않는 경우는 위로해 준다.
+                        IF !MARK:TARGET:9
+                            PRINTFORMW 「아, 아니… 잘못했다, 저기, 힘내라」
+                            PRINTFORMW 「여, 여자의 매력은 가슴뿐만이 아니라고 봐」
+                            PRINTFORMW …어쩌다 격려받았다.
+                        ELSE
+                            PRINTFORMW 「뭐, 네 가슴은, 만져도 아무 즐거움도 없겠지만」
+                            PRINTFORMW 치유리는 \@ TEQUIP:41 ? 홀 # 당신 가슴을 한 번 보고 홀 \@로 싱글거렸다.
+                        ENDIF
+                    ;마스터가 큰 가슴이나 폭유를 가지는 경우
+                    ELSEIF TALENT:MASTER:112 || TALENT:MASTER:113
+                        ;가 반발을 가지지 않는 경우는 칭찬해 준다.
+                        IF !MARK:TARGET:9
+                            PRINTFORMW 「모처럼 훌륭한 가슴이 있는데 아깝네」
+                            PRINTFORMW 당신의 휘어지게 여문 가슴이 희미하게 흔들렸다.
+                        ELSE
+                            PRINTFORMW 「그렇게 훌륭한 가슴을 가진 주제에…」
+                            SIF !TEQUIP:40
+                                PRINTFORMW 치유리는 홧김에 당신의 풍부한 가슴을 손가락으로 쳐 봤다.
+                        ENDIF
+                    ENDIF
+                ENDIF
+            ENDIF
+        ENDIF
+        CFLAG:9003 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9003 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「유두가 오똑해졌어… 거기, 좋아, 좋앗!」
+            CFLAG:9003 = 4
+        ;B감각 Lv3 이상
+        ELSEIF ABL:3 >= 3 && (CFLAG:9003 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「뭐, 뭐냣! 가, 가슴이… 기분… 좋아…!?」
+            CFLAG:9003 = 3
+        ;그 이외
+        ELSEIF CFLAG:9003 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「근지럽기만 하다구. 정말로 기분 좋게 될 수 있나?」
+            CFLAG:9003 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;키스 CFLAG9006
+;-------------------------------------------------
+IF SELECTCOM == 6
+    ;처음
+    IF CFLAG:9006 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「"키스를 하는 곳"에 의미가 있는 걸 알고 있어?」
+            PRINTFORMW 「손등은 존경, 뺨은 후의, 입술은 애정…」
+            PRINTFORMW 「그럼, 주인님은 어디로 해 줄래?」
+            ;PRINTFORMW 「덧붙여서, 거기 같은 것은 문제 외라구」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「키스는 입술만 맞추는 행위가 아냐」
+            PRINTFORMW 「입술과 함께 마음도 맞추는 거야」
+            PRINTFORMW 「납득했나? 납득… 할 리 없나」
+        ENDIF
+        CFLAG:9006 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9006 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「내 키스의 솜씨도… 혀놀림? 도 꽤 하지?」
+            PRINTFORMW 치유리는 당신의 혀와 자신의 혀를 꼬아대며 키스를 즐기고 있다.
+            CFLAG:9006 = 4
+        ;순종 Lv3 이상
+        ELSEIF ABL:10 >=3 && (CFLAG:9006 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「뭐, 맞거나 넣는 것보다는 좋은가…」
+            PRINTFORMW 치유리는 당신의 키스를 받아들이고 있는 것 같다.
+            CFLAG:9006 = 3
+        ;그 이외
+        ELSEIF CFLAG:9006 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「너 같은 것과 키스하느니… 맞는 쪽이 낫지!」
+            PRINTFORMW 저항하는 치유리의 양팔을 억누르고 무리하게 키스를 계속했다.
+            CFLAG:9006 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;아무것도 하지 않는 CFLAG9009
+;-------------------------------------------------
+IF SELECTCOM == 9
+    ;처음
+    IF CFLAG:9009 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「그렇게 쳐다보니까 부끄럽군」
+            PRINTFORMW 아무것도 하지 않는 것을 불만스러워 하는 듯했지만, 그렇지만도 않은 것 같다.
+        ;그 이외
+        ELSE
+            PRINTFORMW 「…아무것도 하지 않는 것은 다행이지만」
+            PRINTFORMW 「이건 이것대로 상당히 기분 나쁘다구」
+        ENDIF
+        CFLAG:9009 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋욕정 Lv3 이상
+        IF TALENT:150 && PALAM:13 >= PALAMLV:3 && (CFLAG:9009 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「애태우기 플레이인가? 좋아, 끈기 있게 기다려 주마」
+            PRINTFORMW 어쩐지 이상한 곳을 자극해 버린 것 같다…
+            CFLAG:9009 = 4
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:9009 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「완급 조절이, 능숙하다구」
+            CFLAG:9009 = 3
+        ;그 이외
+        ELSEIF CFLAG:9009 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「이 침묵… 싫은 느낌이라구」
+            CFLAG:9009 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;로터 CFLAG9010　작아도 필살의 무기입니다
+;-------------------------------------------------
+IF SELECTCOM == 10
+    ;처음
+    IF CFLAG:9010 == 0
+        PRINTFORMW 「그건 로터군, 그걸로 뭘 할 생각이야? \@ TALENT:150 ? 주인님 # \@」
+        PRINTFORMW 「…목적은 하나겠지, \@ TALENT:150 ? 후왓, 이, 이거, 좋아 # 젠장, 그만둬! 그만둬엇 \@!」
+        CFLAG:9010 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9010 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「이건 작아도 필살의 무기라구!」
+            PRINTFORMW 「기분… 좋아… 좀 더, 좀 더 세게…!」
+            CFLAG:9010 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:9010 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「우와… 와아앗! 스위치, 스위치는 어디냐~!」
+            PRINTFORMW 필사적으로 스위치를 끄려고 손발을 버둥대고 있다…
+            CFLAG:9010 = 3
+        ;그 이외
+        ELSEIF CFLAG:9010 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「이런 싸구려 장난감으로 날 어떻게 할 수 있을 것 같냐!」
+            PRINTFORMW 로터의 진동음이 허무하게 방 안에 울린다.
+            CFLAG:9010 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;바이브 CFLAG9012　CFLAG8811
+;-------------------------------------------------
+;개시시
+IF SELECTCOM == 12 && TEQUIP:20
+    ;처음
+    IF CFLAG:9012 == 0
+        ;처녀
+        IF TALENT:0 == 1
+            PRINTFORMW 「그건 바이브레이터잖아… 이봐, 말 좀 하자.
+            PRINTFORMW 사실 나 처녀야… 그러니까, 그건, 기다려 주지 않겠나?
+            ;연모
+            IF TALENT:150
+                PRINTFORMW 할 수 있으면 주인님 걸로 부탁하고 싶지만…
+                ;남자나 뚜껑이든지라면 주인님의 물건을 조른다
+                PRINTFORMW 알고 있어. 주인님\@ TALENT:MASTER:120 || TALENT:MASTER:121 ? 의 명령은 절대적이니까… # 은 여자지, 엉뚱한 소리를 했군 \@」
+            ;그 이외
+            ELSE
+                PRINTFORMW 지, 지금이라면 선택 미스라고 해도 봐 준다구…
+                PRINTFORMW 그러니까… 그, 그만둬… 그만둬어억!」
+            ENDIF
+        ;비처녀
+        ELSE
+            ;연모
+            IF TALENT:150
+                PRINTFORMW 「그건 바이브레이터잖아… 되게 굵군」
+                PRINTFORMW 「어, 넣어? 아, 당연한 소리지… 하하하, 들어갈까?」
+            ;그 이외
+            ELSE
+                PRINTFORMW 「무리다! 그렇게 굵은 건 들어갈 리 없잖아?」
+                PRINTFORMW 뒷걸음질 치는 치유리의 질구에 바이브를 꽉 누른다.
+                PRINTFORMW 「으끄욱… 드, 들어 오고 있어억!?」
+            ENDIF
+        ENDIF
+        CFLAG:9012 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9012 <= 3 || FLAG:11 == 2)
+            IF TALENT:MASTER:120 || TALENT:MASTER:121
+                PRINTFORMW 「이런 것보다 주인님 걸 넣어~」
+                PRINTFORMW 불평을 늘어놓는 치유리 보지에 강하게 바이브를 집어넣었다.
+                PRINTFORMW 「으햐아아아아아앗! 바, 바이브도 기분 죠아요~!!!」
+            ELSE
+                PRINTFORMW 「주인님의 손가락이나 혀도 좋지만, 역시 이게 없으면~」
+                PRINTFORMW 치유리는 굵고, 우뚝 솟은 인공의 페니스에 뺨을 댄다.
+                PRINTFORMW 「섬세한 여자의 손가락과 강직한 인공의 장형… 최고라구」
+            ENDIF
+            CFLAG:9012 = 4
+        ;V감각 Lv3 이상
+        ELSEIF ABL:1 >= 3 && (CFLAG:9012 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「안 들어가, 안 들어간다고 말해도… 들어가는군」
+            PRINTFORMW 흠뻑 젖은 고간에 들어간 바이브를 보며 한숨을 내쉬었다.
+            CFLAG:9012 = 3
+        ;그 이외
+        ELSEIF CFLAG:9012 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「찢어져… 찢어져… 찢어져… 찢어져~!」
+            CFLAG:9012 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+;탈착시
+ELSEIF SELECTCOM == 12
+    ;연모
+    IF TALENT:150 && (CFLAG:8811 < 3 || FLAG:11 == 2)
+        PRINTFORMW 「이 상실감… 빨리 뭔가로 채우고 싶은 기분이라구」
+        CFLAG:8811 = 3
+    ;굴복 각인 Lv3
+    ELSEIF MARK:2 == 3 && (CFLAG:8811 <= 2 || FLAG:11 == 2)
+        PRINTFORMW 「어… 뺀다고?」
+        PRINTFORMW 「아, 아니, 빼도 상관 없다, 그, 그런 거」
+        CFLAG:8811 = 2
+    ;그 이외
+    ELSEIF CFLAG:8811 < 1 || FLAG:11 == 2
+        PRINTFORMW 「빠, 빠졌나… 으응, 아직 이물감이 있군」
+        CFLAG:8811 = 1
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;어널 바이브 CFLAG9013　CFLAG8812
+;-------------------------------------------------
+;개시시
+IF SELECTCOM == 13 && TEQUIP:25
+    ;처음
+    IF CFLAG:9013 == 0
+        PRINTFORM 「바이브레이터인가… 
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 어, 이건 다르다고?
+            PRINTFORMW 그, 그쪽에 넣는 바이브인가… 후후, 기대되는군」
+        ;그 이외
+        ELSE
+            PRINTFORMW 추잡한 걸 꺼내는군」
+            PRINTFORMW 「뭐!? 그쪽에 넣는 바이브라고!? 그만둬, 당장 그만둬!!」
+        ENDIF
+        CFLAG:9013 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋A감각 Lv3 이상
+        IF TALENT:150 && ABL:2 >= 3 && (CFLAG:9013 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 당신이 애널 바이브를 꺼내자, 치유리는 눈을 빛냈다.
+            PRINTFORMW 「이거, 이거, 이 감촉이 최고야, 들어 오는 순간과…
+            PRINTFORMW 이렇게, 지, 진동이… 찌릿한 게… 끄앗~!!!」
+            CFLAG:9013 = 5
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:9013 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「의외로… 들어가는군… 으끅… 끄앗!!!」
+            PRINTFORMW 치유리 항문은 바이브를 깊이 물었다… 조금 힘든 것 같지만.
+            CFLAG:9013 = 4
+        ;A감각 Lv3 이상
+        ELSEIF ABL:2 >= 3 && (CFLAG:9013 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 당신이 애널 바이브를 꺼내자, 치유리는 한순간 눈을 빛냈다.
+            PRINTFORMW 「(어, 나 뭘 기대하는 거야… 저런 거에…)」
+            CFLAG:9013 = 3
+        ;그 이외
+        ELSEIF CFLAG:9013 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「그런 걸 넣는 데가 아냐악~!!!」
+            CFLAG:9013 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+;탈착시
+ELSEIF SELECTCOM == 13
+    ;연모
+    IF TALENT:150 && (CFLAG:8812 < 3 || FLAG:11 == 2)
+        PRINTFORMW 「또, 똥 나와앗~!!!
+        PRINTFORMW 하아, 하아… 똥, 안 나왔나?」
+        CFLAG:8812 = 3
+    ;A감각 Lv3 이상
+    ELSEIF ABL:2 >= 3 && (CFLAG:8812 < 2 || FLAG:11 == 2)
+        PRINTFORMW 「이 빠질 때의 감각… 못 참겠어…
+        PRINTFORMW 헉! 나 무슨 말을 한 거지…?」
+        CFLAG:8812 = 2
+    ;그 이외
+    ELSEIF CFLAG:8812 < 1 || FLAG:11 == 2
+        PRINTFORMW 「겨… 겨우 빼 줬군… 죽는 줄 알았다구…」
+        CFLAG:8812 = 1
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;정상정도 CFLAG9020
+;-------------------------------------------------
+;조수에 처녀 빼앗기는 경우도 이런 대사 토하지만 어떻게든 되지 않아인가
+;조수시 말을 자르는을 사용하면 이이의 것인가?
+;장비시의 대사 확대
+
+IF SELECTCOM == 20
+    ;처음
+    IF CFLAG:9020 == 0
+        ;처녀
+        IF TALENT:0 == 1
+            ;연모
+            IF TALENT:150
+                PRINTFORMW 「첫 상대가 주인님이라니 다행이라구, 난 최고의 행운아야」
+                PRINTFORMW 치유리는 어딘가 뿌듯한 표정으로 지금부터 시작되는 행위에 몸을 바쳤다.
+                PRINTFORMW 「…되게, 아프군. 그렇지만… 나… 난… 행복… 하다구」
+            ;굴복 각인이 3때
+            ELSEIF MARK:2 == 3
+                PRINTFORMW 「첫 상대가 너라니… 이것도 운명인가?」
+                PRINTFORMW 치유리는 어딘가 단념한 것 같은 표정으로 지금부터 시작되는 행위에 몸을 바쳤다.
+                PRINTFORMW 「…어차피 아프다면… 좀 더 좋아하는 상대와… 하고 싶었다구」
+            ;그 이외
+            ELSE
+                PRINTFORMW 「첫 상대가 너라고? 사절하겠어! 당장 꺼져!」
+                PRINTFORMW 저항하는 치유리를 무리하게 억누르고 가랑이를 벌리게 한다.
+                PRINTFORMW 「아… 아… 어째서… 어째서 이런 일이…!」
+            ENDIF
+        ;비처녀
+        ELSE
+            ;연모
+            IF TALENT:150
+                PRINTFORMW 「이렇게 서로 마주 보고 섹스하게 된다니…」
+                PRINTFORMW 「만났을 때는 생각도 못 했다구」
+            ;그 이외
+            ELSE
+                PRINTFORMW 「네 얼굴을 보면서 섹스인가…」
+                PRINTFORMW 「어디, 네가 우스꽝스럽게 가 버린 얼굴을 보고 비웃어 주마」
+            ENDIF
+        ENDIF
+        CFLAG:9020 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9020 <= 4 || FLAG:11 == 2)
+            ;야외+아이마스크+줄이라든지의 경우는 어떻게 하지
+            ;야외 플레이의 경우
+            IF TEQUIP:52
+                PRINTFORMW 「등에 흙은 차가운데… 주인님 몸은 따뜻해서…」
+                PRINTFORMW 치유리의 거친 숨결이 살랑거리는 바람과 섞여, 생생하게 피부에 닿는다.
+                PRINTFORMW 「아… 좀 더 강하게 껴안아 줘…」
+            ;아이마스크 착용의 경우
+            ELSEIF TEQUIP:41
+                PRINTFORMW 「깜깜하다, 아무것도 안 보여, 그러니까…」
+                PRINTFORMW 「좀 더 확실히 껴안아 줘… 주인님의 장소를 느끼게 해 줘」
+            ;줄의 경우
+            ELSEIF TEQUIP:40
+                PRINTFORMW 「사족을 못 쓴다는 게 이런 건지, 아닌 건지」
+                PRINTFORMW 「아무튼 난 주인님의 물건이니까, 주인님 맘대로 날 희롱해 줘…」
+            ELSE
+                PRINTFORMW 「등에 긁힌 상처를 만들어도 좋은가? 농담이다, 곧이 듣지 말라고」
+                PRINTFORMW 「노… 농담이 아닐지도 몰라… 응흣!」
+            ENDIF
+            CFLAG:9020 = 5
+        ;굴복 각인 Lv3＋V감각 Lv3 이상
+        ELSEIF MARK:2 == 3 && ABL:1 >= 3 && (CFLAG:9020 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「아, 안 돼! 이상한 얼굴, 가 버리는 얼굴 보이면… 보지 마~!」
+            CFLAG:9020 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:9020 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「끄으… 뭐, 뭐야? 별로, 기분 좋을 리가…」
+            CFLAG:9020 = 3
+        ;그 이외
+        ELSEIF CFLAG:9020 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「안간힘을 써대는 게… 내 처지 같군」
+            CFLAG:9020 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;후배 정도 CFLAG9021
+;-------------------------------------------------
+IF SELECTCOM == 21
+    ;처음
+    IF CFLAG:9021 == 0
+        ;처녀
+        IF TALENT:0 == 1
+            ;연모
+            IF TALENT:150
+                PRINTFORMW 「첫 상대가 주인님이라니 다행이라구, 난 최고의 행운아야.
+                PRINTFORMW 할 수 있으면 주인님의 얼굴을 보면서 하고 싶었지만, 이것은 이것대로 좋을지도 모르겠어」
+                PRINTFORMW 치유리는 어딘가 뿌듯한 표정으로 지금부터 시작되는 행위에 몸을 바쳤다.
+                PRINTFORMW 「…되게, 아프군. 그렇지만… 나… 난… 행복… 하다구」
+            ;그 이외
+            ;굴복 각인이 3때
+            ELSEIF MARK:2 == 3
+                PRINTFORMW 「첫 상대가 너라니… 이것도 운명인가?」
+                PRINTFORMW 치유리는 어딘가 단념한 것 같은 표정으로 지금부터 시작되는 행위에 몸을 바쳤다.
+                PRINTFORMW 「…어차피 아프다면… 좀 더 좋아하는 상대와… 하고 싶었다구」
+            ;그 이외
+            ELSE
+                PRINTFORMW 「첫 상대가 너라고? 사절하겠어! 당장 꺼져!」
+                PRINTFORMW 저항하는 치유리를 무리하게 억누르고 납죽 엎드리게 한다.
+                PRINTFORMW 「아… 아… 어째서… 어째서 이런 일이…!」
+            ENDIF
+        ;비처녀
+        ELSE
+            ;연모
+            IF TALENT:150
+                PRINTFORMW 「뒤에서라… 마치 짐승의 교미 같군」
+                PRINTFORMW 「좋다, 한 번 짐승이 되어, 사귀지 않겠나」
+            ;그 이외
+            ELSE
+                PRINTFORMW 「엎드리라고? 왜 그런 명령을…」
+                PRINTFORMW 「…아무튼, 네 얼굴을 보지 않아도 되는 건 다행인가」
+            ENDIF
+        ENDIF
+        CFLAG:9021 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9021 <= 4 || FLAG:11 == 2)
+            ;야외 플레이의 경우
+            IF TEQUIP:52
+                PRINTFORMW 「밖에서, 게다가 뒤로부터… 정말로 짐승의 교미 같군」
+                PRINTFORMW 「그렇지만, 지금은 그래서 좋아, 본능 대로, 날 범해 줘」
+                PRINTFORMW 치유리의 교성이, 짐승이 짖는 것처럼 메아리 쳤다.
+            ;아이마스크 착용의 경우
+            ELSEIF TEQUIP:41
+                PRINTFORMW 시각이 차단된 치유리의 배후에서, 단숨에 관철한다.
+                PRINTFORMW 「끄읏… 끄으읏… 갑자기 한다니 반칙이라구… 그래도, 아아하앗…」
+            ;줄의 경우
+            ELSEIF TEQUIP:40
+                PRINTFORMW 「자유를 빼앗긴 채, 그것도 뒤에서 한다니」
+                PRINTFORMW 「이거, 강간 당하는 느낌이 들어서, 뭔가 도착적이군…」
+            ELSE
+                PRINTFORMW 「좀 더! 세게! 찌르듯이~!!!」
+                PRINTFORMW 치유리는 당신의 율동에 맞추어 허리를 크게 흔들고 있다.
+            ENDIF
+            CFLAG:9021 = 5
+        ;굴복 각인 Lv3＋V감각 Lv3 이상
+        ELSEIF MARK:2 == 3 && ABL:1 >= 3 && (CFLAG:9021 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「…이 부끄러운 얼굴을 보이지 않아서 다행이라구」
+            PRINTFORMW 「응, 별로 아무것도 아니다, 환청이겠지?」
+            CFLAG:9021 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:9021 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「끄으… 참자, 참아…」
+            CFLAG:9021 = 3
+        ;그 이외
+        ELSEIF CFLAG:9021 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「네 얼굴을 보지 않아서 다행이라구」
+            CFLAG:9021 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;어널 섹스 CFLAG9030
+;-------------------------------------------------
+IF GROUPMATCH(SELECTCOM, 30, 31, 32, 33, 34, 37, 38)
+    ;처음
+    IF CFLAG:9030 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「그쪽 구멍인가…」
+            PRINTFORMW 치유리가 침을 꼴깍 삼킨 것 같았다.
+            PRINTFORMW 「다양하게 시험해 보는 것도 나쁘지 않다, 좋아, 와라!」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「거기는 나오는 곳이지, 넣는 곳은 아냐」
+            PRINTFORMW 「잘못 말한 거지? 지금이라면 정정을 인정하지」
+            PRINTFORMW 「…변태 자식」
+        ENDIF
+        CFLAG:9030 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9030 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「내 온갖 구멍을 주인님이 정복한다니… 못 참겠어」
+            CFLAG:9030 = 4
+        ;A감각 Lv3 이상
+        ELSEIF ABL:2 >= 3 && (CFLAG:9030 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「말도 안 돼! 왜 이렇게 기분 좋은 거야…」
+            CFLAG:9030 = 3
+        ;그 이외
+        ELSEIF CFLAG:9030 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「으끄윽… 장을 잡아 끄집어내는 기분이다…」
+            CFLAG:9030 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;역강간 CFLAG9025
+;(주인이 비남자, 노예가 남자/뚜껑이든지 마셔)
+;-------------------------------------------------
+IF SELECTCOM == 25
+    ;처음
+    IF CFLAG:9025 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「흐흥, 오늘은 취향을 바꿔서, 내가 괴롭히는 거군」
+            PRINTFORMW 「난 봐 주는 걸 못 해, 각오해 둬, 주인님?」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「좋다, 지금까지의 원한을 충분히 풀어 주지」
+            PRINTFORMW 치유리는 의욕이 넘치는 것 같다. 그것이 당신의 계산대로인 것도 모르고…
+        ENDIF
+        CFLAG:9025 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9025 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「주인님의 약점은 어딘가… 여긴가?」
+            CFLAG:9025 = 3
+        ;그 이외
+        ELSEIF CFLAG:9025 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「…어딜 괴롭혀야 이 녀석이 괴로워하는 얼굴을 볼 수 있지?」
+            CFLAG:9025 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;자위 CFLAG9040
+;-------------------------------------------------
+IF SELECTCOM == 40
+    ;처음
+    IF CFLAG:9040 == 0
+        ;연모 소유
+        IF TALENT:150
+            PRINTFORMW 「오늘은 손으로 주인님을 만족시키면 되나?」
+            PRINTFORMW 치유리는 침을 당신 음경에 바르고, 애정을 담아 쓰다듬었다.
+        ;봉사 정신 Lv3 이상
+        ELSEIF ABL:13 >= 3
+            PRINTFORMW 「…입이나 가슴으로 하라는 명령보다는, 마음 편하다구」
+            PRINTFORMW 치유리는 익숙한 손놀림으로 당신 음경을 손으로 켜기 시작했다.
+        ;그 이외
+        ELSE
+            PRINTFORMW 「이런 거 잡고 싶지 않은데… 쯧」
+            PRINTFORMW 치유리는 투덜투덜 불평을 늘어놓으면서 당신 음경을 손으로 켜기 시작했다.
+        ENDIF
+        CFLAG:9040 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋봉사 정신 Lv5(봉사 3에 경감)
+        IF TALENT:150 && ABL:13 >= 3 && (CFLAG:9040 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「맡겨라, 내 손으로 기분 좋게 해 주지」
+            PRINTFORMW 그렇게 말하자마자, 치유리는 당신 음경을 교묘하게 만지기 시작했다.
+            CFLAG:9040 = 4
+        ;봉사 정신 Lv3 이상
+        ELSEIF ABL:13 >= 3 && (CFLAG:9040 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「…뭐, 손으로 하는 정도는 상관 없어」
+            PRINTFORMW 치유리는 별로 저항하는 기색 없이, 당신 음경을 손으로 켜기 시작했다.
+            CFLAG:9040 = 3
+        ;그 이외
+        ELSEIF CFLAG:9040 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「또인가… 이런 더러운 걸, 왜 만져야 하는데?」
+            PRINTFORMW 치유리는 짜증내며 당신의 음경을 켜기 시작했다.
+            CFLAG:9040 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;구강 성교 CFLAG9041
+;-------------------------------------------------
+IF SELECTCOM == 41
+    ;처음
+    IF CFLAG:9041 == 0
+        ;봉사 정신 Lv3 이상
+        IF ABL:13 >= 3
+            PRINTFORMW 「그걸 빨라고… 알았어」
+            PRINTFORMW 반발할 줄 알았지만, 치유리는 별로 저항하는 기색 없이,
+            PRINTFORMW 당신 음경을 입에 넣고, 혀로 희롱했다.
+        ;그 이외 남녀 분기 있어(남자 없음이라면 필연적으로 뚜껑이든지…야)
+        ;페니반? 몰라가
+        ELSE
+            PRINTFORM 「거긴 배뇨 기관이잖아? 
+            IF TALENT:MASTER:120
+                PRINTFORMW 그걸 입으로 빨라는 거냐?」
+            ELSE
+                PRINTFORMW 아니, 너의 경우는 다른가…
+                PRINTFORMW 그래도 어느 쪽이든 그런 걸 빨고 싶진 않아!」
+            ENDIF
+            PRINTFORMW 「…끄, 역겨운 냄새. 빨리 입을 씻어내고 싶군」
+        ENDIF
+        CFLAG:9041 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋봉사 정신 Lv3
+        IF TALENT:150 && ABL:13 >= 3 && (CFLAG:9041 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「후후후, 몇십 초 버틸까~?」
+            PRINTFORMW 치유리의 오랄 기술은 절품이다. 무엇보다 애정이 가득 차 있다.
+            CFLAG:9041 = 5
+        ;연모만
+        ELSEIF TALENT:150 && (CFLAG:9041 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「아직 많이 서툴지만… 애정을 담아서 하니까 용서해 줘」
+            PRINTFORMW 치유리는 기쁜 듯이 음경을 맛보고 있다.
+            CFLAG:9041 = 4
+        ;봉사 정신 Lv3 이상
+        ELSEIF ABL:13 >= 3 && (CFLAG:9041 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「속도도 중요하지만, 혀 사용도 중요한 것 같군」
+            PRINTFORMW 치유리는 다양하게 방법을 모색하고 있는 것 같다…
+            CFLAG:9041 = 3
+        ;그 이외
+        ELSEIF CFLAG:9041 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「아~ 입 속이 잡균 투성이다, 빨리 양치하고 싶군」
+            CFLAG:9041 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;파이즈리 CFLAG9042
+;-------------------------------------------------
+IF SELECTCOM == 42
+    ;처음
+    IF CFLAG:9042 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「뭐? 가슴으로 해?」
+            ;빈유
+            IF TALENT:111 || TALENT:110
+                PRINTFORMW 「괜찮은데… 내 초라한 가슴으로 괜찮은가?」
+                PRINTFORMW 「그래서 좋다, 라… 좋다면 해 봐도 괜찮나」
+            ;허유(오자에 있지 않고)
+            ELSEIF TALENT:112 || TALENT:113
+                PRINTFORMW 「좋다, 치유리 님의 큰 가슴으로 승천 시켜 주지」
+            ;보통젖
+            ELSE
+                PRINTFORMW 「좋다, 내 가슴을 빌려 주지, 물론, 성적인 의미로」
+            ENDIF
+        ;그 이외
+        ELSE
+            PRINTFORMW 「뭐? 가슴으로 하라고? 대책 없는 변태군」
+        ENDIF
+        CFLAG:9042 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋봉사 정신 Lv5
+        IF TALENT:150 && ABL:13 >= 5 && (CFLAG:9042 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「요즘 요령을 알게 돼서 말이지… 즉, 유두의 사용법이 포인트야」
+            PRINTFORMW 치유리는 당신을 보다 기분 좋게 하기 위해 열심히 연구하고 있는 것 같다.
+            CFLAG:9042 = 4
+        ;봉사 정신 Lv3 이상
+        ELSEIF ABL:13 >= 3 && (CFLAG:9042 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「어쩔 수 없나… 뭐, 내가 주도권을 잡을 수 있는 건, 편하다면 편한가」
+            CFLAG:9042 = 3
+        ;그 이외
+        ELSEIF CFLAG:9042 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「왜 이런 걸 내가 해야 하냐구…」
+            CFLAG:9042 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;가랑이 CFLAG9043
+;-------------------------------------------------
+IF SELECTCOM == 43
+    ;처음
+    IF CFLAG:9043 == 0
+        ;연모 있어
+        IF TALENT:150
+            PRINTFORMW 「어, 넣지 않는다니, 좀 실망이군…」
+            PRINTFORMW 불만스러워 하던 치유리였지만, 곧바로 얼굴이 펴졌다.
+            PRINTFORMW 「이건 이거대로… 되게 기분… 좋잖아… 히끄읏!」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「뭐, 설마 넣을 생각이냐?」
+            PRINTFORMW 당신은 삽입하는 게 아니라, 가랑이로 문지르는 거라고 가르쳤다.
+            PRINTFORMW 「이상한 짓만 줄줄이 잘 떠올리는군」
+        ENDIF
+        CFLAG:9043 = 1
+    ;2회째 이후
+    ELSE
+        ;연모 있어
+        IF TALENT:150 && (CFLAG:9043 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「근데 최초로 이걸 발명한 건 누굴까?」
+            PRINTFORMW 치유리는 허리를 리드미컬하게 흔들며 입을 연다.
+            PRINTFORMW 「뭐, 누구든, 그 사람에겐 감사해야지.
+            PRINTFORMW 이렇게 기분 좋은 걸 개발했으니까」
+            CFLAG:9043 = 3
+        ;그 이외
+        ELSEIF CFLAG:9043 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「이걸 최초로 발명한 인간은 어떤 녀석일까」
+            PRINTFORMW 「분명 너같은 변태일 거다」
+            CFLAG:9043 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;승마정도 CFLAG9024
+;-------------------------------------------------
+IF SELECTCOM == 24
+    ;처음
+    IF CFLAG:9024 == 0
+        ;처녀
+        IF TALENT:0 == 1
+            ;연모
+            IF TALENT:150
+                PRINTFORMW 「내가 주인님에게 처녀를 바칠 수 있다니…」
+                PRINTFORMW 「이런 기회는 좀처럼 없어. 난 행운아라구」
+                ;반발 붙으면(자) 고멘나
+            ;그 이외
+            ELSE
+                PRINTFORMW 「뭐… 내가 넣으라니…! 제, 제정신이냐…」
+                PRINTFORMW 「(난 처음이라구, 그걸… 그걸… 끄으욱…!)」
+            ENDIF
+        ;비처녀
+        ELSE
+            ;연모
+            IF TALENT:150
+                PRINTFORMW 「내가 위로? 그래서 어떻게 즐기지?」
+                PRINTFORMW 「과연… 주인님 부담도 줄어들고 나도 기분 좋은 거군. 자, 탄다구」
+                ;이 탔다구, 는 괘사가 되어 있다!
+            ;그 이외
+            ELSE
+                PRINTFORMW 「내가 위로 올라가? 웃기지 마, 난 그런…」
+                PRINTFORMW 싫어하는 치유리를 억지로 자기 몸 위에 싣는다.
+                PRINTFORMW 「끄으… (적어도, 내 체중으로 괴롭히겠어!)」
+            ENDIF
+        ENDIF
+        CFLAG:9024 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9024 <= 4 || FLAG:11 == 2)
+            ;극히 보기 드물게 질경련
+            ;야외시•욕실은 연주한다
+            IF !(TEQUIP:52 || TEQUIP:53) && !RAND:999
+                PRINTFORMW 「응, 끄응… 흐아…」
+                PRINTFORMW 여느 때처럼 기승위를 즐기는 두 사람…
+                PRINTFORMW 「응끗, 으끗, 응응…」
+                PRINTFORMW 그 때, 이변이 일어났다!
+                PRINTFORMW 「우왓! 뭐, 뭐냐구!!」
+                PRINTFORMW 크게 삐걱거리는 침대의 소리, 두 명의 리드미컬한 율동이 침구를 파괴했던 것이다!
+                PRINTFORMW 「아차~ 너무 세게 했다구, 괜찮나?」
+                PRINTFORMW 충격으로 다소 몸이 아프지만, 그렇게 피해는 없었다.
+                PRINTFORMW 「일단 빼자… 읏, 응… 어?」
+                PRINTFORMW 갑작스런 침묵과 방울져 떨어지는 식은 땀.
+                PRINTFORMW 「아… 안 빠져? 어, 어떻게 된 거야?」
+                PRINTFORMW 당황한 치유리. 어떻게든 빼려고 노력하지만 오히려 더 들어간다.
+                PRINTFORMW 당신은 치유리가 패닉에 빠지지 않도록 부드럽게 말을 걸고,
+                PRINTFORMW 치유리의 음부를 꼼꼼하게 계속 마사지 했다…
+                PRINTFORML ---------
+                PRINTFORML ------
+                PRINTFORMW ---
+                PRINTFORMW 「휴, 어떻게 되는 줄 알았다구」
+                PRINTFORMW 그리고 수십 분, 간신히 해방된 두 사람은,
+                PRINTFORMW 큰 피해 없이, 이 이상한 소동을 마칠 수 있었다…
+            ELSE
+                PRINTFORMW 「내가 위에 있고 아래에 주인님이 있는 체위는, 뭘~ 까?」
+                PRINTFORMW 「답은 기승위라구. 확실히 기분 좋게 해 주지」
+            ENDIF    
+            CFLAG:9024 = 5
+        ;굴복 각인 Lv3+봉사 정신 Lv3 이상＋V감각 Lv3 이상
+        ELSEIF MARK:2 == 3 && ABL:13 >= 3 && ABL:1 >= 3 && (CFLAG:9024 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「(스스로 움직이면… 끄으, 삐걱거려서 기분 좋을까?)」
+            PRINTFORMW 「(안 돼, 움직이고 싶지 않은데… 움직여져…! )」
+            CFLAG:9024 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:9024 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「…내가 탔어, 자, 다음은 알아서 해」
+            PRINTFORMW 치유리는 당신에게 승마한 채로 움직이지 않는다…
+            PRINTFORMW 어쩔 수 없이, 당신은 아래에서 치유리를 밀어 올리기로 했다.
+            CFLAG:9024 = 3
+        ;그 이외
+        ELSEIF CFLAG:9024 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「(에잇, 에잇, 에잇!)」
+            PRINTFORMW 치유리는 열심히 체중을 실어 당신을 괴롭히려 하고 있지만,
+            PRINTFORMW 그게 오히려 쾌감을 주고 있단 걸 깨닫지 못 한 것 같다.
+            CFLAG:9024 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;스팬 킹 CFLAG9220
+;-------------------------------------------------
+IF SELECTCOM == 220
+    ;처음
+    IF CFLAG:9220 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「유메미 님한테도 많이 맞았었다구」
+            PRINTFORMW 「엉덩이는 얻어맞지 않았지만, 그래도, 여기가 기분 좋군」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「유메미 님한테 맞았었던 걸 떠올리게 하는군…」
+            PRINTFORMW 「내가 멀쩡했으면 널 파이프 의자로 때려 주는데…」
+        ENDIF
+        CFLAG:9220 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋매저키스트기분 Lv3 이상
+        IF TALENT:150 && ABL:21 >= 3 && (CFLAG:9220 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「엉덩이… 맞을… 때마다… 정신이… 나갈 것 같아…!」
+            PRINTFORMW 엉덩이 찜질을 끝낸 당신의 손에는 대량의 애액이 묻어 있었다.
+            CFLAG:9220 = 5
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:9220 <= 3 || FLAG:11 == 2)
+            PRINTFORMW  팡「아읏」팡「아흣」팡「햐읏」팡「이읏!」
+            PRINTFORMW 경쾌한 리듬으로 당신의 손이 치유리 몸 위에서 춤춘다.
+            CFLAG:9220 = 4
+        ;매저키스트기분 Lv3 이상
+        ELSEIF ABL:21 >= 3 && (CFLAG:9220 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「체벌… 바, 반대~!」
+            PRINTFORMW 그렇게 말하는 치유리였지만, 입가는 느슨해져, 야무지지 못 하게 타액을 늘어뜨리고 있다.
+            CFLAG:9220 = 3
+        ;그 이외
+        ELSEIF CFLAG:9220 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「체벌은 반대라구, 좀 봐 줘라」
+            ;PRINTFORMW 『아파 봐야 기억을 하지』
+            CFLAG:9220 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;채찍 CFLAG9221
+;-------------------------------------------------
+IF SELECTCOM == 221
+    ;처음
+    IF CFLAG:9221 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「나 무슨 잘못했나… 주인님을 소중히 여기고 있는데.
+            PRINTFORMW 화병을 깨뜨린 건 아직 들키지 않았을 거라구!」
+            PRINTFORMW 오늘의 채찍질은 세게 해야겠다고 다짐한 당신이었다.
+        ;그 이외
+        ELSE
+            PRINTFORMW 「그건 채찍이군, 응, 보면 알지. 그래서, 어디에 쓰게?」
+            PRINTFORMW 똑똑한 치유리라면 채찍의 용도는 이해할 수 있을 것이다.
+            PRINTFORMW 아마 은근히 「내게 쓰지 마」라고 암시하고 있는 것일까.
+            PRINTFORMW 희망을 끊듯이 채찍을 휘두르자, 치유리의 비통한 비명이 메아리쳤다.
+        ENDIF
+        CFLAG:9221 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋매저키스트기분 Lv5 이상
+        IF TALENT:150 && ABL:21 >= 3 && (CFLAG:9221 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 조교실에 채찍 치는 소리가 울린다.
+            PRINTFORMW 그러나 그 이상으로 큰 교성이 울린다.
+            PRINTFORMW 온몸이 새빨간데다, 군데군데 살이 찢어진 곳이 드러나는데도,
+            PRINTFORMW 치유리의 비소는 질척질척한 점액으로 흘러넘치고 있었다.
+            PRINTFORMW 그리고, 당신이 채찍을 휘두를 때마다, 대량의 애액이 흩날린다.
+            PRINTFORMW 「좀 더, 좀 더 갖고 싶어, 주인님의 채찍을…」
+            CFLAG:9221 = 5
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:9221 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「으, 끄윽! 아파… 이것도 사랑의 형태인가…」
+            CFLAG:9221 = 4
+        ;매저키스트기분 Lv3 이상
+        ELSEIF ABL:21 >= 3 && (CFLAG:9221 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「…매정한 자식, 소녀의 부드러운 살갗에 채찍을 휘두르다니」
+            PRINTFORMW 「(뭐, 뭐야? 왜 내 거기가 젖고 있지?)」
+            CFLAG:9221 = 3
+        ;그 이외
+        ELSEIF CFLAG:9221 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「채찍은 그만둬! 채찍은! 마, 말하는 거 다 들어 준단 말이야~!」
+            CFLAG:9221 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;바늘 CFLAG9222
+;-------------------------------------------------
+IF SELECTCOM == 222
+    ;처음
+    IF CFLAG:9222 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「그건 바늘이군, 주인님 옷을 수선하면 되나?」
+            PRINTFORMW 「아니, 주인님은 정말 좋아하지만, 그건 역시 좀…
+            PRINTFORMW 으아아파! 좀 더 상냥하게 부탁한다구요, 주인님!!!」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「그건 바늘이군, 유메미 님 망토 수선할 때 자주 썼다구」
+            PRINTFORMW 「그러니까, 옷 수선할 때 쓰는 도구라고 말했잖아!
+            PRINTFORMW 찌르지 마, 찌르지 마! 으, 꺄아아아악!!!」
+        ENDIF
+        CFLAG:9222 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋매저키스트기분 Lv3 이상
+        IF TALENT:150 && ABL:21 >= 3 && (CFLAG:9222 <= 5 || FLAG:11 == 2)
+            PRINTFORMW 톡, 푸욱! 툭, 푸슉! 툭, 푹푹!
+            PRINTFORMW 의성음으로 표현하면 이런 식일까.
+            PRINTFORMW 치유리 몸을 은빛 바늘로 도려낼 때, 방 안에 상술한 의성음이 울려퍼진다.
+            PRINTFORMW 「난… 벼, 변태야, 이렇게, 바늘로 찔려서 가 버리니까…」
+            PRINTFORMW 「주, 주인님 탓이라구… 확실하게, 책임져…」
+            CFLAG:9222 = 5
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:9222 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「끄헉… 사랑만으로 극복하기엔 좀 터무니 없다구…」
+            CFLAG:9222 = 4
+        ;매저키스트기분 Lv3 이상
+        ELSEIF ABL:21 >= 3 && (CFLAG:9222 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「뭐, 뭐야악! 아픈데… 아픈 건데… 우라질!」
+            CFLAG:9222 = 3
+        ;그 이외
+        ELSEIF CFLAG:9222 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「히끼이이야아아아아악!! 끄! 끄으악!!」
+            CFLAG:9222 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;아이마스크 CFLAG9225　CFLAG:8871
+;-------------------------------------------------
+;개시시
+IF SELECTCOM == 225 && TEQUIP:41
+    ;처음
+    IF CFLAG:9225 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「아이마스크인가, 그거엔 예전에 신세를 졌다구,
+            PRINTFORMW 용도도 목적도 전혀 다르지만, 또 신세를 지는 것 같군」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「아~ 그 녀석은 대학 시절에 신세를 졌다구,
+            PRINTFORMW 잘 때 쓰면 평소보다 안정됐었지」
+            PRINTFORMW 「…설마 이런 곳에서 보게 될 줄은 몰랐지만」
+        ENDIF
+        CFLAG:9225 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋매저키스트기분 Lv3 이상
+        IF TALENT:150 && ABL:21 >= 3 && (CFLAG:9225 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「후후, 요즘엔 아이마스크를 씌운다고 듣는 것만으로,
+            PRINTFORMW 여기가 촉촉히 젖어들어… 나도 훌륭한 변태다」
+            PRINTFORMW 「이렇게 당하기만 하는 상태가 되는 게… 참을 수 없군」
+            CFLAG:9225 = 5
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:9225 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「주인님 얼굴을 볼 수 없어서 외롭군,
+            PRINTFORMW 확실히 옆에 있는 걸 알 수 있게, 꼭 껴안고 있어 줘」
+            CFLAG:9225 = 4
+        ;매저키스트기분 Lv3 이상
+        ELSEIF ABL:21 >= 3 && (CFLAG:9225 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「언제 네 팔이나 혀가 닿을지 모른다,
+            PRINTFORMW 이 감각은 의외로 나쁘지 않군… 아픈 건 사절이지만」
+            CFLAG:9225 = 3
+        ;그 이외
+        ELSEIF CFLAG:9225 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「눈이 안 보이면, 고통은 몇 배로 느낀다고 하는군」
+            PRINTFORMW 「조교에는 최적의 도구야… 난 이 정도로 굴복하지 않지만 말이지!」
+            CFLAG:9225 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+;종료시
+ELSEIF SELECTCOM == 225
+    ;연모
+    IF TALENT:150 && (CFLAG:8871 < 2 || FLAG:11 == 2)
+        PRINTFORMW 「우왓, 눈부셔! 주, 주인님은 어디냐구~」
+        PRINTFORMW 치유리는 비틀비틀 걷기 시작해, 이윽고 주인의 몸에 얼굴을 파묻었다.
+        CFLAG:8871 = 2
+    ;그 이외
+    ELSEIF CFLAG:8871 < 1 || FLAG:11 == 2
+        PRINTFORMW 「휴… 눈부시군…」
+        CFLAG:8871 = 1
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;줄 CFLAG9224　CFLAG:8872
+;-------------------------------------------------
+;개시시
+IF SELECTCOM == 224 && TEQUIP:40
+    ;처음
+    IF CFLAG:9224 == 0
+        PRINTFORMW 「\@ TALENT:150 ? 주인님, # 힉! \@ 그걸로 날 때리게?」
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 착각하고 눈쌀을 찌푸리는 치유리에게, 이건 "묶는" 도구라고 가르쳤습니다.
+            PRINTFORMW 「뭐야, 내 착각이었나… 묶어?」
+        ;그 이외
+        ELSE
+            PRINTFORMW 당신은 "때리는" 게 아니고 "묶는" 거라고 치유리에게 가르쳤다.
+            PRINTFORMW 「그, 그런가, 다행이라구… 아니, 묶는다니, 묶는다고!」
+            PRINTFORMW 치유리의 항의를 신경쓰지 않고, 당신은 훌륭한 묶음새를 완성시켰다.
+        ENDIF
+        CFLAG:9224 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋매저키스트기분 Lv3 이상
+        IF TALENT:150 && ABL:21 >= 3 && (CFLAG:9224 <= 5 || FLAG:11 == 2)
+            PRINTFORMW 「가랑이에… 가랑이에 줄이 스쳐, 먹혀들어… 기, 기분… 좋아…!」
+            PRINTFORMW 신체에서 불어나오는 치유리의 체액으로 줄은 흠뻑 젖고 있다.
+            PRINTFORMW 관리를 게을리하면 틀림없이 곰팡이가 난다. 그렇게 생각하는 당신이었다.
+            CFLAG:9224 = 5
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:9224 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「후후, 줄로 만든 의상을 몸에 감은 나도 매력적이겠지?」
+            PRINTFORMW 치유리는 줄에 안기는 감촉에, 황홀한 표정을 띄우고 있다.
+            CFLAG:9224 = 4
+        ;매저키스트기분 Lv3 이상
+        ELSEIF ABL:21 >= 3 && (CFLAG:9224 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「파고드는 게… 아, 앗… 좋아…」
+            CFLAG:9224 = 3
+        ;그 이외
+        ELSEIF CFLAG:9224 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「끄윽… 줄이 먹혀들어 아프다… 좀 더 느슨하게 해 줘라…」
+            CFLAG:9224 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+;종료시
+ELSEIF SELECTCOM == 224
+    ;연모
+    IF TALENT:150 && (CFLAG:8872 < 2 || FLAG:11 == 2)
+        PRINTFORMW 「또, 묶어 줄거야?」
+        CFLAG:8872 = 2
+    ;그 이외
+    ELSEIF CFLAG:8872 < 1 || FLAG:11 == 2
+        PRINTFORMW 「소녀의 부드러운 살갗에 줄 자국이 남으면 어떻게 하지?」
+        PRINTFORMW 「네가 책임이라도 진다고? 사절이라구」
+        CFLAG:8872 = 1
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;관장 CFLAG9174
+;-------------------------------------------------
+;개시시
+IF SELECTCOM == 174 && TEQUIP:25
+    ;처음
+    IF CFLAG:9174 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「주, 주인님 생각은 잘 알겠군」
+            PRINTFORMW 「뭐냐니… 그거 관장이잖아, 아니, 최근 변비인 것 같아서…
+            PRINTFORMW 어, 맥빠지니까 그만두라고? 알았어… 궁시렁궁시렁」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「난 변비가 아니니까 그런 건 필요없어」
+            PRINTFORMW 꺼내 보인 용기의 정체는 알고 있는 것 같았다.
+            PRINTFORMW 「그러니까, 필요없다고 했잖아! 병신아, 그만둬!」
+        ENDIF
+        CFLAG:9174 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9174 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「주인님에게라면, 내 모든 걸 드러낼 수 있군…
+            PRINTFORMW 그게, 비록 배설이라고 해도」
+            CFLAG:9174 = 4
+        ;A감각 Lv3 이상＋매저키스트기분 Lv3 이상
+        ;ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9174 <= 2 || FLAG:11 == 2)
+            ;PRINTFORMW 「
+            ;CFLAG:9174 = 3
+        ;그 이외
+        ELSEIF CFLAG:9174 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「젠장… 왜 이런 꼴이…」
+            CFLAG:9174 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;배설 CFLAG8854
+;-------------------------------------------------
+IF !TEQUIP:25 && SELECTCOM == 174
+    ;처음
+    IF CFLAG:8854 == 0
+        PRINTFORMW 「\@ TALENT:150 ? 봐, 주인님, 내, 내가 싸는 걸 봐~ # 우와아아악, 보, 보지 마! 보지 마아악 \@!」
+        CFLAG:8854 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:8854 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「내 부끄러운 부분을 전부 받아 들여 준다니…
+            PRINTFORMW 이런 로맨틱한 게 어딨어…」
+            CFLAG:8854 = 4
+        ;A감각 Lv3 이상＋매저키스트기분 Lv3 이상
+        ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:8854 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「아~ 엄청난 냄새라구… 근데도, 그만둘 수 없어… 빌어먹을」
+            CFLAG:8854 = 3
+        ;그 이외
+        ELSEIF CFLAG:8854 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「으… 씨발, 보지 마, 보지 마…」
+            CFLAG:8854 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;로션 사용 CFLAG9060
+;-------------------------------------------------
+IF SELECTCOM == 60
+    ;처음
+    IF CFLAG:9060 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「오, 그건 로션이란 거군」
+            PRINTFORMW 「윤활 작용을 높인다라… 편리한 대용품이군」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「미끈거리는군… 로션이란 녀석인가?」
+            PRINTFORMW 「좀 기분이 나쁘지만… 아프지 않게 된다면 써도 상관없어」
+        ENDIF
+        CFLAG:9060 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9060 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「꼼꼼히 발라 줘, 주인님」
+            PRINTFORMW 「나도 주인님도 기분 좋게 될 수 있게」
+            CFLAG:9060 = 3
+        ;그 이외
+        ELSEIF CFLAG:9060 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「또 그건가… 빨리 끝내고 씻어내고 싶군」
+            CFLAG:9060 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;미약사용 CFLAG9061
+;-------------------------------------------------
+IF SELECTCOM == 61
+    ;처음
+    IF CFLAG:9061 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「후후, 가끔씩은 이런 약을 쓰는 것도 좋을지도 몰라」
+            PRINTFORMW 「미지의 세계로 향하는 문이 열리지 않을까… 열락의 세계 말이지」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「이 약은 알고 있다, 미약이란 거지?」
+            PRINTFORMW 「그런 약으로 내 몸을 맘대로 할 수 있을 리 없어.
+            PRINTFORMW 그러니까… 단념… 큭… 단념해라」
+        ENDIF
+        CFLAG:9061 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9061 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「전의 감각은 기억하고 있어, 상당히 좋지, 그거」
+            PRINTFORMW 「다만… 푹 빠지게 될 것 같아 좀 무섭군」
+            CFLAG:9061 = 3
+        ;그 이외
+        ELSEIF CFLAG:9061 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「또 그건가… 그렇게 자기 손에 자신이 없나?」
+            CFLAG:9061 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;비디오 카메라 사용 CFLAG9100
+;-------------------------------------------------
+IF SELECTCOM == 100 && TEQUIP:50
+    ;처음
+    IF CFLAG:9100 == 0
+        PRINT 「비디오 카메라… 인가, 
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 후후후, 그것도 좋겠군」
+            PRINTFORMW 치유리는 어쩐지 매우 기분이 좋아 보인다.
+            PRINTFORMW 오해가 없게, 매각용이라고 가르치자, 조금 실망한 것 같다.
+        ;그 이외
+        ELSE
+            PRINTFORMW 너, 이 터무니 없는 쓰레기 자식아」
+            PRINTFORMW 치유리는 카메라의 용도도 목적도 이해하고 있는 것 같다.
+        ENDIF
+        CFLAG:9100 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9100 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「한 개는 매각용, 한 개는 포교용, 나머지는 보존용이야」
+            PRINTFORMW 치유리는 자신과 당신과의 치태가 담긴 기록을 아무래도 갖고 싶은 것 같다.
+            CFLAG:9100 = 3
+        ;그 이외
+        ELSEIF CFLAG:9100 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「나와 너의 정사 장면은, 보고 싶은 놈이 있지 않겠지,
+            PRINTFORMW 뭐, 최대한 팔리지 않고 남아서, 대손해를 봤으면 좋겠군」
+            CFLAG:9100 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;야외 플레이 CFLAG9104　CFLAG:8821
+;-------------------------------------------------
+;개시시
+IF SELECTCOM == 104 && TEQUIP:52
+    ;처음
+    IF CFLAG:9104 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「밖이라… 주인님과 연결된 채로 걷거나 하나?」
+            PRINTFORMW 치유리는 농담하며 스스로 목걸이를 꼈다.
+        ;그 이외
+        ELSE
+            PRINTFORMW 「…네가 그렇게 간단하게 밖으로 보내 줄 리 없겠지」
+            PRINTFORMW 목걸이와 리드를 보고, 밉살스러운 듯이 치유리는 중얼거렸다.
+        ENDIF
+        CFLAG:9104 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋노출버릇 Lv3 이상
+        IF TALENT:150 && ABL:14 >= 3 && (CFLAG:9104 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「밖에 가? 오늘은 좋은 날씨겠지?」
+            LOCAL = RAND:100
+            ;30%로 비 30%로 맑음 30%로 흐려 극히 불과의 확률로 눈과 폭풍우
+            IF LOCAL < 32
+                PRINTFORMW 당신이 「비」라고 하자 치유리는 살짝 입을 비쭉 내몄다.
+                PRINTFORMW 「비인가… 그렇게 되면 젖잖아, 감기에 걸리지 않게 해야지」
+                PRINTFORMW 「돌아가면 확실히 목욕탕에서 따뜻하게 하고… 말려 줘?」
+            ELSEIF LOCAL < 64
+                PRINTFORMW 당신이 「흐림」이라고 하자 치유리는 좀 한숨을 쉬었다.
+                PRINTFORMW 「일광욕하고 싶었는데… 뼈가 약해지면 싫으니까」
+                PRINTFORMW 「뭐, 너무 더운 것보다는 낫나, 자, 가자구, 주인님」
+            ELSEIF LOCAL < 96
+                PRINTFORMW 당신이 「맑음」이라고 하자 치유리는 살며시 미소를 띠었다.
+                PRINTFORMW 「밖에서 알몸이 되는 걸 감안하면 역시 맑은 게 제일이라구」
+                PRINTFORMW 「나중에 모기약을 잊지 말아줘」
+            ELSEIF LOCAL < 98
+                PRINTFORMW 당신이 「눈」이라고 하자 치유리는 눈을 부릅 떴다.
+                PRINTFORMW 「눈… 이라고? 그렇게 추운데 야외 플레이라니」
+                PRINTFORMW 「으… 동상 걸리지 않게 돌아가면 확실히 따뜻하게 해 줘…」
+            ELSE
+                PRINTFORMW 당신이 「대폭풍우」라고 하자 치유리의 눈이 만화와 같이 튀어나왔다.
+                PRINTFORMW 「무슨 태풍 리포터도 아니고, 이런 날은 여기서
+                PRINTFORMW 편하게 보내자구… 아, 그래, 알았어, 나 참…」
+            ENDIF
+            CFLAG:9104 = 4
+        ;노출버릇 Lv3 이상
+        ELSEIF ABL:14 >= 3 && (CFLAG:9104 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「밖에 가는 건 좋지만… 그, 목걸이는 어떻게 안 될까」
+            CFLAG:9104 = 3
+        ;그 이외
+        ELSEIF CFLAG:9104 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「난 "인간"이라구, 노예도, 동물도 아냐」
+            CFLAG:9104 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+;종료시
+ELSEIF SELECTCOM == 104
+    ;연모
+    IF TALENT:150 && (CFLAG:8821 < 2 || FLAG:11 == 2)
+        PRINTFORMW 「오~ 그리운 우리 집에 돌아왔군…」
+        PRINTFORMW 「우리 집이 아니라고? 우리 집 같은 거겠지? 나와 주인님의」
+        CFLAG:8821 = 2
+    ;그 이외
+    ELSEIF CFLAG:8821 < 1 || FLAG:11 == 2
+        PRINTFORMW 「빨리 방에 돌려 보내 주고 목걸이도 풀어 줘라」
+        CFLAG:8821 = 1
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;조수를 범하게 한다 CFLAG9307 (제작자가 착각했는지 26번 커맨드로 지정돼 있었는데 구상 문맥에 맞춰 307번 및 308번으로 수정했습니다. T)
+;-------------------------------------------------
+IF INRANGE(SELECTCOM, 307, 308)
+    ;처음
+    IF CFLAG:9307 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「…그래, 주인님이 아닌 상대를 상대하는 것도 재미있을 것 같구나」
+            PRINTFORMW 「자, 내 솜씨를 보여 주지」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「타인의 치태를 보면서 자기는 먼 산 보듯 구경한다니, 성질 좋군」
+            PRINTFORMW 「…나쁘게 생각하지 마, 네 주인 잘못이니까」
+        ENDIF
+        CFLAG:9307 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9307 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「좋은 몸이잖아, 이건 즐길 만하다구」
+            CFLAG:9307 = 3
+        ;그 이외
+        ELSEIF CFLAG:9307 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「…나쁘게 생각하지 마, "주인님"의 명령이니까」
+            CFLAG:9307 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;이라마치오 CFLAG9260
+;-------------------------------------------------
+IF SELECTCOM == 230
+    ;처음
+    IF CFLAG:9260 == 0
+        PRINTFORMW 당신은 묻지도 않고 음경을 치유리 목 안에 찔러 넣었다.
+        ;봉사 정신 Lv5 이상
+        IF ABL:13 >= 5
+            PRINTFORMW 「(이렇게 무리하게 하지 않아도, 말해 준다면 펠라해 주는데)」
+            PRINTFORMW 「(그래도, 이건 이것대로 좋을지도…)」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「우억! 읍, 므윽, 우웁, 므윽!」
+            PRINTFORMW 입에서는 침, 눈에서는 눈물이 나와 치유리의 얼굴을 엉망진창으로 만들었다.
+        ENDIF
+        CFLAG:9260 = 1
+    ;2회째 이후
+    ELSE
+        ;연모＋봉사 정신 Lv3
+        IF TALENT:150 && ABL:13 >= 3 && (CFLAG:9260 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「(이 무리하게 범해지는 시츄에이션이 좋은 것 같아…)」
+            PRINTFORMW 치유리는 뭔가 황홀한 표정을 띄우고 음경을 탐내고 있다.
+            CFLAG:9260 = 4
+        ;봉사 정신 Lv3 이상
+        ELSEIF ABL:13 >= 3 && (CFLAG:9260 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「(이런 엉뚱한 일을 받아들이다니…)」
+            PRINTFORMW 「(난 이제 틀린 걸지도 모르겠어)」
+            CFLAG:9260 = 3
+        ;그 이외
+        ELSEIF CFLAG:9260 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「(염병, 이빨 세울 틈도 없어…)」
+            CFLAG:9260 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;촉수 소환 CFLAG9500　CFLAG:8901
+;-------------------------------------------------
+;개시시
+IF SELECTCOM == 500 && TEQUIP:90
+    ;처음
+    IF CFLAG:9500 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「주, 주인님은 마법사였나…」
+            PRINTFORMW 소환된 이형의 모습에 치유리는 무심코 뒤로 물러나 버렸다.
+        ;그 이외
+        ELSE
+            PRINTFORMW 「그, 그런 것을 소환할 수 있다니 마법사인가?」
+            PRINTFORMW 치유리는 추악한 촉수의 모습에 몸이 굳어졌다.
+        ENDIF
+        CFLAG:9500 = 1
+    ;2회째 이후
+    ELSE
+        ;연모+촉수 경험 20이상(소비 기본치가 3 분의 1이 된다)
+        IF TALENT:150 && EXP:53 >= 20 && (CFLAG:9500 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「주인님보다 촉수를 좋아하게 돼도, 원망하면 안 된다구?」
+            PRINTFORMW 「날 이렇게 만든 건 주인님이니까…」
+            CFLAG:9500 = 4
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:9500 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「아무리 주인님 명령이라고 해도 이건…」
+            PRINTFORMW 「참으면 기분 좋게 될 수 있다고? 음」
+            CFLAG:9500 = 3
+        ;그 이외
+        ELSEIF CFLAG:9500 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「너, 너에게 사람으로서의 마음이 있다면, 이 괴물을…!」
+            CFLAG:9500 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+;종료시
+ELSEIF SELECTCOM == 500
+    ;연모+촉수 경험 20이상(소비 기본치가 3 분의 1이 된다)
+    IF TALENT:150 && EXP:53 >= 20 && (CFLAG:8901 < 3 || FLAG:11 == 2)
+        PRINTFORMW 「또 만나자구, 촉수야」
+        CFLAG:8901 = 3
+    ;연모
+    ELSEIF TALENT:150 && (CFLAG:8901 < 2 || FLAG:11 == 2)
+        PRINTFORMW 「휴… 정말로 이런 걸 받아들이게 된다고?」
+        CFLAG:8901 = 2
+    ;그 이외
+    ELSEIF CFLAG:8901 < 1 || FLAG:11 == 2
+        PRINTFORMW 「하아… 하아… 살았나?」
+        CFLAG:8901 = 1
+    ENDIF
+    RETURN 0
+ENDIF
+
+;~~~~~~~~~~~~~~~~~~~~~~~~~
+;추가 커멘드•통상판 CFLAG9004 이후를 사용
+;~~~~~~~~~~~~~~~~~~~~~~~~~
+
+;-------------------------------------------------
+;샤워 CFLAG9351
+;-------------------------------------------------
+IF SELECTCOM == 351 && TEQUIP:54
+    ;처음
+    IF CFLAG:9351 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「섹스하다 보면 땀 말고도 여러가지로 더러워지니까…」
+            PRINTFORMW 「주인님은 냄새 고약한 여자는 싫나? 아니, 대답하지 않아도 되는데」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「눈치 빠르군, 확실하게 씻게 해 줘라」
+        ENDIF
+        CFLAG:9351 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9351 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「좋은 기분이다, 주인님도 함께하자구」
+            PRINTFORMW 둘이서 샤워를 즐겼습니다.
+            CFLAG:9351 = 3
+        ;그 이외
+        ELSEIF CFLAG:9351 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「확실히 씻게 해 줘라, 안 그래도 방이 불결하니까」
+            CFLAG:9351 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;이뇨제 CFLAG9062
+;-------------------------------------------------
+IF SELECTCOM == 62
+    ;연모+주되들 해 버릇
+    IF TALENT:150 && TALENT:45 && (CFLAG:9062 < 4 || FLAG:11 == 2)
+        PRINTFORMW 「내일 아침, 확실히 이불이랑 시트 청소 도와 줄 거지…?」
+        CFLAG:9062 = 4
+    ;연모
+    ELSEIF TALENT:150 && (CFLAG:9062 < 3 || FLAG:11 == 2)
+        PRINTFORMW 「주인님 머리에 오줌 싸고 싶은데~
+        PRINTFORMW 안 되나? 그럼 어쩔 수 없지만…」
+        CFLAG:9062 = 3
+    ;굴복 각인 Lv3
+    ELSEIF MARK:2 == 3 && (CFLAG:9062 < 2 || FLAG:11 == 2)
+        PRINTFORMW 「그렇게 내 오줌을 보고 싶은가… 답 없는 놈이다」
+        CFLAG:9062 = 2
+    ;그 이외
+    ELSEIF CFLAG:9062 < 1 || FLAG:11 == 2
+        PRINTFORMW 「이건… 이뇨제잖아! 또 무슨 꿍꿍이냐…」
+        CFLAG:9062 = 1
+    ENDIF
+    RETURN 0
+ENDIF
+
+
+;-------------------------------------------------
+;목욕탕 플레이 CFLAG9350 해제 CFLAG8824
+;-------------------------------------------------
+;재료가 떠오르는 대로 수납 예정
+[SKIPSTART]
+IF SELECTCOM == 350 && TEQUIP:53
+    ;처음
+    IF CFLAG:9350 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 
+        ;그 이외
+        ELSE
+            PRINTFORMW 
+        ENDIF
+        CFLAG:9350 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9350 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 
+            CFLAG:9350 = 3
+        ;그 이외
+        ELSEIF CFLAG:9350 <= 1 || FLAG:11 == 2
+            PRINTFORMW 
+            CFLAG:9350 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+;종료시
+ELSEIF SELECTCOM == 350
+    ;처음
+    IF CFLAG:8824 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 
+        ;그 이외
+        ELSE
+            PRINTFORMW 
+        ENDIF
+        CFLAG:8824 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:8824 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 
+            CFLAG:8824 = 3
+        ;그 이외
+        ELSEIF CFLAG:8824 <= 1 || FLAG:11 == 2
+            PRINTFORMW 
+            CFLAG:8824 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+[SKIPEND]
+
+;-------------------------------------------------
+;새댁 플레이 CFLAG9090 해제 CFLAG8823
+;-------------------------------------------------
+[SKIPSTART]
+;개시시
+IF SELECTCOM == 90 && TEQUIP:59
+    ;처음
+    IF CFLAG:9090 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 
+        ;그 이외
+        ELSE
+            PRINTFORMW 
+        ENDIF
+        CFLAG:9090 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9090 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 
+            CFLAG:9090 = 3
+        ;그 이외
+        ELSEIF CFLAG:9090 <= 1 || FLAG:11 == 2
+            PRINTFORMW 
+            CFLAG:9090 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+;종료시
+ELSEIF SELECTCOM == 90
+    ;처음
+    IF CFLAG:8823 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 
+        ;그 이외
+        ELSE
+            PRINTFORMW 
+        ENDIF
+        CFLAG:8823 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:8823 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 
+            CFLAG:8823 = 3
+        ;그 이외
+        ELSEIF CFLAG:8823 <= 1 || FLAG:11 == 2
+            PRINTFORMW 
+            CFLAG:8823 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+[SKIPEND]
+
+;-------------------------------------------------
+;방뇨 CFLAG9111
+;강제 방뇨 CFLAG9620
+;-------------------------------------------------
+IF GROUPMATCH(SELECTCOM, 111, 620)
+    ;강제 방뇨
+    IF SELECTCOM == 620 || SELECTCOM == 111 && ((TALENT:45 == 0 && ABL:10 >= 4 && ABL:11 >= 3 && ABL:21 >= 3) || (TALENT:45 && TEQUIP:12 == 0))
+        ;야외 플레이
+        IF TEQUIP:52
+            ;연모
+            IF TALENT:150 && (CFLAG:9620 < 2 || FLAG:11 == 2)
+                PRINTFORMW 「음~ 이 해방감… 밖에서 오줌 누는 것도 특이한 경험이군」
+                ;PRINTFORMW 「마침 오줌 누려 했는데, 좋아, 목표는 저 논이다」
+                ;PRINTFORMW 논에 뿌려지는 세련된 아가씨의 소변…
+                ;PRINTFORMW 「응? 뭐지? 난감한 표정을 짓고 있어?」
+                ;(이)라든가 말하면서 야외+강제 방뇨하면(자) 좋은 확률로 공포가 붙구나…(YM)
+                CFLAG:9620 = 2
+            ;그 이외
+            ELSEIF CFLAG:9620 < 1 || FLAG:11 == 2
+                PRINTFORMW 「히, 밖에서 오줌이라니… 제정신인가? 눌 리 없잖아?」
+                PRINTFORMW 「누, 누면 되잖아, 끄…」
+                PRINTFORMW 몇 안 되는 양의 소변이 졸졸 흘러 기세가 없었던 탓에,
+                PRINTFORMW 치유리 다리에 좀 묻은 것 같다.
+                CFLAG:9620 = 1
+            ENDIF
+        ;야외 플레이가 아니다
+        ELSE
+            ;연모
+            IF TALENT:150 && (CFLAG:9620 < 2 || FLAG:11 == 2)
+                PRINTFORMW 「괜찮은데, 청소는 내가 해야 하나?」
+                PRINTFORMW 「내 자신의 오줌 청소를 하면, 허무해져~」
+                CFLAG:9620 = 2
+            ;그 이외
+            ELSEIF CFLAG:9620 < 1 || FLAG:11 == 2
+                PRINTFORMW 「부탁이다, 적어도, 적어도 화장실에서…」
+                CFLAG:9620 = 1
+            ENDIF
+        ENDIF
+    ;방뇨
+    ELSE
+        ;야외 플레이
+        IF TEQUIP:52
+            ;연모
+            IF TALENT:150 && (CFLAG:9620 < 2 || FLAG:11 == 2)
+                PRINTFORMW 치유리의 고간에서 투명한 액체가 넘쳐 나온다…
+                PRINTFORMW 「어, 뭔가 나와… 아! 흘려 버렸다!」
+                CFLAG:9620 = 2
+            ;그 이외
+            ELSEIF CFLAG:9620 < 1 || FLAG:11 == 2
+                PRINTFORMW 「아… 차, 참고 있었는데…」
+                CFLAG:9620 = 1
+            ENDIF
+        ;야외 플레이가 아니다
+        ELSE
+            ;연모
+            IF TALENT:150 && (CFLAG:9620 < 2 || FLAG:11 == 2)
+                PRINTFORMW 「후왓, 나, 나온다!」
+                CFLAG:9620 = 2
+            ;그 이외
+            ELSEIF CFLAG:9620 < 1 || FLAG:11 == 2
+                PRINTFORMW 「우와아악! 화장실, 화장실에…!」
+                CFLAG:9620 = 1
+            ENDIF
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+
+;-------------------------------------------------
+;69 CFLAG9602
+;-------------------------------------------------
+IF SELECTCOM == 602
+    ;처음
+    IF CFLAG:9602 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「69… 들은 적 없는 말이라구」
+            PRINTFORMW 처음엔 의문스러운 얼굴이었지만,
+            PRINTFORMW 「아, 즉… 이런 건가」
+            PRINTFORMW 서로 성기를 빨며 조금 납득한 것 같았다.
+        ;그 이외
+        ELSE
+            PRINTFORMW 「69? 뭐냐, 그건?」
+            PRINTFORMW 치유리의 의문에 실전으로 대답해 주기로 했다.
+        ENDIF
+        CFLAG:9602 = 1
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:9602 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「이거, 내가 기분 좋은 건 물론 기쁜데,
+            PRINTFORMW 주인님도 기분 좋게 될 수 있어서 좋아」
+            CFLAG:9602 = 5
+        ;굴복 각인 Lv3+봉사 정신 Lv3 이상+C감각 Lv3 이상
+        ELSEIF MARK:2 == 3 && ABL:13 >= 3 && ABL:0 >= 3 && (CFLAG:9602 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「후왓, 응… 응…」
+            PRINTFORMW 치유리의 혀놀림이 극단적으로 둔해질 때가 있다…
+            PRINTFORMW 아무래도 꽤 느끼고 있는 것 같다.
+            CFLAG:9602 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:9602 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「나도 기분 좋게 해 줄 테니,
+            PRINTFORMW 너도 날 확실히 기분 좋게 해 줘라」
+            CFLAG:9602 = 3
+        ;그 이외
+        ELSEIF CFLAG:9602 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「빨리는 것만으로도 최악인데…
+            PRINTFORMW 왜 이 녀석 성기도 빨아야 해…」
+            CFLAG:9602 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+
+;-------------------------------------------------
+;쿤닐링구스 강제 CFLAG5388
+;여주인인의 최강 커멘드라고 생각하고 있어가
+;대부분의 말로 대사가 없어서 외로운 커멘드
+;-------------------------------------------------
+IF SELECTCOM == 300
+    ;처음
+    IF CFLAG:5388 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「주인님의 소중한 부분이다, 열심히 애무시켜 주지」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「그렇게 더러운 곳을 내게 빨라는 거냐?」
+            PRINTFORMW 거부하는 치유리의 머리를 붙잡고, 억지로 당신의 음순을 빨게 했다.
+        ENDIF
+        CFLAG:5388 = 1
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:5388 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「주인님 애액, 좀 더 갖고 싶군…」
+            PRINTFORMW 치유리가 당신의 애액을 훌쩍거리는 소리가 방 전체에 퍼진다.
+            CFLAG:5388 = 5
+        ;굴복 각인 Lv3+봉사 정신 Lv3 이상
+        ELSEIF MARK:2 == 3 && ABL:13 >= 3 && (CFLAG:5388 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「…지금 게 좋았어? 음~ 그럼 이건 어떠냐구?」
+            CFLAG:5388 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:5388 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「알았어, 그 정도는 상관없어」
+            CFLAG:5388 = 3
+        ;그 이외
+        ELSEIF CFLAG:5388 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「아~ 짜다, 짜, 입 소독이 필요하다구」
+            CFLAG:5388 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;짝 맞추기 놀이 CFLAG5389
+;여주인인의 최강 커멘드라고 생각하고 있어가
+;많은 말로 대사가 없어서 외로운 커멘드
+;-------------------------------------------------
+IF SELECTCOM == 301
+    ;처음
+    IF CFLAG:5389 == 0
+        ;연모
+        IF TALENT:150
+            ;주인님이 처녀일까
+            IF TALENT:MASTER:0 == 1
+                PRINTFORMW 「주인님 여기… 깨끗하구만~」
+                PRINTFORMW 당신의 남자를 모르는 성기를 본 치유리는 흥분하고 있는 것 같다…
+                PRINTFORMW 「…여기에 대도 좋은가? 괜히 멋쩍네…」
+            ;주인님은 처녀로 없는 것 같습니다.
+            ELSE
+                PRINTFORMW 「이게… 주인님 거시기인가…」
+                PRINTFORMW 「내 거랑 주인님 게… 상상만으로 젖어드는군」
+            ENDIF
+        ;그 이외
+        ELSE
+            PRINTFORMW 「왜 네 가랑이랑 내 가랑이를 맞대야 하냐!」
+            PRINTFORMW 싫어하는 치유리를 안고, 조개끼리 꽉 문질렀다.
+        ENDIF
+        CFLAG:5389 = 1
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:5389 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「후후후, 이렇게 꽉 주인님과 하나가 돼서…
+            PRINTFORMW 주인님도 흠뻑 젖고 있는 것 같아, 기쁘네」
+            CFLAG:5389 = 5
+        ;굴복 각인 Lv3+봉사 정신 Lv3 이상
+        ELSEIF MARK:2 == 3 && ABL:13 >= 3 && (CFLAG:5389 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「어때, 기분 좋은가? 조금은 익숙해진 것 같은데」
+            CFLAG:5389 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:5389 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「알았다구, 그렇게 지치는 것도 아니니까」
+            CFLAG:5389 = 3
+        ;그 이외
+        ELSEIF CFLAG:5389 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「최악의 기분이다… 누가 이런 걸 발상했나…」
+            CFLAG:5389 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;사진 촬영 CFLAG9603
+;-------------------------------------------------
+IF SELECTCOM == 102
+    ;처음
+    IF CFLAG:9603 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「나만 찍나? 주인님도 찍자」
+            PRINTFORMW 수도 없이 치유리를 어떻게든 설득해서,
+            PRINTFORMW 치유리만 비친 사진을 찍는 것에 성공했습니다.
+        ;그 이외
+        ELSE
+            PRINTFORMW 「내 치태를 카메라에 담을 생각인가…」
+            PRINTFORMW 일부러 흔들어 대서 깨끗이 찍는데 고생했습니다.
+        ENDIF
+        CFLAG:9603 = 1
+    ELSE
+        IF TALENT:150 && (CFLAG:9603 == 5 || FLAG:11 == 2)
+            PRINTFORMW 「(이 사진은 무엇에 쓰는 걸까…)」
+            PRINTFORMW 「(팔아서 돈벌이를… 하는가, 아니면 앨범에 간직하는가…)」
+            PRINTFORMW 「(혹시, 딸감으로 쓰나…)」
+            PRINTFORMW 「(그렇다면 좀 더 깨끗이 찍히도록, 최선을 다해야지)」
+            CFLAG:9603 = 6
+        ;연모 다하고 첫회
+        ELSEIF TALENT:150 && (CFLAG:9603 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 당신이 카메라를 꺼내자, 치유리는 문득 떠오른 걸 물었다.
+            PRINTFORMW 「어이, 주인님, 주인님 사진을 한 장 주지 않겠어?」
+            PRINTFORMW 「어디에 쓰냐면… 물론」
+            PRINTFORMW 「딸감으로 삼는 게 당연하잖아? (사랑하는 주인님께 언제라도 곁에 있고 싶기 때문이다)」
+            PRINTFORMW 겉과 속이 반대잖아… 당신은 한숨을 쉬었다.
+            CFLAG:9603 = 5
+        ;음란
+        ELSEIF TALENT:170 && (CFLAG:9603 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「이런 건 어때?」
+            PRINTFORMW 치유리는 카메라의 렌즈를 도발하는 것 같이,
+            PRINTFORMW 요염한 포즈를 이쪽에 과시해 온다.
+            CFLAG:9603 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:9603 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「…알았어, 찍혀 주지.
+            PRINTFORMW 다만 "찍는 이상 아름답게", 명심해 둬」
+            CFLAG:9603 = 3
+        ;그 이외
+        ELSEIF CFLAG:9603 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「교묘하다구, 그렇게 사진을 뿌려서,
+            PRINTFORMW 내 도피처를 없앨 생각이겠지?」
+            CFLAG:9603 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+;사진 촬영 여기까지
+
+;-------------------------------------------------
+;알몸 에이프런 CFLAG9604
+;-------------------------------------------------
+;연모 친애 애정 경험 근처에서 분기
+IF SELECTCOM == 90 && TEQUIP:59
+    ;처음
+    IF CFLAG:9604 == 0
+        ;친애
+        IF TALENT:152
+            PRINTFORMW 「주인님도 음란하다… 알몸 위에 에이프런이라니」
+            PRINTFORMW 「내가 부엌 일하고 있는 뒤에서… 이런, 생각이겠지?」
+            PRINTFORMW 능글거리며 치유리는 에이프런을 입었다.
+        ;연모
+        ELSEIF TALENT:150
+            PRINTFORMW 「에이프런인가, 뭔가 부부가 된 것 같아서, 부끄럽군」
+            PRINTFORMW 「\@ TALENT:MASTER:120 ? 근데 알몸 위에 입는 건… 이런 게 "꼴리"나 # 아차, 주인님은 남자가 아니니까 부부(夫婦)가 아니고… 부부(婦婦)인가\@?」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「그건… 에이프런이군? 가정부 흉내라도 내라는 건가?」
+            PRINTFORMW 「알몸에 입으라고? 가정부 쪽이 차라리 낫다구…」
+        ENDIF
+        CFLAG:9604 = 1
+    ELSE
+        ;친애
+        IF TALENT:152
+            PRINTFORMW 「후후, 어때, 어울려? 여보~?」
+            PRINTFORMW 그렇게 말하며, 눈앞에서 휙 돌아 보였다.
+        ;연모
+        ELSEIF TALENT:150 && (CFLAG:9604 <= 4 || FLAG:11 == 2)
+            PRINTFORMW 「입었다구, 그럼, 뭘 하면 좋지? \@ TALENT:MASTER:120 ? 서•방•님 # 아•가•씨 \@」
+            PRINTFORMW 치유리의 행동, 태도가, 알몸 에이프런에 잘 어울려 보였다.
+            CFLAG:9604 = 5
+        ;굴복 각인 Lv3+애정 경험 50이상
+        ELSEIF MARK:2 == 3 && EXP:21 >= 50 && (CFLAG:9604 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「아니, 또 소꿉장난인가?」
+            PRINTFORMW 소꿉장난, 이라고 비하하면서도, 치유리는 아주 싫진 않은 것 같다.
+            CFLAG:9604 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:9604 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「…입기만 한다면 별 감정 없어」
+            PRINTFORMW 싫어하는 낌새 없이, 에이프런을 입었다.
+            CFLAG:9604 = 3
+        ;그 이외
+        ELSEIF CFLAG:9604 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「이상하게 바람이 솔솔거려서 기분 나빠」
+            PRINTFORMW 「이러느니 차라리 알몸으로 있는 게 낫다구」
+            CFLAG:9604 = 2
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;채혈 주사 CFLAG9605
+;-------------------------------------------------
+IF SELECTCOM == 88
+    ;처음
+    IF CFLAG:9605 == 0
+        IF TALENT:150
+            PRINTFORMW 「응? 그 주사는 뭐지? 의사 놀이라도 하게?」
+            PRINTFORMW 「채혈? 주인님도 괴상한 놀이를 생각한다구」
+            DRAWLINE
+            PRINTFORMW 「아야야… 조, 좀 더 살살…」
+        ;매저키스트 3이상
+        ELSEIF ABL:21 >= 3
+            PRINTFORMW 「그 주사 뭐야, 그걸로 날 어떻게 할 셈이야?」
+            PRINTFORMW 그렇게 말하면서도, 치유리는 주사 바늘에 기대의 시선을 향하고 있다…
+            DRAWLINE
+            PRINTFORMW 「아파… 지금 피를 뽑히는 감각이, 왠지 찌릿하군…」
+        ELSE
+            PRINTFORMW 「그 주사 뭐야, 그걸로 날 어떻게 할 셈이야?」
+            PRINTFORMW 「채혈? 건강진단이라도 하게? 배려도 넘치신다구」
+            DRAWLINE
+            PRINTFORMW 「아파… 이, 돌팔이 자식아!」
+        ENDIF
+        CFLAG:9605 = 1
+    ;2번째 이후
+    ELSE
+        IF TALENT:150
+            PRINTFORMW 「또 채혈인가? 난 괜찮은데」
+            PRINTFORMW 「너무 많이는 하지 마, 빈혈 때문에 즐길 수 없으니까」
+            DRAWLINE
+            PRINTFORMW 「응… 하아… 내 피는 어때? 예쁜가?」
+        ;매저키스트 3이상
+        ELSEIF ABL:21 >= 3
+            PRINTFORMW 「또 채혈인가? 그렇게 무시무시한 걸 꺼내고…」
+            PRINTFORMW 치유리의 눈동자는 주사바늘 끝을 응시하고 있다…
+            DRAWLINE
+            PRINTFORMW 「아파… 뭔가, 버릇이 될 것 같군」
+        ELSE
+            PRINTFORMW 「또 채혈인가? 그렇게 채혈하고 싶으면 의사나 돼라…」
+            PRINTFORMW 「나 참, 그 피를 뭐에 쓰려고…」
+            DRAWLINE
+            PRINTFORMW 「젠장… 속이 메스꺼워지는군…」
+        ENDIF
+    ENDIF
+    RETURN 0
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_PALAMCNG 관계(X1를 캐릭터 번호에 치환)
+;파라미터 변동을 트리거로 한 말
+;파라미터 변동 후에 말을 발동합니다
+;-------------------------------------------------
+@KOJO_MESSAGE_PALAMCNG_107
+;조수가 조교했을 때에 말을 스킵 한다(기호에 응해 사용하는, 줄머리의 것;을 지우면(자) 스킵 하게 된다)
+;SIF ASSI > 0 && ASSIPLAY
+;    RETURN 0 
+;볼 개그 착용시에는 말을 스킵 한다(OFF라고 구를 차지해 마구 말한다)
+SIF TEQUIP:42 == 1
+    RETURN 0
+;수면•실신시에 말을 스킵 한다(OFF라고 잠꼬대가 굉장한 것에)
+SIF TEQUIP:14 || TFLAG:899 > 0
+    RETURN 0
+;--------------------------------------------------
+;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, X1를 주인의 캐릭터 번호에 치환)
+;--------------------------------------------------
+;IF NO:MASTER == Y1
+;    CALL LES_MESSAGE_PALAMCNG_KX1_MY1
+;    RETURN 0
+;ENDIF
+;IF ASSI > 0 && ASSIPLAY
+;    IF NO:ASSI == Y1
+;        CALL LES_MESSAGE_PALAMCNG_KX1_MY1
+;        RETURN 0
+;    ENDIF
+;ENDIF
+;-------------------------------------------------
+;파라미터 변동시의 대사 CFLAG 221~260을 사용
+;-------------------------------------------------
+;이것도 연모는 보류로 좋을지도
+;-------------------------------------------------
+;처음으로 윤활이 LV2 넘은 CFLAG8001
+;-------------------------------------------------
+IF PALAM:10 + UP:10 > PALAMLV:2 && CFLAG:8001 == 0
+    PRINTFORMW 「우왓… 오줌 싼 거 아냐… 이게 뭐야…」
+    PRINTFORMW "애액, 느끼고 있는 증거다"라고 가르치자, 치유리는 \@ TALENT:150 ? 기쁜 듯이 뺨을 느슨하게 했 # 격렬하게 부정했 \@다.
+    CFLAG:8001 = 1
+ENDIF
+
+;-------------------------------------------------
+;처음으로 욕정이 LV2 넘은 CFLAG8002
+;-------------------------------------------------
+IF PALAM:13 + UP:13 > PALAMLV:2 && CFLAG:8002 == 0
+    PRINTFORMW 「\@ TALENT:150 ? 좀 더… 좀 더 부탁해 # …왠지 이상한 기분이 되어 왔다구 \@…」
+    CFLAG:8002 = 1
+ENDIF
+
+;-------------------------------------------------
+;처음으로 공포가 LV2 넘은 CFLAG8004
+;-------------------------------------------------
+IF PALAM:17 + UP:17 > PALAMLV:2 && CFLAG:8004 == 0
+    ;연모
+    IF TALENT:150
+        PRINTFORMW 「무서울 정도로 좋아한단 말도 있지만…
+        PRINTFORMW 좀 의미가 다른 것 같은 생각이 드는군」
+    ;그 이외
+    ELSE
+        PRINTFORMW 「이 녀석… 유메미 따위는 비교도 되지 않을 정도로 무서워…」
+    ENDIF
+    CFLAG:8004 = 1
+ENDIF
+
+;처음으로~절정계는 연모 생각하는 것이 어렵기 때문에 보류
+;-------------------------------------------------
+;처음으로 C절정 CFLAG8005
+;-------------------------------------------------
+IF NOWEX:0 > 0 && CFLAG:8005 == 0
+    ;연모
+    IF TALENT:150
+        ;PRINTFORMW 
+    ;그 이외
+    ELSE
+        PRINTFORMW 「읏끄… 뭐지, 이 감각… 우와, 뭔가 와!」
+        PRINTFORMW 치유리의 요도에서 분사된 조수는, 포물선을 그리며 방에 흩날렸다.
+    ENDIF
+    CFLAG:8005 = 1
+ENDIF
+
+;-------------------------------------------------
+;처음으로 V절정 CFLAG8006
+;-------------------------------------------------
+IF NOWEX:1 > 0 && CFLAG:8006 == 0
+    ;연모
+    IF TALENT:150
+        ;PRINTFORMW 
+    ;그 이외
+    ELSE
+        PRINTFORMW 「뭐야… 눈앞이 돌아… 우왓, 우와앗!!!」
+    ENDIF
+    CFLAG:8006 = 1
+ENDIF
+
+;-------------------------------------------------
+;처음으로 A절정 CFLAG8007
+;-------------------------------------------------
+IF NOWEX:2 > 0 && CFLAG:8007 == 0
+    ;연모
+    IF TALENT:150
+        ;PRINTFORMW 
+    ;그 이외
+    ELSE
+        PRINTFORMW 「웃기지 마! 그런 곳으로 느낀다니… 거짓말이다! 거짓말이다아앗!」
+    ENDIF
+    CFLAG:8007 = 1
+ENDIF
+
+;-------------------------------------------------
+;처음으로 B절정 CFLAG8008
+;-------------------------------------------------
+IF NOWEX:3 > 0 && CFLAG:8008 == 0
+    ;연모
+    IF TALENT:150
+        ;PRINTFORMW 
+    ;그 이외
+    ELSE
+        PRINTFORMW 「어라… 가슴이 어쩐지… 크게, 울려…!
+        PRINTFORMW 힉, 이 감각 뭐야, 안 돼, 안 돼엣!!」
+    ENDIF
+    CFLAG:8008 = 1
+ENDIF
+
+;-------------------------------------------------
+;처녀 상실(처녀만) CFLAG8009
+;-------------------------------------------------
+IF TFLAG:0 > 0 && CFLAG:8009 == 0
+    ;연모 또한 주인의 섹스에 의한 처녀 상실
+    IF TFLAG:2
+        PRINTFORMW \@ TALENT:150 && (UP:20 + UP:21 < 500 || TFLAG:105 == 1) ? 「이것이… 내 첫 경험의 증거인가… 쑥스럽군」 # 치유리는 복잡한 얼굴을 하고 있다… \@
+    ;손가락 삽입로 처녀 상실(반감이 꽤 적다)
+    ELSEIF SELECTCOM == 4
+        PRINTFORMW 「아파! …피? 설마… 내 처음…!?」
+    ;그 이외때에 처녀 상실
+    ELSE
+        PRINTFORMW 「\@ TALENT:150 ? 할 수 있으면 제대로 된 형태로… 아니, 아무것도 아니다 # 너무해… \@」
+    ENDIF
+    CFLAG:8009 = 1
+ENDIF
+
+;-------------------------------------------------
+;섹스로 사정시킨 CFLAG8010 CFLAG8011
+;-------------------------------------------------
+IF TFLAG:9 > 0 || TFLAG:10 > 0
+    ;어널 섹스인가? (어널 섹스, 정상정도 어널, 후배 정도 어널, 대면자리정도 어널, 배면자리정도 어널, 승마정도 어널)
+    IF TFLAG:9 > 0
+        ;연모
+        IF TALENT:150 && (CFLAG:8011 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「좋아, 그대로 안에 주인님 걸 전부 싸 줘~!」
+            CFLAG:8011 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:8011 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「(어라, 의외로 좋지 않을까? 이 감촉…)」
+            CFLAG:8011 = 3
+        ;그 이외
+        ELSEIF CFLAG:8011 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「으에… 최악의 기분이라구…」
+            CFLAG:8011 = 2
+        ENDIF
+    ;그 이외
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:8010 <= 3 || FLAG:11 == 2)
+            PRINTFORMW 「질 내가 채워지고 있는 것이 느껴지는군… 따뜻하다…」
+            CFLAG:8010 = 4
+        ;굴복 각인 Lv3
+        ELSEIF MARK:2 == 3 && (CFLAG:8010 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「우왓! 나오고 있어… 내 안에서… 나오고 있어…」
+            CFLAG:8010 = 3
+        ;그 이외
+        ELSEIF CFLAG:8010 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「우와아아아악!!! 그만둬! 네 아이는 갖기 싫어!!」
+            CFLAG:8010 = 2
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;손으로 사정시킨 CFLAG8012
+;-------------------------------------------------
+IF TFLAG:12 > 0
+    ;봉사 정신 Lv5
+    IF ABL:13 >= 5 && (CFLAG:8012 <= 2 || FLAG:11 == 2)
+        PRINTFORMW 「…아냐, 좀 더 빨리 보내야 한다구」
+        PRINTFORMW 치유리는 당신을 얼마나 빨리 사정시킬 수 있는지 연구하고 있는 것 같다…
+        CFLAG:8012 = 3
+    ;봉사 정신 Lv3
+    ELSEIF ABL:13 >= 3 && (CFLAG:8012 <= 1 || FLAG:11 == 2)
+        PRINTFORMW 「헤헤, 내 손에 가 버렸다구」
+        CFLAG:8012 = 2
+    ;그 이외
+    ELSEIF CFLAG:8012 <= 0 || FLAG:11 == 2
+        PRINTFORMW 「와풉! 싸, 쌀 거면 싼다고 말해… 손이 더러워졌다구」
+        CFLAG:8012 = 1
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;입으로 사정시킨 CFLAG8013 CFLAG8014
+;-------------------------------------------------
+IF TFLAG:11 > 0
+    ;이라마치오의 경우
+    IF SELECTCOM == 230
+        ;정액 중독 Lv5
+        IF ABL:31 >= 5 && (CFLAG:8013 < 5 || FLAG:11 == 2)
+            PRINTFORMW 「목에 직접 싸는 것과 혀를 경유하는 것과는 맛이 다르군,
+            PRINTFORMW 물론, 양쪽 모두 맛보게 해 줄 거지?」
+            CFLAG:8013 = 5
+        ;정액 중독 Lv3
+        ELSEIF ABL:31 >= 3 && (CFLAG:8013 < 3 || FLAG:11 == 2)
+            PRINTFORMW 「아, 정말, 혀로 좀 더 맛보고 싶다구」
+            CFLAG:8013 = 3
+        ;봉사 정신 Lv3 이상
+        ELSEIF ABL:13 >= 3 && (CFLAG:8013 < 2 || FLAG:11 == 2)
+            PRINTFORMW 「빌어먹을… 이런 무리한 식으로 싸대고…」
+            CFLAG:8013 = 2
+        ;그 이외
+        ELSEIF CFLAG:8013 < 1 || FLAG:11 == 2
+            PRINTFORMW 「우엑! 컥! 콜록, 콜록!」
+            CFLAG:8013 = 1
+        ENDIF
+    ;페라
+    ELSEIF SELECTCOM == 41
+        ;정액 중독 Lv5
+        IF ABL:31 >= 5 && (CFLAG:8013 < 5 || FLAG:11 == 2)
+            PRINTFORMW 「아직… 아직 부족해… 좀 더, 좀 더…」
+            PRINTFORMW 치유리는 주위에 흩날린 정액까지 다 빨려 하고 있다…
+            CFLAG:8013 = 5
+        ;정액 중독 Lv3
+        ELSEIF ABL:31 >= 3 && (CFLAG:8013 < 3 || FLAG:11 == 2)
+            PRINTFORMW 「헤헤, 정액 맛있군… 다음은 좀 더 많이 부탁할게?」
+            CFLAG:8013 = 3
+        ;봉사 정신 Lv3 이상
+        ELSEIF ABL:13 >= 3 && (CFLAG:8013 < 2 || FLAG:11 == 2)
+            PRINTFORMW 「웁… 가득 냈군… 느꼈어?」
+            CFLAG:8013 = 2
+        ;그 이외
+        ELSEIF CFLAG:8013 < 1 || FLAG:11 == 2
+            PRINTFORMW 「이 따위 걸 사람 입에… 삼키라고? 지랄하지 마!」
+            CFLAG:8013 = 1
+        ENDIF
+    ;파이즈리의 경우
+    ELSEIF SELECTCOM == 42
+        ;봉사 정신 Lv5
+        IF ABL:13 >= 5 && (CFLAG:8014 < 3 || FLAG:11 == 2)
+            PRINTFORMW 「오~ 많이 나왔어. 20cc는 싸지 않았을까?」
+            ;만화인가
+            CFLAG:8014 = 3
+        ;봉사 정신 Lv3 이상
+        ELSEIF ABL:13 >= 3 && (CFLAG:8014 < 2 || FLAG:11 == 2)
+            PRINTFORMW 「와읍… 헤헤, 내 가슴도 준수하지?」
+            CFLAG:8014 = 2
+        ;그 이외
+        ELSEIF CFLAG:8014 < 1 || FLAG:11 == 2
+            PRINTFORMW 「성질상, 얼굴에 꼭 묻는 게 아무래도…」
+            CFLAG:8014 = 1
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;사정한(뚜껑이든지/남자만) CFLAG8015
+;-------------------------------------------------
+IF TFLAG:30 > 0
+    ;처음
+    IF CFLAG:8015 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「우왓! 놀랐다~ 이게 사정인가…」
+            PRINTFORMW 「꽤, 꽤 기분 좋군… 다, 다시 한번 부탁할게」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「이것이 사정이란 건가… 의외로 기분 좋군」
+        ENDIF
+        CFLAG:8015 = 1
+        RETURN 0
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:8015 <= 2 || FLAG:11 == 2)
+            IF TALENT:MASTER:120 || TALENT:MASTER:121
+                PRINTFORMW 「주인님과 나, 어느 쪽이 많이 나올까?」
+            ELSE
+                PRINTFORMW 「이걸로 주인님을 임신시켜 줄까? 후후, 난 진심이라구」
+            ENDIF
+            CFLAG:8015 = 3
+        ;그 이외
+        ELSEIF CFLAG:8015 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「흐읏…」
+            PRINTFORMW 「…이 뒤의 허무함은 어떻게든 안 되나?」
+            CFLAG:8015 = 2
+        ENDIF
+        RETURN 0
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;분유 한(모유 체질만) CFLAG8016
+;-------------------------------------------------
+IF TFLAG:31 > 0
+    ;처음
+    IF CFLAG:8016 == 0
+        PRINTFORMW 「\@ ABL:10 >= 4 ? …놀랐다, 이거 뭐야, 모유? # 거, 거짓말이겠지… \@」
+        CFLAG:8016 = 1
+        RETURN 0
+    ;2회째 이후
+    ELSE
+        ;순종 Lv4 이상
+        IF ABL:10 >= 4 && (CFLAG:8016 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「모유는 맛 없는 것 같은데… 정말로 마시게?」
+            CFLAG:8016 = 3
+        ;그 이외
+        ELSEIF CFLAG:8016 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「꿈이 아냐, 이건 진짜 모유라구…」
+            CFLAG:8016 = 2
+        ENDIF
+        RETURN 0
+    ENDIF
+ENDIF
+
+
+;보류
+
+;-------------------------------------------------
+;C감각 Lv5로 C절정 50이상 CFLAG8017
+;-------------------------------------------------
+[SKIPSTART]
+IF ABL:0 >= 5 && EX:0 >= 50 && NOWEX:0 > 0
+    ;처음
+    IF CFLAG:8017 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 
+        ;그 이외
+        ELSE
+            PRINTFORMW 
+        ENDIF
+            CFLAG:8017 = 1
+            RETURN 0
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:8017 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 
+            CFLAG:8017 = 3
+        ;그 이외
+        ELSEIF CFLAG:8017 <= 1 || FLAG:11 == 2
+            PRINTFORMW 
+            CFLAG:8017 = 2
+        ENDIF
+            RETURN 0
+    ENDIF
+ENDIF
+[SKIPEND]
+
+;-------------------------------------------------
+;V감각 Lv5로 V절정 50이상 CFLAG8018
+;-------------------------------------------------
+IF ABL:1 >= 5 && EX:1 >= 50 && NOWEX:1 > 0
+    ;처음
+    IF CFLAG:8018 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「자, 자궁구가, 자궁구가!」
+        ;그 이외
+        ;ELSE
+            ;PRINTFORMW 
+        ENDIF
+        CFLAG:8018 = 1
+        RETURN 0
+    ;2회째 이후
+    ;ELSE
+        ;연모
+        ;IF TALENT:150 && (CFLAG:8018 <= 2 || FLAG:11 == 2)
+            ;PRINTFORMW 
+            ;CFLAG:8018 = 3
+        ;그 이외
+        ;ELSEIF CFLAG:8018 <= 1 || FLAG:11 == 2
+            ;PRINTFORMW 
+            ;CFLAG:8018 = 2
+        ;ENDIF
+        ;RETURN 0
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;A감각 Lv5로 A절정 50이상 CFLAG8019
+;-------------------------------------------------
+IF ABL:2 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
+    ;처음
+    IF CFLAG:8019 == 0
+        PRINTFORMW 「\@ TALENT:150 ? 너무 좋아아아앗!!! 똥구머어어엉 # 뭐야, 엉덩이가… 탄다, 탄다아아아앗 \@!!」
+        CFLAG:8019 = 1
+        RETURN 0
+    ;2회째 이후
+    ;ELSE
+        ;연모
+        ;IF TALENT:150 && (CFLAG:8019 <= 2 || FLAG:11 == 2)
+            ;PRINTFORMW 
+            ;CFLAG:8019 = 3
+        ;그 이외
+        ;ELSEIF CFLAG:8019 <= 1 || FLAG:11 == 2
+            ;PRINTFORMW 
+            ;CFLAG:8019 = 2
+        ;ENDIF
+        ;RETURN 0
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;B감각 Lv5로 B절정 50이상 CFLAG8020
+;-------------------------------------------------
+IF ABL:3 >= 5 && EX:3 >= 50 && NOWEX:3 > 0
+    ;처음
+    IF CFLAG:8020 == 0
+        ;연모
+        IF TALENT:150
+            PRINTFORMW 「좀 더 가슴으로, 가슴으로 가게 해 줘, 가게 해 줘~!!!」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「어, 어째서 가슴이 이렇게 기분 좋게… 아, 안 돼,
+            PRINTFORMW 눈앞이… 새하얗게… 간다아아아앗!」
+        ENDIF
+        CFLAG:8020 = 1
+        RETURN 0
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:150 && (CFLAG:8020 <= 2 || FLAG:11 == 2)
+            PRINTFORMW 「더욱 세게, 좀 더 세게 해 줘어어엇!!!」
+            CFLAG:8020 = 3
+        ;그 이외
+        ELSEIF CFLAG:8020 <= 1 || FLAG:11 == 2
+            PRINTFORMW 「우와아아앗! 가슴이, 가슴이잇~!!」
+            CFLAG:8020 = 2
+        ENDIF
+        RETURN 0
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_MARKCNG 관계(X1를 캐릭터 번호에 치환)
+;각인 변동을 트리거로 한 말
+;각인 변동 후에 말을 발동합니다
+;-------------------------------------------------
+@KOJO_MESSAGE_MARKCNG_107
+;조수가 조교했을 때에 말을 스킵 한다(기호에 응해 사용하는, 줄머리의 것;을 지우면(자) 스킵 하게 된다)
+;SIF ASSI > 0 && ASSIPLAY
+;    RETURN 0 
+;볼 개그 착용시에는 말을 스킵 한다(OFF라고 구를 차지해 마구 말한다)
+SIF TEQUIP:42 == 1
+    RETURN 0
+;수면•실신시에 말을 스킵 한다(OFF라고 잠꼬대가 굉장한 것에)
+SIF TEQUIP:14 || TFLAG:899 > 0
+    RETURN 0
+;--------------------------------------------------
+;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, X1를 주인의 캐릭터 번호에 치환)
+;우선 현재유메미만
+;--------------------------------------------------
+;IF NO:MASTER == 108
+;    CALL LES_MESSAGE_MARKCNG_KX1_MY1
+;    RETURN 0
+;ENDIF
+;IF ASSI > 0 && ASSIPLAY
+;    IF NO:ASSI == 108
+;        CALL LES_MESSAGE_MARKCNG_KX1_MY1
+;        RETURN 0
+;    ENDIF
+;ENDIF
+;-------------------------------------------------
+;고통 각인 Lv3 취득 CFLAG8097
+;-------------------------------------------------
+IF TFLAG:40 == 3 && CFLAG:8097 == 0
+    ;연모
+    IF TALENT:150
+        PRINTFORMW 「이 아픔 또한 사랑의 형태겠지… 아마」
+    ELSE
+        PRINTFORMW 「으꺄악~! 아, 아, 아파아아아아악!
+        PRINTFORMW  그, 그만둬! 당장 그만둬어억!」
+    ENDIF
+    CFLAG:8097 = 1
+ENDIF
+
+;-------------------------------------------------
+;쾌락 각인 Lv3 취득 CFLAG8098
+;-------------------------------------------------
+IF TFLAG:41 == 3 && CFLAG:8098 == 0
+    ;연모
+    IF TALENT:150
+        PRINTFORMW 「이런 기분 좋은 걸 빨리 가르쳐 줬다면,
+        PRINTFORMW  좀 더 빨리 주인님을 좋아했을 텐데…」
+    ELSE
+        PRINTFORMW 「끄윽… 이 느낌 뭐냐구… 안 된다구… 소리가…」
+    ENDIF
+    CFLAG:8098 = 1
+ENDIF
+
+;-------------------------------------------------
+;굴복 각인 Lv3 취득 CFLAG8099
+;-------------------------------------------------
+IF TFLAG:42 == 3 && CFLAG:8099 == 0
+    ;연모
+    IF TALENT:150
+        PRINTFORMW 「네가 이겼다구, 내 패배다… 어?
+        PRINTFORMW  난 진작에 주인님한테 반했었는데…」
+    ELSE
+        PRINTFORMW 「…네가 이겼다구. 더 이상 옹고집을 부리는 것보단,
+        PRINTFORMW  쾌감에 몸을 맡기는 편이 편하겠군」
+    ENDIF
+    CFLAG:8099 = 1
+ENDIF
+
+;-------------------------------------------------
+;반발 각인 Lv3 취득 CFLAG8100
+;-------------------------------------------------
+IF TFLAG:44 == 3 && CFLAG:8100 == 0
+    ;연모로 붙이는 사람이라든가 있는 거야? 건방지기 때문에 붙기 쉽지만…이라고 하는 것으로 재료에 달린다.
+    PRINTFORMW 「\@ TALENT:150 ? 이런 괴로운… 사랑 따윈 필요 없어! # 저, 절대로 용서 못 해… \@」
+    CFLAG:8100 = 1
+ENDIF
+
+;------------------------------------------------------
+;------------------사망시 말-------------------------
+;------------------------------------------------------
+;는 생명 활동을 정지…죽었던 것이다.
+;분기 조건
+;친애•망신→연모•복종•음란→반발 각인→
+;조수에 「아카자키」 「8뜻」 「다홍색」의 어느 쪽인가가 존재하는 경우 복귀 가능.
+;(이)라든지, 보류중
+
+IF BASE:0 <= 0
+    PRINTFORMW ………
+    PRINTFORMW ……
+    PRINTFORMW …
+    WAIT
+    ;촉수에 의한 구속을 받고 있지 않다.
+    IF !TEQUIP:90
+        PRINTFORMW 치유리가 이상하다.
+        PRINTFORMW 쓰러진 몸, 초점이 맞지 않는 눈동자.
+        PRINTFORMW 껴안은 당신에게 치유리의 모든 무게가 실린다.
+        PRINTFORMW 팔이 축 쳐지고 다리는 힘 없이 늘어져 생기를 느낄 수 없다…
+        ;서로 사랑함이 존재하는 경우※주의 꽤 야바메 표현※
+        IF TALENT:153
+            PRINTFORMW 「주… 인… 님…」
+            PRINTFORML 
+            PRINTFORML 
+            PRINTFORMW 치유리는 다시는 돌아오지 않는다, 그 사실을 받아들일 수가 없었다.
+            PRINTFORMW 숨이 멎은 치유리의 몸을 당신은 집요하게 희롱한다.
+            PRINTFORML 
+            PRINTFORML 
+            PRINTFORMW 식음도 전폐하고 치유리를 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다.
+            PRINTFORMW 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다.
+            PRINTFORMW 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다.
+            PRINTFORML 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다.
+            PRINTFORML 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다. 사랑한다.
+            PRINTFORMW 사랑한다사랑한다사랑한다사랑한다사랑한다사랑한다사랑한다
+            PRINTFORMW ………
+            PRINTFORMW ……
+            PRINTFORMW …
+            PRINTFORMW 썩는 냄새와 음취가 섞인 한 방에 어우러진 2개의 그림자
+        ;친애•망신의 어느 쪽인지가 존재하는 것인가
+        ELSEIF TALENT:152 || TALENT:151
+            PRINTFORMW 「…주인님이 주는 거라면,
+            PRINTFORMW 그게 비록 "죽음"이라고 해도 난 받아들일 거야…」
+            PRINTFORMW
+            PRINTFORMW 「근데… 커헉, 그렇지만…」
+            PRINTFORMW 「주, 주인님을… 두 번 다시 만날 수 없어서… 끄윽, 외로울 거야…」
+            PRINTFORMW 「그러니까… 적어도…」
+            PRINTFORMW 「적어도 마지막은… 주인님 품 속에서…」
+            PRINTFORMW 치유리의 몸을 강하게 꼭 껴안았다.
+            PRINTFORMW 치유리의 온기를 잊지 않게…
+        ;친애가 존재하지 않고. 연모•복종(YM)중 한쪽이 있을까
+        ELSEIF TALENT:150 || TALENT:160
+            PRINTFORMW 「주인님… 주인님 어딨냐구…?」
+            PRINTFORMW 텅 빈 눈으로 팔을 뻗어, 치유리는 당신을 찾는다.
+            PRINTFORMW 당신이 팔을 잡아, 자신이 있을 곳을 알리자, 치유리는 안도의 표정을 띄웠다.
+            PRINTFORMW 그것도 잠시, 치유리의 표정이 일그러진다. 마지막이 임박했단 걸, 치유리는 느낀 것이다.
+            PRINTFORMW 「싫어, 싫다구, 주인님과 떨어지는 거 난 싫어…」
+            PRINTFORMW 팔과 머리를 힘 없이 흔들며, 필사적으로 부정의 말을 던진다.
+            PRINTFORMW 「미안해…」
+            PRINTFORMW 그러나, 그 힘도 점점 없어져 간다.
+            PRINTFORMW 「ㅈ…」
+            PRINTFORMW 치유리의 생명의 숨결은 이 말을 마지막으로 끊어졌다…
+        ;친애•망신•연모•복종이 존재하지 않고, 음란이 있을 때
+        ELSEIF TALENT:170
+            PRINTFORMW 「뭘까… 이 감각은… 지금까지 없던 느낌이라구…」
+            PRINTFORMW 「둥실둥실, 하늘로 뜨는… 그런 감각이다…」
+            PRINTFORMW 「아하, 아하하… 주인님, 기분 좋아… 기분…」
+            PRINTFORMW 그걸 마지막으로, 치유리는 말하는 걸 멈췄다.
+        ;친애•연모•복종(YM)•음란•망신이 모두 없고, 반발 각인이 존재한다.
+        ELSEIF MARK:9
+            PRINTFORMW 「노예로서 감금되어… 조교당하다… 살해된다고…?」
+            PRINTFORMW 「웃기지 마… 난 이럴려고 태어난 게 아냐」
+            PRINTFORMW 「난… 난 더… ㅅ…」
+            PRINTFORMW 치유리는 그 뒤로 말이 없었다.
+            PRINTFORMW 그러나, 동공이 풀린 눈동자는 당신을 계속 노려보고 있는 듯했다…
+        ;연모계없이 반발 각인이 존재하지 않는다.
+        ELSE
+            PRINTFORMW 「생명까지는 빼앗지 않을 줄 알았는데…」
+            PRINTFORMW 「아, 아무래도 한참 잘못 봤군…」
+            PRINTFORMW 「내, 내 인생은… 이런 것… 이었나…」
+            PRINTFORMW 그것이, 치유리의 유언이었다.
+        ENDIF
+    ;촉수에 의한 구속을 받고 있다.
+    ELSE
+        PRINTFORMW 이상을 느낀 당신은 촉수를 이계로 되돌려 보냈다.
+        PRINTFORMW 그러나, 모든 게 끝난 뒤였다.
+        PRINTFORMW 해방된 치유리의 모습은 보기에도 끔찍했으며, 원래 모양을 찾을 수 없었다…
+    ENDIF
+ENDIF
+;-------------------------------------------------------
+;-------------------------------------------------------
+
+
+
+
+
+
+
+
+
+;//
+;//TFLAG:200 관련 이벤트계
+;//
+;//
+
+@SELF_KOJO_K107
+;------------------------------
+;커멘드 실행 거부 TFLAG:200 ==1
+;------------------------------
+IF TFLAG:200 == 1
+    IF TALENT:153 || TALENT:152 || TALENT:150
+        PRINTFORMW 「아무리 주인님 명령이라도, 그건 따를 수 없어」
+    ELSEIF MARK:2 == 3
+        PRINTFORMW 「네 명령이라도, 그건 무리라구…」
+        PRINTFORMW 「벌이든 뭐든 받을 거니까 그것 만큼은…」
+    ELSE
+        PRINTFORMW 「그런 명령은 듣지 않겠어!」
+        PRINTFORMW 「위협할 생각인가? 흥, 마음대로 해라!」
+    ENDIF
+ENDIF
+
+;------------------------------
+;거만함 소멸 TFLAG:200 == 56
+;------------------------------
+IF TFLAG:200 == 56
+    PRINTFORMW 「…좀 더 솔직해져 보는 것도 좋겠어」
+    PRINTFORMW 「사랑받기만 해선, 미안하니까… 적어도 보답으로서…」
+ENDIF
+
+;------------------------------
+;연모 취득 TFLAG:200 == 70
+;------------------------------
+IF TFLAG:200 == 70
+    PRINTFORMW 「이상한 일도 다 있다구…」
+    PRINTFORMW 「저런, 저런 범죄자를, 좋아하게 되다니…」
+ENDIF
+
+;------------------------------
+;망신 취득 TFLAG:200 == 71
+;------------------------------
+IF TFLAG:200 == 71
+    PRINTFORMW 「난 결정했다구」
+    PRINTFORMW 「지금부터 앞으로, 무엇이 있어도, 주인님을 따르겠어」
+ENDIF
+
+;------------------------------
+;복종 취득 TFLAG:200 == 74
+;------------------------------
+IF TFLAG:200 == 74
+    PRINTFORMW 「저항하는 것보다, 따르는 편이 현명하겠군…」
+ENDIF
+
+;------------------------------
+;음란 취득 TFLAG:200 == 75
+;------------------------------
+IF TFLAG:200 == 75
+    PRINTFORMW 「아휴, 나도 완전히 물들어 버린 것 같다구…」
+ENDIF
+
+;---------------------------------
+;주되들 해 취득 TFLAG:200 == 102
+;------------------------------
+
+IF TFLAG:200 == 102
+    IF TALENT:153 || TALENT:152 || TALENT:150
+        PRINTFORMW 「아하하, 부, 부끄러운 걸 들켜 버렸다구…」
+    ELSEIF MARK:2 == 3
+        PRINTFORMW 「또 하나 약점 잡혔다구」
+        PRINTFORMW 「아니, 만들어졌다. 가 맞나?」
+    ELSE
+        PRINTFORMW 「윽… 보, 보지 마! 보지 마!」
+        PRINTFORMW 「너! 너 때문이라구! 그러니까… 보지 마!」
+    ENDIF
+ENDIF
+
+;---------------------------------
+;인기 취득 TFLAG:200 == 104
+;---------------------------------
+
+;취득 조건피사경효험 40 혹은 가창 경험 500이상으로 라이브 대성공
+;이런 조건 달성할 수 있는 것은 연모 후가 타당이라고 생각해 굳이 분기 하지 않고.
+;SCOM로 분기 가능?
+
+IF TFLAG:200 == 104
+    PRINTFORMW 「소문으로 듣기로는, 내가 상당히 인기 있는 것 같은데」
+    IF EXP:73 >= 500
+        PRINTFORMW 「뭐, 그토록 라이브를 했으니 당연한 거라구」
+    ELSEIF EXP:72 >= 40
+        PRINTFORMW 「인기가 있는 건 기쁜데…」
+        PRINTFORMW 「방법이 방법인 만큼 복잡한 기분이다… 하하」
+    ENDIF
+ENDIF
+
+;---------------------------------
+;미약중독 취득 TFLAG:200 == 105
+;---------------------------------
+
+IF TFLAG:200 == 105
+    PRINTFORMW 「부족하다… 부족해…」
+    PRINTFORMW 「좀 더, 좀 더 약을… 그 약을 갖고 싶어…」
+ENDIF
+
+;---------------------------------
+;양도 취득 TFLAG:200 == 109
+;---------------------------------
+;양도 취득은 연모보다 후가 통설, 따라 조건은 생략한다
+
+IF TFLAG:200 == 109
+    PRINTFORMW 「예외를 제외하면, 세상엔 남자와 여자가 존재해」
+    PRINTFORMW 「남자만 사귀는 것보다, 여자와도 사귀는 쪽이」
+    PRINTFORMW 「인생을 2배 즐길 수 있다… 그런 생각이 들었다구」
+    PRINTFORMW 「\@ TALENT:MASTER:남자 ? 그러면, 주인님의 조교 지원도 할 수 있을 거고 # 주인님도 여자니까, 분명 좋을 거야 \@」
+ENDIF
+
+;---------------------------------
+;주인의 요리를 먹는 TFLAG:200 == 116
+;---------------------------------
+;주인의 요리 기능의 연모등을 본다.
+
+IF TFLAG:200 == 116
+    DRAWLINE
+    IF ABL:MASTER:70 >= 5
+        IF TALENT:150
+            PRINTFORMW 「역시 주인님이 손수 만든 요리는 최고다!」
+        ELSE
+            PRINTFORMW "그 전후의 풍경"
+            PRINTFORMW 「네 요리는… 절대… 안 먹어…」
+            PRINTFORMW 필사적으로 욕망에 저항하는 치유리였지만,
+            PRINTFORMW 당신 요리의 향기로운 향기와 아름다운 외형에 결국 져 버렸다.
+            PRINTFORMW 「젠장… 다음엔 절대로 지지 않겠어…」
+        ENDIF
+    ELSEIF ABL:MASTER:70 >= 2
+        PRINTFORMW 「\@ TALENT:150 ? 휴, 배가 빵빵하다구, 잘 먹었어 # 어차피, 안 먹으면 화낼 거지? 어, 그래, 제대로 먹을게 \@」
+    ELSE
+        IF TALENT:150
+            PRINTFORMW 「…주인님, 좀 더 노력하자구」
+            PRINTFORMW 그렇게 말하면서도 치유리는 깨끗이 식사를 먹어치웠다.
+        ELSE
+            PRINTFORMW 「…이것도 일종의 조교인가? …이 따위 거나 먹이다니」
+        ENDIF
+    ENDIF
+ENDIF
+
+
+
+;---------------------------------
+;체력 업!  TFLAG:200 == 120
+;---------------------------------
+IF TFLAG:200 == 120
+    IF TALENT:150 || TALENT:152 || TALENT:153
+        PRINTFORMW 「좀 더 길게 주인님과 있을 수 있게 됐다구」
+    ELSE 
+        PRINTFORMW 「이것도 "습관"이란 녀석인가… 분하다」
+    ENDIF
+ENDIF
+
+;---------------------------------
+;기력 업!  TFLAG:200 == 121
+;---------------------------------
+IF TFLAG:200 == 121
+    IF TALENT:150 || TALENT:152 || TALENT:153
+        PRINTFORMW 「격렬한 조교도 견딜 수 있도록, 정신도 단련해야겠다구」
+    ELSE 
+        PRINTFORMW 「마음을 강하게 가지지 않으면, 끝장날 거야…」
+    ENDIF
+ENDIF
+
+
+
+;-------------------------------------------------
+;매각
+;-------------------------------------------------
+IF TFLAG:200 == 130
+    ;연모+반발 각인 Lv3 미만
+    IF TALENT:150 && MARK:9 < 3
+        PRINTFORMW 「영원히 함께 있을 수 있다고는 생각하지 않았다구.
+        PRINTFORMW 근데, 근데 말이다, 아무리 뭐라 해도 너무 빠르지 않은가?
+        PRINTFORMW 결국, 내 착각일 뿐이었나?
+        PRINTFORMW 착각이라도… 착각이라도 상관 없으니까… 옆에 있게 해 줬으면 한다구…」
+        PRINTFORMW 매달리는 것 같은 눈동자로 당신에게 호소하는 치유리를 배웅하고, 당신은 집으로 돌아갔다.
+        PRINTFORMW ………
+        PRINTFORMW (전)치유리 방을 청소하고 있었을 때, 침대와 벽 틈새에 뭔가가 있는 걸 눈치챘다.
+        PRINTFORMW 그것이, 당신을 향한 안타까운 모정에 대해 치유리가 쓴 일기란 걸 알고,
+        PRINTFORMW 당신은 일기를 재빠르게 덮어 곧바로 그것을 태워 버렸다.
+        PRINTFORMW 한때의 정에 휘둘려서는 노예 상인으로서 버틸 수 없으니까.
+    ;반발 LV3 또한 연모
+    ELSEIF TALENT:150
+        PRINTFORMW 「흥, 네 얼굴을 안 볼 수 있게 돼서 다행이라구」
+        PRINTFORMW 치유리는 아무 저항도 없이 팔려 갔다…
+        PRINTFORMW 「내가 말하는 걸 듣지 않아서 팔린 건가…
+        PRINTFORMW 만약, 반발하지 않고, 솔직하게 말하는 걸 들었으면…
+        PRINTFORMW 옆에… 있을 수 있었을까…? 있을 수… 있었을까…」
+    ;반발 각인 Lv3
+    ELSEIF MARK:9 == 3
+        PRINTFORMW 「겨우 작별인가, 언젠가 널 찾아 복수하겠다」
+        PRINTFORMW 격렬한 살기를 날리면서, 치유리는 팔려 갔다.
+        PRINTFORMW 노예 상인이라고 하는 직업 상, 그와 같은 미움을 사는 것은 당연지사다.
+        PRINTFORMW 그 정도 위협에 벌벌 떨 틈 따윈 없다.
+        PRINTFORMW 자, 다음 조교를 시작하자!
+    ;음란
+    ELSEIF TALENT:170
+        PRINTFORMW 「네 조교에는 감사하고 있어, 다음 주인님도
+        PRINTFORMW 너만한 솜씨를 가지고 있으면 좋겠는데…」
+        PRINTFORMW 이렇게 치유리는 아무도 모르는 인간에게 팔리기 위해 끌려갔다…
+        PRINTFORMW 이제 두 번 다시 만날 일도 없을 것이다…
+    ;굴복 각인 Lv2 이상
+    ELSEIF MARK:2 >= 2
+        PRINTFORMW 「결국… 계속 있을 순 없는 거군」
+        PRINTFORMW 치유리는 유감스러운 얼굴로 하늘을 올려다보고 있었다.
+        PRINTFORMW 「다음엔… 어디로 끌려가는 걸까…」
+        PRINTFORMW 치유리의 행방은, 아무도 모른다.
+    ;그 이외
+    ELSE
+        PRINTFORMW 「잘 있어라, 두 번 다시 만날 것도 없겠지만」
+        PRINTFORMW 치유리는 팔려 갔다.
+        PRINTFORMW 조교 부족은 영수증을 보면 분명했지만
+        PRINTFORMW 이제 와서 그것을 후회해도 방법이 없는 일이다.
+    ENDIF
+ENDIF
+
+;---------------------------------
+;비디오 매각 TFLAG:200 == 131
+;---------------------------------
+;연모•음란 이상이나 이하로 분기
+
+IF TFLAG:200 == 131
+    PRINTFORMW 「\@ TALENT:150 || TALENT:음란 ? 내 # 아… 내 \@ 치태가 세상에 퍼지는 것인가…」
+    IF TALENT:150 || TALENT:음란
+        PRINTFORMW 「그리고, 그걸 보고 자위하는 놈도 있는 걸까…」
+        PRINTFORMW 「후후후, 왠지 기대되는구나…」
+    ELSE
+        PRINTFORMW 「아무리 과거 시대라도… 아니, 그래서 더 좋지 않은 건가…」
+        PRINTFORMW 「어느 쪽이든, 끝장이다…」
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;아침 페라 TFLAG:200 == 140
+;-------------------------------------------------
+IF TFLAG:200 == 140
+    ;연모
+    IF TALENT:150
+        PRINTFORMW 「아, 일어났나, 아직 자고 있어도 돼, 다시 한 번 짜낼 거니까」
+        PRINTFORMW 당신은 "거, 참" 이라고 생각하면서, 치유리 머리를 쓰다듬었다.
+    ;기교 Lv3 이상
+    ELSEIF ABL:12 >= 3
+        PRINTFORMW 「헤헤, 아침에 팔팔하다는 게 사실인 것 같군」
+    ;그 이외
+    ELSE
+        PRINTFORMW 당신은 음경에 날카로운 아픔을 느꼈다.
+        PRINTFORMW 「…이빨이 닿아 버렸다구… 요, 용서해 줘라」
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;조교 후 섹스 TFLAG:200 == 150
+;-------------------------------------------------
+IF TFLAG:200 == 150
+    IF TALENT:150
+        PRINTFORMW 「즐거움의 시작이라구…」
+        PRINTFORMW 
+    ELSEIF ABL:1 >= 3
+        PRINTFORMW 「얼마 안 되는 향락의 시간이다, 좀 더 만끽해야지」
+    ;그 이외
+    ELSE
+        PRINTFORMW 「이대로는 못 지, 책임져라!」
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;조교 후 자위 TFLAG:200 == 151
+;-------------------------------------------------
+IF TFLAG:200 == 151
+    IF TALENT:150
+        PRINTFORMW 「끄… 주인님… 좀 더 주인님한테 안겨서… 같이 있고 싶어」
+    ELSEIF ABL:30
+        PRINTFORMW 「최근 이걸 하지 않으면 잘 수 없게 되었군… 자면서 할 때도 있고」
+    ELSE
+        PRINTFORMW 「이 몸의 불을 끄려면… 이것밖에 없는가…」
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;레즈비언 플레이 TFLAG 154or155(69)
+;-------------------------------------------------
+IF INRANGE(TFLAG:200, 154, 155)
+    IF TALENT:150
+        IF TALENT:MASTER:120
+            PRINTFORMW 「주인님께 미안하지만, 남자랑 하는 거랑 여자랑 하는 건
+            PRINTFORMW 차이가 있는 거니까… 바람 피는 건 아니라구?」
+        ELSE
+            PRINTFORMW 「여자끼리 하면 왜 이렇게 기분 좋아질 수 있는 걸까…
+            PRINTFORMW 남자는 이 세상에 필요 없지 않을까?」
+        ENDIF
+    ELSEIF ABL:33 >= 3
+        PRINTFORMW 「나쁘지만 조금 어울려 줘, 여자끼리, 함께 즐기지 않겠어?」
+    ELSEIF ABL:22 >= 3
+        PRINTFORMW 「보습 수업 시간인가? 조금은 쉬게 해 줬으면 한다구」
+        PRINTFORMW 입으론 그렇게 말하면서도, 치유리는 레즈비언 플레이를 즐기고 있는 것 같다.
+    ;그 이외
+    ELSE
+        PRINTFORMW 「아~ 욱신거리는 게 멈추지 않는군, 좀 어울려 줘」
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;조교 후야 겨 TFLAG:200 == 158
+;-------------------------------------------------
+IF TFLAG:200 == 158
+    IF TALENT:150 
+        PRINTFORMW 「열쇠도 잠그지 않고 조심성이 없다구? 아니면… 날 기다리고 있던 거야?」
+    ELSE
+        PRINTFORMW 「별로… 네가 좋은 게 아니라구?」
+        PRINTFORMW 「몸이 후끈거려서 잠 못 자니까 이러는 것뿐이야」
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;임신!  TFLAG:200 == 170
+;-------------------------------------------------
+IF TFLAG:200 == 170
+    IF TALENT:150 
+        PRINTFORMW 「후후, 내가 이 나이에 엄마라니…」
+        PRINTFORMW 「확실히 책임져 줘, "아빠"」
+    ELSE
+        PRINTFORMW 「…내… 아이…!」
+        PRINTFORMW 치유리는 아연실색한 표정으로 허공을 응시하고 있다…
+    ENDIF
+ENDIF
+
+;---------------------------------
+;친구를 동반해 키타!  TFLAG:200 == 190
+;---------------------------------
+IF TFLAG:200 == 190
+    PRINTFORMW 「지금 이 녀석은 선물이다」
+    PRINTFORMW 「그런데, 이런 멋진 선물을 가지고 돌아온 날,
+    PRINTFORMW   다시 한 번 버리거나 하진 않겠지?」
+ENDIF
+
+;---------------------------------
+;자금을 따라 키타!  TFLAG:200 == 191
+;---------------------------------
+IF TFLAG:200 == 191
+    PRINTFORMW 「지금 이 녀석은 선물이다」
+    PRINTFORMW 「이것만 버는 데에도 고생했다구?」
+    PRINTFORMW 「그러니까, 좀 더 옆에 있게 해 줘…」
+ENDIF
+
+;---------------------------------
+;고옥 TFLAG:200 == 210
+;---------------------------------
+IF TFLAG:200 == 210
+    PRINTFORMW 「응… 뭔가 힘이 빠지는군…」
+ENDIF
+
+;---------------------------------
+;응개입수 TFLAG:200 == 215
+;---------------------------------
+IF TFLAG:200 == 215
+    PRINTFORMW 「오, 빠는 건가, 깨끗이 부탁하지」
+    PRINTFORMW 「어, 달라? 아, 장식한다고, 그럼, "깨끗이" 부탁하지」
+ENDIF
+
+;---------------------------------
+;촉수생지 TFLAG:200 == 257
+;---------------------------------
+IF TFLAG:200 == 257
+    PRINTFORML …………………………
+    PRINTFORML 그 조금 전…
+    PRINTFORMW …………………………
+    PRINTFORMW 주인에게 이끌려 방을 나온 치유리.
+    PRINTFORMW 밖에서의 조교, 이상한 것은 아니지만, 왜일까 안 좋은 예감이 든다.
+    PRINTFORMW 방 문이 닫히는 소리가, 이상하게 귀에 남았다.
+    PRINTFORML ………………
+    PRINTFORML …………
+    PRINTFORMW ……
+    PRINTFORMW 대기하도록 한 방에서 주인을 기다린다.
+    PRINTFORMW 여자의 감이라고 해야 할까, 조금 전부터의 안 좋은 예감이
+    PRINTFORMW 뇌리에 들러붙어, 떨어지려고 하지 않는다.
+    PRINTFORMW 불식하려고 머리를 흔든 때였다.
+    PRINTFORMW 과연, 예감은 맞았다.
+    PRINTFORML ………………
+    PRINTFORML …………
+    PRINTFORMW ……
+    IF TALENT:153 || TALENT:152
+        PRINTFORMW 「주인님… 이것이 당신 사랑이구나」
+        PRINTFORMW 「좋았어, 받아들이겠어… 받아들이고 말고」
+        PRINTFORMW 「주인님… 마지막 봉사, 전해 줄게…」
+    ELSEIF TALENT:150 || TALENT:복종
+        PRINTFORMW 「싫어, 싫다구… 주, 주인님! 주인님~!!!」
+        PRINTFORMW 「내 몸을 어떻게 취급해도 상관 없어!」
+        PRINTFORMW 「펠라도, 파이즈리도 다 할게!」
+        PRINTFORMW 「그러니까 주인님! 주인… 힉! 다리가!」
+        PRINTFORMW 「도와줘… 도와… 줘……」
+    ELSE
+        PRINTFORMW 「이, 이 녀석, 뭐야…」
+        PRINTFORMW 「설마, 그 자식, 날 이 녀석의 먹이로…!」
+        PRINTFORMW 「하, 하하하… 내, 내 승리라구」
+        PRINTFORMW 「나보다 먼저 이 녀석이 굴복했다 이거지?」
+        PRINTFORMW 「그러니까, 이런 것의 먹이로… 날… 처분…?」
+        PRINTFORMW 「싫어… 싫다구… 야, 거기 있지? 대답해 봐!」
+        PRINTFORMW 「그만둬! 밖에 꺼내 줘! 이 자식 좀 말려 봐!」
+        PRINTFORMW 「말 잘 듣고, 노예답게 굴고, 명령도 들을 거니까…!」
+        PRINTFORMW 「이 자식 좀 말려…」
+    ENDIF
+    PRINTFORMW  
+    PRINTFORMW 방 안에는 대량의 점액과 너덜너덜하게 찢어진 세일러복 파편이 남아 있었다…
+    PRINTFORMW ………………
+    PRINTFORMW …………
+    PRINTFORMW ……
+ENDIF
+
+;---------------------------------
+;체력 회복약 TFLAG:200 == 310
+;---------------------------------
+IF TFLAG:200 == 310
+    IF TALENT:150
+        PRINTFORMW 「휴~ 살겠다…」
+        PRINTFORMW 「자, 계속할까?」
+    ELSE
+        PRINTFORMW 「피곤이 가시는 것은 기쁘지만…」
+        PRINTFORMW 「복잡한 기분이다… 어차피, 조교를 위해 하는 거잖아?」
+    ENDIF
+ENDIF
+
+;---------------------------------
+;곁잠 TFLAG:200 == 400
+;---------------------------------
+IF TFLAG:200 == 400
+    IF TALENT:150
+        PRINTFORMW 「이런 밤에, 혼자서 자다니 너무 외롭군」
+        PRINTFORMW 「실례하러 갈까…」
+    ;ELSE
+        ;PRINTFORMW 「」
+        ;PRINTFORMW 「」
+    ENDIF
+ENDIF
+
+;---------------------------------
+;술잔치 TFLAG:200 == 450 451
+;---------------------------------
+IF INRANGE(TFLAG:200, 450, 451)
+    IF TALENT:150
+        PRINTFORMW 「아하하하하, 역시 술은 최고다…」
+        PRINTFORMW 「그것도, 사랑하는 사람과 함께라면 더 그렇다구… 히끅」
+    ELSE
+        PRINTFORMW 「오, 너 치고 센스 있군」
+        PRINTFORMW 「…취하게 해서 덮칠 생각은 마라」
+        PRINTFORMW 치유리는 시종 경계하면서 술을 즐겼다.
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;요리를 만들게 하는 애정 요리 TFLAG200 == 111
+;-------------------------------------------------
+;분기 조건 친애:서로 사랑함:　연모:망신:복종 반발 그 이외로 분기
+;더욱 내부 요리 능숙함(Lv3 이상인가)
+IF TFLAG:200 == 111    
+    ;난수로 분기
+    LOCAL = RAND:3
+    ;친애나 서로 사랑함인 경우신부로서
+    IF TALENT:152 || TALENT:153
+        ;요리 레벨이 3이상의 경우
+        IF ABL:70 > 2
+            IF LOCAL == 0
+                PRINTFORMW 「요리! 맡겨 줘라, 맛있는 걸 만들어 주지」
+            ELSEIF LOCAL == 1
+                PRINTFORMW 「요리인가, %조사처리(STR:401, "이")% 정말 좋아하는 걸 만들어 줄게」
+            ELSE
+                PRINTFORMW 「정력이 붙는 걸 충분히 넣을까…」
+                PRINTFORMW 「그리고 그 다음엔… 후후후」
+            ENDIF
+        ;요리 레벨이 3 이하의 경우
+        ELSE
+            IF LOCAL == 0
+                PRINTFORMW 「맞을 수도 있고, 안 맞을 수도 있고…」
+                PRINTFORMW 「무슨 얘기냐고? 총같은 거라구」
+            ELSEIF LOCAL == 1
+                PRINTFORMW 「쌀 씻을 땐 비누랑 세제 중 어떤 게 좋지?」
+                PRINTFORMW 「노, 농담이라구, 그렇게 화내지 마…」
+            ELSE
+                ;마족기분 3이상 있는 경우 부엌칼로 관계를 끊고 기뻐한다(;′∀`)
+                PRINTFORMW 「\@ ABL:21 > 3 ? 앗흥 # 으꺄악 \@!」
+                PRINTFORMW 치유리의 비명이 들려서 무슨 일인가 하고 부엌으로 달려갔다.
+                PRINTFORMW 「조, 조금 손이 미끄러졌을 뿐이라구…. 하하」
+                PRINTFORMW 손가락에서 살짝 피가 나고 있다… 손가락을 부엌칼로 벤 것 같다.
+            ENDIF
+        ENDIF
+    ;연모•망신•복종이 있는 경우 주인님에 대해서 (망신의 전제 조건은 연모/복종/음란 전부 취득이므로 조건문에서 뺐습니다. T)
+    ELSEIF TALENT:150 || TALENT:160
+        ;요리 레벨이 3이상의 경우
+        IF ABL:70 > 2
+            IF LOCAL == 0
+                PRINTFORMW 「요리라면 자신 있다구. 일단 보고 있어 봐」
+            ELSEIF LOCAL == 1
+                PRINTFORMW 「이건 어디에 쓰면 좋을까?」
+            ELSE
+                PRINTFORMW 「어이, 뭘 먹고 싶어? 뭐든지 시켜 봐」
+            ENDIF
+        ;요리 레벨이 3 이하의 경우
+        ELSE
+            IF LOCAL == 0
+                PRINTFORMW 「"진지하게" 노력은 하지, 노력은」
+            ELSEIF LOCAL == 1
+                PRINTFORMW 「조금 맛보기를… 으, 정진이 부족하군」
+            ELSE
+                PRINTFORMW 「끄악! 조미료가 통째로… 주인님은 보지 않았겠지…」
+            ENDIF
+        ENDIF
+    ;반발 각인이 있는 경우
+    ELSEIF MARK:9
+        ;요리 레벨이 3이상의 경우
+        IF ABL:70 > 2
+            IF LOCAL == 0
+                PRINTFORMW 「네게 내 요리는 과분하니까, 개밥이나 먹는 게 어때?」
+            ELSEIF LOCAL == 1
+                PRINTFORMW 「대충 할까… 진심을 다할 생각이 안 나」
+            ELSE
+                PRINTFORMW 「…아주 서툴다고 하면 그것도 화가 나는데, 뭐, 됐어」
+            ENDIF
+        ;요리 레벨이 3 이하의 경우
+        ELSE
+            IF LOCAL == 0
+                PRINTFORMW 「부엌칼… 나이프… 깡통 따개…」
+            ELSEIF LOCAL == 1
+                PRINTFORMW 「적당히 만들자~ 적당히」
+            ELSE
+                PRINTFORMW 「당뇨병과 고혈압으로 죽여주겠어… 어디 보자」
+            ENDIF
+        ENDIF
+    ;특히 아무것도 없는 경우
+    ELSE
+        ;요리 레벨이 3이상의 경우
+        IF ABL:70 > 2
+            IF LOCAL == 0
+                PRINTFORMW 「요리? 별로 상관 없어」
+            ELSEIF LOCAL == 1
+                PRINTFORMW 「조교냐? 오늘은 봐 줘라…」
+                PRINTFORMW 「어, 요리만 만들라고? …맥빠진다구」
+            ELSE
+                PRINTFORMW 「이렇게 보여도 요리는 능숙하다구」
+            ENDIF
+        ;요리 레벨이 3 이하의 경우
+        ELSE
+            IF LOCAL == 0
+                PRINTFORMW 「요리는 질색이라구. 차라리 채찍 쪽이 낫지… 는 않나」
+            ELSEIF LOCAL == 1
+                PRINTFORMW 「컵라면이나 냉동식품은…」
+                PRINTFORMW 「헉, 없군, 성실하게 요리할 수밖에 없나?」
+            ELSE
+                PRINTFORMW 「큰일이다… 일단 뭔가 참고할 게…」
+                PRINTFORMW 「끄… 이건, 일종의 수치 플레이라구」
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+;요리 여기까지
+;야외 라이브 여기로부터
+;연모 이상 반발 그 외로 분기 예정
+IF TFLAG:200 == 110
+    LOCAL = RAND:3
+    ;가창 기능 3이상으로 성공
+    IF ABL:72 >= 3 || TFLAG:99 == 1
+        IF LOCAL == 0
+            PRINTFORMW 「어떠냐, 이게 내 실력이라구」
+            PRINTFORMW 치유리는 만족스러운 표정을 짓고 땀을 닦고 있다.
+        ELSEIF LOCAL == 1
+            PRINTFORMW 「봤나? 관객들이 열광해서, 기분 좋다구」
+        ELSE
+            PRINTFORMW 「설마 그토록 성대한 라이브가 되다니…」
+            PRINTFORMW 「내 재능이 이렇게 무시무시하지… 아니면 말고」
+        ENDIF
+    ;실패
+    ELSE
+        IF LOCAL == 0
+            PRINTFORMW 「젠장… 너무 서툴렀다구…」
+        ELSEIF LOCAL == 1
+            PRINTFORMW 「이럴 땐 아무것도 말하지 않고… 꼭 껴안아 주겠어?」
+        ELSE
+            PRINTFORMW 「아, 이건… 그… 뭔가 좀 실수… 한 거라구」
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;약혼 반지 사용시
+;-------------------------------------------------
+IF TFLAG:200 == 200
+    DRAWLINE
+    PRINTFORMW 「이건 뭐야? 예쁜 반지네…」
+    PRINTFORMW 「나한테 준다고? 오… 어, 약혼 반지?」
+    PRINTFORMW 그 말과 동시에, 치유리는 돌처럼 굳었다.
+    PRINTFORMW 그리고 잠시 후, 말 뜻을 이해함과 함께,
+    PRINTFORMW 치유리는 이미지에 안 맞게 얼굴을 새빨갛게 붉히고, 손을 버둥거리며 당황했다…
+    PRINTFORMW 그런 치유리의 가늘고, 흰 약지에 반지를 끼운다.
+    PRINTFORMW 「아…」
+    PRINTFORMW 잠깐의 침묵, 그리고,
+    PRINTFORMW 「부족하지만… 잘 부탁한다」
+    PRINTFORMW 신선한 말투로 청혼을 받아들였다.
+    PRINTFORMW ……………………
+    PRINTFORMW …………
+    PRINTFORMW ……
+ENDIF
+
+TFLAG:200 = 0
+RETURN 0
+
+;-------------------------------------------------
+;@단독 엔딩 관계(X1, X2를 캐릭터 번호에 치환한다)
+;-------------------------------------------------
+;남녀로 엔딩 분기 시킬까~와
+;유메미 주인님이라면 조금 모순이 있을지도, 「당신」전용일까? 혹은 「치르노」도 재미있을지도
+;베토 베토의 연애 엔딩 기대한 사람 미안
+;※덧붙여 씀
+;엔딩을 분기 형식으로 해 플레이어에 선택하게 할까?
+;육욕 엔딩, 부부 엔딩, 공간 이동 엔딩이라든지
+;능력으로 분기 하는 것은 귀찮아서 선택해 줘는 것으로
+;이하 제작 메모
+;육욕 엔딩••
+;순애 엔딩…과거의 조교를 잊기 위해서(때문에) 기억을 봉인했다든가
+;비교 엔딩…남：천재 발명가가 되어 병행 세계에 여자:병행 세계의 마법을 찾기에(파라독스)
+
+@SINGLE_ENDING_K107
+DRAWLINE
+PRINTFORMW ―――단독 엔딩 조건 달성―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+    
+PRINTL 어떤 엔딩을 보겠습니까?
+PRINTL [0] 육욕 엔딩
+PRINTL [1] 순애 엔딩
+PRINTL [2] 비교 물리학 엔딩
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+;육욕 엔딩
+    PRINTFORMW 「지금… 몇 시냐구?」
+    PRINTFORMW 개운하게 잠에서 깨어나, 치유리 말에 눈을 뜬다.
+    PRINTFORMW 당신은 주위를 둘러보다, 침대 아래에 널려 있던 시계를 응시한다.
+    PRINTFORMW …딱 정오인가, 그렇지 않으면 한밤 중인가, 모든 바늘이 바로 위를 향하고 있었다.
+    PRINTFORMW 「12시인 건 안다구, 그래서… 며칠의 12시야?」
+    PRINTFORMW 눈을 뜨는 것과 동시에 얼싸안아, 그리고 얽혀, 서로 사귄다.
+    PRINTFORMW 서로의 체액을 빨아 홀짝거리고, 탐낸다. 쾌락과 열락에 빠져 그 끝에 잠든다.
+    PRINTFORMW 약혼 반지를 주고 나서, 두 명은 그것만 반복하고 있었다.
+    PRINTFORMW 「이제 배도 고파지는데… 뭐 사러 나갈까?」
+    PRINTFORMW 그때부터 며칠이 지났을까, 공복과 피로가 여실히 시간의 경과를 나타내고 있었다.
+    PRINTFORMW 그러나, 당신은 외출을 인정하지 않았다. 치유리를 껴안아 밀어 넘어뜨린다.
+    PRINTFORMW 치유리는 아무런 저항을 하지 않고, 당신의 신체를 받아들인다.
+    PRINTFORMW 팔과 다리를 맞붙여 퍼즐 조각을 맞추듯 신체를 밀착시켰다.
+    PRINTFORMW 「이대로 계속 이어지고 있으면… 언젠가 마음도 신체도 녹아서…」
+    PRINTFORMW 「정말로, 하나가 될 것… 같아」
+    PRINTFORMW 치유리의 군소리가 어두운 방에 나직이 흐르다, 사그라든다.
+    PRINTFORMW 그리고 다시 잠를 청한다. 사랑하는 사람 팔에 안겨…
+ELSEIF RESULT == 1
+;순애 엔딩
+    PRINTFORMW 「아침이라구∼ 밥 됐어∼」
+    PRINTFORMW 치유리의 위세 좋은 소리에 깨어났다.
+    PRINTFORMW 왠지 머나먼 옛 꿈을 꿨던 것 같다.
+    PRINTFORMW 어떤 꿈이었는가… 치유리에게 약혼 반지를 준 장면은 선명하지만
+    PRINTFORMW 그 전은 어떤 꿈이었는가 애매하다. 이런저런 고민을 하다가 치유리 모습을 봤다.
+    PRINTFORMW 「이거 참, 일찍 일어나~!」
+    PRINTFORMW 에이프런을 걸치고, 슬리퍼를 신은 치유리가 뺨을 부풀리고 있다.
+    PRINTFORML 
+    PRINTFORMW 「오늘 아침은 달걀 후라이랑 된장국에 샐러드라구, 식기 전에 들어~」
+    PRINTFORMW 치유리가 만드는 밥은 보기에도 좋고, 맛도 좋고, 경제적인, 그런 삼박자가 어우러져 있다.
+    PRINTFORMW 식사를 앞두고, 문득, 다시 꿈을 머릿속에 떠올렸다.
+    PRINTFORMW 치유리와 어떻게 만났는지, 어째서 서로 사랑하게 되었는가.
+    PRINTFORMW 그 꿈은 그런 꿈이었던 것일까, 그러나, 생각해 내려고 하면 할수록
+    PRINTFORMW 꿈은 흐려지고, 그리고 애매모호하게 되어 간다.
+    PRINTFORMW 「야, 야, 뭘 골똘히 생각해. 된장국 식는다」
+    PRINTFORMW 치유리가 재촉하는 나머지 당황해서 된장국을 급히 들이켰다. 뜨겁다. 입에서 국물이 넘쳐 흐른다.
+    PRINTFORMW 「아~ 뭐하는 건지」
+    PRINTFORMW 어처구니 없게 바라보던 치유리가 당신 입술을 손수건으로 닦아 줬다.
+    PRINTFORMW 이윽고, 누가 먼저라 할 것도 없이 웃음이 흘러나왔고,
+    PRINTFORMW 작은 집의, 작은 방이 웃음이라고 하는 행복의 형태로 채워져 갔다.
+    PRINTFORML ---------
+    PRINTFORML ------
+    PRINTFORMW ---
+    PRINTFORMW 이 행복이 언제까지나 계속된다고는 할 수 없다.
+    PRINTFORMW 여러가지 곤란이 두 명을 덮칠지도 모른다.
+    PRINTFORMW 그러나, 어느 시대에든 해피 엔딩으로 마무리 짓기에,
+    PRINTFORMW 가장 적당한 말은 하나. 바로…
+    PRINTFORMW ----------경사로세 경사로세---------
+ELSEIF RESULT == 2
+;비교 물리학 엔딩
+    PRINTFORMW 당신의 \@ TALENT:MASTER:120 ? 아내 # 반려자 \@가 된 치유리는, 그 생활 속에서 여러가지 지식을 가르쳐 줬다.
+    PRINTFORMW 「\@ TALENT:MASTER:120 ? 서당 개 삼 년에 풍월을 읊는 # 독서당 개가 맹자 왈 한 \@다」는 아니지만, 그러한 날들이 계속되는 동안에,
+    PRINTFORMW 점차 당신은 학문, 특히 그녀가 전공한 비교 물리학에 매료되어 갔다.
+    PRINTFORMW 어느 날, 당신은 진지하게 학문에 임하기로 치유리에게 말했다.
+    PRINTFORMW 치유리는 처음엔 곤혹스러워했지만, 당신의 말이
+    PRINTFORMW 진심에서 나온 걸 깨닫고, 기분 좋게 승낙해 줬다.
+    PRINTFORML  
+    PRINTFORMW 「선생님」의 고마운 수업을, 가끔 열심히, 가끔 졸면서 청강하고,
+    PRINTFORMW 짬이 있으면 독서를 열심히 하고, 장시간 논쟁을 벌였다.
+    PRINTFORMW 책상에 푹 엎드려 자는 당신의 등에 윗도리를 덮고,
+    PRINTFORMW 책에 열중한 당신 곁에, 야식으로 주먹밥과 커피를 뒀다.
+    PRINTFORML 
+    PRINTFORML 그리고…
+    PRINTFORMW 
+    ;남자편
+    IF TALENT:MASTER:120
+        PRINTFORMW 「이야~ 설마 다시 이걸 보게 될 줄은 몰랐다구…」
+        PRINTFORMW 목전에 우뚝 솟은 거대한 배를 치유리와 둘이서 올려다본다.
+        PRINTFORMW 그것은 일찌기, 치유리가 시공을 넘어 환상향으로 왔을 때에
+        PRINTFORMW 오카자키 유메미와 함께 탔던 가능성 공간 이동배와 다름없었다.
+    ;여자편
+    ELSE
+        PRINTFORMW 「그 이론, 아무도 상대하지 않는다고 했잖아?」
+        PRINTFORMW 치유리는 쓴웃음을 지으며, 분노에 떠는 당신을 달래고 있었다.
+    ENDIF
+    
+    PRINTFORMW 그로부터 수년, 당신의 지식•과학력은 치유리를 훨씬 더 능가해,
+    PRINTFORMW 그녀의 전 스승인 오카자키 유메미에 비견될 정도였다.
+    
+    ;남자편
+    IF TALENT:MASTER:120
+        PRINTFORMW 「내부도 꼭 닮아서, 왠지 그립군」
+        PRINTFORMW 선장은 당신, 선원은 치유리. 단 둘이서 평행 세계라고 하는 망망대해로 저어 나간다.
+        PRINTFORMW 그러나, 우려는 없었다. 오히려, 지금부터 시작되는 새로운 두 명의
+        PRINTFORMW 새로운 역사를 구축하는 것에 대한 기대가 부풀어 갔다.
+        PRINTFORMW 가능성 공간 이동배가 둘의 미래를 양 날개에 짊어지고 나아간다…
+     ;여자편
+    ELSE
+        PRINTFORMW 그 지식과 과학력으로 학회에서 여러가지 설을 발표하고,
+        PRINTFORMW 세계적으로도 유명한 과학자로 거론되기도 했다.
+        PRINTFORMW 「그렇게 유명한 학자가 그런 터무니없는 이론을 제창해서~」
+        PRINTFORMW 콱
+        PRINTFORMW 「너무하네∼」
+        PRINTFORMW 일단 치유리를 때리고 진정하려 했지만 그게 안 된다.
+        PRINTFORMW 자신만만하게 주장했다가 코웃음을 듣고 반박도 못 한 것이 가슴 깊이 한으로 남았다.
+        PRINTFORMW 학회에 대한 복수심, 그리고 주장의 올바름의 증명을 위해,
+        PRINTFORMW 당신은 가능성 공간 이동배에 탑승했다.
+        PRINTFORMW 「데자뷰가 느껴지는군」
+        PRINTFORMW 궁시렁거리는 치유리를 때리면서, 당신은 배를 기동시킨다.
+        PRINTFORMW 「아파라… 좀 더 다정하게 대해 줘, 『교수님』」
+    ENDIF
+ELSE
+    GOTO INPUT_LOOP
+ENDIF
+PRINTFORML 
+PRINTFORMW 　　　　　　　　―― Ending No. 1107 (치유리 엔딩)
+
+RETURN 0

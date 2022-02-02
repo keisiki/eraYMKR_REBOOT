@@ -1,0 +1,5462 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;eratohoYM Mk-2 rev.6용 분할형 대사 템플릿
+;X1을 캐릭터 번호 치환해 사용해주세요(레이무라면 1, 렌코라면 49, 미마라면 100).
+;
+;이 파일에는 조교 개시시 · 종료시 · 조교 중 이벤트 · 엔딩 대사용 함수 등이 마련되어 있습니다.
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;==================================================
+;○○ 대사
+;해설 따위를 여기에 적으면 됨
+;CFLAG:5201 = 범용(분할형) 대사에서 조교 첫회 판정으로서 이용
+;CFLAG:5002~5009 = 범용(단독형) 대사에서 조수 입장 첫회 판정으로서 이용
+;CFLAG:5300~5309 = 범용(분할형) 대사에서 절정 첫회 판정으로서 이용
+;CFLAG:5310~5319 = 범용(분할형) 대사에서 각인 첫회 판정으로서 이용
+;CFLAG:5320~5355 = 범용(분할형) 대사에서 파라미터 첫회 판정으로서 이용
+;CFLAG:7000~7999 = 범용(분할형) 대사에서 커맨드 여러회 판정으로서 이용 @COM_FLAG2 참조
+;CFLAG:8900~8905 = 범용(분할형) 대사에서 자위 여러회 판정으로서 이용 @COM_FLAG2 참조
+;CFLAG:9000~9099 = 범용(분할형) 대사에서 커맨드 첫회 판정으로서 이용 @COM_FLAG 참조
+;==================================================
+;==================================================
+;대사 파일의 존재 판정
+;==================================================
+;대사의 존재 판정(YM판)
+@TRY_249
+RETURN 1
+
+;==================================================
+;엑스트라 모드 구문
+;본인의 이상 속 색시를 표현하는데 쓴다
+;==================================================
+@SET_CHARA_KOJO_EXTRA_K249
+
+IF CFLAG : 5020 == 0
+    PRINTFORML 시온의 가슴은 어느만큼?」
+    PRINTL [0] 못먹었으니.....작지 않을까요 (변함 없음)  
+    PRINTL [1] 언니니까...조온보다는 클꺼야 (빈유를 잃습니다.)
+    $INPUT_STLOOP_1
+    INPUT
+    IF RESULT == 0
+        DRAWLINE
+        PRINTFORMW 「못먹고 다니는것도 서러운데.....」
+        DRAWLINE
+    ELSEIF RESULT == 1
+        DRAWLINE
+        PRINTFORMW 「작지않아!」
+        DRAWLINE
+        TALENT : 111 = 0
+    ELSE
+        GOTO INPUT_STLOOP_1
+    ENDIF
+    PRINTFORML 시온은 환상향에서 어떤 대우를 받나요?
+    PRINTL [0] 음.....그냥 거지? (변함없음)
+    PRINTL [1] 빈곤신 주제 어딜! 꺼져! (아픔에 강함을 얻습니다)
+    $INPUT_STLOOP_2
+    INPUT
+    IF RESULT == 0
+        DRAWLINE
+        PRINTFORMW 「아무거나 베풀어 줘요─ 배고파요─」
+        DRAWLINE
+    ELSEIF RESULT == 1
+        DRAWLINE
+        PRINTFORMW 「축하해.」
+        PRINTFORMW 「네가 환상향에서 가장 미움받는 자야.」
+        DRAWLINE
+        TALENT : 41 = 1
+    ELSE
+        GOTO INPUT_STLOOP_2
+    ENDIF
+    PRINTFORML 당신의 시온은? [대사 변경은 없습니다.]
+    PRINTL [0] 프라이드 낮고 동생한테 빌붙어 사는 여자애 (변함없음)
+    PRINTL [1] 「최흉최악은 한 사람으로 충분. 그것이야말로 나, 빈곤신 요리가미 시온이다!」 (프라이드 낮음을 잃습니다)
+    $INPUT_STLOOP_3
+    INPUT
+    IF RESULT == 0
+        DRAWLINE
+        PRINTFORMW 「조온....늦네.....」
+        DRAWLINE
+    ELSEIF RESULT == 1
+        DRAWLINE
+        PRINTFORMW 「가난을 겁내며 죽어라!」
+        DRAWLINE
+        TALENT : 17 = 0
+    ELSE
+        GOTO INPUT_STLOOP_3
+    ENDIF
+ENDIF    
+CFLAG : 5020 = 1
+
+;==================================================
+;조교 개시 대사 부분
+;==================================================
+@EVENTTRAIN
+;대사 표시를 OFF했을 경우에는 돌아온다
+SIF FLAG:11 <= 0
+    RETURN 0
+SIF NO:TARGET != 249
+    RETURN 0
+;자고 있을 경우에는 돌아온다
+SIF EQUIP:14
+    RETURN 0
+;재갈이 있을 경우에도 돌아온다
+SIF TEQUIP:42
+    RETURN 0
+;기절 중에도 돌아온다
+SIF TFLAG:899 >= 1
+    RETURN 0
+
+DRAWLINE
+
+;조교 개시 대사 분기
+IF CFLAG:5201 == 0
+    TRYCALL K249_MESSAGE_START_1
+ELSE
+    TRYCALL K249_MESSAGE_START_2
+ENDIF
+
+;-------------------------------------------------
+;첫조교시
+;-------------------------------------------------
+@K249_MESSAGE_START_1
+
+;첫대면+조온 조수(시온:남)
+IF ASSINO() == 248
+    IF TALENT:120
+        DRAWLINE 
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 문을 열고 방에 들어왔다.
+        PRINTFORML 침대위에는 남색머리카락과 압류딱지가 붙어있는 옷을입고 있는 소년 요리가미 시온이 누워있다.
+        PRINTFORML 문이 닫히는 소리에 정신을 찾은 시온은 당신을 경계하기 시작했다
+        PRINTFORMW 「당신!....어?」
+        PRINTFORML 자신의 목에서 나온 평소와 다른 자신의 목소리에 시온은 자신의 몸을 더듬기 시작했다. 
+        PRINTFORML 몸을 더듬다 자신의 고간사이 여자라면 있지 말아야할 물건이 달려있는걸 확인한 시온은 %조사처리(CALLNAME:MASTER,"을")% 향해 소리쳤다. 
+        PRINTFORMW 「당신! 내몸에 무슨짓을 한거야!」
+        PRINTFORML 시온이 %조사처리(CALLNAME:MASTER,"을")% 향해 달려가려는 찰나 등뒤에서 익숙한 목소리가 들려오기 시작했다.
+        PRINTFORMW 『와~정말로 남자가 되버렸네~』
+        PRINTFORMW 『오랜만이야 언니~...아니지 지금은 오빠라고 불러야 하나~?』
+        PRINTFORML 그 목소리의 주인공은 시온의 여동생 요리가미 조온. 
+        PRINTFORMW 「조...조온...」
+        PRINTFORML 조온은 당황해하는 시온을 향해 미소짖고 %CALLNAME:MASTER%의 입술에 키스하기 시작했다.
+        PRINTFORMW 「ㄴ...너...지금 뭐하는.....」
+        PRINTFORML %CALLNAME:MASTER%과 키스를 마친 조온은 시온을 향해 걸어가면서 말했다.
+        PRINTFORMW 『응? 놀랄 필요 없어 주인님과 함께면 언...아니 오빠도 곧 이렇게 될거야~』
+        PRINTFORML 조온은 시온의 옷을 하나하나 벗겨가기 시작했다
+        PRINTFORMW 「잠....정신 차려 조온!」
+        DRAWLINE 
+        CFLAG:5202 = 1
+    ;첫대면+조온 조수(시온:여)
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 남색머리카락과 압류딱지가 붙어져있는 옷을 입고있는 소녀 요리가미 시온은 문이 열리는 소리에 정신을 차렸다. 
+        PRINTFORMW 「으...음.....여기는....?」
+        PRINTFORML 주위를 둘러보던 시온의 품속에 주황색머리와 화려한 옷을 입은 소녀가 뛰어들었다.
+        PRINTFORMW 『언니~~~~이~~~』
+        PRINTFORML 시온의 품속에 안긴 소녀는 그녀의 동생 조온. 
+        PRINTFORMW 「조온!」 
+        PRINTFORMW 「어떻게 된거야? 여기는 어디고? 몸은 괜찬.........」
+        PRINTFORML 조온의 몸에서 나는 특이한 향을 맡자 시온은 갑작스러운 졸음에 휩싸이기 시작했다.
+        PRINTFORMW 「조....오.....ㄴ...무..ㅓㄹ.....ㅎ....」
+        PRINTFORML 사라져가는 의식속에서 시온은 문넘어로 들어오는 %CALLNAME:MASTER%의 품에 안기는 조온을 보았다
+        PRINTFORMW ...............
+        PRINTFORML ...........
+        PRINTFORMW ........
+        PRINTFORML 오랜 시간이 지난후 의문의 소리에 정신을 차린 시온은 %CALLNAME:MASTER%의 품에 안겨있는 조온을 보고 경악했다. 
+        PRINTFORMW 「조온! 너...지금 뭐하는거야?」
+        PRINTFORMW 『아....♥일어났어?...읏....♥조금 더....자고있어도 되는데♥』
+        PRINTFORMW 「너! 우리 조온한테 뭔짓을 한거야! 감히....우리 조온을!....」
+        PRINTFORML 화를 내는 시온을 본 조온은 %CALLNAME:MASTER%의 품에서 벗어나 고간사이로 백탁액을 흘리며 시온을 향해 걸어갔다.
+        PRINTFORMW 시온의 앞에선 조온은 미소짓더니 시온을 거칠게 넘어뜨렸다.
+        PRINTFORML 조온에 의해 넘어진 시온을 조온을 향해 화를 내기 시작했다.
+        PRINTFORMW 「조온! 너 지금 뭐하는 짓....」
+        PRINTFORMW 『아무리 언니라도 우리 주인님을 욕하는 건 못참아~♥』
+        PRINTFORMW 「뭐?」
+        PRINTFORML 조온은 당황해하는 시온의 옷을 벗기기 시작했다.
+        DRAWLINE 
+        CFLAG:5202 = 1
+    ENDIF
+ELSE
+    ;시온 첫 대면 남
+    IF TALENT:120
+        DRAWLINE 
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 문을 열고 방에 들어왔다.
+        PRINTFORML 침대위에는 남색머리카락과 압류딱지가 붙어있는 옷을입고 있는 소녀였었던 하는 소년 요리가미 시온이 누워있었다.
+        PRINTFORML 문이 닫히는 소리에 정신을 찾은 시온은 당신을 경계하기 시작했다
+        PRINTFORMW 「당신!....어?」
+        PRINTFORML 자신의 목에서 나온 평소와 다른 자신의 목소리에 시온은 자신의 몸을 더듬기 시작했다. 
+        PRINTFORML 몸을 더듬다 자신의 고간사이 여자라면 있지 말아야할 물건이 달려있는걸 확인한 시온은 %조사처리(CALLNAME:MASTER,"을")% 향해 소리쳤다. 
+        PRINTFORMW 「당신! 내몸에 무슨짓을 한거야!」
+        PRINTFORML %조사처리(CALLNAME:MASTER,"은")% 분노하는 시온을 무시하며 준비된 단도로 시온의 옷을 하나씩 찟기 시작했다.
+        PRINTFORMW 「지금 뭐하는....짓.....」
+        DRAWLINE 
+    ;시온 첫 대면(여)
+    ELSE
+        DRAWLINE 
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 문을 열고 방에 들어왔다.
+        PRINTFORML 방한구석 침대에는 남색머리카락, 압류딱지가 붙어있는 옷을 입고있는 소녀가 누워있다.
+        PRINTFORMW 그 소녀의 이름은 요리가미 시온, 자신도 포함해 주위를 불운하게 만드는 정도의 액신이다.
+        PRINTFORML 하지만 조교전의 힘으로 액신의 힘을 잃은 그녀는 단순한 소녀에 불가하다.
+        PRINTFORMW 시온이 일어날 기미가 보이지 않자 %조사처리(CALLNAME:MASTER,"은")% 그녀의 옷을 하나하나 벗기기 시작했다.
+        PRINTFORML %조사처리(CALLNAME:MASTER,"은")% 옷을 벗기는 도중 시온이 정신을 차리기 시작했다. 
+        PRINTFORML 정신을 차려보니 옷이 벗겨지고 있던 시온은 급히 저항을 하기 시작했다.
+        PRINTFORMW 「자...잠시만 지금 뭐하는...그만....」
+        DRAWLINE 
+    ENDIF
+ENDIF
+CFLAG:5201 = 1
+;-------------------------------------------------
+; 조교 개시 (1회)
+;-------------------------------------------------
+@K249_MESSAGE_START_2
+;굴 1 
+IF CFLAG:5201 < 2 && MARK:2 == 1 && TALENT : 150 == 0 && ASSI == 0
+    DRAWLINE 
+    PRINTFORMW  %조사처리(CALLNAME:MASTER,"이")% 방에 들어가자 시온이 당신을 바라보며 말했다.
+    PRINTFORMW 「얼마나 할일이 없으면 빈곤신을 가지고 노는거야?」
+    DRAWLINE
+    CFLAG:5201 = 3 
+;굴2
+ELSEIF CFLAG:5201 < 3 && MARK:2 == 2 && TALENT : 150 == 0 && ASSI == 0
+    DRAWLINE 
+    PRINTFORMW  「저기.....나 빈곤신이라니까? 설마....빈곤신이 뭔지 모르는 바보인거야?」 
+    PRINTFORMW  시온은 어이가 없다는 듯한 한숨을 짖고 옷을 벗기 시작했다.
+    DRAWLINE
+    CFLAG:5201 = 3 
+;굴3
+ELSEIF CFLAG:5201 < 4 && MARK:2 == 2 && TALENT : 150 == 0 && ASSI == 0
+    DRAWLINE 
+    PRINTFORMW  「......항복이야....」 
+    PRINTFORMW  「굽든지 삶든지 하고 싶은데로 하라고.」 
+    DRAWLINE
+    CFLAG:5201 = 4
+;연모
+ELSEIF CFLAG:5201 < 5 && TALENT : 150
+    DRAWLINE 
+    PRINTFORMW  %조사처리(CALLNAME:MASTER,"이")% 방이 들어오자 침대위에 앉아있는 시온이 말했다.
+    PRINTFORMW  「.....변함없이 이 시간에 올거라 생각했어」
+    PRINTFORMW  「........하아」
+    PRINTFORMW  시온은 얼굴을 붉히며 자신의 앞머리를 만지기 시작했다.
+    PRINTFORMW  「......바보같아」
+    PRINTFORMW  시온은 뭔가를 말하려 했지만 뭔가가 목에 걸린듯이 머뭇거리고 있다.
+    PRINTFORMW  「...........당신도....나도...다 똑같이 바보같아」
+    PRINTFORMW  「.......좋아...」
+    PRINTFORMW  시온은 무언가 결심했다는 듯한 표정과 함께 %CALLNAME:MASTER%의 얼굴을 바라보았다.
+    PRINTFORMW  「........아마도...」
+    PRINTFORMW  「........내가....」
+    PRINTFORMW  「........사랑에 빠진거 같아...」
+    PRINTFORMW  「........다른 사람도 아닌 당신에게....」
+    PRINTFORMW  「이런 험한일....당하고 있는데도...」
+    PRINTFORMW  「당신과 함께 있으면 행복해...」
+    PRINTFORMW  「계속 당신과 함께 있고 싶어....」
+    PRINTFORMW  「......바보 같지?」
+    PRINTFORMW  시온은 천천히 옷을 벗기시작했다.
+    IF ASSI >= 0 && ASSINO() == 248
+        PRINTFORMW  ........
+        PRINTFORMW  .....
+        PRINTFORMW  『우와──엄청난 대사』
+        PRINTFORMW  『부끄럽지 않았어?』
+        PRINTFORMW  「조.....조온?」
+        PRINTFORMW  『안녕─』
+        PRINTFORMW  「너.....어디서 부터 듣고있던거야?」
+        PRINTFORMW  『음.....변함없이 부터?』
+        CFLAG:5202 = 1
+    ENDIF
+    DRAWLINE
+    CFLAG:5201 = 5 
+ELSE
+    CALL K249_MESSAGE_START_3 
+ENDIF
+
+
+;-------------------------------------------------
+;조교 개시시
+;-------------------------------------------------
+@K249_MESSAGE_START_3
+IF ASSINO() == 248 && CFLAG:5202 == 0 && (TALENT : 150 || TALENT : 160)
+    DRAWLINE 
+    PRINTFORMW 문이 열리고 누군가가 들어오기 시작했다.
+    PRINTFORMW 「!!!!!」
+    PRINTFORML 들어온 것은 온몸을 화려한 옷가지과 보석으로 치장한 소녀였다.
+    PRINTFORMW 「조.....조온!」
+    PRINTFORML 소녀의 이름은 요리가미 조온 요리가미 시온의 쌍둥이 여동생이다.
+    PRINTFORML 『간만이야~』
+    PRINTFORMW 「........하아」
+    PRINTFORMW 「너도 여기 있던거야?」
+    PRINTFORML 『뭐...그렇지?』
+    PRINTFORML 『그래서...주인님이랑 어디까지 했어?』
+    PRINTFORMW 「........」
+    PRINTFORML 『부끄러워 하기는~~』
+    PRINTFORMW 그 순간 %조사처리(CALLNAME:MASTER,"이")% 문을 열고 들어왔다 
+    DRAWLINE 
+    CFLAG:5202 = 1
+    RETURN 1
+ELSEIF ASSINO() == 248 && CFLAG:5202 == 0
+    DRAWLINE 
+    PRINTFORMW 시온은 문넘어의 인기척을 경계하기 시작했다.
+    PRINTFORML 문이 열리고 누군가가 들어오기 시작했다.
+    PRINTFORMW 「!!!!!」
+    PRINTFORML 들어온 것은 온몸을 화려한 옷가지과 보석으로 치장한 소녀였다.
+    PRINTFORMW 「조.....조온!」
+    PRINTFORML 소녀의 이름은 요리가미 조온 요리가미 시온의 쌍둥이 여동생이다.
+    PRINTFORML 『간만이야~』
+    PRINTFORMW 「다친곳은 없지? 빨리 여기서 나가자!」
+    PRINTFORML 『왜 여기서 나가야해?』
+    PRINTFORMW 「뭐...라고?」
+    PRINTFORML 『주인님과 함께 있으면 얼~~마나 행복한데』
+    PRINTFORMW 「너...방금 뭐라고 했어?」
+    PRINTFORMW 그 순간 %조사처리(CALLNAME:MASTER,"이")% 문을 열고 들어왔다 
+    DRAWLINE 
+    CFLAG:5202 = 1
+    RETURN 1
+; 복종, 친애
+ELSEIF TALENT:160 == 1 || TALENT:150 == 1 && ASSINO() == 248
+    DRAWLINE 
+    PRINTFORMW 「조온.....와줘.....」
+    PRINTFORMW 『드디어 행복해진거 같네~~』
+    DRAWLINE 
+;공포 3
+ELSEIF MARK:8 == 3 && ASSINO() == 248
+    DRAWLINE 
+    PRINTFORMW 「저....저리가....!」
+    PRINTFORMW 『하나뿐인 사랑스러운 동생을 이렇게 대한다고?』
+    DRAWLINE 
+;반발 3
+ELSEIF MARK:9 == 3 && ASSINO() == 248
+    DRAWLINE 
+    PRINTFORMW 「적당히 하는게 좋을거야 조온..!」
+    PRINTFORMW 『그냥 지금까지 빌붙어 산 방값을 내는거라고 생각해~』
+    PRINTFORMW 「뭣....」
+    PRINTFORMW 『주인님 오시는데 표정이 그러면 안되지?』
+    DRAWLINE 
+;쾌락 3, 공포,반발 0
+ELSEIF MARK:1 == 3 && MARK:9 == 0 && MARK:8 == 0 && ASSINO() == 248
+    DRAWLINE 
+    PRINTFORMW 『벌써 이 상태라니 너무 야한거 아니야?』
+    PRINTFORMW 「.....아니야....난」
+    DRAWLINE 
+;그외
+ELSEIF ASSINO() == 248
+    DRAWLINE 
+    PRINTFORMW 『아직도 버티고있는거야?』
+    PRINTFORMW 「.......」
+    PRINTFORMW 『아무말 안하기야? 재미없기는.『
+    PRINTFORMW 「.....조온」
+    DRAWLINE 
+;그외 조수
+ELSEIF ASSI > 0
+   DRAWLINE 
+   PRINTFORMW 「.....당신 누구야..」
+   PRINTFORMW 시온은 방에 들어온 의문의 인물을 경계하기 시작했다.
+   DRAWLINE 
+;반발2 이상 연친망굴
+ELSEIF MARK:9 >= 2 
+    IF TALENT:150 || TALENT:151 || TALENT:152 || TALENT:153 || TALENT:160
+        DRAWLINE 
+        PRINTFORMW 「주인 요즘 뭔가 거슬리는게 있어?」
+        PRINTFORMW 「아니면 다른사람들 처럼 내가 미워진거야?」
+        PRINTFORMW 슬픈 눈을한 시온은 천천히 옷을 벗기 시작했다.
+        DRAWLINE 
+    ;반발2 이상
+    ELSE
+        DRAWLINE 
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"이")% 방에 들어서자 시온이 당신을 향해 소리쳤다.
+        PRINTFORMW 「날 언제까지 가지고 놀 생각이지?!」
+        PRINTFORMW 「마지막 경고다!」
+        PRINTFORMW 「빈곤신의 저주를 온몸으로 체험해보기 싫으면 당장 나를 풀어라!」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 그런 시온의 말을 들은체 만체 하면서 시온을 넘어뜨렸다.
+        DRAWLINE 
+    ENDIF
+;친 망
+ELSEIF TALENT : 151 || TALENT : 152
+    DRAWLINE 
+    PRINTFORMW 「와줬구나...」
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"이")% 들어오는걸 본 시온은 미소 짓기 시작했다
+    PRINTFORMW 「주인님이 와줘서 난 행복해....」
+    DRAWLINE 
+;약3
+ELSEIF MARK:3 == 3
+    DRAWLINE 
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 들어오자 시온이 당신을 붙잡고 애원하기 시작했다.
+    PRINTFORMW 「뭐....뭐든지..할..테니...야...약을....주세요..!」
+    PRINTFORMW 당신은 그런 시온을 무시하고 옷을 벗기기 시작했다. 
+    DRAWLINE 
+;공3
+ELSEIF MARK:8 == 3
+    DRAWLINE 
+    PRINTFORMW 「히익!」
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 들어오자 시온은 온몸을 떨기 시작했다.
+    PRINTFORMW 「오....오지마!」
+    DRAWLINE 
+;굴3
+ELSEIF MARK:2 == 3 
+    DRAWLINE 
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 방에 들어오자 시온은 옷을 하나씩 벗기 시작했다.
+    PRINTFORMW 시온은 속옷만을 남겨두고 %조사처리(CALLNAME:MASTER,"을")% 향해 빈 그릇을 내밀며 말했다.
+    PRINTFORMW 「한푼 주면 속옷까지 벗어줄게」
+    DRAWLINE 
+;굴, 복
+ELSEIF TALENT : 150 || TALENT : 160
+    DRAWLINE 
+    PRINTFORMW 「와줬구나...」
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"이")% 들어오는걸 본 시온은 미소 짓기 시작했다
+    PRINTFORMW 「주인님이 와줘서 기뻐....」
+    DRAWLINE 
+;약2
+ELSEIF MARK:3 == 2
+    DRAWLINE 
+    PRINTFORMW 「오늘도 그 약들 쓰는거야?」
+    PRINTFORMW 시온은 기대하는 눈빛으로 당신을 바라보며 말했다.
+    DRAWLINE 
+;공2
+ELSEIF MARK:8 == 2
+    DRAWLINE 
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시온을 향해 다가서자 시온은 겁먹은 표정으로 물었다.
+    PRINTFORMW 「오....오늘은 뭘 할생각이지.....?」
+    DRAWLINE 
+;굴2
+ELSEIF MARK:2 == 2 
+    DRAWLINE 
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"이")% 들어오자 시온은 %조사처리(CALLNAME:MASTER,"을")% 향해 빈 그릇을 내밀며 말했다
+    PRINTFORMW 「한푼만 준다면 스스로 벗을수도 있는데?」
+    DRAWLINE 
+ELSE 
+    DRAWLINE 
+    PRINTFORMW 시온은 방에들어온 %조사처리(CALLNAME:MASTER,"을")% 향해 이해할 수 없다는 표정을 지으며 말했다
+    PRINTFORMW 「빈곤신을 가지고 놀아봤자 뭐가 좋다고」
+    DRAWLINE  
+ENDIF
+;==================================================
+;조교 종료시의 대사
+;==================================================
+@EVENTEND
+;대사 표시를 OFF했을 경우에는 돌아온다
+SIF FLAG:11 <= 0
+    RETURN 0
+SIF NO:TARGET != 249
+    RETURN 0
+;자고 있을 경우에는 돌아온다
+SIF EQUIP:14
+    RETURN 0
+;재갈이 있을 경우에도 돌아온다
+SIF TEQUIP:42
+    RETURN 0
+;기절 중에도 돌아온다
+SIF TFLAG:899 >= 1
+    RETURN 0
+DRAWLINE
+TRYCALL K249_MESSAGE_END
+
+;--------------------------------------------------
+;조교 종료시의 대사
+;--------------------------------------------------
+@K249_MESSAGE_END
+;처녀 상실 (1회용)
+IF TFLAG : 0 > 0 && CFLAG:5203 == 0 && CFLAG:5204
+;연모,복종,망신,친애+첫경험 주인
+    IF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) && CFLAG:5205
+        DRAWLINE 
+        PRINTFORMW 「아.....줘버렸다....처음」
+        PRINTFORMW 「주인님이 처음이라 조금 행복할수도」
+        PRINTFORMW 시온은 파괴혈을 바라보며 미소를 짖고있었다.
+        DRAWLINE 
+        CFLAG:5203 = 1
+        RETURN 1
+    ;연망복친 주인X
+    ELSEIF  TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152
+        DRAWLINE 
+        PRINTFORMW 「나.....처음은 주인님에게 주고 싶었는데」
+        PRINTFORMW 「어쨰서.......」
+        PRINTFORMW 시온은 파괴혈을 바라보며 울고있다.
+        DRAWLINE 
+        CFLAG:5203 = 1
+        RETURN 1
+    ;그외
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 시온은 자신의 고간사이에서 흐르는 파괴혈을 보고있다.
+        PRINTFORMW 「복수할거야......반드시.......」
+        PRINTFORMW 「빈곤의 힘을 보여주겠어.......」
+        DRAWLINE   
+        CFLAG:5203=1
+        RETURN 1
+    ENDIF
+ENDIF
+; 조온 조수
+IF ASSI > 0
+    ;친애, 망신 (조교 종료 기준 욕정LV3이상)
+    IF (TALENT : 152 || TALENT : 151) && PALAM : 13 >= PALAMLV : 3 && ASSINO() ==248
+        DRAWLINE 
+        PRINTFORMW 『기분좋았어?』
+        PRINTFORMW 「응.....」
+        PRINTFORMW 『다음부터는 넌 오지마....』
+        DRAWLINE 
+    ;친애, 망신 
+    ELSEIF (TALENT : 151 || TALENT : 152) && ASSINO() == 248
+        DRAWLINE 
+        PRINTFORMW 「조온......」
+        PRINTFORMW 『응? 왜?』
+        PRINTFORMW 「다음부터는 오지마.....」  
+        DRAWLINE 
+    ;친애, 복종  (조교 종료 기준 욕정LV3이상)
+    ELSEIF (TALENT : 160 || TALENT : 150) && PALAM : 13 >= PALAMLV : 3 && ASSINO() == 248
+        DRAWLINE 
+        PRINTFORMW 『충분히 만족했어?』
+        PRINTFORMW 「하아.......하아......」
+        PRINTFORMW 『그런 모양이네~』
+        DRAWLINE 
+    ;친애, 복종
+    ELSEIF (TALENT : 160 || TALENT : 150) && ASSINO() == 248
+        DRAWLINE 
+        PRINTFORMW 『충분히 만족했어?』
+        PRINTFORMW 「아직...조금만더...」
+        PRINTFORMW 『아쉽지만 다음시간에~』
+        DRAWLINE 
+    ;미함락 욕망3LV
+    ELSEIF PALAM : 13 >= PALAMLV : 3 && ASSINO() == 248
+        DRAWLINE 
+        PRINTFORMW 『이렇게 즐겨놓고 버티고 있는거야?』
+        PRINTFORMW 「아니야....난...」
+        PRINTFORMW 『아니긴 뭐야 아니야~ 변태같기는~~』
+        DRAWLINE  
+    ;미함락
+    ELSEIF ASSINO() == 248
+        DRAWLINE 
+        PRINTFORMW 『언제까지 버틸거야? 그냥 포기하라니까~』
+        PRINTFORMW 「조온.....」
+        PRINTFORMW 『그럼 다음에 또봐~』
+        DRAWLINE 
+    ;조온 조수x 미함락 욕3
+    ELSEIF PALAM : 13 >= PALAMLV : 3
+        DRAWLINE 
+        PRINTFORMW 「하아....하아....」
+        PRINTFORMW 「이 이상 당해버리면 나는......」
+        PRINTFORMW 「돌아오지 못할수도...」
+        DRAWLINE 
+    ;조 조x 미함 욕X
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「....꺼져」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"을")% 경멸하는 눈빛으로 보고있다.
+        PRINTFORMW 「......변태새끼들」  
+        DRAWLINE 
+    ENDIF
+    RETURN 1
+ENDIF
+
+IF TEQUIP : 40
+    IF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) && ABL:21 >= 4  
+        DRAWLINE 
+        PRINTFORMW 「저...저기?」
+        PRINTFORMW 「주인님?」
+        PRINTFORMW 「이거....방치플레이는.....아니지?」
+        DRAWLINE
+    ELSEIF TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152
+        DRAWLINE 
+        PRINTFORMW 「저...저기?」
+        PRINTFORMW 「주인님?」
+        PRINTFORMW 「이거....혼자서는 못풀거 같은데?」
+        DRAWLINE
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「저...저기!!」
+        PRINTFORMW 「이거....풀어주고 가야지!」
+        PRINTFORMW 「내말 안들려?」
+        DRAWLINE
+    ENDIF
+;조수 없음 연,망,복, 망 욕3
+ELSEIF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) && PALAM : 13 >= PALAMLV : 3
+    DRAWLINE 
+    PRINTFORMW 「하아....하아....」
+    PRINTFORMW 「주인님.....」
+    PRINTFORMW 시온은 만족한듯한 표정으로 %조사처리(CALLNAME:MASTER,"을")% 보고있다.
+    DRAWLINE 
+;조수 없음 연,망 
+ELSEIF TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152
+    DRAWLINE 
+    PRINTFORMW 「앗.....어째서?」
+    PRINTFORMW 시온은 나갈 준비를 하고있는 %조사처리(CALLNAME:MASTER,"을")% 애달픈 눈으로 보고있다.
+    DRAWLINE 
+;조수 없음 미함 욕3
+ELSEIF PALAM : 13 >= PALAMLV : 3 
+    DRAWLINE 
+    PRINTFORMW 「하아....하아....」
+    PRINTFORMW 「이 이상 당해버리면 나는......」
+    PRINTFORMW 「돌아오지 못할수도...」
+    DRAWLINE 
+;조 없 미함 욕X
+ELSE
+    DRAWLINE 
+    PRINTFORMW 「......꺼져」
+    PRINTFORMW 시온은 %조사처리(CALLNAME:MASTER,"을")% 경멸하는 눈빛으로 보고있다.
+    PRINTFORMW 「......변태새끼」  
+    DRAWLINE 
+ENDIF
+  
+;==================================================
+;@KOJO_MESSAGE_PALAMCNG 관계
+;패러미터 변동이 방아쇠인 대사
+;패러미터 변동 후에 대사를 발동합니다
+;==================================================
+@KOJO_MESSAGE_PALAMCNG_249
+;자고 있을 경우에는 돌아온다
+SIF EQUIP:14
+    RETURN 0
+;재갈이 있을 경우에도 돌아온다
+SIF TEQUIP:42
+    RETURN 0
+;기절 중에도 돌아온다
+SIF TFLAG:899 >= 1
+    RETURN 0
+;처음으로 PALAM이 LV2 넘었을 때의 대사 호출
+FOR LOCAL, 0, 35
+    SIF PALAM:LOCAL + UP:LOCAL > PALAMLV:2 && CFLAG:(5320 + LOCAL) == 0
+        TRYCALLFORM K249_MESSAGE_OVERLV2_{LOCAL}
+NEXT
+;절정시의 대사 호출
+FOR LOCAL, 0, 50
+    SIF NOWEX:LOCAL
+        TRYCALLFORM K249_MESSAGE_ORGASM_{LOCAL}
+NEXT
+;다중 절정 대사 호출
+TRYCALL K249_MESSAGE_MULTIPLE_ORGASM
+;사정시켰다
+FOR LOCAL, 8, 30
+    SIF TFLAG:LOCAL
+        TRYCALLFORM K249_MESSAGE_EJAC_PLAYER_{LOCAL}
+NEXT
+
+;==================================================
+;처음으로 PALAM이 LV2 넘었을 때의 대사 CFLAG 5320～5355을 사용
+;==================================================
+;-------------------------------------------------
+;처음으로 윤활이 LV2 넘었다 CFLAG:5330
+;-------------------------------------------------
+@K249_MESSAGE_OVERLV2_10
+;조온이 조수(로)
+IF SELECTCOM == 60 && ASSIPLAY && ASSINO() == 248
+    DRAWLINE
+    PRINTFORMW 「이런거....끈적거리기만 하고 기분 나쁘다고....」
+    PRINTFORMW 『로션만 있는게 아닌거 같은데~ 시치미 때기는~』
+    DRAWLINE
+;조 조
+ELSEIF ASSIPLAY && ASSINO() == 248 
+    DRAWLINE
+    PRINTFORMW 『벌써 이렇게 젖은거야? 변태같기는~』
+    PRINTFORMW 시온은 얼굴을 붉히며 눈을 감았다.
+    DRAWLINE
+;로
+ELSEIF SELECTCOM == 60
+    DRAWLINE
+    PRINTFORMW 「이런거....끈적거리기만 하고 기분 나쁘다고....」
+    DRAWLINE
+ELSE
+    DRAWLINE
+    PRINTFORMW 시온은 허벅지는 자신의 애액으로 젖시기 시작했다.
+    PRINTFORMW 「설마?......거짓말...」
+    DRAWLINE
+ENDIF
+CFLAG:5330 = 1
+
+;-------------------------------------------------
+;처음으로 욕정이 LV2 넘었다 CFLAG:5333
+;-------------------------------------------------
+@K249_MESSAGE_OVERLV2_13
+;조 조 (미)
+IF ASSIPLAY && ASSINO() == 248 && SELECTCOM == 61
+    DRAWLINE
+    PRINTFORMW 『몸은 솔직해 진거 같은데~』
+    PRINTFORMW 「크읏.....묘한 약따위에....의지나 하고....」
+    DRAWLINE
+ELSEIF ASSIPLAY && ASSINO() == 248
+    DRAWLINE
+    PRINTFORMW 「(뭐지? 몸이.....이상해.....)」
+    PRINTFORMW 조온은 %CALLNAME:MASTER%에게 무언가를 원하는 표정을 지었다.
+    PRINTFORMW 『좋은 표정이네~♥』
+    DRAWLINE
+ELSEIF SELECTCOM == 61
+    DRAWLINE
+    PRINTFORMW 「크읏.....묘한 약따위에....의지나 하고....」
+    DRAWLINE
+ELSE
+   DRAWLINE
+   PRINTFORMW 「(뭐지? 몸이.....이상해.....)」
+   PRINTFORMW 조온은 %CALLNAME:MASTER%에게 무언가를 원하는 표정을 지었다.
+   DRAWLINE
+ENDIF
+CFLAG:5333 = 1
+
+;-------------------------------------------------
+;처음으로 치정이 LV2 넘었다 CFLAG:5335
+;-------------------------------------------------
+@K249_MESSAGE_OVERLV2_15
+;조온이 조수
+IF ASSIPLAY && ASSINO() == 248
+    DRAWLINE
+    PRINTFORMW 「조온.....나......뭔가.....」
+    PRINTFORMW 『곧 있으면 그게 뭔지 알거야~』
+    DRAWLINE
+ELSE
+    DRAWLINE
+    PRINTFORMW 「당신....뭔짓을....한거야...가슴이....」
+    PRINTFORMW 시온은 가슴 언저리에 손을 올리고 %CALLNAME:MASTER%에게 말했다.
+    DRAWLINE
+ENDIF
+CFLAG:5335 = 1
+
+;-------------------------------------------------
+;처음으로 공포가 LV2 넘었다 CFLAG:5337
+;-------------------------------------------------
+@K249_MESSAGE_OVERLV2_17
+;조온이 조수
+IF ASSIPLAY && ASSINO() == 248
+    DRAWLINE
+    PRINTFORMW 「조온...오지마.....」
+    PRINTFORMW 조온이 다가서자 시온이 작은 목소리로 중얼거렸다.
+    DRAWLINE
+ELSE
+;그외
+    DRAWLINE
+    PRINTFORMW 「그만......제발......」
+    PRINTFORMW 시온은 눈물을 머금고 당신에게 부탁했다.
+    DRAWLINE
+ENDIF
+CFLAG:5337 = 1
+
+;==================================================
+;절정시의 대사 CFLAG 5300～을 사용
+;==================================================
+;-------------------------------------------------
+;Ｃ절정 CFLAG:5300
+;-------------------------------------------------
+@K249_MESSAGE_ORGASM_0
+;처음
+IF CFLAG:5300 == 0
+    ;조온이 조수(시온 남OR 후타)
+    IF ASSIPLAY && ASSINO() == 248 && (TALENT:120 || TALENT:121)
+        DRAWLINE  
+        PRINTFORML 「조온!.....잠시!....멈춰....!...읏!」
+        PRINTFORMW 『기분 좋았어?』
+        DRAWLINE
+    ;조온 조수 (시온여)
+    ELSEIF ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORML 「앗?...아앗! 이거 뭐야!...그만해!」
+        PRINTFORMW 『겁먹지 말고 가버리라고~♥』
+        DRAWLINE
+    ;남자 혹은 후타(남성의 절정은 C절정판정)
+    ELSEIF TALENT:120 || TALENT:121
+        DRAWLINE
+        PRINTFORMW 「잠시만.....!, 멈춰...... 으읏!」
+        DRAWLINE
+    ;그외
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「앗?...아앗! 이거 뭐야!...그만해!」
+        DRAWLINE
+    ENDIF
+    CFLAG:5300 = 1
+    RETURN 1
+;2회째 이후
+ELSEIF CFLAG:5300 == 1 && NOWEX:1 == 0 && NOWEX:0 >= 1 && NOWEX:3 == 0 && NOWEX:2 == 0
+    CFLAG:8001 = 0
+    CFLAG:8000 = 0
+    ;C감 4 친 망
+    IF ABL:0 >= 4 && (TALENT : 151 || TALENT : 152)
+        DRAWLINE 
+        PRINTFORMW 「클리.....기분..좋아...더 만져줘...」
+        DRAWLINE 
+        RETURN 1
+    ;C감 4 복 연
+    ELSEIF ABL:0 >= 4 && (TALENT : 150 || TALENT : 160)
+        DRAWLINE 
+        PRINTFORMW 「거기....기분 좋았어.....」
+        DRAWLINE
+        RETURN 1
+    ;C감 4이상
+    ELSEIF ABL:0 >= 4
+        DRAWLINE 
+        PRINTFORMW 「하아...기분 좋았.....아...아니야!」
+        DRAWLINE
+        RETURN 1
+    ;조조(시남)
+    ELSEIF ASSIPLAY && ASSINO() == 248 && TALENT:120
+        DRAWLINE  
+        PRINTFORML 「읏──!...간닷!」
+        PRINTFORMW 『쾌락에 익숙해진거 같아서 다행이야~』
+        DRAWLINE
+        RETURN 1
+    ;조조(시후)
+    ELSEIF ASSIPLAY && ASSINO() == 248 && TALENT:121
+        DRAWLINE  
+        PRINTFORML 「읏──!...간닷!」
+        PRINTFORMW 『자지로 가버린 기분은 어때 언니?』
+        DRAWLINE
+        RETURN 1
+    ;조온 조수 (시온여)
+    ELSEIF ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORML 「가...간닷! 조온..안됏!.....보지마아아!」
+        PRINTFORMW 『변태 같은대사 잘먹었습니다~』
+        DRAWLINE
+        RETURN 1
+    ;남자 친망
+    ELSEIF TALENT:120 && (TALENT : 151 || TALENT : 152)
+        DRAWLINE
+        PRINTFORMW 「주인니이임!....저...가버려욧──!」
+        DRAWLINE
+        RETURN 1
+    ;후타 친망
+    ELSEIF TALENT:121 && (TALENT : 151 || TALENT : 152)
+        DRAWLINE
+        PRINTFORMW 「주인니이임!...자...자지로 가벼리는거.....봐주세요오오!」
+        DRAWLINE
+        RETURN 1
+    ;친망
+    ELSEIF TALENT : 151 || TALENT : 152
+        DRAWLINE
+        PRINTFORMW 「주....주인님...!──간닷──!」
+        DRAWLINE
+        RETURN 1
+    ;남자 굴연
+    ELSEIF TALENT:120 && (TALENT : 160 || TALENT : 150)
+        DRAWLINE
+        PRINTFORMW 「가....간닷!.....보지마!」
+        DRAWLINE
+        RETURN 1
+    ;후타(남성의 절정은 C절정판정) 굴연
+    ELSEIF TALENT:121 && (TALENT : 160 || TALENT : 150)
+        DRAWLINE
+        PRINTFORMW 「자지..또...온다! 보...보지마!」
+        DRAWLINE
+        RETURN 1
+    ;굴 연
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「간닷──!」
+        DRAWLINE
+        RETURN 1
+    ;C절
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「읏──! 이런거.... 아무렇지도....」
+        DRAWLINE
+        RETURN 1
+    ENDIF
+ENDIF
+
+
+;-------------------------------------------------
+;Ｖ절정 CFLAG:5301
+;-------------------------------------------------
+@K249_MESSAGE_ORGASM_1
+
+;처음
+IF CFLAG:5301 == 0 && CFLAG:5204 == 1 
+    ;조온이 조수
+    IF ASSIPLAY && ASSINO() == 248
+        DRAWLINE  
+        PRINTFORML 「조온!.....잠시만!.....나...이상해져..!」
+        PRINTFORMW 『내가.....언니를.....읏───』
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「읏───!안돼....!.」
+        DRAWLINE
+    ENDIF
+    CFLAG:5301 = 1
+    RETURN 1
+;2회째 이후
+ELSEIF CFLAG:5301 == 1 && NOWEX:1 >= 1 && NOWEX:0 == 0 && NOWEX:3 == 0 && NOWEX:2 == 0
+    CFLAG:8001 = 0
+    CFLAG:8000 = 0
+    ;V감 4 친 망
+    IF ABL:1 >= 4 && (TALENT : 152 || TALENT : 151)
+        DRAWLINE 
+        PRINTFORMW 「아──앗! 기분좋아! 더!....더 찔러줘!」
+        DRAWLINE 
+        RETURN 1
+    ;V감 4 복 연 
+    ELSEIF ABL:1 >= 4 && (TALENT : 150 || TALENT : 160)
+        DRAWLINE 
+        PRINTFORMW 「하아.....하아.....기분 좋았어.....」
+        DRAWLINE
+        RETURN 1
+    ;V감 4이상
+    ELSEIF ABL:1 >= 4
+        DRAWLINE 
+        PRINTFORMW 「하앗...하아...하아....이런거.....」
+        DRAWLINE
+        RETURN 1
+    ;조온 조수
+    ELSEIF ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 「윽───조온....진정해.....」
+        DRAWLINE
+        RETURN 1
+    ;친망
+    ELSEIF TALENT:152 || TALENT:151
+        DRAWLINE
+        PRINTFORMW 「하아....하아.....기분 좋았어.....멈추지...말아줘...」
+        DRAWLINE
+        RETURN 1
+    ;연복
+    ELSEIF TALENT:150 || TALENT:160
+        DRAWLINE
+        PRINTFORMW 「하아....하아.....기분 좋았어」
+        DRAWLINE
+        RETURN 1
+    ;V절
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「읏......이런거....기분만 나쁘다고......」
+        DRAWLINE
+    ENDIF
+ENDIF
+;-------------------------------------------------
+;Ａ절정 
+;-------------------------------------------------
+@K249_MESSAGE_ORGASM_2
+
+;처음
+IF CFLAG:5302 == 0
+    ;조온이 조수
+    IF ASSIPLAY && ASSINO() == 248
+        DRAWLINE  
+        PRINTFORML 「앗?!.....설마....엉덩이로?」
+        PRINTFORMW 『엉덩이로 가버리다니 얼마나 변태인거야?』
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「앗?!....설마....엉덩이로?」
+        DRAWLINE
+    ENDIF
+    CFLAG:5302 = 1
+    RETURN 1
+;2회째 이후
+ELSEIF CFLAG:5302 == 1 && NOWEX:1 == 0 && NOWEX:0 == 0 && NOWEX:3 == 0 && NOWEX:2 >= 1
+    CFLAG:8001 = 0
+    CFLAG:8000 = 0
+    ;A감 4이상 연망
+    IF ABL:2 >= 4 && (TALENT :151 || TALENT : 152)
+        DRAWLINE 
+        PRINTFORMW 「엉덩이잇! 기분좋아아앗!───더....더!」
+        DRAWLINE
+    ;친복
+    ELSEIF ABL:2 >= 4 && (TALENT :150 || TALENT : 160)
+        DRAWLINE 
+        PRINTFORMW 「하아.....엉덩이.....기분 좋았어....」
+        DRAWLINE
+    ELSEIF ABL:2 >= 4
+        DRAWLINE 
+        PRINTFORMW 「하아...하아......내가....이딴....구멍으로....느낄거같냐....」
+        DRAWLINE
+    ;조조
+    ELSEIF ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORML 「조온...그만둬...더이상 당하면 나....」
+        PRINTFORMW 「부셔질거 같다고?」
+        DRAWLINE
+        RETURN 1
+    ;연망
+    ELSEIF TALENT :151 || TALENT : 152
+        DRAWLINE 
+        PRINTFORMW 「엉덩이....기분좋았어요....주인님」
+        DRAWLINE
+    ;친복
+    ELSEIF TALENT :150 || TALENT : 160
+        DRAWLINE 
+        PRINTFORMW 「엉덩이로 가버리다니....싫어.....」
+        DRAWLINE
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「이딴 구멍으로....느낄리가 없잖아....」
+        DRAWLINE
+    ENDIF
+ENDIF
+;-------------------------------------------------
+;Ｂ절정 CFLAG:5303
+;-------------------------------------------------
+@K249_MESSAGE_ORGASM_3
+
+;처음
+IF CFLAG:5303 == 0
+    ;조온이 조수
+    IF ASSIPLAY && ASSINO() == 248
+        DRAWLINE  
+        PRINTFORML 「가슴만으로 가버린거야? 우와~변태같아~」
+        PRINTFORMW 『아니야.....』
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「아.....설마...나....가슴만으로?」
+        DRAWLINE
+    ENDIF
+    CFLAG:5303 = 1
+    RETURN 1
+;2회째 이후
+ELSEIF CFLAG:5303 == 1 && NOWEX:1 == 0 && NOWEX:0 == 0 && NOWEX:3 >= 1 && NOWEX:2 == 0
+    CFLAG:8001 = 0
+    CFLAG:8000 = 0
+    ;B감 4이상 연망
+    IF ABL:3 >= 4 && (TALENT :151 || TALENT : 152)
+        DRAWLINE 
+        PRINTFORMW 「가....간닷!....가슴만으로....가버렷!」
+        DRAWLINE
+    ;친복
+    ELSEIF ABL:3 >= 4 && (TALENT :150 || TALENT : 160)
+        DRAWLINE 
+        PRINTFORMW 「가슴....기분좋아......」
+        DRAWLINE
+    ELSEIF ABL:3 >= 4
+        DRAWLINE 
+        PRINTFORMW 「하앗....가지.....않았어......」
+        DRAWLINE
+    ;조온 조수
+    ELSEIF ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORML 「젖꼭지...싫어...가버려엇?」
+        PRINTFORMW 「이렇게 작은 가슴으로도 느끼는거야?」
+        DRAWLINE
+        RETURN 1
+    ELSEIF TALENT : 151 || TALENT : 152
+        DRAWLINE
+        PRINTFORMW 「주인님......가슴....기분좋았어...좀더 만져줘......」
+        DRAWLINE
+    ELSEIF TALENT : 160 || TALENT : 150
+        DRAWLINE
+        PRINTFORMW 「가슴만으로 가버리다니.....부끄러워.....」
+        DRAWLINE
+    ;B절
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「....가지않았어....」
+        DRAWLINE
+    ENDIF
+ENDIF
+;----------------------
+;다중절정
+;----------------------
+@K249_MESSAGE_MULTIPLE_ORGASM
+;-------[모코우 구상에서 참고 했습니다.]-----------
+Q = 0
+Q += (NOWEX:0) ?  1 # 0
+Q += (NOWEX:1) ?  1 # 0
+Q += (NOWEX:2) ?  1 # 0
+Q += (NOWEX:3) ?  1 # 0
+;-------------------------------------------------------
+;사중 절정
+IF Q == 4
+    ;사중절정 두번째
+    IF CFLAG:8000 == 1
+        DRAWLINE
+        PRINTFORMW 「안돼! 온다.....와버ㄹㅕ────!!!!!」
+        PRINTFORMW 시온은 한계치까지 등을 젖히면서 소리없는 비명을 질렀다.
+        PRINTFORMW 「제....제발.....이제....머리.....바보가.....될거같아...」
+        CFLAG:8001 = 0
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「─────!!!」
+        PRINTFORMW 시온은 전신을 경련시키며 평소에는 맛보지 못할 절정을 맛보고있다 .
+        PRINTFORMW 「.....으읏......이...이....런거....다음번에는.....부서져....버려.....」
+        CFLAG:8001 = 0
+        CFLAG:8000 = 1
+        DRAWLINE
+    ENDIF
+ELSEIF Q == 3
+    IF CFLAG:8001 == 1
+        DRAWLINE
+        PRINTFORMW 「가...간닷!───엄청난거 오고 있어!──가아아아앗!」
+        PRINTFORMW 시온은 군침을 흘리며 자신에게 찾아온 쾌감만을 느끼고있다.
+        CFLAG:8000 = 0
+        DRAWLINE
+    ELSEIF TALENT : 152 || TALENT : 151
+        DRAWLINE
+        PRINTFORMW 「으읏─!!!────이거...뭐야──!...엄청난거....오고있어!」
+        PRINTFORMW 시온은 절정에 여운에서 벗어나지 못한체 %CALLNAME:MASTER%에게 속삭였다.
+        PRINTFORMW 「방금....그거.....다시.....한번만♥」
+        CFLAG:8001 = 1 
+        CFLAG:8000 = 0
+        DRAWLINE
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「으읏─!!!────이거...뭐야──!...엄청난거....오고있어!」
+        PRINTFORMW 시온은 절정에 여운에서 벗어나지 못한체 몸을 경련시키고 있다..
+        PRINTFORMW 「괴....굉장했어.....」
+        CFLAG:8001 = 1 
+        CFLAG:8000 = 0
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「으읏─!!!────이.....이거...뭐야──?!」
+        PRINTFORMW 시온은 절정에 여운에서 벗어나지 못한체 몸을 경련시키고 있다.
+        CFLAG:8001 = 1
+        CFLAG:8000 = 0
+        DRAWLINE 
+    ENDIF 
+ELSEIF Q == 2
+    DRAWLINE
+    PRINTFORMW 「아───앗? 평소보다....더?」
+    CFLAG:8001 = 0
+    CFLAG:8000 = 0
+    DRAWLINE
+ENDIF
+;-------------------------------------------------
+;분유 CFLAG:5304
+;-------------------------------------------------
+@K249_MESSAGE_ORGASM_10
+;처음
+IF CFLAG:5304 == 0
+    ;임O 주임O 연,망
+    IF TALENT:140 && CFLAG : 70 == 1 || TALENT : 152 || TALENT : 151
+        DRAWLINE
+        PRINTFORMW 「임신한게 맞는거 같네.....」
+        PRINTFORMW 「나와 주인님의 아기....후훗」
+        DRAWLINE
+    ;임O 주임O 친 복
+    ELSEIF TALENT:140 && CFLAG : 70 == 1 || TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「임신한게 맞는거 같네....」
+        PRINTFORMW 「나.....앞으로 어떻게 되는걸까......」
+        DRAWLINE
+    ;임O 주임 O 친, 복, 연, 망, x
+    ELSEIF TALENT : 140
+        DRAWLINE
+        PRINTFORMW 「임신한게 맞는거 같네.....」
+        PRINTFORMW 「ㅎ.....흐.....흑....왜?.....이딴놈의 아이를?」
+        DRAWLINE
+    ;임X
+    ELSE
+        DRAWLINE
+        PRINTFORML 「엣? 모유가....나...설마?」
+        PRINTFORMW 시온은 자신의 배를 어루만지기 시작했다.
+        DRAWLINE
+    ENDIF
+    CFLAG:5304 = 1
+
+;2회째 이후
+ELSE
+    ;임O 주임O 연,망
+    IF TALENT:140 && CFLAG : 70 == 1 || TALENT : 152 || TALENT : 151
+        DRAWLINE
+        PRINTFORMW 「아이에게 줄 분량이 주는거 아니야?」
+        PRINTFORMW 「주인님이 원한다면 상관없지만~」
+        DRAWLINE
+    ;임O 주임O 친 복
+    ELSEIF TALENT:140 && CFLAG : 70 == 1 || TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「아이에게 줄 분량이 주는거 아니야?」
+        PRINTFORMW 「조금만 자제 해줬으면해 주인님....」
+        DRAWLINE
+    ;임O 주임 O 친, 복, 연, 망, x
+    ELSEIF TALENT : 140
+        DRAWLINE
+        PRINTFORMW 「아이에게 줄 분량이 주는거 아니야?」
+        PRINTFORMW 「뱃속의 아기는 굶어도 상관없다는 건가?」
+        DRAWLINE
+    ;임X
+    ELSE
+        DRAWLINE
+        PRINTFORML 「아이도 없는데 어째서?」
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;사정 CFLAG:5305
+;-------------------------------------------------
+@K249_MESSAGE_ORGASM_11
+;처음
+IF CFLAG:5305 == 0
+    ;남자 조 조
+    IF TALENT:120 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 「조...조온!....나....뭔가....나와 버렷!」
+        PRINTFORMW 『시원하게 싸버렸네 오빠~』
+        DRAWLINE
+    ;후 조 조
+    ELSEIF TALENT:121 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 『여자인데도 이렇게 싸버린거야?』
+        PRINTFORMW 「조온......그만.......」
+        DRAWLINE
+    ;남자 연 망
+    ELSEIF TALENT:120 && (TALENT : 152 || TALENT : 151) 
+        DRAWLINE
+        PRINTFORMW 「주인니이임!.....나....뭔가......나와왓!」
+        DRAWLINE
+    ;남 친 복
+    ELSEIF TALENT:120 && (TALENT : 150 || TALENT : 160) 
+        DRAWLINE
+        PRINTFORMW 「싫어엇!....뭐....뭔가......나와버려엇!」
+        DRAWLINE
+    ;남
+    ELSEIF TALENT:120
+        DRAWLINE
+        PRINTFORMW 「싫엇───!」
+        DRAWLINE
+    ;후 연 망
+    ELSEIF TALENT:121 && (TALENT : 152 || TALENT : 151) 
+        DRAWLINE
+        PRINTFORMW 「주인니이임!...제가.....봐주세요오오!」
+        DRAWLINE
+    ;후 친 복
+    ELSEIF TALENT:121 && (TALENT : 150 || TALENT : 160) 
+        DRAWLINE
+        PRINTFORMW 「안돼엣! 나.....여잔데...보지마앗!」
+        DRAWLINE
+    ;후
+    ELSEIF TALENT:121
+        DRAWLINE
+        PRINTFORMW 「앗───?! 거짓말.....나 여자인데도....」
+        DRAWLINE
+    ENDIF
+    CFLAG:5305 = 1
+ELSE
+    ;남자 조 조
+    IF TALENT:120 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 「조...조온!....나....정액....나와 버렷!」
+        PRINTFORMW 『시원하게 싸버렸네 오빠~』
+        DRAWLINE
+    ;후 조 조
+    ELSEIF TALENT:121 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 「여자인데도 이렇게 싸버린거야?」
+        PRINTFORMW 「조온......그만.......」
+        DRAWLINE
+    ;남자 연 망
+    ELSEIF TALENT:120 && (TALENT : 152 || TALENT : 151) 
+        DRAWLINE
+        PRINTFORMW 「주인니이임!.....나....정액.....ㄴ......나와왓!」
+        DRAWLINE
+    ;남 친 복
+    ELSEIF TALENT:120 && (TALENT : 150 || TALENT : 160) 
+        DRAWLINE
+        PRINTFORMW 「싫어엇!....나.....정액......나와버려엇!」
+        DRAWLINE
+    ;후 연 망
+    ELSEIF TALENT:121 && (TALENT : 152 || TALENT : 151) 
+        DRAWLINE
+        PRINTFORMW 「주인니이임!...자...자지로 가벼리는거.....봐주세요오오!」
+        DRAWLINE
+    ;후 친 복
+    ELSEIF TALENT:121 && (TALENT : 150 || TALENT : 160) 
+        DRAWLINE
+        PRINTFORMW 「안돼엣! 여잔데...자지로 가는거...보지마앗!」
+        DRAWLINE
+    ;후
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「크읏....이딴거......」
+        DRAWLINE
+    ENDIF
+ENDIF
+;-------------------------------------------------
+;방뇨 CFLAG:5306
+;방뇨 또는 강제방뇨 커맨드시에는 호출되지 않는다
+;-------------------------------------------------
+@K249_MESSAGE_ORGASM_12
+IF SELECTCOM == 111 || SELECTCOM == 620
+    RETURN 1
+ELSEIF TALENT : 151 || TALENT : 152
+    DRAWLINE
+    PRINTFORMW 「안됏! 참을 수 없어! 아아앗!」
+    DRAWLINE
+ELSEIF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 「안됏! 오줌 세어버려엇! 보지마앗!」
+    DRAWLINE
+ELSE
+    DRAWLINE
+    PRINTFORMW 「으읏.....보지마......」
+    DRAWLINE
+ENDIF
+;--------------------------------
+;C슨도메
+;-------------------------------
+@K249_MESSAGE_ORGASM_20
+;c슨도메
+IF CFLAG:5300 == 1 && NOWEX:20 >= 1 && NOWEX:0 == 0 && FLAG:11 == 2
+    IF EX:20 >= 11 && ASSIPLAY && ASSINO() == 248  && TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152  
+        DRAWLINE
+        PRINTFORMW 「가고싶어! 조온! 제발!」
+        PRINTFORMW 『조금더 애원해봐~』
+        DRAWLINE
+    ELSEIF EX:20 >= 11 && TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152 
+        DRAWLINE
+        PRINTFORMW 「멈추지 말아주세요! 가고싶어!」
+        DRAWLINE
+    ELSEIF EX:20 <= 5 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 「간다!......아?」
+        PRINTFORMW 『♩~~♬~~♪』
+        DRAWLINE
+    ELSEIF EX:20 > 5 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 「조온.....적당히....!」
+        PRINTFORMW 『응? 뭐가?』
+        DRAWLINE
+    ELSEIF EX:20 <= 5
+        DRAWLINE
+        PRINTFORMW 「간다......아?」
+        DRAWLINE
+    ELSEIF EX:20 > 5
+        DRAWLINE
+        PRINTFORMW 「읏.....왜?」
+        DRAWLINE
+    ENDIF 
+ENDIF
+;---------------------------
+;V슨도메
+;------------------------------
+@K249_MESSAGE_ORGASM_21
+
+;V슨도메
+IF CFLAG:5301 == 1 && NOWEX:21 >= 1 && NOWEX:1 == 0 && FLAG:11 == 2
+    IF EX:21 >= 11 && ASSIPLAY && ASSINO() == 248 && TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152 
+        DRAWLINE
+        PRINTFORMW 「조온! 부탁이야! 가고...싶어..!」
+        PRINTFORMW 『음....싫은데~?』
+        PRINTFORMW 「제발!」
+        DRAWLINE
+    ELSEIF EX:21 >= 11 && TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152 
+        DRAWLINE
+        PRINTFORMW 「제발!....가게 해 주세요! 멈추지 말아아줘!」
+        DRAWLINE
+    ELSEIF EX:21 <= 5 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 『얼마나 참을 수 있을지 볼까?』
+        PRINTFORMW 「지금 뭘하려는....」
+        DRAWLINE
+    ELSEIF EX:21 > 5 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 『슬슬 한계 같은데~』
+        PRINTFORMW 「적당히...하는게....좋을거야....조온....」
+        DRAWLINE
+    ELSEIF EX:21 <= 5
+        DRAWLINE
+        PRINTFORMW 「...이번엔 또 뭘하려는 거지?」
+        DRAWLINE
+    ELSEIF EX:21 > 5
+        DRAWLINE
+        PRINTFORMW 「흣...이....이런건.....아무렇지도....윽.....」
+        DRAWLINE
+    ENDIF 
+ENDIF
+;-------------------------------
+;A슨도메
+;------------------------------
+@K249_MESSAGE_ORGASM_22
+
+;A슨도메
+IF CFLAG:5302 == 1 && NOWEX:22 >= 1 && NOWEX:2 == 0 && FLAG:11 == 2
+    IF EX:22 >= 11 && ASSIPLAY && ASSINO() == 248 && TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152 
+        DRAWLINE
+        PRINTFORMW 『설마 엉덩이로 가고 싶은거야?』
+        PRINTFORMW 「엉덩이라도 좋으니까 빨리 보내줘!」
+        PRINTFORMW 『변태~』
+        DRAWLINE
+    ELSEIF EX:22 >= 11 && TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152 
+        DRAWLINE
+        PRINTFORMW 「제발....엉덩이....멈추지 말아주세요!」
+        DRAWLINE
+    ELSEIF EX:22 <= 5 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 『얼마나 버틸지 내기해볼래?』
+        PRINTFORMW 「뭔 짓을 할생각이야?」
+        DRAWLINE
+    ELSEIF EX:22 > 5 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 『생각보다 잘버티는데~』
+        PRINTFORMW 「읏....이런거....재미없어...조온....」
+        DRAWLINE
+    ELSEIF EX:22 <= 5
+        DRAWLINE
+        PRINTFORMW 「......뭐.....야?」
+        DRAWLINE
+    ELSEIF EX:22 > 5
+        DRAWLINE
+        PRINTFORMW 「흣.....이런짓.....해서....느낄거라고.....생각해?」
+        DRAWLINE
+    ENDIF 
+ENDIF
+;----------------------------------
+;B슨도메
+;---------------------------------
+@K249_MESSAGE_ORGASM_23
+
+;B슨도메
+IF CFLAG:5303 == 1 && NOWEX:23 >= 1 && NOWEX:3 == 0 && FLAG:11 == 2
+    IF EX:23 >= 11 && ASSIPLAY && ASSINO() == 248 && TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152 
+        DRAWLINE
+        PRINTFORMW 『조온! 제발! 한번만 봐줘!』
+        PRINTFORMW 「응? 잘못한게 뭐가 있다고 봐달라는거야?」
+        DRAWLINE
+    ELSEIF EX:23 >= 11 && TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152 
+        DRAWLINE
+        PRINTFORMW 「가슴으로 가고싶어요! 제발!」
+        DRAWLINE
+    ELSEIF EX:23 <= 5 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 『가슴으로는 얼마나 버틸려나~』
+        PRINTFORMW 「....적당히 하라고....조온...」
+        DRAWLINE
+    ELSEIF EX:23 > 5 && ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 『이제 보내줄까?』
+        PRINTFORMW 「...이런거.....뭐가....재미있다고....」
+        DRAWLINE
+    ELSEIF EX:23 <= 5
+        DRAWLINE
+        PRINTFORMW 「...이번엔....가슴으로?」
+        DRAWLINE
+    ELSEIF EX:23 > 5
+        DRAWLINE
+        PRINTFORMW 「흑...몇번을....해도....나는 지지 않아....」
+        DRAWLINE
+    ENDIF 
+ENDIF
+
+
+
+;-------------------------------------------------
+;질내 사정 시늉(엉덩이, 균열)으로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_8
+IF PALAM : 13 >= PALAMLV : 3  && (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152)
+    DRAWLINE
+    PRINTFORMW 「이런 장난 말고 직접 싸줬으면 좋겠는데......」
+    DRAWLINE
+ELSE
+    DRAWLINE
+    PRINTFORMW 「....뭐하는 짓이야?」
+    DRAWLINE
+ENDIF
+
+;-------------------------------------------------
+;애널 섹스로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_9
+;주인의 페니스
+IF TFLAG:35
+    IF TALENT:152 || TALENT :151
+        DRAWLINE
+        PRINTFORMW 「하항♥ 엉덩이! 진한거! 들어와왓!」
+        DRAWLINE
+    ELSEIF TALENT:150 || TALENT:160
+        DRAWLINE
+        PRINTFORMW 「주인님?! 잠깐! 거기는!」
+        DRAWLINE
+    ELSE 
+        DRAWLINE
+        PRINTFORMW 「지금 어디다 싸는.....」
+        DRAWLINE
+        ENDIF
+ELSEIF TFLAG:36 
+    IF ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 『읏...! 기분좋아...싼닷!』
+        PRINTFORMW 「자...잠시만 조온! 지금 어디다.....!」
+        DRAWLINE
+    ELSE 
+        DRAWLINE
+        PRINTFORMW 「지금 어디다 싸는.....」
+        DRAWLINE
+    ENDIF
+ENDIF
+;-------------------------------------------------
+;섹스로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_10
+;주인의 페니스
+IF TFLAG:35
+    IF TALENT:151 || TALENT:152
+        DRAWLINE
+        PRINTFORML 「....주인님과의 아기 생겨버리는 걸까...」
+        PRINTFORMW 「그건 조금 기쁠수도..」
+        DRAWLINE
+    ELSEIF TALENT:150 || TALENT:160
+        DRAWLINE
+        PRINTFORMW 「...주인님의 정자....」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「안에 싸다니.....아기가 생기면 어쩔생각이야!」
+        DRAWLINE
+    ENDIF
+;조온이 조수플
+ELSEIF ASSIPLAY && ASSINO() == 248
+    DRAWLINE
+    PRINTFORMW 「조...조온....자...잠시....으읏────!」
+    PRINTFORMW 『하아....하아.....하아......』
+    DRAWLINE
+;그 외
+ELSE
+    DRAWLINE
+    PRINTFORMW 「안돼! 아기가....생겨버려엇!」
+    DRAWLINE
+ENDIF
+ 
+;-------------------------------------------------
+;입으로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_11
+IF TFLAG:11 > 0 || TFLAG:29 > 0
+;펠, 파펠, 아마, 69, W펠, 덥펠, 기목[펠2연속]
+    IF SELECTCOM == 41 || SELECTCOM == 209 || SELECTCOM == 303 || SELECTCOM == 304 || SELECTCOM == 602 || SELECTCOM == 604 || SELECTCOM == 230
+        ; 정중3이상 
+        IF ABL:31 >= 3 && (CFLAG:8002 < 5 || FLAG:11 == 2)
+            DRAWLINE
+            PRINTFORMW 「아....정액....맛있어......」
+            PRINTFORMW 「지금 까지 먹었던것과 비교 할수 없을정도야....」
+            DRAWLINE
+            CFLAG:8002 = 5
+        ;연망
+        ELSEIF (TALENT : 151 ||TALENT:152) && (CFLAG:8002 < 4 || FLAG:11 == 2)
+            DRAWLINE
+            PRINTFORMW 「응.....으읍..........후....」
+            PRINTFORMW 「주인님의 정액....맛있어」
+            DRAWLINE
+            CFLAG:8002 = 4
+        ;친복
+        ELSEIF (TALENT : 150 ||TALENT:160) && (CFLAG:8002 < 3 || FLAG:11 == 2)   
+            DRAWLINE
+            PRINTFORMW 「응……으욱!? 으읍....읍...꿀꺽......하아....하아.... 」
+            PRINTFORMW 「조금 힘들지만 주인님이 원한다면...노력해 볼게....주인님의 정액......맛있으니까.....」
+            CFLAG:8002 = 3
+            DRAWLINE
+        ;봉3
+        ELSEIF ABL:13 >= 3 && (CFLAG:8002 < 2 || FLAG:11 == 2)
+            DRAWLINE
+            PRINTFORMW 「읍... 으으읍!?...으읍...읍...꿀꺽....켁......」
+            PRINTFORMW 시온은 토하지 말라는 %CALLNAME:MASTER%의 명령을 듣고 힘겹게 정액을 삼켰다……
+            CFLAG:8002 = 2
+            DRAWLINE
+        ;각X
+        ELSEIF CFLAG:8002 < 1 || FLAG:11 == 2
+            DRAWLINE
+            PRINTFORMW 「읏... 으으읍!? 우웩.....퉷.....」
+            PRINTFORMW 시온은 갑작스럽게 들어온 정액을 토해했다.
+            PRINTFORMW 「내가 아무리 못먹고 살았다고 해도 이딴걸 먹을까 보냐...!」
+            DRAWLINE
+            CFLAG:8002 = 1
+        ENDIF
+    ;파, 세파, 덥파, 69파 
+    ELSEIF SELECTCOM == 42 || SELECTCOM == 208 || SELECTCOM == 306 || SELECTCOM == 603
+        ;빈 복 망 친 연
+        IF (TALENT : 150 || TALENT : 151 || TALENT : 152 || TALENT :160) && (CFLAG:8003 <= 2 || FLAG:11 == 2)  
+            IF TALENT : 111
+                DRAWLINE
+                PRINTFORMW 「이런 가슴이라도...기분좋은거같아 다행이다......」
+                DRAWLINE
+            ; 복 망 친 연
+            ELSE
+                DRAWLINE
+                PRINTFORMW 「가슴....기분좋아?」
+                DRAWLINE
+            ENDIF
+            CFLAG:8003 == 2
+        ELSEIF CFLAG:8003 <= 1 || FLAG:11 == 2
+            ;빈 복X
+            IF TALENT:111
+                DRAWLINE
+                PRINTFORMW 「가슴이면 전부 좋은가 보지?」
+                DRAWLINE
+            ;복X
+            ELSE
+                DRAWLINE
+                PRINTFORMW 「이런게 뭐가 좋다고....」
+                DRAWLINE
+            ENDIF
+            CFLAG:8003 = 1
+        ENDIF
+    ENDIF
+ENDIF
+;-------------------------------------------------
+;손으로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_12
+;시온이 조수플
+IF ASSIPLAY && ASSINO() == 248
+    PRINTFORMW 『자...잠시만...!』
+    PRINTFORMW 「으...끈적거려...,」
+ELSE
+    IF TALENT:151 || TALENT:152
+        DRAWLINE
+        PRINTFORMW 「내손으로 잔뜩 즐겨준 모양이네...」
+        DRAWLINE
+    ELSEIF  TALENT:150 || TALENT :160
+        DRAWLINE
+        PRINTFORMW 「내손...기분 나쁘지 않았어? 」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「우욱....더럽고 냄새나」
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;커닐링구스 강제로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_13
+DRAWLINE
+PRINTFORMW 「으읍?!..으으읍!...으욱....」
+DRAWLINE
+
+;-------------------------------------------------
+;키스로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_14
+
+
+IF ASSIPLAY && ASSINO() == 248
+    DRAWLINE
+    PRINTFORMW 「키스....기분좋았어 조온?」
+    PRINTFORMW 『.....응』
+    DRAWLINE
+ELSEIF TALENT:152 || TALENT:151
+    DRAWLINE
+    PRINTFORMW 「응....읍...츄릅....그정도로 내 키스가 기분이 좋았어?...후훗」
+    DRAWLINE
+ELSEIF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 「응...읍...츄릅.....」
+    PRINTFORMW 「키스로도 갈 수 있는거야?....대단하네」
+    DRAWLINE
+ELSE
+    DRAWLINE
+    PRINTFORMW 「....키스만으로 가버린겨야?」
+    PRINTFORMW 「....한심해」
+    DRAWLINE
+ENDIF
+
+;-------------------------------------------------
+;머리카락으로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_16
+
+IF ASSIPLAY && ASSINO() == 248
+    DRAWLINE
+    PRINTFORMW 「조온....내 머리카락 기분좋았어?」
+    PRINTFORMW 『기분좋았어.....』
+    DRAWLINE
+ELSEIF TALENT:152 || TALENT:151
+    DRAWLINE
+    PRINTFORMW 「주인님이 원한다면 어디든 상관없어...」
+    PRINTFORMW 「머리카락이든 손이든 입이든...다」
+    DRAWLINE
+ELSEIF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 「내 머리카락 기분 나쁘지 않았어?」
+    PRINTFORMW 「좋았다고? 그럼 다행이다....」
+    DRAWLINE
+ELSE
+    DRAWLINE
+    PRINTFORMW 「하아.....」
+    PRINTFORMW 「머리감을때 얼마나 힘든지 알기나해?」
+    DRAWLINE
+ENDIF
+;-------------------------------------------------
+;발로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_19
+
+IF ASSIPLAY && ASSINO() == 248
+    DRAWLINE
+    PRINTFORMW 『하아....하아...발....기분좋았어...』
+    PRINTFORMW 「....변태 같아.....조온」
+    DRAWLINE
+ELSEIF TALENT:152 || TALENT:151
+    DRAWLINE
+    PRINTFORMW 「내 발...기분좋지?」
+    PRINTFORMW 「연습한 보람이.....」
+    PRINTFORMW 「아...아니야!!!」
+    DRAWLINE
+ELSEIF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 「내 발...기분 좋다고?」
+    PRINTFORMW 「헤헷....기쁘다..」
+    DRAWLINE
+ELSE
+    DRAWLINE
+    PRINTFORMW 「내 발로 느낀다고?」
+    PRINTFORMW 「다음은 내가 보는 것만으로도 느낄 생각이야?」
+    PRINTFORMW 「변태 같아..」
+    DRAWLINE
+ENDIF
+
+;-------------------------------------------------
+;겨드랑이로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_20
+
+IF ASSIPLAY && ASSINO() == 248
+    DRAWLINE
+    PRINTFORMW 「조....조온?」
+    PRINTFORMW 『겨드랑이 기분좋아...』
+    DRAWLINE
+ELSEIF TALENT:152 || TALENT:151
+    DRAWLINE
+    PRINTFORMW 「내 겨드랑이 기분좋지?」
+    PRINTFORMW 「주인님이 기뻐하는걸 보면 행복해...」
+    DRAWLINE
+ELSEIF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 「겨드랑이...좋아?」
+    PRINTFORMW 「좋았다고?...후훗」
+    DRAWLINE
+ELSE
+    DRAWLINE
+    PRINTFORMW 「...후우」
+    PRINTFORMW 「겨드랑이는 홍백의 무녀한테 가서 부탁하라고....」
+    DRAWLINE
+ENDIF
+
+;-------------------------------------------------
+;펠라로 사정 후, 불결을 핥아낼 때
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_21
+PRINTFORMW 「츄릅....으음....파하......」
+
+;-------------------------------------------------
+;육변기로 사정
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_24
+;PRINTFORMW 「육변기로 사정시켰을 시의 대사입니다」
+
+;-------------------------------------------------
+;가슴으로 조교자가 사정(핥지 못함)
+;-------------------------------------------------
+@K249_MESSAGE_EJAC_PLAYER_29
+;PRINTFORMW 「가슴으로 조교자가 사정했을 시의 대사입니다」
+
+;================================
+; 조교 명령어 대사 (CFLAG : 8010~)
+;=================================
+;-------------------------------------------------------------
+;애무
+;-------------------------------------------------------------
+@K249_MESSAGE_COM_0
+
+IF RESULT : 1 == 0
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        ;연모
+        IF MARK :2 >= 2
+            DRAWLINE
+            PRINTFORMW 「조온......」
+            PRINTFORMW 『걱정하지마』
+            PRINTFORMW 『무서워 하지말고 그냥 나한테 몸을 맡겨줘..』
+            DRAWLINE
+        ;그 굴복 2 2하 조온
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「조온......」
+            PRINTFORMW 『상냥하게 만져 줄테니까』
+            PRINTFORMW 『겁먹을 필요 없어』
+            DRAWLINE
+        ENDIF
+    ;그외 조수
+    ELSEIF ASSIPLAY
+        DRAWLINE
+        PRINTFORMW 「그 사람에게 만져지는거 보단 나을려나....」
+        DRAWLINE
+    ;주인이 직접
+    ELSE
+        ;연모
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE
+            PRINTFORMW 「주인님....」
+            ;야외
+            IF TFLAG : 151 == 1
+                PRINTFORMW 「야외라서...」
+            ;실내
+            ELSE
+                PRINTFORMW 「처음이라....」
+            ENDIF
+            PRINTFORMW 「긴장되는데....」
+            PRINTFORMW 「조금만더....상냥하게.....해줘」
+            DRAWLINE
+        ELSEIF MARK : 2 >= 2
+            IF ABL:MASTER:12 == 5
+                DRAWLINE
+                PRINTFORMW 「응....읏.....조금만.....상냥하게.....」
+                DRAWLINE 
+            ELSEIF MARK : 2 >= 2
+                DRAWLINE
+                PRINTFORMW 「응........읏.......으.......」
+                DRAWLINE 
+            ENDIF
+        ;굴복 2 이하
+        ELSEIF MARK : 2 <= 2
+            IF ABL:MASTER:12 == 5
+                DRAWLINE
+                PRINTFORMW 「응....읏.....생각보다......잘하네....」
+                DRAWLINE 
+            ELSE
+                DRAWLINE
+                PRINTFORMW 「각오는 하고 만지는 거지?」
+                DRAWLINE 
+            ENDIF
+        ENDIF
+    ENDIF
+ELSE
+    ; 욕정8 조수
+    IF  PALAM:13 >= PALAMLV:8 && ASSIPLAY && (TALENT : 150 || TALENT : 160)
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 전신이 성감대 처럼 민감해진 시온은 손대는 것 만으로 느끼고 있다
+            PRINTFORMW 「아앗──!조....조온!....그...그만!」
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 전신이 성감대 처럼 민감해진 시온은 손대는 것 만으로 느끼고 있다
+            PRINTFORMW 「아앗──!더...더....이상은!」
+            DRAWLINE 
+        ENDIF   
+    ; 욕정8 
+    ELSEIF PALAM:13 >= PALAMLV:8 && (TALENT:150 || TALENT : 160)
+        ;연모
+        DRAWLINE 
+        PRINTFORMW 「하앗!──주인님!...더....더...만져주세요....!」
+        PRINTFORMW 전신이 성감대 처럼 민감해진 시온은 손대는 것 만으로 느끼고 있다
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 「읏──조온..!」
+            PRINTFORMW 『기분좋아?』
+            DRAWLINE
+        ELSE
+            IF TALENT : 150 || TALENT : 160
+                IF ABL:ASSI:12 == 5
+                    DRAWLINE
+                    PRINTFORMW 「으응!───」
+                    PRINTFORMW 「주인님이.....아니면...싫은..데....」
+                    PRINTFORMW 「너무....기분...좋아!」
+                    DRAWLINE
+                ELSE
+                    DRAWLINE
+                    PRINTFORMW 「주인님이.....아니면...싫은..데....」    
+                    DRAWLINE
+                ENDIF
+            ENDIF
+        ENDIF
+    ELSEIF TALENT : 153 || TALENT : 162
+        DRAWLINE
+        PRINTFORMW 「천천히....만져줘.....주인님의 열로....나를....녹여줘.....」
+        DRAWLINE
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「....내몸...기분좋아?.....」
+        DRAWLINE
+    ELSEIF MARK:2 >= 2
+        DRAWLINE
+        PRINTFORMW 「응....으읏.....하항......」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「적당히 하고 손 때시지?」
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;-------------------------------------------------------------
+;커닐링구스
+;-------------------------------------------------------------
+@K249_MESSAGE_COM_1
+
+IF RESULT : 1 == 1
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        ;굴복2
+        IF MARK :2 >= 2
+            DRAWLINE
+            PRINTFORMW 「조온..!..너...지금....어딜....」
+            PRINTFORMW 『응? 기분좋지 않아?』
+            PRINTFORMW 「조...좋지만....」
+            DRAWLINE
+        ;그 굴복 2 이하 조온
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「조온..!...지금...어딜 빠는..!」
+            PRINTFORMW 『너무 맛있어 보여서 그만...』
+            PRINTFORMW 「뭐라는...읏!───」
+            DRAWLINE
+        ENDIF
+    ;그외 조수
+    ELSEIF ASSIPLAY
+        DRAWLINE
+        PRINTFORMW 「자....잠시만....그런곳.....빨면.....으흣──!」
+        DRAWLINE   
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「주인님....」
+        ;야외
+        IF TFLAG : 151 == 1
+            PRINTFORMW 「야외라서...」
+        ;실내
+        ELSE
+            PRINTFORMW 「처음이라....」
+        ENDIF
+        PRINTFORMW 「그런데....」
+        PRINTFORMW 「조금만더....살살」
+        DRAWLINE
+    ELSEIF MARK : 2 >= 2
+        DRAWLINE
+        PRINTFORMW 「핫!──으읏───하핫!」
+        DRAWLINE 
+    ;굴복 2 이하
+    ELSEIF MARK : 2 <= 2
+        DRAWLINE
+        PRINTFORMW 「이....이런....거....기분....좋을리가.....」
+        DRAWLINE 
+    ENDIF
+ELSE
+    ;C쾌락경험 50이상,C감각 2이상 혹은 C쾌 2 조수, 연모
+    IF EXP:41 >=50 && (ABL:0 >=2 || PALAM:0 >= PALAMLV:2) && ASSIPLAY && (TALENT : 150 || TALENT : 160)
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조온!...거기....그렇게.....빨면.....!」
+            PRINTFORMW 『기분좋아져?』
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아...앙돼..거...거기....그..이상....빨면....」
+            PRINTFORMW %CALLNAME:ASSI%는 시온의 반응이 재미있는지 더욱 강하게 자극을 주기 시작했다.
+            DRAWLINE 
+        ENDIF   
+    ;C쾌락경험 50이상,C감각 2이상 혹은 C쾌 2 연모
+    ELSEIF EXP:41 >=50 && (ABL:0 >=2 || PALAM:0>= PALAMLV:2) && (TALENT:150 || TALENT : 160 )    
+            DRAWLINE 
+            PRINTFORMW 「앗!──거기!....기분좋아!...더..쌔게!...」
+            PRINTFORMW 시온은 %CALLNAME:MASTER%의 뒤통수에 손을 올리고 느끼고 있다.
+            DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 「조온..!...거기...민감하니까...!」
+            DRAWLINE
+        ELSE 
+            DRAWLINE
+            PRINTFORMW 「으응.....주인님이.....아니...면....싫어...」
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 153 || TALENT : 162
+        DRAWLINE
+        PRINTFORMW 「주인님......클리....더....괴롭혀줘.......」
+        DRAWLINE
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「으읏.....조금만....더....쌔게....빨아줘.......」
+        DRAWLINE
+    ELSEIF MARK:2 >= 2
+        DRAWLINE
+        PRINTFORMW 「읏.....조금만....더.....」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「흣...!.....이제......그만하는게...좋을걸?」
+        DRAWLINE
+    ENDIF
+ENDIF
+;-------------------------------------------------------------
+;에널애무
+;-------------------------------------------------------------
+@K249_MESSAGE_COM_2
+IF RESULT : 1 == 1
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        ;연모
+        IF MARK :2 >= 2
+            DRAWLINE
+            PRINTFORMW 「꺄앗!..조온....너...어딜만지는...!」
+            PRINTFORMW 『응? 내가 뭐가?』
+            DRAWLINE
+        ;그 굴복 2 이하 조온
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「조온..!..너....지금...!」
+            PRINTFORMW 시온은 자신의 항문을 만지는 조온의 손가락에서 벗어나려고 하고있다.
+            DRAWLINE
+        ENDIF
+    ;그외 조수
+    ELSEIF ASSIPLAY
+        DRAWLINE
+        PRINTFORMW 「지금...어디를....만지는....」
+        PRINTFORMW 시온은 자신의 항문을 만지는 %CALLNAME:ASSI%의 손가락을 두려워 하고 있다.
+        DRAWLINE
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「꺅...?...주...주인님...?」
+        ;야외
+        IF TFLAG : 151 == 1
+            PRINTFORMW 「야외에서....」
+        ;실내
+        ELSE
+            PRINTFORMW 「설마....」
+        ENDIF
+        PRINTFORMW 「그런곳....」
+        PRINTFORMW 「만지면.....안되는데....」
+        DRAWLINE
+    ELSEIF MARK : 2 >= 2
+        DRAWLINE
+        PRINTFORMW 「앗?──거...거기는?」
+        DRAWLINE 
+    ;굴복 2 이하
+    ELSEIF MARK : 2 <= 2
+        DRAWLINE
+        PRINTFORMW 「지금 어딜 만지는거야!」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%의 손가락에 격렬이 저항하고있다.
+        DRAWLINE 
+    ENDIF
+ELSE
+    ;a쾌락경험 50이상,a감각 2이상 혹은 a쾌 2 조수
+    IF EXP:43 >=50 && (ABL:2 >=2 || PALAM:2 >= PALAMLV:2) && ASSIPLAY && (TALENT : 150 || TALENT : 160)
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조온.....조금만....천천히.....」
+            PRINTFORMW 『설마 엉덩이로 느끼고 있는거야?』
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「거기....더러운 곳인데.....기분좋아....」
+            PRINTFORMW 시온의 항문은 %CALLNAME:ASSI%의 손가락 만으로 쾌락을 느끼고 있다.
+            DRAWLINE 
+        ENDIF   
+    ;a쾌락경험 50이상,a감각 2이상 혹은 a쾌 2
+    ELSEIF EXP:43 >=50 && (ABL:2 >=2 || PALAM:2 >= PALAMLV:2) && (TALENT:150 || TALENT : 160 )
+            DRAWLINE 
+            PRINTFORMW 「으앗──! 거기……ㅆ!」
+            PRINTFORMW 시온은 확실하게 항문으로의 쾌감을 느끼고 있다.
+            DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 「조온..!...거기...더러운 곳이라고...!..말했는뎃...!」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「거기....더러운....곳....이라고..」
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 153 || TALENT : 162
+        DRAWLINE
+        PRINTFORMW 「주인님이 원한다면 언제든지...써줘.....」
+        DRAWLINE
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「거기....만지면...기분좋아?」
+        DRAWLINE
+    ELSEIF MARK:2 >= 2
+        DRAWLINE
+        PRINTFORMW 「으읏...!....아프다고....」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「그런곳....더럽다고!」
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;-------------------------------------------------------------
+;가슴애무
+;-------------------------------------------------------------
+@K249_MESSAGE_COM_3
+IF RESULT : 1 == 1
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        ;연모
+        IF MARK :2 >= 2
+            DRAWLINE
+            PRINTFORMW 「조온...지금 뭐하는 거야?」
+            PRINTFORMW 『음....만지면 커진다면서?』
+            DRAWLINE
+        ;그 굴복 2 이하 조온
+        ELSE
+            DRAWLINE
+            PRINTFORMW 『가슴 만지면 커진다는거...믿고있어?』
+            PRINTFORMW 「장난도 정도것.....」
+            DRAWLINE
+        ENDIF
+    ;그외 조수
+    ELSEIF ASSIPLAY
+        DRAWLINE
+        PRINTFORMW 「가슴....비비지...마!」
+        PRINTFORMW %CALLNAME:ASSI%은 시온의 가슴의 감촉을 즐기고있다.
+        DRAWLINE
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「주인님...」
+        ;빈유
+        IF TALENT : 111 == 1
+            PRINTFORMW 「내 가슴...작지않아?」
+            PRINTFORMW 「그래도....」
+        ENDIF 
+        PRINTFORMW 「내....가슴....」
+        PRINTFORMW 「기분 좋지?...」
+        DRAWLINE
+    ELSEIF MARK : 2 >= 2
+        IF TALENT : 111 
+            DRAWLINE
+            PRINTFORMW 시온은  자신의 가슴을 만지고 있는 %조사처리(CALLNAME:MASTER,"을")% 보며 말했다. 
+            PRINTFORMW 「내거....작다고 생각안해?」
+            DRAWLINE 
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「가슴...기분좋아?」
+            PRINTFORMW 시온은  자신의 가슴을 만지고 있는 %CALLNAME:MASTER%을 보며 얼굴을 붉히며 말했다.
+            DRAWLINE 
+        ENDIF
+    ;굴복 2 이하
+    ELSEIF MARK : 2 <= 2
+        DRAWLINE
+        PRINTFORMW 「....변태같아......」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%의 얼굴을 바라보며 말했다
+        DRAWLINE 
+    ENDIF
+ELSE
+    ;B쾌락경험 50이상,B감각 2이상 혹은 B쾌 2 조수
+    IF EXP:44 >=50 && (ABL:3 >=2 || PALAM:3 >= PALAMLV:2) && ASSIPLAY && (TALENT : 150 || TALENT : 160)
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 『젖꼭지가 너무 단단해진거 아니야?』
+            PRINTFORMW 「거기.. 만지면───!」
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「하아....하아.....이제...」
+            PRINTFORMW 시온은 %CALLNAME:ASSI%의 손을 느끼고 있다.
+            DRAWLINE 
+        ENDIF   
+    ;B쾌락경험 50이상,B감각 2이상 혹은 B쾌 2
+    ELSEIF EXP:44 >=50 && (ABL:3 >=2 || PALAM:3 >= PALAMLV:2) && (TALENT:150 || TALENT : 160 )
+        DRAWLINE 
+        PRINTFORMW 「하앗....으읏......」
+        PRINTFORMW 시온은 가슴에 %CALLNAME:MASTER%의 손이 닿을때 마다 뜨거운 한숨을 내뱉고 있다.
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 「조온..!...만진다고....커지는건....아니야....!」
+            PRINTFORMW 『해보기전 까지는 모르는거 아니겠어?』
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 153 || TALENT : 162
+        DRAWLINE
+        PRINTFORMW 「주인님의 손.....기분 좋아....더..만져줬으면...좋겠어...」
+        DRAWLINE
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「음.....읏......흣......」
+        DRAWLINE
+    ELSEIF MARK:2 >= 2
+        DRAWLINE
+        PRINTFORMW 「이런게 뭐가좋다고...」
+        PRINTFORMW 그렇게 말하고 있는 시온의 볼은 붉게 물들어 있다
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「....이런거 재미있어?」
+        DRAWLINE
+    ENDIF
+ENDIF
+;-------------------------------------------------------------
+;손가락 삽입으로 처녀 상실 
+;-------------------------------------------------------------
+@K249_MESSAGE_COM_4
+IF RESULT : 1 == 1
+    ;처녀상실
+    IF TALENT : 0 
+        ;조온 
+        IF ASSINO() == 248 && ASSIPLAY
+            DRAWLINE
+            PRINTFORMW 『피....언니....설마?』
+            PRINTFORMW 「.....닥쳐...」
+            PRINTFORMW 『.....자..잠시만....이건....』
+            PRINTFORMW 「.....실수...라고 얼버무릴셈이야?」
+            DRAWLINE
+        ;그외 조수
+        ELSEIF ASSIPLAY
+            DRAWLINE
+            PRINTFORMW 「........너....기대하는게....좋을거야」
+            PRINTFORMW 「내가 왜 최흉최악인지 알려주지....」
+            PRINTFORMW %CALLNAME:ASSI%은 시온의 경고에 겁먹은 표정을 짖고있다
+            DRAWLINE
+        ;주인이 직접
+        ;연모
+        ELSEIF TALENT : 150 || TALENT : 160
+            DRAWLINE
+            PRINTFORMW 「주인님...」
+            PRINTFORMW 「손가락도 좋았지만......」
+            PRINTFORMW 「진짜였으면....더....좋았을거야....」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「........너....기대하는게....좋을거야」
+            PRINTFORMW 「내가 왜 최흉최악인지 알려주지....」
+            DRAWLINE 
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------------------
+;키스한다
+;-------------------------------------------------------------
+@K249_MESSAGE_COM_6
+IF RESULT : 1 == 1
+;첫키스
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        DRAWLINE
+        PRINTFORMW 『설마 퍼스트 키스?』
+        PRINTFORMW 「조온.....그런건 하기전에 물어보라고」
+        DRAWLINE
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150
+        DRAWLINE
+        PRINTFORMW 「방금....첫키스였어....」
+        PRINTFORMW 「처음이 주인님이라서...다행이야....」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「첫키스를....이런식으로.......」
+        DRAWLINE 
+    ENDIF
+ELSE
+    IF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 「음....흣....흠」
+            PRINTFORMW 『가족끼리의 키스가 기분이 좋나봐?』
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 153 || TALENT : 162
+        DRAWLINE
+        PRINTFORMW 「주님니임...키스.....조금더어....」
+        DRAWLINE
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「엣? 이걸로 끝이야?」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「읍!.....우욱...!」
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;자위
+;-------------------------------------------------
+@K249_MESSAGE_COM_7
+
+IF RESULT : 1 == 1
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        DRAWLINE
+        PRINTFORMW 「이런...변태같은짓을 하라고?」
+        PRINTFORMW 『당연하지──』
+        PRINTFORMW 「조온...두고봐....」
+        DRAWLINE
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT :160
+        DRAWLINE
+        PRINTFORMW 「주인님...」
+        PRINTFORMW 「바보같은건 알고있었는데....」
+        PRINTFORMW 「이건 너무한거 아니야?」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「지금...나보고 뭘 하라고?」
+        DRAWLINE 
+    ENDIF
+ELSE
+    IF ABL:30 >= 3 
+        IF ASSIPLAY 
+            IF ASSINO() == 248
+                DRAWLINE
+                PRINTFORMW 「아앗!...기분좋아...!」
+                PRINTFORMW 『저기.....너무 즐기고 있는거 아니야?』
+                DRAWLINE
+            ENDIF
+        ELSEIF TALENT : 150 || TALENT : 160
+            DRAWLINE
+            PRINTFORMW 「하앗!...아앗!....주인님!....」
+            PRINTFORMW 「자위하면서...느끼는 나...봐줘어....」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「싫어...보여지고 있는데도....손이 멋대로....」
+            DRAWLINE
+        ENDIF
+    ELSE
+        IF ASSIPLAY 
+            IF ASSINO() == 248
+                DRAWLINE
+                PRINTFORMW 「...그렇게 보고있을거야?」
+                PRINTFORMW 『그러면 누워서 봐줄까?』
+                DRAWLINE
+            ENDIF
+        ELSEIF TALENT : 150 || TALENT : 160 
+            DRAWLINE
+            PRINTFORMW 「......내가 자워하는거....재미있어?」
+            PRINTFORMW 「그렇다면 상관없지만...」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「...이런거....계속해서...재미있어?」
+            DRAWLINE
+        ENDIF
+    ENDIF
+ENDIF
+
+;---------------------------------
+;아무것도 하지 않는다
+;--------------------------------------
+@K249_MESSAGE_COM_9
+
+IF ASSIPLAY  
+    IF ASSINO() == 248 && ( TEQUIP:25 || TEQUIP:20 || TEQUIP:35 || TEQUIP:30 )
+        DRAWLINE 
+        PRINTFORMW 「조온...이거...뺴줘」
+        PRINTFORMW 『방치플레이는 취향이 아닌가봐?』
+        DRAWLINE 
+    ELSEIF ASSINO() == 248 && PALAM:13 >= PALAMLV:3 
+        DRAWLINE 
+        PRINTFORMW 「조온....뭐라도...」
+        PRINTFORMW 『뭘 해주길 바라는걸까──?』
+        DRAWLINE 
+    ELSEIF ASSINO() == 248
+        DRAWLINE 
+        PRINTFORMW 「조온...뭐하는거야?」
+        PRINTFORMW 『음....쉬는 시간?』
+        DRAWLINE 
+    ENDIF
+ELSE
+    ;연모
+    IF TALENT : 150 || TALENT : 160
+        ;착용 도구 EX) 유두캡 클리캡 에널바이브 바이브
+        IF TEQUIP:25 || TEQUIP:20 || TEQUIP:35 || TEQUIP:30
+            DRAWLINE 
+            PRINTFORMW 「지금....뭐하는....」
+            PRINTFORMW 「방치플레이는.....싫은데.....」
+            DRAWLINE 
+        ;욕정 3
+        ELSEIF  PALAM:13 >= PALAMLV:3 
+            DRAWLINE 
+            PRINTFORMW 시온온 가랑이를 비비며 뜨거운 한숨을 내뱉고 있다.
+            PRINTFORMW 「하아....하아....바라보기만....할거야?」
+            DRAWLINE 
+        ELSE 
+            DRAWLINE 
+            PRINTFORMW 「그런식으로 바라만 보는거...」
+            PRINTFORMW 「생각보다 부끄러우니까 그만둬....」
+            DRAWLINE 
+        ENDIF
+    ELSE
+        ;착용 도구 EX) 유두캡 클리캡 에널바이브 바이브
+        IF TEQUIP:25 || TEQUIP:20 || TEQUIP:35 || TEQUIP:30
+            DRAWLINE 
+            PRINTFORMW 「읏...윽....흐읏.....」
+            PRINTFORMW 「쉬게..할거면....이런거....빼라고」
+            DRAWLINE 
+        ;욕정 3
+        ELSEIF  PALAM:13 >= PALAMLV:3 
+            DRAWLINE 
+            PRINTFORMW 「......쉬는시간야?」
+            PRINTFORMW 시온은 자신이 뭔가 부족하다는 눈빛으로 %조사처리(CALLNAME:MASTER,"를")% 바라보고 있다는걸 인지 못하고있다.
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「쉬는시간이야?」
+            PRINTFORMW 「질렸으면 그냥 풀어주는것도 나쁘지 않은데.」
+            DRAWLINE 
+        ENDIF
+    ENDIF
+ENDIF 
+;---------------------------------
+;로터
+;--------------------------------------
+@K249_MESSAGE_COM_10
+
+IF RESULT : 1 == 1
+    IF ASSIPLAY && ASSI > 0
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조온? 뭘 가져온거야?」
+            PRINTFORMW 『아..이거? 로터라고 하는건데........』
+            PRINTFORMW 조온은 로터에 대해 설명해 주었다.
+            PRINTFORMW 「조온?..지금..그걸...설마..?」
+            PRINTFORMW 설명을 들은 시온은 뒷걸음질 치며 도망가려 하고있다.
+            PRINTFORMW 『당연히 그 설마지──』
+            PRINTFORMW 조온은 그런 시온의 하반신을 누른뒤 로터를 고간위에다 눌렀다
+            PRINTFORMW 「아아앗!..떨려서....싫어엇!」
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「뭔 장난감을 가져온거지?」
+            PRINTFORMW %CALLNAME:ASSI%의 손에 들린 로터를 보고 뒷걸음질 하고 있다.
+            PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% 그런 시온의 하반신을 누른뒤 로터를 고간위에다 눌렀다
+            PRINTFORMW 「아아앗!..떨려서....싫어엇!」
+            DRAWLINE 
+        ENDIF
+    ELSE
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE 
+            PRINTFORMW 「...손에 들고있는건 뭐에 쓰는거야?」
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")%로터에 대해 설명해 주었다.
+            PRINTFORMW 「음.....진동이라....조금 무서울지도....」
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시곤의 고간위에 로터를 꽉 눌렀다.
+            PRINTFORMW 「아아앗!..떨려서....기분...좋아앗!」
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「뭔 장난감을 가져온거지?」
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 로터에 대해 설명해 주었다.
+            PRINTFORMW 설명을 들은 시온은 뒷걸음질 치며 도망가려 하고있다.
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 그런 시온의 하반신을 누른뒤 로터를 고간위에다 눌렀다
+            PRINTFORMW 「아아앗!..떨려서....싫어엇!」
+            DRAWLINE 
+        ENDIF
+    ENDIF
+ELSE
+    ;C쾌락경험 50이상,C감각 2이상 혹은 C쾌 2 조수, 연모
+    IF EXP:41 >=50 && (ABL:0 >=2 || PALAM:0 >= PALAMLV:2) && ASSIPLAY && (TALENT : 150 || TALENT : 160)
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조온..!..자극이..너무...!」
+            PRINTFORMW 『이런 작은 장난감에도 느끼는거야?』
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「하아앗!...아앙!...자극이..!」
+            PRINTFORMW 시온은 로터로의 자극에 온 몸을 떨며 느끼고있다.
+            DRAWLINE 
+        ENDIF   
+    ;C쾌락경험 50이상,C감각 2이상 혹은 C쾌 2 연모
+    ELSEIF EXP:41 >=50 && (ABL:0 >=2 || PALAM:0>= PALAMLV:2) && (TALENT:150 || TALENT : 160)
+        DRAWLINE 
+        PRINTFORMW 「햐앗!...주인님...이런것도...아앙!」
+        PRINTFORMW 「주인님이...훨씬...기분..좋아...」.
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조온..!...그거...그만둬...!」
+            DRAWLINE 
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE 
+        PRINTFORMW 「이런거...말고....직접...만져줘」
+        DRAWLINE 
+    ELSEIF MARK:2 >= 2
+        DRAWLINE    
+        PRINTFORMW 「하앗...아앗...조금..만...약하게...해줘...」
+        DRAWLINE 
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「흣...!...이런 장난감...기분 좋을리가...없잖아?」
+        DRAWLINE 
+    ENDIF
+ENDIF
+
+;---------------------------------
+;전기안마기
+;--------------------------------------
+@K249_MESSAGE_COM_11
+
+IF RESULT : 1 == 1
+    IF ASSIPLAY && ASSI > 0
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조온? 뭘 가져온거야?」
+            PRINTFORMW 『아..이거? 그냥 안마기야』
+            PRINTFORMW 『이게 기분이 좋다고 들어서 가져왔지~』
+            PRINTFORMW 「조온...기분 좋다는거...어느쪽으로 기분 좋다는거야?」
+            PRINTFORMW 시온은 뒷걸음질 치며 도망가려 하고있다.
+            PRINTFORMW 『응?』
+            PRINTFORMW 조온은 그런 시온의 하반신을 누른뒤 안마기를 고간위에다 올린 후
+            PRINTFORMW 『....당연히 이런쪽 아니겠어?』
+            PRINTFORMW 파워를 최강으로 올렸다
+            PRINTFORMW 「진동이?!...아아앗!....자...잠시만..!...멈춰...!」
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「뭔 장난감을 가져온거지?」
+            PRINTFORMW %CALLNAME:ASSI%의 손에 들린 안마기를 보고 뒷걸음질 하고 있다.
+            PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% 그런 시온의 하반신을 누른뒤 안마기를 고간위에다 눌렀다
+            PRINTFORMW 「진동이?!...아아앗!....자...잠시만..!...멈춰...!」
+            DRAWLINE 
+        ENDIF
+    ELSE
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE 
+            PRINTFORMW 「...손에 들고있는건 뭐에 쓰는거야?」
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")%안마기에 대해 설명해 주었다.
+            PRINTFORMW 「음.....어깨를 풀어준다라....」
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시온의 안마기를 고간위에 올렸다.
+            PRINTFORMW 「앗...주인님.....방금...어깨라고 하지 않았어?」
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시온을 향해 미소짓고 안마기의 전원을 올렸다.
+            PRINTFORMW 「진동이?!...아아앗!....자...잠시만..!...멈춰...!」
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「뭔 장난감을 가져온거지?」
+            PRINTFORMW %CALLNAME:MASTER%의 손에 들린 안마기를 보고 뒷걸음질 하고 있다.
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 그런 시온의 하반신을 누른뒤 안마기를 고간위에다 눌렀다
+            PRINTFORMW 「진동이?!...아아앗!....자...잠시만..!...멈춰...!」
+            DRAWLINE 
+        ENDIF
+    ENDIF
+ELSE
+    ;C쾌락경험 50이상,C감각 2이상 혹은 C쾌 2 조수, 연모
+    IF EXP:41 >=50 && (ABL:0 >=2 || PALAM:0 >= PALAMLV:2) && ASSIPLAY && (TALENT : 150 || TALENT : 160)
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「아아아앗!..하아아앗!...조온!..그...그만!」
+            PRINTFORMW 『음...조금만 더 하고 멈춰줄게』
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아아아앗!..하아아앗!.이거....그만...!...」
+            PRINTFORMW 시온은 허리를 튕기며 비명같은 신음소리를 내뱉고 있다.
+            DRAWLINE 
+        ENDIF   
+    ;C쾌락경험 50이상,C감각 2이상 혹은 C쾌 2 연모
+    ELSEIF EXP:41 >=50 && (ABL:0 >=2 || PALAM:0>= PALAMLV:2) && (TALENT:150 || TALENT : 160 )    
+        DRAWLINE 
+        PRINTFORMW 「아아아앗!..하아아앗!...주..주인니임...!...」
+        PRINTFORMW 「기분...너무...좋아서...망가져버려어어엇!」
+        PRINTFORMW 시온은 허리를 튕기며 비명같은 신음소리를 내뱉고 있다.
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 『여기가 많이 뭉친거 같으니까 이걸로 풀어줄게~』
+            PRINTFORMW 「조온 농담도 정도꺼───ㅅ?」
+            DRAWLINE 
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE 
+        PRINTFORMW 「아아아앗!...하아아앗!..」
+        DRAWLINE  
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「서...설마...또..그걸?」
+        PRINTFORMW 시온은 마사지기가 주는 쾌락을 두려워 하고 있는 모양이다.
+        DRAWLINE 
+    ENDIF
+ENDIF
+
+;-----------------
+;바이브
+;------------------
+@K249_MESSAGE_COM_12
+IF RESULT : 1 == 1 && TEQUIP:20 == 1
+    ;처녀상실
+    IF TALENT : 0
+        ;조온 
+        IF ASSINO() == 248 && ASSIPLAY
+            DRAWLINE 
+            PRINTFORMW 『피....언니....설마?』
+            PRINTFORMW 「.....닥쳐...」
+            PRINTFORMW 『.....자..잠시만....이건....』
+            PRINTFORMW 「.....실수...라고 얼버무릴셈이야?」
+            DRAWLINE 
+        ;그외 조수
+        ELSEIF ASSIPLAY
+            DRAWLINE
+            PRINTFORMW 「........너....기대하는게....좋을거야」
+            PRINTFORMW 「내가 왜 최흉최악인지 알려주지....」
+            PRINTFORMW %조사처리(CALLNAME:ASSI,"은")% 시온의 경고에 겁먹은 표정을 짖고있다
+            DRAWLINE
+        ;주인이 직접
+        ;연모
+        ELSEIF TALENT : 150 || TALENT : 160
+            DRAWLINE
+            PRINTFORMW 「주인님...」
+            PRINTFORMW 「이런것 보다.....」
+            PRINTFORMW 「진짜였으면....더....좋았을거야....」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「........너....기대하는게....좋을거야」
+            PRINTFORMW 「내가 왜 최흉최악인지 알려주지....」
+            DRAWLINE 
+        ENDIF
+    ELSEIF TALENT : 0 == 0
+        IF ASSINO() == 248 && ASSIPLAY
+            DRAWLINE 
+            PRINTFORMW 「조...조온...그거...무서우니까...치워줘....」
+            PRINTFORMW 조온은 아무말 없이 시온의 비소에 바이브를 집어 넣고있다
+            PRINTFORMW 「조..조온?..뭔 말이라도 해줘...」
+            DRAWLINE 
+        ;그외 조수
+        ELSEIF ASSIPLAY
+            DRAWLINE
+            PRINTFORMW 「저....저기...그거...무서우니까...치워줘....」
+            PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% 아무말 없이 시온의 비소에 바이브를 집어 넣고있다
+            DRAWLINE
+        ;주인이 직접
+        ;연모
+        ELSEIF TALENT : 150 || TALENT : 160
+            DRAWLINE
+            PRINTFORMW 「주인님...」
+            PRINTFORMW 「그런 장난감보다」
+            PRINTFORMW 「진짜를 넣고 싶지않아?」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「뭐야....그거.....」
+            PRINTFORMW 남성기를 본뜬 도구를 보고 있는 시온의 얼굴은 두려움에 젖어있었다.
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")%두려움에 떨고 있는 시온의 몸을 누르고 비소에 바이브를 천천히 집어 넣었다. 
+            DRAWLINE 
+        ENDIF
+    ENDIF
+;첫회 이후
+ELSEIF TEQUIP:20 == 1
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 조수, 연모
+    IF EXP:42 >=50 && (ABL:1 >=2 || PALAM:1 >= PALAMLV:2) && ASSIPLAY && (TALENT : 150 || TALENT : 160)
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 『뿌리까지 삼켰는데 설마...주인님것보다 좋은거야?』
+            PRINTFORMW 「하앗!....아앙...!....아....아니야!....」
+            PRINTFORMW 『거짓말 같은데?』
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아앗!...하앙!...바이브!...기분조아앗!」
+            PRINTFORMW 시온은 바이브의 진동에 몸을 경련시키고 있다.
+            DRAWLINE 
+        ENDIF   
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 연모
+    ELSEIF EXP:42 >=50 && (ABL:1 >=2 || PALAM:1 >= PALAMLV:2) && (TALENT:150 || TALENT : 160 ) 
+        DRAWLINE 
+        PRINTFORMW 「시러엇!...이거...바보가 되버릴거 같아아!」
+        PRINTFORMW 시온은 바이브의 진동에 몸을 튕기고 있다.
+        DRAWLINE  
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 「조온...빨리...빼....」
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「주인님....」
+        PRINTFORMW 「이런거 말고...」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「이....이런거....괴로울 뿐이야..」
+        PRINTFORMW 시온은 몸을 움찔거리고 뜨거운 한숨을 뱉으며 말하고있다. 
+        DRAWLINE
+    ENDIF
+ELSEIF TEQUIP:20 == 0
+    IF PALAM : 13 >= PALAMLV : 5
+        IF ASSIPLAY && ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「...왜?」
+            PRINTFORMW 『설마 뽑지 않았으면 한거야?』
+            DRAWLINE 
+        ELSEIF TALENT : 150 || TALENT : 160 
+            DRAWLINE 
+            PRINTFORMW 바이브를 뽑자 시온의 음부에서 나온 하얀실이 바이브봐 바닥을 적시기 시작했다.
+            PRINTFORMW 그녀의 질은 아직 부족하다는 듯이 꿈툴거리고 있다.
+            PRINTFORMW 「주인니이임...저.....아직...부족해요오오...」
+            DRAWLINE 
+        ELSE 
+            DRAWLINE 
+            PRINTFORMW 「하앗....아앗....」
+            PRINTFORMW 바이브를 뽑자 시온의 음부에서 나온 하얀실이 바이브봐 바닥을 적시기 시작했다.
+            PRINTFORMW 그녀의 질은 아직 부족하다는 듯이 꿈툴거리고 있다.
+            DRAWLINE 
+        ENDIF
+    ELSE 
+        DRAWLINE 
+        PRINTFORMW 시온은 자신의 질에서 이물감이 사라지자 천천히 숨을 돌렸다
+        PRINTFORMW 「하아....하아....하아....」
+        DRAWLINE  
+    ENDIF
+ENDIF
+;-----------------------
+;애널 바이브
+;-----------------------
+@K249_MESSAGE_COM_13
+IF RESULT : 1 == 1 && TEQUIP:25 == 1
+;삽입시
+    ;조수 조온
+    IF ASSINO() == 248 && ASSIPLAY
+        DRAWLINE 
+        PRINTFORMW 「조...조온...그거...무서우니까...치워줘....」
+        PRINTFORMW 조온은 아무말 없이 시온의 항문에 바이브를 집어 넣고있다
+        PRINTFORMW 「조..조온?!..거기는...더럽단 말이야!」
+        DRAWLINE 
+    ;그외 조수
+    ELSEIF ASSIPLAY
+        DRAWLINE
+        PRINTFORMW 「저....저기...그거...무서우니까...치워줘....」
+        PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% 아무말 없이 시온의 항문에 바이브를 집어 넣고있다
+        PRINTFORMW 「뭐...뭣?!..거기는...더럽단 말이야!」
+        DRAWLINE
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「주인님...」
+        PRINTFORMW 「그런 더러운곳...」
+        PRINTFORMW 「굵은거...안들어가....」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「뭐야....그거.....」
+        PRINTFORMW 남성기를 본뜬 도구를 보고 있는 시온의 얼굴은 두려움에 젖어있었다.
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")%두려움에 떨고 있는 시온의 몸을 누르고 항문에 바이브를 천천히 집어 넣었다.
+        PRINTFORMW 「거..거기!..안들어간단 말이야!」
+        DRAWLINE 
+    ENDIF
+;첫회 이후
+ELSEIF TEQUIP:25 == 1
+    ;A쾌락경험 50이상,A감각 2이상 혹은 A쾌 2 조수, 연모
+    IF EXP:43 >=50 && (ABL:2 >=2 || PALAM:2 >= PALAMLV:2) && ASSIPLAY && (TALENT : 150 || TALENT : 160)
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 『뿌리까지 삼켰는데 설마...주인님것보다 좋은거야?』
+            PRINTFORMW 「하앗!....아앙...!....아....아니야!....」
+            PRINTFORMW 『거짓말 같은데?』
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아앗!...하앙!...바이브!...기분조아앗!」
+            PRINTFORMW 시온은 바이브의 진동에 몸을 경련시키고 있다.
+            DRAWLINE 
+        ENDIF   
+    ;A쾌락경험 50이상,A감각 2이상 혹은 A쾌 2 연모
+    ELSEIF EXP:43 >=50 && (ABL:2 >=2 || PALAM:2 >= PALAMLV:2) && (TALENT:150 || TALENT : 160 )    
+        DRAWLINE 
+        PRINTFORMW 「시러엇!...이거...바보가 되버릴거 같아아!」
+        PRINTFORMW 시온은 바이브의 진동에 몸을 튕기고 있다.
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 「조온...빨리...빼....」
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「주인님....」
+        PRINTFORMW 「이런거 말고...」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「이....이런거....괴로울 뿐이야..」
+        PRINTFORMW 시온은 몸을 움찔거리고 뜨거운 한숨을 뱉으며 말하고있다. 
+        DRAWLINE
+    ENDIF
+ELSEIF TEQUIP:25 == 0
+    IF PALAM : 13 >= PALAMLV : 5
+        IF ASSIPLAY && ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「...아?」
+            PRINTFORMW 『설마 뽑지 않았으면 한거야?』
+            DRAWLINE 
+        ELSEIF TALENT : 150 || TALENT : 160 
+            DRAWLINE 
+            PRINTFORMW 바이브를 뽑자 시온의 장액이 바이브봐 바닥을 적시기 시작했다.
+            PRINTFORMW 그녀의 항문은 아직 부족하다는 듯이 움찔거리고 있다.
+            PRINTFORMW 「주인니이임...저.....아직...부족해요오오...」
+            DRAWLINE 
+        ELSE 
+            DRAWLINE 
+            PRINTFORMW 「하앗....아앗....」
+            PRINTFORMW 바이브를 뽑자 시온의 장액이 바이브봐 바닥을 적시기 시작했다.
+            PRINTFORMW 그녀의 항문은 아직 부족하다는 듯이 움찔거리고 있다.
+            DRAWLINE 
+        ENDIF
+    ELSE 
+        DRAWLINE 
+        PRINTFORMW 시온은 자신의 항문에서 이물감이 사라지자 천천히 숨을 돌렸다
+        PRINTFORMW 「하아....하아....하아....」
+        DRAWLINE 
+    ENDIF
+ENDIF
+;----------------
+;클리캡
+;--------------
+@K249_MESSAGE_COM_14
+IF RESULT : 1 == 1 && TEQUIP:30 == 1
+    IF ASSIPLAY && ASSI > 0
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조온.. 그건뭐야?」
+            PRINTFORMW 『아..이거?』
+            PRINTFORMW 조온은 기습적으로 시온을 눕히고 클리캡을 부착시켰다
+            PRINTFORMW 『이렇게 쓰는거야~』
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「그건 또 뭔 장난감이지?」
+            PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% 아무런 대답없이 시온은 강제로 눕히고 클리캡을 부착시켰다
+            DRAWLINE 
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE 
+        PRINTFORMW 「주인님...그건?」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 직접 체험해보는 편이 빠르다 말했다
+        PRINTFORMW 「주인님이 그렇게 말한다면야...」
+        PRINTFORMW 시온은 %조사처리(CALLNAME:MASTER,"을")% 향해 하반신을 내밀었다.
+        DRAWLINE 
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「그건 또 뭔 장난감이지?」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 클리캡에 대해 설명해 주었다.
+        PRINTFORMW 「내가...그런걸 할거 같아?」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 저항하는 시온을 강제로 눕히고 클리캡을 부착 시켰다 
+        DRAWLINE 
+    ENDIF
+ELSEIF TEQUIP:30 == 1
+    IF ASSIPLAY && ASSI > 0
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조온.. 그거...또 쓰는거야?」
+            PRINTFORMW 『왜? 기분 좋았나봐?』
+            DRAWLINE 
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE 
+        PRINTFORMW 「주인님...그거..또..쓰는거야?」
+        PRINTFORMW 「주인님이 원한다면 어쩔 수 없지만....너무 가버려도 뭐라 그러지마...」
+        PRINTFORMW 시온은 %조사처리(CALLNAME:MASTER,"을")% 향해 하반신을 내밀었다.
+        DRAWLINE 
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「설마...그걸...또?
+        PRINTFORMW 「내가...그런걸 할거 같아?」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시온을 강제로 눕히고 클리캡을 부착 시켰다 
+        DRAWLINE 
+    ENDIF
+ELSEIF TEQUIP:30 == 0
+    IF PALAM : 13 >= PALAMLV : 5
+        IF ASSIPLAY && ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 『이제 뽑는다?』
+            PRINTFORMW 「자...잠깐!....으햣!」
+            PRINTFORMW 시온은 갑작스럽게 클리캡이 뽑힐때의 자극과 차가운 공기 때문에 이상한 신음을 내뱉었다
+            DRAWLINE 
+        ELSEIF TALENT : 150 || TALENT : 160 
+            DRAWLINE 
+            PRINTFORMW 클리캡을 뽑자 크게 부풀어오른 클리토리스가 드러났다 
+            PRINTFORMW 「주인님....클리.....좀더....만져주세요」.
+            DRAWLINE 
+        ELSE 
+            DRAWLINE 
+            PRINTFORMW 클리캡을 뽑자 크게 부풀어오른 클리토리스가 드러났다 
+            PRINTFORMW 「하앗....아앗.....으으」
+            PRINTFORMW 시온의 음부에서 나온 대량의 애액이 바닥을 적시고 있다.
+            DRAWLINE 
+        ENDIF
+    ELSE 
+        DRAWLINE 
+        PRINTFORMW 클리캡을 뽑자 크게 부풀어오른 클리토리스가 드러났다 
+        PRINTFORMW 「하앗....아앗.....으으」
+        DRAWLINE 
+    ENDIF
+ENDIF
+
+;----------------
+;유두캡
+;--------------
+@K249_MESSAGE_COM_15
+IF RESULT : 1 == 1 && TEQUIP:35 == 1
+    IF ASSIPLAY && ASSI > 0
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조온.. 그건뭐야?」
+            PRINTFORMW 『아..이거?』
+            PRINTFORMW 조온은 기습적으로 시온을 눕히고 유두캡을 부착시켰다
+            PRINTFORMW 『이렇게 쓰는거야~』
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「그건 또 뭔 장난감이지?」
+            PRINTFORMW %조사처리(CALLNAME:ASSI,"은")% 아무런 대답없이 시온은 강제로 눕히고 유두캡을 부착시켰다
+            DRAWLINE 
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE 
+        PRINTFORMW 「주인님...그건?」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 직접 체험해보는 편이 빠르다 말했다
+        PRINTFORMW 「주인님이 그렇게 말한다면야...」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%에게 백허그 당하듯이 안겼다
+        DRAWLINE 
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「그건 또 뭔 장난감이지?」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 유두캡에 대해 설명해 주었다.
+        PRINTFORMW 「내가...그런걸 할거 같아?」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 저항하는 시온을 강제로 눕히고 유두캡을 부착 시켰다 
+        DRAWLINE 
+    ENDIF
+ELSEIF TEQUIP:35 == 1
+    IF ASSIPLAY && ASSI > 0
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조온.. 그거...또 쓰는거야?」
+            PRINTFORMW 『왜? 기분 좋았나봐?』
+            DRAWLINE 
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE 
+        PRINTFORMW 「주인님...그거..또..쓰는거야?」
+        PRINTFORMW 「주인님이 원한다면 어쩔 수 없지만....너무 가버려도 뭐라 그러지마...」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%에게 백허그 당하듯이 안겼다.
+        DRAWLINE 
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「설마...그걸...또?
+        PRINTFORMW 「내가...그런걸 할거 같아?」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 저항하는 시온을 강제로 눕히고 유두캡을 부착 시켰다
+        DRAWLINE 
+    ENDIF
+ELSEIF TEQUIP:35 == 0
+    IF PALAM : 13 >= PALAMLV : 5
+        IF ASSIPLAY && ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 『이제 뽑는다?』
+            PRINTFORMW 「자...잠깐!....으읏!!」
+            DRAWLINE  
+        ELSEIF TALENT : 150 || TALENT : 160 
+            DRAWLINE 
+            PRINTFORMW 유두캡을 뽑자 크게 발기한 유두가 드러났다 
+            PRINTFORMW 「주인님....유두.....좀더....괴롭혀주세요」.
+            DRAWLINE 
+        ELSE 
+            DRAWLINE 
+            PRINTFORMW 클리캡을 뽑자 크게 발기한 유두가 드러났다 
+            PRINTFORMW 「하앗....아앗.....으으」
+            PRINTFORMW 시온의 유두는 차가운 공기조차 자극이 되고있다.
+            DRAWLINE 
+        ENDIF
+    ELSE  
+        DRAWLINE 
+        PRINTFORMW 유두캡을 뽑자 크게 발기한 유두가 드러났다 
+        PRINTFORMW 「하앗....아앗.....으으」
+        DRAWLINE 
+    ENDIF
+ENDIF
+
+;=====================
+;삽입계 질
+;=====================
+;--------------------
+; 정상위 
+;-------------------
+@K249_MESSAGE_COM_20
+IF RESULT : 1 == 1
+    IF TALENT : 0
+        ;조온 
+        IF ASSINO() == 248 && ASSIPLAY
+            DRAWLINE 
+            PRINTFORMW 『피....언니....설마?』
+            PRINTFORMW 「.....닥쳐...」
+            PRINTFORMW 『.....자..잠시만....이건....』
+            PRINTFORMW 「.....실수...라고 얼버무릴셈이야?」
+            DRAWLINE 
+        ;그외 조수
+        ELSEIF ASSIPLAY
+            DRAWLINE
+            PRINTFORMW 「........너....기대하는게....좋을거야」
+            PRINTFORMW 「내가 왜 최흉최악인지 알려주지....」
+            PRINTFORMW %조사처리(CALLNAME:ASSI,"은")% 시온의 경고에 겁먹은 표정을 짖고있다
+            DRAWLINE
+        ;주인이 직접
+        ;연모
+        ELSEIF TALENT : 150
+            DRAWLINE
+            PRINTFORMW 「주인님....」
+            PRINTFORMW 「안아줘.......」
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")%시온을 뜨겁게 안아줬다.
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「........너....기대하는게....좋을거야」
+            PRINTFORMW 「내가 왜 최흉최악인지 알려주지....」
+            DRAWLINE 
+        ENDIF
+    ELSEIF TALENT : 0 == 0
+        IF ASSINO() == 248 && ASSIPLAY
+            DRAWLINE 
+            PRINTFORMW 「조...조온.....가족끼리...이런거....」
+            PRINTFORMW 『가족끼리 이런게 어째서?』
+            DRAWLINE 
+        ;그외 조수
+        ELSEIF ASSIPLAY
+            DRAWLINE
+            PRINTFORMW 「자...잠깐!...지금...뭐 하는 짓이야!」
+            PRINTFORMW %조사처리(CALLNAME:ASSI,"은")% 시온의 비소속에 자신의 물건을 찔러 넣었다.
+            DRAWLINE
+        ;주인이 직접
+        ;연모
+        ELSEIF TALENT : 150 || TALENT : 160 
+            DRAWLINE
+            PRINTFORMW 「이렇게 얼굴보고 하는거.....」
+            PRINTFORMW 「연인같아서...기분좋아....」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「자...잠깐!...지금...뭐 하는 짓이야!」
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 시온의 비소속에 자신의 물건을 강하게 찔러 넣었다.
+            DRAWLINE 
+        ENDIF
+    ENDIF
+;첫회 이후
+ELSE
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 조수, 연모
+    IF EXP:42 >=50 && (ABL:1 >=3 || PALAM:1 >= PALAMLV:3) && ASSIPLAY && (TALENT : 150 || TALENT : 160 )
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 『나랑 주인님 누가 더 기분 좋아?』
+            PRINTFORMW 「하앗!....아앙..!...주..주인...니」
+            PRINTFORMW 조온은 시온의 대답이 끝나기도 전에 허리를 더욱 쌔게 흔들었다.
+            PRINTFORMW 『뭐라고── 잘 안들리는데?』
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아앗!...하앙!...주인님이외에 사람이랑....시러어어....」
+            PRINTFORMW 시온은 %조사처리(CALLNAME:ASSI,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+            DRAWLINE 
+        ENDIF   
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 연모
+    ELSEIF EXP:42 >=50 && (ABL:1 >=3 || PALAM:1 >= PALAMLV:3) && (TALENT:150 || TALENT : 160 )    
+        DRAWLINE 
+        PRINTFORMW 「하앗...아앗....주인님...더 쌔게 찔러줘....」
+        PRINTFORMW 시온은 다리로 %CALLNAME:MASTER%의 허리를 휘감고 있다. 
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 「조온.....」
+            PRINTFORMW 『키스라도 해줘야 하나?』
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160  
+        DRAWLINE
+        PRINTFORMW 「하아....하앙....주인님....」
+        PRINTFORMW 「키스해줘.....」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「읏.....하앗.....빨리....뺴...라고....」
+        PRINTFORMW 시온은 몸을 움찔거리고 뜨거운 한숨을 뱉고있다. 
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;--------------------
+; 후배위
+;-------------------
+@K249_MESSAGE_COM_21
+IF RESULT : 1 == 1
+    IF TALENT : 0
+        ;조온 
+        IF ASSINO() == 248 && ASSIPLAY
+            DRAWLINE 
+            PRINTFORMW 『피....언니....설마?』
+            PRINTFORMW 「.....닥쳐...」
+            PRINTFORMW 『.....자..잠시만....이건....』
+            PRINTFORMW 「.....실수...라고 얼버무릴셈이야?」
+            DRAWLINE 
+        ;그외 조수
+        ELSEIF ASSIPLAY
+            DRAWLINE
+            PRINTFORMW 「........너....기대하는게....좋을거야」
+            PRINTFORMW 「내가 왜 최흉최악인지 알려주지....」
+            PRINTFORMW %조사처리(CALLNAME:ASSI,"은")% 시온의 경고에 겁먹은 표정을 짖고있다
+            DRAWLINE
+        ;주인이 직접
+        ;연모
+        ELSEIF TALENT : 150 || TALENT : 160 
+            DRAWLINE
+            PRINTFORMW 「주인님...」
+            PRINTFORMW 「얼굴이 안보이면...무서워....」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「........너....기대하는게....좋을거야」
+            PRINTFORMW 「내가 왜 최흉최악인지 알려주지....」
+            DRAWLINE 
+        ENDIF
+    ELSEIF TALENT : 0 == 0
+        IF ASSINO() == 248 && ASSIPLAY
+            DRAWLINE 
+            PRINTFORMW 「조...조온.....가족끼리...이런거....」
+            PRINTFORMW 『가족끼리 이런게 어째서?』
+            DRAWLINE 
+        ;그외 조수
+        ELSEIF ASSIPLAY
+            DRAWLINE
+            PRINTFORMW 「자...잠깐!...지금...뭐 하는 짓이야!」
+            PRINTFORMW %조사처리(CALLNAME:ASSI,"은")% 시온의 비소속에 자신의 물건을 찔러 넣었다.
+            DRAWLINE
+        ;주인이 직접
+        ;연모
+        ELSEIF TALENT : 150 || TALENT : 160 
+            DRAWLINE
+            PRINTFORMW 「주인님!...이거...짐승같──」
+            PRINTFORMW 「아앗..! .하앗!....하악....」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「자...잠깐!...지금...뭐 하는 짓이야!」
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시온의 비소속에 자신의 물건을 강하게 찔러 넣었다.
+            DRAWLINE 
+        ENDIF
+    ENDIF
+;첫회 이후
+ELSE
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 조수, 연모
+    IF EXP:42 >=50 && (ABL:1 >=3 || PALAM:1 >= PALAMLV:3) && ASSIPLAY && (TALENT : 150 || TALENT : 160)
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 『이런거 짐승같아서 기분좋지?』
+            PRINTFORMW 「하앗!....아앙..!...하앗!」
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아앗!...하앙!...주인님이외에 사람이랑....시러어어....」
+            PRINTFORMW 시온은 %조사처리(CALLNAME:ASSI,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+            DRAWLINE 
+        ENDIF   
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 연모
+    ELSEIF EXP:42 >=50 && (ABL:1 >=3 || PALAM:1 >= PALAMLV:3) && (TALENT:150 || TALENT : 160 )    
+        DRAWLINE 
+        PRINTFORMW 「하앗...아앗!....이거...안쪽까지....」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 자신의 물건을 찔러 넣을때 마다 시온의 허리는 활처럼 휘며 몸을 경련시키고 있다. . 
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 「조온.....이거....」
+            PRINTFORMW 『짐승같다고?』
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160  
+        DRAWLINE
+        PRINTFORMW 「하아....하앙....주인님....」
+        PRINTFORMW 「이거...안쪽까지..찔려서....」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「읏.....하앗.....빨리....빼라고....」
+        PRINTFORMW 시온은 몸을 움찔거리고 뜨거운 한숨을 뱉고있다. 
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;--------------------
+; 대면좌위
+;-------------------
+@K249_MESSAGE_COM_22
+IF RESULT : 1 == 1
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        DRAWLINE 
+        PRINTFORMW 『사랑스러운 동생과 마주보면서 하는 감상은?』
+        PRINTFORMW 「.......부끄러워.....」
+        DRAWLINE 
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「이거....주인님이랑 포옹하는거 같아서 좋아」
+        PRINTFORMW 「잠시만 이러고 있으면 안될까?」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「....뭘 그리 빤히 처다보는거야?」
+        PRINTFORMW 「더듬거리지마...기분 나쁘니까」
+        DRAWLINE 
+    ENDIF
+;첫회 이후
+ELSE
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 조수, 연모
+    IF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && ASSIPLAY && (TALENT : 150 || TALENT : 160 )
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「하앗!....아앙..!...하앗!」
+            PRINTFORMW 시온은 조온의 품안에 안겨서 허리를 흔드는것에 몰두하고 있다
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아앗!...하앙!...주인님이외에 사람이랑....시러어어....」
+            PRINTFORMW 시온은 %조사처리(CALLNAME:ASSI,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+            DRAWLINE 
+        ENDIF   
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 연모
+    ELSEIF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && (TALENT:150 || TALENT : 160 )    
+        DRAWLINE 
+        PRINTFORMW 「하앗!....주인니임!...조금 더!...」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%의 품안에 안겨서 허리를 흔드는것에 몰두하고 있다
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 『........』
+            PRINTFORMW 「그렇게...빤히....바라보면..부..끄러워..조온..」
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 150  || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「아앗..하항...주인님.......」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%의 목을 휘감고 허리를 흔들고 있다
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「으으....이딴놈 이랑...이런식으로....」
+        PRINTFORMW 시온은 눈을감고 %조사처리(CALLNAME:MASTER,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;-----------------------
+;배면좌위
+;-----------------------
+@K249_MESSAGE_COM_23
+IF RESULT : 1 == 1
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        DRAWLINE 
+        PRINTFORMW 『이 체위는 가슴 만지기가 편하단 말이지──』
+        PRINTFORMW 「아저씨 같아....조온...」
+        DRAWLINE 
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「이러니까...주인님이 안보여서 불안하긴 하지만.....」
+        PRINTFORMW 「백허그 당하는거 같아서 행복한걸......」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「더듬거리지마...기분 나쁘니까」
+        DRAWLINE 
+    ENDIF
+;첫회 이후
+ELSE
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 조수, 연모
+    IF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && ASSIPLAY && (TALENT : 150 || TALENT : 160 )
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「하앗!....아앙..!...하앗!」
+            PRINTFORMW 시온은 조온의 품안에 안겨서 허리를 흔드는것에 몰두하고 있다
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아앗!...하앙!...주인님이외에 사람이랑....시러어어....」
+            PRINTFORMW 시온은 %조사처리(CALLNAME:ASSI,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+            DRAWLINE  
+        ENDIF   
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 연모
+    ELSEIF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && (TALENT:150 || TALENT : 160 )    
+        DRAWLINE 
+        PRINTFORMW 「하앗!....주인니임!...조금 더!...」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%의 품안에 안겨서 허리를 흔드는것에 몰두하고 있다
+        DRAWLINE  
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 조온은 시온의 척추를 침에 적신 손가락으로 자연스럽게 훑었다.
+            PRINTFORMW 「꺄앗?!....너...뭐하는...」
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160  
+        DRAWLINE
+        PRINTFORMW 「주인님...나 무겁거나...그렇지 않지?」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「으으....이딴놈 이랑...이런식으로....」
+        PRINTFORMW 시온은 눈을감고 %조사처리(CALLNAME:MASTER,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+        DRAWLINE
+    ENDIF
+ENDIF
+;-----------------------------------
+;수치 배면좌위 (거울+배면좌위)
+;-------------------------------------
+@K249_MESSAGE_COM_612
+IF RESULT : 1 == 1
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        DRAWLINE 
+        PRINTFORMW 『보여? 내 자지가 나왔다 들어갔다 하는게?』
+        PRINTFORMW 「자...잘보이니까....그만하면 안될까?」
+        DRAWLINE 
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「저...저기 이러면....교합부라고 해야하나....」
+        PRINTFORMW 「너무 적나라하게...보여서....부끄러워......」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「얼마나 변태짓을해야 만족할거야?」
+        DRAWLINE 
+    ENDIF
+;첫회 이후
+ELSE
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 조수, 연모
+    IF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && ASSIPLAY && (TALENT : 150 || TALENT : 160 )
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「하앗!....아앙..!...하앗!」
+            PRINTFORMW 시온은 자신의 모습이 거울에 비친다는 사실을 잊은체 허리를 흔드는것에 몰두하고 있다
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아앗!...하앙!...주인님이외에 사람이랑....시러어어....」
+            PRINTFORMW 시온은 %조사처리(CALLNAME:ASSI,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+            DRAWLINE 
+        ENDIF   
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 연모
+    ELSEIF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && (TALENT:150 || TALENT : 160 )    
+        DRAWLINE 
+        PRINTFORMW 「하앗!....주인니임!...조금 더!...」
+        PRINTFORMW 시온은 자신의 모습이 거울에 비친다는 사실을 잊은체 허리를 흔드는것에 몰두하고 있다
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 『거울 말고 어딜보고 있는거야?』
+            PRINTFORMW 조온은 시온의 턱을 거울쪽으로 당겨서 거울을 보게 만들었다.
+            PRINTFORMW 「으으으.....」
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160  
+        DRAWLINE
+        PRINTFORMW 「주인님.....이거...너무 부끄러워.....」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「으으....이딴놈 이랑...이런식으로....」
+        PRINTFORMW 시온은 눈을감고 %조사처리(CALLNAME:MASTER,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+        DRAWLINE
+    ENDIF
+ENDIF 
+
+;---------------------------------
+;기승위
+;--------------------------------
+@K249_MESSAGE_COM_24
+
+IF RESULT : 1 == 1
+    IF TALENT : 0
+        ;주인이 직접
+        ;연모
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE
+            PRINTFORMW 「나...처음은 주인님이 리드 해줬으면 했는데..」
+            PRINTFORMW 「뭐...이런 모습에 반한것도 있으니까...」
+            PRINTFORMW 「하아....」
+            PRINTFORMW 「아무리 생각해도 바보같다니까..」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 슬퍼하는 시온의 허리를 붙잡고 위 아래로 흔들기 시작했다.
+            PRINTFORMW 「읏!...이....망할....쓰레기...새끼....」
+            PRINTFORMW 「반.....드..시.흣....복수.....하겠...다...」
+            PRINTFORMW 「으읏.....빈곤을....겁...먹다....죽...으..라고..」 
+            DRAWLINE 
+        ENDIF
+    ELSE
+        IF ASSIPLAY
+            IF ASSINO() == 248
+                DRAWLINE
+                PRINTFORMW 『언니가 올라타서 리드 해줬으면 좋겠는데──』
+                PRINTFORMW 「.......조온...」
+                PRINTFORMW 『응?』
+                PRINTFORMW 「너까지 바보가 옮아버린거야?」
+                PRINTFORMW 『설마....이렇게 사랑스러운 동생의 부탁을 무시할거야?』
+                PRINTFORMW 「.....하아....옮아버린 모양이네....」
+                DRAWLINE        
+            ENDIF
+        ELSE 
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE
+                PRINTFORMW 「내가 위에서 해보라고?」
+                PRINTFORMW 「뭐....주인님이 바란다면 해줘야지...」
+                PRINTFORMW  시온은 %CALLNAME:MASTER%의 위에 올라가 천천히 허리를 내리기 시작했다.
+                PRINTFORMW 「아무리 생각해도 바보같다니까..」
+                DRAWLINE
+            ELSE
+                DRAWLINE
+                PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 머뭇거리는 시온의 허리를 붙잡고 강제로 삽입시켰다.
+                PRINTFORMW 「읏!?...너...지금...뭐하는.....」
+                PRINTFORMW 「빨리....뽑으라고.....」
+                DRAWLINE 
+            ENDIF
+        ENDIF
+    ENDIF
+;첫회 이후
+ELSE
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 조수, 연모
+    IF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && ASSIPLAY && (TALENT : 150 || TALENT : 160 )
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「하앗!....아앙..!...하앗!」
+            PRINTFORMW 시온은 조온의 허리위에 안겨서 허리를 흔드는것에 몰두하고 있다
+            DRAWLINE 
+        ENDIF   
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 연모
+    ELSEIF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && (TALENT:150 || TALENT : 160 )   
+        DRAWLINE 
+        PRINTFORMW 「하앗!....주인니임!...기분....죠아아?」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%의 허리위 허리를 흔드는것에 몰두하고 있다
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 『기분좋아......』
+            PRINTFORMW 「하앗!....으읏....」
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160  
+        DRAWLINE
+        PRINTFORMW 「주인님...나 무겁거나...그렇지 않지?」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「으으....이딴놈 이랑...이런식으로....」
+        PRINTFORMW 시온은 %조사처리(CALLNAME:MASTER,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;-----------------------------------
+;조온을 범한다
+;-------------------------------------
+@K249_MESSAGE_COM_26
+IF RESULT : 1 == 1
+    IF ASSINO() == 248
+        ;연모
+        IF TALENT : 150 || TALENT : 160 
+            DRAWLINE
+            PRINTFORMW 『뭐야 그 눈은? 설마....부러운거야?』
+            PRINTFORMW 「아..아니야...」
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 『나랑 주인님이랑 하는거 거기서 잘 보고있어야해?』
+            PRINTFORMW 「........」
+            DRAWLINE 
+        ENDIF
+    ENDIF
+;첫회 이후
+ELSE
+    IF ASSINO() == 248
+        ; 욕망 3이상 혹은 욕정3 연모
+        IF ABL:11 >=3 && PALAM:1 >= PALAMLV:3 && (TALENT : 150 || TALENT : 160 )
+            DRAWLINE 
+            PRINTFORML 『아앗!...주인님....평소보다.....더....격렬한거...아니야?』
+            PRINTFORMW 「주...주인님.....」
+            PRINTFORML 『주인님─저쪽에서 뭔가 하고 싶은 말이 있나본데?』
+            PRINTFORMW 「나...나도...범해....주...ㅓ...줬으면....좋..겠어...」
+            DRAWLINE 
+        ELSEIF ABL:11 >=3 && PALAM:1 >= PALAMLV:3
+            DRAWLINE  
+            PRINTFORMW 『아앗!...주인님....평소보다.....더....격렬한거...아니야?』
+            PRINTFORMW 시온은 군침을 흘리며 자신의 가랑이를 비비고있다.
+            DRAWLINE  
+        ELSEIF TALENT : 150 || TALENT : 160  
+            DRAWLINE
+            PRINTFORML 『아앗!...주인님....평소보다.....더....격렬한거...아니야?』
+            PRINTFORMW 시온은 조온을 부러운듯한 눈빛으로 바라보고 있다.
+            DRAWLINE
+        ENDIF 
+    ENDIF
+ENDIF
+
+;--------------------
+; 대면입위
+;-------------------
+@K249_MESSAGE_COM_27
+IF RESULT : 1 == 1
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        DRAWLINE 
+        PRINTFORMW 『사랑스러운 동생과 마주보면서 하는 감상은?』
+        PRINTFORMW 「.......부끄러워.....」
+        DRAWLINE 
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「일어서서..한다고?」
+        PRINTFORMW 「뭐...포옹 하는거 같아서 좋긴하지만...」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「....뭘 그리 빤히 처다보는거야?」
+        PRINTFORMW 「더듬거리지마...기분 나쁘니까」
+        DRAWLINE 
+    ENDIF
+;첫회 이후
+ELSE
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 조수, 연모
+    IF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && ASSIPLAY && (TALENT : 150 || TALENT : 160 )
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「하앗!....아앙..!...하앗!」
+            PRINTFORMW 시온은 조온의 품안에 안겨서 허리를 흔드는것에 몰두하고 있다
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아앗!...하앙!...주인님이외에 사람이랑....시러어어....」
+            PRINTFORMW 시온은 %조사처리(CALLNAME:ASSI,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+            DRAWLINE 
+        ENDIF   
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 연모
+    ELSEIF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && (TALENT:150 || TALENT : 160 )    
+        DRAWLINE 
+        PRINTFORMW 「하앗!....주인니임!...조금 더!...」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%의 품안에 안겨서 허리를 흔드는것에 몰두하고 있다
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 『........』
+            PRINTFORMW 「그렇게...빤히....바라보면..부..끄러워..조온..」
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160  
+        DRAWLINE
+        PRINTFORMW 「아앗..하항...주인님.......」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%의 목을 휘감고 허리를 흔들고 있다
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「으으....이딴놈 이랑...이런식으로....」
+        PRINTFORMW 시온은 눈을감고 %조사처리(CALLNAME:MASTER,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;-----------------------
+;배면입위
+;-----------------------
+@K249_MESSAGE_COM_28
+IF RESULT : 1 == 1
+    ;조온 
+    IF ASSINO() == 248 && ASSIPLAY
+        DRAWLINE 
+        PRINTFORMW 『이 체위는 가슴 만지기가 편하단 말이지──』
+        PRINTFORMW 「아저씨 같아....조온...」
+        DRAWLINE 
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT : 160 
+        DRAWLINE
+        PRINTFORMW 「이러니까...주인님이 안보여서 불안하긴 하지만.....」
+        PRINTFORMW 「백허그 당하는거 같아서 행복한걸......」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「더듬거리지마...기분 나쁘니까」
+        DRAWLINE 
+    ENDIF
+;첫회 이후
+ELSE
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 조수, 연모
+    IF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && ASSIPLAY && (TALENT : 150 || TALENT : 160 )
+        ;연모 친애 상애
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「하앗!....아앙..!...하앗!」
+            PRINTFORMW 시온은 조온의 품안에 안겨서 허리를 흔드는것에 몰두하고 있다
+            DRAWLINE 
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「아앗!...하앙!...주인님이외에 사람이랑....시러어어....」
+            PRINTFORMW 시온은 %조사처리(CALLNAME:ASSI,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+            DRAWLINE 
+        ENDIF   
+    ;V조율경험 50이상,V감각 2이상 혹은 V쾌 2 연모
+    ELSEIF EXP:42 >=50 && (ABL:1 >=3 && PALAM:1 >= PALAMLV:3) && (TALENT:150 || TALENT : 160 )    
+        DRAWLINE 
+        PRINTFORMW 「하앗!....주인니임!...조금 더!...」
+        PRINTFORMW 시온은 %CALLNAME:MASTER%의 품안에 안겨서 허리를 흔드는것에 몰두하고 있다
+        DRAWLINE 
+    ELSEIF ASSIPLAY 
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 조온은 시온의 척추를 침에 적신 손가락으로 자연스럽게 훑었다.
+            PRINTFORMW 「꺄앗?!....너...뭐하는...」
+            DRAWLINE
+        ENDIF
+    ELSEIF TALENT : 150 || TALENT : 160  
+        DRAWLINE
+        PRINTFORMW 「주인님...조금더 끌어안아 주면 안될까?」
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「으으....이딴놈 이랑...이런식으로....」
+        PRINTFORMW 시온은 눈을감고 %조사처리(CALLNAME:MASTER,"가")%주는 쾌락을 인정하기 싫다는듯 쾌감을 참고있다.
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;==========
+;봉사계
+;==========
+
+;----------------------
+;수음
+;----------------------
+@K249_MESSAGE_COM_40
+IF RESULT : 1 == 1
+    IF TALENT : 150 || TALENT : 160
+        DRAWLINE 
+        PRINTFORMW 「손으로 해달라고?」
+        PRINTFORMW 「해본적은 없지만....노력은 해볼게..」
+        DRAWLINE
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「이대로 꺽어버릴까....」
+        DRAWLINE       
+    ENDIF
+ELSE   
+    IF TALENT : 150 || TALENT : 160
+        DRAWLINE 
+        PRINTFORMW 「손으로 해달라고?」
+        PRINTFORMW 「전에 해준게 기분이 좋았나봐?」
+        DRAWLINE
+    ELSEIF ABL:13 >= 3 && (TALENT : 150 || TALENT : 160)
+        DRAWLINE 
+        PRINTFORMW 「어때?」
+        PRINTFORMW 「조금은 능숙해 진거 같아?」
+        DRAWLINE
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「으...징그럽고 냄새나....」
+        DRAWLINE      
+    ENDIF
+ENDIF    
+
+;----------------------
+;펠라치오
+;----------------------
+@K249_MESSAGE_COM_41
+IF RESULT : 1 == 1
+    IF TALENT : 150 || TALENT : 160
+        DRAWLINE 
+        PRINTFORMW 「입으로?」
+        PRINTFORMW 「해본적은 없지만....노력은 해볼게..」
+        DRAWLINE
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「그런거 들이밀지 말라.ㄱ...으읍!」
+        DRAWLINE       
+    ENDIF
+ELSE   
+    IF TALENT : 150 || TALENT : 160
+        DRAWLINE 
+        PRINTFORMW 「또..입으로?」
+        PRINTFORMW 「뭐 부탁한다면야.....」
+        DRAWLINE
+    ELSEIF ABL:13 >= 3 && (TALENT : 150 || TALENT : 160)
+        DRAWLINE 
+        PRINTFORMW 「입으로 해달라고?」
+        PRINTFORMW 「뭐..그럼...」
+        PRINTFORMW 「잘먹겠습니다...?」
+        DRAWLINE
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「으...징그럽고 냄새나....」
+        DRAWLINE      
+    ENDIF
+ENDIF    
+
+;----------------------
+;파이즈리
+;----------------------
+@K249_MESSAGE_COM_42
+IF RESULT : 1 == 1
+    IF TALENT : 111
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE 
+            PRINTFORMW 「가슴으로?」
+            PRINTFORMW 「이런 가슴으로...만족하려나...」
+            DRAWLINE
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「이런 가슴으로 뭘 시킬라고...」
+            PRINTFORMW 「변태같아....」
+            DRAWLINE       
+        ENDIF
+    ELSE   
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE 
+            PRINTFORMW 「가슴으로 해달라고?」
+            PRINTFORMW 「해본적은 없지만 노력해볼게....」
+            DRAWLINE
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「가슴에 비비지 말라고...」
+            DRAWLINE      
+        ENDIF
+    ENDIF
+ELSE  
+    IF TALENT : 111
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE 
+            PRINTFORMW 「또..가슴으로...?」
+            PRINTFORMW 「이거 놀리는거 아니지?」
+            DRAWLINE
+        ELSEIF ABL:13 >= 3 && (TALENT : 150 || TALENT : 160)
+            DRAWLINE 
+            PRINTFORMW 「또 가슴으로?」
+            PRINTFORMW 「.....기분좋아?」
+            PRINTFORMW 「(이거 손으로 하는거랑 차이가 있나?)」
+            DRAWLINE  
+        ENDIF
+    ELSE
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE 
+            PRINTFORMW 「또..가슴으로...?」
+            PRINTFORMW 「...기분좋아?」
+            DRAWLINE
+        ELSEIF ABL:13 >= 3 && (TALENT : 150 || TALENT : 160)
+            DRAWLINE 
+            PRINTFORMW 「또 가슴으로?」
+            PRINTFORMW 「...기분좋아?」
+            PRINTFORMW 「제법 능숙해 졌지?」
+            DRAWLINE
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「으...징그럽고 냄새나....」
+            DRAWLINE      
+        ENDIF
+    ENDIF
+ENDIF
+;-------------------------
+;애널 애원
+;-------------------------
+@K249_MESSAGE_COM_45
+IF ASSIPLAY
+    IF ASSINO() == 248
+        DRAWLINE 
+        PRINTFORMW 「진짜로..해?」
+        PRINTFORMW 『당연하지──』
+        PRINTFORMW 「으...시온의 애널...마음껏.....휘져어....주세요.....」
+        DRAWLINE      
+    ENDIF
+ELSE    
+    IF ABL:2 >= 2 && PALAM:13 >= PALAMLV:5 && (TALENT : 150 || TALENT : 160)
+        DRAWLINE 
+        PRINTFORMW 「주....주인님!....」
+        PRINTFORMW 「시온의 이.. 음란한 구멍...원하시는데로...마음껏 휘저어 주세요!」
+        DRAWLINE          
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE 
+        PRINTFORMW 「진짜로..해?」
+        PRINTFORMW 「으...시온의 애널...마음껏.....휘져어....주세요.....」
+        DRAWLINE
+    ENDIF
+ENDIF
+
+;-------------------------
+;미약
+;-------------------------
+@K249_MESSAGE_COM_61
+IF RESULT : 1 == 1
+    IF ASSIPLAY
+        IF ASSINO() == 248
+            DRAWLINE 
+            PRINTFORMW 「조오..ㄴ...뭘...먹인거..」
+            PRINTFORMW 『솔직해 지는 약 이랄까?』
+            DRAWLINE      
+        ENDIF
+    ELSE
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE 
+            PRINTFORMW 「기분...좋아지는약?」
+            PRINTFORMW 「뭔가 수상해 보이지만....」
+            DRAWLINE                
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「몸이....뜨거워.....」
+            PRINTFORMW 「너....뭘먹인거야........」
+            DRAWLINE
+        ENDIF
+    ENDIF
+ELSE
+    IF MARK:3 == 3
+        IF ASSIPLAY
+            IF ASSINO() == 248
+                DRAWLINE 
+                PRINTFORMW 「하아....하아....약.....조금 더....조온....」
+                PRINTFORMW 『저..저기?...장난 치는거지?』
+                DRAWLINE      
+            ENDIF
+        ELSE
+            DRAWLINE 
+            PRINTFORMW 「하아...하아...약...조금 더....」
+            PRINTFORMW 몸속에 약물이 들어가자 시온의 눈동자의 빛이 사라지기 시작했다
+            DRAWLINE                
+        ENDIF
+    ELSE
+        IF ASSIPLAY
+            IF ASSINO() == 248
+                DRAWLINE 
+                PRINTFORMW 『의존도가 심한약이긴 하지만....신령이니까 상관 없을려나?』
+                PRINTFORMW 「...또 그 약...쓰는거야?」
+                DRAWLINE      
+            ENDIF
+        ELSE
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE 
+                PRINTFORMW 「주인...또...그 약 쓰는거야?」
+                PRINTFORMW 「나...그거..무서운데....」
+                DRAWLINE     
+            ELSE
+                DRAWLINE 
+                PRINTFORMW 「약물에...의지하지 않으면 아무것도...못하는 거냐?」
+                PRINTFORMW 몸속에 약물이 들어가자 시온의 볼의 붉어지고 숨이 거칠어 지기 시작했다.
+                DRAWLINE                
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+;-------------------------
+;알몸 앞치마
+;-------------------------
+@K249_MESSAGE_COM_90
+IF RESULT : 1 == 1
+    IF TALENT : 150 || TALENT : 160 
+        DRAWLINE 
+        PRINTFORMW 「꼭 알몸으로 입어야해?」
+        PRINTFORMW 「이거...여러가지로 쓸려서 조금 그런데...」
+        PRINTFORMW 「신혼부부 같아서 좋기는 하지만.....」
+        DRAWLINE
+    ENDIF
+ELSE
+    IF TALENT : 150 || TALENT : 160 
+        DRAWLINE 
+        PRINTFORMW 「뭔가...부부같네...」
+        PRINTFORMW 시온은 무언가를 상상하더니 얼굴을 홍당무 처럼 붉게 물들였다.
+        DRAWLINE
+    ENDIF
+ENDIF     
+
+;-------------------------
+;비디오 촬영
+;-------------------------
+@K249_MESSAGE_COM_100
+
+IF TEQUIP:50
+    IF RESULT : 1 == 1
+        IF ASSIPLAY 
+            IF ASSINO() == 248
+                DRAWLINE 
+                PRINTFORMW 『이쪽보고 웃어봐──』
+                PRINTFORMW 「앗!...조온 지금 뭐하는!」
+                DRAWLINE
+            ENDIF
+        ELSE
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE 
+                PRINTFORMW 「엣...카메라....」
+                PRINTFORMW 「자기소개라도....해줄까?」
+                DRAWLINE
+            ELSE
+                DRAWLINE 
+                PRINTFORMW 「지금 뭘 찍으려는....」
+                PRINTFORMW 「빨리 치우지 못해?」
+                DRAWLINE
+            ENDIF
+        ENDIF
+    ELSE
+        IF ASSIPLAY 
+            IF ASSINO() == 248
+                DRAWLINE 
+                PRINTFORMW 『이쪽보고 웃어봐──』
+                PRINTFORMW 「앗!...조온 지금 뭐하는!」
+                DRAWLINE
+            ENDIF
+        ELSE
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE 
+                PRINTFORMW 「이름은.....요리가미...시온」
+                PRINTFORMW 「직업은...빈곤신...」
+                PRINTFORMW 「나이는......」
+                PRINTFORMW 「.....이런식으로 하면 되는거야?」
+                DRAWLINE
+            ELSE
+                DRAWLINE 
+                PRINTFORMW 「지금 뭘 찍으려는....」
+                PRINTFORMW 「빨리 치우지 못해?」
+                DRAWLINE
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------
+;수치 플레이
+;-------------------------
+@K249_MESSAGE_COM_103
+
+IF TEQUIP:56
+    IF RESULT : 1 == 1
+        IF ASSIPLAY 
+            IF ASSINO() == 248
+                DRAWLINE 
+                PRINTFORMW 『오늘은 여기서 해볼까?』
+                PRINTFORMW 「조온...여기는...거울 앞인데..?」
+                DRAWLINE
+            ENDIF
+        ELSE
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE 
+                PRINTFORMW 「우와.....」
+                PRINTFORMW 「이거..상상 이상으로 부끄러울거 같은데....」
+                DRAWLINE
+            ELSE
+                DRAWLINE 
+                PRINTFORMW 「으읏..?!」
+                PRINTFORMW 「설마......이정도로.....변태일줄이야....」
+                DRAWLINE
+            ENDIF
+        ENDIF
+    ELSE
+        IF ASSIPLAY 
+            IF ASSINO() == 248
+                DRAWLINE 
+                PRINTFORMW 『오늘은 여기서 해볼까?』
+                PRINTFORMW 「조온...여기는...거울 앞인데..?」
+                DRAWLINE
+            ENDIF
+        ELSE
+            IF ABL:14 >= 3 && (TALENT : 150 || TALENT : 160)
+                DRAWLINE 
+                PRINTFORMW 「또 거울이야?」
+                PRINTFORMW 「난 주인님 옆이면 어디든 상관없어...」
+                DRAWLINE 
+            ELSEIF TALENT : 150 || TALENT : 160
+                DRAWLINE 
+                PRINTFORMW 「으으으으.....」
+                PRINTFORMW 「부끄러워......」
+                DRAWLINE
+            ELSEIF ABL:14 >= 3
+                DRAWLINE 
+                PRINTFORMW 「또 거울이야?」
+                PRINTFORMW 「뭐...이제는 어디든 상관없을지도」
+                DRAWLINE 
+            ELSE
+                DRAWLINE 
+                PRINTFORMW 「또 거울이야?」
+                PRINTFORMW 「질리도 않나봐?」
+                DRAWLINE
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------
+;야외플레이
+;-------------------------
+@K249_MESSAGE_COM_104
+IF TEQUIP:52
+    IF RESULT : 1 == 1
+        IF ASSIPLAY 
+            IF ASSINO() == 248
+                DRAWLINE 
+                PRINTFORMW 『산책이라도 나가볼까?』
+                PRINTFORMW 「조온...옷이라도 입혀주면 안될까..?」
+                DRAWLINE
+            ENDIF
+        ELSE
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE 
+                PRINTFORMW 「우와.....」
+                PRINTFORMW 「이거..상상 이상으로 부끄러울거 같은데....」
+                DRAWLINE
+            ELSE
+                DRAWLINE 
+                PRINTFORMW 「미쳤어?」
+                PRINTFORMW 「들키면 어떻게 하려고?」
+                DRAWLINE
+            ENDIF
+        ENDIF
+    ELSE
+        IF ASSIPLAY 
+            IF ASSINO() == 248
+                DRAWLINE 
+                PRINTFORMW 『오늘도 나가볼까?』
+                PRINTFORMW 「옷이라도 달라니까.....」
+                DRAWLINE
+            ELSE
+                DRAWLINE 
+                PRINTFORMW 「내가 순순히 나갈거 같아?」
+                PRINTFORMW %조사처리(CALLNAME:ASSI,"은")% 목줄을 강하게 당겨 시온을 강제로 끌고 나갔다.
+                DRAWLINE
+            ENDIF
+        ELSE
+            IF ABL:14 >= 3 && (TALENT : 150 || TALENT : 160)
+                DRAWLINE 
+                PRINTFORMW 「나가자고?」
+                PRINTFORMW 「오늘은 사람이 많았으면 좋겠다.」
+                DRAWLINE 
+            ELSEIF TALENT : 150 || TALENT : 160
+                DRAWLINE 
+                PRINTFORMW 「으으으으.....」
+                PRINTFORMW 「부끄러워......」
+                DRAWLINE
+            ELSEIF ABL:14 >= 3
+                DRAWLINE 
+                PRINTFORMW 「설마.....나가자고?」
+                PRINTFORMW 시온은 걱정보다 기대심이 더 커진모양이다.
+                DRAWLINE 
+            ELSE
+                DRAWLINE 
+                PRINTFORMW 「내가 순순히 나갈거 같아?」
+                PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 목줄을 강하게 당겨 시온을 강제로 끌고 나갔다.
+                DRAWLINE
+            ENDIF
+        ENDIF
+    ENDIF
+ELSEIF TEQUIP:52 == 0
+    IF ABL:14 >= 3 && (TALENT : 150 || TALENT : 160)
+        DRAWLINE 
+        PRINTFORMW 「벌써 돌아가는거야?」
+        PRINTFORMW 「간만에 외출이라 조금 더 즐기고 싶었는데....」
+        DRAWLINE 
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE 
+        PRINTFORMW 「안들켰지?」
+        PRINTFORMW 「다행이다.....」
+        DRAWLINE
+    ELSEIF ABL:14 >= 3
+        DRAWLINE 
+        PRINTFORMW 「......칫」
+        DRAWLINE 
+    ELSE
+        DRAWLINE 
+        PRINTFORMW 「병원 한번 가보는게 좋을거야....」
+        DRAWLINE
+    ENDIF
+ENDIF
+ 
+;-----------------------
+;관장
+;-----------------------
+@K249_MESSAGE_COM_174
+IF TEQUIP:25 == 7
+    IF ASSINO() == 248 && ASSIPLAY
+        DRAWLINE 
+        PRINTFORMW 『아직 한참 남았다고~~』
+        PRINTFORMW 「조..조온?!....그만!....더는...베가!....」
+        PRINTFORMW 시온은 배를 부여잡고 식은 땀을 흘리며 신음하고 있다
+        PRINTFORMW 『중간에 새어버리면 곤란하니까 마개로 막아줄게─』
+        DRAWLINE 
+    ELSEIF ASSIPLAY
+        DRAWLINE
+        PRINTFORMW 「자...잠깐만...!..뭘 할 생각이야?!」
+        PRINTFORMW 「차...차가워? 서..설마? 그...그것만은!」
+        PRINTFORMW 시온의 뱃속에 주사기의 내용물이 들어갈수록 시온의 저항은 줄어들고 있다.
+        PRINTFORMW 「아.....안ㄷ...이상은.....무리이....」
+        PRINTFORMW %조사처리(CALLNAME:ASSI,"은")% 아직 패닉속에 벗어나지 못한 시온에게 애널플러그를 꽂아넣었다.
+        DRAWLINE 
+    ;주인이 직접
+    ;연모
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「주인님..!.」
+        PRINTFORMW 「자...잠깐....그거 무리에요!」
+        PRINTFORMW 「배...배가!....아....제발....」
+        PRINTFORMW 시온은 배를 부여잡고 식은 땀을 흘리며 신음하고 있다
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「자...잠깐만...!..뭘 할 생각이야?!」
+        PRINTFORMW 「차...차가워? 서..설마? 그...그것만은!」
+        PRINTFORMW 시온의 뱃속에 주사기의 내용물이 들어갈수록 시온의 저항은 줄어들고 있다.
+        PRINTFORMW 「아.....안ㄷ...이상은.....무리이....」
+        PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 아직 패닉속에 벗어나지 못한 시온에게 애널플러그를 꽂아넣었다.
+        DRAWLINE 
+    ENDIF
+ENDIF
+IF TEQUIP:25 == 0
+    CALL K249_MESSAGE_BS
+ENDIF
+
+;-----------------------------------
+; 채찍
+;----------------------------------
+@K249_MESSAGE_COM_221
+
+IF RESULT : 1 == 1
+    IF ASSIPLAY && ASSI >0
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 『후후후.....』
+            PRINTFORMW 『이 못된 노예의 버릇을 고쳐볼까?』
+            DRAWLINE 
+        ENDIF
+    ELSE 
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE
+            PRINTFORMW 「아앗!」
+            PRINTFORMW 「아픈데....그만해주면 안될까?」
+            DRAWLINE 
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「아팟!」
+            PRINTFORMW 「뭐하는 짓이야!」
+            DRAWLINE 
+        ENDIF
+    ENDIF
+ELSE
+    IF ABL:21 >= 5
+        IF ASSIPLAY && ASSI >0
+            IF ASSINO() == 248
+                DRAWLINE
+                PRINTFORMW 「하앙──♥」
+                PRINTFORMW 『어디서 버릇없이 느끼고 있는거야!』
+                PRINTFORMW 「조온님! 이 버릇없는 노예에게 좀더.....벌을!」
+                DRAWLINE 
+            ENDIF
+        ELSE 
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE
+                PRINTFORMW 「하앙──♥」
+                PRINTFORMW 「채찍 기분좋아요!...좀더.....좀더...!」
+                DRAWLINE 
+            ELSE
+                DRAWLINE
+                PRINTFORMW 「아앙───」
+                PRINTFORMW 「뭣?...느끼거나....그러지 않았거든!」
+                DRAWLINE 
+            ENDIF
+        ENDIF
+    ELSEIF ABL:21 >= 3 && ABL:21 <= 4 
+        IF ASSIPLAY && ASSI >0
+            IF ASSINO() == 248
+                DRAWLINE
+                PRINTFORMW 「흐읏───!」
+                PRINTFORMW 『혹시 느끼거나 그런거 아니겠지?』
+                PRINTFORMW 「서...설마...이런걸로 느낄리가 없잖....아」
+                DRAWLINE 
+            ENDIF
+        ELSE 
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE
+                PRINTFORMW 「흐읏──!」
+                PRINTFORMW 「주인님....이런 말하기 싫은데...」
+                PRINTFORMW 「방금...기분 좋았어....」
+                DRAWLINE 
+            ELSE
+                DRAWLINE
+                PRINTFORMW 「흐읏──!」
+                PRINTFORMW 「(뭐지? 방금 기분이...)」
+                DRAWLINE 
+            ENDIF
+        ENDIF
+    ELSE
+        IF ASSIPLAY && ASSI >0
+            IF ASSINO() == 248
+                DRAWLINE
+                PRINTFORMW 「아팟!」
+                PRINTFORMW 『흠....아직인가.....』
+                PRINTFORMW 「이런걸로 느낄리가 없잖....아」
+                DRAWLINE 
+            ENDIF
+        ELSE 
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE
+                PRINTFORMW 「아파앗!」
+                PRINTFORMW 「주인님.....」
+                PRINTFORMW 「고통을 즐기는 사람이 있을리가 없잖아?」
+                DRAWLINE 
+            ELSE
+                DRAWLINE
+                PRINTFORMW 「아팟!」
+                PRINTFORMW 「이제...그만해줘....」
+                DRAWLINE 
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+;-----------------------------------
+; 스팽킹
+;----------------------------------
+@K249_MESSAGE_COM_220
+
+IF RESULT : 1 == 1
+    IF ASSIPLAY && ASSI >0
+        IF ASSINO() == 248
+            DRAWLINE
+            PRINTFORMW 『후후후.....』
+            PRINTFORMW 『이 못된 노예의 버릇을 고쳐볼까?』
+            DRAWLINE 
+        ENDIF
+    ELSE 
+        IF TALENT : 150 || TALENT : 160
+            DRAWLINE
+            PRINTFORMW 「아앗!」
+            PRINTFORMW 「아픈데....그만해주면 안될까?」
+            DRAWLINE 
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「아팟!」
+            PRINTFORMW 「뭐하는 짓이야!」
+            DRAWLINE 
+        ENDIF
+    ENDIF
+ELSE
+    IF ABL:21 >= 5
+        IF ASSIPLAY && ASSI >0
+            IF ASSINO() == 248
+                DRAWLINE
+                PRINTFORMW 「하앙──♥」
+                PRINTFORMW 『어디서 버릇없이 느끼고 있는거야!』
+                PRINTFORMW 「조온님! 이 버릇없는 노예에게 좀더.....벌을!」
+                DRAWLINE 
+            ENDIF
+        ELSE 
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE
+                PRINTFORMW 「하앙──♥」
+                PRINTFORMW 「주인님....! 기분좋아요!...좀더.....좀더...!」
+                DRAWLINE 
+            ELSE
+                DRAWLINE
+                PRINTFORMW 「아앙───」
+                PRINTFORMW 「뭣?...느끼거나....그러지 않았거든!」
+                DRAWLINE 
+            ENDIF
+        ENDIF
+    ELSEIF ABL:21 >= 3 && ABL:21 <= 4 
+        IF ASSIPLAY && ASSI >0
+            IF ASSINO() == 248
+                DRAWLINE
+                PRINTFORMW 「흐읏───!」
+                PRINTFORMW 『혹시 느끼거나 그런거 아니겠지?』
+                PRINTFORMW 「서...설마...이런걸로 느낄리가 없잖....아」
+                DRAWLINE 
+            ENDIF
+        ELSE 
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE
+                PRINTFORMW 「흐읏──!」
+                PRINTFORMW 「주인님....이런 말하기 싫은데...」
+                PRINTFORMW 「방금...기분 좋았어....」
+                DRAWLINE 
+            ELSE
+                DRAWLINE
+                PRINTFORMW 「흐읏──!」
+                PRINTFORMW 「(뭐지? 방금 기분이...)」
+                DRAWLINE 
+            ENDIF
+        ENDIF
+    ELSE
+        IF ASSIPLAY && ASSI >0
+            IF ASSINO() == 248
+                DRAWLINE
+                PRINTFORMW 「아팟!」
+                PRINTFORMW 『흠....아직인가.....』
+                PRINTFORMW 「이런걸로 느낄리가 없잖....아」
+                DRAWLINE 
+            ENDIF
+        ELSE 
+            IF TALENT : 150 || TALENT : 160
+                DRAWLINE
+                PRINTFORMW 「아파앗!」
+                PRINTFORMW 「주인님.....」
+                PRINTFORMW 「고통을 즐기는 사람이 있을리가 없잖아?」
+                DRAWLINE 
+            ELSE
+                DRAWLINE
+                PRINTFORMW 「아팟!」
+                PRINTFORMW 「이제...그만해줘....」
+                DRAWLINE 
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+;-------------------------------------
+;배설
+;----------------------------------------
+@K249_MESSAGE_BS
+
+IF ASSINO() == 248 && ASSIPLAY
+    DRAWLINE
+    PRINTFORMW 『그럼 뽑는다?』
+    PRINTFORMW 「자...잠깐..! 조..조온?! 여기서...뽑으면...!」
+    PRINTFORMW 「아...안돼.....화장실....빨리......」
+    PRINTFORMW 시온은 식은 땀을 흘리며 관장액이 세어나오는 것을 참고있다
+    PRINTFORMW 『동생앞에서는 부끄러운거야?』
+    PRINTFORMW 조온은 그런 시온의 뒤로 돌아 귓가에 바람을 불었다.
+    PRINTFORMW 「히얏?!」
+    PRINTFORMW 『시원하게 싸버리라고──♬』
+    PRINTFORMW 「아..?! 안돼엣!! 실어어!....보...보면.....」
+    PRINTFORMW 자신에 뱃속에있는 관장액을 단숨에 분출했다.
+    DRAWLINE
+ELSEIF ASSIPLAY
+    DRAWLINE
+    PRINTFORMW %조사처리(CALLNAME:ASSI,"은")% 시온의 항문을 막고 있던 애널 플러그를 뽑았다.
+    PRINTFORMW 「자...잠깐..!  여기서...뽑으면...!」
+    PRINTFORMW 「아...안돼.....화장실....빨리......」
+    PRINTFORMW 시온은 식은 땀을 흘리며 관장액이 세어나오는 것을 참고있다
+    PRINTFORMW %조사처리(CALLNAME:ASSI,"은")% 그런 시온의 배를 천천히 누르기 시작했다.
+    PRINTFORMW 「자...잠깐..!...그러면!...」
+    PRINTFORMW 자신의 복부에 보는 추가적인 자극에 버티지 못한 시온은
+    PRINTFORMW 「아..?! 안돼엣!! 실어어!....보...보면.....」
+    PRINTFORMW 자신에 뱃속에있는 관장액을 단숨에 분출했다.
+    DRAWLINE
+;주인이 직접
+;연모
+ELSEIF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시온의 항문을 막고 있던 애널 플러그를 뽑았다.
+    PRINTFORMW 「자...잠깐..! 주인님?! 여기서...뽑으면...!」
+    PRINTFORMW 「아...안돼.....화장실....빨리......」
+    PRINTFORMW 시온은 식은 땀을 흘리며 관장액이 세어나오는 것을 참고있다
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 그런 시온의 뒤로 돌아 귓가에 바람을 불었다.
+    PRINTFORMW 「히얏?!」
+    PRINTFORMW 갑작스러운 자극에 놀란 시온은 이상한 신음소리와 함께
+    PRINTFORMW 「아..?! 안돼엣!! 실어어!....보...보면.....」
+    PRINTFORMW 자신에 뱃속에있는 관장액을 단숨에 분출했다.
+    DRAWLINE
+ELSE
+    DRAWLINE
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시온의 항문을 막고 있던 애널 플러그를 뽑았다.
+    PRINTFORMW 「자...잠깐..!  여기서...뽑으면...!」
+    PRINTFORMW 「아...안돼.....화장실....빨리......」
+    PRINTFORMW 시온은 식은 땀을 흘리며 관장액이 세어나오는 것을 참고있다
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 그런 시온의 배를 천천히 누르기 시작했다.
+    PRINTFORMW 「자...잠깐..!...그러면!...」
+    PRINTFORMW 자신의 복부에 보는 추가적인 자극에 버티지 못한 시온은
+    PRINTFORMW 「아..?! 안돼엣!! 실어어!....보...보면.....」
+    PRINTFORMW 자신에 뱃속에있는 관장액을 단숨에 분출했다.
+    DRAWLINE
+ENDIF
+
+;-------------------------------------------
+; 목욕탕 플레이
+;------------------------------------------
+@K249_MESSAGE_COM_350
+
+IF TEQUIP:53
+    IF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「목욕 하자고?」
+        PRINTFORMW 「진짜?」
+        PRINTFORMW 「....목욕만 할거야?」
+        DRAWLINE
+    ENDIF
+ELSEIF TEQUIP:53 == 0
+    IF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「먼저 나가있어....」
+        PRINTFORMW 「난 여기서 살꺼야.....」
+        PRINTFORMW 「....역시 무리일려나?」
+        DRAWLINE
+    ENDIF
+ENDIF
+;-------------------------------------------
+; 목욕하며 보낸다
+;------------------------------------------
+@K249_MESSAGE_COM_345
+
+IF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 「아......」
+    PRINTFORMW 「피로가 풀리는 이 느낌....」
+    PRINTFORMW 「매일 목욕하면 안될까?」
+    DRAWLINE      
+ENDIF
+
+;-------------------------------------------
+; 밖에서 보낸다
+;------------------------------------------
+@K249_MESSAGE_COM_346
+
+IF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 「밖에 나가자고?」
+    PRINTFORMW 「뭔가 데이트 같은걸......」
+    PRINTFORMW 「뭐?」
+    PRINTFORMW 「데이트가 맞아?」
+    PRINTFORMW  시온의 얼굴은 그 어느때보다 붉게 물들었다.
+    DRAWLINE      
+ENDIF
+
+;-------------------------------------------
+; 신혼부부처럼 보낸다
+;------------------------------------------
+@K249_MESSAGE_COM_347
+
+IF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 「놀이가 아니라...진짜였으면....」
+    PRINTFORMW 「........」
+    DRAWLINE      
+ENDIF
+
+;-------------------------------------------
+; 샤워
+;------------------------------------------
+@K249_MESSAGE_COM_347
+
+IF (TALENT : 150 || TALENT : 160) && TEQUIP:54 == 2
+    DRAWLINE
+    PRINTFORMW 「꺄앗?!」
+    PRINTFORMW 갑작스러운 찬물 세례에 시온 짧은 비명을 질렀다.
+    DRAWLINE      
+ELSEIF (TALENT : 150 || TALENT : 160) && TEQUIP:54 == 1
+    DRAWLINE
+    PRINTFORMW 「아아....기분좋아....」
+    DRAWLINE 
+ELSE
+    DRAWLINE
+    PRINTFORMW 「꺄앗?!」
+    PRINTFORMW 시온에게 샤워기로 뜨거운 물을 끼얹자 짧은 비명을 질렀다.
+    DRAWLINE       
+ENDIF
+
+;-------------------------------------------
+; 거품 비비기
+;------------------------------------------
+@K249_MESSAGE_COM_352
+
+IF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 시온은 자신의 몸에 거품을 낸후 %CALLNAME:MASTER%의 등에 안기며 말을했다.
+    PRINTFORMW 「내가 씻겨줄까?」
+    DRAWLINE      
+ENDIF
+
+;-------------------------------------------
+; 포옹하기
+;------------------------------------------
+@K249_MESSAGE_COM_339
+
+IF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 「하루종일 이러고 있으면 안될까?」
+    PRINTFORMW 「지금 너무 행복한데......」
+    DRAWLINE      
+ENDIF
+
+;-------------------------------------------
+; 상냥하게 대한다.
+;------------------------------------------
+@K249_MESSAGE_COM_339
+
+IF TALENT : 150 || TALENT : 160
+    DRAWLINE
+    PRINTFORMW 「싫지는 않지만....」
+    PRINTFORMW 「갑자기 이러는거 조금 부담스러운데.....」
+    DRAWLINE      
+ENDIF
+
+;-----------------------------------------------
+;촉수
+;-----------------------------------------------
+@K249_MESSAGE_COM_500
+
+IF RESULT : 1 == 1
+    IF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「우와아아아....」
+        PRINTFORMW 「갑자기 이 징그러운건 왜?」
+        PRINTFORMW 「이걸로 범한다고?」
+        PRINTFORMW 「누구를?」
+        PRINTFORMW 「나?」
+        PRINTFORMW 「하하하.....」
+        PRINTFORMW 시온은 전력으로 도망치기 시작했다.
+        DRAWLINE     
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「자...잠시만!」
+        PRINTFORMW 「설마....그걸로 나를.....」
+        PRINTFORMW 「범할 생각이야?」
+        PRINTFORMW 「지...진짜로?」
+        PRINTFORMW 시온은 전력으로 도망치기 시작했다.
+        DRAWLINE     
+    ENDIF
+ELSE
+    IF ABL:35 >= 3 && (TALENT : 150 || TALENT : 160)
+        DRAWLINE
+        PRINTFORMW 「주인님...」
+        PRINTFORMW 「이러다가 이 아이들이 주인님보다 좋아 질거 같은데...」
+        PRINTFORMW 「상관없어?」
+        DRAWLINE   
+    ELSEIF TALENT : 150 || TALENT : 160
+        DRAWLINE
+        PRINTFORMW 「또...? 장난이지?」
+        PRINTFORMW 시온은 울상을 지으며 %조사처리(CALLNAME:MASTER,"를")%바라보았다
+        DRAWLINE 
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「차라리 다른걸 시켜주면 안될까?」
+        PRINTFORMW 시온은 울상을 지으며 %조사처리(CALLNAME:MASTER,"를")%바라보았다
+        DRAWLINE        
+    ENDIF
+ENDIF
+;==================================================
+;@KOJO_MESSAGE_MARKCNG 관계
+;각인 변동이 방아쇠인 대사
+;각인 변동 후에 대사를 발동합니다.
+;==================================================
+@KOJO_MESSAGE_MARKCNG_249
+;자고 있을 경우에는 돌아온다
+SIF EQUIP:14
+    RETURN 0
+;재갈이 있을 경우에도 돌아온다
+SIF TEQUIP:42
+    RETURN 0
+;기절 중에도 돌아온다
+SIF TFLAG:899 >= 1
+    RETURN 0
+;각인 취득 대사 호출
+FOR LOCAL, 0, 7
+    FOR LOCAL:1, 1, 4
+        SIF TFLAG:(LOCAL + 40) == LOCAL:1 && CFLAG:(LOCAL + 5310) < LOCAL:1
+            TRYCALLFORM K249_MESSAGE_MARK{LOCAL}_{LOCAL:1}
+    NEXT
+NEXT
+
+;==================================================
+;각인 취득시의 대사 CFLAG 5310～을 사용
+;==================================================
+;-------------------------------------------------
+;고통각인 취득 CFLAG:5310
+;-------------------------------------------------
+@K249_MESSAGE_MARK0_1
+DRAWLINE
+PRINTFORMW 「아팟!...너....지금 뭐하는....」
+DRAWLINE
+CFLAG:5310 = 1
+
+@K249_MESSAGE_MARK0_2
+DRAWLINE
+PRINTFORMW 「아앗!...너!....저....적당히.....해주....세요..」
+DRAWLINE
+CFLAG:5310 = 2
+
+@K249_MESSAGE_MARK0_3
+DRAWLINE
+PRINTFORMW 「아팟!아파앗! 죄송해요! 아픈건 이제 그만! 싫어엇!」
+DRAWLINE
+CFLAG:5310 = 3
+
+;-------------------------------------------------
+;쾌락각인 취득 CFLAG:5311
+;-------------------------------------------------
+@K249_MESSAGE_MARK1_1
+DRAWLINE
+PRINTFORMW 「으───읏?」
+PRINTFORMW 「(뭐지 방금 온몸에 전기가?)」
+DRAWLINE
+CFLAG:5311 = 1
+
+@K249_MESSAGE_MARK1_2
+DRAWLINE
+PRINTFORMW 「아앗!? 바....방금....월 한거야?」
+DRAWLINE
+CFLAG:5311 = 2
+
+@K249_MESSAGE_MARK1_3
+DRAWLINE
+PRINTFORMW 「더이상은 안돼....몸이....이상해 지고 있어....」
+DRAWLINE
+CFLAG:5311 = 3
+
+;-------------------------------------------------
+;굴복각인 취득 CFLAG:5312
+;-------------------------------------------------
+@K249_MESSAGE_MARK2_1
+DRAWLINE
+PRINTFORMW 「알았어....하면 될거아니야....」
+DRAWLINE
+CFLAG:5312 = 1
+
+@K249_MESSAGE_MARK2_2
+DRAWLINE
+PRINTFORMW 「다음번에는 뭘 시킬려고?」
+DRAWLINE
+CFLAG:5312 = 2
+
+@K249_MESSAGE_MARK2_3
+DRAWLINE
+PRINTFORMW 「항복이야.....마음대로 하라고」
+DRAWLINE
+CFLAG:5312 = 3
+
+;-------------------------------------------------
+;공포각인 취득 CFLAG:5313
+;-------------------------------------------------
+@K249_MESSAGE_MARK3_1
+DRAWLINE
+PRINTFORMW 「히익───!」
+DRAWLINE
+CFLAG:5313 = 1
+
+@K249_MESSAGE_MARK3_2
+DRAWLINE
+PRINTFORMW 「오..오지마...」
+DRAWLINE
+CFLAG:5313 = 2
+
+@K249_MESSAGE_MARK3_3
+DRAWLINE
+PRINTFORMW 「죄....죄송해요!......제발!」
+DRAWLINE
+CFLAG:5313 = 3
+
+;-------------------------------------------------
+;반발각인 취득 CFLAG:5314
+;-------------------------------------------------
+@K249_MESSAGE_MARK4_1
+DRAWLINE
+PRINTFORMW 「빈곤신에게 이런짓을 한다는건 각오된거지?」
+DRAWLINE
+CFLAG:5314 = 1
+
+@K249_MESSAGE_MARK4_2
+DRAWLINE
+PRINTFORMW 「이 치욕....반드시 잊지않겠어.....」
+DRAWLINE
+CFLAG:5314 = 2
+
+@K249_MESSAGE_MARK4_3
+DRAWLINE
+PRINTFORMW 「저주할꺼야…평생을 가난에서 썩게만들어주지......」
+DRAWLINE
+CFLAG:5314 = 3
+
+;-------------------------------------------------
+;치욕각인 취득 CFLAG:5316
+;-------------------------------------------------
+@K249_MESSAGE_MARK6_1
+DRAWLINE
+PRINTFORMW 「흣...이런 모습 뭐가 재미있다고......」
+DRAWLINE
+CFLAG:5316 = 1
+
+@K249_MESSAGE_MARK6_2
+DRAWLINE
+PRINTFORMW 「보....보지마.....」
+DRAWLINE
+CFLAG:5316 = 2
+
+@K249_MESSAGE_MARK6_3
+DRAWLINE
+PRINTFORMW 「흐항...나를....보지마.....제발.....」
+DRAWLINE
+CFLAG:5316 = 3
+
+;==================================================
+;@KOJO_MESSAGE_COM 관계
+;커맨드 대사 판정 처리
+;커맨드 실행시에 출력됩니다
+;==================================================
+@KOJO_MESSAGE_COM_249
+;자고 있을 경우에는 돌아온다
+SIF EQUIP:14
+    RETURN 0
+;재갈이 있고, 재갈을 채우는 커맨드가 아닐 경우에도 돌아온다
+SIF (TEQUIP:42 && (SELECTCOM != 226 && SELECTCOM != 229 && SELECTCOM != 506 && SELECTCOM != 509 && SELECTCOM != 583))
+    RETURN 0
+;기절 중에도 돌아온다
+SIF TFLAG:899 >= 1
+    RETURN 0
+
+;커맨드 첫회 판정을 갱신
+CALL COM_FLAG
+;PANCTION 내의 장비품 대사 보완 함수를 사용한다
+SIF FLAG:10 == 1
+    TRYCALL EQUIPTEXT
+;처녀 상실시의 메시지 호출
+SIF TALENT:0 && TFLAG:1
+    TRYCALL K249_MESSAGE_LOST_VIRGIN
+;커맨드 대사 호출
+TRYCALLFORM K249_MESSAGE_COM_{SELECTCOM}
+
+;-------------------------------------------------
+;처녀 상실 처녀 CFLAG:5204
+;-------------------------------------------------
+@K249_MESSAGE_LOST_VIRGIN
+;연모, 망신 주인의 페니스
+
+IF TFLAG: 0 > 0 && CFLAG : 5204 == 0
+    ;주인
+    IF TFLAG:2 
+        ;연모
+        IF TALENT : 150 || TALENT : 160 
+            DRAWLINE
+            PRINTFORMW 「으극!....처음.....줘버렸다....」
+            PRINTFORMW 「주인님이 처음이라 기쁜걸.....」
+            PRINTFORMW 「끝까지 책임 져야한다는거 알지?」
+            DRAWLINE
+            CFLAG:5205 = 1
+        ENDIF
+    ;손가락
+    ELSEIF SELECTCOM == 4
+        IF TALENT : 150 || TALENT : 160 
+            DRAWLINE
+            PRINTFORMW 「.......처음은....주인님에게.....이런식이...아니라....」
+            PRINTFORMW 시온은 손가락을 타고 내려오는 파괴혈을 보고 중얼거렸다.
+            DRAWLINE
+        ELSE
+            DRAWLINE
+            PRINTFORMW 「.......설마.....내...처음이...이런식으로....」
+            PRINTFORMW 시온은 손가락을 타고 내려오는 파괴혈을 보고 중얼거렸다.
+            DRAWLINE
+        ENDIF
+    ;그 외
+    ELSEIF ASSIPLAY && ASSINO() == 248
+        DRAWLINE
+        PRINTFORMW 「조온......너...지금」
+        PRINTFORMW 『..........』
+        DRAWLINE
+    ELSE
+        DRAWLINE
+        PRINTFORMW 「거짓말......처음은.....사랑하는...사람에게...주고....싶었는데.....」
+        PRINTFORMW 「너무해.......」
+        DRAWLINE
+    ENDIF
+ENDIF
+CFLAG:5204 = 1
+;==================================================
+;@SELF_KOJO 관계
+;이벤트 대사 판정 처리
+;SELF_KOJO 실행시에 출력됩니다
+;==================================================
+@SELF_KOJO_K249
+;자고 있을 경우에는 돌아온다
+SIF EQUIP:14
+    RETURN 0
+;조교 중에다 재갈을 물렸을 때에도 돌아온다
+SIF TFLAG:999 && TEQUIP:42
+    RETURN 0
+;조교 중에다 기절 중일 때에도 돌아온다
+SIF TFLAG:999 && (TFLAG:899 >= 1 && TFLAG:200 != 12)
+    RETURN 0
+
+;이벤트 대사 호출
+TRYCALLFORM K249_MESSAGE_EVENT_{(TFLAG:200)}
+
+;==================================================
+;@LOOK_VIDEO_KOJO 관계
+;비디오를 함께 감상할 시의 대사
+;==================================================
+@LOOK_VIDEO_KOJO_K249
+;PRINTFORMW 「비디오를 함께 감상할 시의 대사입니다」
+
+;==================================================
+;@DAILY_LIFE_MASSAGE 관계
+;휴식 대사
+;일상생활 이벤트ＯＮ이며 휴식 실행시에 출력됩니다
+;==================================================
+@DAILY_MESSAGE_249, ARG
+IF MARK:9 >= 3
+    PRINTFORMW 「휴식? 뭘 꾸미고있지?」
+ELSEIF CFLAG:1610 == 0
+    PRINTFORMW 「그냥 놔주면 좋겠는데.....」
+ELSE
+    PRINTFORMW 「오늘은 아무것도 안할거야?」
+ENDIF
+
+;==================================================
+;@IMPRESSION_MAIN 관계
+;스테이터스 화면을 볼 시에 출력됩니다
+;한 마디 표시이므로 한 줄로 정리할 것
+;==================================================
+@IMPRESSION_K249
+;아직 한 번도 조교하지 않았음
+IF CFLAG:1610 == 0
+    IF RAND:3 == 0
+        PRINTSINGLEFORM    「하암....생각보다 편할지도?」
+    ELSEIF RAND:2 == 0
+        PRINTSINGLEFORM    「일단 여기 있어볼까.....」
+    ELSE
+        PRINTSINGLEFORM    「으음?...여긴...?.」
+    ENDIF
+    RETURN 1
+;반발각인 3
+ELSEIF MARK:9 >= 3
+    IF MARK:2 >= 3
+        IF RAND:3 == 0
+            PRINTSINGLEFORM    「죽어서라도.....저주하겠어.....반드시.....」
+        ELSEIF RAND:2 == 0
+            PRINTSINGLEFORM    「반드시.......흐윽...흑......흑.....」
+        ELSE
+            PRINTSINGLEFORM    「복수 하고 싶어.....하지만.....무서워......」
+        ENDIF
+    ELSE
+        IF RAND:3 == 0
+            PRINTSINGLEFORM    「내가 나가면 빈곤신의 힘을 똑똑히 경험하게 해주지!」
+        ELSEIF RAND:2 == 0
+            PRINTSINGLEFORM    「내가 여기서 죽기를 바래야 할거다!」
+        ELSE
+            PRINTSINGLEFORM    「빈곤신을 건드리다니! 죽을 각고는 했겠지!」
+        ENDIF
+    ENDIF
+    RETURN 1
+;상애
+ELSEIF TALENT:153
+    IF RAND:3 == 0
+        PRINTSINGLEFORM    「설마.....내가 미워진건가?.......」
+    ELSEIF RAND:2 == 0
+        PRINTSINGLEFORM    「빨리 나를 찾아왔으면.......」
+    ELSE
+        PRINTSINGLEFORM    「주인.....」
+    ENDIF
+    RETURN 1
+;친 망
+ELSEIF TALENT:152 || TALENT : 151
+    IF RAND:3 == 0
+        PRINTSINGLEFORM    「오늘은 나를 찾아오겠지?」
+    ELSEIF RAND:2 == 0
+        PRINTSINGLEFORM    「주인님을 생각할수록....행복해지는거 같아.....」
+    ELSE
+        PRINTSINGLEFORM    「빈곤신 따위라도 사랑 받을 수 있을까?」
+    ENDIF
+    RETURN 1
+;그 외
+ELSE
+    IF RAND:3 == 0
+        PRINTSINGLEFORM    「조온........」
+    ELSEIF RAND:2 == 0
+        PRINTSINGLEFORM    「어떻게 하면 나갈 수 있을려나?」
+    ELSE
+        PRINTSINGLEFORM    「뭘 원하는거지?」
+    ENDIF
+    RETURN 1
+ENDIF
+;----------------------------------
+;TFLAG;200 파생 이벤트
+;---------------------------------
+;--------------------------------------
+;촉수 최면
+;---------------------------------------
+@K249_MESSAGE_EVENT_8
+;평온
+IF RESULT == 0
+    DRAWLINE
+    PRINTFORMW 「으.....음.......조...오....ㄴ───어서와......」
+    DRAWLINE
+;레즈
+ELSEIF RESULT == 1
+    DRAWLINE
+    PRINTFORMW 「조...온.....거기......조금...더...」
+    DRAWLINE
+;데이트
+ELSEIF RESULT == 2
+    DRAWLINE
+    PRINTFORMW 「맛있어...?....후훗......」
+    DRAWLINE
+;이상
+ELSEIF RESULT == 4
+    DRAWLINE
+    PRINTFORMW 「정액이.....욕조가득......」
+    DRAWLINE
+ENDIF
+
+;--------------------------------
+;매각시 대사
+;--------------------------------
+@K249_MESSAGE_EVENT_130
+IF  TALENT : 150 || TALENT : 160 || TALENT : 151 || TALENT : 152
+    DRAWLINE
+    PRINTFORMW 「지금 뭐라고 그랬어....?」
+    PRINTFORMW 「내가......팔렸다고?」
+    PRINTFORMW 「거짓말.....이지?」
+    PRINTFORMW 「난....당신을.....」
+    DRAWLINE
+ELSEIF MARK:9 == 3
+    DRAWLINE
+    PRINTFORMW 「날 팔겠다고?」
+    PRINTFORMW 「최대한 빨리 여기서 도망가는게 좋을거야」
+    PRINTFORMW 「반드시 복수하러 올거니까..」
+    PRINTFORMW 「기대하라고...」
+    DRAWLINE
+ELSE
+    DRAWLINE
+    PRINTFORMW 「날 팔겠다고?」
+    PRINTFORMW 「뭐.....어딜 가도 변함 없으려나.....」
+    DRAWLINE
+ENDIF
+
+;----------------------------
+;아침펠라
+;-----------------------------
+@K249_MESSAGE_EVENT_140
+IF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) &&  (CFLAG:8004 < 3 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「아.....조...좋은...아침?」
+    PRINTFORMW 「음....뭐라해야하나.....」
+    PRINTFORMW 「아침식사?」
+    DRAWLINE
+    CFLAG:8004 = 3
+ELSEIF ABL:13 >= 5 &&  (CFLAG:8004 < 2 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「음....읍....츄릅.....」
+    PRINTFORMW 「...기분 좋았어?」
+    PRINTFORMW 「읍....츄르릅...」
+    DRAWLINE
+    CFLAG:8004 = 2
+ELSEIF CFLAG:8004 < 1 || TFLAG:11 == 2
+    DRAWLINE
+    PRINTFORMW 「음....읍....하읍....」
+    PRINTFORMW 「앗!...이....이건......」
+    PRINTFORMW 「지금 빼두면....나중에....빨리 끝날까봐.....」
+    DRAWLINE
+    CFLAG:8004 = 1
+ENDIF
+@K249_MESSAGE_EVENT_142
+
+IF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) && (CFLAG:8005 < 3 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「으흣!──하앗!──앗......」
+    PRINTFORMW 「이...이건...말이야....」
+    PRINTFORMW 「너무...팔팔해서...아파 보였다고 해야 하나?」
+    DRAWLINE
+    CFLAG:8005 = 3
+ELSEIF ABL:11 >= 5 &&  (CFLAG:8005 < 2 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「으읏!────으응!───핫......」
+    PRINTFORMW 「아....」
+    PRINTFORMW 「나도 모르게 그만.....」
+    DRAWLINE
+    CFLAG:8005 = 2
+ELSEIF CFLAG:8005 < 1 || TFLAG:11 == 2
+    DRAWLINE
+    PRINTFORMW 「하핫───굉장......아......」
+    PRINTFORMW 「아......」
+    PRINTFORMW 시온은 도망치듯 방을 나갔다.
+    DRAWLINE
+    CFLAG:8005 = 1  
+ENDIF
+
+@K249_MESSAGE_EVENT_147
+
+IF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) && (CFLAG:8006 < 3 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「으흣!──하앗!──앗......」
+    PRINTFORMW 「이...이건...말이야....」
+    PRINTFORMW 「너무...팔팔해서...아파 보였다고 해야 하나?」
+    DRAWLINE
+    CFLAG:8006 = 3
+ELSEIF ABL:11 >= 5 &&  (CFLAG:8006 < 2 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「으읏!────으응!───핫......」
+    PRINTFORMW 「아....」
+    PRINTFORMW 「나도 모르게 그만.....」
+    DRAWLINE
+    CFLAG:8006 = 2
+ELSEIF CFLAG:8006 < 1 || TFLAG:11 == 2
+    DRAWLINE
+    PRINTFORMW 「하핫───굉장......아......」
+    PRINTFORMW 「아......」
+    PRINTFORMW 시온은 도망치듯 방을 나갔다.
+    DRAWLINE
+    CFLAG:8006 = 1  
+ENDIF
+
+@K249_MESSAGE_EVENT_150
+
+IF PALAM : 13 >= PALAMLV : 3 && (CFLAG:8007 < 3 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 시온은 %CALLNAME:MASTER%의 옷을 잡았다.
+    PRINTFORMW 「이대로 애태우기만 하고 끝...?」
+    PRINTFORMW 「아니면..내가 애원하는걸 보고 싶은거야?」
+    DRAWLINE 
+    CFLAG:8007 = 3
+ELSEIF ABL:11 >= 5 &&  (CFLAG:8007 < 2 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「난...아직 더 할 수 있는데....」
+    PRINTFORMW 「이대로 끝내기는 아쉽지 않아?」
+    PRINTFORMW 「한번만....더....하자.....」
+    DRAWLINE
+    CFLAG:8007 = 2
+ELSEIF CFLAG:8007 < 1 || TFLAG:11 == 2
+    DRAWLINE
+    PRINTFORMW 「....불완전 연소로는 찝찝하지 않아?」
+    PRINTFORMW 「확실하게...태워버리는건....어떨까?」
+    DRAWLINE
+    CFLAG:8007 = 1  
+ENDIF
+
+@K249_MESSAGE_EVENT_151
+
+IF ABL:30 >= 3 && (CFLAG:8008 < 3 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「하앗!───아앗!──」
+    PRINTFORMW 「이런거....계속하면 안되는데.....」
+    PRINTFORMW 「....마지막으로.....딱.....한번만......더」
+    DRAWLINE 
+    CFLAG:8008 = 3
+ELSEIF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) &&  (CFLAG:8008 < 2 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「아앗!───아앙──!.」
+    PRINTFORMW 「주인님!....주인님!......」
+    DRAWLINE
+    CFLAG:8008 = 2
+ELSEIF CFLAG:8008 < 1 || TFLAG:11 == 2
+    DRAWLINE
+    PRINTFORMW 「읏──! 이런거....하면 흣──!....안될거...같은데....」
+    DRAWLINE
+    CFLAG:8008 = 1  
+ENDIF
+
+@K249_MESSAGE_EVENT_158
+
+IF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) && CFLAG:8009 == 1 && (CFLAG:8008 < 3 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「작년에 왔던 각설이───」
+    PRINTFORMW 「죽지도 않고 또 왔네──」
+    PRINTFORMW 「.......부끄러우니까 빨리 뭐라도 해줘....」
+    DRAWLINE 
+    CFLAG:8008 = 3
+ELSEIF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) && (CFLAG:8008 < 2 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「주인장 계십니까──」
+    PRINTFORMW 「동침 한번만 해 주십시요──」
+    PRINTFORMW 「.........랄까?」
+    DRAWLINE
+    CFLAG:8008 = 2
+    CFLAG:8009 = 1
+ELSEIF CFLAG:8008 < 1 || TFLAG:11 == 2
+    DRAWLINE
+    PRINTFORMW 「혼자서 자면 외롭지 않아?」
+    PRINTFORMW 「난 외로워서 그런데....옆으로 조금 비켜봐」
+    DRAWLINE
+    CFLAG:8008 = 1  
+ENDIF
+
+@K249_MESSAGE_EVENT_161
+IF  ABL:31 >= 3 && (CFLAG:8009 < 2 || TFLAG:11 == 2)
+    DRAWLINE
+    PRINTFORMW 「...아직 부족한 모양인가봐?」
+    PRINTFORMW 「사실 나도 조금.....」
+    PRINTFORMW 「으읏!───아앗!───자...잠시만...!」
+    DRAWLINE 
+    CFLAG:8009 = 2
+ELSEIF CFLAG:8008 < 1 || TFLAG:11 == 2
+    DRAWLINE
+    PRINTFORMW 「엣...설마.....잠시만......진정.....」
+    PRINTFORMW 「꺄악!....주인님!......살려주........ㅓ!」
+    DRAWLINE
+    CFLAG:8009 = 1  
+ENDIF
+
+@K249_MESSAGE_EVENT_257
+;연망친복 촉중3
+IF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) && ABL:35 >= 3
+    DRAWLINE
+    PRINTFORMW 「뭐라고?」
+    PRINTFORMW 「이....이 아이들이랑....계속...여기있으라고?」
+    PRINTFORMW 「평생?」
+    PRINTFORMW 「지금 뭔 소리를 하느ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㄴ?」
+    PRINTFORMW 시온의 말이 체 끝나기전 촉수들은 익숙한 냄새의 소유자를 깊숙히 끌고 들어갔다.
+    PRINTFORMW 「주인!....잠시!....내 말조..ㅁ....으읍!」
+    PRINTFORMW 촉수들은 시온이 마지막으로 뱉을 말조차 끝까지 허락하지 않고 그녀의 몸을 즐기기 시작했다.
+    PRINTFORMW 「으읍!.....으읍!.....읍!......우..............」
+    PRINTFORMW %CALLNAME:MASTER%은 촉수와 시온의 경계가 사라진걸 확인하고 방을 나갔다.
+    DRAWLINE
+;연망친복 총경o
+ELSEIF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) && EXP:53 >= 1
+    DRAWLINE
+    PRINTFORMW 「뭐라고?」
+    PRINTFORMW 「이 방에서 다시는 나올 수...없다고?」
+    PRINTFORMW 「평생?」
+    PRINTFORMW 「지금 뭔 소리를....꺄악?」
+    PRINTFORMW 시온의 말이 체 끝나기전에 촉수들은 시온의 다리를 붙잡고 끌고 가기 시작했다
+    PRINTFORMW 하반신이 촉수에게 먹혀버린 시온은 당신의 바지를 붙잡고 애원하기 시작했다.
+    PRINTFORMW 「주인님! 제발! 이것만은..! 뭐든지 할테니!」
+    PRINTFORMW 「제발! 발을 핥으라면 핥고 육변기가 되라면 될테니! 제발 촉수만은!」
+    PRINTFORMW 촉수가 가슴까지 올라오자 시온은 탈출을 위해 바닥을 긁으며 기어가기 시작했다.
+    PRINTFORMW 「안돼....저기만은.....저기는....지옥이라고.....제발?!」
+    PRINTFORMW 촉수들은 시온의 몸을 들고 방 가장 깊은 곳으로 던졌다.
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시온이 바닥에 남긴 손톱자국과 바닥에 남긴 핏자국을 보고 방을 나갔다.
+    DRAWLINE
+;연망친복 총경X
+ELSEIF (TALENT : 150 || TALENT : 151 || TALENT : 160 || TALENT : 152) && EXP:53 == 0
+    DRAWLINE
+    PRINTFORMW 「주인님 이 방은?」
+    PRINTFORMW 시온은 평소에는 보지 못했던 방에 호기심을 가지기 시작했다
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 방문앞에서 처음보는 방안을 둘러보는 시온의 등뒤로 향했다. 
+    PRINTFORMW 그 뒤
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 무방비한 시온의 등을 밀쳐 방안으로 집어 넣었다
+    PRINTFORMW 「아앗? 주인님...! 지금 뭐하는!...」
+    PRINTFORMW 「주인님? 문은 왜 닫는거야?!」
+    PRINTFORMW 방문이 닫히고 방안에 어둠이 찾아왔다.
+    PRINTFORMW 「주인님? 이건 또 뭔 장난이야?」
+    PRINTFORMW 「이런거...무섭기만 하고....재미없는데?」
+    PRINTFORMW 「빨리 문 열어.....꺄앗?!」
+    PRINTFORMW 방안에 완전한 어둠이 깔리자 벽들로 위태했던 촉수들이 모습을 보이기 시작했다
+    PRINTFORMW 「주인님! 바....방안에...이상한....괴물들이!.....」
+    PRINTFORMW 「주인님?! 저기요? 거기 아무도 없어요! 살려주세요! 제발!」
+    PRINTFORMW 「안돼!...이런식으로......죽기는....아무나!!.....제발!!.....주인님!!!......조...조온!...사....살려주세요────」
+    PRINTFORMW 방이 침묵으로 뒤덥히자 %조사처리(CALLNAME:MASTER,"은")% 자신의 방으로 돌아갔다.
+    DRAWLINE
+ELSE 
+    DRAWLINE
+    PRINTFORMW 「지금 뭐하자는 거야?」
+    PRINTFORMW 「산제물? 내가?」
+    PRINTFORMW 「농담 하지 말라고.」
+    PRINTFORMW 「니 성노리개 역활도 충분히 억울한데 뭔 소리야?」
+    PRINTFORMW 「헛소리도 적당히....」
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시온의 배를 발로차 방안으로 집어 넣었다.
+    PRINTFORMW 시온이 방안에 들어오자 시온의 전신은 촉수로 뒤덥히기 시작했다
+    PRINTFORMW 「자....잠깐..! 진정해!....내..내 말좀..들어봐...!」
+    PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 시온의 말을 들을 생각이 없다는 듯이 문을 닫고 나갔다
+    PRINTFORMW 방안이 잠잠해지는걸 확인한 %조사처리(CALLNAME:MASTER,"은")% 자신의 방으로 돌아갔다.
+    DRAWLINE
+ENDIF
+TFLAG:200 = 0
+RETURN 0
+
+;--------------------------------
+; 약혼 반지  (TFLAG:200==200),
+;---------------------------------
+@K249_MESSAGE_EVENT_200 
+PRINTFORMW  그것을 본 시온은 당항해 하면서 당신에게 물었다.
+PRINTFORMW 「이게.....뭐야?」
+PRINTFORMW  %조사처리(CALLNAME:MASTER,"은")% 당황해하는 시온에게 말했다
+PRINTFORMW 『나의 여자가 되어줘』
+PRINTFORMW  그 말을 들은 시온은 떨리는 목소리로 말하기 시작했다
+PRINTFORMW 「주....주인님?」
+PRINTFORMW 「주인님.....자...장난이 너무 심한거 아니야?」
+PRINTFORMW 「내가 주인님을 사랑한다고 말했어도....」
+PRINTFORMW 「이건 도가 지나친 농담인거 같아....」
+PRINTFORMW  .......
+PRINTFORMW  ....
+PRINTFORMW  %조사처리(CALLNAME:MASTER,"은")% 시온의 말에도 굴하지 않고 다시한번 말했다
+PRINTFORMW 「.....진심인가 보네...」
+PRINTFORMW  .......
+PRINTFORMW  ....
+PRINTFORMW 「흐......흐으....윽...흑.....훌쩍....」
+PRINTFORMW 「아....아니야.....너무....기뻐서.....잠시만.....」
+PRINTFORMW  ........
+PRINTFORMW  .........
+PRINTFORMW  조금 진정된 시온은 %CALLNAME:MASTER%에게 말했다.
+PRINTFORMW 「....어째서...나야?」
+PRINTFORMW 「환상향에서 가장 미움받고 있는 나를?」
+PRINTFORMW 「가진것이라고는 주변 인물에게 불행을 퍼뜨리는거 말고 없는 나를?」
+PRINTFORMW 「왜 나같은 빈곤신에게 마음 한켠을 내주는 거지?」
+PRINTFORMW 「내가 곁에 있으면 주인님은 불행하기만 할건데?」
+PRINTFORMW 「어째서?」
+PRINTFORMW 「제발.....」
+PRINTFORMW 「부탁이야.....」
+PRINTFORMW 「다시 한번만 생각해줘....」
+PRINTFORMW 「나는 불행에 쩔어서 까지 나를 사랑하는 주인님을 볼 수 없어....」
+PRINTFORMW 「그런 생활은 행복이 아니야....불행일 뿐이라고....」
+PRINTFORMW 「다시 한번만 생각해줘....」
+PRINTL [0] 『우리 같이 불행을 극복해 나가자』
+PRINTL [1] 『난 너와 함께라면 불행하지 않을거야』
+$INPUT_K249EDLOOP
+INPUT
+IF RESULT == 1
+    PRINTFORMW 「....뭐?」
+    PRINTFORMW 「뭘 믿고 그런말을 하는거야?」
+    PRINTFORMW 「확실히 주인님을 만난 뒤 뭔가 이상하기는 했어....」
+    PRINTFORMW 「마치.....」
+    PRINTFORMW 「내가 내가 아니게 된 느낌?」
+    PRINTFORMW 「불행을 만드는 능력이 행복을 느끼다니 이상하잖아?」
+    PRINTFORMW 「나 한테 뭔짓을 한건지 말해 줄 수 있어?」
+    PRINTL [0] 동방조교전을 말해준다
+    PRINTL [1] 『아무것도 하지 않았어』
+    $INPUT_K249EDLOOP2
+    INPUT
+    IF RESULT == 0
+        PRINTFORMW 「나중에 알려 주겠다고?」
+        PRINTFORMW 「뭐...그럼....」   
+        PRINTFORMW 「앞으로 잘 부탁드립니다...?」
+        CFLAG:8906 = 1
+    ELSEIF RESULT == 1
+        PRINTFORMW 「뭐..?」
+        PRINTFORMW 「아무것도 하지 않았다고?」   
+        PRINTFORMW 「하긴....그런 힘이 있을리가 없잖아?」
+        PRINTFORMW 「단순한 착각이였나 봐」
+        PRINTFORMW 「주인님은 불행을 정신력으로 버틸 생각인가봐?」
+        PRINTFORMW 「하아......」
+        PRINTFORMW 「가끔가다 느끼는건데....주인님은 바보같은 구석이 있어...」
+        PRINTFORMW 「뭐....그렇다면 어쩔수 없지....」   
+        PRINTFORMW 「앞으로 잘 부탁드립니다....」
+        CFLAG:8908 = 1
+    ELSE
+        GOTO INPUT_K249EDLOOP2
+    ENDIF
+ELSEIF RESULT == 0
+    PRINTFORMW 「....하아」
+    PRINTFORMW 「주인님이 그런걸 바란다면 어쩔 수 없지....」
+    PRINTFORMW 「그럼...앞으로 잘 부탁드립니다....」
+    CFLAG:8907 = 1
+ELSE
+    GOTO INPUT_K249EDLOOP
+ENDIF
+DRAWLINE
+;---------------------------------
+; 붉 개 목
+;-------------------------------------
+@K249_MESSAGE_EVENT_201
+PRINTFORMW 「뭐야?....야외플레이라도 하려고?」
+PRINTFORMW 「.......벗을까?」
+PRINTFORMW  당신은 옷을 벗을려는 시온을 말리고 목걸이의 의미를 설명해 주었다
+PRINTFORMW 「평생....주인님의 소유물.....」
+PRINTFORMW 「이런거....나한테 줘도 되는거야?」
+PRINTFORMW  당신은 당연하다고 시온에게 말했다
+PRINTFORMW 「앞으로.....평생동안.....주인님의 것이라.........」
+PRINTFORMW  ....주르륵
+PRINTFORMW  갑자기 시온의 코에서 붉은 피가 흐르기 시작했다.
+PRINTFORMW 「앗......」
+PRINTFORMW 「걱정하지마.....」
+PRINTFORMW 「앞으로의 상상을 했더니 흥분되서 그만.....」
+PRINTFORMW 「그럼 앞으로도......」
+PRINTFORMW 「주인님의 소유물로써 평생을 다하겠습니다.」
+PRINTFORMW 「잘부탁 드려요 주인님......」
+
+;=====================
+;공 정 목
+;-------------------------------------
+@K249_MESSAGE_EVENT_204
+PRINTFORMW 「뭐야?....야외플레이라도 하려고?」
+PRINTFORMW 「.......벗을까?」
+PRINTFORMW  당신은 옷을 벗을려는 시온을 말리고 목걸이의 의미를 설명해 주었다
+PRINTFORMW 「평생....주인님의 소유물.....」
+PRINTFORMW 「이런거....나한테 줘도 되는거야?」
+PRINTFORMW  당신은 당연하다고 시온에게 말했다
+PRINTFORMW 「앞으로.....평생동안.....주인님의 것이라.........」
+PRINTFORMW  ....주르륵
+PRINTFORMW  갑자기 시온의 코에서 붉은 피가 흐르기 시작했다.
+PRINTFORMW 「앗......」
+PRINTFORMW 「걱정하지마.....」
+PRINTFORMW 「앞으로의 상상을 했더니 흥분되서 그만.....」
+PRINTFORMW 「그럼 앞으로도......」
+PRINTFORMW 「주인님의 소유물로써 평생을 다하겠습니다.」
+PRINTFORMW 「잘부탁 드려요 주인님......」
+
+;------------------------------
+;청산호
+;-----------------------------
+@K249_MESSAGE_EVENT_205
+PRINTFORMW  그것을 본 시온은 당항해 하면서 당신에게 물었다.
+PRINTFORMW 「이게.....뭐야?」
+PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 당황해하는 시온에게 말했다
+PRINTFORMW 『나의 여자가 되어줘』
+PRINTFORMW 그 말을 들은 시온은 떨리는 목소리로 말하기 시작했다
+PRINTFORMW 「주....주인님?」
+PRINTFORMW 「주인님.....자...장난이 너무 심한거 아니야?」
+PRINTFORMW 「내가 주인님을 사랑한다고 말했어도....」
+PRINTFORMW 「이건 도가 지나친 농담인거 같아....」
+PRINTFORMW  %조사처리(CALLNAME:MASTER,"은")% 시온의 말에도 굴하지 않고 다시한번 말했다
+PRINTFORMW 「.....진심인가 보네...」
+PRINTFORMW  .......
+PRINTFORMW  ....
+PRINTFORMW 「흐......흐으....윽...흑.....훌쩍....」
+PRINTFORMW 「아....아니야.....너무....기뻐서.....잠시만.....」
+PRINTFORMW  ........
+PRINTFORMW  .........
+PRINTFORMW 「이런 나라도 좋다면,,,,,,,」
+PRINTFORMW 「앞으로 잘 부탁드립니다.....」
+PRINTFORMW 「주인님─♥」
+;=============================================================================
+;엔딩 대사의 처리
+;=============================================================================
+;-------------------------------------------------
+;@SINGLE_ENDING 관계
+;단독 엔딩
+;-------------------------------------------------
+@SINGLE_ENDING_K249
+DRAWLINE
+PRINTFORMW ―――단독 엔딩 조건 달성―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+IF CFLAG:8906 == 1 
+    PRINTFORML  당신은 반지를 시온의 손가락에 끼운 뒤 모든걸 말했다.... 
+    PRINTFORML  동방조교전 역시...
+    PRINTFORMW 「....그러니까..」
+    PRINTFORMW 「그 책이 있으면.....」
+    PRINTFORMW 「그 책의 힘이라면.....」
+    PRINTFORMW 「내...능력이 발동이....안된다는거지?」
+    PRINTFORML  당신은 망설이듯 고개를 끄덕였다....
+    PRINTFORMW 「설마.....나와......주변의 인물이 불행해지지 않은 것도....?」
+    PRINTFORMW 「그럼... 그 책이 없었다면....」
+    PRINTFORMW 「내가....이렇게 까지....행복했을 일도 없다는거야?」
+    PRINTFORML  당신은 부정했다.
+    PRINTFORML  하지만...시온의 귀에는 들리지 않았다.....
+    PRINTFORMW 「거짓말이지?」
+    PRINTFORMW 「방금부터.....계속.....질나쁜 거짓말을......하고있는거지...?」
+    PRINTFORMW 「어?」
+    PRINTFORMW 「대답해줘......빨리......」
+    PRINTFORMW 「이....행복이.....」
+    PRINTFORMW 「내.....마음이......」
+    PRINTFORMW 「나 스스로....주인님을 생각해서....얻어낸.....마음이라고.....」
+    PRINTFORMW 「제발......」
+    PRINTFORMW 「난.......」
+    PRINTFORMW  ...........
+    PRINTFORMW  ........
+    PRINTFORMW 「ㅇ....ㅏ....니야.....」
+    PRINTFORMW 「아니야....아니야....아니야......」
+    PRINTFORMW 「....난....진심이였어.......」
+    PRINTFORMW 「....나는.....진심이였다고......」
+    PRINTFORMW 「....이건 농담이야....」
+    PRINTFORMW 「....내 행복은..저런 책 따위에 만들어 지지 않았어....」
+    PRINTFORMW  ...........
+    PRINTFORMW  ..........
+    PRINTFORMW  .......
+    PRINTFORMW 「ㅎ......ㅏ」
+    PRINTFORMW 「하.....하하....하하하....」
+    PRINTFORMW 「...아...하하하!...하하하하!」
+    PRINTFORML  시온은 갑자기 미친듯이 웃기 사작했다
+    PRINTFORMW 「....내 행복이 만들어 진거였다고?」
+    PRINTFORMW 「그걸 진짜라고 믿고 이 지랄을 한거야?」
+    PRINTFORMW 「아하하하하하!」
+    PRINTFORMW 「능력이라곤 불행해 지는것 말고는 없는년이 처음으로 자기 스스로 행복을 찾았다고?」
+    PRINTFORMW 「그런 착각을 하는 꼴을 직접보다니!」
+    PRINTFORMW 「니 눈엔 내가 얼마나 우스웠을까!」
+    PRINTFORMW 「하하하하하!」
+    PRINTFORMW 「....하하하하!...」
+    PRINTFORMW 「....하...하....하」
+    PRINTFORML  시온은 실이 끊어진 마리오네트 처럼 주저 앉았다.
+    PRINTFORML  %조사처리(CALLNAME:MASTER,"은")% 시온의 상태를 보기 위해 시온을 향해 다가 갔다.
+    PRINTFORML  시온은 %조사처리(CALLNAME:MASTER,"은")% 역살을 잡고 울부짖었다.
+    PRINTFORMW 「감히 날 가지고 놀았겠다!」
+    PRINTFORMW 「최흉최악의 빈곤신 요리가미 시온의 이름을 걸고 맹세하겠다!」
+    PRINTFORMW 「죽어서 까지 널 저주하겠다!」
+    PRINTFORMW 「평생 가난을 겁내다 죽어라!........」
+    DRAWLINE
+    PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} (%CALLNAME:TARGET% BAD 엔딩)―― 
+    PRINTL 
+    PRINTL ------------------------------------GAME END-----------------------------------
+    PRINTL
+    PRINTFORMW 클릭이나 키보드로 게임을 종료합니다.
+    QUIT
+    ENDIF
+IF CFLAG:8907 == 1
+    PRINTFORMW  당신은 시온의 손가락에 반지를 끼운뒤 뜨거운 포옹을 했다
+    PRINTFORMW  포옹을 마친뒤 시온과 %조사처리(CALLNAME:MASTER,"은")% 서로 마주보고 미소지었다.
+    PRINTFORMW 「빈곤신의 힘....견딜 수 있을거 같아?」
+    PRINTFORMW 「나...이래보여도....최흉최악의 빈곤신인데?」
+    PRINTFORMW 「얼마나 버틸 수 있을려나?」
+    PRINTFORMW 「.....후훗」
+    PRINTFORMW 「당신과 함께라면 그역시도 행복할 수도....」
+    PRINTFORMW 「앞으로 잘부탁드립니다...」
+    PRINTFORMW 「최흉최악의 힘....잘....견더보라고?」
+    PRINTFORMW 「주인님....♥」
+    DRAWLINE
+    PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} (%CALLNAME:TARGET% 엔딩―― 
+    RETURN 0
+ENDIF
+IF CFLAG:8908 == 1
+    PRINTFORMW  XX년뒤......
+    PRINTFORMW  시온은 백발이된 %CALLNAME:MASTER%의 옆에 앉아있었다.
+    PRINTFORMW 「......당신」
+    PRINTFORMW 「지금 까지....내 곁에 있어줘서 고마웠어....」
+    PRINTFORMW 「이런 빈곤신을 끝까지 버리지 않고 곁에 둬 두다니.....」
+    PRINTFORMW 「그런데 이렇게 혼자서 쓸쓸히 가버리면 어쩌자는거야.....」
+    PRINTFORMW 「당신의 결말 너무....불행하지 않아?」
+    PRINTFORMW 「내가 이런 신령만 아니였어도.....」
+    PRINTFORMW 「당신과 영원히 함께해서 불행한 결말을 막을 수 있었을텐데...!」
+    PRINTFORMW  %조사처리(CALLNAME:MASTER,"은")% 그런 시온의 볼을 쓰다듬으며 말했다
+    PRINTFORMW  내 인생 마지막 날에 시온이 있어서 해피엔딩으로 끝날거라고.
+    PRINTFORMW 「......훗」
+    PRINTFORMW 「그때도 그렇고 당신은 가끔 보면 바보같아....」
+    PRINTFORMW 「빈곤신을 옆에 두고 해피엔딩이라고?」
+    PRINTFORMW 「후후훗.....후후후........」
+    PRINTFORMW 「..........」
+    PRINTFORMW 「....흐....흐흑.....흑....」
+    PRINTFORMW 「정말로 이렇게 가는거야?」
+    PRINTFORMW 「나를 버리고 이렇게?」
+    PRINTFORMW 「봉래인의 간을 가져올까? 아니면 지옥으로가 명부를 바꿔달라고 부탁을 해볼까?」
+    PRINTFORMW 「당신을 살릴 수 있다면 뭐든지 할 수 있어....」
+    PRINTFORMW 「제발...나를 혼자 두지마.....」
+    PRINTFORMW  %조사처리(CALLNAME:MASTER,"은")% 그런 시온을 위로해 주고 싶었지만 몰려오는 졸음에 이기지 못하고 눈을 감았다.
+    PRINTFORMW 「....흐....흐흑.....흑....」
+    PRINTFORMW 「......어?」
+    PRINTFORMW 「당신? 자는거야? 일어나봐.....당신!.....%CALLNAME:MASTER%!」
+    PRINTFORMW 「.....제발!....날 혼자 두지 말아줘!」
+    PRINTFORMW 「....당신이 없으면 난....!」
+    PRINTFORMW 「.....불행해질것만 같단말이야.....」
+    PRINTFORMW 「....날...다시....불행하게 만들지 말아줘....제발.....」
+    PRINTFORMW  ...............
+    PRINTFORMW  ...........
+    PRINTFORMW  ......
+    PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} (%CALLNAME:TARGET% SAD 엔딩)―― 
+    PRINTL 
+    PRINTL ------------------------------------GAME END-----------------------------------
+    PRINTL
+    PRINTFORMW 클릭이나 키보드로 게임을 종료합니다.
+    QUIT
+ENDIF
+;-------------------------------------------------
+;@SINGLE_ENDING_AFTER 관계
+;단독 엔딩 후에 「계속한다」를 선택했을 때에 출력합니다
+;-------------------------------------------------
+@SINGLE_ENDING_AFTER_K249
+;PRINTFORMW 「단독 엔딩 종료 후의 대사입니다」
+RETURN 0
+
+;-------------------------------------------------
+;@SLAVE_ENDING 관계
+;노예 엔딩
+;-------------------------------------------------
+@SLAVE_ENDING_K249
+DRAWLINE
+PRINTFORMW ―――노예 엔딩 조건 달성―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+PRINTFORMW  다음날 아침.....
+PRINTFORMW  잠에서 깬 시온은 당신곁에서 일어났다.
+PRINTFORMW  시온은 아직 잠에서 해어나오지 못한 %조사처리(CALLNAME:MASTER,"을")% 보고 미소 지었다.
+PRINTFORMW 「주인님....오늘은 어떤 플레이를 할거야?」
+PRINTFORMW  가진것이라고는 불행과 가난뿐이던 신령이
+PRINTFORMW  지금은 %CALLNAME:MASTER%의 노예로써 누구보다 행복한 미소를 짖고있다.
+PRINTFORMW  %조사처리(CALLNAME:MASTER,"은")% 그런 시온의 머리를 쓰다듬었다
+PRINTFORMW 「뭘하고 싶냐고?」
+PRINTFORMW 「음.......」
+PRINTFORMW 「그럼 오늘은 마을로 나가볼까?」
+PRINTFORMW 「날 미워 하던사람들이 주인님과 함께 걷는 내 모습을 보고 어떤 반응을 할지 궁금해」
+PRINTFORMW 「덤으로 이 목걸이 자랑도 하고」
+PRINTFORMW  시온은 자신의 목에 걸려있는 붉은 목걸이를 사랑스럽다는 듯이 쓰다듬으며 말했다.
+PRINTFORMW 「그럼....오늘은 그걸로 결정한거야?」
+PRINTFORMW 「그전에.......」
+PRINTFORMW 「한번만 하고 갈까?」
+PRINTFORMW .......아마도 외출은 다음으로 미뤄질것만 같다
+PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET}i (%CALLNAME:TARGET% BED 엔딩)──
+RETURN 0
+;-------------------------------------------------
+;@SLAVE_ENDING_AFTER 관계
+;노예 엔딩 후에 「계속한다」를 선택했을 때에 출력합니다
+;-------------------------------------------------
+@SLAVE_ENDING_AFTER_K249
+;PRINTFORMW 「노예 엔딩 종료 후의 대사입니다」
+RETURN 0

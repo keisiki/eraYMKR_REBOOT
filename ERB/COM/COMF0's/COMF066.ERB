@@ -1,0 +1,436 @@
+﻿;=================================================================
+;배란유도제
+;=================================================================
+;………………………………………………
+;실행 판정
+;………………………………………………
+@COM_ABLE66
+;개별 설정 커맨드 필터
+SIF DITEMTYPE:999:66 > 0
+    RETURN 0
+;약품계 확장 커맨드를 유효하게 하지 않으면 안 됨
+SIF (FLAG:15 & 32) == 0
+    RETURN 0
+;아이템을 가지고 있는지, 아이템 없음 설정이 아니면 안 됨
+SIF ITEM:64 == 0 && NOITEM == 0
+    RETURN 0
+;주인이 아니면 안 됨
+SIF ASSIPLAY
+    RETURN 0
+;3명 중 최소 하나는 여자고 배란유도제, 긴급피임약을 먹지 않았어야 함
+IF ASSI > 0
+    SIF (TALENT:ASSI:120 || TEQUIP:ASSI:16 || TEQUIP:ASSI:17) && (TALENT:MASTER:120 || TEQUIP:MASTER:16 || TEQUIP:MASTER:17) && (TALENT:120 || TEQUIP:16 || TEQUIP:17)
+        RETURN 0
+ELSE
+    SIF (TALENT:MASTER:120 || TEQUIP:MASTER:16 || TEQUIP:MASTER:17) && (TALENT:120 || TEQUIP:16 || TEQUIP:17)
+        RETURN 0
+ENDIF
+;촉수 조교 중에는 불가
+SIF TEQUIP:90
+    RETURN 0
+RETURN 1
+
+@EXCOM_ABLE66(ARG)
+#FUNCTION
+;먹는 대상마다 판정
+IF ARG == TARGET
+    ;주인 혹은 조수가 남자나 후타나리 나오지 않으면 안 됨
+    SIF EXIST_PENIS(MASTER) == 0 && EXIST_PENIS(ASSI) == 0 
+        RETURNF 0
+    ;강제개구기 외에 다른 걸로 입이 막혀 있으면 불가
+    SIF TEQUIP:42 && TEQUIP:42 != 3
+        RETURNF 0
+ENDIF
+IF ARG == ASSI
+    ;조수가 없으면 안 됨
+    SIF ASSI < 0 
+        RETURNF 0
+    ;주인 혹은 노예가 남자나 후타나리 나오지 않으면 안 됨
+    SIF EXIST_PENIS(MASTER) == 0 && EXIST_PENIS(TARGET) == 0
+        RETURNF 0
+    ;난생, 산란 체질이 일 때 (원래는 먹고 탈이 나야 하지만 조수와 주인 파라미터가 제대로 구현 안 되서 못 먹는 걸로 처리함)
+    SIF TALENT:ASSI:135 || TALENT:ASSI:136
+        RETURNF 0
+ENDIF
+IF ARG == MASTER
+    ;조수 혹은 노예가 남자나 후타나리 나오지 않으면 안 됨
+    SIF EXIST_PENIS(TARGET) == 0 && EXIST_PENIS(ASSI) == 0 
+        RETURNF 0
+    ;난생, 산란 체질이 일 때 (원래는 먹고 탈이 나야 하지만 조수와 주인 파라미터가 제대로 구현 안 되서 못 먹는 걸로 처리함)
+    SIF TALENT:MASTER:135 || TALENT:MASTER:136
+        RETURNF 0
+ENDIF
+;약물내성의 경우 안 됨
+SIF TALENT:ARG:44
+    RETURNF 0
+;남자라면 안 됨
+SIF TALENT:ARG:120
+    RETURNF 0
+;임신중이라면 불가
+SIF TALENT:ARG:140
+    RETURNF 0
+;회란 중에는 불가
+SIF TALENT:ARG:145
+    RETURNF 0
+;산란촉진제를 사용 중이면 사용할 수 없다(사용할 수 없겠지만)
+SIF TEQUIP:ARG:9
+    RETURNF 0
+;수면중은 불가
+SIF EQUIP:ARG:14
+    RETURNF 0
+;긴급피임약을 사용 중이면 사용할 수 없다(사용할 수 없겠지만)
+SIF TEQUIP:ARG:17
+    RETURNF 0
+;벌써 사용중이라면 사용할 수 없다
+SIF TEQUIP:ARG:16
+    RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;커맨드 본체
+;--------------------------------------------------
+@COM66
+PRINTL 배란유도제
+COM_NAME = 배란유도제
+
+LOCAL == 0
+;노예 체크
+IF TALENT:120 == 0
+    SIF EXCOM_ABLE66(TARGET)
+        LOCAL |= 1
+ENDIF
+;조수 체크
+IF ASSI > 0
+    SIF EXCOM_ABLE66(ASSI)
+        LOCAL |= 2
+ENDIF
+;주인 체크
+IF TALENT:MASTER:120 == 0
+    SIF EXCOM_ABLE66(MASTER)
+        LOCAL |= 4
+ENDIF
+
+IF LOCAL == 0
+    PRINTL 배란유도제를 먹을 수 있는 사람이 없다.
+    PRINTW 그러므로 아무것도 하지 않았다….
+    RETURN 1
+;정상작동
+ELSE
+    PRINTL 배란유도제를 먹입니다.
+    PRINTL 누구에게 먹입니까?
+    SIF LOCAL & 1
+        PRINT [0] 「노예」 
+    SIF LOCAL & 2
+        PRINT [1] 「조수」 
+    SIF LOCAL & 4
+        PRINT [2] 「주인」 
+    PRINTL
+
+    $INPUT_LOOP
+    INPUT
+    IF RESULT == 0
+        TFLAG:99 = 0
+        CALL COM66_TARGET
+    ELSEIF RESULT == 1
+        TFLAG:99 = 1
+        CALL COM66_ASSI
+    ELSEIF RESULT == 2
+        TFLAG:99 = 2
+        CALL COM66_MASTER
+    ELSE
+        GOTO INPUT_LOOP
+    ENDIF
+ENDIF
+
+RETURN 1
+
+@COM66_TARGET
+PRINTL 배란유도제(노예)
+COM_NAME = 배란유도제
+CALL TRAIN_MESSAGE_COM066
+
+;조제 지식이 있으면 소비를 억제한다
+IF TALENT:MASTER:55 || (ASSI >= 0 && TALENT:ASSI:55)
+    DOWNBASE:0 += 45
+    DOWNBASE:1 += 45
+ELSE
+    DOWNBASE:0 += 100
+    DOWNBASE:1 += 100
+ENDIF
+
+LOCAL:1 = 0
+;태생 때(=난생, 산란 체질이 아닐 때)
+IF TALENT:135 == 0 && TALENT:136 == 0
+    ;연모인가 친애나 상애 때
+    IF TALENT:150 || TALENT:152 || TALENT:153
+        SOURCE:11 = 1500
+        LOCAL:1 = 1
+    ENDIF
+    ;복종이나 망신 때
+    IF TALENT:160 || TALENT:161
+        SOURCE:17 = 2000
+        LOCAL:1 = 1
+    ENDIF
+    ;음란 때
+    IF TALENT:170
+        SOURCE:18 = 1800
+        LOCAL:1 = 1
+    ENDIF
+    ;함락 하고 있지는 않지만 순종 Lv5로 굴복 각인 3으로 반발 각인이 없을 때
+    IF LOCAL:1 == 0 && ABL:10 == 5 && MARK:2 == 3 && MARK:9 == 0
+        SOURCE:19 += 100
+        SOURCE:22 = 1000
+        LOCAL:1 = 1
+    ENDIF
+
+    ;위의 각 조건에 들어맞지 않는 경우는 반발이 있다
+    IF LOCAL:1 == 0
+        SOURCE:32 = 1000
+        LOCAL:2 = 400
+        ;ABL:순종을 본다
+        IF ABL:10 == 0
+            TIMES LOCAL:2 , 6.00
+        ELSEIF ABL:10 == 1
+            TIMES LOCAL:2 , 5.00
+        ELSEIF ABL:10 == 2
+            TIMES LOCAL:2 , 4.00
+        ELSEIF ABL:10 == 3
+            TIMES LOCAL:2 , 3.00
+        ELSEIF ABL:10 == 4
+            TIMES LOCAL:2 , 2.00
+        ENDIF
+        SOURCE:32 += LOCAL:2
+        LOCAL:3 = 500
+        ;MARK:반발 각인을 본다
+        IF MARK:9 == 0
+            TIMES LOCAL:3 , 2.00
+        ELSEIF MARK:9 == 1
+            TIMES LOCAL:3 , 3.00
+        ELSEIF MARK:9 == 2
+            TIMES LOCAL:3 , 4.00
+        ELSEIF MARK:9 >= 3
+            TIMES LOCAL:3 , 5.00
+        ENDIF
+        SOURCE:25 += 1000
+        SOURCE:32 += LOCAL:3
+    ELSE
+        SOURCE:19 = 1500
+    ENDIF
+    ;난생·산란 체질의 경우는 효과가 없다.
+    TEQUIP:16 = 1
+ELSE
+    ;난생 혹은 산란 체질 때는 반발 밖에 부르지 않는다.
+    SOURCE:32 = 500
+    LOCAL:2 = 200
+    ;ABL:순종을 본다
+    IF ABL:10 == 0
+        TIMES LOCAL:2 , 6.00
+    ELSEIF ABL:10 == 1
+        TIMES LOCAL:2 , 5.00
+    ELSEIF ABL:10 == 2
+        TIMES LOCAL:2 , 4.00
+    ELSEIF ABL:10 == 3
+        TIMES LOCAL:2 , 3.00
+    ELSEIF ABL:10 == 4
+        TIMES LOCAL:2 , 2.00
+    ENDIF
+    SOURCE:31 += LOCAL:2
+    SOURCE:32 += LOCAL:2
+    LOCAL:3 = 400
+    ;MARK:반발 각인을 본다
+    IF MARK:9 == 0
+        TIMES LOCAL:3 , 2.00
+    ELSEIF MARK:9 == 1
+        TIMES LOCAL:3 , 3.00
+    ELSEIF MARK:9 == 2
+        TIMES LOCAL:3 , 4.00
+    ELSEIF MARK:9 >= 3
+        TIMES LOCAL:3 , 5.00
+    ENDIF
+    SOURCE:31 += LOCAL:3
+    SOURCE:32 += LOCAL:3
+ENDIF
+
+SOURCE:26 = 250
+;아이템 없음 모드가 아니면 배란유도제 보충 처리를 실시할지도 모른다.
+IF NOITEM == 0
+    ITEM:64 -= 1
+    SIF FLAG:13 & 8 && MONEY:0 >= ITEMPRICE:64
+        CALL FILL_PLURAL_ITEM, 64
+ENDIF
+
+CFLAG:21 |= 128
+
+SIF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+    TCVAR:12 += 1
+
+;약물 경험
+TCVAR:40 += 1
+
+@COM66_ASSI
+PRINTL 배란유도제(조수)
+COM_NAME = 배란유도제(조수)
+CALL TRAIN_MESSAGE_COM066
+
+;조제 지식이 있으면 소비를 억제한다
+IF TALENT:MASTER:55 || (ASSI >= 0 && TALENT:ASSI:55)
+    DOWNBASE:ASSI:1 += 30
+ELSE
+    DOWNBASE:ASSI:1 += 50
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 5
+
+IF NOITEM == 0
+    ITEM:64 -= 1
+    SIF FLAG:13 & 8 && MONEY:0 >= ITEMPRICE:64
+        CALL FILL_PLURAL_ITEM, 64
+ENDIF
+TEQUIP:ASSI:16 = 1
+
+;노예의 질투
+;상애 or친애 or낙인 소유
+IF TALENT:153 || TALENT:152 || TALENT:161
+    ;[광기]＋[질투]
+    IF TALENT:157 && TALENT:158
+        SOURCE:32 = 6666
+    ;[질투]
+    ELSEIF TALENT:157
+        SOURCE:32 = 3333
+    ;[질투하기 쉽다]
+    ELSEIF TALENT:19
+        SOURCE:32 = 666
+    ENDIF
+ELSE
+    ;[광기]＋[질투]
+    IF TALENT:157 && TALENT:158
+        SOURCE:32 = 666
+    ;[질투]
+    ELSEIF TALENT:157
+        SOURCE:32 = 333
+    ENDIF
+ENDIF
+
+SIF TALENT:MASTER:120 == 0 && TALENT:ASSI:120 == 0
+    TCVAR:ASSI:12 += 1
+
+;약물 경험
+TCVAR:ASSI:40 += 1
+
+@COM66_MASTER
+PRINTL 배란유도제(주인)
+COM_NAME = 배란유도제(주인)
+CALL TRAIN_MESSAGE_COM066
+
+;조제 지식이 있으면 소비를 억제한다
+IF TALENT:MASTER:55 || (ASSI >= 0 && TALENT:ASSI:55)
+    DOWNBASE:MASTER:1 += 30
+ELSE
+    DOWNBASE:MASTER:1 += 50
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 5
+
+;아이템 없음 모드가 아니면 배란유도제 보충 처리를 실시할지도 모른다.
+IF NOITEM == 0
+    ITEM:64 -= 1
+    SIF FLAG:13 & 8 && MONEY:0 >= ITEMPRICE:64
+        CALL FILL_PLURAL_ITEM, 64
+ENDIF
+TEQUIP:MASTER:16 = 1
+
+;약물 경험
+TCVAR:MASTER:40 += 1
+
+;--------------------------------------------------
+;조교시 메시지
+;--------------------------------------------------
+@TRAIN_MESSAGE_COM066
+;조수의 대사에서 제어하는 방법은 없습니다.
+CALL KOJO_TRAIN_MESSAGE_COM
+SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+    RETURN 0
+
+IF TFLAG:99 == 0 ;노예가 먹음
+    PRINTL
+    PRINTFORM %CALLNAME:TARGET%에게 
+    SIF ABL:PLAYER:12 >= 3
+        PRINT 입으로 
+    SIF ABL:10 <= 2
+        PRINT 억지로 
+    PRINTL 배란유도제를 먹였다.
+    PRINTFORM \@ (CFLAG:21 & 128) ? 먹인 약의 효능을 설명하자 # 무엇을 먹었는지 깨달은 \@ %조사선택(CALLNAME:TARGET, "는")% 
+    IF TALENT:135 || TALENT:136
+        ;【난생】,【산란 체질】의 어느 쪽인지
+        PRINTW 이상한 약을 먹인 것에 대한 반감을 숨길 수 없었다….
+    ELSEIF TALENT:150 || TALENT:152 || TALENT:153
+        ;【연모】,【친애】,【상애】의 최악이어도 1개를 가진다
+        PRINTFORMW %CALLNAME:PLAYER%의 아기를 가지길 기대한 듯, 어리광을 피우듯이 다가오고 있다.
+    ELSEIF TALENT:160 || TALENT:161
+        ;【복종】,【낙인】의 어느 쪽인지
+        PRINTW 질내사정을 황홀한 표정으로 기다리고 있다.
+    ELSEIF TALENT:162 || TALENT:170
+        ;【예속】,【음란】의 어느 쪽인지
+        PRINTW 금방이라도 질내사정해 주었으면 하는 것처럼 보지를 손가락으로 열고 있다.
+    ELSEIF ABL:10 >= 5 && MARK:2 == 3 && MARK:9 == 0
+        ;종속 Lv5 또한 굴복 각인 Lv3 또한 반발 각인 Lv0
+        PRINTW 포기했는지 다리를 벌리고 다음 행동을 기다리고 있다.
+    ELSE
+        PRINTFORMW %조사선택(CALLNAME:PLAYER, "를")% 심상치 않은 표정으로 째려보고 있다.
+    ENDIF
+    
+ELSEIF TFLAG:99 == 1 ;조수가 먹음
+     ;조수가 주인을 사랑하는지 복종하는지 음란하는지 판정
+    LOCAL = ORDER_FALLEN(ASSI)
+    ;조수가 주인의 아이를 원하는지 판정
+    ;연모, 낙인, 예속, 괴조인격 : 굿 임신 이벤트를 일으키는 소질들
+    LOCAL:1 = (TALENT:ASSI:150 || TALENT:ASSI:161 || TALENT:ASSI:162 || TALENT:ASSI:169) && EXIST_PENIS(MASTER)
+    ;조수가 노예의 아이를 원하는지 판정
+    LOCAL:2 = (CFLAG:ASSI:(NO:TARGET + 1000) >= 1000) && EXIST_PENIS(TARGET)
+    
+    PRINTL
+    PRINTFORML %조사선택(CALLNAME:MASTER, "는")% %CALLNAME:ASSI%에게 배란유도제를 먹으라고 명령했다.
+    PRINTFORM 그것을 들은 %조사선택(CALLNAME:ASSI, "는")% 
+    ;조수의 아이도 원할 시 33% 확률로, 조수의 아이만 원할 시 무조건
+    IF (LOCAL:2 && RAND:3 == 0) || (LOCAL:2 && LOCAL:1 == 0)
+        PRINTFORMW %조사처리(CALLNAME:TARGET,"의")% 페니스를 보며 눈을 빛내고 있다.
+    ;[연모계] [음란]조수
+    ELSEIF LOCAL == 1 && TALENT:ASSI:170 && LOCAL:1
+        PRINTFORMW %CALLNAME:PLAYER%의 아기를 가지길 기대하는 듯,
+        PRINTFORMW %조사처리(CALLNAME:TARGET,"이")% 보고 있는데도 어리광을 피우고 있다.
+    ;[복종계] [음란]조수
+    ELSEIF LOCAL == 2 && TALENT:ASSI:170 && LOCAL:1
+        IF BASE:MASTER:2 < 1000
+            PRINTFORMW 작아진 %CALLNAME:PLAYER%의 페니스를 보고 다가와서 불알을 애무했다.
+            PRINT 그 다음 
+            BASE:MASTER:2 = 1000
+        ENDIF
+        PRINTL 뒤로 돌아 엎드린 뒤, 보지를 손가락으로 열고 당신의 것을 조르고 있다.
+        PRINTW 교육의 성과만은 아닌 건지, 다리 사이엔 물이 흐르기 시작했다.
+    ;[연모계]조수
+    ELSEIF LOCAL == 1 && LOCAL:1
+        PRINTFORMW %조사처리(CALLNAME:TARGET,"이")% 보고 있는 앞에서 아이 만들기를 하려니 부끄러운 듯 몸을 꼬고 있다.
+    ;[복종계]조수
+    ELSEIF LOCAL == 2 && LOCAL:1
+        PRINTW 뒤로 돌아 엎드린 뒤, 보지를 손가락으로 열고 당신의 것을 조르고 있다.
+        PRINTL 굴욕적인 자세를 꺼리낌없이 취하는 것이 교육을 시킨 보람이 있다.
+        PRINTFORMW %조사처리(CALLNAME:TARGET,"에게")% 좋은 모범이 될 것 이다.
+    ;[음란계]조수
+    ELSEIF LOCAL == 3 && LOCAL:1
+        PRINTW 「임신을 하면 섹스를 못하는 데...」라는 표정으로 보지를 손가락으로 열고 있다.
+    ELSE ;임신을 원하지 않음
+        PRINTW 명령을 충실히 따르고 있지만 긴장한 기색을 숨기지 못하고 있다.
+    ENDIF
+
+ELSEIF TFLAG:99 == 2 ;주인이 먹음
+    PRINTFORMW %조사선택(CALLNAME:MASTER, "는")% 배란유도제를 먹었다.
+    IF (TALENT:150 || TALENT:152 || TALENT:153) && EXIST_PENIS(TARGET)
+        PRINTFORM 그것을 본 %조사선택(CALLNAME:TARGET, "는")% 
+        PRINTW 기대에 찬 표정을 짓고 있다.
+    ENDIF
+ELSE
+    PRINTFORMW 버그발생 COMF066.ERB
+ENDIF
+

@@ -1,0 +1,368 @@
+﻿;=============================================================================
+;신장 · 체중 · 3사이즈의 생성 처리
+;=============================================================================
+;신장 · 체중 · 3사이즈를 생성하고, 이하의 변수에 격납합니다.
+;BASE:10 … 신장
+;BASE:11 … 체중
+;BASE:12 … 바스트
+;BASE:13 … 웨스트
+;BASE:14 … 힙
+;MAXBASE:10 … 신장의 계산시의 난수값
+;MAXBASE:11 … 미사용
+;MAXBASE:12 … 미사용
+;MAXBASE:13 … 미사용
+;MAXBASE:14 … 미사용
+;CFLAG:3500 … 임신에 따른 추가 사이즈
+;LOCAL:0 ～ 4 … 최종 계산 결과의 임시 보존용
+;LOCAL:10 ～ 14 … 계산 도중의 임시 보존용
+;LOCAL:20 ～ 24 … 전의 값의 임시 보존용
+;산출 순서는, 신장→웨스트→바스트→힙→체중 순으로 산출합니다.
+;
+;제1인수 ･･･ 호출처 ARG 0:그대로 1:캐릭터의 등록번호 있음
+;제2인수 ･･･ 캐릭터의 등록번호
+;
+;--------------------------------------------------
+;신체 사이즈 생성 처리. 인수로 호출처를 취득
+;--------------------------------------------------
+@MAKE_SIZE, ARG, ARG:1
+VARSET LOCAL,0
+;초기값의 취득    호출처의 장소에 따라 변화
+LOCAL:99 = (ARG == 0) ? TARGET # ARG:1
+;신체측정 플래그가 켜져 있으면 계산하지 않고 돌아감
+SIF CFLAG:(LOCAL:99):8 
+    RETURN 0
+
+;===신장의 산출===
+;난수값이 존재하지 않을 경우에는 계산하고, 그것을 평생에 걸쳐 사용한다.
+IF MAXBASE:(LOCAL:99):10 <= 0
+    LOCAL:10 = 1 + RAND:70 + RAND:70 + RAND:70 + RAND:70 + RAND:70
+    MAXBASE:(LOCAL:99):10 = LOCAL:10
+ELSE
+    LOCAL:10 = MAXBASE:(LOCAL:99):10
+ENDIF
+;난수값＋성별에 따른 기초가 신장이다(mm)
+LOCAL:10 += (TALENT:(LOCAL:99):120) ? 1450 # 1300
+
+;소질에 따른 키 보정
+IF BODYSIZE(LOCAL:99)
+    ;소수점을 버리고 계산하는 프로그램 구조 상 정밀도를 위해 * 1000
+    LOCAL = LOCAL:10 * 1000
+    REPEAT ABS(BODYSIZE(LOCAL:99))
+        IF BODYSIZE(LOCAL:99) > 0
+            TIMES LOCAL, 1.1
+        ELSE
+            TIMES LOCAL, 0.9090909 ;= 10 / 11
+        ENDIF
+    REND
+    LOCAL:10 = LOCAL / 1000
+ENDIF
+
+;신장 결정
+BASE:(LOCAL:99):10 = LOCAL:10
+
+
+;===웨스트의 산출===
+;웨스트의 기초값 산출
+LOCAL:13 = (LOCAL:10 * 38) / 100 ;상위 25%
+SIF TALENT:(LOCAL:99):120
+    LOCAL:13 = (LOCAL:10 * 42) / 100
+
+;성숙도 소질에 따른 보정
+;[작은체형]
+SIF TALENT:(LOCAL:99):128
+    TIMES LOCAL:13, 1.05
+
+;웨스트 결정 (mm)
+BASE:(LOCAL:99):13 = LOCAL:13
+
+;===바스트의 산출===
+;언더 바스트 산출
+LOCAL:15 = (1600 * 43) / 100 ;체중 계산시 사용하기 위해 160 cm로 계산
+SIF TALENT:(LOCAL:99):120
+    LOCAL:15 = (1600 * 55) / 100
+
+;[작은체형]
+SIF TALENT:(LOCAL:99):128
+    TIMES LOCAL:15, 1.05
+
+;가슴계 소질로 기초값 변화    110:절벽 111:빈유 112:거유 113:폭유
+IF TALENT:(LOCAL:99):110
+    LOCAL:16 = 50
+ELSEIF TALENT:(LOCAL:99):111
+    LOCAL:16 = 100
+ELSEIF TALENT:(LOCAL:99):112
+    LOCAL:16 = 200
+ELSEIF TALENT:(LOCAL:99):113
+    LOCAL:16 = 250
+ELSE
+    LOCAL:16 = 150
+ENDIF
+;바스트 결정 
+;키 160 cm를 기준으로 키에 비례해서 계산
+BASE:(LOCAL:99):12 = (LOCAL:15 + LOCAL:16) * LOCAL:10 / 1600
+;언더 바스트 저장
+MAXBASE:(LOCAL:99):12 = LOCAL:15 * LOCAL:10 / 1600
+
+;===힙의 산출===
+;힙의 기초값 산출
+LOCAL:14 = (LOCAL:10 * 54) / 100 ;웨스트 / 힙 = 0.7 정도가 모델
+SIF TALENT:(LOCAL:99):120
+    LOCAL:14 = (LOCAL:10 * 52) / 100
+
+;성숙도 소질에 따른 보정
+;[작은체형]은 약간 작게 보정해봄
+SIF TALENT:(LOCAL:99):128
+    TIMES LOCAL:14, 0.95
+
+;힙 결정
+BASE:(LOCAL:99):14 = LOCAL:14
+
+;===체중의 산출===
+;체중의 기초값 산출(남자 160 cm 에 48.0 kg(180 cm에 68 kg), 여자 47.0 kg 라고 치자.)
+LOCAL:17 = (TALENT:(LOCAL:99):120) ? 480000 # 470000 ;단위 0.1g
+
+;성숙도 소질에 따른 보정
+;[작은체형]
+SIF TALENT:(LOCAL:99):128
+    TIMES LOCAL:17, 1.05
+
+
+;바스트에 따른 중량 가산
+;가슴의 부피(mL) = 0.000015113*B^3 - 0.0204363*B^2 + 12.9805393*B - 3602.6 (회귀분석으로 구한거라 공식이 더러움)
+;B (cm) = (밑가슴둘레 + 2*컵크기)
+LOCAL = LOCAL:15 + 2 * LOCAL:16
+LOCAL:1 = POWER(LOCAL, 3)
+TIMES LOCAL:1, 0.000015113689409
+LOCAL:2 = POWER(LOCAL, 2)
+TIMES LOCAL:2, -0.0204363749
+LOCAL:3 = LOCAL 
+TIMES LOCAL:3, 12.9805393
+LOCAL:18 = LOCAL:1 + LOCAL:2 + LOCAL:3 - 3603
+LOCAL:18 *= 2 ;가슴은 2개
+TIMES LOCAL:18, 0.9 ;가슴의 비중은 대략 0.9
+
+;합계
+LOCAL:11 = LOCAL:17 + LOCAL:18
+
+;소질에 따른 보정
+;기계(무거움)
+SIF TALENT:(LOCAL:99):206
+    TIMES LOCAL:11 , 1.50
+;영체(극히 가벼움)
+SIF TALENT:(LOCAL:99):207
+    TIMES LOCAL:11 , 0.60
+;오니(조금 무거움)
+SIF TALENT:(LOCAL:99):214
+    TIMES LOCAL:11, 1.10
+;신령(조금 가벼움)
+SIF TALENT:(LOCAL:99):222
+    TIMES LOCAL:11 , 0.90
+
+;체중 결정
+;체중은 키의 3제곱에 비례 (둘레가 키에 비례하므로)
+BASE:(LOCAL:99):11 = LOCAL:11 * LOCAL:10 / 1600 * LOCAL:10 / 1600 * LOCAL:10 / 1600
+
+;신체측정 플래그를 켠다
+CFLAG:(LOCAL:99):8 = 1
+
+;--------------------------------------------------
+;임신시에 증가하는 웨스트(가슴둘레)와 체중을 조작한다
+;--------------------------------------------------
+;LOCAL:0 ･･･ 역산용 변수
+;LOCAL:1 ･･･ 난수 보존용 변수
+;LOCAL:10 ･･･ 전회 계측 신장 보존
+@MAKE_BABY_SIZE, ARG
+CFLAG:ARG:8 = 0
+CALL MAKE_SIZE, 1, ARG
+LOCAL:11 = BASE:ARG:11 ;몸무게 획득
+
+;CFLAG:77 = 출산 예정일
+LOCAL:0 = (FLAG:600 - (CFLAG:ARG:77 - DAY) + 1) * 100 / FLAG:600 ;임신 진행도(%)
+LOCAL:0 = LIMIT(LOCAL:0,0,100)
+LOCAL:1 = 120000 * LOCAL:0 / 100 * LOCAL:11 / 470000 ;만삭 시 체중 = +12 kg ;체중에 비례
+CFLAG:ARG:3500 = LOCAL:1
+
+;-------------------------------------------------
+;신체 사이즈에 따른 가부
+;-------------------------------------------------
+;신체 사이즈が同程度か、신체 사이즈を無視出来る(=禁断の知識持ち)状態でない場合は0を返す
+;ARG:0……조교자 측 캐릭터 위치
+;ARG:1……조교 대상 측 캐릭터 위치
+@COMMON_BODYSIZE_CHECK(ARG:0, ARG:1)
+#FUNCTION
+
+;조교자 측이[금단의 지식]이 없는 경우 체격 비교 판정
+IF TALENT:ARG:56 == 0
+    ;서로의 체격에 의한 체격 차를 구한다
+    LOCAL = BODYSIZE(ARG) - BODYSIZE(ARG:1)
+
+    ;조교자 측과 대상과의 체격 차이가 4 단계 이상이면 안 된다
+    SIF ABS(LOCAL) > 3
+        RETURNF 0
+ENDIF
+RETURNF 1
+
+;-------------------------------------------------
+;신체 사이즈 크기 값
+;-------------------------------------------------
+;0 = 여자 키 147.5 cm를 기준
+;1 커질 때마다 1.1 배 키가 커지고
+;1 작아 질때마다 (1 / 1.1) 배 키가 작아진다.
+;[소인](-16)은 대략 32.1 cm
+@BODYSIZE(ARG)
+#FUNCTION
+;기본체격, 기본 성숙도 = 130 cm
+LOCAL = 0
+
+;체격 소질에 따른 수정
+;[소인]
+IF TALENT:(ARG):127
+    LOCAL = -16
+;[거구]
+ELSEIF TALENT:(ARG):129
+    LOCAL = 3
+ENDIF
+
+;신체 성숙도에 따른 수정
+;[작은체형]
+SIF TALENT:(ARG):128
+    LOCAL -= 3
+
+RETURNF LOCAL
+
+;-------------------------------------------------
+;가슴 크기 값
+;-------------------------------------------------
+;ARG = 캐릭터 번호
+@BUSTSIZE(ARG)
+#FUNCTION
+SIF ARG < 0
+    RETURNF 0
+;절벽
+IF TALENT:ARG:110 
+    LOCAL = 1
+;빈유
+ELSEIF TALENT:ARG:111
+    LOCAL = 2
+;큰 가슴
+ELSEIF TALENT:ARG:112
+    LOCAL = 4
+;폭유
+ELSEIF TALENT:ARG:113
+    LOCAL = 5
+;보통
+ELSE
+    LOCAL = 3
+ENDIF
+RETURNF LOCAL
+
+;-------------------------------------------------
+;가슴 크기를 변경한다
+;-------------------------------------------------
+;ARG = 캐릭터 번호
+;ARG:1 = 가슴 크기 숫자
+;ARG:2 = 비트 값, 1 = 이름을 말한다, 2 = 원래 가슴크기, 4 = 바뀐 가슴크기를 말한다
+@NUM_TO_BUST(ARG, ARG:1, ARG:2 = 0)
+IF ARG:2 & 2
+    ;절벽
+    IF TALENT:ARG:110 
+        PRINTFORM [%TALENTNAME:110%]에서 
+    ;빈유
+    ELSEIF TALENT:ARG:111
+        PRINTFORM [%TALENTNAME:111%]에서 
+    ;큰 가슴
+    ELSEIF TALENT:ARG:112
+        PRINTFORM [%TALENTNAME:112%]에서 
+    ;폭유
+    ELSEIF TALENT:ARG:113
+        PRINTFORM [%TALENTNAME:113%]에서 
+    ;보통
+    ELSE
+        PRINTFORM [평유]에서 
+    ENDIF
+ENDIF
+TALENT:ARG:110 = 0
+TALENT:ARG:111 = 0
+TALENT:ARG:112 = 0
+TALENT:ARG:113 = 0
+SELECTCASE ARG:1
+    CASE 1
+        TALENT:ARG:110 = 1
+        SIF ARG:2 & 4
+            PRINTFORMW [%TALENTNAME:110%]로 바뀌었다.
+        ;절벽은 모유가 나오지 않는다. 그러나 [확장유두]는 모유가 멈추지 않는다.
+        IF TALENT:ARG:134 && !TALENT:ARG:2
+            TALENT:ARG:134 = 0 ;[모유체질]
+            MAXBASE:ARG:3 = 0 ;모유 게이지
+            SIF ARG:2 & 4
+                PRINTFORMW 가슴이 너무 작아 모유가 나오지 않게 되었다.
+        ENDIF
+    CASE 2
+        TALENT:ARG:111 = 1
+        SIF ARG:2 & 4
+            PRINTFORMW [%TALENTNAME:111%]로 바뀌었다.
+    CASE 3
+        ;아무 소질도 켜지 않는다.
+        SIF ARG:2 & 4
+            PRINTFORMW [평유]로 바뀌었다.
+    CASE 4
+        TALENT:ARG:112 = 1
+        SIF ARG:2 & 4
+            PRINTFORMW [%TALENTNAME:112%]로 바뀌었다.
+    CASE 5
+        TALENT:ARG:113 = 1
+        SIF ARG:2 & 4
+            PRINTFORMW [%TALENTNAME:113%]로 바뀌었다.
+    CASEELSE
+        THROW 버그 발생! @NUM_TO_BUST, 입력된 가슴 크기가 이상합니다.
+ENDSELECT
+;-------------------------------------------------
+;가슴 크기를 키운다
+;-------------------------------------------------
+;ARG = 캐릭터 번호
+;ARG:1 = 최댓값
+;ARG:2 = 비트 값, 1 = 이름을 말한다, 2 = 원래 가슴크기, 4 = 바뀐 가슴크기를 말한다
+@BUSTSIZE_UP(ARG, ARG:1 = 5, ARG:2 = 7)
+LOCAL = BUSTSIZE(ARG)
+LOCAL:1 = LIMIT(LOCAL + 1, 1, ARG:1)
+IF LOCAL:1 > LOCAL
+    IF ARG:2 & 1
+        IF LOCAL == 1
+            PRINTFORMW %CALLNAME:ARG%의 가슴이 약간 부풀어 올랐다.
+        ELSEIF LOCAL == 2
+            PRINTFORMW %CALLNAME:ARG%의 가슴이 커졌다.
+        ELSEIF LOCAL == 3
+            PRINTFORMW %CALLNAME:ARG%의 가슴이 아주 터질 것 같은 크기가 되었다.
+        ELSE
+            PRINTFORMW %CALLNAME:ARG%의 가슴이 몸에 어울리지 않을 만큼 커졌다.
+        ENDIF
+    ENDIF
+    CALL NUM_TO_BUST(ARG, LOCAL:1, ARG:2)
+ENDIF
+;-------------------------------------------------
+;가슴 크기를 줄인다.
+;-------------------------------------------------
+;ARG = 캐릭터 번호
+;ARG:1 = 최솟값
+;ARG:2 = 비트 값, 1 = 이름을 말한다, 2 = 원래 가슴크기, 4 = 바뀐 가슴크기를 말한다
+@BUSTSIZE_DOWN(ARG, ARG:1 = 1, ARG:2 = 7)
+LOCAL = BUSTSIZE(ARG)
+LOCAL:1 = LIMIT(LOCAL - 1, ARG:1, 5)
+IF LOCAL:1 < LOCAL
+    IF ARG:2 & 1
+        IF LOCAL == 5
+            PRINTFORMW %CALLNAME:ARG%의 너무나도 풍만하던 가슴이 한 단계 줄어들었다.
+            PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 약간이지만 아쉬운 표정을 지었다.
+        ELSEIF LOCAL == 4
+            PRINTFORMW %CALLNAME:ARG%의 가슴이 남들만한 크기로 작아졌다.
+            PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 다소 쇼크를 받은 듯하다.
+        ELSEIF LOCAL == 3
+            PRINTFORMW %CALLNAME:ARG%의 가슴이 작아졌다.
+            PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 쇼크를 받은 것 같다.
+        ELSE
+            PRINTFORMW %CALLNAME:ARG%의 가슴이 극단적으로 줄어들었다.
+            PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 아연해 하고 있다.
+        ENDIF
+    ENDIF
+    CALL NUM_TO_BUST(ARG, LOCAL:1, ARG:2)
+ENDIF

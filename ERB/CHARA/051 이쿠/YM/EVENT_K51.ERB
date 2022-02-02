@@ -1,0 +1,4568 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;eratohoYM Mk-3用 口上テンプレート
+;51をキャラ番号に置換して使用してください(霊夢なら1, 蓮子なら49, 魅魔なら100). 
+;
+;このファイルでは調教開始時・終了時・調教中イベント・エンディング口上用関数などが置いてあります. 
+;このファイル内で他の関数を呼び出す処理のある関数は, 削除せず残すことを推奨します. 
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;==============================================================
+;永江衣玖口上
+;解説などをここに書くとよい
+;==============================================================
+;========================================================
+;口上ファイルの存在判定
+;========================================================
+;口上の存在判定（YM版）
+@TRY_51
+RETURN 1
+
+;========================================================
+;専用口上表示の固定化判定
+;========================================================
+;口上表示の専用口上使用設定において, 選択肢を専用口上のみに固定化させたい場合は2を, 専用口上＋地の文のみに固定化させたい場合は3を返すようにしてください
+;なお, 1を返した(またはこの関数をコメントアウト等で使用できないようにした)場合は両方の選択肢が出るように, 1・2・3以外の数値を返した時はエラー回避のため専用口上を使用できないようになっています
+;@KOJO_51_DISPLAY_SETTINGS
+;RETURN 1
+
+;========================================================
+;エキストラモード構文
+;自らの理想の嫁を表現するのに使う
+;========================================================
+@SET_CHARA_KOJO_EXTRA_K51
+;PRINTFORML エキストラモードの選択
+;PRINTL [0]はい
+;PRINTL [1]いいえ
+;$INPUT_LOOP_1
+;INPUT
+;IF RESULT == 0
+    ;PRINTFORMW エキストラモード実行
+;ELSEIF RESULT == 1
+    ;PRINTFORMW エキストラモード無視
+;ELSE
+    ;GOTO INPUT_LOOP_1
+;ENDIF
+IF CFLAG:7899 == 0
+    PRINTL 이쿠의 대사 타입을 선택해주세요.
+    PRINTL [0] RR판!
+    PRINTL [1] YM판!
+    $INPUT_LOOP_TYPE
+    INPUT
+    SIF RESULT != 0 && RESULT != 1
+        GOTO INPUT_LOOP_TYPE
+    PRINTFORMW ―\@ RESULT ? YM # RR \@ 타입 대사로 개시합니다―
+    CFLAG:7900 = RESULT
+ENDIF
+CFLAG:7899++
+;========================================================
+;調教開始口上
+;========================================================
+@KOJO_51_SLAVE_MESSAGE_TRAIN_START_YM
+;眠ってる場合は戻る
+SIF EQUIP:14
+    RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:42
+    RETURN 0
+;失神中も戻る
+SIF TFLAG:899 >= 1
+    RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:167
+    RETURN 0
+DRAWLINE
+
+;主人と助手の交代フラグをリセット
+SIF CFLAG:7202 > 0
+    CFLAG:7202 = 0
+
+;精液量リセット なんと雑な構文
+SIF CFLAG:7000 > 0 || CFLAG:7001 > 0 || CFLAG:7002 > 0 || CFLAG:7003 > 0 || CFLAG:7010 > 0 || CFLAG:7011 > 0 || CFLAG:7012 > 0 || CFLAG:7015 > 0 || CFLAG:7016 > 0 || CFLAG:7017 > 0
+    CFLAG:7000 = 0
+    CFLAG:7001 = 0
+    CFLAG:7002 = 0
+    CFLAG:7003 = 0
+    CFLAG:7010 = 0
+    CFLAG:7011 = 0
+    CFLAG:7012 = 0
+    CFLAG:7015 = 0
+    CFLAG:7016 = 0
+    CFLAG:7017 = 0
+
+;テストプレイ用にあなたにデバッグをつける
+;TALENT:MASTER:998 == 1
+
+;調教開始口上分岐
+IF CFLAG:5201 == 0
+    TRYCALL K51_MESSAGE_START_1_YM
+ELSE
+    TRYCALL K51_MESSAGE_START_2_YM
+ENDIF
+
+;-------------------------------------------------
+;첫 조교시
+;-------------------------------------------------
+@K51_MESSAGE_START_1_YM
+IF CFLAG:5201 == 0
+    PRINTFORMW 「어째서 이런 짓을…」
+    PRINTFORMW 「저의 역할은 당신들 인간에게 지진의 전조를 전하는 것」
+    PRINTFORMW 「그런 저를 가두고, 대체 어쩔 생각입니까？」
+    PRINTFORML 
+    PRINTFORMW 이쿠가 당신에게 묻는다. 
+    PRINTFORMW 이전 인간마을에 나타난 천녀. 비색의 옷을 걸친, 우아하게 하늘을 나는 아름다운 모습…
+    PRINTFORMW 조교사가 된 지금, 언젠가는 자신의 것으로 하고 싶었던 것이 눈 앞에 있다. 
+    PRINTFORML 
+    PRINTFORMW 「용신님의 노여움을 사기전에, 이런 짓은 그만두세요」
+    PRINTFORML 
+    PRINTFORMW 이쿠는 당신을 설득했다…만, 이런 기회를 놓칠 수는 없다. 
+    PRINTFORMW 당신은 이쿠에게 다가가서, 그 몸에 손을 얹었다…
+    CFLAG:5201 = 1
+    RETURN 1
+ENDIF
+;-------------------------------------------------
+;조교 개시시 1회만
+;-------------------------------------------------
+@K51_MESSAGE_START_2_YM
+;임신
+IF CFLAG:5201 < 4 && TALENT:임신
+    ;연모
+    IF TALENT:연모
+        PRINTFORMW 「임신을 알고나선 처음이지만…잘 부탁드려요…？」
+        PRINTFORMW 어딘지 모르게 긴장하고 있는 모습의 이쿠. 당연하다면 당연하지만…
+        PRINTFORMW 「아뇨, 컨디션은 괜찮지만…역시, 뱃속의 아이를 의식해 버려서…」
+        PRINTFORMW 내키지 않는다면 다음 기회라도 상관없다, 라고 당신은 전했다…
+        PRINTFORMW 「저기！그게…하고 싶지 않은 게 아니라, 오히려 상당히 하고 싶지만…앗」
+        PRINTFORMW 「그게…%조사처리(CALLNAME:MASTER,"이")% 상냥하게 해준다면, 저도 긴장하지 않는다고 생각하니까…」
+        PRINTFORMW 
+        PRINTFORMW 서로 달라붙어 회화를 하는 동안, 분위기가 가벼워져 가는 것을 느꼈다…
+        PRINTFORMW 「후훗, 뭔가 %조사처리(CALLNAME:MASTER,"과")% 이야기하는 동안에, 편해졌습니다」
+        PRINTFORMW 「네, 알겠습니다…무리는 하지 말고 느긋하게, 즐기자고요…？」
+    ;굴복각인Lv3
+    ELSEIF MARK:굴복각인 == 3
+        PRINTFORMW 「오늘도 하는군요…어쩔 수 없는 일인건 알고 있습니다」
+        PRINTFORMW 「하지만 적어도…부디 뱃속의 아이에겐 지장이 없도록 해주실 수 없습니까…？」
+        PRINTFORMW 임신이 발각되고 나서 처음 받는 조교이므로, 명백하게 긴장하고 있다…
+        PRINTFORMW 아이를 소중히 여기는 마음을 하찮게 여겼다간 반발만 살 뿐이다
+        PRINTFORMW 당신은 오늘은 천천히 이쿠의 몸을 풀어 주기로 마음먹었다…
+    ;그 이외
+    ELSE
+        PRINTFORMW 「알고 계십니까…？저는 임신한 몸 입니다…！」
+        PRINTFORMW 「이제 만족하셨겠죠！팔아치우든지, 버리든지 마음대로 하면 될텐데！」
+        PRINTFORMW 「그러니까 이젠 그만…흐흑！흐윽, 크흐읏…이젠 그만둬어…」
+        PRINTFORMW 억지로 이쿠의 몸에 손을 댄다. 
+        PRINTFORMW 성감대의 자극에 의해 달콤한 목소리가 새어나온다…
+        PRINTFORMW 임신하여 더욱 반항적인 태도도, 완전히 조교된 몸의 쾌락은 거역할 수 없는 것 같다…
+        PRINTFORMW 「이젠 싫어…어째서, 어째서 내가 이런 꼴이…」
+    ENDIF
+    CFLAG:5201 = 4
+    RETURN 1
+;연모
+ELSEIF CFLAG:5201 < 3 && TALENT:연모
+    PRINTFORMW 드물게, 이쿠로부터 방에 와줬으면 좋겠다고 부탁받았다. 
+    PRINTFORMW 기본적으로 이쿠는 타인에게 개입하는걸 그다지 좋아하지 않는다. 
+    PRINTFORMW 분위기를 읽고, 상대의 의중을 파악하여, 장소에 익숙해지도록 유의하여 행동한다. 
+    PRINTFORMW 그것이 이쿠의 능력이며, 원래의 성격이기도 하다. 
+    PRINTFORMW 그리고, 당신은 그 덕에 조교를 계속해온 것도 사실이었다. 
+    PRINTFORMW 그런데 이렇게 불러내곤, 지금 당신의 눈앞엔 양손을 깍지 끼고, 
+    PRINTFORMW 뭔가를 말하고 싶은 듯한, 그럼에도 그 생각을 말하는 것을 주저하는 듯한 이쿠가 있다. 
+    PRINTFORMW 긴 침묵 뒤에, 이쿠는 간신히 입을 열었다…
+    PRINTFORMW 「…죄송합니다, 갑자기 불러내가지고…저어, 저는…어떤 여성으로 보입니까？」
+    PRINTFORMW 갑작스런 질문에 당신은 당혹감을 감추지 못한다. 
+    PRINTFORMW 「아니, 그게…저는, 확실히, 얌전한 편이라고 생각합니다. 뭐라 할까…」
+    PRINTFORMW 「남의 말에 따르는, 그다지 자기 주장이 없는듯한, 그런 인물로, 보이지 않습니까？」
+    PRINTFORMW …확실히 그럴지도 모른다만, 그렇다고 단언하는 것도 실례다. 
+    PRINTFORMW 당신은 그럴지도 모른다, 라고 애매하게 답변했다…
+    PRINTFORMW 「그럴지도 모릅니다…그렇지만, 그렇지만…다릅니다」
+    PRINTFORMW 이쿠의 손에 힘이 들어간다. 
+    PRINTFORMW 「지금은, 저의 기분을 억누를 수 없어서…마치 태풍처럼, 마음 속이 어지러워서…！」
+    PRINTFORMW 「%CALLNAME:MASTER%에게 끌려와서, 여러가지 일이 있었습니다…」
+    PRINTFORMW 「싫은 일도 괴로운 일도…하지만 그것뿐만이 아니었습니다. %조사처리(CALLNAME:MASTER,"과")% 접하는 가운데,」
+    PRINTFORMW 「좀 더 %CALLNAME:MASTER%에 대한 걸 알고싶어, 그리고 나에 대한 걸 알리고 싶어라는 마음이, 점점 커져서…」
+    PRINTFORMW 이쿠가 이렇게나 자신의 이야기를 하는 것은 처음이다…
+    PRINTFORMW 이쿠는 한 번 호흡을 가다듬고, 
+    PRINTFORMW 「…%조사처리(CALLNAME:MASTER,"이")%, 좋습니다. 좀 더, %CALLNAME:MASTER%의 곁에, 있게 해 주시지 않겠습니까…？」
+    PRINTFORML 
+    PRINTFORMW ―――처음엔 단순한 욕망이었다. 
+    PRINTFORMW 동경의 여성을 자신의 것으로 하고 싶다는 이기적인 욕망…
+    PRINTFORMW 자신이 얻은 불합리한 능력을 사용해, 조교라는 형태로 대상을 자신에게 편리한 대로 만들어 가면서, 
+    PRINTFORMW 그것이 당신이 이용하는 평소의 수단이었다…만, 지금 눈앞에 있는 이쿠는 어떠한가…？
+    PRINTFORMW 진심으로 속내를 털어놓고 있는 이쿠는, 과연 자신의 조교의 결과로 바뀌어 버렸는가, 
+    PRINTFORMW 아니면, 겨우 꾸밈없는 자기 자신을 드러낼 각오를 한 것인가…
+    PRINTFORMW 다만 확실한 것은, 이쪽을 똑바로 응시하고 있는 이쿠의 시선으로부터 눈을 돌릴 수 없다는 것, 
+    PRINTFORMW 그리고 그 표정이, 지금까지 본 적 없을 정도로 매력적이고, 아름답게 느껴진다는 것…
+    PRINTFORMW 달라진 이쿠의 대한걸 좀 더 알고싶어, 좀 더 보고싶어라고 당신도 똑같이 느꼈다. 
+    PRINTFORML 
+    PRINTFORMW 당신은 이쿠의 고백을 받아들였다…
+    PRINTFORMW 「아아…기쁩니다……이로써 %조사처리(CALLNAME:MASTER,"과")% 좀 더, 함께 있을 수 있습니다…」
+    PRINTFORMW 「…엣, 히끅, 싫닷, 우웃, 멈추지 않아…」
+    PRINTFORMW 감정이 지나치게 고조되었는지, 이쿠의 눈에서 눈물이 흘러넘친다…
+    PRINTFORMW 당신은 살그머니 손가락으로 눈물을 닦아 주었다. 
+    PRINTFORMW 「아하하…죄송합니다, 왠지, 뭐랄까…」
+    PRINTFORMW 「…이제부턴…저의 마음, 자주 %CALLNAME:MASTER%에게 전할테니까요…？」
+    PRINTFORMW 「그 대신…%CALLNAME:MASTER%의 마음도, 잔뜩 받아들이겠어요…」
+    PRINTFORMW 「후훗, 잘 부탁드려요…♪」
+    CFLAG:5201 = 3
+    RETURN 1
+;공포각인Lv3
+;떠오르는 대로 분기 첨부 이벤트를 만들어 본 결과가 이것 / 왜 이 상황을 선택했는지
+ELSEIF CFLAG:5201 < 2 && MARK:공포각인 == 3
+    PRINTFORMW 이쿠는 방에 들어온 당신의 모습을 파악하자, 흠칫하며 몸을 움츠렸다…
+    PRINTFORMW 「…싫엇…오지마…그만둬…！」
+    PRINTFORMW 방구석으로 뒷걸음질치는 이쿠. 무심코 당신은 그것을 뒤쫓아 버린다. 
+    PRINTFORMW 「이제…무서운건 싫습니다…싫어, 싫어어…」
+    PRINTFORMW 결코 좁은 방은 아니지만, 도망 다닐만한 넓이의 방도 아니다. 
+    PRINTFORMW 이윽고 벽에 몰려 도망칠 곳을 잃은 이쿠는 주저앉아서, 어린애처럼 떨고있다…
+    PRINTFORMW 당신은―
+    PRINTL [0] 팔을 잡아 억지로 일으켜 세운다
+    PRINTL [1] 상냥하게 달래준다
+    $INPUT_LOOP_FEAR3
+    INPUT
+    ;팔을 잡아 억지로 일으켜 세운다
+    IF RESULT == 0
+        PRINTFORMW 당신은 이쿠의 팔을 잡곤, 억지로 일으키려 했다…
+        PRINTFORMW 「힉…！」
+        PRINTFORMW 「끌어당기지 맛, 싫어, 시, 싫어어어……」
+        PRINTFORMW 
+        PRINTFORMW …당신은 뭔가 미적지근한 공기를 마신 느낌이었다. 김도 보인 것 같은…
+        PRINTFORMW 이쿠는, 웅크린 채로 울음을 터뜨리고 말았다. 그리고 그 스커트로부터 솟아오르는 것은…
+        PRINTFORMW 「…보지 마, 오지 맛, 우으아앗…죄송합니다…더는 시러어…」
+        PRINTFORMW 
+        PRINTFORMW 당신은 서둘러 뒤처리 준비를 했다. 우선 충격으로 굳어버린 이쿠를 욕실에 밀어넣고, 
+        PRINTFORMW 바닥 청소 용구를 갖추었다. 
+        PRINTFORMW 더러워져 버린 옷은 나중에 스스로 세탁시키기로하고, 청소를 하는 동안, 
+        PRINTFORMW 이쿠가 침착해지는 것을 기다린다. 
+        PRINTFORMW 그렇다 하더라도, 설마 저정도로 무서워한다는 건, 정말로…
+        PRINTL [0] 나쁜 짓을 했다
+        PRINTL [1] 흥분했다
+        $INPUT_LOOP
+        INPUT
+        ;나쁜 짓을 했다
+        IF RESULT == 0
+            PRINTFORMW 정말로 나쁜 짓을 해 버렸다…
+            PRINTFORMW 평상시엔 차분한 여성인 만큼, 저런 모습을 보여버려서 자존심도 많이 상했을 것이다. 
+            PRINTFORMW 당신은 욕실 안의 이쿠에게 사과 했다…
+            PRINTFORMW 「이쪽이야말로, 죄송합니다…그렇게나, 평정심을 잃어서…」
+            PRINTFORMW 「…저도 그렇게 강한 여성은 아닙니다…지금부터는, 너무 심한 일은, 하지 말아 주세요…？」
+        ;흥분했다
+        ELSEIF RESULT == 1
+            PRINTFORMW 솔직히, 흥분했다고 말할 수 밖에 없다. 
+            PRINTFORMW 평상시엔 차분하고 침착한 이쿠가 이토록 흐트러지다니…조교사를 계속해 온 보람이 있었다는 것이다. 
+            PRINTFORMW 라곤 해도, 자주 위협하다간 익숙해질 것이다. 
+            PRINTFORMW 언젠가 또 이쿠의 무서워하는 모습을 보기 위해, 확실하게 계획을 세우기로 했다…
+            PRINTFORMW 
+            PRINTFORMW 「…언제 또 심한 일을 당하게 되는건가…이래서야 살아있는 기분이 들지 않네요…」
+            PRINTFORMW 욕실의 안, 이쿠는 혼자서 떨고 있었다…
+            PRINTFORMW -이쿠는 「겁쟁이」를 얻었다-
+            TALENT:겁쟁이 = 1
+        ELSE
+            GOTO INPUT_LOOP_FEAR3
+        ENDIF
+        PRINTFORMW 방뇨경험+1
+        EXP:방뇨경험 += 1
+    ;상냥하게 달래준다
+    ELSEIF RESULT == 1
+        PRINTFORMW 당신은 이쿠에게 다가가, 상냥하게 달래 주었다…
+        PRINTFORMW 「…이제 심한 일을 하지 않는다고, 약속해 주시겠습니까？」
+        PRINTFORMW 「아뇨, 대답은 괜찮습니다…」
+        PRINTFORMW 「다만…침착해질 때까지, 조금만 더, 곁에 있어 주세요…」
+    ELSE
+        GOTO INPUT_LOOP_FEAR3
+    ENDIF
+    CFLAG:5201 = 2
+    RETURN 1
+
+;조수의 유무 체크（없는 경우엔 2회째 이후에 난다）/助手の有無をチェック（いない場合は二回目以降へ飛ぶ）
+ELSEIF ASSI < 0
+    CALL K51_MESSAGE_START_3_YM
+
+;-------------------------------------------------
+;조수가 텐시
+;-------------------------------------------------
+ELSEIF NO:ASSI == 52
+    ;처음
+    IF CFLAG:5202 == 0
+        ;조수가 후타나리
+        IF TALENT:ASSI:후타나리
+            ;연모
+            ;이쿠씨는 에로하니까 고간만 보고 있었다구
+            IF TALENT:연모
+                PRINTFORMW 「……？꽤나 귀여운 남자애네요…」
+                PRINTFORMW 「저어, %CALLNAME:MASTER%？혹시 저는…이 아이의 상대를 해야하나요？」
+                PRINTFORMW 「웃…체격에 비해서, 상당히 훌륭한 것을 가지고 있어…하지만, 저에겐 %조사처리(CALLNAME:MASTER,"이라")%는 사람이」
+                PRINTFORMW 『저기 이쿠』
+                PRINTFORMW 「！」
+                PRINTFORMW 『누가 남자애라고？』
+                PRINTFORMW 「…거짓말, 설마」
+                PRINTFORMW 『됐으니까！다시 한번 더 말해봐…누가, 남자애, 라고？』
+                PRINTFORMW 「………크, 큰 아가씨？」
+                PRINTFORML 
+                PRINTFORMW 완전히 혼란에 빠져 있는 이쿠에게 당신은 사정을 설명했다. 
+                PRINTFORMW 텐시도 이쿠와 똑같이 조교를 받고 있던 일, 단순히 흥미로 무심코 저것을 자라나게 한 일도…
+                PRINTFORML 
+                PRINTFORMW 『아～…역시 우리들이 나빴어. 미안해 이쿠』
+                PRINTFORMW 「아니오…실례, 했습니다…」
+                PRINTFORMW 『그야 오랜만에 만났는데 이런 게 붙어 있으면 놀라겠지…』
+                PRINTFORMW 『뭐 조금 흥미가 있었어, 게다가 평생 이대론 것도 아니고』
+                PRINTFORMW 『만족하면 원래대로 돌아갈 생각이라고？그러니까 그때까진 즐겨보자, 이쿠』
+                PRINTFORMW 「아니, 저기…오래간만인데, 건강해 보이셔서 다행이십니다…」
+            ;그 이외
+            ELSE
+                PRINTFORMW 「큰아…가씨？정말로, 큰아가씨, 이십니까…？」
+                PRINTFORMW 돌연 당신과 함께 나타난 텐시의 존재에, 이쿠는 그저 당황하고 있다…
+                PRINTFORMW 「거짓말입니다, 싫어엇…！그런, 설마…！」
+                PRINTFORMW 「대체 큰아가씨께 무슨 짓을 한 겁니까！어째서 그런…우웃, 사타구니에…」
+                PRINTFORMW 이쿠는 텐시의 몸의 이변을 알아차리자, 날카로운 눈으로 당신을 노려본다. 
+                PRINTFORMW 허나, 텐시는 그 시선을 차단하듯이 당신의 앞에 서서, 반대로 이쿠에게 몸을 보인다…
+                PRINTFORMW 『뭐야 이쿠, 나의 몸에 뭔가 이상한 곳이라도 있다고 말하는 거야？』
+                PRINTFORMW 「이상합니다！당신은, 왜냐하면…」
+                PRINTFORMW 『흥, 남근이 나 있기 때문에라고 말하는 거야？』
+                PRINTFORMW 『단순한 소녀가 갑자기 천인이 되는 것과 비교하면, 이런 것 변화도 아냐』
+                PRINTFORMW 「무슨 말씀을 하시는 겁니까…부디, 정신 차리세요…！」
+                PRINTFORML 이쿠는 텐시의 몸으로부터 눈을 돌리면서도, 어떻게든 설득하려 하고 있지만
+                PRINTFORMW 텐시는 전혀 귀를 기울이지 않는다…
+                PRINTFORML 『저기, 됐으니까 빨리 시작하자？이쿠의 야한 몸을 보고있으면…』
+                PRINTFORMW 『왠지 여기가 반응해버려…봐？후훗』
+                PRINTFORMW 「싫엇, 이상합니다, 미쳤어요…！%CALLNAME:MASTER%도, 텐시도…！」
+            ENDIF
+            CFLAG:7201 = 1
+        ;조수가 연모
+        ELSEIF TALENT:ASSI:연모
+            ;두 사람 모두 연모
+            IF TALENT:연모
+                PRINTFORMW 당신이 이쿠의 침실로 방문하자, 이쿠는 언제나처럼 상냥한 미소로 맞이해준다…
+                PRINTFORMW 「어서오세요, %CALLNAME:MASTER%…오늘도, 즐겨요…♪」
+                PRINTFORMW 조용히, 과시하듯 옷을 벗기 시작하는 이쿠. 
+                PRINTFORMW 당신의 배후에 평상시와는 다른 그림자가 있는 것을 알아채지 못하고…
+                PRINTFORML 
+                PRINTFORMW 『야해라…이쿠도 참, 그런데도 용신을 모시는 입장인걸까？』
+                PRINTFORMW 「엣」
+                PRINTFORMW 『%CALLNAME:MASTER%도 어지간하네. 이 견실한 용궁의 사자를 어떻게 하면 여기까지 조교할 수 있던걸까』
+                PRINTFORMW 「앗, 그」
+                PRINTFORMW 『그렇다 치더라도 좋은 몸을 하고 있네…뭐야 그 가슴…하아, 괴롭히는거야？』
+                PRINTFORMW 「힉」
+                PRINTFORMW 『역시 천녀를 자신의 것으로 만드는 것은 인간의 동경일까？잘됐네 이쿠, 멋진 상대를 찾아서』
+                PRINTFORMW 「그런, 저」
+                PRINTFORMW 텐시가 이쿠를 조롱하는 기세가 점점 강해졌기에, 당신은 텐시를 저지했다…
+                PRINTFORMW 『무-, 어쩔 수 없네. 뭐어 아무래도 이쿠도 상당히 주인님이 맘에 드는 것 같고, 질 수 없네』
+                PRINTFORMW 「설마, 큰아가씨도…？」
+                PRINTFORMW 『텐시로 좋아. 후훗, 즐거움은 지금부터네, 주인님？』
+                PRINTFORMW 「하, 아하…텐시, 저기, 부드럽게, 부탁드릴게요…？」
+            ;텐시만 연모
+            ELSE
+                PRINTFORMW 「큰아…가씨？정말로, 큰아가씨, 이십니까…？」
+                PRINTFORMW 돌연 당신과 함께 나타난 텐시의 존재에, 이쿠는 그저 당황하고 있다…
+                PRINTFORMW 「어째서 이런 곳에…설마, 큰아가씨도, 끌려오셔서…！」
+                PRINTFORMW 『뭐 그런거지. 뭐야？그렇게 놀란 얼굴을 하고…』
+                PRINTFORMW 『그다지 심한 꼴을 당하고 있는건 아니야…이쿠는 어떨지 모르겠지만. 그럼, 시작하자？』
+                PRINTFORMW 텐시가 당신을 본다. 
+                PRINTFORMW 당신은 끄덕이며 대답했다…
+                PRINTFORMW 『라는 이유로 이쿠, 빨리 옷을 벗어. 나는 기다리는 게 싫거든』
+                PRINTFORMW 「무슨 말씀을 하시는 겁니까…！그만둬 주세요…！잠깐, 무슨！」
+                PRINTFORMW 이쿠가 당황하는 동안에도, 텐시는 스스로 옷을 벗어 전라가 되었다…
+                PRINTFORMW 『후흥, 어때？주인님께 잔뜩 사랑받은 몸은』
+                PRINTFORMW 『주인님을 위해서도, 이쿠가 확실하게 봉사의 방법을 배우지 않으면 곤란해. 그치？주인님♪』
+                PRINTFORMW 텐시는 굳어져있는 이쿠에게 접근해, 거침없이 옷을 벗겨 버린다. 원래의 입장 탓인가, 이쿠도 거역하기 힘든 모양이다…
+                PRINTFORMW 「그, 그런…！됐습니다, 스스로, 벗을테니까…」
+                PRINTFORMW 『어머, 순순하네. 좀 더 저항할거라고 생각했더니…벌써 꽤나 조교되어 있는 걸까？』
+                PRINTFORMW 『…뭐 됐어. 그럼 주인님도 이쿠도, 함께 즐기자고？』
+            ENDIF
+        ;그 이외
+        ELSE
+            ;이쿠만 연모
+            IF TALENT:연모
+                PRINTFORMW 방 안에서는 이미 전라의 이쿠가 기다리고 있었다. 
+                PRINTFORMW 「어머나 큰아가씨」
+                PRINTFORMW 『자, 잠깐！주인님！알몸！아니 아니지, 어째서, 이쿠가！？』
+                PRINTFORMW 「슬슬 시간이라서…기다리고 있었던 것입니다만, 뭔가…？」
+                PRINTFORMW 『아니 그게…우웃, 보이지마！숨기라고！』
+                PRINTFORMW 「오늘은 그…처음으로, 큰아가씨가 오신다는 것으로…긴장, 하고 있습니다…」
+                PRINTFORMW 꽤나 부끄러워하는 이쿠. 
+                PRINTFORMW 텐시는 아무래도 맞물리지 않는 회화에 초조함이 심해진 듯 하다…
+                PRINTFORMW 『웃기지 마！…정말, 조수를 한다곤 했지만, 어째서 이런 일이…』
+                PRINTFORMW 『도대체가, 이제 와서 가르칠 것따위 없지 않아？이 녀석 완전히 따르고 있잖아. 당신』
+                PRINTFORMW 「그렇네요…다만, 주인님이, 저와 큰아가씨가 사이좋게 있는 모습을 보고 싶다고」
+                PRINTFORMW 『하？』
+                PRINTFORMW 「츄츄 하는 것을 보고 싶다고」
+                PRINTFORMW 『시끄러워』
+                PRINTFORMW 「크흠, …하신다면, 저로선 거기에 응하는 역할이기에…」
+                PRINTFORMW 「라는, 이유로, 오늘부터 잘 부탁드려요？큰아가씨」
+                PRINTFORMW 생긋 텐시에게 미소짓는 이쿠. 이에 텐시는 꽤나 기가 막힌 듯하다…
+                PRINTFORMW 『라는 이유로라니…정말 이쿠는 설명이 적당하다니까…』
+                PRINTFORMW 『하아, 할 수 없네…그럼 주인님의 소원대로, 이쿠의 몸을 좋을대로 할게？』
+                PRINTFORMW 『그리고, 이제 와서 큰아가씨라고 불리는 것도 어색해. 텐시로 부탁해』
+                PRINTFORMW 「알겠습니다. 텐시…후훗♪」
+            ;그 이외
+            ELSE
+                PRINTFORMW 『도대체 누구를 조교하는 걸까…나의 지인？흐응…』
+                PRINTFORMW 『딱히 구애받지는 않아. 어머, 싫어할거라 생각했어？흥, 그 정도 각오는 했어…』
+                PRINTFORMW 당신과 텐시는 문을 열고, 이쿠의 침실로 들어갔다…
+                PRINTFORML 
+                PRINTFORMW 「큰아…가씨！？」
+                PRINTFORMW 『헤에, 누군가 했더니…』
+                PRINTFORMW 텐시는 이쿠의 모습을 보자, 히죽 미소를 띄웠다…
+                PRINTFORMW 『그러니까, 누구였더라？나는 히나나이 텐시. 당신은？』
+                PRINTFORMW 이쿠는 눈을 피해 고개를 숙인 채로, 대답하려 하지 않는다…
+                PRINTFORMW 『어머, 무례한 용궁의 사자도 있네. 모처럼 천인인 내가 자칭해 주었는데…』
+                PRINTFORMW 『그게 아니면 아직도 자신의 입장을 받아들이지 못한걸까나？땅에 떨어진 천녀는 인간에게 능욕당할 수 밖에 없는거야』
+                PRINTFORMW 입을 다문 채로 있는 이쿠에게 텐시는 말을 이어나간다…
+                PRINTFORMW 『무-, 재미없네. 저기 주인님, 오늘은 이 여자를 철저하게 괴롭혀 주는걸까？』
+                PRINTFORMW 「이쿠입니다！나가에…이쿠입니다…」
+                PRINTFORMW 초조한듯 입을 연 이쿠를 보자, 텐시는 기가 막혀 한다…
+                PRINTFORMW 『정말, 농담이야. 정말이지…부끄러워하지 말고 빨리 자칭했으면 좋았을텐데』
+                PRINTFORMW 『뭐어, 이전에 조금 혼나긴 했어도…그렇다고 해서, 딱히 심한 꼴을 당하게 하려고는 생각하지 않았어…나는 말야？』
+                PRINTFORMW 『그러면, 최대한 즐기자고？』
+            ENDIF
+        ENDIF
+        CFLAG:5202 = 1
+        RETURN 1
+    ;2회째 이후
+    ELSEIF CFLAG:5202 == 1
+        ;자라나 있어요!
+        IF TALENT:ASSI:후타나리 && CFLAG:7201 == 0
+            PRINTFORMW 『저기, 있지 이쿠, 오늘은 당신에게 보여 주고 싶은 것이 있어』
+            PRINTFORMW 『나의 이곳, 만져줘？』
+            PRINTFORMW 쭈뼛쭈뼛 이쿠가 텐시의 사타구니에 손을 뻗는다. 
+            PRINTFORMW 그리고 그것에 닿는 순간, 이변을 느낀 이쿠가 놀라서 손을 움츠렸다…
+            ;연모+음란
+            IF TALENT:연모 == 1 && TALENT:음란 == 1
+                PRINTFORML 
+                PRINTFORMW …만, 다음의 순간에는 텐시의 스커트와 속옷을 끌어 내리고 있었다. 
+                PRINTFORMW 『햐아앗！갑자기 무슨 짓이야 이쿠！』
+                PRINTFORMW 텐시의 작은 몸에 걸맞지 않은, 커다란 페니스가 그 모습을 드러낸다…
+                PRINTFORMW 「어머나…훌륭합니다, 텐시…♪후훗, 잘 된 것 같네요？%CALLNAME:MASTER%…」
+                PRINTFORMW 텐시가 당신을 노려보았다…알려줬나라고 규탄하는 눈빛이다. 
+                PRINTFORMW 「텐시가 이 약에 대한 걸 알면, 반드시 흥미를 가질 것이다라고…」
+                PRINTFORMW 「텐시는 야한 일을 매우 좋아하니까…분명 훌륭한 것이 자랄 것이다라고 이야기했다, 그렇죠？」
+                PRINTFORMW 『뭐, 뭣……우으읏～～～！！』
+                PRINTFORMW 텐시는 하반신을 드러낸 채로, 얼굴을 새빨갛게 물들였다…
+                PRINTFORMW 「후훗, 귀여워요 텐시…♪자아, %CALLNAME:MASTER%도 벗어 주세요…」
+                PRINTFORMW 당신은 거기에 따라 옷을 벗어 던지고, 이쿠의 곁으로 다가갔다…
+                PRINTFORMW 「훌륭한 자지가 늘어났어요…후훗, 저, 지금부터 어떤 일을 당하는 걸까요…♪」
+            ;연모
+            ELSEIF TALENT:연모 == 1
+                PRINTFORML
+                PRINTFORMW 「…！저, 저기…어째서 이런 것이…？」
+                PRINTFORMW 『그런 약이 있다고 들었더니 시험해 보고 싶어서…』
+                PRINTFORMW 『나도 주인님처럼 이쿠랑 하고싶다ー라니…안돼？』
+                PRINTFORMW 이쿠를 당신 쪽을 쳐다보며, 어쩌면 좋을지 묻는거처럼 보인다. 
+                PRINTFORMW 당신은 만면에 미소를 띄우며, 꼭 계속 해달라고 전했다…
+                PRINTFORMW 「………하아, 왠지 이젠 이런 일에도 익숙해졌습니다」
+                PRINTFORMW 「각오해 주세요 텐시？저의 봉사는…꽤나, 기분이 좋다구요？」
+                PRINTFORMW 당신도 수긍한다. 
+                PRINTFORMW 『후흥, 바라던 바야…이 천인의 몸에 이쿠를 빠지게 해줄게！』
+                PRINTFORMW 「하늘에 오른다는 것이 어떤 건지, 알려드리겠습니다…후훗」
+            ;그 이외
+            ELSE
+                PRINTFORML
+                PRINTFORMW 「…！싫엇, 거짓말…거짓말입니다, 어째서 이런 것이…！」
+                PRINTFORMW 『아, 알겠어？그러면 인사를 해볼까나』
+                PRINTFORML 텐시가 재빠르게 스커트와 속옷을 벗어 던지자, 텐시의 작은 몸에 걸맞지 않은
+                PRINTFORMW 커다란 페니스가 그 모습을 드러냈다. 
+                PRINTFORMW 벌써 발기해 쿠퍼액까지 늘어뜨리고 있다…
+                PRINTFORMW 『그런 약이 있다고 들었더니 시험해 보고 싶어서…』
+                PRINTFORMW 『이거봐…이쿠와 하고 싶어서 벌써 이렇게 되었다고？』
+                PRINTFORMW 그렇게 말하는 동안에도 텐시의 페니스는 딱딱해지며, 숨도 점점 난폭해져 간다…
+                PRINTFORMW 『핫, 아하하핫, 이쿠의 야한 몸을 보고 있으면 점점 흥분해버려…』
+                PRINTFORMW 『빨리이, 빨리하자？이쿠…당신의 몸으로, 나의 자지를 기분좋게 해줘…♪』
+                PRINTFORMW 「…어떻게 된겁니까！정신 차리세요, 텐시…！」
+                PRINTFORMW 이쿠는 텐시의 이상한 모습에 완전히 떨고 있다…
+                PRINTFORMW 텐시는 상관없다는 듯이, 육욕의 포로가 된 얼굴로 이쿠를 밀어 넘어뜨렸다…
+            ENDIF
+            CFLAG:7201 = 1
+        ;조수가 연모
+        ELSEIF TALENT:ASSI:연모 == 1
+            ;두 사람 모두 연모
+            IF TALENT:연모 == 1
+                ;기니까 저확률
+                IF RAND:20 == 0
+                    PRINTFORMW 「저어…어울리, 나요…？」
+                    PRINTFORMW 『어때？내가 골라준 속옷은？꽤 괜찮지』
+                    PRINTFORMW 당신이 이쿠의 방을 방문하자, 텐시에 의한 이쿠 옷입히기 놀이가 한창이었다…
+                    PRINTFORMW 『이런 것은 천인인 내게 맡기라고？정말 이쿠는 센스가 없으니까』
+                    PRINTFORMW 『주인님의 방에 있던 카탈로그를 봤어. 후흥, 지금부터는 좀 더 즐기라고？』
+                    PRINTFORMW 이쿠의 센스가 나쁘다곤 생각하지 않지만, 확실히 지금의 모습이 더욱 매력적이다…
+                    PRINTFORMW 「감사합니다, 텐시…조금 부끄럽지만, 즐거워요」
+                    PRINTFORMW 『이봐, 주인님, 뭐하고 있는 거야？모처럼 이쿠가 노력하고 있으니까 정신차려』
+                    PRINTFORML 
+                    PRINTFORMW 넋을 잃고 바라보던 당신을 텐시가 다그친다. 
+                    PRINTFORMW 이쿠의 매력을 더욱 이끌어낸 텐시에겐 감사하고싶지만, 다만…
+                    PRINTFORMW 방에 대량으로 어질러진 속옷을 사는데 이 아가씨는 얼마나 썼는지, 그게 걱정이었다…
+                ;기니까 저확률
+                ELSEIF RAND:19 == 0
+                    PRINTFORMW 『이쿠우～들어간다～』
+                    PRINTFORMW 지금부터 무엇을 하려는지 정말 알고 있는가 의심될 정도로, 텐시는 편하게 실내에 말을 건냈다. 
+                    PRINTFORMW 「앗…어서오세요, %CALLNAME:MASTER%, 텐시…」
+                    PRINTFORMW 텐시는 실내의 상황을 엿본 뒤, 이쿠를 살펴보고 말했다…
+                    PRINTFORMW 『후흥, 이쿠도 참 준비만반이네？방안에 음란한 기질이 흘러넘치고 있다고？』
+                    PRINTFORMW 「후훗…피차일반이네요？텐시한테서도, 오늘은 엉망진창으로 해줬으면 해, 라는 공기가 느껴집니다」
+                    PRINTFORMW 『천계에선 이 정도의 기질을 숨기고 있었다니…이쿠도 참 무뚝뚝하네』
+                    PRINTFORMW 「텐시가 불량 천인으로 불리고 있던 것은, 그쪽 방면에 지나친 관심이 있던 것도 원인이랍니다？」
+                    PRINTFORMW 『후흥』
+                    PRINTFORMW 「후훗」
+                    PRINTFORML 
+                    PRINTFORMW ……서로를 이해하고 있는 것 같아서 다행이다. 
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「…무척 즐거워 보이네요, 텐시」
+                    PRINTFORMW 『최근 이쿠의 반응을 보는 것이 즐거워ー』
+                    PRINTFORMW 『주인님도 아직 개발하지 않은 곳이 있지 않아？이 내가 찾아 줄게！』
+                    PRINTFORMW 「…너무 이상한 일은 하지 말아 주세요？」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「가끔은 텐시도 충분히 귀여워해 주세요？%CALLNAME:MASTER%」
+                    PRINTFORMW 『무우-…』
+                    PRINTFORMW 「여하튼 제멋대로에 외로움쟁이라 독점욕이 강한 편이라서…상대해 주지 않으면 무슨 일을 저지를지…」
+                    PRINTFORMW 『그만하라니까 정말！…흥, 심심풀이로 이쿠와 놀아줄게, 감사하라고！』
+                ELSE
+                    PRINTFORMW 『이쿠 쪽이 키도 크고 언니 같은데, 이렇게 마음대로 할 수 있는게 흥분돼네』
+                    PRINTFORMW 「가슴도 크지요」
+                    PRINTFORMW 『넘긴거야. 공기 읽으라고』
+                    PRINTFORMW 「좋다구요？이 언니에게 응석부려도. 후훗」
+                ENDIF
+            ;텐시만 연모
+            ELSE
+                IF RAND:2 == 0
+                    PRINTFORMW 『…정말, 그렇게 딱딱하게 굴 필요 없다고？이쿠』
+                    PRINTFORMW 『쓸데없는 반항을 하지 않는 편이, 당신을 위하기도 한거니까？』
+                    PRINTFORMW 『그러니까 자, 나에게 맡기라고？응？』
+                    PRINTFORMW 마치 누나가 동생을 달래듯이, 텐시는 이쿠에게 말을 건내고 있다…
+                ELSE
+                    PRINTFORMW 『자아 이쿠, 제대로 주인님께 과시하듯, 천천히, 야하게 옷을 벗어』
+                    PRINTFORMW 「…단순히 텐시가 보고 싶은 것이 아닙니까？」
+                    PRINTFORMW 『솔직히 조금은 흥미 있다고？이쿠같은 미인이 갈아입는 모습은 좀처럼 보기 힘들어』
+                    PRINTFORMW 『자, 시간이 아까워. 빨리 빨리』
+                ENDIF
+            ENDIF
+        ;그 이외
+        ELSE
+            ;이쿠만 연모
+            IF TALENT:연모 == 1
+                PRINTFORMW 「자아, 오늘도 주인님을 즐겁게 해드리자고요…？」
+                PRINTFORMW 『나는 이쿠만큼 저 녀석을 중요하게 생각하지 않아…』
+            ;그 이외
+            ELSE
+                PRINTFORMW 『일도 열심이고 딱딱한 이쿠씨도 조교할 수 있으니까, 즐기지 않으면 손해네』
+                PRINTFORMW 「어째서 그렇게 편하게 있는겁니까…」
+            ENDIF
+        ENDIF
+        RETURN 1
+    ENDIF
+
+;구상이 없는 조수일 경우엔, 통상의 2회째 이후의 구상이 출력된다
+ELSE
+    CALL K51_MESSAGE_START_3_YM
+ENDIF
+
+;-------------------------------------------------
+;조교 개시시
+;-------------------------------------------------
+@K51_MESSAGE_START_3_YM
+;연모
+IF TALENT:연모
+    ;임신
+    IF TALENT:임신
+        IF RAND:4 == 0
+            PRINTFORMW 「어머…%CALLNAME:MASTER%…오늘도 오셨네요…」
+            PRINTFORMW 이쿠가 배를 신경쓰며 천천히 일어선다. 
+            PRINTFORMW 당신은 당황해 이쿠에게 달려들었다…
+            PRINTFORMW 「앗, 죄송해요…후훗, 괜찮으신가요？」
+            PRINTFORMW 「걱정해 주셔서 기뻐요…하지만, 지금은 %조사처리(CALLNAME:MASTER,"과")% 서로 사랑하고 싶어요…」
+            PRINTFORMW 「와주세요, %CALLNAME:MASTER%…」
+        ELSEIF RAND:3 == 0
+            PRINTFORMW 「그래요, 그런 식으로 상냥하게…쓰다듬어 주세요…」
+            PRINTFORMW 「저의 소중한 곳을 만지는 것처럼…후훗, 좀 더…♪」
+            PRINTFORMW 이쿠의 부탁으로 그 배를 쓰다듬어 주고 있는데, 아무래도 그 속삭임이 이상해진다…
+            PRINTFORMW 「음란한 기분이, 되어 버렸나요…？」
+            PRINTFORMW 「…후후, 저도예요…시작하죠…♪」
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「왠지 오늘은 상태도 좋은 거 같고…조금은 격렬하게 해도, 괜찮을지도…？」
+            PRINTFORMW 적극적으로 나오는 것은 기쁘지만, 하지만 지금은 만약의 일도 생각해야 할 것이다…당신은 이쿠를 넌지시 나무랐다. 
+            PRINTFORMW 「앗…네에, 그 말대로네요…정말, 저만 음란한 것 같아서…부끄러워요」
+            PRINTFORMW 「그치만 그렇게 신경을 써준다니…너무나 행복해요. 후훗」
+        ELSE
+            PRINTFORMW 「후후, 또 야한 일하고 싶어져 버렸나요？」
+            PRINTFORMW 「임산부 상대로 그렇게나 흥분해서, 몸을 요구하다니…」
+            PRINTFORMW 「하지만…그런 솔직한 %조사처리(CALLNAME:MASTER,"이니")%까, 저도 정직해질게요…오늘도 잔뜩, 이쿠랑 섹스하죠…♪」
+        ENDIF
+    ;그 이외
+    ELSE
+        IF RAND:5 == 0
+            PRINTFORMW 「단정하게 있을 생각이었습니다만……왠지, 이 방에 있으면……」
+            PRINTFORMW 「%조사처리(CALLNAME:MASTER,"과")% 둘이서 밤새 흐트러진 후의 공기가, 남아 있는 것 같은 느낌이 들어서……」 
+            PRINTFORMW 「기분 좋았다던가, 부끄러웠다던가……여러 가지 일이 생각나서, 읏, 후아……」
+            PRINTFORMW 「이제……참을 수, 없어요……부디 빨리, 안아 주세요……」
+        ELSEIF RAND:4 == 0
+            PRINTFORMW 「%조사처리(CALLNAME:MASTER,"이")% 오는 것이 몹시 기다려져서…또 혼자서 시작할 뻔 했다고요？」
+            PRINTFORMW 「유감이었네요…♪좀 더 늦었으면, 제가 하고 있는 것을 볼 수 있었을지도 모르는데…」
+            PRINTFORMW 「그렇지만, 엿보지 않아도, 말하신다면 지금이라도…후훗」
+        ELSEIF RAND:3 == 0
+            PRINTFORMW 「저기…벌써 이렇게나, 커져버렸나요…？」
+            PRINTFORMW 「아직 아무것도 만지지 않았을 텐데요…」
+            PRINTFORMW 당신의 속옷을 밀어 올린 존재에, 이쿠는 당황하고 있다…
+            PRINTFORMW 「후훗, 그렇게나 흥분하다니, 조금 기쁘네요…」
+            PRINTFORMW 「그, 부드럽게, 부탁드릴게요？%CALLNAME:MASTER%…♪」
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「기다리고 있었다고요？%CALLNAME:MASTER%…」
+            PRINTFORMW 당신이 방에 들어가자, 이쿠는 상냥하게 웃으며 당신에게 향했다…
+            PRINTFORMW 「오늘도 그…이쿠에게, 야한 일, 가르쳐 주세요…♪」
+        ELSE
+            PRINTFORMW 「앗, 어서오세요…후훗」
+            PRINTFORMW 당신의 모습을 보자마자, 이쿠는 달려들어 껴안아 왔다…
+            PRINTFORMW 「%조사처리(CALLNAME:MASTER,"이")% 와 준 것만으로도…기뻐서 어쩔 수가 없어요…」
+            PRINTFORMW 「좋아해요, %CALLNAME:MASTER%…」
+        ENDIF
+    ENDIF
+    RETURN 1
+;그 이외
+ELSE
+    ;공포각인Lv3이상
+    IF MARK:공포각인 >= 3
+        IF RAND:2 == 0
+            PRINTFORMW 「%CALLNAME:MASTER%의 명령에 복종할 테니까…」
+            PRINTFORMW 「부디, 너무 심한 일은 하지 말아 주세요…」
+        ELSE
+            PRINTFORMW 「…！」
+            PRINTFORMW 이쿠는 당신의 모습을 보자마자 움츠러들어, 괴로운 듯 호흡을 흐트렸다…
+            PRINTFORMW 「스스로…벗을 테니까…！침착해질 때까지, 기다려, 주세요…」
+        ENDIF
+    ;공포각인Lv2이상
+    ELSEIF MARK:공포각인 >= 2
+        IF RAND:2 == 0
+            PRINTFORMW 「위협하는 것 같은 짓이 언제까지나 통할거라 생각하지 말아 주세요…！」
+            PRINTFORMW 강한 어조로 말하고는 있지만, 표정에는 분명한 두려움이 보인다…
+        ELSE
+            PRINTFORMW 「…큿, 공포로 말을 듣게밖에 못하나요？」
+            PRINTFORMW 「당신은 비겁자입니다…！」
+        ENDIF
+    ;반발각인Lv3
+    ELSEIF MARK:반발각인 == 3
+        PRINTFORMW 「…앞으로 어떤 비극이 일어날 줄도 모르고…」
+        PRINTFORMW 「그때까지 최대한 즐기는게 좋을 겁니다, 당신은 용신님의 분노로부터 도망칠 수 없습니다」
+    ;반발각인Lv1이상
+    ELSEIF MARK:반발각인 >= 1
+        IF RAND:2 == 0
+            PRINTFORMW 「…싫은 공기가 들어 왔네요」
+            PRINTFORMW 이쿠는 당신을 보자마자, 노골적으로 불쾌한 얼굴을 했다…
+        ELSE
+            PRINTFORMW 「충고는 했습니다…너무 우쭐하지 않는 게 좋을 거라고」
+            PRINTFORMW 「말을 듣지 않는 사람을 배려해줄 만큼, 저는 좋은 사람이 아닙니다」
+        ENDIF
+    ;굴복각인Lv3
+    ELSEIF MARK:굴복각인 == 3
+        IF RAND:3 == 0
+            PRINTFORMW 「…저기, 그렇게나 저를 상대하는게, 즐겁습니까…？」
+            PRINTFORMW 당신은 대답 대신에, 이쿠의 몸을 끌어 당겼다…
+            PRINTFORMW 「햣…！？」
+            PRINTFORMW 「우웅…요구되는 것도, 나쁜 기분은 아니네요…」
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「이곳의 분위기에도 익숙해져 버린걸까요…」
+            PRINTFORMW 「%조사처리(CALLNAME:MASTER,"은")% 저의 이런 성격을 알고선 이곳에 데려 온 것입니까？」
+            PRINTFORMW 「…다르다？순수하게 저를 손에 넣고 싶었으니까…라니, 갑자기, 무슨 말을 하는겁니까…！」
+        ELSE
+            PRINTFORMW 「저도 사실은 이런 짓을 좋아하는 걸지도 모릅니다…」
+            PRINTFORMW 「%CALLNAME:MASTER%에게 만져지면, 음란한 기분만이 부풀어 오릅니다」
+            PRINTFORMW 「…%조사처리(CALLNAME:MASTER,"은")% 알고 계셨습니까？저의 음란한 본성을…」
+        ENDIF
+    ;굴복각인Lv2이상
+    ELSEIF MARK:굴복각인 >= 2
+        IF RAND:2 == 0
+            PRINTFORMW 「…가능하다면, 빨리 끝내 주시겠습니까…？」
+            PRINTFORMW 「몸을 좋을대로 만져지는 것에 익숙해져 가는 것이, 무섭습니다…」
+        ELSE
+            PRINTFORMW 「…너무, 심한 일은 하지 말아 주세요…」
+            PRINTFORMW 이쿠는 이쪽을 보려하진 않지만, 옷을 스스로 벗게 되었다…
+        ENDIF
+    ;굴복각인Lv1이상
+    ELSEIF MARK:굴복각인 >= 1
+        IF RAND:2 == 0
+            PRINTFORMW 「몇번이나 몇번이나…어째서 당신은 저에게 흥미를 가진 겁니까…？」
+        ELSE
+            PRINTFORMW 「해방시켜 달라고 말해도, 소용없겠죠…」
+            PRINTFORMW 「당신은 저를, 어쩌려는 겁니까…？」
+        ENDIF
+    ;그 이외
+    ELSE
+        IF RAND:2 == 0
+            PRINTFORMW 「이번엔 무엇을 할 작정입니까…」
+            PRINTFORMW 이쿠는 당신을 맥없이 노려봤다…
+        ELSE
+            PRINTFORMW 「지상의 인간이라고 하는 것은…대체 무엇을 생각하고 있는 겁니까…」
+            PRINTFORMW 저항할 수 없는 분함을 드러내며, 이쿠는 중얼거렸다…
+        ENDIF
+    ENDIF
+ENDIF
+;========================================================
+;調教終了時の口上
+;========================================================
+@KOJO_51_SLAVE_MESSAGE_TRAIN_END_YM
+;眠ってる場合は戻る
+SIF EQUIP:14
+    RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:42
+    RETURN 0
+;失神中も戻る
+SIF TFLAG:899 >= 1
+    RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:167
+    RETURN 0
+DRAWLINE
+TRYCALL K51_MESSAGE_END_YM
+
+;--------------------------------------------------
+;조교 종료시의 구상
+;--------------------------------------------------
+@K51_MESSAGE_END_YM
+;처녀 상실 직후（1회만）
+;연모 주인 섹스로 처녀 상실＆질내사정
+IF TALENT:0 == 0 && TALENT:150 == 1 && CFLAG:5401 == 1 && CFLAG:7039 == 0
+    PRINTFORMW 「설마 그렇게 격렬하게 할 줄은 예상하지 못했어요…」
+    PRINTFORMW 「안겨서 진심으로 기쁘지만…아직, 그곳이 조금…」
+    PRINTFORML 이쿠가 쓴 웃음을 지으며 당신에게 말을 건다. 
+    PRINTFORMW …아직 아픈 것인지, 이쿠는 한 손을 하복부에 댄 채다. 
+    PRINTFORML 이쿠가 첫경험이라고 말했는데도, 열중해서 허리를 흔들고 있던 게 생각났다. 
+    PRINTFORMW 조교사라는 입장도 잊고, 이쿠의 질내에 정액을 내는 것에 너무 필사적이었다…
+    PRINTFORMW 「저도 견뎌본다고 말해 %조사처리(CALLNAME:MASTER,"을")% 유혹해버렸고, 뭐 어쩔 수 없지만요, 후훗」
+    PRINTFORML …확실히 그 말은 효과가 있었다. 
+    PRINTFORML 그렇지 않으면 아파하는 이쿠를 배려해 도중에 그만뒀을지도 모르고, 
+    PRINTFORMW 당신이 그토록 필사적으로 되는 일도 없었을 것이다…
+    PRINTFORMW 「매우 아팠고, 조금은 무서웠지만…」
+    PRINTFORMW 「그래도, %조사처리(CALLNAME:MASTER,"이")% 사정한 것을 느꼈을 때, 굉장히 행복한 기분이 됐어요…」
+    PRINTFORMW 「뭔가 매우, 충족된 감각…신기한 기분이었어요」
+    PRINTFORML 이쿠는 그렇게 말하고는 당신에게 미소짓는다. 
+    PRINTFORMW 지금까지 충분히 매력적이었던 그 미소가, "여자"가 된 탓인지…당신에겐 한층 더 매혹적으로 비친다. 
+    PRINTFORMW 「…왜 그러시나요？」
+    PRINTFORMW 잠시동안 정신이 팔려있던 것 같다…당신은 동요를 숨기면서 어떻게든 미소를 돌려주었다. 
+    PRINTFORMW 「……？후훗, 저 오늘의 일은 반드시 잊지 않을 거예요？소중히 기억해 둘게요」
+    PRINTFORMW 「앞으로도 잘 부탁드려요, %CALLNAME:MASTER%…」
+    CFLAG:7039 = 1
+    CFLAG:7030 = 2
+    RETURN 1
+;연모 섹스로 처녀 상실했지만 사정하지 않았다
+;평범하게 플레이한다면 대체로 도달하지 않을 상황 / 하지만 쓰는 것이 로망!
+ELSEIF TALENT:0 == 0 && TALENT:150 == 1 && CFLAG:5401 == 0 && CFLAG:7039 == 0 && CFLAG:7032 == 0
+    PRINTFORMW 「저기…괜찮은가요？그게, 끝까지 하지 않아도…」
+    PRINTFORMW 조교의 끝을 고한 당신에게, 이쿠가 물어왔다. 
+    PRINTFORMW …아직 아픈 것인지, 이쿠의 한 손은 하복부에 댄 채다. 
+    PRINTFORMW 「확실히…생각 이상의 아픔이었습니다. 하지만, 가능하다면 %조사처리(CALLNAME:MASTER,"을")% 제대로 만족시켜주고 싶어서…」
+    PRINTFORML 이쿠가 당신을 배려해 주는 것은 기쁘지만…
+    PRINTFORMW 가능하면 이쿠도 기분 좋아졌으면 좋겠다, 같은 당신의 이기적임도 있는 것이었다. 
+    PRINTFORMW 조급해 하지 말고 천천히, 섹스를 즐길 수 있게 되면 돼라고 당신은 이쿠에게 전했다. 
+    PRINTFORMW 「정말…그런 말투를 하면 저만 야한 일을 하고 싶어하는 것 같네요…」
+    PRINTFORMW 「후훗, 하지만 덕분에 조금은 기분이 좋아졌어요」
+    PRINTFORMW 「…다음엔, 둘이서 기분 좋아져요？」
+    CFLAG:7039 = 1
+    CFLAG:7030 = 2
+    RETURN 1
+ELSEIF CFLAG:7030 == 1
+    ;연모 주인 섹스 이외로 처녀 상실
+    IF CFLAG:7032 == 1 && CFLAG:5401 == 0
+        PRINTFORMW 조교가 끝나고, 당신은 방을 떠나려 했지만…
+        PRINTFORMW 이쿠의 어딘지 모르게 원망스러운 듯한 시선이 이쪽을 향하는게 느껴진다. 
+        PRINTFORMW 당신에게 처녀를 빼앗긴 것이 아닌게 역시 못마땅한 듯 하다. 
+        PRINTFORMW 할수 있으면 실제로 삽입할때 지나치게 아픈 경험을 하지 않게 하고 싶었던 것이지만…
+        PRINTFORMW …저질러버린 일은 어쩔 수 없다. 
+        PRINTFORMW 당신은 이쿠에게 미안하게 생각하며, 방을 떠났다…
+        PRINTFORMW 
+        PRINTFORMW 「그런 배려를 하지 않아도 좋았을 테지만 말이죠…」
+        PRINTFORMW 「아픔을 원하는 것도, 조금은 있다고요？」
+        PRINTFORML 
+    ;비연모 주인 섹스로 처녀 상실
+    ELSEIF CFLAG:7033 == 1
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            PRINTFORMW 「마침내 이곳도…범해지고 말았네요…」
+            PRINTFORMW 조교가 끝나 자기 방에 홀로 남겨진 이쿠가 중얼거린다. 
+            PRINTFORMW 방금 전까지 당신에게 범해지고 있던 질내는 아직 위화감이 남아 있다…
+            ;질내 사정 당했다
+            IF CFLAG:5401 == 1
+                PRINTFORMW 「게다가, 그렇게 질에 내다니…」
+                PRINTFORMW …질내에 퍼지는 정액의 감각을 떠올린다. 
+                PRINTFORMW 이쿠는 당신에게 완전히 굴복해 버린 일을 재차 되새기게 되었다…
+                ENDIF
+            PRINTFORMW 「각오는 하고 있었습니다만…생각보다, 참을 만 하네요…」
+            PRINTFORMW 「이제 저는…어쩌지도 못합니다…」
+        ;그 이외
+        ELSE
+            PRINTFORMW 조교가 끝나고 당신은 몸가짐을 정돈하고 있었지만, 이쿠는 침대에 들어간 채로 아무런 반응이 없다. 
+            PRINTFORMW 당신은 이쿠의 순결을 빼앗은 일에 만족하며, 그대로 방을 떠났다…
+            PRINTFORML 
+            PRINTFORMW 이쿠는 아직 통증이 남은 하복부를 누르며, 괴로워했다…
+            PRINTFORMW 「…으큭, 우우, 하아, 하아…」
+            PRINTFORMW 「아파서, 괴로워서…분해…분해애…！」
+            PRINTFORMW 「무엇을 위해서 저는 지금까지…착실히, 용궁의 사자라는, 역할을…！」
+            PRINTFORMW 「……우웃, 읏, 우아아앙……」
+        ENDIF
+    ;비연모 주인 섹스 이외로 처녀 상실
+    ELSEIF CFLAG:7034 == 1 
+        PRINTFORMW 「당신은 마치 장난처럼 여성의 순결을 가지고 노는군요…」
+        PRINTFORMW 「제가 요괴니까, 라고 말한다면…그런대로 납득이 갑니다」
+        PRINTFORMW 「다만, 혹시 당신이 인간을 상대로도 똑같은 짓을 하고 있다면…」
+        PRINTFORMW 이쿠는 거기까지 말하고는 머뭇거린다…당신은 별 반응없이, 가만히 이야기를 듣고 있다. 
+        PRINTFORMW 「너무나도 무섭습니다…더 이상 인간이 아닙니다…」
+    ENDIF
+    CFLAG:7030 = 2
+    RETURN 1
+
+;텐시가 조수 조수가 조교
+ELSEIF ASSIPLAY && NO:ASSI == 52
+    ;두 사람 모두 연모
+    IF TALENT:연모 && TALENT:ASSI:연모
+        ;처음
+        IF CFLAG:6052 == 0
+            PRINTFORMW 『어땠어 이쿠？그, 좋았어？』
+            PRINTFORMW 「네…무척이나…후훗, 텐시와 이런 관계가 된다고는, 생각지도 못했어요」
+            PRINTFORMW 『후흥, 나도야. 정말, 그저 지인이었을 뿐일텐데』
+            PRINTFORMW 「그렇네요…이번엔, 둘이서 주인님께 사랑받자고요, 텐시？」
+            PRINTFORMW 『그것도 좋지만, 둘이서 주인님을 괴롭히는 것도 좋지 않아？』
+            PRINTFORMW 「어머…그것도 좋겠네요, 재밌어 보입니다…♪」
+            PRINTFORMW 즐거운 듯이 당신을 괴롭힐 계획을 세우는 두사람을 내버려둔 채, 당신은 허둥지둥 방을 떠났다…
+            CFLAG:6052 == 1
+        ;2회째 이후
+        ELSE
+            ;체력500미만
+            IF BASE:0 < 500
+                IF RAND:2 == 0
+                    PRINTFORMW 「하앗, 하앗…어떤가요 텐시…저, 노력했어요…」
+                    PRINTFORMW 『이 나를 따라오다니 꽤 하잖아…분하지만 나도 한계야』
+                    PRINTFORMW 「이대로 함께 잡시다？텐시…후훗, 좋은 향기」
+                    PRINTFORMW 『잠ㄲ, 멋대로 사람을 다키마쿠라로…우웃, 뭐야 이거, 푹신햇, 기분 좋아…』
+                ELSE
+                    PRINTFORMW 『미안해 이쿠…조금 지나쳤네. 괜찮아？』
+                    PRINTFORMW 「조금 지친 것 뿐입니다, 괜찮아요…텐시는 상냥하네요」
+                    PRINTFORMW 『됐으니까 느긋하게 쉬어. 이쿠에게 무슨 일이 있으면 나…아니 그게, 주, 주인님도 곤란하니까』
+                    PRINTFORMW 「후훗, 고마워요…그러면 조금, 휴식해 볼까요」
+                ENDIF
+            ;그 이외
+            ELSE
+                IF RAND:2 == 0
+                    PRINTFORMW 「여기까지, 인가요…？저는 아직 괜찮은데요…」
+                    PRINTFORMW 『됐어. 주인님과 할 체력도 필요하지？』
+                    PRINTFORMW 『그게 아니면 좀 더 나와 하고싶어？후흥, 욕심쟁이네. 이쿠도 참』
+                    PRINTFORMW 「읏…아, 알았어요…저기, %CALLNAME:MASTER%…또 다음에, 안길 수 있나요…？」
+                ELSE
+                    PRINTFORMW 『하아, 주인님이 열중하는 이유네. 이쿠의 몸도 참 어디든 부드럽고 정말 매력적이야』
+                    PRINTFORMW 「텐시의 몸도 멋지다고요？매끈매끈하고 사랑스러운데다가…좋은 향기도 나요」
+                    PRINTFORMW 『하ー？이쿠도 참 야하다니까…그래도 이쿠랑 주인님껜 허락해줄게』
+                    PRINTFORMW 「후훗, 그건 기쁘네요」
+                ENDIF
+            ENDIF
+        ENDIF            
+    ;텐시만 연모
+    ELSEIF TALENT:ASSI:연모 == 1
+        ;처음
+        IF CFLAG:6052 == 0
+            PRINTFORMW 『어땠을까나？주인님. 나의 테크닉도 꽤 괜찮지』
+            PRINTFORMW 체격에선 이쿠보다 전체적으로 한층 작게 보이는 텐시가, 겉보기엔 연상인 이쿠를 좋을대로 하고 있다…
+            PRINTFORMW 「텐시…어째서 이런 일을, 하는 겁니까…」
+            PRINTFORMW 『이유 같은 거 아무래도 좋잖아, 그럼, 몸을 깨끗이 해서 쉬고, 다음 조교에 대비하라고？』
+            PRINTFORMW 『아니면 내가 이쿠를 보살펴 줄까나？후흥, 이것도 조수의 일이지』
+            PRINTFORMW 텐시는 그렇게 말하더니 무리하게 이쿠를 데리고, 욕실로 들어갔다…
+            PRINTFORMW 「앗, 잠깐！괜찮으니깟, 스스로 할테니까요！」
+            PRINTFORMW 『명령이야！됐으니까 내게 씻기도록해！…주인님？그럼 또 다음에』
+            CFLAG:6052 == 1
+        ;2회째 이후
+        ELSE
+            ;체력500미만
+            IF BASE:0 < 500
+                IF RAND:2 == 0
+                    PRINTFORMW 「이제 됐어요 텐시…이 이상 했다간 이젠, 죽어버려요…」
+                    PRINTFORMW 『그런 유혹하는 듯한 몸을 하고있는 이쿠가 나쁜거야…자아 계속, 아얏！？』
+                    PRINTFORMW 이젠 한계인 이쿠를 더 범한다는 텐시를 무리하게 끌어내, 우선 방을 떠났다. 
+                    PRINTFORMW 유혹하는 듯한 몸…문득 힘없이 누워있는 이쿠의 알몸을 생각하니, 무심코 욕망이 끓어오른다…
+                    PRINTFORMW 당신은 미련이 남으면서도, 지금은 이쿠를 쉬게 하기로 했다…
+                ELSE
+                    PRINTFORMW 『후흥, 뭐어 내가 진심이 되면 이런 거야』
+                    PRINTFORMW 『그럼 주인님, 이번엔 내 차례네…자아 빨리, 빨리 하자？』
+                    PRINTFORMW 당신은 나체로 침대에 축 처진 이쿠를 간호하려고 했지만, 
+                    PRINTFORMW 텐시에게 억지로 방에서 끌려 나갔다…
+                ENDIF
+            ;그 이외
+            ELSE
+                IF RAND:2 == 0
+                    PRINTFORMW 『오늘도 귀여웠다고 이쿠？자아 칭찬해 줄테니 얌전히 있어, 자 자』
+                    PRINTFORMW 그렇게 말하며 이쿠의 머리를 쓰다듬는 텐시. 이쿠는 부끄러움 때문인지 저항하고 있다…
+                    PRINTFORMW 「뭣！그만둬 주세요…이런 일 하지 않아도 괜찮으니까, 텐시, 우우우…」
+                ELSE
+                    PRINTFORMW 『어때 이쿠, 좋았지？쾌락에 몸을 맡기는 것도 나쁘지 않잖아？』
+                    PRINTFORMW 『당신은 공기를 읽을 수 있는걸, 솔직해지면 좀 더 귀여움 받을 수 있다고』
+                    PRINTFORMW 「…큿, 저에 대한 건 내버려 두시죠…！」
+                ENDIF
+            ENDIF
+        ENDIF
+    ;이쿠만 연모
+    ELSEIF TALENT:연모
+        PRINTFORMW 「후훗, 무척이나 좋았답니다？텐시」
+        PRINTFORMW 「저에게 어리광 부리고 싶어지면, 또 주인님과 함께 오세요？」
+        PRINTFORMW 『어리광이라고…！정말, 가슴이 좀 크다고 우쭐대지 마！』
+    ;레즈끼 Lv3이상
+    ELSEIF ABL:레즈끼 >= 3
+        PRINTFORMW 「텐시의 손가락, 무척 기분 좋았어요…」
+        PRINTFORMW 「다음엔 저도, 텐시를 기분 좋게 만들어 주고싶은데…안 되나요…？」
+        PRINTFORMW 『…착각하지 마. 이건 주인님의 명령으로 하고 있는 거니까…』
+        PRINTFORMW 『뭐어, 주인님이 좋다고 말한다면, 딱히…아아 정말, 좋을대로 하지 그래？』
+        PRINTFORMW 아무렇게나 말하는 텐시였지만, 꼭 그렇지만도 않은 것 같다…
+    ;그 이외
+    ELSE
+        ;체력 500미만
+        IF BASE:0 < 500
+            PRINTFORMW 『뭐야, 벌써 끝？정말 이쿠도 참, 좀 더 괴롭히게 해 달라고』
+            PRINTFORMW 「천인의 튼튼함과 비교하지 말아 주세요…」
+        ;그 이외
+        ELSE
+            PRINTFORMW 『이제 와서지만 의문이네. 나는 어째서 이쿠와 이런 일을 하고있는 걸까？』
+            PRINTFORMW 「저도 그렇게 생각합니다, 텐시…」
+        ENDIF
+    ENDIF
+;통상의 조교
+ELSE
+    ;연모
+    IF TALENT:연모
+        ;임신
+        IF TALENT:임신
+            ;체력500미만
+            IF BASE:0 < 500
+                PRINTFORMW 「하앗, 핫…더는…안된다고요？%CALLNAME:MASTER%…」
+                PRINTFORMW 「뱃속에…아기가, 있으니까요…？」
+                PRINTFORMW 이쿠의 어조는 부드럽지만, 표정에는 슬픔이 드러나있다…
+                PRINTFORMW 「사랑해 주시는 것은…진심으로, 기쁩니다…하지만, 하지만…」
+                PRINTFORMW 「부디 지금은, 이 아이를 제일 소중하게 여겨주세요, 부탁합니다…」
+            ;그 이외
+            ELSE
+                PRINTFORMW 「앗, 이제…휴식인가요？」
+                PRINTFORMW 「후훗, 그러네요…무리하면 안 되는 몸이니까…」
+                PRINTFORMW 사랑스러운 듯 배를 문지르는 이쿠. 
+                PRINTFORMW 당신도 손을 더해, 함께 배를 어루만져 주었다…
+                PRINTFORMW 「뭔가 지금…저, 매우 만족한 기분이에요…」
+                PRINTFORMW 「또…해요？사랑합니다, %CALLNAME:MASTER%…」
+            ENDIF
+        ;체력500미안
+        ELSEIF BASE:0 < 500
+            IF RAND:3 == 0
+                PRINTFORMW 「후앗, 하앗…하아아아…굉장, 했어요…」
+                PRINTFORMW 「마치, 폭풍 속에 있는 것 처럼…격렬하게 몸을 꾸짖어선…」
+                PRINTFORMW 「아하하…뭔가, 엉망이 됐네요…」
+                PRINTFORMW 당신과 이쿠는 미소를 주고 받은 뒤, 서로의 몸을 깨끗하게 닦았다…
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「싫어요…아직…아직 %조사처리(CALLNAME:MASTER,"과")% 떨어지기 싫어요…！」
+                PRINTFORMW 「저기, 아직…괜찮으니까…좀 더, 안아 주세요…」
+                PRINTFORMW 그렇게는 말하지만, 호흡은 거칠고, 시선도 확실치 않은 것 처럼 보인다. 
+                PRINTFORMW 당신은 이쿠를 달래면서, 잠들 때까지 곁에 있기로 했다…
+                PRINTFORMW 「죄송해요…감사합니다…이대로 조금만 더, 함께 있어주세요…」
+            ELSE
+                PRINTFORMW 「하앗, 하아아…후훗, 이제, 한계예요…」
+                PRINTFORMW 「조금, 지쳤습니다…조금만, 쉬게 해 주세요…」
+                PRINTFORMW 잠든 이쿠의 풍만한 가슴이 호흡 할 때마다 상하로 움직이고 있다. 
+                PRINTFORMW 여러가지 액체 투성이인, 요염하게 빛을 반사하고있는 그 피부는 참을 수 없을 정도로 매력적이다…
+                PRINTFORMW …허나, 이 이상의 조교는 역시 위험하다. 
+                PRINTFORMW 당신은 욕망을 누르며, 방을 떠났다…
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:3 == 0
+                PRINTFORMW 「슬슬 정리할까요. 도와드릴게요？」
+                PRINTFORMW 조교도 끝나고 진정될 무렵, 이쿠가 스스로 말한 것으로 당신은 순순히 따랐다. 
+                PRINTFORMW 익숙한 손놀림으로 시트를 교환하고, 어질러진 침대를 다시 정돈하는 이쿠…전라인 채로. 
+                PRINTFORMW 「어머나…보고만 있을 건가요？후훗」
+                PRINTFORMW 돕지 않는 것인지, 그렇지 않으면, 자신에게 손 대지 않는 것인지, 라는 것인가…？가끔은 이쿠의 분위기를 읽는 것이 어렵다. 
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「너무 무리를 하는 것도 좋지 않아요. 특히나 이런 일은 체력을 사용하고」
+                PRINTFORMW 「하지만, %조사처리(CALLNAME:MASTER,"이")% 끝까지 하고 싶다면…저도 힘내볼게요？후훗」
+                PRINTFORMW 이쿠의 매혹적인 미소에 유혹될 거 같지만, 당신은 어떻게든 욕망을 억눌렀다…
+            ELSE
+                PRINTFORMW 「가 버리는 건가요…」
+                PRINTFORMW 「언제라도, 기다리고 있으니…또 와 주세요？」
+                PRINTFORMW 외로운 듯한 미소를 짓는 이쿠를 남기고, 당신은 방을 떠났다…
+            ENDIF
+        ENDIF
+    ;반발각인Lv3
+    ELSEIF MARK:반발각인 == 3
+        ;체력500미만
+        IF BASE:0 < 500
+            PRINTFORMW 이쿠는 체력을 다 써 버려 침대에 쓰러졌지만, 당신을 적의에 가득 찬 눈으로 노려보고 있다…
+            PRINTFORMW 「하아, 하앗, 잘도, 이렇게 좋을대로 해대다니…」
+            PRINTFORMW 「용서하지 않겠습니다…절대로…」
+        ;그 이외
+        ELSE
+            PRINTFORMW 격한 감정을 들어내는 일이 적은 이쿠지만, 지금은 분명한 분노가 느껴진다…
+            PRINTFORMW 당신은 평상시의 모습과 너무나 다른 이쿠에게 당황하며, 방을 떠났다…
+        ENDIF
+    ;반발각인Lv1이상
+    ELSEIF MARK:반발각인 >= 1
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            PRINTFORMW 「이대로 제가 %조사처리(CALLNAME:MASTER,"을")% 계속 따를 거라 생각하십니까？」
+            PRINTFORMW 「%CALLNAME:MASTER%에겐 사람의 공기를 읽는 것 따위 할 수 없을테니까, 일단 충고하겠습니다」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「…볼 일 다 봤으면 빨리 나가 주세요…」
+            PRINTFORMW 「지금은 %CALLNAME:MASTER%의 얼굴을 보고 싶지 않으니까…」
+        ENDIF
+    ;굴복각인Lv3
+    ELSEIF MARK:굴복각인 == 3
+        ;호감도700이상일때 가끔
+        IF RAND:5 == 0 && CFLAG:2 >= 700
+            PRINTFORMW （가끔씩…이렇게 조교가 끝나는 것이 쓸쓸해질 때가 있습니다…）
+            PRINTFORMW （그 사람은…저에 대한걸 어떻게 생각하고 있을까요…）
+        ELSEIF RAND:4 == 0
+            PRINTFORMW 「…몸뿐인 관계로, %조사처리(CALLNAME:MASTER,"은")% 만족하는 겁니까？」
+            PRINTFORMW 「…아뇨, 쓸데없는 참견이었습니다, 잊어 주세요」
+        ELSEIF RAND:3 == 0
+            PRINTFORMW 「봉사가 능숙해졌다…？하아, 감사합니다」
+            PRINTFORMW 「%조사처리(CALLNAME:MASTER,"을")% 그런 얼굴로 만들 수 있는건 그때 정도니까요…후훗」
+            PRINTFORMW 「말하는 것은 듣습니다만, 답례도 시켜주세요？기대해도 좋아요」
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「기분 좋았는지, 입니까…？」
+            PRINTFORMW 「심한 질문이네요…뭐 그렇지만, 보시는 대로입니다…대단히, 느꼈습니다…」
+        ELSE
+            PRINTFORMW 「이렇게나 쾌락을 배우고, %CALLNAME:MASTER%에게 순종하게 되서야…」
+            PRINTFORMW 「이젠 더 이상, 용신님을 뵐 면목이 없네요…」
+        ENDIF
+    ;굴복각인Lv1이상
+    ELSEIF MARK:굴복각인 >= 1
+        IF RAND:2 == 0
+            PRINTFORMW 「…공기를 읽는 일따윈 하지 않았습니다…」
+            PRINTFORMW 「그저, 딱히 반항할 생각이 들지 않을 뿐입니다…」
+            PRINTFORMW 이쿠는 거북한 듯이 눈을 피했다…
+        ELSE
+            PRINTFORMW 「하아…익숙해져 버리는 거네요」
+            PRINTFORMW 「이런 이상한 상황이라는 것에…」
+            PRINTFORMW 이쿠는 아무 일도 없었다는 듯이, 옷을 갈아입고 있다…
+        ENDIF
+    ;그 이외
+    ELSE
+        ;체력500미만
+        IF BASE:0 < 500
+            PRINTFORMW 「핫, 하앗, 하앗, 흐읏…」
+            PRINTFORMW 「일부러, 여기까지, 하지 않아도…」
+        ;그 이외
+        ELSE
+            IF RAND:2 == 0
+                PRINTFORMW 「…당신을 어찌 할 생각은 없습니다」
+                PRINTFORMW 「그러니, 빨리 여기서 꺼내 주실 수 없습니까…」
+            ELSE
+                PRINTFORMW 「하아…저도 중요한 일이 있습니다만…」
+                PRINTFORMW 「무슨 일이 있어도, 해방시켜 주지 않는겁니까…」
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+;========================================================
+;@KOJO_X_MESSAGE_PALAMCNG
+;パラメータ変動をトリガーにした口上
+;パラメータ変動後に口上を発動します
+;========================================================
+@KOJO_51_MESSAGE_PALAMCNG_YM
+;眠ってる場合は戻る
+SIF EQUIP:14
+    RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:42
+    RETURN 0
+;失神中・失神回復時も戻る
+SIF TFLAG:899 >= 1 || TFLAG:898 == 1
+    RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:167
+    RETURN 0
+
+;처녀喪失時のメッセージ呼び出し
+SIF TFLAG:0
+    TRYCALL K51_MESSAGE_LOST_VIRGIN
+;初めてPALAMがLV2超えた時の口上呼び出し
+FOR LOCAL, 0, 35
+    SIF PALAM:LOCAL + UP:LOCAL > PALAMLV:2 && CFLAG:(5320 + LOCAL) == 0
+        TRYCALLFORM K51_MESSAGE_OVERLV2_{LOCAL}
+NEXT
+;絶頂時の口上呼び出し
+FOR LOCAL, 0, 50
+    SIF NOWEX:LOCAL
+        TRYCALLFORM K51_MESSAGE_ORGASM_{LOCAL}
+NEXT
+
+;射精させた
+FOR LOCAL, 8, 30
+    IF TFLAG:LOCAL
+        TRYCALLFORM K51_MESSAGE_EJAC_PLAYER_{LOCAL}
+    ENDIF
+NEXT
+
+SIF CFLAG:(TFLAG:94):74 == 9
+    TRYCALL K51_MESSAGE_EJAC_PLAYER_CONDOM
+
+;-------------------------------------------------
+;射精させた回数, 精液量のカウント
+;7000-7003　二人で出した合計量
+;7010-7017　主人or天子それぞれの出した量
+;通常射精で+1, 大量射精で+2
+;二人で犯す系のコマンドだとどうも正確にカウントされないのであしからず
+;-------------------------------------------------
+;主人の射精量（次回の調教開始時にリセット）
+IF TFLAG:35 > 0
+    ;膣内に射精
+    IF TFLAG:11 == 1
+        CFLAG:7010 += 1
+    ELSEIF TFLAG:11 == 2
+        CFLAG:7010 += 2
+    ;腸内に射精
+    ELSEIF TFLAG:12 == 1
+        CFLAG:7011 += 1
+    ELSEIF TFLAG:12 == 2
+        CFLAG:7011 += 2
+    ;口内に射精
+    ELSEIF TFLAG:15 == 1
+        CFLAG:7012 += 1
+    ELSEIF TFLAG:15 == 2
+        CFLAG:7012 += 2
+    ENDIF
+ENDIF
+
+;助手天子の射精量（次回の調教開始時にリセット）
+IF TFLAG:36 > 0 && ASSI >= 0 && NO:ASSI == 52
+    ;膣内に射精
+    IF TFLAG:11 == 1
+        CFLAG:7015 += 1
+    ELSEIF TFLAG:11 == 2
+        CFLAG:7015 += 2
+    ;腸内に射精
+    ELSEIF TFLAG:12 == 1
+        CFLAG:7016 += 1
+    ELSEIF TFLAG:12 == 2
+        CFLAG:7016 += 2
+    ;口内に射精
+    ELSEIF TFLAG:15 == 1
+        CFLAG:7017 += 1
+    ELSEIF TFLAG:15 == 2
+        CFLAG:7017 += 2
+    ENDIF
+ENDIF
+
+;主人と助手合計の射精量（次回の調教開始時にリセット）
+    ;膣内射精
+    SIF TFLAG:11 > 0
+        CFLAG:7000 += 1
+    SIF TFLAG:11 == 2
+        CFLAG:7000 += 1
+    ;腸内射精
+    SIF TFLAG:12 > 0
+        CFLAG:7001 += 1
+    SIF TFLAG:12 == 2
+        CFLAG:7001 += 1
+    ;口内射精
+    SIF TFLAG:15 > 0
+        CFLAG:7002 += 1
+    SIF TFLAG:15 == 2
+        CFLAG:7002 += 1
+    ;その他ぶっかけ
+    SIF TFLAG:13 > 0 || TFLAG:14 > 0 || TFLAG:16 > 0 || TFLAG:17 > 0 || TFLAG:18 > 0 || TFLAG:19 > 0 || TFLAG:20 > 0 || TFLAG:22 > 0 || TFLAG:23 > 0 || TFLAG:24 > 0 || TFLAG:26 > 0
+        CFLAG:7003 += 1
+
+;シャワーで精液は洗い流される
+IF TEQUIP:54 > 0
+    CFLAG:7000 = 0
+    CFLAG:7001 = 0
+    CFLAG:7002 = 0
+    CFLAG:7003 = 0
+ENDIF
+
+;-------------------------------------------------
+;처녀喪失
+;-------------------------------------------------
+@K51_MESSAGE_LOST_VIRGIN
+;연모時かつ主人のペニス
+IF TFLAG:2
+    ;PRINTFORMW てすと　主人연모セックス
+;助手が天子で助手が調教
+ELSEIF ASSIPLAY && NO:ASSI == 52
+    ;セックス系
+    IF TFLAG:9 == 1
+        ;연모
+        IF TALENT:연모
+            ;PRINTFORMW てすと　てんこちんこ연모
+            CFLAG:7035 = 1
+        ;それ以外
+        ELSE
+            ;PRINTFORMW てすと　てんこちんこ非연모
+            CFLAG:7037 = 1
+        ENDIF
+    ;그 이외
+    ELSE
+        ;연모
+        IF TALENT:연모
+            ;PRINTFORMW てすと　연모てんこセックス以外
+            CFLAG:7036 = 1
+        ;その他
+        ELSE
+            ;PRINTFORMW てすと　てんこセックス以外
+            CFLAG:7038 = 1
+        ENDIF
+    ENDIF
+;그 이외
+ELSE
+    ;연모
+    IF TALENT:연모
+        ;PRINTFORMW てすと　主人연모セックス以外
+        CFLAG:7032 = 1
+    ;セックス系
+    ELSEIF TFLAG:9 == 1
+        ;PRINTFORMW てすと　主人非연모セックス
+        CFLAG:7033 = 1
+    ;그 이외
+    ELSE
+        ;PRINTFORMW てすと　主人非연모セックス以外
+        CFLAG:7034 = 1
+    ENDIF
+    CFLAG:7030 = 1
+ENDIF
+
+;----------------------------------------------------------
+;初めてPALAMがLV2超えた時の口上 CFLAG 5320～5355を使用
+;@KOJO_51_MESSAGE_PALAMCNGから呼び出すのでセットで使うこと
+;----------------------------------------------------------
+;-------------------------------------------------
+;윤활이 처음으로 LV2 CFLAG:5330
+;-------------------------------------------------
+@K51_MESSAGE_OVERLV2_10
+IF (PALAM:10 + UP:10) > PALAMLV:2 && CFLAG:5330 == 0
+    ;효과[로션]
+    IF TEQUIP:10 == 1
+        PRINTFORMW 「꺄앗, 미끌미끌해…」
+    ;그 이외
+    ELSE
+        PRINTFORMW 이쿠의 비부는 차츰 습기를 띄고 있다…
+        PRINTFORMW 「…일일이, 말하지 말아 주세요…부끄럽습니다…！」
+    ENDIF
+    CFLAG:5330 = 1
+ENDIF
+
+;-------------------------------------------------
+;욕정이 처음으로 LV2 CFLAG:5333
+;-------------------------------------------------
+@K51_MESSAGE_OVERLV2_13
+IF (PALAM:13 + UP:13) > PALAMLV:2 && CFLAG:5333 == 0
+    ;효과[미약]
+    IF TEQUIP:11 == 1
+        PRINTFORMW 「으읏…대체 무슨 약입니까…이렇게, 멋대로…！」
+    ;그 이외
+    ELSE
+        PRINTFORMW 「하앗, 하앗…읏, 보지 말아 주세요…」
+        PRINTFORMW 눈을 돌리는 이쿠. 
+        PRINTFORMW 하지만 얼굴은 달아오르고, 숨도 난폭해지고 있다…
+    ENDIF
+    CFLAG:5333 = 1
+ENDIF
+;-------------------------------------------------
+;치정이 처음으로 LV2 CFLAG:5335
+;-------------------------------------------------
+@K51_MESSAGE_OVERLV2_15
+IF (PALAM:15 + UP:15) > PALAMLV:2 && CFLAG:5335 == 0
+    PRINTFORMW 「이런건, 부끄럽습니다, 그만둬 주세요…！」
+    CFLAG:5335 = 1
+ENDIF
+
+;-------------------------------------------------
+;공포가 처음으로 LV2 CFLAG:5337
+;-------------------------------------------------
+@K51_MESSAGE_OVERLV2_17
+IF (PALAM:17 + UP:17) > PALAMLV:2 && CFLAG:5337 == 0
+    PRINTFORMW 「저기, 슬슬, 그만둬 주시지 않겠습니까…」 
+    CFLAG:5337 = 1
+ENDIF
+;----------------------------------------------------------
+;絶頂時の口上 CFLAG 5300～を使用
+;@KOJO_51_MESSAGE_PALAMCNGから呼び出すのでセットで使うこと
+;----------------------------------------------------------
+;-------------------------------------------------
+;Ｃ절정 CFLAG:5300
+;-------------------------------------------------
+@K51_MESSAGE_ORGASM_0
+;처음
+IF CFLAG:5300 == 0
+    PRINTFORMW 「앗, 아앗！그만ㅎ！……～～～～읏！」
+    PRINTFORMW 클리토리스에서의 미지의 쾌감에 이쿠는 입술을 깨물며 소리를 참고 있다…
+    CFLAG:5300 = 1
+;2회째 이후
+ELSE
+    ;今回の調教でのＣ絶頂が50以上
+    ;IF EX:0 >= 50
+        ;PRINTFORMW 
+    ;ヴァギナを拭く のときはカット
+    IF SELECTCOM == 336
+    ;사중절정을 여기에 배치하면…？
+    ELSEIF NOWEX:0 > 0 && NOWEX:1 > 0 && NOWEX:2 > 0 && NOWEX:3 > 0
+        ;연모
+        IF TALENT:연모
+            IF RAND:2 == 0
+                PRINTFORMW 「온닷！와욧！굉장한거 와버ㄹ…―――――-응읏！！」
+                PRINTFORMW 이쿠는 소리가 되지 못한 외침을 내며, 쾌락에 눈물을 흘리면서 절정을 맞이했다…
+                PRINTFORMW 유두와 클리토리스는 한계까지 발기하고, 바기나와 애널에선 체액이 기세좋게 분출됐다…
+                PRINTFORMW 「크으우웃！굉장햇, 멈추지 않아앙♪가는거 멈추지 않앗♪간닷, 간다아아아ーーーー앗♪」
+                PRINTFORMW 이윽고 이쿠의 몸은 탈진해 실이 끊어진 듯이 쓰러졌다…
+                PRINTFORMW 반듯한 얼굴은 눈물과 침으로 뒤범벅이고, 고간은 양동이로 물을 뿌린 듯이 질척질척해져 있다…
+                PRINTFORMW 「하앗, 하앗, 후훗…굉장해, 더…♪좀 더, 좀 더 이쿠를 엉망진창으로 만들어 주세요, %CALLNAME:PLAYER%…♪」
+            ;그 이외
+            ELSE
+                PRINTFORMW 「꺄아아아아앗！아아아아앗！응아아아아앗！」
+                PRINTFORMW 이쿠의 체내에 강렬한 절정의 쾌락이 돌아다니자, 비명같은 신음소리를 질렀다…
+                PRINTFORMW 「가버려어어어엇！햐아앗！하아아아앗！아아아아아앗！」
+                PRINTFORMW 「…후앗, 아앗♪…후웃, 으으으응읏♪계속, 가버려서…후아아앗♪」
+                PRINTFORMW 이쿠의 전신은 강렬한 물결이 사라진 뒤에도, 쾌락의 여운으로 아직도 떨리고 있다…
+                PRINTFORMW 당신은 온 몸이 체액 투성이가 되어 몸부림치는 이쿠를 만족한 듯이 바라봤다…
+                ENDIF
+        ;그 이외
+        ELSE
+            PRINTFORMW 「으읏！으그웃, 으응！으응아앗！싫엇, 그마아안！」
+            PRINTFORMW 이쿠는 필사적으로 목소리를 참으려 하지만, 전신을 덮쳐오는 강렬한 쾌감 앞에선 어쩔 도리가 없다…
+            PRINTFORMW 「가, 간다아앗！가버려, 시러엇, 햐아아아아앗！아앗！앙！아그으아앗…！」
+            PRINTFORMW 이쿠는 몸을 붉히며, 덮쳐오는 압도적인 쾌락에 비명과도 같은 목소리를 계속 내질렀다…
+            PRINTFORMW 「…아핫, 하앗, 하아아아…뭐가, 어떻게 된 겁니까…히읏！읏으응！」
+        ENDIF
+    ;연모
+    ELSEIF TALENT:연모
+        IF RAND:7 == 0 && TALENT:음란
+            PRINTFORMW 「꺄아아읏！자극이, 너무 강해앳…클리가, 떨어져 버려요옷…！」
+        ELSEIF RAND:6 == 0 && TALENT:음란
+            PRINTFORMW 「클리 기분 좋아앗！클리 망가져 버렷！안대애앳！가버려욧！」
+        ELSEIF RAND:5 == 0 && TALENT:음란
+            PRINTFORMW 「거기 괴롭혀버리면, 기분 좋아서엇！이젠, 간닷！가버려요오♪」
+        ELSEIF RAND:4 == 0 && TALENT:음란
+            PRINTFORMW 「하앗, 후아아앗！클리가 기분 좋아서어…애액이, 넘쳐 버리니까아…」
+        ELSEIF RAND:3 == 0
+            PRINTFORMW 「아하앗, 으아아앗…！저릿저릿해서, 기분 좋앗…！」
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「그렇게엣, 강하게 하면…！클리가, 떨렷…이제, 와요옷…！」
+        ELSE
+            PRINTFORMW 「응아앗！클리토리스가, 기분 좋아욧…！간다, 간다아앗…」
+        ENDIF
+    ;그 이외
+    ELSE
+        ;C감각Lv3이상
+        IF ABL:C감각 >= 3
+            IF RAND:3 == 0
+                PRINTFORMW 「아앗, 후앗…！그만해 주세요, 그마안, 안된다니까요오…！」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「앗…크으으웃…거기 민감하게 되서, 안됏, 기분 좋아욧…！」
+            ELSE
+                PRINTFORMW 「거기 괴롭히지 말아주세요…！안됏, 또, 가버려어엇…！」
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:2 == 0
+                PRINTFORMW 「또, 기분 좋은게엣…싫어어엇…！」
+            ELSE
+                PRINTFORMW 「그만둿, 그렇게, 만지지 말아주세ㅇ…아으으읏…！」
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ｖ절정 CFLAG:5301
+;-------------------------------------------------
+@K51_MESSAGE_ORGASM_1
+;처음
+IF CFLAG:5301 == 0
+    ;연모
+    IF TALENT:연모 == 1
+        PRINTFORMW 「그곳이, 좋아, 좋아앗, 뭔가, 와 버려요옷…！」
+    ;그 이외
+    ELSE
+        PRINTFORMW 「싫어, 싫어엇, 움직이지 마앗…싫어어, 우으아앗, 으읏！」
+    ENDIF
+    CFLAG:5301 = 1
+;2회째 이후
+ELSE
+    ;今回の調教でのＶ絶頂が50以上
+;    IF EX:1 >= 50
+;        ;연모
+;        IF TALENT:연모 == 1
+;            PRINTFORMW 「いぐっ, いぐうっ, ううっ！はううっ！」
+;            PRINTFORMW あまりの絶頂に, 衣玖は痙攣したように体をビクビクとさせている…
+;            PRINTFORMW 「おまんこがあっ…私のおまんこ, どうしちゃったんですかぁ…」
+;            PRINTFORMW 「えうっ, えぐっ, 気持ち良すぎてっ, 怖いですっ, もうっ, わからないですっ, だからっ…あっ…」
+;            PRINTFORMW 快感のあまり涙ぐみ, 混乱している衣玖をあなたはしっかりと抱きしめた…
+;        ;그 이외
+;        ELSE
+;        ENDIF 
+    ;사중절정일땐 컷
+    IF NOWEX:0 > 0 && NOWEX:1 > 0 && NOWEX:2 > 0 && NOWEX:3 > 0
+    ;보지닦기 커맨드　매번 나오지 않게 설정
+    ELSEIF SELECTCOM == 336
+        ;연모
+        IF TALENT:연모
+            IF RAND:6 == 0
+                PRINTFORMW （싫닷…닦고 있을 뿐, 일텐데…느껴, 버려…！）
+            ELSEIF RAND:5 == 0
+                PRINTFORMW 이쿠는 %조사처리(CALLNAME:PLAYER,"을")% 방해하지 않도록, 입술을 깨물고 눈물을 머금으며, 절정으로 인해 떨리는 몸을 억누르려 하고 있다…
+            ELSEIF RAND:4 == 0
+                PRINTFORMW 「하아아, 앗……아아, 미안, 해요……가 버려요, 가 버려어엇…！」
+            ELSEIF RAND:3 == 0
+                PRINTFORMW 「하아, 앗, 하아……상냥하게, 해주셔서…」
+                PRINTFORMW 「그곳이, 그만…기분 좋게, 돼버렸어요…후훗…♪」
+            ENDIF
+        ELSE
+        ENDIF
+    ;3P
+    ELSEIF SELECTCOM == 610
+        ;연모
+        IF TALENT:연모
+            ;ＶＡ 동시 절정
+            IF (TFLAG:130 == 1 && TFLAG:131 == 2) || (TFLAG:130 == 2 && TFLAG:131 == 1) && NOWEX:1 > 0 && NOWEX:2 > 0
+                ;A감각Lv3以上＋V감각Lv3以上＋음란
+                IF ABL:A감각 >= 3 && ABL:V감각 >= 3 && TALENT:음란
+                    IF RAND:3 == 0
+                        PRINTFORMW 「가요！가 버려요오오！엉덩이도, 보지도…어느 쪽인지, 알 수 없어, 간다, 간다아아아앗%UNICODE(0x2665)%」
+                    ELSEIF RAND:2 == 0
+                        PRINTFORMW 「간다아, 좋앗, 가아아앗, 가고 있어어엇, 더욱 더 찔러엇%UNICODE(0x2665)%」
+                    ELSE
+                        PRINTFORMW 「안쪽, 안쪽잇！안대앳…이 이상, 찔렸, 다가아아안！아아！가 버려어어어엇%UNICODE(0x2665)%」
+                    ENDIF
+                ;Ａ감각Lv3이상＋Ｖ감각Lv3이상
+                ELSEIF ABL:A감각 >= 3 && ABL:V감각 >= 3
+                    IF RAND:3 == 0
+                        PRINTFORMW 「이런 거엇, 이젠…♪참을 수 없어요옷, 으우, 으아앗！간다, 간다아…！」
+                    ELSEIF RAND:2 == 0
+                        PRINTFORMW 「하아아아앙！아앙！이제, 전부…이상해져, 버릴 거 같아요오…아아, 간닷, 온다아아앗…！」
+                    ELSE
+                        PRINTFORMW 「아아, 응아아！안대애, 어느 쪽도 안돼욧, 기분 좋아, 좋아앗…하아아앗…！」
+                    ENDIF
+                ;V감각Lv3이상
+                ELSEIF ABL:V감각 >= 3
+                    PRINTFORMW 「엉덩이도…아으앗, 좋아요오, 어느 쪽도, 느껴 버려서…아아아ーー！」
+                ;Ａ감각 Lv3이상
+                ELSEIF ABL:A감각 >= 3
+                    PRINTFORMW 「그곳이…아읏, 앗 시러엇, 함께, 기분, 좋아…！」
+                ELSE
+                    PRINTFORMW （격렬햇…！어느 쪽도, 강해서 이젠…머리가, 이상해져엇…）
+                ENDIF
+            ;Ｖ와 입으로 Ｖ절정
+            ELSEIF (TFLAG:130 == 1 && TFLAG:131 == 3) || (TFLAG:130 == 3 && TFLAG:131 == 1)
+                ;V감각Lv3이상＋음란
+                IF ABL:V감각 >= 3 && TALENT:음란 && RAND:2 == 0
+                    IF RAND:2 == 0
+                        PRINTFORML （입이이…자지가 찔러대서 괴로운데에…%UNICODE(0x2665)%）
+                        PRINTFORMW （그렇지만, 이제 간닷, 보지 간다앗…%UNICODE(0x2665)%）
+                    ELSE
+                        PRINTFORMW （마음껏, 가고 있는데…자지 빠는거…그만 둘 수, 없어…%UNICODE(0x2665)%）
+                        PRINTFORMW （저의 입이…보지가, 된 것 같아요오…%UNICODE(0x2665)%）
+                    ENDIF
+                ;V감각Lv3이상
+                ELSEIF ABL:V감각 >= 3
+                    IF RAND:2 == 0
+                        PRINTFORMW 「응붓, 읏응, 으ーー응！으ーーー읏！」
+                    ELSE
+                        PRINTFORMW 「하읏, 으극, 응…읏！웃！우ー읏！」
+                    ENDIF
+                ELSE
+                ENDIF
+            ENDIF
+        ELSE
+        ENDIF
+    ;연모
+    ELSEIF TALENT:연모
+        ;임신
+        IF TALENT:임신
+            ;효과[바이브]
+            IF TEQUIP:20 == 1
+                PRINTFORMW 「아이가 있는데도, 바이브로, 가버립니다앗, 간닷, 가아아아앗…！」
+            ;섹스계 조교
+            ELSEIF TFLAG:9 == 1
+                IF RAND:3 == 0
+                    PRINTFORMW 「이제 곧, 이제 곧 기분 좋게, 될 거 같으니까…！이대로 천천히, 움직여 주세요…하아앙！무척이나, 기분 좋아요…！」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「질이 기분 좋아서, 녹아 버릴 것 같아요…이 아이도 기뻐하고 있어요…후훗, 따뜻해…」
+                ELSE
+                    PRINTFORMW 「아앗…그대로, 찔러 주세요…아앙, 기분 좋은거 와요, 좋아앗, 간다앙…♪」
+                ENDIF
+            ;그 이외
+            ELSE
+                IF RAND:3 == 0
+                    PRINTFORMW 「거기…거기도, 전부, 좋아요, 가아앗, 간다아아…」
+                    PRINTFORMW 「어째선지, 그곳이 매우 민감해…임신, 해 버려서 일까요…？」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「응앗…하앗, 아앗…！좋아앗, 가 버려요오옷…」
+                    PRINTFORMW 「이렇게 상냥하고 기분 좋게 해 주시다니…무척, 기뻐요…♪」
+                ELSE
+                    PRINTFORMW 「앗, 아앗！가앗, 버려어어…！」
+                    PRINTFORMW 「…정말로, 능숙하다니까요…」
+                ENDIF
+            ENDIF
+        ;음란
+        ELSEIF TALENT:음란 && RAND:2 == 0
+            ;효과[바이브]
+            IF TEQUIP:20 == 1
+                IF RAND:3 == 0
+                    PRINTFORMW 「아앗, 죄송해요, 죄송해요…%CALLNAME:PLAYER%의 자지가 아닌데도,」
+                    PRINTFORMW 「보지 너무 느껴버려서, 쭉 가버리고 있어요옷…♪」
+                    PRINTFORMW 이쿠는 천박하게 가랑이를 크게 벌려서, 바이브가 주는 쾌감에 심취하고 있다…
+                    PRINTFORMW 「음란한 여자라 죄송해욧, 아앗, 또 간다아앗♪아하아앗！」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「간닷, 아아 이젠, 갑니닷…！제가, 바이브로 가는 걸, 봐줘엇…！」
+                    PRINTFORMW 「～～～～읏…！으큿, 아으으응…！」
+                    PRINTFORMW 이쿠는 입술을 깨물며, 손으로 입을 막아 필사적으로 절정에 이르는 것을 참고 있다…
+                    PRINTFORMW 당신은 이쿠의 Ｇ스팟을 자극하듯, 바이브를 슥슥 문질렀다……
+                    PRINTFORMW 「응아아아아앗…！거길 문지르면…안돼요옷…힉, 아앗！앗, 기분 좋은게, 멈추지 않아요…」
+                ELSE
+                    PRINTFORMW 「바이브 갱장해앳, 찌릿찌릿해！보지, 보지가 엉망진창이 되버려서, 가요오오옷♪」
+                    PRINTFORMW 당신이 바이브를 넣었다 뺐다 할때마다, 이쿠의 질에선 애액과 조수를 계속 내뿜고 있다…
+                    PRINTFORMW 최후엔 힘을 더해 바이브를 질 안에 깊숙히 넣자, 이쿠는 미친듯이 허리를 떨며 몸부림쳤다…
+                    PRINTFORMW 「아히이잇！가고 있으니까앗！이젠 그만, 그만, 응아아아아～～앗♪」
+                ENDIF
+            ;섹스계 조교
+            ELSEIF TFLAG:9 == 1
+                IF RAND:6 == 0
+                    PRINTFORMW 「좋앗！읏하아앗！안돼애, 안돼앳, %CALLNAME:PLAYER%의 자지가앗,」
+                    PRINTFORMW 「질에서 날뛰고 있어요오…기분 너무 좋아서엇, 이상해져 버려요…♪」
+                    PRINTFORMW 이쿠는 전신을 떨며, 의식이 날아갈 정도의 쾌감을 견디고 있다…
+                ELSEIF RAND:5 == 0
+                    PRINTFORMW 「좋앗！아앗！좀 더 보지 문질러서, 휘저어엇…！」
+                    PRINTFORMW 「흐아아앗！거기이, 거기 안대애, 간다, 가버려엇, 후아아앙…♪」
+                ELSEIF RAND:4 == 0
+                    PRINTFORMW 「찔러엇, 좀 더 찔러 주세요！흐으아앗！아앗！흐아앙！하으으읏！」
+                    PRINTFORMW 「보지 안, 전부 기분 좋아요…♪」
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「햐아아앗！느껴어엇！느껴버려서 이젠, 보지 넘쳐버려요옷！」
+                    PRINTFORMW 이쿠의 질 안쪽으로 페니스를 내리칠 때마다, 액체가 놀라울 정도로 질척질척하게 흘러넘쳤다…
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「하아앗！흐아아앗！좋아앗♪%CALLNAME:PLAYER%의 자지 좋아앗♪」
+                    PRINTFORMW 「거기가앗, 보지가 이젠 안될거 같아요옷♪내줘엇, 이대로 내주세요♪」
+                ELSE
+                    PRINTFORMW 「아히잇！응아앗, 자지로 이제엣, 보지, 엉망진창이예요…♪」
+                    PRINTFORMW 「함께엣, 함께 가요, 아앗！이젠 안대앳！간다앗, 간다아아아…！」
+                ENDIF
+            ;그 이외
+            ELSE
+                IF RAND:5 == 0
+                    PRINTFORMW 「더 이상, 참을 수, 없어욧…！읏, 후앗, 앗, 아아～～～～앗…！」
+                    PRINTFORMW 「하아, 하아…보지로 가버리는거, 더는……못 견디겠어요…♪」
+                ELSEIF RAND:4 == 0
+                    PRINTFORMW 「좋앗, 기분 좋앗, 갑니다앗…♪」
+                    PRINTFORMW 「앗…흐아앗…다음엔, %CALLNAME:PLAYER%의 자지로…이쿠를 가게 해 주시지 않겠습니까…？」
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「가아, 간다앗, 간다아앙…！좀 더, 좀 더 보지를 엉망진창으로 만들어 주세요…♪」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「질이, 보지가 저려엇…응아앗！좋아, 좋아앗…가 버려어어엇…♪」
+                ELSE
+                    PRINTFORMW 「좀 더 문질러줘엇…좀 더 강하게…！으그으읏！앗, 왔다, 기분 좋은거, 왔다아앗！」
+                ENDIF
+            ENDIF
+        ;그 이외
+        ELSE
+            ;효과[바이브]
+            IF TEQUIP:20 == 1
+                PRINTFORMW 「떨리고 있엇, 너무 강해앳！아앗, 안돼애！안대앳…으응～～～～～읏！」
+            ;섹스계 조교
+            ELSEIF TFLAG:9 == 1
+                IF RAND:5 == 0
+                    PRINTFORMW 「후읏, 후읏, 핫, 하앗！」
+                    PRINTFORMW 「가 버려욧, 가고 있으니까아, 이대로 이쿠에게 내주세요」
+                    PRINTFORMW 「%CALLNAME:PLAYER%의 정자로, 저를 임신시켜줘요…！」
+                ELSEIF RAND:4 == 0
+                    PRINTFORMW 「%CALLNAME:PLAYER%의 것으로, 저의 질이…무척, 행복해요…！」
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「저엇, 저 이젠…안돼요, 그러니까 %CALLNAME:PLAYER%도, 함께엣, 와아앗…！」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「안쪽이, 안쪽이 기분 좋아요옷！그대로, 찔러줘엇…！하읏！간다, 간다아아…」
+                ELSE
+                    PRINTFORMW 「하앗, 하읏！으아읏！기분 좋앗, 가 버려욧…！」
+                ENDIF
+            ;그 이외
+            ELSE
+                IF RAND:4 == 0
+                    PRINTFORMW 「좋앗！기분 좋아앗！거기가, 오싹오싹해서…아앗！흐아아아앗…！」
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「가요！가 버려욧, 굉장해, 기분 좋, 앗, 하아아앗…！」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「좀 더, 좀 더엇！아앗！이젠, 이젠 앙대애…가아아앗…♪」
+                ELSE
+                    PRINTFORMW 「간다！간다아！보지로, 가 버려욧！아앗, 온다아！」
+                ENDIF
+            ENDIF
+        ENDIF
+    ;그 이외
+    ELSE
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            IF RAND:3 == 0
+                PRINTFORMW 「잔뜩, 문질러져서…질이, 뜨거워, 이젠…앗, 응아아앗…！」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「질에서, 격렬하겟…！흐읏, 읏, 아아앙！거기가, 느껴버려엇, 간다아아앗…！」
+            ELSE
+                PRINTFORMW 「읏하아아…읏, 응！아읏, 이제, 가 버려요오…아아아앗…！」
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:2 == 0
+                PRINTFORMW 「그만둬 주세요, 안엣, 움직이지 말아줘엇…싫어어, 아아앗…！」
+            ELSE
+                PRINTFORMW 「크읏, 으읏, 그마안, 거기아앗…우으으읏…！」
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ａ절정 CFLAG:5302
+;-------------------------------------------------
+@K51_MESSAGE_ORGASM_2
+;初めて
+IF CFLAG:5302 == 0
+    ;연모
+    IF TALENT:연모
+        PRINTFORMW 「엉덩이잇, 좋아요, 응아앗！왔다아앗！」
+        PRINTFORMW 「…진짜로, 엉덩이로, 가 버렸네요…후훗, %CALLNAME:PLAYER% 때문이라고요, 정말…♪」
+    ;그 이외
+    ELSE
+        PRINTFORMW 「응긋！우읏！후앗…으우～～～웃！」
+        PRINTFORMW 「엉덩이로…가 버렸습니다…핫, 아하핫…」
+        PRINTFORMW 본래 있을 수 없는 곳에서의 절정에, 이쿠는 자조적인 웃음을 흘렸다…
+    ENDIF
+    CFLAG:5302 = 1
+;2회째 이후
+ELSE
+    ;今回の調教でのＡ絶頂が50以上
+    ;IF EX:2 >= 50
+        ;PRINTFORMW 
+    ;사중절정일땐 컷
+    IF NOWEX:0 > 0 && NOWEX:1 > 0 && NOWEX:2 > 0 && NOWEX:3 > 0
+    ;3P
+    ELSEIF SELECTCOM == 610
+        ;연모
+        IF TALENT:연모
+            ;ＶＡ 동시 절정 / V절정 구상에 정리돼있으므로 컷
+            IF (TFLAG:130 == 1 && TFLAG:131 == 2) || (TFLAG:130 == 2 && TFLAG:131 == 1) && NOWEX:1 > 0 && NOWEX:2 > 0
+            ;Ａ와 입으로 Ａ절정
+            ELSEIF (TFLAG:130 == 2 && TFLAG:131 == 3) || (TFLAG:130 == 3 && TFLAG:131 == 2)
+                ;A감각Lv3이상＋음란
+                IF ABL:A감각 >= 3 && TALENT:음란 && RAND:2 == 0
+                    IF RAND:2 == 0
+                        PRINTFORML （입이이…자지가 찔러대서 괴로운데에…%UNICODE(0x2665)%）
+                        PRINTFORMW （그렇지만, 이제 간닷, 엉덩이…간다앗…%UNICODE(0x2665)%）
+                    ELSE
+                        PRINTFORMW （마음껏, 가고 있는데…자지 빠는거…그만 둘 수, 없어…%UNICODE(0x2665)%）
+                        PRINTFORMW （목까지…성기가, 된 것 같아요오…%UNICODE(0x2665)%）
+                    ENDIF
+                ;A감각Lv3이상
+                ELSEIF ABL:A감각 >= 3
+                    IF RAND:2 == 0
+                        PRINTFORMW 「응붓, 읏응, 으ーー응！으ーーー읏！」
+                    ELSE
+                        PRINTFORMW 「하읏, 으극, 응…읏！웃！우ー읏！」
+                    ENDIF
+                ELSE
+                ENDIF
+            ELSE
+            ENDIF
+        ELSE
+        ENDIF
+    ;연모
+    ELSEIF TALENT:연모
+        ;애널 섹스계 조교
+        IF TFLAG:9 == 2
+            ;음란+Ａ감각Lv5
+            IF TALENT:음란 == 1 || ABL:A감각 == 5 && RAND:2 == 0
+                IF RAND:5 == 0
+                    PRINTFORMW 「오호옷, 하옷, 응오오옷…♪아아 싫다앗, 이상한, 목소리…」
+                    PRINTFORMW 「나와 버린닷, 응구우！읏, 오아앗…♪너무해욧, 응으읏！간다, 간다아아앗…♪」
+                ELSEIF RAND:4 == 0
+                    PRINTFORMW 「뜨거웟, 안 쪽, 안 쪽이잇…♪안되는 곳, 찌르고 있어요옷…！」
+                    PRINTFORMW 「좀더 깊게에……후앗, 흐아앗！아아 간다, 가아아앗, 박박 긁어대고 있어요옷, 기분 좋아아, 시러어어어…♪」
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「시럿, 힉！히야아앗！이런 곳, 푹푹 찔려서엇, 가 버리다니이」
+                    PRINTFORMW 「변태예요, 이상합니다앗, 아아 안돼애, 정말로옷…히이잇！아앗！흐아아아앙…♪」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「후그으읏♪응극, 응아아아앗…안대애, 이렇게엣, 느껴버려서어어…♪」
+                    PRINTFORMW 「엉덩이 구멍…돌아올 수, 없게 돼버려요…바보처럼, 돼버려요오옷…！」
+                ELSE
+                    PRINTFORMW 「뜨거운거…주세요옷, 이쿠의 음란한 엉덩이에…！」
+                    PRINTFORMW 「아아, 내줘엇…！갑니닷, 함께…아앗, 마음껏, 내주세요옷！」
+                ENDIF
+            ;A감각Lv3이상
+            ELSEIF ABL:A감각 >= 3
+                IF RAND:3 == 0
+                    PRINTFORMW 「엉덩이 좋아욧, 하앗, 앗, 아아아아！간다, 간다아앗…」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「배가, 앗, 잔뜩, 찔려서엇…아힛, 잇, 가 버려요오…！」
+                ELSE
+                    PRINTFORMW 「굵은 것이, 날뛰고 있어욧…！부숴져, 버릴 것 같아요옷…하아읏, 기분 좋아…♪」
+                ENDIF
+            ;A감각Lv1이상
+            ELSEIF ABL:A감각 >= 1
+                IF RAND:2 == 0
+                    PRINTFORMW 「또, %CALLNAME:PLAYER%의 걸로…！엉덩이, 이상하게 되어 버려요오…후아아아…」
+                ELSE
+                    PRINTFORMW 「앗！응크읏！기다려, 기다려 주세요…엉덩이가…앗！응아아！」
+                ENDIF
+            ;그 이외
+            ELSE
+                PRINTFORMW 「잇！하힛…아픈데엣…엉덩이로 느껴, 버렸어요…」
+            ENDIF
+        ;음란+Ａ감각Lv5
+        ELSEIF TALENT:음란 == 1 || ABL:A감각 == 5 && RAND:2 == 0
+            IF RAND:3 == 0
+                PRINTFORMW 「햐아앙, 하앗！아크응, 응으아앗……！」
+                PRINTFORMW 「이런, 민감한 엉덩이가 되버려서어…이젠 %조사처리(CALLNAME:PLAYER,"으로")%부터, 떨어질 수 없네요…♪」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「힛, 핫, 하아앗…간다, 이제, 엉덩이로…엉덩이로 가아앗…♪」
+            ELSE
+                PRINTFORMW 「응그으읏！응옷, 응호오옷…！안돼애, 이젠…엉덩이로 가는게, 버릇 들어 버렸어요옷…♪」
+            ENDIF
+        ;Ａ감각Lv3이상
+        ELSEIF ABL:A감각 >= 3
+            IF RAND:3 == 0
+                PRINTFORMW 「어째서 이렇게엣…！아앗, 이젠 안돼앳, 엉덩이가아…응아아아앗！」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「후그읏응！읏, 아앗…！이렇게나, 기분이 좋아지다니…믿을 수, 없어요…♪」
+            ELSE
+                PRINTFORMW 「아아아…！왔습, 니다앗…！엉덩이로는, 정말…부끄러운데에…」
+            ENDIF
+        ;Ａ감각Lv1이상
+        ELSEIF ABL:A감각 >= 1
+            PRINTFORMW 「얏, 또 엉덩이로, 가버려…！하아아앗…！」
+            PRINTFORMW 「…%CALLNAME:MASTER%뿐만 이니까요…？이런 일을 허락하는 건…」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「읏후우읏, 크우우읏！엉덩이가앗…！」
+            PRINTFORMW 「…정말, 너무 부끄러워요, 역시…」
+        ENDIF
+    ;그 이외
+    ELSE
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            PRINTFORMW 「엉덩이가, 엉덩이가앗…햣！우으으～～～읏！」
+            PRINTFORMW 이쿠는 허리를 덜덜 떨며 애널에서의 절정을 맛보고 있다…
+        ;그 이외
+        ELSE
+            PRINTFORMW 「싫엇, 이런 곳에서, 이런 곳으로 기분 좋아지…읏크우우읏…！」
+            PRINTFORMW 이쿠는 입을 굳게 다물어 소리를 높이지 않으려 있다…
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;Ｂ절정 CFLAG:5303
+;-------------------------------------------------
+@K51_MESSAGE_ORGASM_3
+;처음
+IF CFLAG:5303 == 0
+    PRINTFORMW 「후앗, 가슴만, 그렇게…！」
+    PRINTFORMW 「저려엇, 이상해져, 그만두…응읏！후읏…！」
+    CFLAG:5303 = 1
+;2회째 이후
+ELSE
+    ;今回の調教でのＢ絶頂が50以上
+    ;IF EX:3 >= 50
+        ;PRINTFORMW 
+    ;4重絶頂の時はカット
+    IF NOWEX:0 > 0 && NOWEX:1 > 0 && NOWEX:2 > 0 && NOWEX:3 > 0
+    ;연모
+    ELSEIF TALENT:연모
+        ;효과[착유기 장착]
+        IF TEQUIP:35 == 2
+            PRINTFORMW 「이런, 기계엣…엉망진창으로 밀크 짜여서, 기분 좋아진다니잇…♪」
+            PRINTFORMW 「가슴 멈추지 않아요오, 아앗！유두가, 유두가앗…♪이젠, 안돼요옷, 크우우우우웃♪」
+        ;음란
+        ELSEIF TALENT:음란
+            ;모유체질
+            IF TALENT:모유체질 && RAND:2 == 0
+                IF RAND:2 == 0
+                    PRINTFORMW 「아하앗, 가슴 기분 좋아…부탁드려요, 젖 짜서, 이쿠를 가게 해주세요…♪」
+                    PRINTFORMW 「%CALLNAME:PLAYER%의 손으로, 꽈악…그래욧, 아앗！왔다, 왔다아아앗！」
+                    PRINTFORMW 당신이 이쿠의 유방과 유두를 단숨에 짜내자, 이쿠는 격렬하게 절정을 맞이했다…
+                    PRINTFORMW 「간다, 간다아앗…젖을 흩뿌리며, 가고 있어요…♪아하아아앗…♪」
+                ELSE
+                    PRINTFORMW 「밀크 나오는거엇, 너무 기분 좋아요, 햐앗, 멈춰줘, 멈춰줘엇♪」
+                    PRINTFORMW 「짜내지는 것도, 들이마셔지는 것도 좋아요옷, 아아아앗, 밀크 나오면서엇, 간다아아아앗♪」
+                    PRINTFORMW 이쿠의 부풀어 오른 유두로부터 끊임없이 모유가 나오고 있다…
+                ENDIF
+            ;그 이외
+            ELSE
+                IF RAND:2 == 0
+                    PRINTFORMW 「가슴의, 가슴의 끝이잇, 아앗！유두 기분 좋아요, 간다, 이젠 안돼앳…♪」
+                    PRINTFORMW 이쿠의 유두는 부풀어 올라, 부드러운 유방의 끝에서 음란한 존재를 과시하고 있다…
+                ELSE
+                    PRINTFORMW 「햐아아앗！가슴잇, 찌릿찌릿해…」
+                    PRINTFORMW 「가 버려욧, 이쿠의 가슴, 엉망진창으로 되어서, 가요오옷♪」
+                    PRINTFORMW 이쿠는 풍만한 유방을 격렬히 떨며, 절정에 심취하고 있다…
+                ENDIF
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:2 == 0
+                PRINTFORMW 「유두가, 저려엇…아읏！아앗！가 버려, 가아아앗…」
+            ELSE
+                PRINTFORMW 「아아읏, 가슴 좋아욧, 좀 더, 강하게 해주ㅅ…아하아아아앗！」
+            ENDIF
+        ENDIF
+    ;그 이외
+    ELSE
+        ;B감각Lv3이상
+        IF ABL:B감각 >= 3
+            PRINTFORMW 「그런 식으로…괴롭히지 마앗, 이제 간다앗, 가 버려어어엇…！」
+        ;난수 분기:2
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「안됩니다앗, 가슴이, 저려서엇…！후우읏, 우아아앗…！」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「유두만, 그렇게, 안됩니닷…！우응, 응아앗…！」
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;분유 CFLAG:5304
+;-------------------------------------------------
+@K51_MESSAGE_ORGASM_10
+;처음
+IF CFLAG:5304 == 0
+    ;연모
+    IF TALENT:연모
+        ;임신
+        IF TALENT:임신 == 1
+            PRINTFORMW 「아앗, 나왔어요…」
+            PRINTFORMW 「봐주세요, 젖, 나왔어요…엄마가, 된 거네요…후훗, 기뻐요…」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「엣, 이건…모유, 지요…？」
+            PRINTFORMW 「아이는 갖지 못했지만…그래도, 기쁘네요…」
+        ENDIF
+    ;그 이외
+    ELSE
+        PRINTFORMW 「그런, 어째서 이런 것이…？」
+        PRINTFORMW 이쿠는 믿을 수 없다는 표정으로 모유가 나온 유두를 바라보고 있다…
+    ENDIF
+    CFLAG:5304 = 1
+;2회째 이후
+ELSE
+    ;섹스계 조교시 컷
+    IF TFLAG:9 == 1 || TFLAG:9 == 2
+    ;연모
+    ELSEIF TALENT:연모
+        ;분유중독Lv3이상
+        IF ABL:분유중독 >= 3 && RAND:2 == 0
+            IF RAND:2 == 0
+                PRINTFORMW 「좀 더어, 좀 더 밀크를 짜 주세요…♪」
+            ELSE
+                PRINTFORMW 「유두에서 뷰ー웃하고 나오는거, 좋아욧…♪」
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:2 == 0
+                PRINTFORMW 「굉장해요, 이렇게나, 저의 가슴에서…」
+            ELSE
+                PRINTFORMW 「앗, 아앗, 젖 흘러나와…」
+            ENDIF
+        ENDIF
+    ;그 이외
+    ELSE
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            PRINTFORMW 「…크우으읏, 젖 나오는거, 멈추지않아…」
+        ;난수 분기:2
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「모유가 나오는 것따위, 보지 말아 주세요…」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「싫어, 젖이, 넘쳐버려…」
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;射精 CFLAG:5305
+;IF TFLAG:9 == 19でＶで逆レイプされて射精した場合を参照可
+;IF TFLAG:9 == 20でＡで逆レイプされて射精した場合を参照可
+;-------------------------------------------------
+@K51_MESSAGE_ORGASM_11
+;初めて
+IF CFLAG:5305 == 0
+    ;PRINTFORMW 
+    ;CFLAG:5305 = 1
+;2회째 이후
+ELSE
+    ;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;放尿 CFLAG:5306
+;放尿または強制放尿コマンド時は呼び出さない
+;-------------------------------------------------
+@K51_MESSAGE_ORGASM_12
+SIF SELECTCOM == 111 || SELECTCOM == 620
+    RETURN 0
+;初めて
+IF CFLAG:5306 == 0
+    ;PRINTFORMW 
+    ;CFLAG:5306 = 1
+;2회째 이후
+ELSE
+    ;PRINTFORMW 
+ENDIF
+
+;-------------------------------------------------
+;질내에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_10
+;主人のペニス
+;IF TFLAG:35
+
+;처음
+IF CFLAG:5401 == 0
+    ;텐시가 조수 조수가 조교
+    IF ASSIPLAY && NO:ASSI == 52
+        ;연모
+        IF TALENT:연모 == 1
+            PRINTFORMW 드디어 사정이 다가왔는지, 열심히 피스톤질을 계속하던 텐시의 숨이 난폭해지고 있다…
+            PRINTFORMW 『아아 이젠…안돼…！오고 있어…뜨거운거, 올라오고 있어…후앗, 핫, 하앗！』
+            PRINTFORMW 「자…잠깐 기다려요 텐시, 질내엔, 읏, 기다려…주세욧…하우, 앗…！」
+            PRINTFORMW 『이쿠웃…이제, 참을 수 없어…나와, 아우, 후아아！아아아아아！』
+            PRINTFORMW 텐시가 이쿠의 몸을 강하게 끌어안아, 페니스가 질 안쪽에 정액을 냈다…
+            PRINTFORMW 뜨겁고 농후한 천인의 정액이 기세 좋게 질내를 채워, 이쿠의 감각을 날뛰게 하고 있다…
+            PRINTFORMW 「힛！앗…뭔가요, 이건…！뜨거워…앗, 아아아…질이, 움찔 움찔거려어…」
+            PRINTFORMW 『이쿠…핫, 핫…기분 좋아…이쿠의 질에 내는거, 엄청, 좋아…조금만 더, 참아줘…』
+            PRINTFORMW 『읏…응아, 후아…전부, 나온걸까…좀 더, 내고싶, 어…』
+            PRINTFORMW 사정이 끝난, 절정에 떨리는 페니스가 딱딱함을 잃지 않고 이쿠의 바기나를 계속해서 자극하고 있다…
+            PRINTFORMW 「아직…！움직이고, 있어요…히우읏」
+            PRINTFORMW 「하아아…이것이…사정당하는, 감각…？」
+            PRINTFORMW 「아아, 뜨거워서…질내에 잔뜩…낸걸, 알겠어요…」
+            PRINTFORMW 「후후…굉장해, 훌륭했어요 텐시…감사합, 니다…」
+            PRINTFORMW 『에…가, 감사하다니…나야말로, 그…』
+            PRINTFORMW 『이쿠와 하는 것…엄청, 기분 좋아서…그러니까, 고, 고마워…』
+            PRINTFORMW 『무, 무슨 일이 생기면 책임 질테, 니까…？』
+            PRINTFORMW 「어머머…그건 기쁘네요, 후훗」
+        ;그 이외
+        ELSE
+            PRINTFORMW 『이쿠우…이제, 이제 곧 질에…잔뜩 내줄 테니까앗…！』
+            PRINTFORMW 『천인의 정액…제대로 자궁에 받아 들여…아앗！나온다, 나와 버린닷！』
+            PRINTFORMW 「싫엇…！적어도 밖에, 부탁드립니다…부탁이에요 텐시, 아아앗！？」
+            PRINTFORMW 텐시가 한층 더 강하게 허리를 박아, 이쿠의 질내에 정액을 기세 좋게 토해냈다. 
+            PRINTFORMW 절정을 맞이한 몸은 부들부들 떨리며, 사정의 쾌감을 조금이라도 더 길게 맛보려 하고 있다…
+            PRINTFORMW 『후후, 후후후…아핫』
+            PRINTFORMW 『이쿠의 그곳 엄청 기분 좋았어…지금부터는 주인님과 내가 잔뜩 귀여워해 줄테니까…♪』
+            PRINTFORMW 「둘이서, 라니…그런…히읏, 우우…그만, 둬어…」
+            PRINTFORMW 텐시는 겁에 질린 이쿠의 반응은 신경쓰지도 않는 듯 계속 허리를 느릿느릿하게 움직여, 정액으로 채워진 질내의 감촉을 즐기고 있었다…
+        ENDIF
+        CFLAG:7313 = 1    
+    ;연모
+    ELSEIF TALENT:연모 == 1
+        ;처녀 상실시에 사정하지 않았던 경우
+        IF CFLAG:7030 == 2
+            PRINTFORMW 「아읏！앗, 읏, 읏응…」
+            PRINTFORML 이쿠를 너무 아프게 하지 않기위해 신중하게 삽입을 계속했지만, 
+            PRINTFORMW 사정이 다가온 것을 느껴, 페니스가 더욱 딱딱해진다…
+            PRINTFORMW 당신은 이쿠에게 곧 한계라는 것을 전했다. 
+            PRINTFORMW 「괜찮아요, 이대로…계속해 주세요, 하읏, 응앗…」
+            PRINTFORMW 「오늘이야말로…저의 질로, 끝까지 해주세요…？앗, 핫, 기분, 좋아요」
+            PRINTFORMW 정말로 여유가 있는 것은 아닐테지만, 이쿠는 당신에게 미소를 지으며 대답했다…
+            PRINTFORMW 당신은 드디어 마지막 순간을 향하여 허리를 움직인다. 
+            PRINTFORML 
+            PRINTFORMW 허리를 크게 움직여, 바기나의 입구부터 안쪽까지 전체적으로 페니스를 문지른다. 
+            PRINTFORMW 움직임은 빠르지 않지만, 페니스 전체에 느껴지는 압박에 순식간에 쾌감이 올라온다…
+            PRINTFORMW 「아앗！하앗, 기분 좋, 아욧…」
+            PRINTFORMW 「그대로, 좀 더, 안쪽까지…！」
+            PRINTFORMW 사정을 참으며 동일한 페이스로 계속 찔렀다…
+            PRINTFORMW 이쿠의 달콤한 목소리가 당신을 더욱 더 욕정시켜, 머리가 뜨거워졌다…
+            PRINTFORMW 「점점 커져엇…아읏！아앙, 좋아요, 이대로 질에…이쿠의 질에, 내주세요…！」
+            PRINTFORML 
+            PRINTFORMW 당신에게 안겨, 숨도 거칠게 헐떡이는 이쿠를 보자 더 이상은 인내의 한계였다…
+            PRINTFORMW 사정까지 얼마 남지 않았지만, 그럼에도 전력으로 허리를 움직였다. 
+            PRINTFORML 갑자기 격렬해진 움직임에 놀란 이쿠였지만, 
+            PRINTFORMW 여자의 기쁨에 눈을 뜨고있는 몸은 곧바로 그 격렬함을 받아들이기 시작했다…
+            PRINTFORMW 「응아아앗！그런！격렬햇, 아앗！그래도, 좋앗, 굉장햇！」
+            PRINTFORMW 「이미, 엉망진창이에요, 이대로, 이대로 격렬하게, 찔러줫…！」
+            PRINTFORMW 바람대로, 이쿠의 가장 안쪽에 찔러넣었다…
+            PRINTFORMW 그러자 이쿠의 바기나가 당신의 페니스를 단단히 조여, 의식이 날아갈 것같은 쾌감을 가져왔다. 
+            PRINTFORMW 페니스에서 넘치듯이 정액이 흘러나와, 기세 좋게 이쿠의 질내를 채워갔다…
+            PRINTFORMW 「흐아아아앗…！아앗！앗, 질에서 커져서…떨리고 있어요…！」
+            PRINTFORMW 「아앗…나온다…나왔, 네요…？굉장히, 따뜻해…」
+            PRINTFORMW 「기분 좋게 됐던 거네요…아앗, 다행이다…」
+            PRINTFORMW 당신의 페니스가 븃 븃하고 이쿠의 자궁 내에 정액을 뿌린다. 
+            PRINTFORMW 고대하던 질내사정을, 이쿠는 행복한 미소로 받아들였다…
+            PRINTFORML 
+            PRINTFORMW 「이전에는 그…저의 안에, 최후까지 해주시지 않았으니까…」
+            PRINTFORMW 「%조사처리(CALLNAME:MASTER,"이")% 정말로 기분이 좋아지지 않은 게 아닌가 하고, 조금 신경쓰였다고요？」
+            PRINTFORML ―――확실히 지난번엔, 삽입에 익숙하지 않은 이쿠가 괴로운 듯이 보였으므로, 사정에 이르기 전에 섹스를 중단했다. 
+            PRINTFORMW 하지만 결과적으론, 반대로 신경쓰이게 해버린 것같다…
+            PRINTFORMW 「후훗, 기뻐…이걸로 겨우, %조사처리(CALLNAME:MASTER,"을")% 진짜로 만족시켜 드렸어요…♪」
+            PRINTFORMW 「몇 번이라도, 와주세요…？저도 노력할테니까…」                
+        ;그 이외
+        ELSE
+            PRINTFORMW 당신은 이쿠를 신경써서, 너무 무리는 하지 않고 천천히 삽입을 반복했다. 
+            PRINTFORMW 하지만 서서히, 몸의 안쪽으로부터 사정감이 높아져 오는 것을 느꼈다…
+            PRINTFORMW 이대로 마음껏 허리를 사용해 기세대로 사정하면 필시 기분 좋을 것이다. 
+            PRINTFORMW 그러나, 처녀를 잃었던 직후로, 아직 때때로 괴로운 듯한 목소리를 내는 이쿠에게 무리를 시키고 싶지는 않다…
+            PRINTFORML 
+            PRINTFORMW 「아읏, 응읏…왜 그러시나요？제가 뭔가…」
+            PRINTFORMW 「…앗, 후훗…알 것 같다고요？좀 더 격렬하게, 하고 싶은거죠…？」
+            PRINTFORML 분위기로 압니다, 라고 이쿠는 얼버무렸다. 
+            PRINTFORMW 하지만, 땀투성이로 난폭하게 숨을 내뱉는 이쿠를 보면, 그럴 여유는 없어 보인다…
+            PRINTFORMW 「후훗…괜찮아요. 저, 이래뵈도 요괴인걸요？」
+            PRINTFORMW 「…조금, 괴롭지만…그래도 %조사처리(CALLNAME:MASTER,"이")%, 기분 좋아졌으면 하니까…」
+            PRINTFORMW 「끝까지, 해줬으면 해요…그, 저, 저의 안에…%CALLNAME:MASTER%의 걸, 내줬으면 해요」
+            PRINTFORMW 「아직, 힘낼 수 있으니까…마음껏, 와 주세요…！」
+            PRINTFORML 
+            PRINTFORMW ―――이쿠의 결심에 응하듯이, 당신은 전력으로 라스트 스퍼트를 건다. 
+            PRINTFORML 이쿠는 당신의 몸을 꽉 껴안는 것으로, 어떻게든 고통을 감추려 하지만, 
+            PRINTFORMW 그럼에도 종종 비통한 목소리를 내며, 힘이 들어간 손톱 끝이 당신의 몸을 파고든다…
+            PRINTFORMW 「후읏, 우읏！아으으읏！아파앗, 아프지만, 기분 좋, 아요！」
+            PRINTFORMW 「읏, 그읏, 커다래…안에서, 아, 안쪽을 좀 더, 찔러엇, 우읏！으그우웃！」
+            PRINTFORML 
+            PRINTFORMW 꽉 조이는 이쿠의 질내는, 당신의 페니스를 안쪽으로 이끄는 것 같다…
+            PRINTFORMW 당신은 이끌리는대로 혼신의 힘을 다해 이쿠의 가장 안쪽, 자궁내까지 닿게 할 생각으로 찔러넣었다. 
+            PRINTFORMW 당신은 부드러운 자궁구에 밀어넣어, 축적된 쾌락을 폭발시키듯이, 이쿠의 질에 사정했다…
+            PRINTFORMW 「흐아앙！아아앗！！와주세요옷！%CALLNAME:MASTER%！%CALLNAME:MASTER%ーーー！！」
+            PRINTFORMW 페니스가 맥동할 때, 밀어닥치듯이 정액을 내보내, 눈 깜짝할 순간에 질내를 채워 간다. 
+            PRINTFORML 그러자, 지금까지 꽉 조이던 이쿠의 질내가 마치 정액을 빨아들이는 것처럼 꿈틀거리기 시작했다, 
+            PRINTFORMW 당신에게 더욱 더 쾌락을 가져온다. 몸 속을 뽑아내는 듯한 사정에 의식이 날아갈 것 같다…
+            PRINTFORMW 「잔뜩…！굉장해 잔뜩, 나왔어…！아픈데, 기분 좋아앗, 응아아앗…！」
+            PRINTFORML 
+            PRINTFORMW 「하아아아…%CALLNAME:MASTER%…%CALLNAME:MASTER%…좋아해요…」
+            PRINTFORMW 길었던 사정이 끝나고, 당신은 이쿠와 깊게 연결된 채로, 그 여운을 곱씹고 있다…
+            PRINTFORMW 이쿠또한, 아직 이대로 있고 싶은지, 양 다리를 당신의 허리에 감은 채다…
+            PRINTFORMW 「끝까지…해버렸네요…이어지는 것이, 이렇게 기분 좋, 다니…」
+            PRINTFORMW 「고맙습니다, %CALLNAME:MASTER%…♪」
+            PRINTFORML 
+            PRINTFORML 이윽고 딱딱함을 잃은 페니스가 질에서 빠지자, 
+            PRINTFORMW 혈액과 정액이 서로 섞인 액체가, 벌어진 질구로부터 꿀렁꿀렁 흘러나왔다…
+            PRINTFORMW 「햐앗！앗, 미끈미끈해서, 빠져 버렸어요…」
+            PRINTFORMW 「아우읏…！이렇게나, 흘러선…죄송하지만, 너무 많아서, 멈추지 않아요…으응！」
+            PRINTFORMW 질내에서 정액이 흘러나오는 감촉에 무심코 느껴 버린 이쿠. 
+            PRINTFORMW 시트에 큰 얼룩을 만든 후에야, 간신히 진정되었다…
+        ENDIF
+    ;반발각인Lv3
+    ELSEIF MARK:반발각인 == 3
+        PRINTFORMW 싫어하는 이쿠를 짓누르고, 억지로 질내를 계속 범하는 동안 사정감이 높아진다…
+        PRINTFORMW 당신은 마지막 순간을 맞이하기 위해, 한층 더 빠르게 허리를 움직였다…
+        PRINTFORMW 「으그윽, 극！그으읏…그만둬, 이젠 그만…！」
+        PRINTFORML 
+        PRINTFORMW 당신은 그대로, 이쿠의 질에 정액을 토해냈다…
+        PRINTFORMW 「우그우웃！？히윽…！나왔어！？싫어, 거짓말…！」
+        PRINTFORMW 「아아아～～앗…범해졌다…범해졌다…！이런, 미천한 인간에게！」
+        PRINTFORMW 「어째서, 어째서 이런 외도에게, 용신님은 벌을 주시지 않는건가요…우읏, 아앗…」
+        PRINTFORML 
+        PRINTFORMW 이쿠는 당신에게 저주를 퍼부으며, 쓰러져 울고 있다…
+        PRINTFORMW 허나, 처음으로 이쿠의 질내를 더럽힌 달성감에 잠긴 당신에겐, 그 말은 닿지 않았다…
+    ;굴복각인Lv3
+    ELSEIF MARK:굴복각인 == 3
+        PRINTFORMW 「…읏！…아읏！…읏, 으읏！…기분 좋습, 니까…？…하앗, 읏！」
+        PRINTFORMW 이쿠의 바기나의 기분 좋은 조임을 맛보는 동안, 당신은 사정이 가까워진 것을 느꼈다…
+        PRINTFORMW 「이대로…낸다…？그런, 그건…！하읏！으읏！으긋, 아얏, 빠릅니다…！」
+        PRINTFORMW 「질엔, 아이가 생겨버려서…！아읏！으응！응긋, 으우웃…」
+        PRINTFORMW 질내사정이라 들은 이쿠는 약하게나마 반발했지만, 당신은 그것을 강한 피스톤질로 막았다…
+        PRINTFORML 
+        PRINTFORMW 한계가 다가온걸 느낀 당신은, 더 빠르게 움직인다. 
+        PRINTFORMW 이쿠는 긴장 때문인지, 공포 때문인지, 입술을 깨물곤, 격렬한 움직임을 참아내고 있다…
+        PRINTFORMW 당신은 불어나는 쾌락에 몸을 맡겨, 그대로 이쿠의 질내에 정액을 토해냈다…
+        PRINTFORML 
+        PRINTFORMW 「히읏…！응앗, 앗…！？나오고, 있어…！」
+        PRINTFORMW 「정말로…정말로 저의 질에, 사정, 한겁니까…？」
+        PRINTFORMW 이쿠는 연결된 부위를 바라보며, 믿을 수 없다는 듯이 중얼거린다. 
+        PRINTFORMW 그곳에선 아직도 페니스가 움찔거리며, 질내에 정액을 내고있다…
+        PRINTFORMW 「하아, 하아…%조사처리(CALLNAME:MASTER,"은")%, 저에게 아이를, 낳게 하고 싶은겁니까…？」
+        PRINTFORMW 「…제가 인간의 아이를 임신할 수 있을지는 모릅니다…다만, 그 때엔…」
+        PRINTFORML 
+        PRINTFORMW ―――그 때엔？이쿠가 그 뒤의 말을 하는 일은 없었다. 
+        PRINTFORMW 당신또한, 쾌락으로 멍해진 머리로는, 그 말의 의미를 생각할 수 없었다…
+    ;그 이외
+    ELSE
+        PRINTFORMW 한계가 가까워져 온 당신은, 사정을 향하여 한층 더 빠르게 허리를 움직였다…
+        PRINTFORMW 동경의 여성의 질내를 자신의 정액으로 더럽힐 수 있다는 흥분에, 당신의 몸에 무심코 힘이 더해진다. 
+        PRINTFORMW 부드러운 엉덩이를 꽉 잡아, 격렬한 삽입을 반복하자 이쿠가 참을 수 없다는 듯 괴로운 목소리를 냈다…
+        PRINTFORMW 「앗, 그읏！아파, 아프니까！난폭하게, 하지 말아주세요…」
+        PRINTFORMW 「뭐, 뭡니까, 질에서, 커져서는…！싫어, 무서워, 이젠 그만…！」
+        PRINTFORMW 아직 페니스를 받아들이는게 익숙하지 않은 질내를 마음껏 유린한 뒤, 
+        PRINTFORMW 당신은 밀어닥치는 쾌락대로, 페니스를 가장 안쪽에 쑤셔 넣어, 그대로 정액을 토해냈다…
+        PRINTFORML 
+        PRINTFORMW 「히이이잇…！싫엇…설마…！뽑아, 뽑아주세요, 질은, 안됩니다…！」
+        PRINTFORMW 쇼크로 인해 별다른 저항이 없는 이쿠에게 당신은 몇번이나 페니스를 찔러 넣었다. 
+        PRINTFORMW 마지막 한 방울까지, 낼 수 있을만큼 정액을 질내에 쏟아냈다…
+        PRINTFORMW 「싫어어어엇！멈춰어엇！싫어…싫엇, 이젠 그만…우읏, 우아아앗…이젠 싫어…」
+        PRINTFORMW 「…죄송합니다…죄송합니다, 용신님…저는 이제…더럽혀져, 버렸습니다…우읏, 아아…」
+        PRINTFORML 
+        PRINTFORMW 당신에게 깔린 채로, 쓰러져 울고있는 이쿠. 
+        PRINTFORMW 힘 없이 펼쳐진 양 다리에는, 질내에서 흘러나온 정액이 몇 가닥 늘어져 있었다…
+    ENDIF
+    CFLAG:5401 = 1
+;2회째 이후
+ELSE
+    ;연모
+    IF TALENT:연모
+        ;3P
+        IF SELECTCOM == 610
+            ;ＡＶ 동시 사정　 조수는 조루를 붙일 수 없기에 의외로 동시 사정하지 않을지도
+            IF TFLAG:11 > 0 && TFLAG:12 > 0
+                ;A감각Lv3이상＋V감각Lv3이상＋음란
+                IF ABL:A감각 >= 3 && ABL:V감각 >= 3 && TALENT:음란
+                    IF RAND:7 == 0 && TALENT:임신
+                        PRINTFORML 
+                        PRINTFORMW 아이를 밴 체내와 장내에 깊숙히 삽입된 두개의 페니스가 동시에 정액을 토해내기 시작한다…
+                        PRINTFORMW 녹을 것같은 질벽과 장벽은 아이를 만들고도, 탐욕스럽게 페니스를 휘감아 대량 사정을 재촉한다…
+                        PRINTFORMW 「히그읏！우으우우읏！왔다앗！뜨거운거 잔뜩 왔다아아아아！」
+                        PRINTFORMW 「내줘어어엇！기분 좋아앗, 히으읏, 정액 기분 죠아아아아앗, 내 안에, 좀 더어어어어%UNICODE(0x2665)%」
+                    ELSEIF RAND:6 == 0 && TALENT:임신
+                        PRINTFORML 
+                        PRINTFORMW 「읏아아아아아앗！아아아ーー！아하아아아아앙…♪」
+                        PRINTFORMW 두 개의 페니스의 폭력적인 사정을, 이쿠는 희열에 취한 표정으로 받아들이고 있다…
+                        PRINTFORMW 「점점……정액이, 아읏…븃 븃하며…들어오고 있어요오오…♪」
+                        PRINTFORMW 「전부 좋아앗…아기도, 보지도, 엉덩이도오…」
+                        PRINTFORMW 「저의, 안……전부, 행복으로, 가득이에요…♪」
+                    ELSEIF RAND:5 == 0
+                        PRINTFORML
+                        PRINTFORMW 「그렇게, 잡아버리면…도망칠 수 없어요♪안돼 안돼앳, 앗 커다랫！간다아, 아아아아ーーー！」
+                        PRINTFORMW 두 사람이서 이쿠의 엉덩이를 꽉 안아, 페니스를 확실하게 근원까지 파고들어서 사정했다…
+                        PRINTFORMW 순식간에 질과 장이 정액으로 넘쳐나, 들어가지 못한 정액이 결합부로부터 흘러넘쳐 두 개의 구멍 주위를 하얗게 더럽혀간다…
+                        PRINTFORMW 「아ーーー…♪아ーーー…♪뜨겁고…진하, 네요오…」
+                        PRINTFORMW 「자지와 정액이…꽉 차있어…♪이대로 좀 더…엉망으로, 해주세요…%UNICODE(0x2665)%」
+                    ELSEIF RAND:4 == 0
+                        PRINTFORML 
+                        PRINTFORMW 「히긋, 좋앗！아아 안돼앳, 앗응으으읏！」
+                        PRINTFORMW 「멈춰줘, 멈춰줫♪내면서 양쪽 모두, 찌르지 말아앗！아긋, 앗, 앙, 앗, 싫어어어어어어！！」
+                        PRINTFORMW 이쿠의 비명같은 신음소리에도 개의치 않고, 두 사람은 사정이 끝날 때까지 허리를 흔드는 것에 열중했다…
+                        PRINTFORMW 「아힛, 힛, 자……잔뜩…엉망진창으로, 나와버렸…다아…」
+                        PRINTFORMW 「응아, 읏크우웃…♪보지도 엉덩이도, 아직…범해지는 느낌이, 남아서…♪」
+                    ELSEIF RAND:3 == 0
+                        PRINTFORML
+                        PRINTFORMW 「정자가, 보지도 엉덩이도, 가드으윽！아읏！아아응！읏, 아아아아！」
+                        PRINTFORMW 「자지 좀 더, 찔러엇, 마구 찔러줘엇, 좀 더 내줘어어！」
+                        PRINTFORMW 두 개의 페니스가 들어오고 있는데도 불구하고 허리를 흔드는 이쿠에게 지지 않으려, 두 사람도 계속 찔러대, 사정을 계속했다…
+                        PRINTFORMW 「아아ーー！아아아ーー！간다아아아아아앗！정액, 움찔움찔하고…오고 있어엇, 자궁도, 엉덩이도옷…♪」
+                        PRINTFORMW 「뱃속이…뜨거워서엇, 질척질척한…정액으로 가득 차도……좋아앗, 간다, 간다아앗…%UNICODE(0x2665)%」
+                    ELSEIF RAND:2 == 0
+                        PRINTFORML 
+                        PRINTFORMW 「크다앗♪온다, 온다앗！내줘어엇, 어느 쪽 구멍도…정액 많이, 내줘어…♪」
+                        PRINTFORMW 두 개의 구멍에 꽂힌 페니스의 귀두가 크게 부풀어 올라, 각각의 안쪽을 노리고 단번에 정액을 토해냈다…
+                        PRINTFORMW 「아아아아아아앗！나온다, 나오고 있어엇, 굉장해…배가, 뜨거웟, 좋ㅇ…아아아아아아！」
+                        PRINTFORMW 「배가…망가, 져어어엇…무척 기분 좋아서엇, 간다아아, 좋아아아앗, 간다아아아ーーー！」
+                    ELSE
+                        PRINTFORML
+                        PRINTFORMW 「가아아, 간다아, 아앗！안됏, 자지 깊엇, 아응으그읏, 응오오옷…♪」
+                        PRINTFORMW 쾌락을 너무 느끼고 있는 이쿠의 체내에 뜨거운 정액이 단숨에 흘러들어갔다…
+                        PRINTFORMW 「하힛, 히익, 아헤, 엣…사정 왔다앗♪전부, 못 쓰게, 되버려어어어어%UNICODE(0x2665)%」
+                        PRINTFORMW 「아으으으으으！웃, 아하아아…！죽어버려엇, 이런 건, 이젠…아아 또 비쿳하고, 나왔…응아아아…♪」
+                    ENDIF
+                ;A감각Lv3이상＋V감각Lv3이상
+                ELSEIF ABL:A감각 >= 3 && ABL:V감각 >= 3
+                    IF RAND:4 == 0
+                        PRINTFORML
+                        PRINTFORMW 「앗으읏, 쿠우으읏！응으ーーー읏！」
+                        PRINTFORMW 이쿠는 입을 굳게 닫고, 두 개의 페니스의 사정을 어떻게든 받아들이고 있다…
+                        PRINTFORMW 「……하앗, 핫, 아……괘, 괜찮아요…두 사람 모두, 많이…나왔네요, 후후…」
+                    ELSEIF RAND:3 == 0
+                        PRINTFORML
+                        PRINTFORMW 「기분, 좋앗…읏앗, 응아！아아…！」
+                        PRINTFORMW 이쿠는 약간의 괴로움은 남아있지만 앞뒤 두개의 고기구멍으로 페니스를 적당하게 조여, 사정으로 이끌었다…
+                        PRINTFORMW 「후앗, 하아……이런, 음란한 일…후훗, 할 수 있는 몸을…%조사처리(CALLNAME:PLAYER,"이")%, 되게 해버렸어요…♪」
+                    ELSEIF RAND:2 == 0
+                        PRINTFORML
+                        PRINTFORMW 「앗！아큿, 하아……그곳도, 엉덩이, 도…」
+                        PRINTFORMW 「이젠…격렬해서…후후, 날아가 버릴 것 같다고 생각했어요…읏, 앙…♪」
+                    ELSE
+                        PRINTFORML 
+                        PRINTFORMW 「아아ーー앗！아아ーー！……앗, 하아, 하아……충분히, 들어가 있어어…♪」
+                        PRINTFORMW 「응큿……두 개가 들어오면……괴로운 것이네요…」
+                        PRINTFORMW 「자아, 안에서 정액…나오지 않나요…？후훗, 응…넣은 채에요…따뜻해…」
+                    ENDIF
+                ;그 이외
+                ELSEIF RAND:4 == 0 && ABL:V감각 >= 3
+                    PRINTFORML 
+                    PRINTFORMW 「히우우읏！우우, 후우, 후우우…」
+                    PRINTFORMW 「엉덩이까지, 함께 나오고 있어…우아, 앗」
+                    PRINTFORMW 「조금, 쉬게 해주시지 않겠습니까…？」
+                ELSEIF RAND:3 == 0 && ABL:A감각 >= 3
+                    PRINTFORML
+                    PRINTFORMW 「앗, 앗！아읏, 이건…」
+                    PRINTFORMW 「그, 엉덩이 쪽이…역시, 느끼고 있는 것 같은, 생각이 들어요…후후, 부끄러워…」
+                ELSEIF RAND:2 == 0
+                    PRINTFORML 
+                    PRINTFORMW 「아그웃！우우！웃쿠우！아아……」
+                    PRINTFORMW 사정이 끝남과 동시에, 이쿠의 몸이 축 늘어졌다…
+                    PRINTFORMW 「몸, 이…이런거, 터무니없어요…우으, 아…」
+                ELSE
+                    PRINTFORML
+                    PRINTFORMW 「배, 뱃속, 이…휘저어진, 것 같아요…」
+                    PRINTFORMW 「굉장히, 지쳤어요…」
+                ENDIF
+            ENDIF
+        ;임신
+        ELSEIF TALENT:임신
+            ;음란
+            IF TALENT:음란
+                IF RAND:3 == 0
+                    PRINTFORMW 「아아아앗♪아하앗♪임신 보지에, 정액이 채워져…이젠, 안대애…♪」
+                    PRINTFORMW 「멈추지 마세요옷, 좀 더엇, 좀 더 주세요♪」
+                    PRINTFORMW 「이쿠의 보테배 보지에, 좀 더 정액, 내주세요오…♪」
+                    PRINTFORMW 이쿠는 완전히 쾌락에 빠진 표정으로, 당신의 정액을 탐욕스럽게 계속 요구했다…
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「아앗, 아아아앗！잔뜩, 나와요옷！」
+                    PRINTFORMW 「아기가, 정액에 빠져버려요오, 음란한 아이가, 되어 버려요옷♪」
+                    PRINTFORMW 이쿠는 커다란 배를 끌어 안으면서도, 격렬하게 허리를 흔들어 정액을 짜내려 하고 있다…
+                ELSE
+                    PRINTFORMW 「아하앗！질에, 뷰쿠뷰쿠하고…！」
+                    PRINTFORMW 「아기가 있는데, 안되는데도…정액 나와버려서, 기분 좋아졌어요…♪」
+                    PRINTFORMW 이쿠는 녹아 버릴 듯한 표정으로, 정액이 질내에서 흘러나오는 감촉에 잠겼다…
+                ENDIF
+            ;그 이외
+            ELSE
+                IF RAND:2 == 0
+                    PRINTFORMW 「아앗, 또 이렇게 나와버려선…」
+                    PRINTFORMW 페니스와 질벽의 사이로부터, 다 들어가지 못한 정액이 차례차례 흘러내리고 있다…
+                    PRINTFORMW 「안된다니까요…응읏, 임신하고 있는데, 이렇게 내버리면…」
+                    PRINTFORMW 「%CALLNAME:MASTER%도 좀 더, 자각해 주세요！」
+                ELSE
+                    PRINTFORMW 「그런, 아기가 있는데도, 나와버리다니잇…응으～～읏！」
+                    PRINTFORMW 흥분을 억누르지 못하고, 임신한 이쿠의 질내에 정액을 냈다…
+                    PRINTFORMW 「정말…어쩔 수 없는 사람이라니까요…」
+                    PRINTFORMW 「기분 좋은 것은 알겠지만, 적당히 해주세요？」    
+                ENDIF
+            ENDIF
+        ;텐시가 처음으로 질내사정
+        ELSEIF ASSIPLAY && NO:ASSI == 52 && CFLAG:7313 == 0
+            ;연모
+            IF TALENT:연모
+                ;음란
+                IF TALENT:음란
+                    PRINTFORML 
+                    PRINTFORMW 「갈 것 같…나요？텐시…알거같아요…하아, 앗！」
+                    PRINTFORMW 「마음대로, 정액을 내도 좋아요…텐시의 정액으로 저의 자궁, 더럽혀 주세요…♪」
+                    PRINTFORMW 「아아！온다아아…！빨리, 빨리 내주세요…진하고 뜨거운 것, 잔뜩 원해요옷…！」
+                    PRINTFORMW 『이쿠웃…기분 좋은거 안에, 나와아…！아앗！아아아ーーー！』
+                    PRINTFORMW 텐시의 페니스가 확실하게 뿌리까지 이쿠의 바기나에 파고들어, 가장 안쪽에서 절정을 맞이한다…
+                    PRINTFORMW 페니스가 맥동할 때, 대량의 정액의 덩어리가 이쿠의 자궁을 향해 토해졌다…
+                    PRINTFORMW 「응아아！아우으으읏…！쿠읏！굉장해, 잔뜨윽…！」
+                    PRINTFORMW 「뜨거운게, 몇번이나…！안됏, 이런거…자궁이, 이상해져 버려요…♪」
+                    PRINTFORMW 「또 나왔…아앗！응아아ーーー！안에서, 꿀렁꿀렁…♪좋앗, 응아앗！후아아아아…♪」
+                    PRINTFORML 
+                    PRINTFORMW 『핫, 핫, 응…나왔어…이쿠…이거, 뽑을테니까…읏, 하앙！』
+                    PRINTFORMW 텐시가 허리를 당기자, 아직도 딱딱함과 크기를 유지한 페니스가 천천히 모습을 드러낸다. 
+                    PRINTFORMW 질내를 다 메울 정도로 사정을 한 텐시의 페니스는 귀두부터 뿌리까지, 전체가 백탁 투성이가 되어 있다…
+                    PRINTFORMW 「앗…힛！핫, 하아…빠져 버렸는데…아직, 잔뜩 들어있는게 느껴져요…」
+                    PRINTFORMW 「텐시의 사정…굉장했, 어요…♪봐 주세요, 한번만으로, 이 양…」
+                    PRINTFORMW 뻐끔 열린 질구로부터, 젤리상태의 정액이 꿀렁거리며 늘어져 떨어지고 있다…
+                    PRINTFORMW 「아직, 그곳이 움찔거리고 있어요…후훗, 진짜…텐시도 참, 정말…♪」
+                    PRINTFORMW 페니스가 빠진 뒤에도, 이쿠의 몸은 남아있는 쾌감에 떨리며, 질구가 꿈틀거리고 있다…
+                    PRINTFORMW 정액 투성이의 비순을 과시하는 이쿠의 치태에 텐시는 숨을 삼키며, 페니스가 다시 반응한다. 
+                    PRINTFORMW 「어라라…아직도, 건강해 보이네요, 후훗…한번만으론 부족해 보여요」
+                    PRINTFORMW 「…아아 이렇게나, 흘러내려 버렸어요…저기 텐시…저의 보지에 한번 더 정액을 잔뜩, 내고싶지 않나요？」
+                    PRINTFORMW 「미끌미끌한 그곳, 텐시의 훌륭한 자지로 맘대로 휘저어서, 엉망진창으로, 만들어서…」
+                    PRINTFORMW 「마지막엔 보지의 가장 안쪽에, 뷰륫뷰륫, 뷰웃하고…몇번이라도 함께 기분 좋게, 됩시다…♪」
+                ;그 이외
+                ELSE
+                    PRINTFORML 
+                    PRINTFORMW 『이젠 한계…저, 저기 이쿠…나도, 질에…내도, 괜찮아…？』
+                    PRINTFORMW 텐시가 당신 쪽을 힐끔힐끔 엿보고 있다. 일단 주인의 허가를 받으려는 것이겠지만, 
+                    PRINTFORMW 당장이라도 사정할 것같은 상태에서, 참으로 안타까운 표정으로 그런걸 물어오는게 정말 기특하다…
+                    PRINTFORMW 「엣, 앗…곤란하네요…어떻게 할까요…？」
+                    PRINTFORMW 「그런 얼굴을 하면…저기？%CALLNAME:MASTER%…후훗」
+                    PRINTFORMW 이대로 이쿠와 둘이서 텐시의 안타까운 듯한 얼굴을 바라보고 싶기도 하지만…역시 불쌍하다. 
+                    PRINTFORMW 승낙의 의미를 담아, 당신은 텐시 쪽을 보며 끄덕였다…
+                    PRINTFORML 
+                    PRINTFORMW 「괜찮아요 텐시…저의 질로…마음껏 기분 좋아져, 주세요…！」
+                    PRINTFORMW 『괜찮겠어…？아아 이젠 나온다…！아앗, 이쿠…잔뜩 낼테니까, 받아줘어엇！』
+                    PRINTFORMW 참고 있던, 음경내에 모여 있던 정액이 단번에 질내로 방출된다…
+                    PRINTFORMW 「하아아！아아！좋…아요오…뜨거운게, 잔뜩, 나와서…！」
+                    PRINTFORMW 『우아！아앗, 아아…이쿠우, 이쿠…히읏, 후아아…！』
+                    PRINTFORMW 페니스가 맥동할 때마다 대량의 정액이 튀어나와, 이쿠의 질 안쪽을 몇번이고 자극한다…
+                    PRINTFORMW 「텐시도 참 귀여운 얼굴을 하곤…정말, 늠름한 사정이네요…！깜짝, 놀랐어요…」
+                    PRINTFORMW 『하아아…아아…미안 이쿠, 조금…힘이 너무 들어가버렸, 달까나…？』
+                    PRINTFORMW 「아뇨, 그런…텐시, 괜찮나요…？후후, 이런거 몇번이나 당했다간…저도, 푹 빠져 버릴 것 같아요…♪」
+                ENDIF
+            ENDIF
+            CFLAG:7313 = 1
+        ;효과[배란유도제]
+        ;길구만！다른 분들의 것을 보고 있으면 좀 더 깔끔하게 해야 할 것같은데 갈피를 못잡겠다
+        ELSEIF TEQUIP:16 == 1
+            IF RAND:5 == 0
+                PRINTFORMW 「%CALLNAME:PLAYER%도…%CALLNAME:PLAYER%도 저를, 그렇게 임신시키고 싶은가요…？」
+                PRINTFORMW 「공기를 읽지 않아도 알아요…후훗, 기뻐요…♪」
+                PRINTFORMW 「부탁드려요…키스, 하면서 끝까지, 해주세요…하뭇, 응츄…」
+                PRINTFORMW 입과 성기와, 서로의 점막이 비벼져, 하나가 되듯이 얽힌다…
+                PRINTFORMW 틈이 없을 정도로 겹친 채로, 두 사람은 동시에 절정에 이르렀다…
+                PRINTFORMW 「응으으읏…！후읏, 츄, 응뭇, 후우웃…！」
+                PRINTFORMW 사정하는 동안에도, 흥분을 더욱 높이는 듯이 서로의 입술을 탐하며, 허리를 얽히고 있다…
+                PRINTFORMW 「훗, 후읏, 츄웃…좀 더…츄우, 후우읏…」
+                PRINTFORMW 「푸앗, 핫, 하앗…굉장히, 기분 좋았어요…마치, 녹아 버린 것 처럼…」
+                PRINTFORMW 「…조금만 더, 이대로 있고 싶어요…배가, 무척이나 따뜻해서, 행복해요…♪」
+            ELSEIF RAND:4 == 0
+                PRINTFORMW 「임신…하고 싶어요, %CALLNAME:PLAYER%의 아이를, 낳고 싶어요…！」
+                PRINTFORMW 「저…%조사처리(CALLNAME:PLAYER,"과")% 행복해지고, 싶어요」
+                PRINTFORMW 「그러니까, 부디 제 자궁에, %CALLNAME:PLAYER%의 정액을 잔뜩, 잔뜩 내주세요」
+                PRINTFORMW 「이쿠를 임신시켜, 주세요…！」
+                PRINTFORMW 당신은 이쿠의 솔직한 바람에 응하기 위해, 전력으로 허리를 찔러 넣었다…
+                PRINTFORMW 「응크우우읏…！왔어욧…하지만 좀 더, 좀 더 안에…！아그읏！아아앗！？」
+                PRINTFORMW 페니스가 자궁구를 억지로 열어, 자궁내까지 도달했다…
+                PRINTFORMW 「아, 안되는 곳까지, 와 버렸어요…！괜찮으니까, 이대로, 내줘어엇…！」
+                PRINTFORMW 당신은 마지막으로, 강렬한 피스톤질을 자궁에 때려 박아, 그대로 사정했다…
+                PRINTFORMW 자궁구에 귀두를 파고든 강렬한 사정에, 이쿠는 소리도 낼 수 없을만큼 느끼고 있다…
+                PRINTFORMW 「앗…핫…자궁에, 나와서…」
+                PRINTFORMW 「이걸로…아기…가질 수 있겠네요？분명…♪」
+            ELSEIF RAND:3 == 0
+                PRINTFORMW 「알겠나요？자궁이, 내려오고…질이, 얕아지고 있어요…」
+                PRINTFORMW 「그래요, 그러니까 곧바로 자지, 안쪽에 닿아버려요, 하으읏！」
+                PRINTFORMW 전체적으로 얕아진 질내에 페니스를 찔러 넣자, 질벽이 지금까지 이상으로 페니스에 휘감겨와, 새로운 쾌감을 가져온다…
+                PRINTFORMW 「안이잇, 아앗！기분 좋아요, 그대로, 잔뜩, 내주세요♪」
+                PRINTFORMW 당신의 페니스가 휘감겨오는 질벽에 휩싸여, 정액을 대량으로 토해냈다. 
+                PRINTFORMW 육벽 하나마저 정액이 스며들도록, 집요하게 질 안쪽을 휘저었다…
+                PRINTFORMW 「햐읏！굉장해, 뜨거운게, 안쪽에서, 날뛰고 있어요…♪」
+                PRINTFORMW 「질도, 자궁도…정액으로, 칠해져서…무척, 따뜻해요…♪」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「갱장해, 커다랫, 너무 커다래여엇, 안대애, 망가져어…」
+                PRINTFORMW 한계까지 발기한 페니스가 확실히 수정시키기 위해, 이쿠의 질내를 가차없이 찔러댔다. 
+                PRINTFORMW 자궁을 끌어낼 생각으로 질 안쪽에 페니스를 밀착시켜, 격렬하게 계속 괴롭혔다…
+                PRINTFORMW 「안쪽에…안쪽에서 커져서엇, 온다, 왔다아, 정액 왔다아아앗…！」
+                PRINTFORMW 당신은 뇌를 태우는 듯한 쾌락과 함께, 기세 좋게 사정을 시작했다. 
+                PRINTFORMW 태내에 정액을 호스로 흘려 넣는 듯한, 폭력적인 사정의 쾌락이 이쿠를 덮친다…
+                PRINTFORMW 「히그윽！아읏, 하그우으으읏…응오옷, 오호오오오옷…♪」
+                PRINTFORMW 「멈춰줘, 멈춰줘엇, 사정 멈춰줘어엇…이젠 무리, 배가아아아앗…♪」
+                PRINTFORMW 
+                PRINTFORMW 지나친 쾌감으로 인해 사정이 끝났는지 어떤지도 자각하지 못한다. 
+                PRINTFORMW 깨달았을 때는, 질구로부터 김이 나올 정도로 뜨거운, 대량의 정액을 늘어뜨리며, 
+                PRINTFORMW 쾌감으로 인해 몸을 움찔거리며 멍해져 있는 이쿠의 모습이 있었다…
+                PRINTFORMW 「…자지이, 커다래서어, 정액, 너무 많아아…」
+                PRINTFORMW 「이젠, 임신, 했어요옷, 정액으로, 임신, 해 버렸어요오…♪」
+            ELSE
+                PRINTFORMW 「나올 것…같나요？네엣, 이대로, 이쿠의 자궁에, 주세요…♪」
+                PRINTFORMW 당신은 한계까지 사정을 참으며, 이쿠의 자궁구를 격렬하게 찌른다. 
+                PRINTFORMW 당신은 부드러운 자궁구에 페니스의 끝 부분이 밀착함과 동시에, 혼신의 힘을 다해 사정했다…
+                PRINTFORMW 「후앗！응읏, 우읏, 응하아아앗！앗, 우읏…」
+                PRINTFORMW 모으고 모은 정액이 기세 좋게 나가며, 이쿠의 질내, 자궁내를 유린한다…
+                PRINTFORMW 「굉장…해요…이쿠의 질, %CALLNAME:PLAYER%의 정액으로 채워지고 있어요…♪」
+                PRINTFORMW 「좀 더…좀 더 주세요…이쿠의 난자를, %CALLNAME:PLAYER%의 정액의 바다에 빠지게 해주세요…♪」
+            ENDIF
+        ;음란
+        ELSEIF TALENT:음란 && RAND:2 == 0
+            ;텐시가 질내사정　1/2의 확률로 표시
+            IF ASSIPLAY && NO:ASSI == 52 && RAND:2 == 0
+                IF RAND:5 == 0
+                    PRINTFORMW 『이쿠의 보지…굉장해, 짜여서, 빨아 들이는 것같아…아아！나온닷, 응아아아！』
+                    PRINTFORMW 「아앗！히얏, 안쪽에 오고 있어엇！좀 더어, 뜨거운 것 주세요…흘러넘칠 정도로옷…！」
+                    PRINTFORMW 『멈추지 않앗, 아아 이쿠웃, 안돼애！그렇게, 보지로 조였다간！』
+                    PRINTFORMW 「내주세요…읏쿠우우응…아아！좋아요…안에서, 터져나와…잔뜩, 저의 질에…」
+                    PRINTFORMW 「보지가…텐시의 것을 놓아 주지 않아요…좀 더, 안쪽에 쏟아내고 싶어서…잔뜩 즙을 내달라고, 울고있는 것 같아요…♪」
+                ELSEIF RAND:4 == 0
+                    PRINTFORMW 「믿을 수 없어요…저의 보지에…오줌같이, 자꾸 쏟아내다니이…♪」
+                    PRINTFORMW 「천인의 교배 너무 강해요…자궁이, 무리하게…정액에, 빠져버려요…기분, 좋아…아아아…♪」
+                    PRINTFORMW 페니스의 뿌리가 크게 뛰어 질구를 넓히고 있는 것이 보인다…
+                    PRINTFORMW 억지로 질내를 넓히고, 뜨거운 정액이 질 안쪽을 태우는 듯한 쾌감에 이쿠는 의식이 날아갈 것만 같다…
+                    PRINTFORMW 『이쿠의 보지…나의 모양으로 만들어 줄테니까…원래대로 돌아가지 못 할 정도로, 범해줄게…♪』
+                    PRINTFORMW 「힉！힛…하앗…♪그러언…좀 더, 해준다니…」
+                    PRINTFORMW 「저의, 따뜻하고 기분 좋은 고기구멍…텐시가 좋을대로, 바꿔버려, 주세요…♪」
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「이제, 임신해도 괜찮으니까…정액 주세요…！텐시의 정액으로 가득 차서, 임신시켜 줘엇…！」
+                    PRINTFORMW 『전부, 질에…낼게엣, 아앗！이제 나온다, 아아！아앗ーーー！」
+                    PRINTFORMW 「안엣…앗！얏…왔닷, 왔다앗……」
+                    PRINTFORMW 「응아아, 야앗, 아하아아아！많다아, 굉장해…♪아아 좀 더, 좀 더어…♪」
+                    PRINTFORMW 「자궁에, 점점 모이는 것 같, 아요…후아, 응아아아…안쪽에서 커다란게…♪」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「햐아아아아！하앗！응아아아아아…！」
+                    PRINTFORMW 「텐시의 것이…질엣, 자궁에…♪꿀렁꿀렁, 굉장햇…아아아！뜨거워서어…좋아, 좋아앗…♪」
+                    PRINTFORMW 「안돼요옷…져버려요옷, 저의, 그곳…천인의 정액, 너무 강해요오…♪」
+                ELSE
+                    PRINTFORMW 「제대로 전부…나왔나요？자아…끝까지 확실하게 허리를 흔들, 죠？」
+                    PRINTFORMW 『기분, 좋아서…움직일 수 없지만, 해볼, 게에…』
+                    PRINTFORMW 「그, 래요…！조금만 더 힘내면, 좀 더, 기분 좋아질 수 있어요…」
+                    PRINTFORMW 「저도, 제대로 조여줄테니까…자지가 깨끗해질 때까지 저의 질, 사용해 주세요…♪」
+                ENDIF
+            ELSE
+                IF RAND:5 == 0
+                    PRINTFORMW 「%CALLNAME:PLAYER%, %CALLNAME:PLAYER%！！」
+                    PRINTFORMW 「좋아해요, 사랑해요, 그러니까아！」
+                    PRINTFORMW 「이쿠의 음란한 보지에, 정액 한가득 쏟아내, 임신시켜, 주세요！」
+                    PRINTFORMW 쿨렁이는 감촉과 함께 젤리 상태의 농후한, 무거운 정액을 질내에 냈다. 
+                    PRINTFORMW 고형 상태의 정액이 질내의 압박을 받아, 도망갈 곳을 잃은 정액은 기세 좋게 자궁내로 쏟아졌다…
+                    PRINTFORMW 「하히이이잇…！쿨렁쿨렁거리는…정액이, 자궁엣…♪」
+                    PRINTFORMW 「븃븃거려서…기분 좋아…♪이거, 반드시 임신하겠죠…♪」
+                ELSEIF RAND:4 == 0
+                    PRINTFORMW 「커지고 있어…아하아아앗！보지의 안, 넓어져 버려요옷…！」
+                    PRINTFORMW 사정 직전의 귀두를 자궁구에 파고들게 해, 그대로 마음껏 정액을 털어 놓았다…
+                    PRINTFORMW 「응그읏！자궁이, 억지로 열려버려엇！들어와앗, 들어오고 있어요옷！」
+                    PRINTFORMW 「%CALLNAME:PLAYER%의 정액 잔뜩 마셔서…자궁이, 기뻐하고 있어요오…♪」
+                    PRINTFORMW 뜨거운 정액을 내자, 이쿠는 질내를 떨며 절정에 이르렀다…
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「후아아아앗！나와요오！움찔움찔하면서, 아아앗！굉장해애애앳♪」
+                    PRINTFORMW 격렬한 피스톤질을 계속하며, 이쿠의 질 안쪽에 잇달아 정액을 냈다. 
+                    PRINTFORMW 「내면서 찌르면…안돼요오옷！보지, 이상하게 되어엇！」
+                    PRINTFORMW 「벌써！가득이에요오옷！비골에, 들어간ㄷ…하아아앗！」
+                    PRINTFORMW 질내사정의 쾌감에 떨리면서도, 이쿠의 바기나는 당신의 페니스를 확실하게 물어, 
+                    PRINTFORMW 정액을 더욱 짜내기위해 꽉 조이고 있다…
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「앗…무슨 일인가요…갑자기 멈춰…에엣！？얏！」
+                    PRINTFORMW 움직임이 멈춘 상태에서, 돌연히 질내에 나오는 정액. 
+                    PRINTFORMW 한계까지 사정감을 높인 후, 허리의 움직임을 멈춘 채로의 사정에 이쿠는 허를 찔렸다…
+                    PRINTFORMW 「정말…깜짝 놀랐잖, 습니까아…♪후훗, 하지만, 굉장한 기세…」
+                    PRINTFORMW 「…다시 한번, 방금 것, 해보지 않을래요…？조금, 힘들겠지만…후훗, 힘내 주세요♪」
+                ELSE
+                    PRINTFORMW 「앗, 나와…♪아앗…이쿠의 질에, %CALLNAME:PLAYER%의 정액, 퍼지고 있어요…♪」
+                    PRINTFORMW 마치 빨아 마셔지는 것처럼, 당신의 페니스가 정액을 내뿜는다. 
+                    PRINTFORMW 「기분 좋았나요…？아아…무척이나 좋은 표정을 하고 있어요, %CALLNAME:PLAYER%…♪」
+                    PRINTFORMW 「아직도 움찔움찔거려…♪후훗, 보지로 조여줄테니, 좀 더 내도 괜찮다고요？」
+                    PRINTFORMW 이쿠는 당신을 상냥하게 껴안으며, 페니스를 꽉 조여, 또 다시 사정으로 이끌었다…
+                ENDIF
+            ENDIF
+        ;그 이외
+        ELSE
+            ;텐시가 질내사정　1/2로 표시
+            IF ASSIPLAY && NO:ASSI == 52 && RAND:2 == 0
+                IF RAND:5 == 0
+                    PRINTFORMW 「아읏…！흣, 후아, 아앗…가득, 나왔네요…기분 좋았나요…？후훗」
+                    PRINTFORMW 『그…그거, 일부러 말하는 거야…？가득, 나왔네요？라니…』
+                    PRINTFORMW 『너무 야하다고…일부러 그런게 아니라면 더 질이 나빠, 정말…』
+                    PRINTFORMW 「후후, 어떨지요…♪」
+                ELSEIF RAND:4 == 0
+                    PRINTFORMW 『정액…내는거, 정말 좋아…다시 한번, 좀 더, 하게해…』
+                    PRINTFORMW 사정 직후임에도 불구하고, 텐시의 허리가 다시 움직인다…
+                    PRINTFORMW 「조, 좀 더…？이렇게 나왔는데, 아직도 딱딱해…앗, 잠ㄲ, 기다려요 텐시…！」
+                    PRINTFORMW 「질이, 휘저어져서…엉망이, 되버려어…응아, 앗, 하앗！」
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「응아！읏앗, 하아아아…뜨거운거, 기분 좋, 아요…」
+                    PRINTFORMW 『나도…이쿠의 질이 따뜻해서, 뭔가 굉장히, 행복할지도…』
+                    PRINTFORMW 「…조금, 손을 잡고 있어 주시지 않겠습니까…？네, 그렇게, 감사합니다…후훗」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「텐시, 텐시이…！제게, 좀 더어…잔뜩…아아아…！」
+                    PRINTFORMW 『나와, 우으…！하아, 아앗…따뜻해애…아아！앗…하아, 하아…』
+                    PRINTFORMW 『…그건 그렇고…나올때의 이쿠의 얼굴, 엄청 행복해 보이는 표정인거 알고있어？』
+                    PRINTFORMW 「에, 그건…텐시가, 능숙하기 때문일 거예요…틀림없이, 그럴 거예요…！」
+                    PRINTFORMW 『착실한 척해도…역시 야하잖아, 후후…그래도 뭐, 그런 이쿠도 귀엽지만 말이야…♪』
+                ELSE
+                    PRINTFORMW 「아아！앗, 응아아……텐시도 참, 어리광 쟁이라니까요…그렇게, 매달려선…」
+                    PRINTFORMW 『그, 그야…최후는, 달라붙는 쪽이 기분 좋잖아…이쿠는 아냐？』
+                    PRINTFORMW 「후후, 텐시의 마음이 분명하게 전해져 오니까…저도 그 편이 좋아요, 고마워요…♪」
+                ENDIF
+            ELSE
+                IF RAND:5 == 0
+                    PRINTFORMW 「하읏, 하히잇…괭장햇, 질에, 잔뜩…또, 나와아앗…！」
+                    PRINTFORMW 페니스가 움찔움찔 떨릴 때마다 정액이 질내를 채워, 이쿠에게 질내사정의 쾌감을 새겼다…
+                    PRINTFORMW 「이래서야 저도 정말로…엄마가, 돼버려요…♪」
+                ELSEIF RAND:4 == 0
+                    PRINTFORMW 「앗！앗！와주세요！이대로, 저에게…！」
+                    PRINTFORMW 「아앗…질이, 따뜻해…후훗, 뭐랄까 왠지, 행복해요…♪」
+                    PRINTFORMW 이쿠는 지나친 쾌락으로 인해 눈가에 눈물이 나오면서도, 만족한 표정으로 하복부를 살며시 어루만졌다…
+                    PRINTFORMW （아기…가질 수 있을까요？）
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「응아앗！굉장한, 기세…자궁에, 닿고 있어요…」
+                    PRINTFORMW 「이대로, %CALLNAME:PLAYER%의 자지와 정액, 느끼게 해주세요…♪」
+                    PRINTFORMW 이쿠의 가장 안쪽에 페니스를 넣은 채로, 꼭 껴안았다…
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「앗, 아앗！%CALLNAME:PLAYER%의 것이, 저의 질에서, 날뛰엇…！」
+                    PRINTFORMW 「저로…기분 좋아져 주신 거네요…기뻐요…」
+                    PRINTFORMW 당신은 행복한 미소를 띄는 이쿠를 강하게 껴안으며, 더욱 더 정액을 냈다…
+                ELSE
+                    PRINTFORMW 「안쪽에, 가득…！아앗, 나오고 있어요…%CALLNAME:PLAYER%의 정액, 가득…」
+                    PRINTFORMW 이쿠의 바기나가 당신의 페니스를 기분 좋게 감쌌다. 
+                    PRINTFORMW 길게 지속되는 쾌락 속에서, 당신의 사정은 계속되었다…
+                    PRINTFORMW 「아하앗, 두근, 두근 거리는…당신의 고동이, 기분 좋, 아요…♪」
+                ENDIF
+            ENDIF
+        ENDIF
+    ;비연모 텐시가 처음으로 질내사정
+    ELSEIF ASSIPLAY && NO:ASSI == 52 && CFLAG:7313 == 0
+        ;굴복각인 Lv3
+        IF MARK:굴복각인 == 3
+            PRINTFORMW 『낼게, 이쿠웃…주인님께 지지 않을 정도로, 잔뜨윽…！』
+            PRINTFORMW 이쿠는 저항없이, 입을 다물고 그 순간이 오는 것을 기다리고 있다…
+            PRINTFORMW 텐시는 페니스에 올라오는 쾌감대로, 이쿠의 질내에 정액을 토해냈다…
+            PRINTFORMW 「얏…！앗, 아아…！텐시잇, 텐시의 것이…질에…」
+            PRINTFORMW 『잔뜩, 아아…！질이, 꾸불꾸불해서…견딜 수 없, 어어…♪』
+            PRINTFORMW 『어때？이쿠…나의…천인의, 사정은…후후, 기분 좋지…？』
+            PRINTFORMW 「핫, 앗…에？아…별로, 그런…」
+            PRINTFORMW 『어떨까…내가 간 뒤로도 이쿠도 참 기분 좋은 듯한 소리, 냈으니까…』
+            PRINTFORMW 『조금만 더, 솔직해지는게 좋지않아…？후흥, 뭐, 이 내가 정성껏 가르쳐 줄테니까』
+        ELSE
+            PRINTFORMW 『아아, 나왔다아…♪굉장해, 이거…이쿠의 그곳, 최고…♪』
+            PRINTFORMW 「싫어, 싫어어, 그런…텐시에게까지…」
+            PRINTFORMW 『그런 괴로운 듯한 얼굴은 하지마…미인이 엉망이라고？』
+            PRINTFORMW 『나쁘게는 하지 않아…이제부터 정성껏 이쿠의 거기, 개발해 줄게…♪』
+        ENDIF
+        CFLAG:7313 = 1
+    ;임신
+    ELSEIF TALENT:임신 == 1
+        IF RAND:2 == 0
+            PRINTFORMW 「내지 마세요！이제, 그만둬엇！히잇！？」
+            PRINTFORMW 싫어하는 이쿠를 짓누르고, 질내에 정액을 쏟아냈다…
+            PRINTFORMW 「싫엇, 가득, 나왔어…너무해…너무해…이런건…너무합니다…」
+        ELSE
+            PRINTFORMW 「그만…그만해 주세요…배의, 아이가…」
+            PRINTFORMW 임신한 모체에 정액을 쏟아낸다는 이상성…
+            PRINTFORMW 흥분을 가라앉힐 수 없는 당신의 사정은 당분간 진정되지 않았다…
+        ENDIF
+    ;그 이외
+    ELSE
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            ;텐시가 질내사정
+            IF ASSIPLAY && NO:ASSI == 52 && RAND:2 == 0
+                IF RAND:3 == 0
+                    PRINTFORMW 「또…질에 나와, 아큿…하우우읏…！」
+                    PRINTFORMW 「…기분 좋았던 모양이네요, 텐시…괜찮습니까？」
+                    PRINTFORMW 『하아, 핫…뭐, 뭐야…내 걱정따윈 하지 않아도…』
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 『하하, 하아…멈추지 않아, 와아…♪이렇게나 야한 몸, 열중하지 않는 쪽이 이상한거야…』
+                    PRINTFORMW 『좀 더 하고싶고…좀 더 내고싶게, 되어 버리잖아…좀 더 어울려줘, 이쿠…』
+                    PRINTFORMW 「아직도, 할 생각입니까…？하다못해, 조금이라도 쉬게 해 주세요…」
+                ELSE
+                    PRINTFORMW 『자꾸 들어가…후후, 정액으로 가득 차서, 이쿠의 자궁이 기뻐하고 있어…♪』
+                    PRINTFORMW 『나의 자식을 임신하게 되다니…이쿠는 행운아네, 후흥』
+                    PRINTFORMW 「힛…히앗, 핫, 하앗…안, 뜨거워서 이젠…모르겠, 습니다…」
+                ENDIF
+            ;질내사정량 분기
+            ;사정량 10이상
+            ELSEIF CFLAG:7000 > 10 && RAND:2 == 0
+                IF RAND:2 == 0
+                    PRINTFORMW 「정말, 몇 번째입니까…앗, 뜨거워…아아！힛, 하우우읏…」
+                    PRINTFORMW 「이렇게…냈다간…응, 앗…흘러 나와…버립니다…」
+                    PRINTFORMW 이쿠는 저항은 하지 않았지만, 놀라운 양의 백탁 투성이가 된 결합부를 불안하게 바라보고 있다…
+                ELSE
+                    PRINTFORMW 이쿠의 몸을 꽉 껴안으며, 이미 정액으로 채워진 자궁에 더욱 자식을 쏟아냈다…
+                    PRINTFORMW 「%CALLNAME:PLAYER%의 것이…！앗, 아아…두근두근거려, 또…나와앗…！」
+                    PRINTFORMW 「하응, 아아아…흘러, 내려…이렇게까지 해서…저를, 임신시키고 싶습니까…？어째서…」
+                ENDIF
+            ;정액량 7이상
+            ELSEIF CFLAG:7000 >= 7 && RAND:2 == 0
+                PRINTFORMW 「아아, 핫, 또, 저의 안에…！」
+                PRINTFORMW 「하아ー…하ー…또, 또…계속하는, 겁니까…？」
+            ;정액량 3이상
+            ELSEIF CFLAG:7000 >= 3 && RAND:3 == 0
+                PRINTFORMW 「아아, 앗！앗…！으하앗…또, 들어와…」
+                PRINTFORMW 「기분 좋았…습니까…？」
+            ELSE
+                IF RAND:2 == 0
+                    PRINTFORMW 「응아앗！옵…니다…%CALLNAME:PLAYER%의…정액이…」
+                    PRINTFORMW 바기나의 기분 좋은 조임을 느끼면서, %조사처리(CALLNAME:PLAYER,"은")% 질 안쪽에 사정했다…
+                ELSE
+                    PRINTFORMW 「우읏！질이…뜨겁습니다…굉장한, 기세…」
+                    PRINTFORMW 질내에 당신의 정액이 기세 좋게 나온다. 
+                    PRINTFORMW 이쿠는 저항없이 그것을 받아들였다…
+                ENDIF
+            ENDIF
+        ;텐시가 질내사정
+        ELSEIF ASSIPLAY && NO:ASSI == 52 && RAND:2 == 0
+            IF RAND:2 == 0
+                PRINTFORMW 『이쿠가앗, 그렇게 조여대는게 나쁜거야…♪아아, 앗！나온다아…！』
+                PRINTFORMW 「싫엇, 또 질에…！아아, 오고 있어, 우우…싫어어…」
+            ELSE
+                PRINTFORMW 「이렇게나…냈다간, 아아, 앗…！」
+                PRINTFORMW 「이젠 만족했겠죠 텐시…이제, 이런 짓은 그만둡시다…」
+            ENDIF
+        ;질내사정량 분기
+        ;정액량 10이상
+        ELSEIF CFLAG:7000 > 10
+            IF RAND:2 == 0
+                PRINTFORMW 「부탁이니까…！이제, 내지 말아주세요, 아아 싫엇, 멈춰어엇！」
+                PRINTFORMW %조사처리(CALLNAME:PLAYER,"은")% 싫어하는 이쿠의 질내에 이젠 몇 번째인지도 모를 사정을 했다…
+            ELSE
+                PRINTFORMW 「또 나와, 우우, 우읏！배가, 아아…하아, 하……」
+                PRINTFORMW 대량의 백탁으로 범해진 자신의 비부를 응시하는 이쿠의 눈동자가 공허하다…
+            ENDIF
+        ;정액량 7이상
+        ELSEIF CFLAG:7000 >= 7 && RAND:2 == 0
+            PRINTFORMW 「또, 내는겁니까…！」
+            PRINTFORMW 「이 이상은, 이제…배가…」
+        ;정액량 3이상
+        ELSEIF CFLAG:7000 >= 3 && RAND:3 == 0
+            PRINTFORMW 「기다려 주세요, 기다려, 아아, 또 나와…！」
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「우쿠읏…이, 임신했다간…어쩔 생각입니까앗…」
+        ELSE
+            PRINTFORMW 「그런, 질에는…！」
+            PRINTFORMW 「싫어, 그만둬 주세요…우읏, 기분 나빠…」
+        ENDIF
+    ENDIF
+ENDIF
+
+;그 이외
+;ELSE
+    ;PRINTFORMW 
+;ENDIF
+
+;-------------------------------------------------
+;애널에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_9
+;主人のペニス
+;IF TFLAG:35
+
+;처음
+IF CFLAG:5402 == 0
+    ;연모
+    IF TALENT:연모
+        ;처녀
+        IF TALENT:처녀 == 1
+            PRINTFORMW 「응으～～읏…！엉덩이 움찔움찔, 떨리고 있어…！」
+            PRINTFORMW 「얏, 쿠우우읏…！뜨거워요…%CALLNAME:PLAYER%의…정액이…」
+            PRINTFORMW 처녀를 유지한 채로 이쿠의 엉덩이 구멍에, 체내에 사정당하는 감각을 철처히 가르치 듯이 정액을 냈다…
+            PRINTFORMW 페니스를 문 애널의 바로 옆에서, 질구가 애처로운 듯이 흠칫거리며 꿈틀대며, 애액을 흘려 보내고 있다…
+            PRINTFORMW 「우우우～…엉덩이가, 처음이라니…순번이 이상해요, 정말…」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「우긋, 읏…하읏！하아앗…！」
+            PRINTFORMW 「하아아…정말로, 엉덩이 안에, 내 버리시다니…저기, 괜찮으신가요？」
+            PRINTFORMW 「뭐, 뭐어 저도 요괴지만……정말！몸의 구조가 어쨌다느니, 이상한 일, 생각하지 말아주세요！」
+            PRINTFORMW 잘 모르겠지만, 부끄러워하는 이쿠의 표정이 사랑스러웠으니 된걸로 하자…
+        ENDIF
+    ;그 이외
+    ELSE
+        ;처녀
+        IF TALENT:처녀 == 1
+            PRINTFORMW 「우읏！우긋！아앗！…나온, 다…」
+            PRINTFORMW 이쿠의 애널 안에 기세 좋게 정액이 나온다…
+            PRINTFORMW 「엉덩이 안이…뜨겁, 습니다…이제, 뽑아, 주세요…」
+            PRINTFORMW （순결을 지키기 위해서인데…어째서 이런, 이상한 일이 되어 버린거지…）
+            PRINTFORMW （이젠 차라리, 단념하는 편이 좋은 걸까…）
+        ;그 이외
+        ELSE
+            PRINTFORMW 「응읏, 크우우우읏…싫엇…엉덩이 안에, 내다니…！」
+            PRINTFORMW 「정상이 아닙니다, 진짜로…！」
+        ENDIF
+    ENDIF
+    CFLAG:5402 == 1
+;2회째 이후
+ELSE
+    ;3P
+    IF SELECTCOM == 610
+        ;ＡＶ동시 사정 / V사정 구상에 정리돼있으므로 컷
+        IF TFLAG:11 > 0 && TFLAG:12 > 0
+        ENDIF
+    ;연모
+    ELSEIF TALENT:연모
+        ;처녀
+        IF TALENT:처녀
+            ;A감각Lv5이상
+            IF ABL:A감각 >= 5
+                IF RAND:3 == 0
+                    PRINTFORMW 「후아아아앗！좋앗！엉덩이에 내는거, 기분 좋아앗…하아앗！」
+                    PRINTFORMW 애널로 느끼면 느낄수록, 이쿠의 비부는 차츰 습기를 띄어, 
+                    PRINTFORMW 딱 닫힌 채인 비부에서 애액이 주륵주륵 흘러넘치고 있다…
+                    PRINTFORMW 「후아…이젠 싫어…이제, 미루는건 싫어요…」
+                    PRINTFORMW 「부탁이니까…저의 처녀, 받아 주세요…빨리, 부탁이니까아！」
+                    PRINTFORMW 「그렇지 않으면, 이제, 이젠 이상해져, 버릴 것 같으니까아…히읏, 응으～읏…！」
+                    PRINTFORMW 이쿠는 당신에게 애원하면서 질척질척한 자신의 비부를 이리저리 만지고 있다…
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「…읏아아앗！엉덩이에서, 자지가, 날뛰고 있어…！좋앗, 기분 좋앗…」
+                    PRINTFORMW 당신의 페니스에 완전히 익숙해진 이쿠의 애널에 정액을 흘려 넣는다. 
+                    PRINTFORMW 아무래도 정액의 뜨거움에 쾌감을 느끼게 된 것 같다…
+                    PRINTFORMW 「…무척, 기분 좋았어요…저어, 다음은 이쪽으로…어떠신지요？」
+                    PRINTFORMW 딱 닫힌 채인 비부를 드러내는 이쿠. 
+                    PRINTFORMW 하지만 당신은 상관하지 않고 애널의 애무를 계속했다…
+                    PRINTFORMW 「엣, 잠깐…아우으읏！그만, 그만해 주세요, 지금 거기는…」
+                ELSE
+                    PRINTFORMW 「읏후우으읏…！잔뜩 나와서, 기분 좋앗…！」
+                    PRINTFORMW 이쿠는 개발된 애널에 사정당하는 쾌감에 빠져있다…
+                    PRINTFORMW 「…우으으읏, 엉덩이만, 만지작거려서…이젠, 완전히 좋아져 버렸어요…」
+                    PRINTFORMW 「대체…대체 언제쯤이면, 저의 처음, 받아 주실건가요…」
+                    PRINTFORMW 당신은 쾌락과 분노, 부끄러움으로 얼굴이 새빨개진 이쿠를 살며시 껴안았다…
+                ENDIF
+            ;그 이외
+            ELSE
+                PRINTFORMW 「우읏！하아읏！…또, 엉덩이 안에 인가요…정말…」
+                PRINTFORMW 「%CALLNAME:PLAYER%에게 기분 좋아지는 것은 기쁘고, 그게, 저도 상당히, 느끼고 있지만…」
+                PRINTFORMW 「…심술쟁이예요, %조사처리(CALLNAME:PLAYER,"은")%…」
+            ENDIF
+        ;임신
+        ELSEIF TALENT:임신
+            ;음란
+            IF TALENT:음란
+                IF RAND:3 == 0
+                    PRINTFORMW 「그렇게나, 좋앗！히잇, 잔뜩, 내다니…」
+                    PRINTFORMW 「이번엔 엉덩이마저, 임신시킬 생각인가요…후앗, 후훗…굉장한, 사정이에요…♪」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「이렇게…하우아아아…♪이상해질 정도로, 기분 좋은게…계속되고 있어요…」
+                    PRINTFORMW 「엉덩이 구멍을…정액으로 잔뜩 채우는게 좋은 변태도…이 아이에게 들켜버려요오…♪」
+                ELSE
+                    PRINTFORMW 「좀더 쏟아내줘어엇…！이쿠의 음란한 엉덩이 구멍에, 흘러 넘칠, 정도로옷…아앗！」
+                    PRINTFORMW 「이쪽의 구멍은 괜찮으니까…%조사처리(CALLNAME:PLAYER,"이")% 좋을대로 기분 좋아져도 좋아요…♪」
+                ENDIF
+            ;A감각Lv3이상
+            ELSEIF ABL:A감각 >= 3
+                IF RAND:3 == 0
+                    PRINTFORMW 「조금 더 강하게 해도 괜찮으니까, 그대로 안에, 주세ㅇ…하읏！읏앗…」
+                    PRINTFORMW 「아…배, 어루만져 주시는 건가요？후훗, 상냥하면서도…음란한 사람이라니까요, 후훗」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「후으으읏…읏, 으큿, 아앗, 기분, 좋아…」
+                    PRINTFORMW 「아기가 있으니까 엉덩이로 한다니…부끄럽지만, 느껴버렸어요…」
+                ELSE
+                    PRINTFORMW 「응앗, 햣…！븃븃하면서…잔뜩…」
+                    PRINTFORMW 「아기가, 놀라지 않았으면 좋겠습니다만…」
+                ENDIF
+            ;그 이외
+            ELSE
+                IF RAND:2 == 0
+                    PRINTFORMW 「어떤가요…그, 엉덩이로 하는건, 시원하셨나요？」
+                ELSE
+                    PRINTFORMW 「이, 이쪽에 내는건…역시, 이상한 느낌이에요…」
+                ENDIF
+            ENDIF
+        ;음란 또는 A감각5이상
+        ELSEIF TALENT:음란 || ABL:A감각 >= 5
+            IF RAND:5 == 0
+                PRINTFORMW 「읏앗, 응아아아！뜨거운거, 잔뜩 오고 있어욧, 좀 더 와줘엇, 아하아앗！」
+                PRINTFORMW 「움직여서 좀 더 엉망진창으로, 만들어 주세요…！%CALLNAME:PLAYER%의 것이 뜨겁고, 오싹오싹햇…♪」
+            ELSEIF RAND:4 == 0
+                PRINTFORMW 「느, 느껴 버려서…엉덩이에 힘이, 들어가지 않아요…아아 좀 더, 정액을 짜주고 싶은데…」
+                PRINTFORMW 「느슨하지 않은가요…？죄송해요, 좀 더 기분 좋게 해드리고 싶은데…읏, 쿠우읏！」   
+            ELSEIF RAND:3 == 0
+                PRINTFORMW 「믿을 수 없어요…엉덩이로 이렇게나 자지를 삼켜서…앗, 또 움찔거려, 나왔다…」
+                PRINTFORMW 「또, 또 다시 움찔거려…저의 엉덩이 구멍이 그렇게나, 읏…좋은가요？후훗」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「히아아아아…！핫아앗, 꿀렁꿀렁, 들어오고 있어요…！」
+                PRINTFORMW 「안이 벌써, 가득 차버렸어요…%CALLNAME:PLAYER%의 자지와 정액으로 채워져서…다 들어가지 않아요…♪」
+            ELSE
+                PRINTFORMW 「천녀의 엉덩이 구멍은……핫, 응……기분 좋았나요…？후훗…」
+                PRINTFORMW 「좋을대로 더럽혀 주세요…엉덩이를 범해져 상스럽게 흐트러지는 저라도, 사랑해 주신다면…♪」
+            ENDIF
+        ;A감각Lv3이상
+        ELSEIF ABL:A감각 >= 3
+            IF RAND:3 == 0
+                PRINTFORMW 「우그으으읏！아우으읏！우그읏！아앗, 아아…엉덩이에 내는 것도, 상당히…」
+                PRINTFORMW 「후훗, 좋아져 버렸어요……그, 그러니까 다시 한번…해주실 수 있나요…♪」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「후으으읏…아긋！아읏, 아하아아아…！」
+                PRINTFORMW 「엉덩이, 안쪽까지…%CALLNAME:PLAYER%의 것이 잔뜩, 왔어요…♪」
+            ELSE
+                PRINTFORMW 「뜨거웟…！엉덩이가앗！우아아앗…」
+                PRINTFORMW 「힛！내면서…휘젓지 맛…！히깃！엉덩이 안, 꺼내져 버려요옷！」
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:2 == 0
+                PRINTFORMW 「앗！엉덩이가, 엉덩이가앗…！」
+                PRINTFORMW 「정말, 너무 냈어요…%CALLNAME:PLAYER%의 것으로, 화상 입을 것같아요…」
+            ELSE
+                PRINTFORMW 「응아앗…！들어 온, 다아앗…！」
+                PRINTFORMW 「하흣, 핫…엉덩이로 하는게…그렇게나, 기분 좋은, 가요…？」
+            ENDIF
+        ENDIF
+    ;A감각Lv3이상
+    ELSEIF ABL:A감각 >= 3
+        IF RAND:2 == 0
+            PRINTFORMW 「얏！아앗！내지말아줘엇…！크우우웃！」
+            PRINTFORMW 「하아, 하아…기분 나쁘니까, 이제 그만해 주세요…！」
+        ELSE
+            PRINTFORMW 「우으아앗…또, 나오고 있어어…」
+            PRINTFORMW 「이런거, 이상한데…기분 좋다닛…」
+        ENDIF
+    ;그 이외
+    ELSE
+        PRINTFORMW 「우읏！응읏…싫어어…엉덩이가, 기분 나쁩니다…」
+    ENDIF
+ENDIF
+
+;그 이외
+;ELSE
+    ;PRINTFORMW 
+;ENDIF
+
+;-------------------------------------------------
+;머리카락에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_16
+;연모
+IF TALENT:연모
+    ;정액중독Lv3이상
+    IF ABL:정액중독 >= 3
+        IF RAND:3 == 0
+            PRINTFORMW 이미 정액으로 하얗게 물든 이쿠의 머리카락에, 정액을 더욱 펴 바르듯이 사정한다…
+            PRINTFORMW 「아아 또 머리카락에, 이렇게 잔뜩 늘어뜨려서…！」
+            PRINTFORMW 「점점, 떨어져 버려요…좀 더…좀 더 늘어뜨려 주세요, 정액…」
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「좀 더 내줘…좀 더 내주세요, 이쿠를 더럽혀 주세요…！」
+            PRINTFORMW 「%CALLNAME:PLAYER%의 냄새를 느끼고 있으면…무척 행복해요…♪」
+        ELSE
+            PRINTFORMW 「아앗…이 냄새가, 이 냄새가 좋아요…」
+            PRINTFORMW 「%CALLNAME:PLAYER%의 정액에…둘러 싸인 것 같아요, 후훗…♪」
+        ENDIF
+    ;정액중독Lv1이상
+    ELSEIF ABL:정액중독 >= 1
+        PRINTFORMW 「이렇게 잔뜩 나오다니…그렇게나 기분 좋으셨나요」
+        PRINTFORMW 이쿠는 백탁 투성이가 된 머리카락의 감촉을 살피고 있다…
+        PRINTFORMW 「후훗…%CALLNAME:PLAYER%에게라면, 더럽혀져도 상관 없어요…♪」
+    ;그 이외
+    ELSE
+        PRINTFORMW 「우읏, 정말…머리카락이, 무거워요…」
+        PRINTFORMW 「될 수 있으면, 좀 더 다른 방법으로 기분 좋아지게 하고 싶습니다만…」
+    ENDIF
+;그 이외
+ELSE
+    ;반발각인Lv1이상
+    IF MARK:반발각인 >= 1
+        PRINTFORMW 「…만족하셨나요？…이런 바보같은 짓을 해서」
+        PRINTFORMW 이쿠는 차가운 눈으로 당신을 노려보고 있다…
+    ;굴복각인Lv3
+    ELSEIF MARK:굴복각인 == 3
+        IF RAND:2 == 0
+            PRINTFORMW 「이러는게, 취미입니까？%조사처리(CALLNAME:PLAYER,"은")%…」
+            PRINTFORMW 「…상당히 특수한 성벽이라도 있으신가 봅니다…」
+        ELSE
+            PRINTFORMW 「하아…끈적끈적 해졌습니다…」
+            PRINTFORMW 「…다음엔 제대로 손질해 주세요…비록 %CALLNAME:PLAYER%에게만 보여준다 하더라도, 깨끗한 채로 있고 싶으니까…」
+        ENDIF
+    ;그 이외
+    ELSE
+        IF RAND:2 == 0
+            PRINTFORMW 「우읏, 더러워…！내지 마세요, 그만둬 주세요…」
+            PRINTFORMW 「아아…이런, 저의 머리카락이…」
+        ELSE
+            PRINTFORMW 「싫엇…기분 나빠…！」
+            PRINTFORMW 「%조사처리(CALLNAME:PLAYER,"은")% 여성의 머리카락을, 뭐라고 생각하는겁니까…！」
+        ENDIF
+    ENDIF
+ENDIF
+;-------------------------------------------------
+;얼굴에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_14
+;처음으로 얼굴사정
+IF CFLAG:5403 == 0
+    ;정액경험 없음
+    IF EXP:정액경험 == 0
+        ;연모
+        IF TALENT:연모
+            PRINTFORMW 「햣…！읏, 푸읏…아으으～～～읏…！」
+            PRINTFORMW 이쿠는 놀란 듯 하지만, 저항없이 얼굴에 정액을 계속 받아냈다…
+            PRINTFORMW 「푸하…이게 %CALLNAME:PLAYER%의 정액…끈적끈적하네요…」
+            PRINTFORML 
+            PRINTFORMW 「지금까지 저에게 이러고 싶었지만, 참았던 거죠…？」
+            PRINTFORMW 이쿠의 얼굴은 정액 투성이지만, 부드러운 미소를 보이며 당신에게 말을 건넸다…
+            PRINTFORMW 「괜찮아요…%CALLNAME:PLAYER%의 욕망은 제가 받아 줄게요…」
+            PRINTFORMW 「하지만…나올 것 같을 때는, 먼저 말해 줘야해요？후훗」
+        ;굴복각인Lv3
+        ELSEIF MARK:굴복각인 == 3
+            PRINTFORMW 「햣…！읏, 푸읏…아으으～～～읏…！」
+            PRINTFORMW 이쿠는 놀란 나머지 그대로 굳어 버렸다…
+            PRINTFORMW 그러는 동안에도 발사된 정액은 이쿠의 얼굴을 더럽혀 갔다…
+            PRINTFORML 
+            PRINTFORMW 「이게 인간 남성의 정액…입니까」
+            PRINTFORMW 어떻게든 눈을 뜬 이쿠는 정액을 손가락으로 닦은 뒤, 가만히 응시하고 있다…
+            PRINTFORMW 「그래서, 이것을 제게 뒤집어 씌우는 것에 무슨 의미가 있는 겁니까？」
+            PRINTFORMW 「……대답하지 않아도 좋습니다…왠지 모르게 공기로 알거 같으니까…」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「햣…！읏, 푸읏…아으으～～～읏…！」
+            PRINTFORMW 「싫엇…쿠윽, 냄새 나…무슨 짓을, 하는 겁니까…！」
+            PRINTFORML 얼굴을 닦으려 하지만, 이상한 냄새를 풍기는 정액에 손대는 것이 꺼려지는지
+            PRINTFORMW 이쿠는 양손을 얼굴 근처에 갖다댄 채로 굳어져 있다…
+            PRINTFORMW 「기분 나빠요…부탁이니까, 빨리 닦아 주세요…」
+            PRINTFORMW （이게 인간 남성의, 정액…뜨겁고, 질척질척하고…심한 냄새）
+        ENDIF
+    ;정액경험 있음+처음으로 얼굴사정
+    ELSE
+        ;연모
+        IF TALENT:연모 == 1
+            PRINTFORMW 「햣…！읏, 푸읏…아으으～～～읏…！」
+            PRINTFORMW 이쿠는 놀란 듯 하지만, 저항없이 얼굴에 정액을 계속 받아냈다…
+            PRINTFORMW 「…푸, 푸하앗…제 얼굴에, 싸고 싶었나요…후훗, 공기로 알 수 있다고요？」
+            PRINTFORML 
+            PRINTFORMW 「지금까지 저에게 이러고 싶었지만, 참았던 거죠…？」
+            PRINTFORMW 이쿠의 얼굴은 정액 투성이지만, 부드러운 미소를 보이며 당신에게 말을 건넸다…
+            PRINTFORMW 「괜찮아요…%조사처리(CALLNAME:PLAYER,"이")% 하고싶은 일, 제가 받아 줄테니까…」
+            PRINTFORMW 「그래도…나올 것 같을 때는, 먼저 말해 줘야해요？후훗」
+        ;굴복각인Lv3
+        ELSEIF MARK:굴복각인 == 3
+            PRINTFORMW 「크읏…으읏！…으부웃, 아으～～읏…」
+            PRINTFORMW 「얼굴에 싸고 싶었다…？하아, 어쩔 수 없는 분이네요…」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「크읏…으읏！…으부웃, 아으～～읏…」
+            PRINTFORMW 「얼굴에 사정하다니…무슨 생각을 하고 있는 겁니까…！」
+        ENDIF
+    ENDIF
+    CFLAG:5403 == 1
+;2회째 이후
+ELSE
+    ;연모
+    IF TALENT:연모
+        ;정액중독Lv3이상
+        IF ABL:정액중독 >= 3
+            ;입에 사정한 뒤 얼굴에 사정
+            IF STAIN:0 & 4 && RAND:2 == 0
+                PRINTFORMW 이미 대량의 백탁액을 뒤집어 쓴 이쿠의 얼굴에, 정액을 더욱 토해냈다…
+                PRINTFORMW 「푸하앗…！푸우읏, 하우으…！」
+                PRINTFORMW 「우으, 므앗…핫, 하으…얼굴이…끈적, 끈적…」
+                PRINTFORMW 이쿠는 눈 주변의 정액을 닦아내고, 입 주변의 정액을 낼름 핥아서, 겨우 침착해진 것 같다…
+                PRINTFORMW 「후냐앗…아아, 응…%조사처리(CALLNAME:PLAYER,"을")% 기분 좋게 했다는, 증거니까…얼마든지, 갖고 싶어요…♪」
+            ELSEIF RAND:3 == 0
+                PRINTFORMW 이쿠의 얼굴을 향해 정액을 토해낸 페니스를, 그 아름다운 얼굴에 문지른다…
+                PRINTFORMW 「꺗, 정말…후훗, 자지가 제 얼굴에서 놀아서는 안돼요…♪」
+                PRINTFORMW 얼굴의 정액을 전부 펴바른 후에야, 페니스를 떼어 놓았다…
+                PRINTFORMW 「정말…얼굴이 끈적끈적해졌어요…」
+                PRINTFORMW 「이런 일을 하지 않아도…저는 이미 %CALLNAME:PLAYER%의 소유라고요？」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「앗！아앗…♪얼굴에 잔뜩, 나와 버렸네요…♪」
+                PRINTFORMW 「얼굴이 이젠, 질척질척해요…후훗, 어떤가요, %CALLNAME:PLAYER%…」
+                PRINTFORMW 「좀 더 저를, %CALLNAME:PLAYER%의 정액으로 더럽혀 주지 않겠나요…？」
+                PRINTFORMW 이쿠는 당신의 페니스를 지긋이 바라보면서, 사정을 또 다시 기다리고 있다…
+            ELSE
+                PRINTFORMW 「후아아앗, 뜨거워요…」
+                PRINTFORMW 「어떤가요…제 얼굴을 정액 투성이로 만든 기분은…？」
+                PRINTFORMW 「후훗, 저도 굉장히, 흥분 했어요…♪좀 더 싸도, 괜찮다고요…？」
+                PRINTFORMW 이쿠는 황홀한 표정을 지으며, 혀로 입 주변의 정액을 핥아내고 있다…
+            ENDIF
+        ;정액중독Lv1이상
+        ELSEIF ABL:정액중독 >= 1
+            IF RAND:2 == 0
+                PRINTFORMW 「%CALLNAME:PLAYER%의 냄새가 나요…후훗」
+                PRINTFORMW 「네에, 괜찮으니까…부디 좋아하는 곳에, 싸주세요…♪」
+            ELSE
+                PRINTFORMW 「아앗…이 더럽혀지는 느낌이…좋아질 것 같아요…♪」
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:2 == 0
+                PRINTFORMW 「정말로, 얼굴에 싸는걸 좋아하시네요…」
+                PRINTFORMW 「%CALLNAME:PLAYER%에게서 왠지 굉장하게 만족한 공기가 느껴져요」
+            ELSE
+                PRINTFORMW 「또, 얼굴에 이렇게…역시 조금은, 놀라 버려요…」
+                PRINTFORMW 「저기, 저 이상한 얼굴을 하고 있나요…？」
+            ENDIF
+        ENDIF
+    ;굴복각인Lv3
+    ELSEIF MARK:굴복각인 == 3
+        IF RAND:2 == 0
+            PRINTFORMW 「…꽤나 흥분하고 계시네요…」
+            PRINTFORMW 「숨이 그렇게나 거칠어 지다니…제 얼굴에 사정하는게 그렇게나 좋습니까」
+        ELSE
+            PRINTFORMW 「꺗！…우읏, 뜨거…」
+            PRINTFORMW 「그대로 있어라니…적어도 닦아내지 않으면, 눈을 뜰 수 없습니다…」
+        ENDIF
+    ;그 이외
+    ELSE
+        PRINTFORMW 「우읏…！부디 얼굴에는, 하지 말아 주세요…진심으로, 더 이상은…」
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;입에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_11
+;이라마치오로 사정
+IF SELECTCOM == 230
+    ;처음으로 구내사정
+    IF CFLAG:5404 == 0
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            PRINTFORMW 「우그으으읏！응긋！으극！으읏……」
+            PRINTFORMW 당신은 괴로운 듯 얼굴을 찡그리는 이쿠는 상관없다는 듯이, 목 안에 마음껏 사정했다…
+            PRINTFORMW 「응긋……우읏！흣！우므읏！우으읏…！」
+            PRINTFORML 
+            PRINTFORMW 사정이 끝나고, 당신은 겨우 이쿠의 머리를 잡은 손을 놓고 목 안에서 페니스를 뽑아낸다. 
+            PRINTFORMW 입 안에서 뽑혀져 나온 페니스는 타액과 정액 투성이가 되어, 입술에 음란한 실을 늘어뜨리고 있다…
+            PRINTFORMW 「콜록, 콜록, 우읏…괴롭습, 니다…」
+            PRINTFORMW 「…다음부터는 제가 제대로 봉사할테니…부디 너무 난폭한 행동은 하지 말아 주세요…」
+            ;그 이외
+        ELSE
+            PRINTFORMW 「우그으으읏！응긋！으극！으읏…」
+            PRINTFORMW 당신은 괴로운 듯 얼굴을 찡그리는 이쿠는 상관없다는 듯이, 목 안에 마음껏 사정했다…
+            PRINTFORMW 「응긋……우읏！흣！우므읏！우으읏…！」
+            PRINTFORML 
+            PRINTFORMW 당신은 뜨거운 입 안에 둘러싸인 채로 기분 좋게 사정을 끝내, 페니스를 뽑아냈다…
+            PRINTFORMW 「…에읏, 켁, 콜록, 우그읏…우에에에에…」
+            PRINTFORMW 그와 동시에 이쿠는 참지 못하고, 정액과 타액이 뒤섞인 액체를 토해냈다…
+            PRINTFORMW …이쿠의 눈에서 눈물이 뚝뚝 흘러내린다. 
+            PRINTFORMW 「콜록…콜록, 이제, 그만해 주세요, 이런 짓…！」
+            PRINTFORMW 「명령을 들을 테니까…부디 난폭하게 하지 말아 주세요…우읏…」
+        ENDIF
+        CFLAG:5404 == 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:연모
+            ;정액중독Lv3이상
+            IF ABL:정액중독 >= 3    
+                IF RAND:4 == 0
+                    PRINTFORMW 「오극…옷, 오…응구우, 무우…！」
+                    PRINTFORMW 타액에 정액이 더해져 윤활이 늘어난 이쿠의 입 안을 난폭하게 범해, 더욱 정액을 내보냈다. 
+                    PRINTFORMW 삼킬 수 없을 정도의 정액이 구강내를 채워, 페니스를 물고있는 입가로부터 흘러내린다…
+                    PRINTFORMW 점액 투성이의 페니스를 뽑아내자, 이쿠는 호흡을 가다듬고 모인 정액을 천천히 마셨다…
+                    PRINTFORMW 「아에, 핫, 후우…」
+                    PRINTFORMW 「목도, 호흡도 전부, %CALLNAME:PLAYER%의 냄새로, 가득해서…행복, 해요…♪」
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「우읏！？후으읏, 우응～～～읏♪」
+                    PRINTFORMW 난폭하게 당하면서도, 기분 좋게 페니스를 감싸는 이쿠의 입 안에 정액을 토해냈다…
+                    PRINTFORMW 지나친 쾌감에 사정이 가라앉지 않아, 입 안을 다 메운 정액은 곧바로 이쿠의 콧구멍까지 흘러넘쳤다…
+                    PRINTFORMW 「후아앗…콜록, 콜록, 우읏…굉장해, 코까지 정액으로, 가득이에요…♪」
+                    PRINTFORMW 입과 코에서 정액이 흘러내려, 심한 얼굴이 되면서도, 이쿠는 정액의 맛과 냄새에 빠져있다…
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 사정감이 높아지자, 이쿠도 당신의 허리에 매달려, 페니스를 한층 더 안쪽으로 받아들였다…
+                    PRINTFORMW 「읏그웃, 후극, 응읏, 으～～～～～～읏！」
+                    PRINTFORMW 더 이상 들어가지 않을 정도로 페니스를 집어넣어, 마음껏 사정했다…
+                    PRINTFORMW （응읏…！목 안에서, %CALLNAME:PLAYER%의 자지가 날뛰는게…좋아…）
+                    PRINTFORMW （머릿속을 범해지는 것 같아서…이젠, 이상해져 버릴 것 같아…♪）
+                ELSE
+                    PRINTFORMW 이쿠의 안면에 허리를 부딪히듯이 페니스를 마음껏 안쪽까지 찔러 넣어, 기세 좋게 정액을 냈다…
+                    PRINTFORMW 「～～～～～읏…！후읏, 응긋, 응극, 꿀꺽…」
+                    PRINTFORMW 페니스 전체가 뜨거운 입 안에 감싸고, 목 안이 페니스를 단단히 조인다…
+                    PRINTFORMW 마치 방뇨하듯이, 대량의 정액을 이쿠의 식도에 흘려넣었다…
+                    PRINTFORMW 「므웃…우우으응～읏, 푸하앗…정액이 잔뜩…잘 먹었습니다아…」
+                ENDIF
+                ;그 이외
+                ELSE
+                    IF RAND:2 == 0
+                        PRINTFORMW 「므우우～～～읏！？읏, 읏, 웅, 아앗…」
+                        PRINTFORMW 사정이 끝난 페니스를 천천히 입안에서 뽑아내자, 정액이 입에서 흘러 내린다…
+                        PRINTFORMW 「에읏, 이렇게나…마실 수 없어요…콜록！콜록！」
+                        PRINTFORMW 이쿠가 기침을 하자 주위에 정액이 흩뿌려져, 한층 더 강렬한 냄새를 내고있다…
+                    ELSE
+                        PRINTFORMW 「응으으읏！우그읏, 그읏, 켁, 우에에에엑…」
+                        PRINTFORMW 「헤엣…하앗, 쿨럭, 하앗…죄송해요, 흘려 버렸어요…」
+                        PRINTFORMW 입 주변이 정액 투성이인 채로, 괴로운 듯이 미소짓는 이쿠. 
+                        PRINTFORMW 당신은 이쿠의 머리를 상냥하게 어루만져 주었다…
+                        PRINTFORMW 「후훗, 그런…기쁘지만, 다음엔 조금 더, 상냥하게 해주세요？」
+                ENDIF
+            ENDIF
+        ;굴복각인Lv3
+        ELSEIF MARK:굴복각인 == 3
+            PRINTFORMW 「읏！응읏, 으웃！아읏, 우우읏～～…」
+            PRINTFORMW 이쿠의 머리를 잡은 채로, 목 안에 마음껏 정액을 사정했다…
+            PRINTFORMW 「콜록, 콜록…응읏, 너무 난폭한건, 좋지 못하니까요…？」
+            ;그 이외
+            ELSE
+                ;난수 분기:2
+                IF RAND:2 == 0
+                    PRINTFORMW 「구읏！으겍, 후긋…그우읏, ～～～～～읏！？」
+                ;그 이외
+                ELSE
+                    PRINTFORMW 「우극！우그읏！에극！우우우읏～～～～！！」
+            ENDIF
+        ENDIF
+    ENDIF
+;그 이외
+ELSE
+    ;처음으로 구내사정
+    IF CFLAG:5404 == 0
+        ;정액경험 없음
+        IF EXP:정액경험 == 0
+            ;연모
+            IF TALENT:연모
+                PRINTFORMW 「우읏…！응그웃…후극…！」
+                PRINTFORMW 이쿠의 입 안에 정액이 채워져 갔…지만, 이쿠는 열심히 당신의 정액을 입으로 받아들여, 
+                PRINTFORMW 얼굴이 뒤틀리면서도 천천히 삼키고 있다…
+                PRINTFORMW 「윽…！읏, 후읏, 응극, 그읏…하아아…하아, 핫」
+                PRINTFORMW 「에윽…후훗, 힘내서 마셔 봤습니다만, 웃…조금, 맛있지 않네요…」
+                PRINTFORMW 처음으로 정액을 접했을 텐데도, 노력해서 정액을 마시는 모습이 기특하다. 
+                PRINTFORMW 당신은 쓴 웃음을 짓는 이쿠의 헌신에 어떻게든 보답하고 싶다고 생각했다…
+                PRINTFORMW 「신경쓰지 마세요…%조사처리(CALLNAME:PLAYER,"이")% 기뻐할만한 일을, 해보고 싶었던 것 뿐이니까…후훗」
+            ;굴복각인Lv3
+            ELSEIF MARK:굴복각인 == 3
+                PRINTFORMW 「우읏…우극, 응읏！후므으읏…」
+                PRINTFORMW 이쿠는 처음으로 느끼는 정액의 감촉, 냄새에 놀라, 입에 머금지 못했다…
+                PRINTFORMW 「에웃！우웃, 우에에……죄송합니다, 뱉어버렸습니다…」
+                PRINTFORMW 「남성은…그, 마셔 주었으면 하는 것입니까？하아, 알겠습니다…」
+                ;그 이외
+            ELSE
+                PRINTFORMW 당신은 사정에 놀라 멀어지려 하는 이쿠의 머리를 붙잡아, 입 안에 정액을 채웠다…
+                PRINTFORMW 「우므으읏！응으…～～읏…흣, 후앗…」
+                PRINTFORMW 사정이 끝나자, 이쿠는 간신히 페니스로부터 해방되었다…
+                PRINTFORMW 「에극…켈록！켁…에웃…싫어…이게…사정, 입니까…？심한 악취, 입니다…」
+                PRINTFORMW 「기분 좋았다고 말해도…이런 일로 칭찬받아도, 곤란합니다…」
+            ENDIF
+        ;정액경험 있음
+        ELSE
+            ;연모
+            IF TALENT:연모
+                PRINTFORMW 「우읏…！응구우읏…후극…！」
+                PRINTFORMW 이쿠의 입 안에 정액이 채워져 갔…지만, 이쿠는 열심히 당신의 정액을 입으로 받아들여, 
+                PRINTFORMW 얼굴이 뒤틀리면서도 천천히 삼키고 있다…
+                PRINTFORMW 「윽…！읏, 후읏, 응극, 그읏…하아아…하아, 핫」
+                PRINTFORMW 「에윽…후훗, 힘내서 마셔 봤습니다만, 웃…조금, 맛있지 않네요…」
+                PRINTFORMW 처음으로 입 안에 사정당했을 텐데도, 노력해서 정액을 마시는 모습이 기특하다. 
+                PRINTFORMW 당신은 쓴 웃음을 짓는 이쿠의 헌신에 어떻게든 보답하고 싶다고 생각했다…
+                PRINTFORMW 「신경쓰지 마세요…%조사처리(CALLNAME:PLAYER,"이")% 기뻐할만한 일을, 해보고 싶었던 것 뿐이니까…후훗」
+            ;굴복각인Lv3
+            ELSEIF MARK:굴복각인 == 3
+                PRINTFORMW 이쿠는 괴로워하면서도, 어떻게든 정액을 삼키려고 하고 있지만…
+                PRINTFORMW 「읏, 구윽…쿨럭！에웃…이 맛은, 조금…」
+                PRINTFORMW 역시나, 첫 구내사정으로, 갑작스러운 정음은 어려웠던 것 같다…
+                PRINTFORMW 「냄새가 굉장하기에 각오는 하고 있었습니다만, 역시 괴롭습니다…죄송합니다, 다음엔 노력할테니까…」
+                ;그 이외
+            ELSE
+                PRINTFORMW 「무그으으읏！？읏！응극！」
+                PRINTFORMW 「우엣！켈록, 우에에…입 안이, 기분나쁩니다…！」
+            ENDIF
+        ENDIF
+        CFLAG:5404 == 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:연모
+            ;음란 또는 정액중독Lv3이상
+            IF TALENT:음란 == 1 || ABL:정액중독 >= 3
+                ;W펠라+당신과 조수(텐시) 동시 사정
+                IF SELECTCOM == 304 && TFLAG:35 > 0 && TFLAG:36 > 0 && NO:ASSI == 52
+                    IF RAND:3 == 0
+                        PRINTFORMW 마구 날뛰는 두 개의 페니스가 참지 못하고, 대량의 정액을 이쿠의 입 안에서 얼굴, 머리카락으로 차례차례 흩뿌린다…
+                        PRINTFORMW 「앗푸…읏, 하읏…읏♪…자지, 날뛰어서…」
+                        PRINTFORMW 「뜨거웟…정액 뜨거워요…♪좀 더 내주…세요, 푸핫, 응읏！」
+                        PRINTFORMW 「읏하아아……하ー, 하ー, 하ー앗……엣푸……맛있, 어요…♪」
+                    ELSEIF RAND:2 == 0
+                        PRINTFORMW 「으응～～～！！응극, 오우읏, 후아아……」
+                        PRINTFORMW 「아무읏, 읏, 읏크우, 응응……핫, 하아아아……♪」
+                        PRINTFORMW 두 사람의 페니스가 몇번이나 움찔거리며, 이쿠의 입 안에 기세 좋게 정액을 쏟아낸다…
+                        PRINTFORMW 「두 사람 모두…이렇게나……항, 푸하……응, 으응…아아…」
+                        PRINTFORMW 「근사하고…늠름한 사정, 감사, 합니다…♪」
+                    ELSE
+                        PRINTFORMW 「잔뜩…잔뜩, 나왔네요…후훗…훗, 응아…♪」
+                        PRINTFORMW 이쿠는 두 명분의 정액을 어떻게든 삼키고, 미소짓고 있다…
+                        PRINTFORMW 「능숙…했었나요？세 사람이서 기분 좋아져서…후후, 무척, 기뻐요…♪」
+                    ENDIF
+                ELSEIF RAND:6 == 0
+                    PRINTFORMW 「에아, 하아…♪또, 입으로 잔뜩, 받아 버렸어요…」
+                    PRINTFORMW 이쿠가 정액을 꿀꺽 삼키자, 목울대가 꿈틀거린다…
+                    PRINTFORMW 그리곤 혀가 요염하게 돌아다니며, 입 안의, 그리고 입술에 붙은 정액을 핥아낸다…
+                    PRINTFORMW 「할짝…에우, 응…정액, 맛있어…」
+                    PRINTFORMW 「후훗, 그렇게 저의 입가를 보시다니…또, 이쿠의 입을 사용하고 싶으신가요？」
+                    PRINTFORMW 「몹시, 진한 것이 갖고 싶어요…혀 위에서 충분히, 굴려드릴 테니까…♪」
+                ELSEIF RAND:5 == 0
+                    PRINTFORMW 이쿠의 능숙한 봉사에, 사정감이 한계까지 치솟는다…
+                    PRINTFORMW 「언제든지…내셔도, 괜찮으니까요…후읏, 음우으읏！」
+                    PRINTFORMW 사정과 동시에 대량의 정액이 입 안으로 흘러 들어가자, 이쿠는 놀라서 움찔거리며 몸을 떨면서도 페니스에 달라붙어 있다……
+                    PRINTFORMW 「응윽, 으무읏, 흐므웃…꿀꺽, 꿀꺽…」
+                    PRINTFORMW 「하아, 하아…이쿠의 입, 기분 좋으셨나요…？」
+                    PRINTFORMW 「좀 더…사용해 주세요…♪%CALLNAME:PLAYER%의 정액이라면, 얼마든지 마셔 드릴테니…♪」
+                ELSEIF RAND:4 == 0
+                    PRINTFORMW 「응읏……응읏…후으읏……봐주세요, 이 양…」
+                    PRINTFORMW 이쿠는 입에 모인 정액을 양손에 뱉어냈다…
+                    PRINTFORMW 젤리처럼 진한 정액이, 이쿠의 양 손바닥을 전부 메우고 있다…
+                    PRINTFORMW 「그러면, 잘 먹겠습니다…스읍, 스으으으, 츄우웃…」
+                    PRINTFORMW 「후우웃…굉장히 진하네요, 목에 걸려선…♪」
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「내줘요…내주세요♪이쿠의 입에, 털어놔주세요…♪」
+                    PRINTFORMW 이쿠가 귀두의 끝 부분을 마음껏 빨아 들이는 동시에, 기세 좋게 정액이 나온다…
+                    PRINTFORMW 이쿠는 순식간에 입 안을 전부 채워버린 그것을, 입 안에 모아두고 있다…
+                    PRINTFORMW 「아앙…읏, 우응……응구읏, 꿀꺽…꿀꺽…아하아아…」
+                    PRINTFORMW 이쿠는 몸을 떨며, 입 안의 모인 정액을 단숨에 삼켰다…
+                    PRINTFORMW 「푸하아앗…잘 먹었습니다아…♪」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「하무읏, 응긋, 꿀꺽, 꿀꺽…아앗…좀 더, 원해요…」
+                    PRINTFORMW 이쿠는 정액을 삼킨 후에도, 페니스에 달라붙어, 훑어대고 있다…
+                    PRINTFORMW 「낼름, 낼름…%CALLNAME:PLAYER%의, 정액을 원해요…마지막 한 방울까지, 전부…♪」
+                ELSE
+                    PRINTFORMW 「응으～～읏！응극, 꿀꺽, 꿀꺽, 응읏…하아아…정액, 잔뜩이에요…」
+                    PRINTFORMW 대량의 정액을 삼킨 이쿠는 만족한듯이 당신에게 미소를 지었다…
+                    PRINTFORMW 「이제, 뱃속이…%CALLNAME:PLAYER%의 정액으로 출렁거려요…후훗」
+                    PRINTFORMW 「아앗…이 냄새, 정말 좋아요…♪」
+                ENDIF
+            ;그 이외
+            ELSE
+                ;W펠라+당신과 조수(텐시) 동시 사정
+                IF SELECTCOM == 304 && TFLAG:35 > 0 && TFLAG:36 > 0 && NO:ASSI == 52
+                    IF RAND:2 == 0
+                        PRINTFORMW 「응푸…앗, 응그읏, 응응！」
+                        PRINTFORMW 「에호, 엣, 에우우우……조금, 많아……요」
+                        PRINTFORMW 이쿠는 지나친 정액의 양에 견딜 수 없었는지, 대부분을 토해냈다…
+                        PRINTFORMW 허나, 입가가 정액 투성이인 이쿠의 모습에 흥분해, 당신과 텐시는 페니스가 다시 딱딱해진다…
+                    ELSE
+                        PRINTFORMW 「하아아……앗, 푸하……응긋, 핫, 아아아……」
+                        PRINTFORMW 「조금, 지쳤어요……하지만, 만족해…주셨나요…？후훗…」
+                    ENDIF
+                ELSEIF RAND:4 == 0
+                    PRINTFORMW 「아앗！나왔네요…굉장한 기세예요…」
+                    PRINTFORMW 이쿠는 사정중인 페니스를 손으로 훑으며, 귀두를 혀로 자극해, 압도적인 쾌락을 가져왔다…
+                    PRINTFORMW 너무나도 기분 좋아져, 페니스가 움찔움찔 떨리며 이쿠의 혀나 얼굴에 정액을 흩뿌렸다…
+                    PRINTFORMW 「후훗, 정말 난폭하신 분이라니까요…이렇게나 더럽혀져 버렸어요…♪」
+                ELSEIF RAND:3 == 0
+                    PRINTFORMW 「우무읏, 굉장한 양…구무읏, 에웃, 응극, 꿀꺽…」
+                    PRINTFORMW 이쿠의 입 안에서 페니스가 격렬하게 사정한다. 
+                    PRINTFORMW 이쿠는 때때로 구역질을 하면서도, 정액을 전부 마셨다…
+                    PRINTFORMW 「하앗, 하앗…입 안이, 정액으로 가득이에요…」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「우읏！읏！츄웃…잔뜩…나왔네요」
+                    PRINTFORMW 「매우 진해요…거기다 굉장한 양…후훗, 좀 더 짜내드릴 테니까요？」
+                ELSE
+                    PRINTFORMW 「우으응…으그읏, 우응…꿀꺽, 꿀꺽, 푸하앗」
+                    PRINTFORMW 「이쿠의 입…어떠셨나요？후훗, %CALLNAME:PLAYER%도 참, 무척이나 기분 좋다는듯이…♪」
+                    PRINTFORMW 이쿠는 당신을 사정시켰던 일에, 큰 행복을 느끼고 있는 것 같다…
+                ENDIF
+            ENDIF
+        ;그 이외
+        ELSE
+            ;굴복각인Lv3
+            IF MARK:굴복각인 == 3
+                ;봉사정신Lv3이상
+                IF ABL:봉사정신 >= 3
+                    IF RAND:3 == 0
+                        PRINTFORMW 「응읏！읏, 후우으읏…응극, 응츄웃, 츄릅, 츄읍…」
+                        PRINTFORMW 이쿠는 입 안에서 정액을 받으면서도, 혀로 페니스를 자극해, 사정을 더욱 재촉하고 있다…
+                        PRINTFORMW 「읏, 읏, 읏…우읏, 푸핫…하아, 하아…굉장한 사정, 이었습니다…」
+                        PRINTFORMW 이쿠 본인의 능숙한 봉사에 의한 긴 사정이었지만, 이쿠는 자각하지 못한 것 같다…
+                    ELSEIF RAND:2 == 0
+                        PRINTFORMW 「읏, 읏！…꿀꺽, 꿀꺽…읏, 후우우…기분, 좋았습니까…？」
+                        PRINTFORMW 이쿠는 정액을 삼키고, 숨을 난폭하게 몰아쉬며, 당신에게 펠라치오의 감상을 요구했다…
+                        PRINTFORMW 「몹시 좋았다, 입니까？감사합니다…무척이나, 농후한 정액, 이었다고요…？」
+                    ELSE
+                        PRINTFORMW 「후읏, 음으우웃…응으～읏…응극, 응그웃…」
+                        PRINTFORMW 정액이 기세 좋게 입 안으로 흘러 들어간다. 
+                        PRINTFORMW 입술의 끝에서 흘러내려도, 이쿠는 열심히 그것을 삼키고 있다…
+                        PRINTFORMW 「응그읏, 우긋, 응응…하아, 하아, 전부, 마셨습니다…」
+                    ENDIF
+                ;그 이외
+                ELSE
+                    IF RAND:2 == 0
+                        PRINTFORMW 「읏, 흐무웃！응읏！응구우읏…」
+                        PRINTFORMW 이쿠의 입 안에 대량의 정액이 흘러 들어간다. 
+                        PRINTFORMW 이쿠는 눈가에 눈물이 맺히며 그것을 받아들이고 있지만…
+                        PRINTFORMW 「우읏, 우우…웃, 우에에에…켈록, 우읏, 너무 진해서, 무리입니다…」
+                        PRINTFORMW 너무나 진했는지, 무심코 뱉어버린 이쿠. 
+                        PRINTFORMW 입의 끝에서 젤리 상태의 정액이 늘어지고 있다…
+                    ELSE
+                        PRINTFORMW 「응으～～읏…우읏, 에웃, 우에에에…」
+                        PRINTFORMW 이쿠는 입 안에 차오르는 정액을 어떻게든 마시려 하지만, 냄새를 견디지 못하고, 토해내 버렸다…
+                        PRINTFORMW 「케헥, 켈록…죄송합니다…다음엔, 제대로 마실테니까…」
+                    ENDIF
+                ENDIF
+            ;그 이외
+            ELSE
+                IF RAND:3 == 0
+                    PRINTFORMW 「우부웃, 그！그만해, 햣！？」
+                    PRINTFORMW 이쿠는 사정에 놀라 무심코 페니스로부터 입을 떼어 놓아 버렸다…
+                    PRINTFORMW 그러나, 그 탓에 대량의 정액을 안면으로 받아 버리고 말았다…
+                    PRINTFORMW 「아앗！햐앗, 날아와서, 우읏…얼굴에, 튀었어…」
+                ELSEIF RAND:2 == 0
+                    PRINTFORMW 「…우그윽！켈록, 콜록！」
+                    PRINTFORMW 사정의 기세에 기침하는 이쿠, 허나 지나친 쾌감으로 인해 사정은 가라앉지 않을 것 같다…
+                    PRINTFORMW 「또, 나와！？우극, 구므으읏, 콜록！콜록！우에에에…」
+                ELSE
+                    PRINTFORMW 「에웃！？응읏！응그읏…우으～읏…」
+                    PRINTFORMW 입 안에 기세 좋게 정액을 냈다. 
+                    PRINTFORMW 이쿠는 당황하여 뱉어내는 일도 삼키는 일도 할 수 없었다…
+                    PRINTFORMW 「씁, 니다…에웃, 우므으읏…하아, 하아…입 안에, 남아 있어요…」
+                ENDIF
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;가슴에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_29
+;처음
+IF CFLAG:5405 == 0
+    ;정액경험 없음
+    IF EXP:정액경험 == 0
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            PRINTFORMW 이쿠의 헌신적인 봉사에 페니스가 한계를 맞이해, 풍만한 유방에 둘러싸여 사정했다…
+            PRINTFORMW 「우읏！후앗…크우으읏…잔뜩…나왔네요」
+            PRINTFORMW 「이것이 %CALLNAME:PLAYER%의 정액…저기, 기분 좋으셨습니까…？」
+            PRINTFORMW 얼굴부터 목덜미까지 대량으로 나온 정액…이쿠의 봉사가 기분 좋았다는 확실한 증거이다. 
+            PRINTFORMW 「감사합니다…저의 가슴으로 이런 일이 가능하다니…이상한 기분입니다」
+        ;그 이외
+        ELSE
+            PRINTFORMW 이쿠의 풍만한 유방에 정액이 흩뿌려진다…
+            PRINTFORMW 「햣！？싫어, 읏, 우읏…！」
+            PRINTFORMW 처음으로 가까이서 보는 사정에, 이쿠는 무심코 눈을 돌렸다…
+            PRINTFORMW 「이게 정액이라니…우읏, 냄새가…가슴도 끈적거리고, 너무합니다…」
+            PRINTFORMW 「…여성의 가슴에 이런 짓을 하면…즐겁습니까？하아…」
+        ENDIF
+    ;정액경험 있음
+    ELSE
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            PRINTFORMW 이쿠의 헌신적인 봉사에 페니스가 한계를 맞이해, 풍만한 유방에 둘러싸여 사정했다…
+            PRINTFORMW 「우읏！후앗…크우으읏, 잔뜩…나왔네요…저기, 기분 좋으셨습니까…？」
+            PRINTFORMW 얼굴부터 목덜미까지 대량으로 나온 정액…이쿠의 봉사가 기분 좋았다는 확실한 증거이다. 
+            PRINTFORMW 「감사합니다…저의 가슴으로 이런 일이 가능하다니…이상한 기분입니다」
+        ;그 이외
+        ELSE
+            PRINTFORMW 이쿠의 풍만한 유방에 정액이 흩뿌려진다…
+            PRINTFORMW 「햣！？싫어, 읏, 우읏…냄새가…가슴도 끈적거리고, 너무합니다…」
+            PRINTFORMW 「…여성의 가슴에 이런 짓을 하면…즐겁습니까？하아…」
+        ENDIF
+    ENDIF
+    CFLAG:5405 == 1
+;2회째 이후
+ELSE
+    ;６９파이즈리
+    IF SELECTCOM == 603
+        ;연모
+        IF TALENT:연모
+            IF RAND:2 == 0
+                PRINTFORMW 「꿀렁거리고 있어요…저의 가슴, 좋았던 것 같네요…」
+                PRINTFORMW 「저도 이렇게 기분 좋아져서…기뻐요」
+            ELSE
+                PRINTFORMW 「앗！잔뜩 나왔어요…」
+                PRINTFORMW 「저도, 기분 좋아요…좀 더 계속해 주세요…」
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:2 == 0
+                PRINTFORMW 「우읏…가슴 속에서, 떨리고 있어…」
+            ELSE
+                PRINTFORMW 「응읏！싫어…가슴에 붙어서…」
+            ENDIF
+        ENDIF
+    ;연모
+    ELSEIF TALENT:연모
+        ;봉사정신Lv4이상 또는 정액중독Lv2이상
+        IF ABL:봉사정신 >= 4 || ABL:정액중독 >= 2
+            IF RAND:5 == 0
+                PRINTFORMW 이쿠의 유방에 둘러싸여 절정을 맞이한 페니스는, 사정이 진정되지 않고 더욱 더 가슴을 더럽혀 간다…
+                PRINTFORMW 「왓, 와아…조금, 너무 힘냈어요…가슴 전부, 정액 붙어 버렸어요…」
+                PRINTFORMW 당신은 질척질척해진 유방에 페니스를 문지르고, 간신히 한숨 돌렸다. 
+                PRINTFORMW 「후훗…저의 가슴에 뿌리는걸 좋아하시나요？공기로 알 수 있어요」
+                PRINTFORMW 「…이러는거, 좋아하시지 않나요？후훗」
+                PRINTFORMW 이쿠는 당신에게 과시하듯이, 정액을 가슴 전체에 펴바르고 있다…
+                PRINTFORMW 음란하게 빛을 반사하며, 존재를 주장하는 풍만한 유방이나 발기한 유두. 
+                PRINTFORMW 음미로운 광경에 한숨 돌리던 당신의 페니스가 참지 못하고 딱딱해졌다…
+                PRINTFORMW 「정직한 자지네요…다음도 %조사처리(CALLNAME:PLAYER,"이")% 좋아하는 곳에, 내주세요…♪」
+            ELSEIF RAND:4 == 0
+                PRINTFORMW 「부디 저의…가슴 속에, 내주세요…！」
+                PRINTFORMW 이쿠가 페니스의 각도를 바꿔, 유방 속에 귀두를 삼키듯이 끼워 넣는다. 
+                PRINTFORMW 이쿠의 가슴에 쏟아지듯이, 정액이 나왔다…
+                PRINTFORMW 「앗！아앗…굉장해, 가슴 속에서, 뜨거운게 부풀어 올라서…」
+                PRINTFORMW 「괴로운가요…？그러면, 풀어드릴테니…참은 만큼, 내버리세요…♪」
+                PRINTFORMW 압박으로부터 해방된 페니스는, 마치 날뛰는 것처럼 이쿠의 상반신에 정액을 흩뿌렸다…
+                PRINTFORMW 「히얏！왓, 정말, 굉장한 양이에요…후훗, 괴롭혀서 미안해요？」
+                PRINTFORMW 톡톡, 페니스를 손가락으로 찌르는 이쿠. 
+                PRINTFORMW 가슴에서 배로, 대량의 정액이 늘어지고 있다…
+            ELSEIF RAND:3 == 0
+                PRINTFORMW 「아읏♪나왔네요…」
+                PRINTFORMW 「그대로 문질러 주세요…후훗, 미끈미끈해서 기분 좋지요…？」
+                PRINTFORMW 자신이 낸 정액을 로션 대신으로 사용해, 사정중의 페니스를 난폭하게 문지른다…
+                PRINTFORMW 이쿠에게 이끌리는 대로, 가슴팍에서 얼굴까지 정액을 펴발랐다…
+                PRINTFORMW 「정말…%CALLNAME:PLAYER%도 참, 이렇게 더럽혀선…♪」
+                PRINTFORMW 「꺄！앗…자지로 유두를 쿡쿡 찔러대…후훗, 좋아요…거기도, 마음대로 해주세요…」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「좀 더…좀 더 기분 좋아져 주세요？」
+                PRINTFORMW 이쿠는 그렇게 말하며 사정중인 페니스를 풍만한 유방으로 쭉쭉 짜냈다…
+                PRINTFORMW 폭력적인 쾌락이 페니스를 덮쳐, 정액이 짜내져 간다…
+                PRINTFORMW 「아아…또 나오네요♪좀 더, 좀 더…」
+                PRINTFORMW 「가슴에서 흘러넘칠 정도로 내도 좋으니까…힘내주세요…♪」
+                PRINTFORMW 이쿠는 더할 나위 없는 미소를 보이며, 페니스에 더욱 봉사를 하고있다…
+            ELSE
+                PRINTFORMW 이쿠는 부드럽게 미소지은 채, 눈을 치켜 뜨고 가슴을 사용해 봉사하고 있다…
+                PRINTFORMW 「기분 좋으신가요…？이대로, 계속할게요…」
+                PRINTFORMW 당신은 부드러운 유방의 감촉과, 이쿠의 헌신적인 봉사 앞에 곧 한계를 맞이했다…
+                PRINTFORMW 「햐응！？꺗, 많앗, 멈추지않아…」
+                PRINTFORMW 「이, 이렇게나…저기, 괜찮으신가요…？」
+                PRINTFORMW 가슴 주변은 백탁 투성이가 되어, 얼굴이나 목덜미에까지 정액이 튀었다…
+                PRINTFORMW 「…그런 얼굴을 해선…후훗, 무척 좋았나보네요？%CALLNAME:PLAYER%…」
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:3 == 0
+                PRINTFORMW 「후앗…！잔뜩…굉장해요…」
+                PRINTFORMW 「가슴에 고일 정도로…기분 좋게 해드릴 수 있었나 보네요…기뻐요…」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「아아, 나왔어요…기분 좋은듯한 얼굴을 하고있어요, %CALLNAME:PLAYER%…」
+                PRINTFORMW 「다음엔…저의 어디로 하길 원하시나요？후훗」
+            ELSE
+                PRINTFORMW 「아읏, 이렇게…질척질척해졌어요, 정말…」
+                PRINTFORMW 이쿠는 사정이 끝난 페니스를 가슴으로 천천히 쓰다듬고 있다…
+                PRINTFORMW 「만족하셨나요？후훗, 지금부터에요」
+            ENDIF
+        ENDIF
+    ;봉사정신Lv3이상
+    ELSEIF ABL:봉사정신 >= 3
+        IF RAND:2 == 0
+            PRINTFORMW 「또, 이렇게…정말 가슴으로 하는게 좋은가보네요…」
+            PRINTFORMW 「그렇게 기분 좋은듯한 얼굴을 하시면…뭐어, 나쁜 기분은 아닙니다만」
+        ELSE
+            PRINTFORMW 「읏, 기세가…！아직도 나와…」
+            PRINTFORMW 「…언제나, 가슴을 너무 더럽힙니다…그렇게나 솜씨가 좋습니까？하아」
+        ENDIF
+    ;봉사정신Lv1이상
+    ELSEIF ABL:봉사정신 >= 1
+        PRINTFORMW 「…기분 좋았던 것 같네요…그렇게 만족한듯한 얼굴을 하시곤」
+    ;그 이외
+    ELSE
+        PRINTFORMW 「아아, 기분 나빠…저의 가슴은 도구가 아닙니다만…」
+    ENDIF
+ENDIF
+
+;20181005 배에 사정기능이 없음
+;-------------------------------------------------
+;배에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_BELLY
+;泡踊りのつもり
+;연모
+IF TALENT:연모
+    ;봉사정신Lv4이상 또는 정액중독Lv2이상
+    IF ABL:봉사정신 >= 4 || ABL:정액중독 >= 2
+        IF RAND:2 == 0
+            PRINTFORMW 「저와 %CALLNAME:PLAYER%의 사이에 껴서, 자지가 움찔거리고 있어요…」
+            PRINTFORMW 이쿠의 하복부에 밀착한 채로, 페니스가 계속해서 쾌감에 떨고 있다…
+            PRINTFORMW 「아직 딱딱한 채네요…그렇게 배에 눌러대면, 그곳이, 의식해 버려요…♪」
+        ELSE
+            PRINTFORMW 「아앗, 이렇게나 잔뜩, 뿌려져 버렸어요…」
+            PRINTFORMW 「그래도, 여기라면 더러워도 그렇게 신경쓰이지 않고…후훗, 좀 더 하고 싶으신가요？」
+            PRINTFORMW 이쿠는 그렇게 말하며 몸을 꿈틀거려, 당신을 밀어붙이고 있다…
+        ENDIF
+    ;그 이외
+    ELSE
+        PRINTFORMW 「후훗…배에 철퍽, 나와 버렸네요…♪」
+        PRINTFORMW 「깨끗하게 해 드릴테니, 얌전히 계셔 주세요？」
+    ENDIF
+;봉사정신Lv3이상
+ELSEIF ABL:봉사정신 >= 3
+    PRINTFORMW 「아아…이렇게나, 나온겁니까…？」
+    PRINTFORMW 「이젠 모릅니다…%CALLNAME:PLAYER%도 끈적끈적하게 만들어 드릴테니까…」
+;봉사정신Lv1이상
+ELSEIF ABL:봉사정신 >= 1
+    PRINTFORMW 「배가 미끌미끌거립니다…우읏」
+    PRINTFORMW 「하아…또 씻겨드릴테니, 가만히 계세요？」
+;그 이외
+ELSE
+    PRINTFORMW 「꺅…！뜨거운게 뿌려져서…우으, 더러워…」
+    PRINTFORMW 「씻겨 드리는 거니까…하다못해 얌전히 계세요！」
+ENDIF
+
+;20181005 겨드랑이에 사정기능이 없음
+;-------------------------------------------------
+;겨드랑이에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_ARMPIT
+;연모
+IF TALENT:연모
+    ;정액중독Lv2이상
+    IF ABL:정액중독 >= 2
+        IF RAND:2 == 0
+            PRINTFORMW 「앗！움찔움찔거려…굉장해요, 벌써 질척거려…」
+            PRINTFORMW 「겨드랑이는 민감하니까…이 냄새가 묻어 있다고 생각하는 것만으로도, 흥분해 버려요…♪」
+        ELSE
+            PRINTFORMW 「%CALLNAME:PLAYER%의 냄새가 잔뜩이에요…후훗, 저도 완전히 %CALLNAME:PLAYER%같은 취미가 되어 버렸네요…」
+            PRINTFORMW 「좀 더 저의 여러 부위, 사용해도 괜찮으니까…♪」
+        ENDIF
+    ;그 이외
+    ELSE
+        PRINTFORMW 「앗, 뜨것…！」
+        PRINTFORMW 「여긴 민감하니까…조금, 놀라버렸어요, 후훗」
+    ENDIF
+;반발각인Lv1이상
+ELSEIF MARK:반발각인 >= 1
+    PRINTFORMW 「큭, 사람의 몸을 장난감 취급하다니…！」
+    PRINTFORMW 이쿠는 오물을 보는 듯한 눈으로 당신을 노려보고 있다…
+;굴복각인Lv3
+ELSEIF MARK:굴복각인 == 3
+    PRINTFORMW 「크우으…뜨거워서, 간지럽습니다…」
+    PRINTFORMW 「기분 좋으셨나요？라고…물을 필요도 없군요, 하아…」
+;굴복각인Lv1이상
+ELSEIF MARK:굴복각인 >= 1
+    PRINTFORMW 「우으으…미끌거려서 기분 나쁩니다…」
+    PRINTFORMW 「저의 겨드랑이를 그렇게 보지 마세요…！」
+;그 이외
+ELSE
+    PRINTFORMW 「싫엇, 나오고 있어, 기분 나빠…！」
+    PRINTFORMW 「문지르지 맛…！아아 정말, 제 정신이 아닙니다…」
+ENDIF
+
+;-------------------------------------------------
+;손에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_12
+;처음
+IF CFLAG:5406 == 0
+    ;정액경험 없음
+    IF EXP:정액경험 == 0
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            PRINTFORMW 「크읏, 뭡니까, 이건…뜨겁습니다…」
+            PRINTFORMW 이쿠의 유연한 손가락에 정액이 뚝뚝 떨어진다…
+            PRINTFORMW 이쿠는 가만히 손을 응시하며, 손끝으로 정액의 감촉을 확인하고 있다…
+            PRINTFORMW 「이게, %CALLNAME:PLAYER%의…저, 정액입니까…？」
+            PRINTFORMW 「이렇게나…저기, 괜찮으십니까？괴로워 보였습니다만…」
+            PRINTFORMW 「능숙했다…？하아, 감사합니다」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「…！꺗, 싫엇…뜨거워…！」
+            PRINTFORMW 이쿠의 유연한 손가락이 당신의 페니스를 훑어대자, 정액이 흘러나오기 시작한다…
+            PRINTFORMW 이쿠는 놀란 나머지 손을 떼지도 못하고, 페니스를 꽉 쥔 채로, 굳어 버렸다…
+            PRINTFORMW 「이건, 뭡니까…뜨겁고, 질척거려서…우읏, 기분 나쁩니다…」
+            PRINTFORMW 「정액…？이게…」
+            PRINTFORMW 「하아…기분 좋았습니까？…그런, 칭찬받아도 곤란합니다…」
+        ENDIF
+    ;정액경험 있음
+    ELSE
+        ;굴복각인Lv3
+        IF MARK:굴복각인 == 3
+            PRINTFORMW 「꺗, 손 안에서, 떨리고 있습니다…！」
+            PRINTFORMW 이쿠의 유연한 손가락에 정액이 뚝뚝 떨어진다…
+            PRINTFORMW 이쿠는 가만히 손을 응시하며, 손끝으로 정액의 감촉을 확인하고 있다…
+            PRINTFORMW 「…손으로 낸건 처음이지만…나올 때의 감촉이 직접 전해져서, 뭐랄까…」
+            PRINTFORMW 「아, 아뇨！아무것도 아닙니다…！」
+        ;그 이외
+        ELSE
+            PRINTFORMW 「…！꺗, 싫엇…뜨거워…！」
+            PRINTFORMW 이쿠의 유연한 손가락이 당신의 페니스를 훑어대자, 정액이 흘러나오기 시작한다…
+            PRINTFORMW 이쿠는 놀란 나머지 손을 떼지도 못하고, 페니스를 꽉 쥔 채로, 굳어 버렸다…
+            PRINTFORMW 「뜨겁고, 질척거려서…우읏, 기분 나쁩니다…」
+            PRINTFORMW 「…하아, 이제 이런 손따위로 깃옷에 손대지 않을겁니다…」
+        ENDIF
+    ENDIF
+    CFLAG:5406 == 1
+;2회째 이후
+ELSE
+    ;연모
+    IF TALENT:연모
+        ;정액중독Lv3이상
+        IF ABL:정액중독 >= 3
+            ;IF ASSIPLAY && NO:ASSI == 52 && EXP:ASSI:射精経験 == 0
+                ;PRINTFORMW 
+            IF RAND:3 == 0
+                PRINTFORMW 「뷰루뷰루 거리면서, 자지 힘내고 있다고요？후훗♪」
+                PRINTFORMW 「좀 더 주세요…좀 더 %CALLNAME:PLAYER%의 정액으로, 이쿠를 더럽혀 주세요…」
+                PRINTFORMW 이쿠는 그렇게 말하며 당신의 페니스를 다시 훑어대기 시작했다…
+                PRINTFORMW 「아하앗…♪끈적끈적해서, 음란한 소리가 나고 있어요…자아, 힘내서…정액 잔뜩, 내도록 하죠…♪」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「아앗, 손에 잔뜩, 휘감겨선…」
+                PRINTFORMW 「후훗, 미끌미끌하네요…모처럼이니, 이렇게 할까요…」
+                PRINTFORMW 이쿠는 정액 투성이가 된 손가락으로 유두나 고간을 만지작거리기 시작했다…
+                PRINTFORMW 「아앗…%CALLNAME:PLAYER%의정액이, 소중한 곳에…스며들고 있어요, 자아…♪」
+            ELSE
+                PRINTFORMW 「왓, 나왔네요…저의 손, %CALLNAME:PLAYER%의 정액으로 뜨거워요…♪」
+                PRINTFORMW 이쿠는 완전히 정액 투성이가 된 손을 유심히 바라보고 있다…
+                PRINTFORMW 「그러면…잘 먹겠습니다…♪」
+                PRINTFORMW 이쿠는 상스러운 소리를 내면서, 손가락에 붙은 정액을 빨아마시고 있다…
+                PRINTFORMW 「%CALLNAME:PLAYER%의…음란한 냄새가 가득해서…참을 수 없어요…♪」
+            ENDIF
+        ;그 이외
+        ELSE
+            ;IF ASSIPLAY && NO:ASSI == 52 && EXP:ASSI:射精経験 == 0
+                ;PRINTFORMW 
+            IF RAND:3 == 0
+                PRINTFORMW 「괜찮아요…이대로 마지막 한 방울까지, 이쿠의 손에 내주세요…」
+                PRINTFORMW 이쿠는 능숙한 손놀림으로, %조사처리(CALLNAME:PLAYER,"을")% 절정으로 이끌었다…
+                PRINTFORMW 「후훗, 잔뜩 나왔네요？음란한 냄새가, 가득해요…♪」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「왓, 와앗, 멈추지 않아…괜찮, 아요…？」
+                PRINTFORMW 「정말…손이 질척거려요…언제나 굉장한 양이라니까요…」
+            ELSE
+                PRINTFORMW 「아앗, 나왔다…굉장한 기세예요…♪」
+                PRINTFORMW 이쿠는 사정중인 페니스를 상냥하게 훑고있다…
+                PRINTFORMW 「마지막까지 확실하게 나왔네요…후훗, 기분 좋았나요？」
+            ENDIF
+        ENDIF
+    ;그 이외
+    ELSE
+        ;봉사정신Lv3이상
+        IF ABL:봉사정신 >= 3
+            IF RAND:2 == 0
+                PRINTFORMW 「조금 더, 문질렀으면 좋겠, 습니까…？」
+                PRINTFORMW 「알겠습니다, 계속하겠습니다…」
+                PRINTFORMW 이쿠는 사정한 직후의 페니스를 천천히 애무하고 있다…
+            ELSE
+                PRINTFORMW 「잔뜩, 나왔습니다…저의 손, 기분 좋으셨습니까…？」
+                PRINTFORMW 「나온 후에 천천히 움직이는게 기분 좋지요…」
+            ENDIF
+        ;봉사정신Lv1이상
+        ELSEIF ABL:봉사정신 >= 1
+            IF RAND:2 == 0
+                PRINTFORMW 「…다시 한번 해드릴까요？」
+                PRINTFORMW 「이쯤이야, 뭐어…몇번 정도는, 해드리겠습니다…」
+            ELSE
+                PRINTFORMW 「기분 좋았던 것 같네요…그럼, 닦아 드리겠습니다…」
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:2 == 0
+                PRINTFORMW 「우읏, 기분 나쁩니다…」
+                PRINTFORMW 「대체 왜, 이런 짓을 하고 있는겁니까…」
+            ELSE
+                PRINTFORMW 「왓, 이렇게나…잔뜩…」
+                PRINTFORMW 「손이 끈적거려…너무합니다…」
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;보지에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_20
+;연모
+IF TALENT:연모
+    ;섹스계 조교
+    IF TFLAG:9 == 1
+        ;임신
+        IF TALENT:임신 == 1
+            PRINTFORMW 당신은 이쿠의 질내를 실컷 맛본 후, 사정 직전에 페니스를 뽑아내, 
+            PRINTFORMW 비렬에 정액을 뿌렸다…
+            PRINTFORMW 「앗, 아아아앗…！크우우우읏…！」
+            PRINTFORMW 「하아, 하아아…기분 좋았어요, %CALLNAME:PLAYER%…♪」
+            PRINTFORMW 「후훗…이렇게 이 아이를 신경쓰면서 야한 일을 하는 것도…왠지 행복해요…」
+        ;음란
+        ELSEIF TALENT:음란
+            IF RAND:2 == 0
+                PRINTFORMW 「앗, 아흐아앗！정액, 잔뜩, 뿌려졌어요…」
+                PRINTFORMW 이쿠는 정액이 뿌려진 쾌감에 절정을 맞이했다…
+                PRINTFORMW 「기분 좋아…기분 좋아요…하지만…」
+                PRINTFORMW 「역시, 이곳에 내는 쪽이…%CALLNAME:PLAYER%도, 기분 좋다고 생각한다고요…？」
+                PRINTFORMW 이쿠는 애액 투성이인 비부를 휘저으며, 당신을 유혹하고 있다…
+                PRINTFORMW 「다음엔…이곳에 잔뜩, 부탁드려요？%CALLNAME:PLAYER%…♪」
+            ELSE
+                PRINTFORMW 「꺗, 아앗, 빠졌, 앗！그런…」
+                PRINTFORMW 사정 직전의 페니스를 질내로부터 뽑아내자, 한계인 페니스가 이쿠의 비부에 정액을 뿌려댔다…
+                PRINTFORMW 「앗, 아앗…정말, 저의 이곳, 더럽히고 싶었나요…？」
+                PRINTFORMW 「…좀 더, 좀 더 질에서부터, 더럽혀지고 싶어요…」
+                PRINTFORMW 「부탁이니까…%CALLNAME:PLAYER%의 것이 질에서 흘러넘치게 해주세요…！」
+                PRINTFORMW 이쿠는 애액 투성이인 비부를 질척거리며 휘젓고 있다…
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:2 == 0
+                PRINTFORMW 이쿠의 비렬에 정액이 잇달아 뿌려진다…
+                PRINTFORMW 「앗, 빠져…앗！그곳에, 정액이…！아하앗, 하앗…」
+                PRINTFORMW 「어째서, 밖에…」
+                PRINTFORMW 「%조사처리(CALLNAME:MASTER,"은")%, 저의 질에 내고 싶지, 않은가요…？」
+                PRINTFORMW 「저는 그게, 질로 끝까지 기분 좋아졌으면 합니다만…안 되나요…？」
+            ELSE
+                PRINTFORMW 이쿠의 비렬에 정액이 잇달아 뿌려진다…
+                PRINTFORMW 「앗！앗！후아아앗！뜨거워…！」
+                PRINTFORMW 「하아, 하아앗…그대로…질에 내버려도, 괜찮았다고요…？」
+                PRINTFORMW 「…저는 그, %CALLNAME:MASTER%의 아이를, 갖고 싶으니까…」
+            ENDIF
+        ENDIF
+    ;여기부턴 평범하게 보지에 사정
+    ;처녀
+    ELSEIF TALENT:처녀 == 1
+        IF RAND:3 == 0
+            PRINTFORMW 「하아, 하아…서로, 이러고 있는 것만으로도 기분이 좋은데…」
+            PRINTFORMW 「만약, 이 뜨거운게 저의 안에 들어간다면…상상도 할 수 없어요…」
+            PRINTFORMW 이쿠의 비순은 애액과 정액 투성이가 되어, 당신의 페니스에 딱 달라붙어 있다…
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「아읏！앗…가버렸나요…？잔뜩, 나왔네요…」
+            PRINTFORMW 「…만약 이것이 저에게 들어온다면…이렇게 안쪽까지, 들어와 버리는 건가요…？믿을 수 없어요…」
+            PRINTFORMW 이쿠는 자신의 하복부와 페니스의 길이를 비교하며, 삽입되는 것을 상상하고 있는 것 같다…
+            PRINTFORMW 「저기…저, 힘내볼테니까요？」
+        ELSE
+            PRINTFORMW 「으응, 읏…！아앗…나와 버렸네요…굉장한 기세…」
+            PRINTFORMW 「…만약 이게 저의 안이었다면…어떻게 되버리겠죠…」
+            PRINTFORMW 이쿠는 열정적인 눈으로 페니스와 흘날린 정액을 응시하며, 삽입의 기대에 떨리는 하복부를 손으로 살며시 억눌렀다…
+        ENDIF
+    ;음란
+    ELSEIF TALENT:음란
+        IF RAND:3 == 0
+            PRINTFORMW 「앗！히야아앗…！안돼요…클리 근처에, 정액을 뿌려선…♪」
+            PRINTFORMW 「아후아아…정액, 뜨거워서 기분 좋아요…읏！으응…」
+            PRINTFORMW 「다음엔…저의, 좀 더 깊은 곳에, 부탁드려요…♪」
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「이렇게나 잔뜩…저의 그곳, 정액으로 질척질척해요…♪」
+            PRINTFORMW 「…다음엔 질에 내주세요…질도 밖도, %CALLNAME:PLAYER%의 정액으로 전부 더럽혀 주세요…♪」
+            PRINTFORMW 이쿠는 정액과 애액으로 질척하게 젖어버린 고간을 과시하고 있다…
+        ELSE
+            PRINTFORMW 「후훗…%CALLNAME:PLAYER%의 것도 저의 여기도, 질척질척해요…♪」
+            PRINTFORMW 「저의 질에 넣기 전에…좀 더 이 감촉을 즐기자고요？」
+            PRINTFORMW 이쿠는 녹아 버릴 듯한 표정을 지으며, 하반신을 당신에게 밀어붙이며 쾌감을 탐하고 있다…
+            PRINTFORMW 「아앗, 굉장해…뜨거운게, 저의 배에, 닿고 있어요…」
+            PRINTFORMW 「클리토리스도, 무척이나 민감해졌어요…후훗, 이래서야 제 쪽에서, 참을 수 없을지도…♪」
+        ENDIF
+    ;그 이외
+    ELSE
+        IF RAND:2 == 0
+            PRINTFORMW 「앗！기분 좋앗, 응아앗！아앗…」
+            PRINTFORMW 「후훗…%CALLNAME:PLAYER%도, 기분 좋았나요…？」
+            PRINTFORMW 「이 들어갈 것 같으면서도 들어가지 않는, 초조한 느낌…두근두근해요…」
+        ELSE
+            PRINTFORMW 「앗！아핫…나왔네요…거기가, 찌릿찌릿해요…」
+            PRINTFORMW 「이것만으론 부족하지요…후훗, 다음은 어떻게 할까요…」
+        ENDIF
+    ENDIF
+;그 이외
+ELSE
+    ;반발각인Lv1이상
+    IF MARK:반발각인 >= 1
+        PRINTFORMW 「싫엇, 이런 곳에, 낸다니…！」
+        PRINTFORMW 「안에만 내지 않으면 괜찮다니…악취미네요…！」」
+    ;굴복각인Lv3
+    ELSEIF MARK:굴복각인 == 3
+        IF RAND:2 == 0
+            PRINTFORMW 「아우으읏…！뜨겁습니다…여기는 그, 민감한 곳이니까…」
+            PRINTFORMW 이쿠는 정액이 뿌려진 비렬을 신중하게 닦고 있다…
+        ELSE
+            PRINTFORMW 「상당히 많이, 나왔군요…」
+            PRINTFORMW 「여기를 더럽히는게, 그렇게나 좋습니까…？」
+        ENDIF
+    ;그 이외
+    ELSE
+        IF RAND:2 == 0
+            PRINTFORMW 「나올 것 같을 때는 말씀해 주세요…」
+            PRINTFORMW 「여기에 뿌려지면, 저기…조금 무서우니까…」
+        ELSE
+            PRINTFORMW 「크우으읏…이런 곳에 내다니…」
+            PRINTFORMW 「닦아내지 않으면…싫엇, 미끌거려요…」
+        ENDIF
+    ENDIF
+ENDIF
+
+;-------------------------------------------------
+;竿に射精
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_21
+;PRINTFORMW 
+
+;-------------------------------------------------
+;엉덩이에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_22
+;A 개발 전제
+;연모
+IF TALENT:연모
+    ;A감각Lv4이상
+    IF ABL:A감각 >= 4
+        IF RAND:2 == 0
+            PRINTFORMW 「크웃, 크우으으읏…！자지가, 떨려요…！」
+            PRINTFORMW 「다음번엔…부디 엉덩이 안에 넣어 주세요…！저의 엉덩이도, 기분 좋아지고 싶어요…♪」
+            PRINTFORMW 이쿠는 애널을 범해지는 것을 기대하며, 엉덩이를 페니스에 밀어붙이고 있다…
+        ELSE
+            PRINTFORMW 「앗, 아앗…잔뜩, 뿌려졌네요…♪」
+            PRINTFORMW 「비비는 것만으로는 어딘가 부족해요…부디, 엉덩이 구멍도…사용해 주세요…！」
+            PRINTFORMW 이쿠는 정액으로 미끌미끌해진 애널을 만지작거리며, 당신을 유혹하고 있다…
+        ENDIF
+    ;그 이외
+    ELSE
+        IF RAND:2 == 0
+            PRINTFORML 
+            PRINTFORMW 당신은 이쿠의 엉덩이에 페니스를 문지르며, 여운에 잠겨있다…
+            PRINTFORMW 「어떠셨나요？저의 엉덩이는…이라니, 왠지 부끄럽네요…」
+            PRINTFORMW 「탱탱했다니…？그런, 정말…그만해 주세요！」
+        ELSE
+            PRINTFORML 
+            PRINTFORMW 당신은 이쿠의 형태 좋은 엉덩이를 더듬으며, 쾌감에 잠겨있다…
+            PRINTFORMW 「기분 좋았나요…？후훗」
+            PRINTFORMW 「그래도, 너무 엉덩이에 손대는 것은 조금…부끄러워요…」
+        ENDIF
+    ENDIF
+;반발각인Lv1이상
+ELSEIF MARK:반발각인 >= 1
+    PRINTFORMW 이쿠는 뜨거운 정액이 자신을 더럽히고 있다는 굴욕에, 입술을 깨물었다…
+    PRINTFORMW 「으윽…정말 취미가 나쁜 사람이군요…」
+;굴복각인Lv3
+ELSEIF MARK:굴복각인 == 3
+    PRINTFORMW 「앗, 아앗…엉덩이의 사이에서, 움찔거리고 있어요…」
+    PRINTFORMW 「좋으셨던 것 같지만…너무 그, 엉덩이를 꽉 잡진 말아 주세요…？」
+;굴복각인Lv1이상
+ELSEIF MARK:굴복각인 >= 1
+    PRINTFORMW 「…만족하셨습니까？」
+    PRINTFORMW （이상한 곳에 사정당하는 것보단, 차라리 잘 된 걸지도 모릅니다…）
+;그 이외
+ELSE
+    PRINTFORMW 이쿠는 뜨거운 정액이 자신의 엉덩이를 더럽히는 감각이 불쾌한 것 같다…
+    PRINTFORMW 「크윽…！이런 짓을 해서, 더럽다고 생각하진 않는겁니까…？」
+ENDIF
+
+;-------------------------------------------------
+;太腿に射精
+;-------------------------------------------------
+;@K51_MESSAGE_EJAC_PLAYER_23
+;PRINTFORMW 
+
+;-------------------------------------------------
+;발에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_19
+;풋잡 전제
+;연모
+IF TALENT:연모
+    ;새드끼Lv3이상
+    IF ABL:새드끼 >= 3
+        IF RAND:4 == 0
+            PRINTFORMW 「기분 좋았나 보네요…우～응, 다음엔 좀 더 아프게 해볼까요？」
+            PRINTFORMW 「%조사처리(CALLNAME:PLAYER,"이")% 어디까지 견딜 수 있는지 알아 두는 것도, 중요한 일이라고 생각합니다만, 어떤가요？」
+            PRINTFORMW 이쿠는 웃는 얼굴로 무서운 말을 하고 있다…
+        ELSEIF RAND:3 == 0
+            PRINTFORMW 「다리만으로 가버리는 건가요？하아, 실망이에요…」
+            PRINTFORMW 「분하다면 다시 한번 더 세워보는건 어떤가요？도와드릴게요？저의 다리로 좋다면」
+            PRINTFORMW 이쿠는 즐거운 듯이 당신의 페니스를 다리로 짓누르고 있다…
+        ELSEIF RAND:2 == 0
+            PRINTFORMW 「…더러워져 버렸네요. 그러면 %조사처리(CALLNAME:PLAYER,"이")% 깨끗하게 해주실래요？」
+            PRINTFORMW 이쿠는 정액 투성이의 발 끝을 당신에게 내밀었다…
+        ELSE
+            PRINTFORMW 「보기 흉하다고요？그런 얼굴을 해선…다음엔 사진이라도 찍어서 보여줄까요？」
+            PRINTFORMW 「…그래도, %CALLNAME:PLAYER%의 그런 얼굴도 좋아한다고요？후훗」
+        ENDIF
+    ;그 이외
+    ELSE
+        IF RAND:2 == 0
+            PRINTFORMW 「잔뜩 나왔어요…이렇게 다리로 비비는데, 아프진 않았나요？」
+            PRINTFORMW 「소중한 곳이니까, 조금 더 상냥하게 다루는게 좋다고 생각합니다만…」
+        ELSE
+            PRINTFORMW 「후훗, 능숙해진 것 같네요…」
+            PRINTFORMW 「조금 불쌍하지만, 자지의 반응이 재밌을, 지도…」
+        ENDIF
+    ENDIF
+;반발각인Lv1이상
+ELSEIF MARK:반발각인 >= 1
+    PRINTFORMW 「…심한 말을 산더미만큼 퍼부어 주고 싶습니다만…」
+    PRINTFORMW 「%조사처리(CALLNAME:PLAYER,"은")% 분명 반대로 기뻐하겠지요？이런 일을 시킬 정도라면…완전 불쾌합니다」
+;굴복각인Lv3
+ELSEIF MARK:굴복각인 == 3
+    PRINTFORMW 「아앗, 어떻게든, 능숙하게 한 것 같습니다만…」
+    PRINTFORMW 「저기, 아프진 않았나요？」
+;그 이외
+ELSE
+    PRINTFORMW 「…지쳤습니다…일단 다리를 깨끗하게 해주세요…」
+    PRINTFORMW 이쿠는 무기력한 표정으로 정액 투성이가 된 발 끝을 보고 있다…
+ENDIF
+
+;-------------------------------------------------
+;조교자가 키스로 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_14
+;처음
+IF CFLAG:5407 == 0
+    ;연모
+    IF TALENT:연모
+        PRINTFORMW 「응읏, 츄웃, 후아아…%CALLNAME:PLAYER%의 것이, 닿고 있어요…굉장히, 뜨거워요…」
+        PRINTFORMW 「그렇다 하더라도, 상당히 배가 뜨겁습니다만……엣？이건, 거짓말…」
+        PRINTFORMW 문득 위화감을 느낀 이쿠가 자신의 배를 문지르자, 정액으로 더럽혀져 있었다…
+        PRINTFORMW 이쿠와 키스를 하고 있는 동안, 흥분해버린 나머지 서로가 깨닫지 못하는 동안 사정해 버린 것인가…？
+        PRINTFORMW 「…키스로, 사정해 버린, 건가요…？믿을 수 없어요…」
+        PRINTFORMW 「저, 저기, 매도하는게 아니고…！」
+        PRINTFORML 
+        PRINTFORMW 「…분명, 너무 흥분해 버린 것이죠？후훗」
+        PRINTFORMW 「저로 흥분하는 것은 기쁘지만…조금만 더, 천천히 즐기자고요？%CALLNAME:PLAYER%…」
+    ;그 이외
+    ELSE
+        PRINTFORMW 「하아웃…츗…읏！후앗…！？뭔가, 뜨거운게…」
+        PRINTFORMW 「싫다…어째서, 아무것도 안했는데, 나와 버린건가요…！」
+    ENDIF
+    CFLAG:5407 == 1
+;2회째 이후
+ELSE
+    ;연모
+    IF TALENT:연모
+        IF RAND:4 == 0
+            PRINTFORMW 당신은 고조되는 흥분을 억누르지 못하고, 이쿠의 몸에 페니스를 문질러 그대로 사정해 버렸다…
+        ELSEIF RAND:3 == 0
+            PRINTFORML 이쿠에 대한 욕정이 가라앉지 않아, 사정을 참을 수 없을 것 같다…
+            PRINTFORMW 사정에 이르게 된 순간, 눈 앞의 이쿠가 요염한 미소를 지은 것 같은 느낌이 들었다…
+        ELSEIF RAND:2 == 0
+            PRINTFORML 한계가 가까워지고 있는 페니스에, 격렬하게 키스를 요구해오는 이쿠의 몸이 가차없이 얽혀온다…
+            PRINTFORMW 당신은 기분 좋은 밀착감에, 참지 못하고 사정해 버렸다…
+        ELSE
+            PRINTFORML 이쿠의 혀가 입 안을 격렬하게 꾸짖어, 쾌감으로 의식이 멀어진다…
+            PRINTFORMW 당신은 새어나오는 정액의 감각에 간신히 의식을 되찾았다…
+        ENDIF
+            IF RAND:5 == 0
+                PRINTFORMW 「앗, 배가, 미끌미끌해서…아므웃, 츗…츄팟, 후훗, 놓치지 않아요♪」
+            ELSEIF RAND:4 == 0
+                PRINTFORMW 「…후훗, 나와 버렸네요…좀 더 저에게 열중해도 좋다고요？」
+            ELSEIF RAND:3 == 0
+                PRINTFORMW 「푸하앗…조금, 격렬했나요？무심코, %CALLNAME:PLAYER%의 키스가 기분 좋아서…」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「어라라, 키스만으로 이렇게…왠지 아까워요…」
+            ELSE
+                PRINTFORMW 「정말, 너무 흥분했다고요？…그렇게 허둥대지 않아도, 저는 도망가지 않는다고, 요？」
+            ENDIF
+    ;굴복각인Lv3
+    ELSEIF MARK:굴복각인 == 3
+        PRINTFORMW 「…조금 더 진정하는 편이 어떨까요？」
+    ;그 이외
+    ELSE
+        PRINTFORMW 「우읏…갑자기 내지 않았으면 하는데요…」
+    ENDIF
+ENDIF
+
+
+;-------------------------------------------------
+;主人が助手を犯すで射精
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_27
+;PRINTFORMW 
+
+;-------------------------------------------------
+;조교자가 콘돔에 사정
+;-------------------------------------------------
+@K51_MESSAGE_EJAC_PLAYER_CONDOM
+;V섹스계 조교
+IF SELECTCOM >= 20 && SELECTCOM < 30
+    ;처음으로 콘돔에 사정
+    IF CFLAG:5409 == 0
+        ;연모
+        IF TALENT:연모
+            PRINTFORMW 「앗…！아앗, 질에서, 커지고 있어…！」
+            PRINTFORMW 당신의 페니스가 한계까지 맞이해, 콘돔에 정액을 잔뜩 토해냈다…
+            PRINTFORMW 「앗, 읏, 굉장하게…떨고 있어요…아직도, 나오는 건가요…？」
+            PRINTFORMW 「따뜻해…이거, 구멍이 난건…」
+            PRINTFORML 정액의 따뜻함을 느낀 이쿠가 위화감을 호소하고 있지만, 
+            PRINTFORMW 아마도 정액이 모여 크게 부푼 곳이 질벽에 위치했기 때문일 것이다…
+            PRINTFORML 
+            PRINTFORMW 당신은 콘돔이 빠지지 않도록, 페니스를 천천히 뽑아 냈다…
+            PRINTFORMW 「…우와아」
+            PRINTFORMW 아직도 딱딱한 상태인 페니스의 끝에, 대령의 정액이 모인 콘돔이 매달려 있다. 
+            PRINTFORMW 이쿠는 얼굴이 새빨개진 채로 눈을 떼지 못하고 있다…
+            ;질내사정 경험 없음
+            IF CFLAG:5401 == 0
+                PRINTFORMW 「이렇게나…나오는거였나요？굉장한 양이에요…」
+                PRINTFORMW 이쿠는 정액이 모인 곳의 감촉을 확인하거나 무게를 재보고 있었다만…역시 낯간지럽다. 
+                PRINTFORMW 「…이렇게나 잔뜩, 혹시 제 질에 나왔다간…」
+                PRINTFORMW 이쿠는 손을 하복부에 대고는, 질내사정을 기대하며 몸을 떨었다…
+                ;음란
+                IF TALENT:음란 == 1
+                    PRINTFORMW 「…다음엔, 부디 그…생으로, 하지 않을래요？」
+                    PRINTFORMW 「피임따윈 됐으니까…%CALLNAME:PLAYER%의 정액, 제 보지로 느껴보고 싶어요…♪」
+                    PRINTFORMW 「아뇨, 보지뿐만아니라…안까지, 자궁에까지 잔뜩, 싸주세요…♪」
+                    PRINTFORMW 이쿠는 녹아 버린 듯한 표정으로 당신의 페니스를 응시하며, 희롱하고 있다…
+                ENDIF
+            ;질내사정 경험 있음
+            ELSE
+                PRINTFORMW 「언제나 이렇게…제 질에, 나오는 건가요…」
+                PRINTFORMW 「왠지…보는 것만으로도 오싹오싹해지네요, 후훗」
+                PRINTFORMW 이쿠는 하반신을 꾸물대며 당신의 페니스를 농락하고 있다…
+            ENDIF
+        ;그 이외
+        ELSE
+            PRINTFORMW 「꺗…！그런, 격렬해요…좀 더, 천천히…크우읏！」
+            PRINTFORML 한계에 도달한 당신은, 이쿠가 고통을 호소하는 것도 상관하지 않고
+            PRINTFORMW 허리를 격렬하게 계속 흔들어, 기세대로 사정했다…
+            PRINTFORMW 「우읏！윽, 싫어어…저의, 질에…」
+            PRINTFORML 대량의 정액이 콘돔을 채워 갔다…
+            PRINTFORMW 이쿠는 피임을 했다고는 해도, 질내에 사정당하는 것과 비슷한 감각이 조금 무서운 듯 하다…
+            PRINTFORMW 「피임 했다고 해도…부디, 무리한 행동은 그만해 주세요…하앗, 핫, 후우으…」
+            PRINTFORML 
+            PRINTFORMW 페니스를 주르륵 뽑아내서, 정액이 모인 콘돔을 과시했다…
+            PRINTFORMW 「으으읏！…갑자기 뽑지 마세요…！」
+            ;굴복각인Lv3
+            IF MARK:굴복각인 == 3
+                PRINTFORMW 「……그런, 보여주지 않아도…우읏, 이 무슨 양을, 사정한 겁니까…」
+                PRINTFORMW 이쿠는 싫어하면서도 페니스에서 눈을 돌리지 못하고 있다…
+                PRINTFORMW 당신은 착실하게 쾌락에 떨어지는 이쿠를 보며, 또 다시 흥분을 느꼈다…
+            ;그 이외
+            ELSE
+                PRINTFORMW 「……싫엇, 기분 나빠…빨리 치워 주세요, 그런건…！」
+                PRINTFORMW 이쿠는 대량으로 모인 정액을 보며 노골적으로 혐오감을 드러냈다…
+                PRINTFORMW …허나 분명, 곧 스스로 요구하게 될 것이다. 
+                PRINTFORMW 당신은 싫어하는 이쿠에게 콘돔을 뺀 페니스를 들이대, 깨끗하게 하도록 시켰다…
+            ENDIF
+        ENDIF
+        CFLAG:5409 = 1
+    ;2회째 이후
+    ELSE
+        ;연모
+        IF TALENT:연모
+            ;임신
+            IF TALENT:임신 == 1
+                ;음란
+                IF TALENT:음란
+                    IF RAND:3 == 0
+                        PRINTFORML 
+                        PRINTFORMW 「하아, 하아앗…기분 좋았나요？야한 임산부의 보지는…♪」
+                        PRINTFORMW 「…네에, 콘돔을 사용했어도, 무척이나 느꼈어요…」
+                        PRINTFORMW 「%CALLNAME:PLAYER%도 그렇게나 싸다니…무척, 멋지네요…♪」
+                    ELSEIF RAND:2 == 0
+                        PRINTFORML 
+                        PRINTFORMW 「후훗, 굉장한 양이에요…♪」
+                        PRINTFORMW 「임신했는데도…이렇게나 저의 질에 싸고 싶었나요？」
+                        PRINTFORML 「조금만…조금만 기다려 주세요. 그러면 다시,」
+                        PRINTFORMW 「저의 질에 좋을대로, %CALLNAME:PLAYER%의 정액을 잔뜩 사정할 수 있으니까…♪」
+                    ELSE
+                        PRINTFORML 
+                        PRINTFORMW 「하아앗…아아～앗……후훗, 잔뜩 나왔네요…」
+                        PRINTFORMW 「그러면…다음 콘돔을 쓰죠？」
+                        PRINTFORMW 「좀 더 해요…좀 더 뱃속의 아이에게, 기분 좋은 것을 가르쳐 주도록 해요…♪」
+                    ENDIF
+                ;그 이외
+                ELSE
+                    IF RAND:3 == 0
+                        PRINTFORML 
+                        PRINTFORMW 「하앗, 앗！아앗…후훗, 나왔네요…」
+                        PRINTFORMW 「무척이나 상냥해서…기분 좋았어요…격렬하게 하지 않아도, 이렇게 느낄 수 있다니…」
+                        PRINTFORMW 「답례로 자지를 확실하게 깨끗하게 만들어 드릴게요…♪그러면, 빼주세요…」
+                    ELSEIF RAND:2 == 0
+                        PRINTFORML 
+                        PRINTFORMW 「정말…콘돔을 끼고 있다고 해서, 너무 쌌어요…」
+                        PRINTFORMW 「왠지 이전보다 흥분하고 있네요？정말이지…」
+                        PRINTFORMW 「저는 상냥하게 해주는 것만으로도 충분히 만족하고 있으니까, 적당히 하죠？」
+                    ELSE
+                        PRINTFORML 
+                        PRINTFORMW 「상냥하게 안아 줬습니다만…나오는 양은 그닥 변함이 없네요…」
+                        PRINTFORMW 이쿠는 쓴 웃음을 지으며 대량의 정액이 모인 콘돔을 바라보고 있다…
+                        PRINTFORMW 「후훗, 이 아이도 %CALLNAME:PLAYER%같은 건강한 아이라면 좋겠네요」
+                    ENDIF
+                ENDIF
+            ;질내사정 경험 없음
+            ELSEIF CFLAG:5401 == 0
+                ;음란
+                ;처녀가 아닌데도 질내사정 미경험인 채로 음란이라는 정신 나간 분기
+                IF TALENT:음란 == 1
+                    IF RAND:2 == 0
+                        PRINTFORML 
+                        PRINTFORMW 「또 콘돔에 싸버린건가요？아까워라…」
+                        PRINTFORMW 「이쿠의 음란한 구멍에…%CALLNAME:PLAYER%의 정액, 싸고 싶지 않나요？」
+                    ELSE
+                        PRINTFORML 
+                        PRINTFORMW 「…저의 질로 직접, 정액을 느끼고 싶어요…」
+                        PRINTFORMW 「저를 이렇게 음란한 몸으로 만들어 놓고…공기를 읽지 못하는 행동은 그만둬 줬으면 해요…」
+                    ENDIF
+                ;그 이외
+                ELSE
+                    IF RAND:2 == 0
+                        PRINTFORML 
+                        PRINTFORMW 「…저로 기분 좋아진 거네요？기뻐요…」
+                        PRINTFORMW 「…아, 콘돔 말인가요？…또 필요하다면 제가 준비하겠습니다만…」
+                        PRINTFORMW 이쿠는 콘돔을 사용하는 것에 조금 불만인 듯 하다…
+                    ELSE
+                        PRINTFORML 
+                        PRINTFORMW 「우읏…잔뜩 나온건 알겠으니까…」
+                        PRINTFORMW 「그렇게 기분 좋다면, 저의 질에 사정하면 되잖습니까…」
+                        PRINTFORMW 당신은 이쿠가 작게 중얼거리는걸 들은 것 같다…
+                    ENDIF
+                ENDIF
+            ;질내사정 경험 있음
+            ELSE
+                ;음란
+                IF TALENT:음란
+                    IF RAND:5 == 0
+                        PRINTFORMW 「기분 좋앗…아앗, 좀 더 싸줘어…♪」
+                        PRINTFORMW 「앗, 굉장해…이대로, 삽입한 채로 있어 주세요…」
+                        PRINTFORMW 「자지도…정액도, 무척이나 따뜻해서 기분 좋아요…♪」
+                    ELSEIF RAND:4 == 0
+                        PRINTFORML 
+                        PRINTFORMW 「싫다, 정말…보여주지 마세요…」
+                        PRINTFORMW 「그런, 정액을 보였다간…제 보지, 쑤시게 되버리니까…♪」
+                        PRINTFORML 「후훗, %CALLNAME:PLAYER%도…그러고 싶죠？이쿠의 보지에 정액을 잔뜩 싸서,」
+                        PRINTFORMW 「흘러넘치게 하고 싶지요？…분명, 무척이나 기분 좋을거라고 생각해요…♪」
+                    ELSEIF RAND:3 == 0
+                        PRINTFORMW 「자지가, 움찔거려요…♪앗, 앗, 지금 뽑으면…！」
+                        PRINTFORMW 이쿠는 지나친 쾌락에 움직임을 억제할 수 없는지, 질내가 불규칙하게 조인다…
+                        PRINTFORML 사정을 끝내 약간 작아진 당신의 페니스가 빠져 버렸지만, 
+                        PRINTFORMW 정액이 모인 콘돔이 질내에 남은 채다…
+                        PRINTFORMW 「우앗, 아하아…♪굉장해, 음란한 풍경이네요…」
+                        PRINTFORMW 「앗, 정액…늘어져 버렸네요…마치, 정말로 질에 싸버린 것 같아요…♪」
+                    ELSEIF RAND:2 == 0
+                        PRINTFORMW 「정말…콘돔에 사정하는게 그렇게나 기분 좋은가요？」
+                        PRINTFORMW 「다음엔 제대로, 생으로, 가장 안쪽에 싸주세요…」
+                        PRINTFORMW 「제 보지로, 무척 기분 좋게 사정시켜 드릴테니까…♪」
+                    ELSE
+                        PRINTFORMW 「콘돔이 끼워져 있으면…자지가 뽑힐때, 무게가 느껴져요…」
+                        PRINTFORMW 「뽑힐때, 가득한 정액이 저의 질을 문질러요…」
+                        PRINTFORMW 「질에 사정되는 것도 좋아하지만…이건 이거대로, 흥분되네요…후훗♪」
+                    ENDIF
+                ;그 이외
+                ELSE
+                    IF RAND:5 == 0
+                        PRINTFORML
+                        PRINTFORMW 「잔뜩, 나왔네요…♪」
+                        PRINTFORMW 「이왕이라면…가득 나온 편이, 저도 기쁘니까요…」
+                    ELSEIF RAND:4 == 0
+                        PRINTFORML 
+                        PRINTFORMW （확실히 기분은 좋지만…）
+                        PRINTFORMW （질에 나오는 쾌감을 알아 버리면, 조금은 부족한 느낌이 들어요…）
+                        PRINTFORMW （저는 역시, 음란한 여자인 걸까요…？）
+                    ELSEIF RAND:3 == 0
+                        PRINTFORML
+                        PRINTFORMW 「…이런 일을 해서, 흥분하는 것은 %CALLNAME:PLAYER%뿐이에요」
+                        PRINTFORMW 「저로서는…콘돔이 없는 쪽이, 기쁘다고요…？」
+                    ELSEIF RAND:2 == 0
+                        PRINTFORML
+                        PRINTFORMW 「또…꽤나 나와 버렸네요…」
+                        PRINTFORMW 「굉장해…출렁거려요…어 그러니까, 어쩌죠？이거…」
+                    ELSE
+                        PRINTFORML
+                        PRINTFORMW 「기분 좋았던건 알겠습니다만…」
+                        PRINTFORMW 「저기, 조금, 너무 제게 강요하지 않아도 괜찮으니까요？」
+                    ENDIF
+                ENDIF
+            ENDIF
+        ;비연모
+        ELSE
+        ENDIF
+    ENDIF
+;섹스 이외
+ELSE
+    ;연모
+    IF TALENT:연모
+        ;음란
+        ;정액중독Lv3이상일때 랜덤 분기 추가
+        IF TALENT:음란
+            IF RAND:6 == 0 && ABL:정액중독 >= 3
+                PRINTFORMW 「진한게 점점 나오고 있어요…콘돔이, 새하얘요…」
+                PRINTFORMW 「후훗, 굉장한 양이네요…전부 마실 수 있을까요, 이렇게나 나와서는…♪」
+            ELSEIF RAND:5 == 0 && ABL:정액중독 >= 3
+                PRINTFORMW 「후훗, 이 상태로 자꾸자꾸 싸주세요？」
+                PRINTFORMW 「…나중에 모아서 맛있게 먹을까하고…기대 되네요…♪」
+            ELSEIF RAND:4 == 0 && ABL:정액중독 >= 3
+                PRINTFORMW 이쿠는 상냥하게 당신의 페니스의 콘돔을 벗겨냈다…
+                PRINTFORMW 「끝에 다 들어가지 않아서…흘러넘쳐 버렸네요」
+                PRINTFORMW 「자지, 뿌리까지 %CALLNAME:PLAYER%의 정액 투성이가 되어 버렸어요…」
+                PRINTFORMW 「싫다…정액과 콘돔의 냄새로…굉장해져 버렸네요…습관, 될지도…♪」
+                PRINTFORMW 이쿠는 당신의 페니스를 만지작거리며 도취된 표정을 짓고 있다…
+            ELSEIF RAND:3 == 0
+                PRINTFORMW 이쿠가 콘돔을 벗겨내자, 페니스가 썰렁한 바깥 공기에 노출된다…
+                PRINTFORMW 「어라…추운 건가요？움찔거리네요」
+                PRINTFORMW 「그렇다면…제가 따뜻하게 만들어 드릴게요？」
+                PRINTFORMW 「제 몸의 좋아하는 곳을 사용해 주세요…어디든 따뜻할거라 생각해요…♪」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「콘돔 안에서 답답했지요…？」
+                PRINTFORMW 「제가 편하게 해줄테니…%조사처리(CALLNAME:PLAYER,"은")% 가만히 계세요？」
+                PRINTFORMW 이쿠는 그렇게 말하면서 콘돔을 벗겨낸 페니스를 물고, 혀 끝으로 핥기 시작했다…
+                PRINTFORMW 「후훗, 커지고 있네요…이걸로 다시, 힘차게 사정할 수 있겠어요…」
+            ELSE
+                PRINTFORMW 「앗, 나왔네요…굉장해, 점점 모여가고 있어요…」
+                PRINTFORMW 「조금만 더 하면 가득찰 것 같네요…자아…조금만 더 힘내서, 정액 싸주세요…♪」
+            ENDIF
+        ;그 이외
+        ELSE
+            IF RAND:3 == 0
+                PRINTFORMW 「이걸 꼈는데도, 야한 일도 하지 않고 사정해 버리는 건가요…」
+                PRINTFORMW 「아까워라…라고 말하면, 제가 구두쇠같네요, 후훗」
+                PRINTFORMW 「…저기, 다음엔 저의 이곳에…해주세요？」
+            ELSEIF RAND:2 == 0
+                PRINTFORMW 「딱히, 저를 더럽히지 않기 위해서 콘돔을 착용한건 아니지요？」
+                PRINTFORMW 「후훗, %CALLNAME:PLAYER%의 음란한 생각정도는 꿰뚫어 보고 있어요」
+            ELSE
+                PRINTFORMW 「이렇게 보니까…굉장한 기세로, 나오고 있네요…」
+                PRINTFORMW 「콘돔 안에서 점점 모여서…아, 흘러넘칠 것 같아요…」
+            ENDIF
+        ENDIF
+    ;비연모
+    ELSE
+    ENDIF
+ENDIF
+
+;========================================================
+;@KOJO_X_MESSAGE_MARKCNG
+;刻印変動をトリガーにした口上
+;刻印変動後に口上を出力されます
+;========================================================
+@KOJO_51_MESSAGE_MARKCNG_YM
+;眠ってる場合は戻る
+SIF EQUIP:14
+    RETURN 0
+;口枷がある場合も戻る
+SIF TEQUIP:42
+    RETURN 0
+;失神中・失神回復時も戻る
+SIF TFLAG:899 >= 1 || TFLAG:898 == 1
+    RETURN 0
+;精神崩壊の場合は戻る
+SIF TALENT:167
+    RETURN 0
+;刻印取得口上呼び出し
+FOR LOCAL, 0, 7
+    FOR LOCAL:1, 1, 4
+        SIF TFLAG:(LOCAL + 40) == LOCAL:1 && CFLAG:(LOCAL + 5310) < LOCAL:1
+            TRYCALLFORM K51_MESSAGE_MARK{LOCAL}_{LOCAL:1}
+    NEXT
+NEXT
+
+;----------------------------------------------------------
+;刻印取得時の口上 CFLAG 5310～を使用
+;@KOJO_X_MESSAGE_MARKCNGから呼び出すのでセットで使うこと
+;----------------------------------------------------------
+;-------------------------------------------------
+;고통각인 취득 CFLAG:5310
+;-------------------------------------------------
+@K51_MESSAGE_MARK0_1
+;PRINTFORMW 
+;CFLAG:5310 = 1
+
+@K51_MESSAGE_MARK0_2
+;PRINTFORMW 
+;CFLAG:5310 = 2
+
+@K51_MESSAGE_MARK0_3
+;연모
+IF TALENT:연모
+    PRINTFORMW 「우윽, 우으으읏…！」
+    PRINTFORMW 「잠깐, 지금건 너무 아파요…！」
+    PRINTFORMW 이쿠는 심한 고통에 몸을 떨며 당신에게 항의하고 있다…
+    RETURN 0
+;그 이외
+ELSE
+    PRINTFORMW 「우으으으윽！꺄아！아파, 아파아！…너무해요…！」
+ENDIF
+CFLAG:5310 = 3
+
+;-------------------------------------------------
+;쾌락각인 취득 CFLAG:5311
+;-------------------------------------------------
+@K51_MESSAGE_MARK1_1
+;PRINTFORMW 
+;CFLAG:5311 = 1
+
+@K51_MESSAGE_MARK1_2
+;PRINTFORMW 
+;CFLAG:5311 = 2
+
+@K51_MESSAGE_MARK1_3
+PRINTFORMW 「응아앗！읏, 후앗！싫엇, 뭡니까, 이건…！」
+PRINTFORMW 이쿠의 몸은 처음으로 느끼는 강렬한 쾌락에, 절정으로부터 돌아올 수 없게 되었다…
+PRINTFORMW （쾌락이, 너무 강해서…！더 이상은, 휩쓸려 버릴, 것 같아요…）
+CFLAG:5311 = 3
+
+;-------------------------------------------------
+;굴복각인 취득 CFLAG:5312
+;-------------------------------------------------
+@K51_MESSAGE_MARK2_1
+;PRINTFORMW 
+;CFLAG:5312 = 1
+
+@K51_MESSAGE_MARK2_2
+;PRINTFORMW 
+;CFLAG:5312 = 2
+
+@K51_MESSAGE_MARK2_3
+;텐시가 조수 조수가 조교
+IF ASSIPLAY && NO:ASSI == 52
+    PRINTFORMW 『…무슨 일이야 이쿠？지쳤어？』
+    PRINTFORMW 텐시가 이쿠에게 묻는다. 
+    PRINTFORMW 어쩐지, 이쿠의 모습이 어딘가 바뀐 것처럼 보인다…
+    PRINTFORMW 「…저기, 텐시…？」
+    PRINTFORMW 『뭐야？』
+    PRINTFORMW 이쿠는 고개를 숙이고, 조용하게 말하기 시작했다…
+    PRINTFORMW 「…더 이상 저는, 용신님의 시중을 드는 몸으로는 있을 수 없게 된, 것 같습니다…」
+    PRINTFORMW 「%조사처리(CALLNAME:MASTER,"과")% 텐시가 가르쳐준 쾌락에…떨어져, 버렸습니다…」
+    PRINTFORMW 「지금부터는 텐시와 함께 주인님을 시중들게, 해주시지 않겠습니까…？」
+    PRINTFORMW 당신은 기쁨을 숨기고, 텐시와 함께 수긍했다…
+    PRINTFORMW 『간신히 마음이 정리된 듯하네？좋은 일이야. 그러면, 계속해볼까』
+    PRINTFORMW 「잘 부탁드립니다, 텐시…텐시와 함께라면, 두렵지 않으니까…」
+;공포각인Lv3 또는 고통각인Lv3
+ELSEIF MARK:공포각인 == 3 || MARK:고통각인 == 3
+    PRINTFORMW 
+    PRINTFORMW 「부탁드립니다, 부탁이니까…！이제, 저에게 심한 일은, 하지 말아 주세요…！」
+    PRINTFORMW 「%CALLNAME:PLAYER%의 명령을 따르겠습니다, %CALLNAME:PLAYER%의 말을 듣겠습니다, 그러니까, 제발…！」
+    PRINTFORMW …이쿠는 당신에게 매달리며 복종을 맹세했다. 
+    PRINTFORMW 심하게 혼내준 만큼 상냥하게 해주는 것도 좋겠지만, 이대로 엄격하게 예의범절을 교육시키는 것도 좋을지도 모른다. 
+    PRINTFORMW 당신은 앞으로의 조교에 대한 기대가 커져, 무심코 미소를 띄웠다…
+;쾌락각인Lv3이상
+ELSEIF MARK:쾌락각인 >= 3
+    PRINTFORMW 
+    PRINTFORMW 「…저는 자신의 역할에 자부심을 가지고 있었, 습니다만…」
+    PRINTFORMW 「이렇게나 기분 좋은 일만 배운다면, 이젠…거스를 수, 없을지도 모릅니다…」
+    PRINTFORMW 진면목, 청초한 평상시의 표정에 숨겨진, 남자를 끌어당기는, 매혹적인 천녀라는 일면…
+    PRINTFORMW 당신은 이쿠의 새로운 일면을 볼 수 있다는 기대에 무심코 흥분했다…
+;그 이외
+ELSE
+    PRINTFORMW 
+    PRINTFORMW …이쿠가 이쪽을 보고있다. 그 눈동자엔 지금까지 있었던 반발이나, 망설임의 색이 빠진 것처럼 보였다…
+    PRINTFORMW 「…이제 저는 용궁의 사자로 있을 수 없게 되버린 것, 같습니다…」
+    PRINTFORMW 「당신이 가르쳐준 쾌락에, 타락해 버렸습니다…」
+ENDIF
+CFLAG:5312 = 3
+
+;-------------------------------------------------
+;공포각인 취득 CFLAG:5313
+;-------------------------------------------------
+@K51_MESSAGE_MARK3_1
+;PRINTFORMW 
+;CFLAG:5313 = 1
+
+@K51_MESSAGE_MARK3_2
+;PRINTFORMW 
+;CFLAG:5313 = 2
+
+@K51_MESSAGE_MARK3_3
+;연모
+IF TALENT:연모 == 1
+    PRINTFORMW 「이, 이건 조금, 무서워요…」
+    PRINTFORMW 「이런 일은, 부디 이걸로 끝내주세요…！」
+;그 이외
+ELSE
+    PRINTFORMW 「…우읏！어째서, 어째서 이런 짓을…！」
+    PRINTFORMW 이쿠는 공포를 필사적으로 견디고있다…
+ENDIF
+CFLAG:5313 = 3
+
+;-------------------------------------------------
+;반발각인 취득 CFLAG:5314
+;-------------------------------------------------
+@K51_MESSAGE_MARK4_1
+;PRINTFORMW 
+;CFLAG:5314 = 1
+
+@K51_MESSAGE_MARK4_2
+;PRINTFORMW 
+;CFLAG:5314 = 2
+
+@K51_MESSAGE_MARK4_3
+;연모
+IF TALENT:연모
+    PRINTFORMW 「…용서할 수 있는 일과, 용서할 수 없는 일이 있습니다…」
+    PRINTFORMW 「그걸 깨닫는게, 서로를 위하는거라고요？」
+;그 이외
+ELSE
+    PRINTFORMW 「당신에겐, 언젠가 쓴맛을 보여드리겠습니다…！」
+ENDIF
+CFLAG:5314 = 3
+
+;-------------------------------------------------
+;치욕각인 취득 CFLAG:5316
+;-------------------------------------------------
+@K51_MESSAGE_MARK6_1
+;PRINTFORMW 
+;CFLAG:5316 = 1
+
+@K51_MESSAGE_MARK6_2
+;PRINTFORMW 
+;CFLAG:5316 = 2
+
+@K51_MESSAGE_MARK6_3
+;연모
+IF TALENT:연모
+    PRINTFORMW 「너무 부끄러워서, 울어버릴 것 같아요…」
+    PRINTFORMW 「저, 저기…나중에, 위로해 주세요…？」
+;그 이외
+ELSE
+    PRINTFORMW 「이런 치욕, 더는 싫어엇…！」
+ENDIF
+CFLAG:5316 = 3
+
+;========================================================
+;@KOJO_X_MESSAGE_LOOK_VIDEO
+;ビデオを一緒に鑑賞する時の口上
+;売却前の選択肢で鑑賞を選んだ場合に呼び出される
+;========================================================
+@KOJO_51_MESSAGE_LOOK_VIDEO
+;PRINTFORMW 
+
+;========================================================
+;@KOJO_X_MESSAGE_IMPRESSION関係
+;ステータス画面を見る時に出力されます
+;一言表示なのでセリフを一行で収めること
+;========================================================
+@KOJO_51_MESSAGE_IMPRESSION
+;PRINTFORML 　　　「」
+
+;=============================================================================
+;エンディング口上の処理
+;=============================================================================
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SINGLE_ENDING関係
+;単体エンディング
+;-------------------------------------------------
+@KOJO_51_MESSAGE_SINGLE_ENDING_YM
+DRAWLINE
+PRINTFORMW ―――단독 엔딩 조건 달성―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+PRINTFORMW 
+PRINTFORMW 「그런데, 정말로 괜찮은 건가요？저따위를 상대로 선택하다니…」
+PRINTFORMW 「저는 상당한 게으름뱅이인데다…거기에 지진의 전조를 모두에게 전할 때도, 왠지 잘 전해지지 않았던 모양이고…」
+PRINTFORML 
+PRINTFORMW ―――당신은 이쿠와 부부가 될 것을 결단하고, 조교에 사용하던 관에서 떠났다. 
+PRINTFORMW 뜻하지 않게 몸에 익어버린 손재주를 살려, 어떻게든 안정된 일도 얻을 수 있었다. 
+PRINTFORMW 물론 고생은 끝나지 않았지만, 그럼에도 여기까지 올 수 있었던 것은 이쿠라는 버팀목이 있었기에 가능했던 것이다. 
+PRINTFORMW 역경에 처했을 때도, 불행에 처했을 때도, 의외로 일이 잘 될 때도, 
+PRINTFORMW 무슨 일이 있을 때마다, 공기를 읽었다고 할 수 밖에 없는 듯한 행동으로 당신을 격려하고, 지지하며, 충고해 주었다. 
+PRINTFORMW 이만큼의 일을 해줬으면서도 게으름뱅이라고？그럴 리가 없다. 
+PRINTFORML 
+PRINTFORMW 「그렇네요…저도, 변한 걸지도 몰라요…」
+PRINTFORMW 「이전에는 정말로 자신의 역할 이외엔 아무래도 좋은 느낌이었지만 말이죠, 후훗」
+PRINTFORMW 이쿠는 당신도 이전보다 상당히 변했다, 라고 말했다. 
+PRINTFORMW 확실히 새로운 일을 얻기위해 고생은 했지만, 그렇다고 해서 자신에게 변화가 있었냐고 한다면, 솔직히 모르겠다. 
+PRINTFORML 
+PRINTFORMW 「…이렇게 서로 조금씩 변해나갈지도 모르지만…그래도, 그것이 나쁜 일은 아니라고 생각해요」
+PRINTFORMW 「여러가지가 바뀌어도…%조사처리(CALLNAME:MASTER,"을")% 사랑하는 이유가 뭐든 하나라도 있으면,」
+PRINTFORMW 「아직 우리는 행복하게, 즐겁게 살 수 있는게 아닌가 하고…그, 어떤가요？」
+PRINTFORMW 이쿠는 마지막에 와선 약간 부끄러운 듯이, 횡설수설하며 말하고 있다. 
+PRINTFORML 
+PRINTFORMW 당신도 동감이었다. 
+PRINTFORMW 오랫동안 함께 지내면 당연히 새로운 발견이나 변화가 있다. 
+PRINTFORMW 좋은 점이나 그렇지 못한 점도…
+PRINTFORMW 그런데도 자신은 변함없이 이쿠를 계속 사랑하고 있다. 
+PRINTFORMW 그렇다곤 해도, 이전과 같은지, 변해 버렸는지는 스스로도 알 수 없다. 
+PRINTFORMW 그저 둘이서 행복하게 살고 싶다는 마음만은 변함이 없다. 
+PRINTFORMW 그렇다면, 그것으로 충분할 것이다. 
+PRINTFORML 
+PRINTFORMW 「…왠지 긴 이야기가 되어 버렸네요…어쩐지 부끄러운 것도 말해 버렸고…」
+PRINTFORMW 「후훗, 역시 저는 게으름뱅이에요…그러면, 계속 할까요…」
+PRINTFORMW 당신의 위에 있던 이쿠의 바기나가 다시 페니스를 물었다…
+PRINTFORMW 「응앗！핫, 하아앗…굉장해, 커다래요…」
+PRINTFORMW 당신은 이쿠와 몸의 자세를 바꿔 정상위의 모습이 되자, 천천히 삽입을 시작했다…
+PRINTFORMW 「으응…♪기분 좋아요…이번엔 %조사처리(CALLNAME:MASTER,"이")% 해주는 거네요…？」
+PRINTFORMW 「벌써 다섯 번이나 저의 질에 내고 있는데도…대단해요, %CALLNAME:MASTER%…♪아앗！앗！히야앗…」
+PRINTFORML 
+PRINTFORMW 서로 사랑하는 두 사람의 밤은, 길고 영원하게, 계속되고 있다―――
+PRINTFORML 
+PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} (%CALLNAME:TARGET% 엔딩)
+RETURN 0
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SINGLE_ENDING_AFTER関係
+;単体エンド後に「続ける」を選んだ時に出力します
+;-------------------------------------------------
+@KOJO_51_MESSAGE_SINGLE_ENDING_AFTER_YM
+;PRINTFORMW 
+RETURN 0
+
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SLAVE_ENDING関係
+;奴隷エンディング
+;-------------------------------------------------
+;텐코가 공략된 상태인가 어떤가는 고려하지 않았음！
+@KOJO_51_MESSAGE_SLAVE_ENDING_YM
+DRAWLINE
+PRINTFORMW ―――노예 엔딩 조건 달성―――
+PRINTFORMW …………
+PRINTFORMW ………
+PRINTFORMW ……
+PRINTFORMW 
+PRINTFORMW ―――오늘도 조교는 능숙하게 진행되었다. 
+PRINTFORMW 당초 데려왔을 땐 너무나 반항적이어서 애를 먹었지만, 
+PRINTFORMW 최근에는 스스로가 쾌락을 바라고 있다. 
+PRINTFORMW 함락 시키는 것도 시간 문제일 것이다. 
+PRINTFORMW 원래부터 성적인 일에 관심이 있었던 건지…그것을 프라이드가 높은척 속이고 있었을지도 모른다. 
+PRINTFORML 
+PRINTFORMW 예정보다 빠르게 조교가 끝났으므로, 자신도 신변을 재빠르게 정리한다. 
+PRINTFORMW 조교가 끝난 후의 이 순간은 언제나 설레이는 기분을 억누를 수 없…지만, 서둘러서는 안된다. 
+PRINTFORMW 당신은 크게 숨을 들이마신 후, 다시 집중해서 잡무를 처리했다…
+PRINTFORML 
+PRINTFORMW 숨을 거칠게 내쉬며 이쿠의 방에 뛰어든 당신을, 이쿠가 여느 때처럼 조용한 미소로 맞이한다. 
+PRINTFORMW 「어서오세요 %CALLNAME:MASTER%…후훗, 상당히 조급하시네요？」
+PRINTFORMW 용궁의 사자의 상징인 깃옷만이 그 신체를 간신히 가려서, 선정적인 모습을 드러내고 있다…
+PRINTFORMW 본래 귀중한 물건인 그것도, 이제 와선 당신의 욕정을 부추기기 위한 도구에 지나지 않는다. 
+PRINTFORMW 「시간은 충분하니까…오늘도 %조사처리(CALLNAME:MASTER,"을")%, 잔뜩 기분 좋게 해드릴게요…♪」
+PRINTFORML 
+PRINTFORMW 「그건 그렇고…최근 %조사처리(CALLNAME:MASTER,"으로")%부터, 어쩐지 알고 있는 것 같은 냄새가 납니다만…」
+PRINTFORMW …보통 이쿠가 이쪽의 일에 참견하는 경우는 없다. 
+PRINTFORMW 허나, 그녀는 공기에 민감하다. 
+PRINTFORMW 지금 당신이 누구를 조교해, 함락 시키려 하는지, 어렴풋이 눈치 챈 것 같다…
+PRINTFORMW 「…혹시 그 분에게 명령을 듣게 하려고 했다면, 분명 고생이었겠죠…」
+PRINTFORMW 「그래도 최근에는 순조로운게 아닌지？…%CALLNAME:MASTER%에게도 안정감이 느껴지고,」
+PRINTFORMW 「무엇보다, 항상 빠르게 와서 듬뿍 안아주고 계시니까…♪후훗」
+PRINTFORML 
+PRINTFORMW 당신은 이쿠에게 조교에 흥미가 있는지 물었다. 
+PRINTFORMW 「그 버릇 없고 분방하고 제멋대로인 분이 %CALLNAME:MASTER%의 앞에서 어떤 식으로 흐트러지는 것인지…」
+PRINTFORMW 「꼭 보고 싶네요…방해가 안된다면, 여러가지로 도와드릴까요？」
+PRINTFORMW 조수까지 담당하겠다는 제안에 당신은 내심 기뻐하며, 그 제안을 받아들였다. 
+PRINTFORMW 「그럼 다음부터 실례하겠습니다…그런데, 서론이 길어져 버렸네요, 시작하죠…」
+PRINTFORMW 회화를 하면서도 애무를 당하던 페니스는 터질듯이 발기해, 이미 쿠퍼액을 늘어뜨리고 있다…
+PRINTFORMW 「그 분은 저보다 몸집이 작으니까…이런 흉악한 것이, 들어갈까요…？후훗」
+PRINTFORMW 「그러면, 입으로 실례할게요…츗, 츄웃, 하무우읏…으뭇, 우응…」
+PRINTFORML 
+PRINTFORMW 완전히 당신의 취향으로 조교된 이쿠의 능숙한 봉사에 순식간에 정액이 올라오는걸 느낀다…
+PRINTFORMW 당신의 욕망은 동경의 천녀를 지배하고도, 가라앉을 줄을 모른다―――
+PRINTFORML
+PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET}i (%CALLNAME:TARGET% 노예 엔딩)
+RETURN 0
+;-------------------------------------------------
+;@KOJO_X_MESSAGE_SLAVE_ENDING_AFTER関係
+;奴隷エンド後に「続ける」を選んだ時に出力します
+;-------------------------------------------------
+@KOJO_51_MESSAGE_SLAVE_ENDING_AFTER_YM
+;PRINTFORMW 
+RETURN 0
+
+;=============================================================================
+;売却後エピソード
+;エンディング時に売ったキャラのエピソードを挿入できる
+;=============================================================================
+;-------------------------------------------------
+;エピソード番号決定など
+;-------------------------------------------------
+;@KOJO_51_SET_SLAVE_AFTERWARDS
+;対象を退避してTFLAG:710を対象にする. 
+;LOCAL = TARGET
+;TARGET = TFLAG:710
+
+;음란
+;IF TALENT:음란
+;    LOCAL:1 = 1
+;エピソードなし
+;ELSE
+;    LOCAL:1 = 0
+;ENDIF
+
+;退避した対象を元に戻す
+;TARGET = LOCAL
+;RETURN LOCAL:1
+
+;-------------------------------------------------
+;エピソード表示
+;-------------------------------------------------
+;@SHOW_SLAVE_AFTERWARDS_K51, ARG, ARG:1
+;DRAWLINE
+;PRINTFORMW 　%CSVCALLNAME(51,0)%のその後
+;DRAWLINE
+;IF ARG == 1
+    ;PRINTFORMW 
+;ENDIF
+;DRAWLINE
+;RETURN 0
+
+;=============================================================================
+;eratohoYM用プロローグ(及びそれに対応したエピローグ)のテンプレ
+;プロローグNo.51 -(サブタイトル入力欄)-
+;=============================================================================
+;--------------------------------------------------
+;プロローグNo.51の存在判定
+;--------------------------------------------------
+;「RETURN 0」を「RETURN 1」にすると読み込み可能になる
+@EXIST_PROLOGUE_YM_51
+RETURN 0
+
+;--------------------------------------------------
+;プロローグNo.51の表示
+;--------------------------------------------------
+;選択画面にてタイトルを記入する場合はここで
+@SHOW_PROLOGUE_YM_51
+PRINTL [51] プロローグNo.51 -(サブタイトル入力欄)-
+
+;--------------------------------------------------
+;プロローグNo.51 -(サブタイトル入力欄)-本文
+;--------------------------------------------------
+@EXE_PROLOGUE_YM_51
+PRINTW 　　　　　　　　―― Prologue No.51 -(サブタイトル入力欄)- (eratohoYM)
+PRINTW  
+DRAWLINE
+PRINTL -------------------------------------GOODLUCK------------------------------------
+DRAWLINE
+PRINTW 
+
+;=============================================================================
+;プロローグNo.51に対応したエピローグ
+;=============================================================================
+;表示させたプロローグに対応するエピローグをノーマルエンドの代わりに表示させることが可能
+;なお, システム上プロローグを作成していないと表示されない
+;--------------------------------------------------
+;プロローグNo.51に対応したエピローグの存在判定
+;--------------------------------------------------
+;「RETURN 0」を「RETURN 1」にすると読み込み可能になる
+@EXIST_EPILOGUE_YM_51
+RETURN 0
+
+;--------------------------------------------------
+;プロローグNo.51に対応したエピローグ本文
+;--------------------------------------------------
+@EXE_EPILOGUE_YM_51
+PRINTW  
+PRINTW 　　　　　　　　―― Ending No.01 (ノーマルエンド)
+
+;■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+;■　　　　　　　　　　　　　 以下EXTRAモード用　　　　　　　　　　　　　　　　　　■
+;■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+;EXTRAモードでは主人となったキャラの口上が読み込まれます
+;eratohoYM用とは違い, 表示可能なのはデフォルトか主人口上のどちらかなので, 選択肢の表示用の関数は存在しません
+;
+;例)○○はかねてから想いを寄せていた××を手中に収めるべく, 行動を開始した……みたいな感じ?
+;
+;なおプロローグでキャラを追加したい場合, キャラIDの関係上直接「ADDCHARA Ｘ」を使うよりも
+;「CALL CHARA_STATE_BASIC, Ｘ」を使った方が望ましい. 
+;その際, 自動的に加入したキャラが調教対象として設定される. 
+;また, 「CALL CHARA_STATE_BASIC, Ｘ」の後に「CSTR:3 = ～～～～」を入力すると, 
+;どのような方法で連れてこられたか記憶することができる. 
+;=============================================================================
+;プロローグNo.51 -(サブタイトル入力欄)-
+;=============================================================================
+;--------------------------------------------------
+;プロローグNo.51の存在判定
+;--------------------------------------------------
+;「RETURN 0」を「RETURN 1」にすると読み込み可能(存在していると判断)になる
+@EXIST_PROLOGUE_EXTRA_51
+RETURN 0
+
+;--------------------------------------------------
+;プロローグNo.51 -(サブタイトル入力欄)-本文
+;--------------------------------------------------
+@EXE_PROLOGUE_EXTRA_51
+
+;………………………………………………
+;キャラ追加イベントを盛り込む場合
+;………………………………………………
+;製作者各人の判断でプロローグにキャラを追加することが可能です. 
+;ただし, 初期金額以上の値段のキャラを追加する場合, 
+;最悪ゲームバランスが崩壊する可能性があります. そのことを踏まえてイベントを追加してください. 
+;
+;特定のキャラを追加する場合(Ｘにはキャラ番号を入力)
+;CALL CHARA_STATE_BASIC, Ｘ
+;どのように連れてこられたかを記憶(例：CSTR:3 = 誘拐した. )
+;※あまり長過ぎると表示がずれる可能性あり
+;CSTR:3 = 
+;以下の行を解禁すると上で追加したキャラを購入したことに出来る(＝所持金が減る. ただし0未満にはならない)
+;MONEY = MIN(MONEY - ITEMPRICE:(NO:TARGET), 0)
+;………………………………………………
+
+PRINTW 　　　　　　　　―― EXTRA Prologue No.51 -(サブタイトル入力欄)-
+PRINTW  
+DRAWLINE
+PRINTL ------------------------------------LET’S ENJOY----------------------------------
+DRAWLINE
+PRINTW 

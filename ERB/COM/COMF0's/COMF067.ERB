@@ -1,0 +1,334 @@
+﻿;=================================================================
+;긴급피임약
+;=================================================================
+;………………………………………………
+;실행 판정
+;………………………………………………
+@COM_ABLE67
+;개별 설정 커맨드 필터
+SIF DITEMTYPE:999:67 > 0
+    RETURN 0
+;약품계 확장 커맨드를 유효하게 하지 않으면 안 됨
+SIF (FLAG:15 & 32) == 0
+    RETURN 0
+;아이템을 가지고 있는지, 아이템 없음 설정이 아니면 안 됨
+SIF ITEM:65 == 0 && NOITEM == 0
+    RETURN 0
+;주인이 아니면 안 됨
+SIF ASSIPLAY
+    RETURN 0
+;3명 중 최소 하나는 여자고 배란유도제, 긴급피임약을 먹지 않았어야 함
+IF ASSI > 0
+    SIF (TALENT:ASSI:120 || TEQUIP:ASSI:16 || TEQUIP:ASSI:17) && (TALENT:MASTER:120 || TEQUIP:MASTER:16 || TEQUIP:MASTER:17) && (TALENT:120 || TEQUIP:16 || TEQUIP:17)
+        RETURN 0
+ELSE
+    SIF (TALENT:MASTER:120 || TEQUIP:MASTER:16 || TEQUIP:MASTER:17) && (TALENT:120 || TEQUIP:16 || TEQUIP:17)
+        RETURN 0
+ENDIF
+;촉수 조교 중에는 불가
+SIF TEQUIP:90
+    RETURN 0
+RETURN 1
+
+@EXCOM_ABLE67(ARG)
+#FUNCTION
+;먹는 대상마다 판정
+IF ARG == TARGET
+    ;주인 혹은 조수가 남자나 후타나리 나오지 않으면 안 됨
+    SIF EXIST_PENIS(MASTER) == 0 && EXIST_PENIS(ASSI) == 0 
+        RETURNF 0
+    ;강제개구기 외에 다른 걸로 입이 막혀 있으면 불가
+    SIF TEQUIP:42 && TEQUIP:42 != 3
+        RETURNF 0
+ENDIF
+IF ARG == ASSI
+    ;조수가 없으면 안 됨
+    SIF ASSI < 0 
+        RETURNF 0
+    ;주인 혹은 노예가 남자나 후타나리 나오지 않으면 안 됨
+    SIF EXIST_PENIS(MASTER) == 0 && EXIST_PENIS(TARGET) == 0
+        RETURNF 0
+ENDIF
+IF ARG == MASTER
+    ;조수 혹은 노예가 남자나 후타나리 나오지 않으면 안 됨
+    SIF EXIST_PENIS(TARGET) == 0 && EXIST_PENIS(ASSI) == 0 
+        RETURNF 0
+ENDIF
+
+;약물내성의 경우 안 됨
+SIF TALENT:ARG:44
+    RETURNF 0
+;남자라면 안 됨
+SIF TALENT:ARG:120
+    RETURNF 0
+;임신중이라면 불가
+SIF TALENT:ARG:140
+    RETURNF 0
+;회란 중에는 불가
+SIF TALENT:ARG:145
+    RETURNF 0
+;산란촉진제를 사용 중이면 사용할 수 없다(사용할 수 없겠지만)
+SIF TEQUIP:ARG:9
+    RETURNF 0
+;수면중은 불가
+SIF EQUIP:ARG:14
+    RETURNF 0
+;배란유도제를 사용 중이면 사용할 수 없다(사용할 수 없겠지만)
+SIF TEQUIP:ARG:16
+    RETURNF 0
+;벌써 사용중이라면 사용할 수 없다
+SIF TEQUIP:ARG:17
+    RETURNF 0
+RETURNF 1
+
+;--------------------------------------------------
+;커맨드 본체
+;--------------------------------------------------
+@COM67
+PRINTL 긴급피임약
+COM_NAME = 긴급피임약
+
+LOCAL == 0
+;노예 체크
+IF TALENT:120 == 0
+    SIF EXCOM_ABLE67(TARGET)
+        LOCAL |= 1
+ENDIF
+;조수 체크
+IF ASSI > 0
+    SIF EXCOM_ABLE67(ASSI)
+        LOCAL |= 2
+ENDIF
+;주인 체크
+IF TALENT:MASTER:120 == 0
+    SIF EXCOM_ABLE67(MASTER)
+        LOCAL |= 4
+ENDIF
+
+;이러한 것은 없을 것이지만…
+IF LOCAL == 0
+    PRINTL 피임약을 먹을 수 있는 사람이 없다.
+    PRINTW 그러므로 아무것도 하지 않았다….
+    RETURN 1
+;정상작동
+ELSE
+    PRINTL 피임약을 먹입니다.
+    PRINTL 누구에게 먹입니까?
+    SIF LOCAL & 1
+        PRINT [0] 「노예」 
+    SIF LOCAL & 2
+        PRINT [1] 「조수」 
+    SIF LOCAL & 4
+        PRINT [2] 「주인」 
+    PRINTL
+
+    $INPUT_LOOP
+    INPUT
+    IF RESULT == 0
+        TFLAG:99 = 0
+        CALL COM67_TARGET
+    ELSEIF RESULT == 1
+        TFLAG:99 = 1
+        CALL COM67_ASSI
+    ELSEIF RESULT == 2
+        TFLAG:99 = 2
+        CALL COM67_MASTER
+    ELSE
+        GOTO INPUT_LOOP
+    ENDIF
+ENDIF
+
+RETURN 1
+
+@COM67_TARGET
+PRINTL 긴급피임약(노예)
+COM_NAME = 긴급피임약
+CALL TRAIN_MESSAGE_COM067
+
+;조제 지식이 있으면 소비를 억제한다
+IF TALENT:MASTER:55 || (ASSI >= 0 && TALENT:ASSI:55)
+    DOWNBASE:0 += 0
+    DOWNBASE:1 += 30
+ELSE
+    DOWNBASE:0 += 0
+    DOWNBASE:1 += 50
+ENDIF
+
+;준비할 뿐(만큼)이므로 기본적으로는 아무것도 변동은 하지 않아 좋을지도
+;(다소의 반발이나 공포는 발생해도 될지도 모르는데)
+
+IF NOITEM == 0
+    ITEM:65 -= 1
+    SIF FLAG:13 & 8 && MONEY:0 >= ITEMPRICE:65
+        CALL FILL_PLURAL_ITEM, 65
+ENDIF
+TEQUIP:17 = 1
+
+SOURCE:26 = 150
+
+SIF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+    TCVAR:12 += 1
+
+;약물 경험
+TCVAR:40 += 1
+
+@COM67_ASSI
+PRINTL 긴급피임약(조수)
+COM_NAME = 긴급피임약(조수)
+CALL TRAIN_MESSAGE_COM067
+
+;조제 지식이 있으면 소비를 억제한다
+IF TALENT:MASTER:55 || (ASSI >= 0 && TALENT:ASSI:55)
+    DOWNBASE:ASSI:1 += 30
+ELSE
+    DOWNBASE:ASSI:1 += 50
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 5
+
+IF NOITEM == 0
+    ITEM:65 -= 1
+    SIF FLAG:13 & 8 && MONEY:0 >= ITEMPRICE:65
+        CALL FILL_PLURAL_ITEM, 65
+ENDIF
+TEQUIP:ASSI:17 = 1
+
+;상애 or친애 or낙인 소유
+IF TALENT:153 || TALENT:152 || TALENT:161
+    ;[광기]＋[질투]
+    IF TALENT:157 && TALENT:158
+        SOURCE:32 = 6666
+    ;[질투]
+    ELSEIF TALENT:157
+        SOURCE:32 = 3333
+    ;[질투하기 쉽다]
+    ELSEIF TALENT:19
+        SOURCE:32 = 666
+    ENDIF
+ELSE
+    ;[광기]＋[질투]
+    IF TALENT:157 && TALENT:158
+        SOURCE:32 = 666
+    ;[질투]
+    ELSEIF TALENT:157
+        SOURCE:32 = 333
+    ENDIF
+ENDIF
+
+SIF TALENT:MASTER:120 == 0 && TALENT:ASSI:120 == 0
+    TCVAR:ASSI:12 += 1
+
+;약물 경험
+TCVAR:ASSI:40 += 1
+
+
+@COM67_MASTER
+PRINTL 긴급피임약(주인)
+COM_NAME = 긴급피임약(주인)
+CALL TRAIN_MESSAGE_COM067
+
+;조제 지식이 있으면 소비를 억제한다
+IF TALENT:MASTER:55 || (ASSI >= 0 && TALENT:ASSI:55)
+    DOWNBASE:MASTER:1 += 30
+ELSE
+    DOWNBASE:MASTER:1 += 50
+ENDIF
+
+DOWNBASE:0 += 0
+DOWNBASE:1 += 5
+
+IF NOITEM == 0
+    ITEM:65 -= 1
+    SIF FLAG:13 & 8 && MONEY:0 >= ITEMPRICE:65
+        CALL FILL_PLURAL_ITEM, 65
+ENDIF
+TEQUIP:MASTER:17 = 1
+
+;약물 경험
+TCVAR:MASTER:40 += 1
+
+;--------------------------------------------------
+;조교시 메시지
+;--------------------------------------------------
+@TRAIN_MESSAGE_COM067
+;조수의 대사에서 제어하는 방법은 없습니다.
+CALL KOJO_TRAIN_MESSAGE_COM
+SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+    RETURN 0
+
+IF TFLAG:99 == 0
+    PRINTL
+    PRINTFORML %CALLNAME:TARGET%에게 보여주듯이 긴급 피임약을 꺼냈다.
+    PRINTFORM 그것을 본 %조사선택(CALLNAME:TARGET, "는")% 
+    IF TALENT:150 || TALENT:152 || TALENT:153
+        ;【연모】,【친애】,【상애】의 최악이어도 1개를 가진다
+        PRINTW 조금 아쉬운 표정을 짓고 있다.
+    ELSEIF TALENT:160 || TALENT:161
+        ;【복종】,【낙인】의 어느 쪽인지
+        PRINTFORMW 다음에 무엇을 할지 이해한 듯, 가랑이를 열고 %CALLNAME:PLAYER%에게 범해지는 것을 기다리고 있다….
+    ELSEIF TALENT:170
+        ;【음란】
+        PRINTW 질내사정을 기다릴 수 없다는 듯이 몸을 배배 꼬고 있다.
+    ELSEIF ABL:10 >= 5 && MARK:2 == 3 && MARK:9 == 0
+        ;종속 Lv5 또한 굴복 각인 Lv3 또한 반발 각인 Lv0
+        PRINTW 조금 안심한 표정을 지었다….
+    ELSE
+        PRINTFORMW %조사선택(CALLNAME:PLAYER, "를")% 경멸하는 눈으로 쳐다보고 있다….
+    ENDIF
+    
+ELSEIF TFLAG:99 == 1
+    ;조수가 주인을 사랑하는지 복종하는지 음란하는지 판정
+    LOCAL = ORDER_FALLEN(ASSI)
+    PRINTL
+    PRINTFORML %조사선택(CALLNAME:MASTER, "는")% %CALLNAME:ASSI%에게 긴급 피임약을 먹으라고 명령했다.
+    PRINTFORM 그것을 들은 %조사선택(CALLNAME:ASSI, "는")% 
+    ;[연모계] [음란]조수
+    IF LOCAL == 1 && TALENT:ASSI:170
+        IF EXIST_PENIS(TARGET) && EXIST_PENIS(MASTER)
+            PRINTFORMW 두 사람의 페니스를 걱정없이 탐할 수 있어 기뻐하고 있다.
+        ELSEIF EXIST_PENIS(TARGET)
+            PRINTFORMW %조사처리(CALLNAME:TARGET,"의")% 페니스를 걱정없이 탐할 수 있어 기뻐하고 있다.
+        ELSE
+            PRINTFORMW %CALLNAME:MASTER%의 아기를 가지길 기대한 듯
+            PRINTW 조금 서운한 표정을 짓고 있다.
+        ENDIF    
+    ;[복종계] [음란]조수
+    ELSEIF LOCAL == 2 && TALENT:ASSI:170
+        IF BASE:MASTER:2 < 1000
+            PRINTFORMW 다가와서 작아진 %CALLNAME:PLAYER%의 페니스를 핧아 크게 했다.
+            PRINT 그 다음 
+            BASE:MASTER:2 = 1000
+        ENDIF
+        PRINTW 다리를 벌린 뒤, 보지를 손가락으로 열고 당신의 것을 조르고 있다.
+        PRINTW 교육의 성과만은 아닌 건지, 가랑이 사이엔 애액이 흐르기 시작했다.
+    ;[연모계]조수
+    ELSEIF LOCAL == 1
+        IF EXIST_PENIS(TARGET) && EXIST_PENIS(MASTER)
+            PRINTFORMW 「설마 두 사람과 하는 건가?」라는 표정으로 난감해하고 있다.
+        ELSEIF EXIST_PENIS(TARGET)
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"의")% 앞에서 %조사처리(CALLNAME:TARGET,"과")% 섹스를 하려니 부끄러운 듯 몸을 꼬고 있다.
+        ELSE
+            PRINTFORMW %조사처리(CALLNAME:TARGET,"의")% 앞에서 섹스를 하려니 부끄러운 듯 몸을 꼬고 있다.
+        ENDIF
+    ;[복종계]조수
+    ELSEIF LOCAL == 2
+        PRINTW 다리를 벌린 뒤, 보지를 손가락으로 열고 당신의 것을 조르고 있다.
+        PRINTL 시키지 않아도 척척 말하는 게 교육을 시킨 보람이 있다.
+        PRINTFORMW %조사처리(CALLNAME:TARGET,"에게")% 좋은 모범이 될 것 이다.
+    ;[음란계]조수
+    ELSEIF LOCAL == 3
+        PRINTW 금방이라도 질내사정해 주었으면 하는 것처럼 황홀한 표정으로 보지를 손가락으로 열고 있다.
+        PRINTW 
+    ELSE
+        PRINTW 명령을 충실히 따르고 있다….
+    ENDIF
+ELSEIF TFLAG:99 == 2
+    PRINTFORMW %조사선택(CALLNAME:MASTER, "는")% 긴급 피임약을 먹었다.
+    IF (TALENT:150 || TALENT:152 || TALENT:153) && EXIST_PENIS(TARGET)
+        PRINTFORM 그것을 본 %조사선택(CALLNAME:TARGET, "는")% 
+        PRINTW 조금 아쉬운 표정을 짓고 있다.
+    ENDIF
+ELSE
+    PRINTFORMW 버그발생 COMF067.ERB
+ENDIF

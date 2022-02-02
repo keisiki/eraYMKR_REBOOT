@@ -1,0 +1,199 @@
+﻿;=============================================================================
+;모유먹이기
+;=============================================================================
+;………………………………………………
+;실행 판정
+;………………………………………………
+@COM_ABLE319
+;개별 설정 커맨드 필터
+SIF DITEMTYPE:999:319 > 0
+    RETURN 0
+;조교자가 모유체질이 아니면 안 됨
+SIF TALENT:PLAYER:134 == 0
+    RETURN 0
+;조교자 봉사·우후후계 커맨드를 유효로 하지 않으면 불가
+SIF (FLAG:15 & 2048) == 0
+    RETURN 0
+;수면중은 불가
+SIF EQUIP:14
+    RETURN 0
+;패닉중은 불가
+SIF TFLAG:108 > 0
+    RETURN 0
+;실신중은 불가
+SIF TFLAG:899 > 0
+    RETURN 0
+;고양이혀라면 기교 4·봉사 정신 3·순종 2이 필요
+SIF TALENT:54 && (ABL:12 < 4 || ABL:13 < 3 || ABL:10 < 2)
+    RETURN 0
+;밧줄 사용 중에는 목분리시만 가능
+SIF TEQUIP:40 && TALENT:230 == 0
+    RETURN 0
+;입에 장비가 장착돼 있으면 불가
+SIF TEQUIP:42 != 0
+    RETURN 0
+;승마 중에는 불가
+SIF TEQUIP:43 && TALENT:230 == 0
+    RETURN 0
+;한증탕과 암반욕 외의 ○○ 욕탕 입욕 중에는 불가
+SIF TEQUIP:55 && TEQUIP:55 != 12 && TEQUIP:55 != 15
+    RETURN 0
+;나체정식 중에는 안 됨
+SIF TEQUIP:60
+    RETURN 0
+;시간정지 중에는 무리
+SIF TEQUIP:71
+    RETURN 0
+;촉수 조교중일 시 안됨
+SIF TEQUIP:90
+    RETURN 0
+RETURN 1
+
+;--------------------------------------------------
+;커맨드 본체
+;--------------------------------------------------
+@COM319
+
+PRINTL 모유먹이기
+COM_NAME = 모유 먹이기
+CALL TRAIN_MESSAGE_COM319
+
+;-------------------------------------------------
+;소스의 계산
+;-------------------------------------------------
+DOWNBASE:0 += 10
+DOWNBASE:1 += 170
+
+SOURCE:14 = 1300
+SOURCE:22 = 1500
+SOURCE:31 = 400
+
+;ABL:봉사 정신을 본다
+IF ABL:13 == 0
+    SOURCE:15 = 420
+    SOURCE:16 = 150
+    TIMES SOURCE:30 , 3.00
+ELSEIF ABL:13 == 1
+    SOURCE:15 = 600
+    SOURCE:16 = 300
+    TIMES SOURCE:30 , 2.00
+ELSEIF ABL:13 == 2
+    SOURCE:15 = 740
+    SOURCE:16 = 650
+    TIMES SOURCE:30 , 1.50
+ELSEIF ABL:13 == 3
+    SOURCE:15 = 820
+    SOURCE:16 = 1000
+    TIMES SOURCE:30 , 1.00
+ELSEIF ABL:13 == 4
+    SOURCE:15 = 900
+    SOURCE:16 = 1800
+    TIMES SOURCE:30 , 0.50
+ELSE
+    SOURCE:15 = 990
+    SOURCE:16 = 2500
+    TIMES SOURCE:30 , 0.10
+ENDIF
+
+;ABL:기교를 본다
+IF ABL:12 == 0
+    TIMES SOURCE:15 , 0.50
+    TIMES SOURCE:16 , 0.50
+ELSEIF ABL:12 == 1
+    TIMES SOURCE:15 , 0.80
+    TIMES SOURCE:16 , 0.80
+ELSEIF ABL:12 == 2
+    TIMES SOURCE:15 , 1.00
+    TIMES SOURCE:16 , 1.00
+ELSEIF ABL:12 == 3
+    TIMES SOURCE:15 , 1.20
+    TIMES SOURCE:16 , 1.20
+ELSEIF ABL:12 == 4
+    TIMES SOURCE:15 , 1.50
+    TIMES SOURCE:16 , 1.50
+ELSE
+    TIMES SOURCE:15 , 2.00
+    TIMES SOURCE:16 , 2.00
+ENDIF
+
+;ABL:레즈끼를 본다
+IF ABL:22 == 0
+    TIMES SOURCE:14 , 0.90
+    SOURCE:18 = 100
+ELSEIF ABL:22 == 1
+    TIMES SOURCE:14 , 1.00
+    SOURCE:18 = 250
+ELSEIF ABL:22 == 2
+    TIMES SOURCE:14 , 1.20
+    SOURCE:18 = 350
+ELSEIF ABL:22 == 3
+    TIMES SOURCE:14 , 1.50
+    SOURCE:18 = 500
+ELSEIF ABL:22 == 4
+    TIMES SOURCE:14 , 2.00
+    SOURCE:18 = 750
+ELSE
+    TIMES SOURCE:14 , 2.50
+    SOURCE:18 = 800
+ENDIF
+
+;대상이 유아 또는 유치 또는 유아퇴행
+SIF TALENT:130 || TALENT:131 || TALENT:159
+    TIMES SOURCE:16 , 1.50
+    
+;여자혐오
+IF TALENT:38
+    TIMES SOURCE:16 , 0.50
+    SOURCE:32 = 500
+ENDIF
+
+SIF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+    TCVAR:12 += 2
+SIF TALENT:150 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0
+    TCVAR:21 += 3
+    
+IF TALENT:150
+    TIMES DOWNBASE:0 , 0.80
+    TIMES DOWNBASE:1 , 0.80
+ELSEIF TALENT:160
+    TIMES DOWNBASE:0 , 0.90
+    TIMES DOWNBASE:1 , 0.90
+ELSEIF TALENT:170
+    TIMES DOWNBASE:0 , 0.90
+    TIMES DOWNBASE:1 , 0.90
+ENDIF
+
+;노예의 입⇔조교자의 가슴의 불결이 이동
+STAIN:0 |= STAIN:PLAYER:5
+STAIN:PLAYER:5 |= STAIN:0
+
+;주인 경험 플래그
+SIF ASSIPLAY == 0 && EXP:22 >= EXPLV:3
+    TFLAG:50 += 1
+
+;조교자의 경험
+TCVAR:PLAYER:5 += 1
+
+SIF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+    TCVAR:PLAYER:12 += 2
+    
+SIF TALENT:PLAYER:142
+    SOURCE:25 -= 500
+
+RETURN 1
+
+;--------------------------------------------------
+;조교시 메시지
+;--------------------------------------------------
+@TRAIN_MESSAGE_COM319
+CALL KOJO_TRAIN_MESSAGE_COM
+SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+    RETURN 0
+
+PRINTL
+PRINTFORM %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 
+IF TALENT:150
+    PRINTW 모유를 먹여 주었다….
+ELSE
+    PRINTW 가슴을 빨게 했다….
+ENDIF
