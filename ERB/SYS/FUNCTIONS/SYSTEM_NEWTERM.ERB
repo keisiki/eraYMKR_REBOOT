@@ -1078,8 +1078,8 @@ FOR ASSI, 0, CHARANUM
         CALL RESET_EX_ASSI
     ;조수가 즉각함락을 갖고 있지 않음＋(과거 주회 플레이를 포함해)지금까지 淫乱、淫核／淫茎、淫壷、淫尻、淫乳、尿道狂、キス魔、ドＳ、ドＭを全て([オトコ]の場合、[淫壷]は不要)취득、
     ;혹은 지금까지 [연모] [친애] [상애] [복종] [낙인] [예속] [사역마] [음란]을 전부 취득
-    ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも即落ちを覚えさせた場合最初から即落ちが付加されるようになる.
-    IF (((TALENT:ASSI:120 && CFLAG:ASSI:16 == 507) || CFLAG:ASSI:16 == 511) && FLAG:3 >= 3) || ((CFLAG:ASSI:16 & 512) && TALENT:ASSI:179 == 0)
+    ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも即落ちを覚えさせた場合最初から即落ちが付加されるようになる. (이미 즉각함락 존재 시 유지 여부 추가. T(220213))
+    IF (((TALENT:ASSI:120 && CFLAG:ASSI:16 == 507) || CFLAG:ASSI:16 == 511) && FLAG:3 >= 3) || CFLAG:ASSI:16 & 512
         CALL FALLEN_ASSI, LOCAL:4
         LOCAL:4 = RESULT
     ELSEIF CFLAG:ASSI:14 >= 15 && CFLAG:ASSI:15 >= 15 && (CFLAG:ASSI:16 & 1) > 0 && TALENT:ASSI:179 == 0
@@ -1283,29 +1283,44 @@ EQUIP:ASSI:0 = 0
 ;조수에게 [즉각함락]을 추가시키는 처리
 ;--------------------------------------------------
 ;いいえを選択しても即落ちを『覚えさせたことがある』と判定される
-;(つまりこの選択肢を出した時点で淫乱系素質全取得の条件が1つ満たされることに)
+;(つまりこの選択肢を出した時点で淫乱系素質全取得の条件が1つ満たされることに) (이미 즉각함락 존재 시 유지 여부 추가. T(220213))
 @FALLEN_ASSI, ARG
-PRINTFORMW %조사처리(CALLNAME:ASSI,"가")% 이쪽을 보는 눈이 이상하다….
-PRINTFORMW 수도 없이 조교를 받은 %CALLNAME:ASSI%의 몸은 완전히 %CALLNAME:MASTER%의 손에 함락되어버린 모양이다…….
-PRINTFORMW ＜%CALLNAME:MASTER%의 손으로 보다 더 느끼기 쉬운 몸으로 바꿀 수 있습니다＞
-PRINTFORML ＜%CALLNAME:ASSI%에게 [즉각함락]을 배우게 하겠습니까?＞
-SIF (CFLAG:ASSI:16 & 512) == 0
-    PRINTL (※아니오를 선택해도 즉각함락을 『배웠던 적이 있다』고 판정됩니다)
-PRINTLC [0] 예
-PRINTLC [1] 아니오
-PRINTL 
-$INPUT_LOOP_FALLEN_ASSI
-INPUT
-IF RESULT == 0
-    PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% [즉각함락]을 얻었다.
-    TALENT:ASSI:179 = 1
-    ARG |= 1
-ELSEIF RESULT == 1
-    PRINTFORMW %조사처리(CALLNAME:ASSI,"가")% [즉각함락]을 익히는 것을 보류했습니다.
+IF TALENT:ASSI:179
+    PRINTFORML ＜%CALLNAME:ASSI%의 [즉각함락]을 유지하겠습니까?＞
+    PRINTLC [0] 예
+    PRINTLC [1] 아니오
+    $INPUT_LOOP_FALLEN_ASSI1
+    INPUT
+    IF RESULT == 0
+        ARG |= 1
+    ELSEIF RESULT == 1
+        PRINTFORMW %조사처리(CALLNAME:ASSI,"가")% [즉각함락]을 잃었습니다. (다음 회차 때 다시 얻을 수 있습니다.)
+    ELSE
+        GOTO INPUT_LOOP_FALLEN_ASSI1
+    ENDIF
 ELSE
-    GOTO INPUT_LOOP_FALLEN_ASSI
+    PRINTFORMW %조사처리(CALLNAME:ASSI,"가")% 이쪽을 보는 눈이 이상하다….
+    PRINTFORMW 수도 없이 조교를 받은 %CALLNAME:ASSI%의 몸은 완전히 %CALLNAME:MASTER%의 손에 함락되어버린 모양이다…….
+    PRINTFORMW ＜%CALLNAME:MASTER%의 손으로 보다 더 느끼기 쉬운 몸으로 바꿀 수 있습니다＞
+    PRINTFORML ＜%CALLNAME:ASSI%에게 [즉각함락]을 배우게 하겠습니까?＞
+    SIF (CFLAG:ASSI:16 & 512) == 0
+        PRINTL (※아니오를 선택해도 즉각함락을 『배웠던 적이 있다』고 판정됩니다)
+    PRINTLC [0] 예
+    PRINTLC [1] 아니오
+    PRINTL 
+    $INPUT_LOOP_FALLEN_ASSI2
+    INPUT
+    IF RESULT == 0
+        PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% [즉각함락]을 얻었다.
+        TALENT:ASSI:179 = 1
+        ARG |= 1
+    ELSEIF RESULT == 1
+        PRINTFORMW %조사처리(CALLNAME:ASSI,"가")% [즉각함락]을 익히는 것을 보류했습니다.
+    ELSE
+        GOTO INPUT_LOOP_FALLEN_ASSI2
+    ENDIF
+    CFLAG:ASSI:16 |= 512
 ENDIF
-CFLAG:ASSI:16 |= 512
 
 RETURN ARG
 
