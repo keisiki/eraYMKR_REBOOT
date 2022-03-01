@@ -94,8 +94,11 @@ IF FLAG:89 & 1
         PRINTLC [92] 다이빙대(30만원)
 ENDIF
 ;-----------------------------------------------
-SIF FLAG:93 < 20
+IF FLAG:93 < 20
     PRINTLC [98] 토지(5000원)
+ELSEIF GETBIT(FLAG:리부트모드설정,2) && FLAG:90 >= 2
+    PRINTLC [98] 토지(5만원)
+ENDIF
 IF FLAG:90 == 0
     PRINTLC [99] 호화저택(10만원)
 ELSEIF FLAG:90 == 1
@@ -182,8 +185,14 @@ ELSEIF RESULT == 91 && FLAG:89 & 1 && (FLAG:89 & 2) == 0
 ELSEIF RESULT == 92 && FLAG:89 & 1 && (FLAG:89 & 4) == 0
     LOCAL:1 = 300000
 
-ELSEIF RESULT == 98 && FLAG:93 < 20
-    LOCAL:1 = 5000
+ELSEIF RESULT == 98 
+    IF FLAG:93 < 20
+        LOCAL:1 = 5000
+    ELSEIF GETBIT(FLAG:리부트모드설정,2) && FLAG:90 >= 2
+        LOCAL:1 = 50000
+    ELSE
+        GOTO INPUT_LOOP
+    ENDIF
 ELSEIF RESULT == 99 && FLAG:90 == 0
     LOCAL:1 = 100000
 ELSEIF RESULT == 99 && FLAG:90 == 1
@@ -298,7 +307,11 @@ ELSEIF LOCAL == 92
 
 ELSEIF LOCAL == 98
     PRINTL 토지를 구입했습니다.>
-    FLAG:93 += 1
+    IF FLAG:93 < 20
+        FLAG:93 += 1
+    ELSEIF GETBIT(FLAG:리부트모드설정,2) && FLAG:90 >= 2
+        FLAG:94 += 3
+    ENDIF
 ELSEIF LOCAL == 99
     IF FLAG:90 == 0
         PRINTL 호화저택을 건설했습니다.＞
@@ -337,7 +350,7 @@ ELSEIF LOCAL == 80
     PRINTW 을 개장했습니다＞
 ELSEIF LOCAL == 98
     PRINTW ＜노예구입 가능 숫자가 늘어났습니다＞
-    SIF FLAG:93 >= 20
+    SIF FLAG:93 >= 20 && (!GETBIT(FLAG:리부트모드설정,2) || FLAG:90 < 2)
         PRINTW ＜더 이상 토지를 구입할 수는 없습니다＞
 ELSEIF LOCAL == 99
     ;주인이 家屋敷を購入したときの現在の調教対象のイベント口上

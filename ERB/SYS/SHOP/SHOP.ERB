@@ -16,6 +16,10 @@
 @EVENTSHOP
 DRAWLINE
 DRAWLINE
+IF FLAG:RBT_타겟제외예약 == 1
+    TARGET = -1
+    FLAG:RBT_타겟제외예약 = 0
+ENDIF
 ;주인 외에 캐릭터가 있으며 낮 턴일 때에는 기념일 체크를 실행한다
 SIF CHARANUM > 1 && TIME == 0
     CALL ANNIVERSARY_CHECK
@@ -709,7 +713,8 @@ REPEAT CHARANUM
         CONTINUE
     SIF CFLAG:COUNT:4 == 1024 && TALENT:COUNT:262
         CONTINUE
-
+    SIF 대상_제외됨(LOCAL)
+        CONTINUE
     CALLF SET_LIST, LOCAL:2, COUNT
     LOCAL:2 += 1
     MARK:COUNT:98 = 1
@@ -915,7 +920,8 @@ REPEAT CHARANUM
     ;실종 중이라거나 이 자리에 없으면 제외
     SIF CFLAG:COUNT:4 == 1
         CONTINUE
-
+    SIF 대상_제외됨(COUNT)
+        CONTINUE
     CALLF SET_LIST, LOCAL:2, COUNT
     LOCAL:2 += 1
     MARK:COUNT:98 = 1
@@ -1024,7 +1030,8 @@ GOTO PRINT_PAGE
 ;RETURNF로 구입 가능한 노예의 인원수를 반사하도록
 @CALC_SLAVE_CAPACITY
 #FUNCTION
-RETURNF (FLAG:4 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:93, BORDER_SLAVE_CAPACITY())
+;챌린지 모드인지 아닌지
+RETURNF (FLAG:4 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:93 + FLAG:94, BORDER_SLAVE_CAPACITY())
 
 ;--------------------------------------------------
 ;집의 수용 가능한 노예의 한계 인원수
@@ -1035,7 +1042,7 @@ RETURNF (FLAG:4 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:93, BORDER_SLAVE_CAP
 IF FLAG:90 == 5
     RETURNF 1000
 ELSEIF FLAG:90 == 3 || FLAG:90 == 4
-    RETURNF 501
+    RETURNF 501 + FLAG:94
 ELSEIF FLAG:90 == 2
     RETURNF 101
 ELSEIF FLAG:90 == 1
@@ -1505,6 +1512,8 @@ REPEAT CHARANUM
     ;실종 중인 캐릭터는 배제
     SIF CFLAG:COUNT:4 == 1
         CONTINUE
+    SIF 대상_제외됨(LOCAL)
+        CONTINUE
     IF TFLAG:0 == 1
         SIF ABL:COUNT:ARG == 0
             CONTINUE
@@ -1594,6 +1603,8 @@ REPEAT 20
     SIF LOCAL == 0
         CONTINUE
     SIF MARK:LOCAL:98 == 0
+        CONTINUE
+    SIF 대상_제외됨(LOCAL)
         CONTINUE
     IF LOCAL == TARGET
         PRINT ☆
