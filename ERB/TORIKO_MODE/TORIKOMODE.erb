@@ -1671,18 +1671,20 @@ LOCAL:1 = 250 - ((BASE:ARG:0/MAXBASE:ARG:0) *150)
 ;남은체력 체크. 
     LOCAL:0 = (LOCAL:0 * LOCAL:1)
 ;소질체크
-    SIF TALENT:ARG:127 == 1
+    SIF TALENT:ARG:소인 == 1 ;소인은 감소
         TIMES LOCAL:0, 0.6
-    SIF TALENT:ARG:128 == 1
+    SIF TALENT:ARG:작은체형 == 1 ; 작은 체형은 감소
         TIMES LOCAL:0, 0.75
-    SIF TALENT:ARG:129 == 1
+    SIF TALENT:ARG:거구 == 1 ;거구는 증가
         TIMES LOCAL:0, 1.25
-    SIF TALENT:ARG:140 == 1
+    SIF TALENT:ARG:임신 == 1 ;임신은 증가
         TIMES LOCAL:0, 1.25
-    SIF TALENT:ARG:143 == 1
+    SIF TALENT:ARG:포란중 == 1
         TIMES LOCAL:0, 1.25
-    SIF TALENT:ARG:205 == 1
+    SIF TALENT:ARG:흡혈귀 == 1
         TIMES LOCAL:0, 1.25
+    SIF TALENT:ARG:요정 == 1
+        TIMES LOCAL:0, 0.25
 ;계산의 마지막에, 뻥튀기한 100배를 다시 나눠준다. 이로서 오차가 줄어듬.
 RESULT:1 = LOCAL:0 /100
 RETURN 1
@@ -1715,19 +1717,20 @@ LOCAL:3 = 125 - (LOCAL:1 * 50 /LOCAL:2)
 LOCAL:0 = LOCAL:0 * LOCAL:3
 
 ;소질체크
-    SIF TALENT:ARG:127 == 1
+    SIF TALENT:ARG:소인 == 1
         TIMES LOCAL:0, 0.6
-    SIF TALENT:ARG:128 == 1
+    SIF TALENT:ARG:작은체형 == 1
         TIMES LOCAL:0, 0.75
-    SIF TALENT:ARG:129 == 1
+    SIF TALENT:ARG:거구 == 1
         TIMES LOCAL:0, 1.25
-    SIF TALENT:ARG:140 == 1
+    SIF TALENT:ARG:임신 == 1
         TIMES LOCAL:0, 1.25
-    SIF TALENT:ARG:143 == 1
+    SIF TALENT:ARG:포란중 == 1
         TIMES LOCAL:0, 1.25
-    SIF TALENT:ARG:205 == 1
+    SIF TALENT:ARG:흡혈귀 == 1
         TIMES LOCAL:0, 1.25
-
+    SIF TALENT:ARG:요정 == 1
+        TIMES LOCAL:0, 0.25
 ;계산의 마지막에, 뻥튀기한 100배를 다시 나눠준다. 이로서 오차가 줄어듬.
 RESULT:1 = LOCAL:0 /100
 RETURN 1
@@ -1887,7 +1890,7 @@ REPEAT CHARANUM
 
     SIF COUNT == MASTER || CFLAG:COUNT:4 == 1
         CONTINUE
-    SIF 대상_제외됨(LOCAL)
+    SIF 대상_제외됨(COUNT)
         CONTINUE
     CALL EATEN_TORIKOMODE(COUNT)
     EATEN_SUM += RESULT
@@ -2208,7 +2211,7 @@ REPEAT CHARANUM
     ;失踪中などこの場にいないなら除外
     SIF CFLAG:COUNT:4 == 1
         CONTINUE
-    SIF 대상_제외됨(LOCAL)
+    SIF 대상_제외됨(COUNT)
         CONTINUE
     CALLF SET_LIST, LOCAL:2, COUNT
     LOCAL:2 += 1
