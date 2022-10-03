@@ -1,0 +1,203 @@
+﻿[SKIPSTART]
+@시정마선택
+#DIM DYNAMIC PAGE
+$LOOP
+DRAWLINE
+PRINTFORML 누구를 준비역으로 쓸까...?
+DRAWLINE
+REPEAT 20
+    LOCAL = GET_LIST(COUNT + PAGE * 20)
+    SIF LOCAL == 0
+        CONTINUE
+    ;주인공 배제
+    SIF LOCAL == 0
+        CONTINUE
+    ;실종 중 캐릭터 배제
+    SIF CFLAG:LOCAL:4 == 1
+        CONTINUE
+    SIF 대상_제외됨(LOCAL)
+        CONTINUE
+    IF LOCAL == TARGET
+        PRINT ☆
+    ELSEIF LOCAL == ASSI
+        PRINT ★
+    ELSEIF LOCAL == 조교준비역
+        PRINT 시
+    ELSEIF CFLAG:LOCAL:4 == 4
+        PRINT ◆
+        LOCAL:3 |= 1
+    ELSEIF CFLAG:LOCAL:4 == 8
+        PRINT ▲
+        LOCAL:3 |= 2
+    ELSEIF CFLAG:LOCAL:4 == 16
+        PRINT ■
+        LOCAL:3 |= 4
+    ELSEIF CFLAG:LOCAL:4 & 1024
+        PRINT ▼
+        LOCAL:3 |= 16
+    ELSEIF CFLAG:LOCAL:4 == 2048 || CFLAG:LOCAL:4 == 4096
+        PRINT ▽
+        LOCAL:3 |= 8
+    ELSEIF ISASSI:LOCAL == 1
+        PRINT ●
+    ELSEIF CFLAG:LOCAL:1 == 2
+        PRINT ○
+    ELSE
+        PRINT 　
+    ENDIF
+    CALL ARRANGE_CHARALIST, LOCAL
+    ;스케쥴 모드 사용중일때
+    SIF FLAG:5000 & 1024 && 1
+        CALL ARRANGE_SCHEDULE_TORIKOMODE, LOCAL
+    ;스트레스 모드 사용 중일때
+    IF FLAG:5000 & 64 && 1
+        PRINT  ♨스트레스:
+        CALL PRINT_STRESS_LEVEL_TORIKOMODE, CFLAG:LOCAL:65
+    ENDIF
+    ;줄바꿈
+    SIF (FLAG:5000 & 1024 || FLAG:5000 & 64) && 1
+        PRINTL 
+    
+    PRINT 　
+    CALL ARRANGE_CHARALIFE, LOCAL, 1
+REND
+DRAWLINE
+PRINT 　　　☆:조교중 ★:조수 ○:조수가능 ●:전 조수 시:조교 준비역
+SIF FLAG:15 & 4096 && FLAG:75 & 32768 && LOCAL:3 & 1
+    PRINT  ◆:촉수 유폐중
+SIF FLAG:73 & 1 && LOCAL:3 & 4
+    PRINT  ■:지하실 수감중
+SIF FLAG:79 & 1 && LOCAL:3 & 8
+    PRINT  ▽:허브 작업중
+PRINTL 　(을)를 나타내고 있습니다
+SIF PAGE
+    PRINTFORMC [1000] 이전 페이지
+PRINTFORMC [9999] 돌아간다
+IF !PAGE * 20 >= CHARANUM
+    PRINTFORML [2000] 다음페이지
+ENDIF
+INPUT
+IF RESULT == 9999
+    RETURN 0
+ELSEIF RESULT == 1000
+    PAGE = MAX(0,PAGE - 1)
+ELSEIF RESULT == 2000
+    IF PAGE * 20 >= CHARANUM
+    ELSE
+        PAGE++
+    ENDIF
+ELSE
+    LOCAL = RESULT
+    IF LOCAL == 0
+        GOTO LOOP
+    ;주인공 배제
+    ELSEIF LOCAL == 0
+        GOTO LOOP
+    ;실종 중 캐릭터 배제
+    ELSEIF CFLAG:LOCAL:4 == 1
+        GOTO LOOP
+    ELSEIF 대상_제외됨(LOCAL)
+        GOTO LOOP
+    ELSEIF LOCAL == TARGET
+        PRINTFORMW 조교 대상은 준비역을 맡을 수 없습니다
+        GOTO LOOP
+    ELSEIF LOCAL == ASSI
+        PRINTFORMW 조수는 준비역을 맡을 수 없습니다
+        GOTO LOOP
+    ENDIF
+    PRINTFORMW %CALLNAME:LOCAL%에게 조교의 준비역을 맡겼습니다
+    조교준비역 = LOCAL
+ENDIF
+GOTO LOOP
+
+@시정마정합성(ARG)
+#DIM DYNAMIC 부적격
+IF 대상_제외됨(ARG)
+    부적격 = 1
+ENDIF
+IF TARGET == ARG
+    부적격 = 1
+ENDIF
+IF ASSI == ARG
+    부적격 = 1
+ENDIF
+
+IF 부적격
+    조교준비역 = 0
+ENDIF
+
+@조교자동준비()
+#DIM DYNAMIC 효율
+#DIM DYNAMIC 항목별효율
+
+효율 = ABL:조교준비역:기교 * 3 + ABL:조교준비역:조교사Lv
+효율 += MIN(5,ABL:TARGET:C감각)
+효율 += MIN(5,ABL:TARGET:V감각)
+효율 += MIN(5,ABL:TARGET:A감각)
+효율 += MIN(5,ABL:TARGET:B감각)
+효율 += RELATION:TARGET:조교준비역 / 10
+효율 += RELATION:조교준비역:TARGET / 10
+효율 -= RAND:5
+IF 효율 <= 6
+    효율 = 6
+ENDIF
+
+항목별효율 = RAND:5 - 5
+IF TALENT:TARGET:C민감
+    항목별효율 += 5
+ENDIF
+IF TALENT:TARGET:C둔감
+    항목별효율 -= 5
+ENDIF
+PALAM:TARGET:쾌Ｃ += 9000 * MAX(1,효율 + 항목별효율) / 100
+
+항목별효율 = RAND:5 - 5
+IF TALENT:TARGET:V민감
+    항목별효율 += 5
+ENDIF
+IF TALENT:TARGET:V둔감
+    항목별효율 -= 5
+ENDIF
+PALAM:TARGET:쾌Ｖ += 9000 * MAX(1,효율 + 항목별효율) / 100
+
+항목별효율 = RAND:5 - 5
+IF TALENT:TARGET:A민감
+    항목별효율 += 5
+ENDIF
+IF TALENT:TARGET:A둔감
+    항목별효율 -= 5
+ENDIF
+PALAM:TARGET:쾌Ａ += 9000 * MAX(1,효율 + 항목별효율) / 100
+
+
+항목별효율 = RAND:5 - 5
+IF TALENT:TARGET:B민감
+    항목별효율 += 5
+ENDIF
+IF TALENT:TARGET:B둔감
+    항목별효율 -= 5
+ENDIF
+PALAM:TARGET:쾌Ｂ += 9000 * MAX(1,효율 + 항목별효율) / 100
+
+항목별효율 = RAND:5 - 5
+IF TALENT:TARGET:젖기쉬움
+    항목별효율 += 5
+ENDIF
+IF TALENT:TARGET:젖기어려움
+    항목별효율 -= 5
+ENDIF
+PALAM:TARGET:윤활 += 3000 * MAX(1,효율 + 항목별효율) / 100
+
+항목별효율 = RAND:5 - 5
+항목별효율 += ABL:TARGET:욕망
+PALAM:TARGET:욕정 += 2000 * MAX(1,효율 + 항목별효율) / 100
+
+항목별효율 = RAND:5 - 5
+IF TALENT:TARGET:부끄럼쟁이
+    항목별효율 += 5
+ENDIF
+IF TALENT:TARGET:부끄럼없음
+    항목별효율 -= 5
+ENDIF
+PALAM:TARGET:치정 += 3000 * MAX(1,효율 + 항목별효율) / 100
+[SKIPEND]
