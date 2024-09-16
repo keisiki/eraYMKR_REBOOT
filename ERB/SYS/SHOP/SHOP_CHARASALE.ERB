@@ -275,12 +275,15 @@ ENDIF
 ;-------------------------------------------------
 ;대상 or 조수의 매각 · 해방에 따른 등록 삭제 처리
 ;-------------------------------------------------
-@CHARA_GONE, ARG, ARG:1, ARG:2
+@CHARA_GONE(GOODS, NOW_TARGET, NOW_ASSI)
+#DIM DYNAMIC GOODS          ;판매할 상품
+#DIM DYNAMIC NOW_TARGET     ;현재 타겟
+#DIM DYNAMIC NOW_ASSI       ;현재 조수
 ;해방되어 떠나는 노예의 이벤트 대사 호출
-CALL SELF_KOJO, ARG, 195, TFLAG:200
+CALL SELF_KOJO, GOODS, 195, TFLAG:200
 
-IF CFLAG:ARG:4 == 0
-    IF NO:ARG == 401
+IF CFLAG:GOODS:4 == 0
+    IF NO:GOODS == 401
         IF FLAG:570 & 16
             TALENT:MASTER:149 = 0
             ABL:MASTER:98 = 0
@@ -288,22 +291,22 @@ IF CFLAG:ARG:4 == 0
             ABL:MASTER:98 = FLAG:572
         ENDIF
         FLAG:570 &= 15
-    ELSEIF NO:MASTER == 400 && NO:ARG == 402 && FLAG:570 & 4
+    ELSEIF NO:MASTER == 400 && NO:GOODS == 402 && FLAG:570 & 4
         FLAG:570 |= 2
         FLAG:570 &= 59
     ENDIF
-    DELCHARA ARG
+    DELCHARA GOODS
 ENDIF
 
-IF ARG:1 < 0 || ARG:1 == ARG
+IF NOW_TARGET < 0 || NOW_TARGET == GOODS
     TARGET = -1
 ELSE
-    TARGET = (ARG:1 > ARG) ? (ARG:1 - 1) # ARG:1
+    TARGET = (NOW_TARGET > GOODS) ? (NOW_TARGET - 1) # NOW_TARGET
 ENDIF
-IF ARG:2 < 0 || ARG:2 == ARG
+IF NOW_ASSI < 0 || NOW_ASSI == GOODS
     ASSI = -1
 ELSE
-    ASSI = (ARG:2 > ARG) ? (ARG:2 - 1) # ARG:2
+    ASSI = (NOW_ASSI > GOODS) ? (NOW_ASSI - 1) # NOW_ASSI
 ENDIF
 
 FLAG:996 = -1
