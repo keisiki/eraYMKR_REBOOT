@@ -80,14 +80,14 @@ IF CFLAG:7899 == 0
         TALENT:부끄럼없음 = 1
         TALENT:61 = 1
         TALENT:86 = 1
-        SIF ABL:10
-            ABL:10 -= 1
-        SIF ABL:1 < 5
-            ABL:1 += 1
-        SIF ABL:12 < 3
-            ABL:12 = 3
-        SIF ABL:31 < 3
-            ABL:31 = 3
+        SIF ABL:순종
+            ABL:순종 -= 1
+        SIF ABL:V감각 < 5
+            ABL:V감각 += 1
+        SIF ABL:기교 < 3
+            ABL:기교 = 3
+        SIF ABL:정액중독 < 3
+            ABL:정액중독 = 3
         EXP:22 += 15
         EXP:2 += 15
         EXP:4 += 20
@@ -355,7 +355,7 @@ ELSEIF CFLAG:5001 < 2 && MARK:1 >= 1
     RETURN 1
     
 ;「음구지식」 습득 이벤트
-ELSEIF TALENT:음구지식 == 0 && CFLAG:7910 >= 5 && ABL:12 >= 5 && MARK:9 == 0 && MARK:8 == 0
+ELSEIF TALENT:음구지식 == 0 && CFLAG:7910 >= 5 && ABL:기교 >= 5 && MARK:9 == 0 && MARK:8 == 0
     DRAWLINE
     PRINTFORMW 「아, %CSTR:90%~♪」
     PRINTFORMW 방에 들어가니, 방 에서 소악마가 조교용 도구를 어지럽힌게 보인다.
@@ -765,7 +765,7 @@ SIF EQUIP:14 || TFLAG:899 > 0
 SIF TALENT:167
     RETURN 0
 ;A감각이 일정 이상이라면 애널 첫체험이 나오지 않게 한다(여기까지 해 거절할 것 응 해)
-SIF ABL:2 >= 3 && CFLAG:5101 == 0
+SIF ABL:A감각 >= 3 && CFLAG:5101 == 0
     CFLAG:5101 = 1
 
 ;-------------------------------------------------
@@ -888,7 +888,7 @@ ELSEIF SELECTCOM == 0 || SELECTCOM == 6
     ;2회째 이후
     ELSE
         ;순종 Lv2 이상
-        IF ABL:10 >=2 && (CFLAG:9006 <= 2 || FLAG:11 == 2)
+        IF ABL:순종 >=2 && (CFLAG:9006 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「응……역시 %CSTR:90%의 정기, 맛있어……♪」
             CFLAG:9006 = 3
         ;그 이외
@@ -940,7 +940,7 @@ IF SELECTCOM == 1 && TEQUIP:56 == 0
             PRINTFORMW 「응, %CSTR:90%의 혀, 멋져요…♪」
             CFLAG:9001 = 4
         ;C감각 Lv3
-        ELSEIF ABL:0 >= 3 && (CFLAG:9001 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:C감각 >= 3 && (CFLAG:9001 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「응훗, 좋아하는곳이 아닌데도 이렇게……♪」
             CFLAG:9001 = 3
         ;그 이외
@@ -954,7 +954,7 @@ ENDIF
 ;이와시미즈
 IF SELECTCOM == 611
     ;노출벽 Lv3 이상+C감각 Lv3 이상
-    IF ABL:14 >= 3 && ABL:0 >= 3 && (CFLAG:9611 <= 5 || FLAG:11 == 2)
+    IF ABL:노출증 >= 3 && ABL:C감각 >= 3 && (CFLAG:9611 <= 5 || FLAG:11 == 2)
         PRINTFORMW 「우우, 누군가에게 이 소리를 들려 주고 싶네요 ♪」
         CFLAG:9611 = 6
 ;    ;연모
@@ -962,7 +962,7 @@ IF SELECTCOM == 611
 ;        PRINTFORMW 
 ;        CFLAG:9611 = 5
     ;C감각 Lv3 이상
-    ELSEIF ABL:0 >= 3 && (CFLAG:9611 <= 3 || FLAG:11 == 2)
+    ELSEIF ABL:C감각 >= 3 && (CFLAG:9611 <= 3 || FLAG:11 == 2)
         PRINTFORMW 「모처럼, 기분 좋으니까, 아, 소리보다 쾌락을……」
         CFLAG:9611 = 4
     ;혀사용
@@ -995,7 +995,7 @@ IF SELECTCOM == 2
     ELSE
         LOCAL = PALAM:10 + UP:10
         ;A감각 3이상+윤활 Lv3 이상
-        IF ABL:2 >= 2 && LOCAL >= PALAMLV:2 && (CFLAG:9002 <= 4 || FLAG:11 == 2)
+        IF ABL:A감각 >= 2 && LOCAL >= PALAMLV:2 && (CFLAG:9002 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「응후읏, 좋은 느낌이에요……실전으로 가는거에요?」
             CFLAG:9002 = 5
         ;연모+윤활 Lv2 미만
@@ -1003,7 +1003,7 @@ IF SELECTCOM == 2
             ;PRINTFORMW 
             ;CFLAG:9002 = 4
         ;A감각 3이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9002 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9002 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「……%CSTR:90%에게 죄송하지만, 아직 준비, 가…」
             CFLAG:9002 = 3
         ;그 이외
@@ -1022,7 +1022,7 @@ IF SELECTCOM == 3
     ;처음
     IF CFLAG:9003 == 0
         ;B감각 Lv2 이상
-        IF ABL:3 >= 2
+        IF ABL:B감각 >= 2
             PRINTFORMW 「으으, 버릇 될 것 같아……♪」
         ;그 이외
         ELSE
@@ -1033,7 +1033,7 @@ IF SELECTCOM == 3
     ;2회째 이후
     ELSE
         ;B감각 Lv3 이상
-        IF ABL:3 >= 3 && (CFLAG:9003 <= 2 || FLAG:11 == 2)
+        IF ABL:B감각 >= 3 && (CFLAG:9003 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「지금의 제 가슴으로는 부족해요!」
             CFLAG:9003 = 3
         ;그 이외
@@ -1098,15 +1098,15 @@ IF SELECTCOM == 5
     ;2회째 이후
     ELSE
         ;사정 중독 Lv3
-        IF ABL:37 >= 3 && (CFLAG:9005 <= 4 || FLAG:11 == 2)
+        IF ABL:사정중독 >= 3 && (CFLAG:9005 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「응, 나올 것 같아, %CSTR:90%에게 뿌리고 싶어요♪」
             CFLAG:9005 = 5
         ;비대 음핵
-        ELSEIF ABL:0 >= 3 && TALENT:비대음핵     && (CFLAG:9005 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:C감각 >= 3 && TALENT:비대음핵     && (CFLAG:9005 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아, 좋아, 클리 자지 기분 좋아 ♪」
             CFLAG:9005 = 3
         ;C감각 Lv3
-        ELSEIF ABL:0 >= 3 && (CFLAG:9005 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:C감각 >= 3 && (CFLAG:9005 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아, 좋아, 자지 기분 좋아요 ♪」
             CFLAG:9005 = 3
         ;그 이외
@@ -1126,13 +1126,13 @@ ENDIF
 ;(와)과 가슴 자위절구일까……
 ;-------------------------------------------------
 ;통상 자위나 로터 자위, 전기안마자위에 대해 지문으로 열중하는 경우(조금 조건빌려주고 있는데)
-IF (SELECTCOM == 7 || SELECTCOM == 124 || SELECTCOM == 125) && ABL:0 >= 5 && ABL:3 >= 5 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7 && (CFLAG:9007 <= 4 || FLAG:11 == 2)
+IF (SELECTCOM == 7 || SELECTCOM == 124 || SELECTCOM == 125) && ABL:C감각 >= 5 && ABL:B감각 >= 5 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7 && (CFLAG:9007 <= 4 || FLAG:11 == 2)
     PRINTFORMW 「……후후, 저 자위만으로 엄청 느끼고 있어요……」
     PRINTFORMW 「%조사처리(CSTR:90,"가")% 멈추라고 말하기 전까진, 계속 할거에요 ♪」
     CFLAG:9007 = 5
     RETURN 0
 ;애널 자위에 대해 지문으로 열중하는 경우(조금 조건빌려주고 있는데)
-ELSEIF SELECTCOM == 182 && ABL:0 >= 5 && ABL:3 >= 5 && PALAM:13 >= PALAMLV:4 && PREVCOM == 182 && (CFLAG:9182 <= 4 || FLAG:11 == 2)
+ELSEIF SELECTCOM == 182 && ABL:C감각 >= 5 && ABL:B감각 >= 5 && PALAM:13 >= PALAMLV:4 && PREVCOM == 182 && (CFLAG:9182 <= 4 || FLAG:11 == 2)
     PRINTFORMW 「아, 이제 나, 애널 만지작거려도 기분 좋아져 버립니다!」
     PRINTFORMW 「%조사처리(CSTR:90,"가")% 멈추라고 말하기 전까진, 엉덩이로 계속 할거에요 ♪
     CFLAG:9182 = 5
@@ -1170,7 +1170,7 @@ ELSEIF SELECTCOM == 182
     ;2회째 이후
     ELSE
         ;A감각 Lv3 이상
-        IF ABL:2 >= 3 && (CFLAG:9182 <= 2 || FLAG:11 == 2)
+        IF ABL:A감각 >= 3 && (CFLAG:9182 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아하…… 이제 저, 엉덩이 너무 좋아요… 스스로 만지는 것도……」
             CFLAG:9182 = 3
         ;그 이외
@@ -1252,7 +1252,7 @@ IF SELECTCOM == 10
             PRINTFORMW 「으응, 지금 클리 만져져서 느껴버려!」
             CFLAG:9010 = 4
         ;C감각 Lv3 이상
-        ELSEIF ABL:0 >= 3 && (CFLAG:9010 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:C감각 >= 3 && (CFLAG:9010 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「응, 진동때문에 이상해져 버릴것 같아요……」
             CFLAG:9010 = 3
         ;그 이외
@@ -1278,11 +1278,11 @@ IF SELECTCOM == 11
     ;2회째 이후
     ELSE
         ;연모＋C감각 Lv4 이상
-        IF TALENT:150 && ABL:0 >= 4 && (CFLAG:9011 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 && ABL:C감각 >= 4 && (CFLAG:9011 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「……%CSTR:90%, %CSTR:91%, %CSTR:91%♪」
             CFLAG:9011 = 4
         ;C감각 Lv3 이상
-        ELSEIF ABL:0 >= 3 && (CFLAG:9011 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:C감각 >= 3 && (CFLAG:9011 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아, 진동, 대단해……중독될 것 같아요…♪」
             CFLAG:9011 = 3
         ;그 이외
@@ -1447,7 +1447,7 @@ IF SELECTCOM == 15 && TEQUIP:35
     ;처음
     IF CFLAG:9015 == 0
         ;B감각 Lv2 이상
-        IF ABL:3 >= 2
+        IF ABL:B감각 >= 2
             PRINTFORMW 「여러 가지 기구를 쓸 정도로 가슴을 아주 좋아하는 건가요 %CSTR:90%은!」
         ;그 이외
         ELSE
@@ -1460,7 +1460,7 @@ IF SELECTCOM == 15 && TEQUIP:35
     ;2회째 이후
     ELSE
         ;B감각 Lv3 이상
-        IF ABL:3 >= 3 && (CFLAG:9015 <= 2 || FLAG:11 == 2)
+        IF ABL:B감각 >= 3 && (CFLAG:9015 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「히응, 젖꼭지에 오는 자극이잇!」
             CFLAG:9015 = 3
         ;그 이외
@@ -1473,7 +1473,7 @@ IF SELECTCOM == 15 && TEQUIP:35
 ;탈착시
 ELSEIF SELECTCOM == 15 && TEQUIP:35 == 0
     ;B감각 Lv3 이상
-    IF ABL:3 >= 3 && (CFLAG:8814 < 2 || FLAG:11 == 2)
+    IF ABL:B감각 >= 3 && (CFLAG:8814 < 2 || FLAG:11 == 2)
         PRINTFORMW 「후~…… 유두가 떨리는게 일상이 되고 있어요……」
         CFLAG:8814 = 2
     ;그 이외
@@ -1499,11 +1499,11 @@ IF SELECTCOM == 16 && TEQUIP:30
     ;2회째 이후
     ELSE
         ;사정 중독 Lv3 이상
-        IF ABL:37 >= 3 && (CFLAG:9016 <= 3 || FLAG:11 == 2)
+        IF ABL:사정중독 >= 3 && (CFLAG:9016 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「응, 대단해 오나홀 안에다 싸버릴것 같아♪」
             CFLAG:9016 = 4
         ;C감각 Lv3 이상
-        ELSEIF ABL:0 >= 3 && (CFLAG:9016 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:C감각 >= 3 && (CFLAG:9016 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「후~……대단해, 내의 자지가……」
             CFLAG:9016 = 3
         ;그 이외
@@ -1516,7 +1516,7 @@ IF SELECTCOM == 16 && TEQUIP:30
 ;종료시
 ELSEIF SELECTCOM == 16 && TEQUIP:30 == 0
     ;사정 중독 Lv3 이상
-    IF ABL:37 >= 3 && (CFLAG:8014 < 2 || FLAG:11 == 2)
+    IF ABL:사정중독 >= 3 && (CFLAG:8014 < 2 || FLAG:11 == 2)
         PRINTFORMW 「후~, 저, 안에다…… 좀 더 넣고 싶어요……」
         CFLAG:8815 = 2
     ;그 이외
@@ -1534,7 +1534,7 @@ IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || S
 ;-------------------------------------------------
 ;섹스계 커맨드로, 준비가 잘 없게 감도나 호감도뜯지 않을 때
 ;-------------------------------------------------
-    IF PALAM:10 < PALAMLV:1 && ABL:1 < 10 && CFLAG:2 < 1000
+    IF PALAM:10 < PALAMLV:1 && ABL:V감각 < 10 && CFLAG:2 < 1000
         PRINTFORMW 「아윽 ……, 아직 아파요, 완전히 젖고 난뒤에……」
         PRINTFORMW 젖지 않은 질에 무리하게 밀어넣어서, 소악마는 괴로워 하는 소리를 내고 있다.……
         RETURN 0
@@ -1558,7 +1558,7 @@ IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || S
                 PRINTFORMW 「더, 더 격렬하게 해줘어……!」
                 CFLAG:9020 = 5
             ;V감각 Lv4 이상
-            ELSEIF ABL:1 >= 4 && (CFLAG:9020 <= 3 || FLAG:11 == 2)
+            ELSEIF ABL:V감각 >= 4 && (CFLAG:9020 <= 3 || FLAG:11 == 2)
                 PRINTFORMW 「좀 더 넣어, 좀 더 깊숙히, 아, 아 아, 좋아, 엄청 좋아하는 거 오고 있어 ♪」
                 PRINTFORMW 소악마는 %CALLNAME:PLAYER%의 허리에 다리를 붙들고 질을 찔리는 쾌락에 빠지고 있다……
                 CFLAG:9020 = 4
@@ -1597,7 +1597,7 @@ IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || S
                 PRINTFORMW 「히익, 심해, 좀 더 깊게 끝까지 범해 주세요……!」
                 CFLAG:9021 = 5
             ;V감각 Lv4 이상
-            ELSEIF ABL:1 >= 4 && (CFLAG:9021 <= 3 || FLAG:11 == 2)
+            ELSEIF ABL:V감각 >= 4 && (CFLAG:9021 <= 3 || FLAG:11 == 2)
                 PRINTFORMW 「좀 더, 좀 더 격렬하게♪」
                 CFLAG:9021 = 4
 ;            ;쾌락각인 Lv3
@@ -1635,7 +1635,7 @@ IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || S
                 PRINTFORMW 「아…… 넣을 듯하면서 넣지 않는 사악한 마음이라니, 부탁이니까 제발좀!」
                 CFLAG:9022 = 5
             ;V감각 Lv4 이상
-            ELSEIF ABL:1 >= 4 && (CFLAG:9022 <= 3 || FLAG:11 == 2)
+            ELSEIF ABL:V감각 >= 4 && (CFLAG:9022 <= 3 || FLAG:11 == 2)
                 IF RAND:2 == 0
                     PRINTFORMW 「으응, 후~……역시 키스 하는 것은 최고에요 ♪」
                 ELSE
@@ -1685,7 +1685,7 @@ IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || S
                 PRINTFORMW 「아……넣을 듯하면서 안하는 사악한 짓거리라니, 부탁이니까 제발좀!」
                 CFLAG:9023 = 5
             ;C감각과 B감각과 V감각이 3이상
-            ELSEIF ABL:1 >= 3 && ABL:0 >= 3 && ABL:3 >= 3 && (CFLAG:9023 <= 3 || FLAG:11 == 2)
+            ELSEIF ABL:V감각 >= 3 && ABL:C감각 >= 3 && ABL:B감각 >= 3 && (CFLAG:9023 <= 3 || FLAG:11 == 2)
                 PRINTFORMW 「아, 좀 더, 좀 더 깊게, 클리도 만져 줘요!」
                 PRINTFORMW 「히아! 오고 있어, 좋아 가득, 좋아 ♪」
                     CFLAG:9023 = 4
@@ -1721,12 +1721,12 @@ IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || S
         ;2회째 이후
         ELSE
             ;V감각 Lv4 이상으로 PLAYER가 사정 가까이
-            IF ABL:1 >= 4 && (MAXBASE:PLAYER:2 - BASE:PLAYER:2 < 1000) && (CFLAG:9024 <= 4 || FLAG:11 == 2)
+            IF ABL:V감각 >= 4 && (MAXBASE:PLAYER:2 - BASE:PLAYER:2 < 1000) && (CFLAG:9024 <= 4 || FLAG:11 == 2)
                 PRINTFORMW 「아, %CSTR:90%의, 안에서 굵어지고 있어 ……♪」
                 PRINTFORMW 「응응, 갖고 싶어… 정액 갖고 싶어어어!」
                 CFLAG:9024 = 5
             ;V감각 Lv4 이상
-            ELSEIF ABL:1 >= 4 && (CFLAG:9024 <= 3 || FLAG:11 == 2)
+            ELSEIF ABL:V감각 >= 4 && (CFLAG:9024 <= 3 || FLAG:11 == 2)
                 PRINTFORMW 「부족해요, 좀 더 안쪽까지 굵은거 가지고 싶어요 ♪」
                 CFLAG:9024 = 4
             ;PLAYER가 사정 가까이
@@ -1822,11 +1822,11 @@ IF SELECTCOM == 30 || SELECTCOM == 31 || SELECTCOM == 33 || SELECTCOM == 38
     ELSE
         LOCAL = PALAM:10 + UP:10
         ;윤활 Lv2 이상＋A감각 Lv3 이상
-        IF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9030 <= 3 || FLAG:11 == 2)
+        IF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9030 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「어…… 엉덩이, 좋아요오, %CSTR:91%, 의, 것이 들어와 ♪」
             CFLAG:9030 = 4
         ;A감각 Lv3 이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9030 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9030 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아, 아직 조금…… 아파요. 엉덩이가 아직 젖지 않았어요……!」
             CFLAG:9030 = 3
         ;그 이외
@@ -1865,7 +1865,7 @@ ENDIF
 ;            PRINTFORMW 
 ;            CFLAG:9030 = 4
 ;        ;윤활 Lv2 이상＋A감각 Lv3 이상
-;        ELSEIF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9030 <= 2 || FLAG:11 == 2)
+;        ELSEIF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9030 <= 2 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9030 = 3
 ;        ;그 이외
@@ -1904,7 +1904,7 @@ ENDIF
 ;            PRINTFORMW 
 ;            CFLAG:9031 = 4
 ;        ;윤활 Lv2 이상＋A감각 Lv3 이상
-;        ELSEIF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9031 <= 2 || FLAG:11 == 2)
+;        ELSEIF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9031 <= 2 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9031 = 3
 ;        ;그 이외
@@ -1928,7 +1928,7 @@ IF SELECTCOM == 32 || SELECTCOM == 37
         CFLAG:5101 = 1
         RETURN 0
     ;처음으로 한편 A감각 Lv3 이상
-    ELSEIF CFLAG:9032 == 0 && ABL:2 >= 3
+    ELSEIF CFLAG:9032 == 0 && ABL:A감각 >= 3
         PRINTFORMW 「후후……모처럼 엉덩이 개발…되어…버렸는걸요……」
         PRINTFORMW 「이 체위도, 시험해 봐야겠죠……?」
         CFLAG:9032 = 1
@@ -1937,12 +1937,12 @@ IF SELECTCOM == 32 || SELECTCOM == 37
     ELSE
         LOCAL = PALAM:10 + UP:10
         ;윤활 Lv2 이상＋A감각 Lv3 이상
-        IF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9032 <= 3 || FLAG:11 == 2)
+        IF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9032 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「하앗~, 응, 응뭇, 츄웃, 후응……」
             PRINTFORMW 소악마는 엉덩이에서 질척거리는 소리를 내면서, %CALLNAME:PLAYER%의 입과 타액의 실을 연결하고 있다……
             CFLAG:9032 = 4
         ;A감각 Lv3 이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9032 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9032 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「하……, 안 돼요, 지금 %조사처리(CSTR:90,"와")% 입맞추면서 하면 혀를 깨물 거예요……」
             CFLAG:9032 = 3
         ;그 이외
@@ -1981,7 +1981,7 @@ ENDIF
 ;            PRINTFORMW 
 ;            CFLAG:9033 = 4
 ;        ;윤활 Lv2 이상＋A감각 Lv3 이상
-;        ELSEIF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9033 <= 2 || FLAG:11 == 2)
+;        ELSEIF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9033 <= 2 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9033 = 3
 ;        ;그 이외
@@ -2007,7 +2007,7 @@ IF SELECTCOM == 34
     ;처음
     ELSEIF CFLAG:9034 == 0
         ;A감각 Lv3 이상
-        IF ABL:2 >= 3
+        IF ABL:A감각 >= 3
             PRINTFORMW 「응, 하앗……내, 엉덩이, %CSTR:90%의 물건 삼켜버렸어 ……♪」
         ;그 이외
         ELSE
@@ -2019,12 +2019,12 @@ IF SELECTCOM == 34
     ELSE
         LOCAL = PALAM:10 + UP:10
         ;윤활 Lv2 이상＋A감각 Lv3 이상
-        IF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9034 <= 3 || FLAG:11 == 2)
+        IF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9034 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「아히이, 대단해, 내 엉덩이, 가득 넘치고 있어!」
             PRINTFORMW 소악마는 입에서 침을 늘어뜨리며, 자지를 삼키듯이 엉덩이를 움직이고 있다……
             CFLAG:9034 = 4
         ;A감각 Lv3 이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9034 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9034 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아, %CSTR:90%, 조금, 기다려, 주세요……」
             CFLAG:9034 = 3
         ;그 이외
@@ -2048,11 +2048,11 @@ IF SELECTCOM == 40
     ;2회째 이후
     ELSE
 ;        ;연모＋봉사 정신 Lv5
-;        IF TALENT:150 && ABL:13 >= 5 && (CFLAG:9040 <= 3 || FLAG:11 == 2)
+;        IF TALENT:150 && ABL:봉사정신 >= 5 && (CFLAG:9040 <= 3 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9040 = 4
 ;        ;봉사 정신 Lv3 이상
-;        ELSEIF ABL:13 >= 3 && (CFLAG:9040 <= 2 || FLAG:11 == 2)
+;        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:9040 <= 2 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9040 = 3
         ;그 이외
@@ -2410,7 +2410,7 @@ IF SELECTCOM == 100 && TEQUIP:50
     ;2회째 이후
     ELSE
         ;노출벽
-        IF ABL:14 >= 3 && (CFLAG:9100 <= 2 || FLAG:11 == 2)
+        IF ABL:노출증 >= 3 && (CFLAG:9100 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「모처럼이니, 시청자들의 꿈에 나오는 것 같은 영상이 되도록 노력해 볼까요♪」
             CFLAG:9100 = 3
         ;그 이외
@@ -2436,7 +2436,7 @@ IF SELECTCOM == 104 && TEQUIP:52
     ;2회째 이후
     ELSE
         ;노출벽 Lv3 이상
-        IF ABL:14 >= 3 && (CFLAG:9104 <= 2 || FLAG:11 == 2)
+        IF ABL:노출증 >= 3 && (CFLAG:9104 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「응, 잘 생각해보면 우리의 모습이랑 비슷한것 같아요♪」
             PRINTFORMW 「여기서 다른 사람에게 보여지는 것과 다른 사람에게 가는 차이일 뿐이에요.」
             CFLAG:9104 = 3
@@ -2450,7 +2450,7 @@ IF SELECTCOM == 104 && TEQUIP:52
 ;종료시
 ELSEIF SELECTCOM == 104 && TEQUIP:52 == 0
     ;노출벽 Lv3 이상
-    IF ABL:14 >= 3 && (CFLAG:8821 < 2 || FLAG:11 == 2)
+    IF ABL:노출증 >= 3 && (CFLAG:8821 < 2 || FLAG:11 == 2)
         PRINTFORMW 「이 상태로, 환상향 모든 인요를 에로틱한 기분으로 만들어 버리죠∼♪」
         CFLAG:8821 = 2
     ;그 이외
@@ -2477,7 +2477,7 @@ IF SELECTCOM == 111
         PRINTFORMW 
         CFLAG:9111 = 4
     ;노출벽 Lv5
-    ELSEIF ABL:14 >= 5 && (CFLAG:9111 < 3 || FLAG:11 == 2)
+    ELSEIF ABL:노출증 >= 5 && (CFLAG:9111 < 3 || FLAG:11 == 2)
         PRINTFORMW 
         CFLAG:9111 = 3
     ;굴복 각인 Lv3
@@ -2502,7 +2502,7 @@ IF SELECTCOM == 620
         PRINTFORMW 
         CFLAG:9620 = 4
     ;노출벽 Lv5
-    ELSEIF ABL:14 >= 5 && (CFLAG:9620 < 3 || FLAG:11 == 2)
+    ELSEIF ABL:노출증 >= 5 && (CFLAG:9620 < 3 || FLAG:11 == 2)
         PRINTFORMW 
         CFLAG:9620 = 3
     ;굴복 각인 Lv3
@@ -2600,7 +2600,7 @@ IF SELECTCOM == 171 && TEQUIP:25
     ;2회째 이후
     ELSE
         ;A감각 Lv3 이상＋마조끼 Lv3 이상
-        IF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9171 <= 4 || FLAG:11 == 2)
+        IF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9171 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「으응……응, 아, 이 정도는, 전극이 아니면 응♪」
             PRINTFORMW 눈물이나 침이 흐르고 있지만 개의치 않고 소악마는 전류가 주는 쾌감에 빠져있다.
             CFLAG:9171 = 5
@@ -2609,7 +2609,7 @@ IF SELECTCOM == 171 && TEQUIP:25
 ;            PRINTFORMW 
 ;            CFLAG:9171 = 4
         ;A감각 Lv3 이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9171 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9171 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아무리, 엉덩이, 익숙해졌다고……이것은 실허요!」
             CFLAG:9171 = 3
         ;그 이외
@@ -2626,7 +2626,7 @@ ELSEIF SELECTCOM == 171 && TEQUIP:25 == 0
 ;        PRINTFORMW 
 ;        CFLAG:8851 = 3
     ;A감각 Lv3 이상＋마조끼 Lv3 이상
-    IF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:8851 < 2 || FLAG:11 == 2)
+    IF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:8851 < 2 || FLAG:11 == 2)
         PRINTFORMW 「우후후…… 자꾸자꾸 제 몸이 발달되고 있어요♪」
         CFLAG:8851 = 2
     ;그 이외
@@ -2661,11 +2661,11 @@ IF SELECTCOM == 172 && TEQUIP:25
         ;텐프레라면 마조끼로 판단하고 있지만, 커맨드 보는 한 그닥 마조끼 관계없는 것 같아요만……
         LOCAL = PALAM:10 + UP:10
         ;윤활 Lv2 이상＋A감각 Lv3 이상
-        IF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9172 <= 3 || FLAG:11 == 2)
+        IF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9172 <= 3 || FLAG:11 == 2)
             PRINTFORMW 
             CFLAG:9172 = 4
         ;윤활 Lv2 미만＋A감각 Lv3 이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9172 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9172 <= 2 || FLAG:11 == 2)
             PRINTFORMW 
             CFLAG:9172 = 3
         ;그 이외
@@ -2678,7 +2678,7 @@ IF SELECTCOM == 172 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 172 && TEQUIP:25 == 0
     ;윤활 Lv2 이상＋A감각 Lv3 이상
-    IF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:8852 < 2 || FLAG:11 == 2)
+    IF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:8852 < 2 || FLAG:11 == 2)
         PRINTFORMW 
         CFLAG:8852 = 2
     ;그 이외
@@ -2704,11 +2704,11 @@ IF (SELECTCOM == 174 || SELECTCOM == 522) && TEQUIP:25
     ;2회째 이후
     ELSE
         ;배설 중독 Lv4 이상
-        IF ABL:21 > 3 && (CFLAG:9174 <= 3 || FLAG:11 == 2)
+        IF ABL:마조끼 > 3 && (CFLAG:9174 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「네……힘차게 낼 수 있도록, 가득 채워 주세요……」
             CFLAG:9174 = 4
         ;A감각 Lv3 이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9174 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9174 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「으으, 엉덩이에 뭔가를 넣는 건 익숙해졌지만, 저한테 하려고 하지 마세요!」
             CFLAG:9174 = 3
         ;그 이외
@@ -2731,11 +2731,11 @@ ELSEIF (SELECTCOM == 174 || SELECTCOM == 522) && TEQUIP:25 == 0
     ;2회째 이후
     ELSE
         ;배설 중독 Lv4 이상
-        IF ABL:21 > 3 && (CFLAG:8854 <= 3 || FLAG:11 == 2)
+        IF ABL:마조끼 > 3 && (CFLAG:8854 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「응 히, 속이, 텅 비어가! 이제 나와…, 푸슉……♪」
             CFLAG:8854 = 4
         ;A감각 Lv3 이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:8854 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:8854 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아, 아, 엄청나게 나오고 있어…, 히, 아……!」
             CFLAG:8854 = 3
         ;그 이외
@@ -2767,7 +2767,7 @@ IF SELECTCOM == 180 || SELECTCOM == 187
         ;2회째 이후
     ELSE
         ;A감각 Lv3 이상
-        IF ABL:2 >= 3 && (CFLAG:9180 <= 3 || FLAG:11 == 2)
+        IF ABL:A감각 >= 3 && (CFLAG:9180 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「자, 마음껏 풀어드릴께요♪」
             CFLAG:9180 = 4
         ;안면기승위 애널로 음마나 음고나 음란 때
@@ -2791,7 +2791,7 @@ IF SELECTCOM == 190
     ;처음
     IF CFLAG:9190 == 0
         ;B감각
-        IF ABL:3 >= 3
+        IF ABL:B감각 >= 3
             PRINTFORMW 「안 돼요, 지금 제 가슴에 로터 닿으면…!」
         ELSE
             PRINTFORMW 「……조금, 근질근질 하네요」
@@ -2803,7 +2803,7 @@ IF SELECTCOM == 190
     ;2회째 이후
     ELSE
         ;B감각 3이상 또한 지문으로 유두가 날카로워진다
-        IF ABL:3 >= 2 && PALAM:13 >= PALAMLV:3 && (CFLAG:9190 <= 4 || FLAG:11 == 2)
+        IF ABL:B감각 >= 2 && PALAM:13 >= PALAMLV:3 && (CFLAG:9190 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「아, 저, 젖꼭지 세운 데에 그렇게 떨리게 하면 안돼요!」
             CFLAG:9190 = 5
         ;지문으로 유두가 날카로워진다
@@ -2811,7 +2811,7 @@ IF SELECTCOM == 190
             PRINTFORMW 「아, 몸, 지칠 것 같아요……!」
             CFLAG:9190 = 4
         ;B감각
-        ELSEIF ABL:3 >= 2 && (CFLAG:9190 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:B감각 >= 2 && (CFLAG:9190 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「좀 더, 네 꾸물거리게……좀 더 세게 해주세요……」
             CFLAG:9190 = 3
         ;그 이외
@@ -2839,7 +2839,7 @@ IF SELECTCOM == 191 && TEQUIP:35
     ;2회째 이후
     ELSE
         ;분유중독
-        IF ABL:34 >= 3 && (CFLAG:9191 <= 2 || FLAG:11 == 2)
+        IF ABL:분유중독 >= 3 && (CFLAG:9191 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「응, 아앙,……기분 좋아지면서, 상품을 만들 수 있다니 ♪」
             PRINTFORMW 마치 사정하기 직전 같은 표정을 하며, 소악마는 빨려가는 가슴을 보고 있다.
             CFLAG:9191 = 3
@@ -2853,7 +2853,7 @@ IF SELECTCOM == 191 && TEQUIP:35
 ;탈착시
 ELSEIF SELECTCOM == 191 && TEQUIP:35 == 0
     ;분유중독
-    IF ABL:34 >= 3 && (CFLAG:8861 < 2 || FLAG:11 == 2)
+    IF ABL:분유중독 >= 3 && (CFLAG:8861 < 2 || FLAG:11 == 2)
         PRINTFORMW 「언젠가, %조사처리(CSTR:90,"가")% 드셔 주셨으면 좋겠네요…」
         CFLAG:8861 = 2
     ;그 이외
@@ -2872,7 +2872,7 @@ IF SELECTCOM == 220 || SELECTCOM == 221 || SELECTCOM == 222
     ;처음
     IF CFLAG:9220 == 0
         ;마조끼
-        IF ABL:21 >= 3
+        IF ABL:마조끼 >= 3
             PRINTFORMW 「신세계야……히응, 아픈데, 기분 좋아 ♪」
         ;그 이외
         ELSE
@@ -2883,21 +2883,21 @@ IF SELECTCOM == 220 || SELECTCOM == 221 || SELECTCOM == 222
     ;2회째 이후
     ELSE
 ;        ;연모＋마조끼 Lv5 이상
-;        IF TALENT:150 && ABL:21 >= 5 && (CFLAG:9220 <= 5 || FLAG:11 == 2)
+;        IF TALENT:150 && ABL:마조끼 >= 5 && (CFLAG:9220 <= 5 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9220 = 6
         ;연모＋마조끼 Lv3 이상으로 채찍
-        IF SELECTCOM == 221 && TALENT:150 && ABL:21 >= 3 && (CFLAG:9220 <= 4 || FLAG:11 == 2)
+        IF SELECTCOM == 221 && TALENT:150 && ABL:마조끼 >= 3 && (CFLAG:9220 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「아…! 좋아요, %조사처리(CSTR:90,"로")%부터의 사랑의 매♪」
             CFLAG:9220 = 5
             SIF TALENT:153 == 0 || TALENT:152 == 0
                 PRINTFORMW ……우선 이 곧 죽어도 한 마디하는 주둥아리부터 후려치는 편이 나을지도 모르겠다.
         ;스팽킹으로 마조끼 Lv2 이상
-        ELSEIF SELECTCOM == 220 && ABL:21 >= 2 && (CFLAG:9220 <= 2 || FLAG:11 == 2)
+        ELSEIF SELECTCOM == 220 && ABL:마조끼 >= 2 && (CFLAG:9220 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아……♪ 어쩐지, 얼얼한게 버릇이 되었어요……」
             CFLAG:9220 = 3
 ;        ;마조끼 Lv3 이상
-        ELSEIF ABL:21 >= 3 && (CFLAG:9220 <= 3 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:9220 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「신세계에요……히응, 아픈데, 기분 좋아 ♪」
             CFLAG:9220 = 4
         ;그 이외
@@ -2924,7 +2924,7 @@ IF (SELECTCOM == 224 && TEQUIP:40) || SELECTCOM == 622
     ;2회째 이후
     ELSE
         ;마조끼 Lv3 이상
-        IF ABL:21 >= 3 && (CFLAG:9224 <= 2 || FLAG:11 == 2)
+        IF ABL:마조끼 >= 3 && (CFLAG:9224 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「웃후후, 명령 대로, 저혼자만 속박되는 쾌감을 받을게요♪」
             CFLAG:9224 = 3
         ;그 이외
@@ -2937,7 +2937,7 @@ IF (SELECTCOM == 224 && TEQUIP:40) || SELECTCOM == 622
 ;종료시
 ELSEIF SELECTCOM == 224 && TEQUIP:40 == 0
     ;마조끼 Lv3 이상
-    IF ABL:21 >= 3 && (CFLAG:8872 < 2 || FLAG:11 == 2)
+    IF ABL:마조끼 >= 3 && (CFLAG:8872 < 2 || FLAG:11 == 2)
         PRINTFORMW 「제가 움직일 수 없으면 시시할 거라고 생각했었지만……속박되는 것도 꽤 좋네요♪」
         PRINTFORMW 「그러니까 다시 묶어 주지 않으실래요?」
         CFLAG:8872 = 2
@@ -2964,7 +2964,7 @@ IF SELECTCOM == 225 && TEQUIP:41
     ;2회째 이후
     ELSE
         ;마조끼 Lv3 이상
-        IF ABL:21 >= 3 && (CFLAG:9225 <= 2 || FLAG:11 == 2)
+        IF ABL:마조끼 >= 3 && (CFLAG:9225 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「후후후, %조사처리(CSTR:90,"는")% 어떤 계획을 하고 있는 걸까요?」
             PRINTFORMW 「꼭 저의 몸에 새겨 주세요♪」
             CFLAG:9225 = 3
@@ -2978,7 +2978,7 @@ IF SELECTCOM == 225 && TEQUIP:41
 ;종료시
 ELSEIF SELECTCOM == 225 && TEQUIP:41 == 0
     ;;마조끼 Lv3 이상
-    IF ABL:21 >= 3 && (CFLAG:8871 < 2 || FLAG:11 == 2)
+    IF ABL:마조끼 >= 3 && (CFLAG:8871 < 2 || FLAG:11 == 2)
         PRINTFORMW 「눈가림 타임은 이걸로 끝인가요……」
         PRINTFORMW 「그러면, 시력에 의지하는 기분을 이번에 실감시켜 주세요♪」
         CFLAG:8871 = 2
@@ -3033,7 +3033,7 @@ IF SELECTCOM == 230
     ;2회째 이후
     ELSE
         ;봉사 정신 Lv3 이상 or연모
-        IF (ABL:13 >= 3 || TALENT:150) && (CFLAG:9230 <= 2 || FLAG:11 == 2)
+        IF (ABL:봉사정신 >= 3 || TALENT:150) && (CFLAG:9230 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「응, 으구웃, 츄릇, 웃, 츄르……」
             PRINTFORMW 소악마는 익숙해진 혀로 목까지 밀어넣어진 자지의 뿌리에 혀로 핣으면서
             PRINTFORMW 자지를 빨면서 입으로 되돌린뒤 다시 목까지 자지를 밀어넣었다.
@@ -3063,7 +3063,7 @@ IF SELECTCOM == 231 || SELECTCOM == 232 || SELECTCOM == 233
     ;2회째 이후
     ELSE
         ;돌진해진 장소에 대응하는 능력이 최대치
-        IF ((SELECTCOM == 231 && ABL:1 >= 5) || (SELECTCOM == 232 && ABL:2 >= 5) || (SELECTCOM == 233 && ABL:1 >= 5 && ABL:2 >= 5)) && (CFLAG:9231 <= 3 || FLAG:11 == 2)
+        IF ((SELECTCOM == 231 && ABL:V감각 >= 5) || (SELECTCOM == 232 && ABL:A감각 >= 5) || (SELECTCOM == 233 && ABL:V감각 >= 5 && ABL:A감각 >= 5)) && (CFLAG:9231 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「아히, 이런 일 하면 몸이, 원래대로 돌아오지 않을것 같아요오……♪」
             CFLAG:9231 = 4
         ;쾌락각인 Lv3＆굴복 각인 Lv3＆호감도 1000이상
@@ -3189,7 +3189,7 @@ IF SELECTCOM == 320 || SELECTCOM == 347
         PRINTFORMW 「에헤헤……가끔 씩은 좋네요, 이런 거……」
         CFLAG:9320 = 3
     ;지문이 바뀐다
-    ELSEIF ABL:10 >= 4 && EXP:20 >= 250 && (CFLAG:9320 <= 1 || FLAG:11 == 2)
+    ELSEIF ABL:순종 >= 4 && EXP:20 >= 250 && (CFLAG:9320 <= 1 || FLAG:11 == 2)
         PRINTFORMW 「하아. 정말……알았어요, 어울려 드릴게요」
         CFLAG:9320 = 2
     ;그 이외
@@ -3365,7 +3365,7 @@ ENDIF
 ;-------------------------------------------------
 ;정액 목욕탕(정액 중독 3이상    CFLAG:9366
 ;-------------------------------------------------
-IF SELECTCOM == 366 && ABL:31 >= 3 && TEQUIP:55
+IF SELECTCOM == 366 && ABL:정액중독 >= 3 && TEQUIP:55
     ;처음
     IF CFLAG:9366 == 0
         PRINTFORMW 「……과연 인간의 정액은 아닌 것 같네요. 촉수인가요」
@@ -3375,7 +3375,7 @@ IF SELECTCOM == 366 && ABL:31 >= 3 && TEQUIP:55
     ;2번째 이후
     ELSE
         ;정액 중독 5이상
-        IF ABL:31 >= 5 && (CFLAG:9366 <= 2 || FLAG:11 == 2)
+        IF ABL:정액중독 >= 5 && (CFLAG:9366 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「……후~, 가득해… 후후, %CSTR:90%에도 좀 드릴까요……?」
             CFLAG:9366 = 3
         ;그 이외
@@ -3414,7 +3414,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 374 && TEQUIP:55
     ;처음으로 순종 3 미만
-    IF CFLAG:9374 == 0 && ABL:10 < 3
+    IF CFLAG:9374 == 0 && ABL:순종 < 3
         PRINTFORMW 「석유버스라고 하면, 이따금 착각 하는 현상이 있습니다―」
         PRINTFORMW 「혹시, %CSTR:90%나 그 부류인가요?」
         CFLAG:9374 = 1
@@ -3422,7 +3422,7 @@ IF SELECTCOM == 374 && TEQUIP:55
     ;2번째 이후
     ELSE
         ;순종 3이상
-        IF ABL:10 >= 3 && (CFLAG:9374 <= 2 || FLAG:11 == 2)
+        IF ABL:순종 >= 3 && (CFLAG:9374 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「사치는 사랑이에요! 비싼 물건은 정말 좋아해요♪」
             PRINTFORMW 「받을 수 있는 것은 받아 두지 않으면 안 되지요!」
             ;핑크는 IN-RAN……이래서야 악마가 아니고 여우다
@@ -3514,7 +3514,7 @@ IF SELECTCOM == 500 && TEQUIP:90
     ;2회째 이후
     ELSE
         ;촉수 중독 3이상
-        IF ABL:35 >= 3 && (CFLAG:9500 <= 3 || FLAG:11 == 2)
+        IF ABL:촉수중독 >= 3 && (CFLAG:9500 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「후후후, 촉수씨에게도 익숙해져 버렸어요∼, 정말 좋아해요♪」
             PRINTFORMW 「촉수씨와 나는, 서로 수요와 공급을 채울 수 있는 관계일지도?」
             CFLAG:9500 = 4
@@ -3533,7 +3533,7 @@ IF SELECTCOM == 500 && TEQUIP:90
 ;종료시
 ELSEIF SELECTCOM == 500 && TEQUIP:90 == 0
     ;촉수 중독 3이상
-    IF ABL:35 >= 3 && (CFLAG:8900 < 3 || FLAG:11 == 2)
+    IF ABL:촉수중독 >= 3 && (CFLAG:8900 < 3 || FLAG:11 == 2)
         PRINTFORMW 「또 와 주세요, 촉수씨?」
         CFLAG:8900 = 3
     ;촉수 경험 20이상
@@ -3562,11 +3562,11 @@ IF SELECTCOM == 602
         RETURN 0
     ELSE
         ;쾌락각인 Lv3+C감각 Lv3 이상＋봉사 정신 Lv3 이상
-        IF MARK:1 == 3 && ABL:0 >= 3 && ABL:13 >= 3 && (CFLAG:9602 <= 3 || FLAG:11 == 2)
+        IF MARK:1 == 3 && ABL:C감각 >= 3 && ABL:봉사정신 >= 3 && (CFLAG:9602 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「하으으으…… 죄, 죄송해요 %CSTR:90%, 저만 느껴 버려서……」
             CFLAG:9602 = 4
         ;쾌락각인 Lv3+C감각 Lv3 이상
-        ELSEIF MARK:1 == 3 && ABL:0 >= 3 && (CFLAG:9602 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:1 == 3 && ABL:C감각 >= 3 && (CFLAG:9602 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「……%CSTR:90%의 혀, 기분 좋아……」
             CFLAG:9602 = 3
         ;그 이외
@@ -3601,7 +3601,7 @@ IF SELECTCOM == 610
             PRINTFORMW 
             CFLAG:9610 = 5
         ;V감각 Lv3 이상＋A감각 Lv3 이상
-        ELSEIF ABL:1 >= 3 && ABL:2 >= 3 && (CFLAG:9610 <= 3 || FLAG:11 == 2)
+        ELSEIF ABL:V감각 >= 3 && ABL:A감각 >= 3 && (CFLAG:9610 <= 3 || FLAG:11 == 2)
             PRINTFORMW 
             CFLAG:9610 = 4
         ;굴복 각인 Lv3
@@ -3912,7 +3912,7 @@ ELSEIF NOWEX:0 > 0 || NOWEX:1 > 0 || NOWEX:2 > 0 || NOWEX:3 > 0
             CFLAG:8005 = 1
         ELSE
             ;사정 중독으로 사정해 C절정
-            IF ABL:37 >= 3 && TFLAG:30 > 0 && (CFLAG:8005 <= 4 || FLAG:11 == 2)
+            IF ABL:사정중독 >= 3 && TFLAG:30 > 0 && (CFLAG:8005 <= 4 || FLAG:11 == 2)
                 PRINTFORMW 「아앗, 흐아앗! 나한테서 정기가 나와버려!」
                 PRINTFORMW 「뷰쿠 뷰쿠 내주는 거, 기분 좋고 멈출 수 없어 ♪」
                 CFLAG:8005 = 5
@@ -3925,7 +3925,7 @@ ELSEIF NOWEX:0 > 0 || NOWEX:1 > 0 || NOWEX:2 > 0 || NOWEX:3 > 0
                 SIF CFLAG:8015 == 0
                     CFLAG:8015 = 1
             ;C감각 3이상
-            ELSEIF ABl:0 >= 3 && (CFLAG:8005 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:C감각 >= 3 && (CFLAG:8005 <= 2 || FLAG:11 == 2)
                 PRINTFORMW 「히아, %CSTR:90%의 덕분에, 여기에서도 이렇게 느껴지게 되었습니다♪」
                 CFLAG:8005 = 3
             ELSEIF CFLAG:8005 <= 1 || FLAG:11 == 2
@@ -3943,7 +3943,7 @@ ELSEIF NOWEX:0 > 0 || NOWEX:1 > 0 || NOWEX:2 > 0 || NOWEX:3 > 0
 ;            CFLAG:8008 = 1
 ;        ELSE
             ;분유중독으로 분유 해 C절정
-            IF ABL:34 >= 3 && TFLAG:31 > 0 && (CFLAG:8008 <= 4 || FLAG:11 == 2)
+            IF ABL:분유중독 >= 3 && TFLAG:31 > 0 && (CFLAG:8008 <= 4 || FLAG:11 == 2)
                 PRINTFORMW 「히 아 아♪ 나와버려, 젖꼭지에서 밀크 나와버려!」
                 PRINTFORMW 「이이잇, 젖꼭지 뜨거워져요, 밀크로 젖꼭지 자극되어버려!」
                 SIF CFLAG:8016 == 0
@@ -3957,7 +3957,7 @@ ELSEIF NOWEX:0 > 0 || NOWEX:1 > 0 || NOWEX:2 > 0 || NOWEX:3 > 0
                 SIF CFLAG:8016 == 0
                     CFLAG:8016 = 1
             ;B감각 3이상
-            ELSEIF ABl:3 >= 3 && (CFLAG:8008 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:B감각 >= 3 && (CFLAG:8008 <= 2 || FLAG:11 == 2)
                 PRINTFORMW 「아, 이힛, 젖꼭지, 이젠, 자지 같이 민감해져!」
                 CFLAG:8008 = 3
             ELSEIF CFLAG:8008 <= 1 || FLAG:11 == 2
@@ -3976,7 +3976,7 @@ ELSEIF NOWEX:0 > 0 || NOWEX:1 > 0 || NOWEX:2 > 0 || NOWEX:3 > 0
             CFLAG:8006 = 1
         ELSE
             ;V감각 최대로 동시에 질내 사정되고 있어 랜덤
-            IF RAND:2 == 0 && ABL:1 >= 5 && TFLAG:10 > 0 && (CFLAG:8007 <= 4 || FLAG:11 == 2)
+            IF RAND:2 == 0 && ABL:V감각 >= 5 && TFLAG:10 > 0 && (CFLAG:8007 <= 4 || FLAG:11 == 2)
                 PRINTFORMW 「후아, 아, 아 아앗♪ 안에 싸는 거 좋앗, 정액 따뜻해서 기분 좋아요!」
                 PRINTFORMW 「내 주세요, 좀 더! 저에게, 정액 주세요오!!」
                 PRINTFORMW 소악마는 허리를 계속 흔들면서, 침을 흘리며 정액을 조르고 있다…
@@ -3987,7 +3987,7 @@ ELSEIF NOWEX:0 > 0 || NOWEX:1 > 0 || NOWEX:2 > 0 || NOWEX:3 > 0
                 PRINTFORMW 소악마는 애액과 침을 흘리면서  만족스러운 미소를 짓고 있다……
                 CFLAG:8007 = 4
             ;V감각 최대
-            ELSEIF ABL:1 >= 5 && (CFLAG:8007 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:V감각 >= 5 && (CFLAG:8007 <= 2 || FLAG:11 == 2)
                 PRINTFORMW 「우웅, %CSTR:90%의 조교 결과입니다. 안에 만져지지마자 가버립니다」
                 PRINTFORMW 「아, 앗 앗 앗, 만져, 괴롭혀 주세요, 좀 더 저의 안쪽, 가버리게 해 주세요♪」
                 CFLAG:8007 = 3
@@ -4008,7 +4008,7 @@ ELSEIF NOWEX:0 > 0 || NOWEX:1 > 0 || NOWEX:2 > 0 || NOWEX:3 > 0
             CFLAG:8007 = 1
         ELSE
             ;A감각 3이상으로 엉덩이에 사정되었다
-            IF ABL:2 >= 3 && TFLAG:9 > 0 && (CFLAG:8007 <= 4 || FLAG:11 == 2)
+            IF ABL:A감각 >= 3 && TFLAG:9 > 0 && (CFLAG:8007 <= 4 || FLAG:11 == 2)
                 PRINTFORMW 「아,아아아아아앗! 좋아요, 정액, 엉덩에 오고 있어요!」
                 PRINTFORMW 「어, 엉덩이, 가버리는게 멈추지 않앗!」
                 CFLAG:8007 = 5
@@ -4018,7 +4018,7 @@ ELSEIF NOWEX:0 > 0 || NOWEX:1 > 0 || NOWEX:2 > 0 || NOWEX:3 > 0
                 PRINTFORMW 「후, 우우……엉덩이에, 나와, 이……」
                 CFLAG:8007 = 4
             ;A감각 3이상
-            ELSEIF ABL:2 >= 3 && (CFLAG:8007 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:A감각 >= 3 && (CFLAG:8007 <= 2 || FLAG:11 == 2)
                 PRINTFORMW 「아흣, 좋아, 엉덩이, 이렇게, 기분 좋다니 ……!」
                 CFLAG:8007 = 3
             ELSEIF CFLAG:8007 <= 1 || FLAG:11 == 2
@@ -4049,7 +4049,7 @@ ELSEIF TFLAG:30 > 0
     ;2회째 이후
     ELSE
         ;사정 중독
-        IF ABL:37 > 2 && (CFLAG:8015 <= 3 || FLAG:11 == 2)
+        IF ABL:사정중독 > 2 && (CFLAG:8015 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「후~, 아직 충분하게 못냈습니다……♪」
             PRINTFORMW 당장 소악마는 좀 더 사정하기 위해서 몸을 움직이기 시작했다……
             CFLAG:8015 = 4
@@ -4071,7 +4071,7 @@ ELSEIF TFLAG:31 > 0
     ;2회째 이후
     ELSE
         ;분유중독
-        IF ABL:34 > 2 && (CFLAG:8016 <= 3 || FLAG:11 == 2)
+        IF ABL:분유중독 > 2 && (CFLAG:8016 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「흣, 아으……가슴이 팽팽해서, 무겁고 뜨거워……좀 더, 더 밀크 내게 해 주세요……」
             PRINTFORMW 유두로부터 모유를 분출하면서, 아직 만족하지 못한 소악마는 매달려 왔다……
             CFLAG:8016 = 4
@@ -4087,7 +4087,7 @@ ELSEIF TFLAG:31 > 0
 ;애널 섹스(절정 하지 않는다)
 ELSEIF TFLAG:9 > 0 && NOWEX:2 == 0
     ;A감각 3이상
-    IF ABL:2 >= 3 && (CFLAG:8011 <= 2 || FLAG:11 == 2)
+    IF ABL:A감각 >= 3 && (CFLAG:8011 <= 2 || FLAG:11 == 2)
         PRINTFORMW 「엉덩이로 기분 좋게 되는 건 알지만 좀 더 노력하지 않으면……」
         CFLAG:8011 = 3
     ;그 이외
@@ -4275,7 +4275,7 @@ ENDIF
 ;고통 각인 Lv3 취득 CFLAG:8096
 ;-------------------------------------------------
 IF TFLAG:40 == 3 && CFLAG:8096 == 0
-    IF ABL:21 >= 3
+    IF ABL:마조끼 >= 3
         PRINTFORMW 「이런 것도, 꽤 좋을지도……」
     ELSE
         PRINTFORMW 「흑흑, 내 취향은 이런 게 아닌데에……」
@@ -4427,7 +4427,7 @@ IF TFLAG:200 == 110
         IF RAND:2 == 0 && CFLAG:7999 >= 20 && (CFLAG:8210 < 4 || FLAG:11 == 2)
             PRINTFORMW 「섹스랑은 다른 기분 좋음이네요……!」
             CFLAG:8210 = 4
-        ELSEIF ABL:72 >= 3 && (CFLAG:8210 < 3 || FLAG:11 == 2)
+        ELSEIF ABL:가창기능 >= 3 && (CFLAG:8210 < 3 || FLAG:11 == 2)
             PRINTFORMW 「제 목소리로 파츄리 님의 책을 낭독하면, 굉장하게 될 것 같네요♪」
             CFLAG:8210 = 3
         ELSEIF CFLAG:8210 < 2 || FLAG:11 == 2
@@ -4451,7 +4451,7 @@ IF TFLAG:200 == 111
         IF CFLAG:7998 >= 30 && (CFLAG:8211 < 4 || FLAG:11 == 2)
             PRINTFORMW 「요리하는 거, 재미있을지도……♪」
             CFLAG:8211 = 4
-        ELSEIF (TALENT:150 || ABL:70 >= 3) && (CFLAG:8211 < 3 || FLAG:11 == 2)
+        ELSEIF (TALENT:150 || ABL:요리기능 >= 3) && (CFLAG:8211 < 3 || FLAG:11 == 2)
             PRINTFORMW 「뭐, 부탁받은 이상 확실히 해 볼게요!」
             CFLAG:8211 = 3
         ELSEIF CFLAG:8211 < 2 || FLAG:11 == 2
@@ -4512,7 +4512,7 @@ IF TFLAG:200 == 140
         PRINTFORMW 「체력은 괜찮아요…? 그게…, 꼭 하고 싶어져서……」
         CFLAG:8240 = 3
 ;    ;봉사 정신 Lv5 이상
-;    ELSEIF ABL:13 >= 5 && (CFLAG:8240 < 2 || FLAG:11 == 2)
+;    ELSEIF ABL:봉사정신 >= 5 && (CFLAG:8240 < 2 || FLAG:11 == 2)
 ;        PRINTFORMW 
 ;        CFLAG:8240 = 2
     ;그 이외
@@ -4637,7 +4637,7 @@ IF TFLAG:200 == 150
             BASE:MASTER:0 = 10
     ENDIF
     ;아쉬움 아끼는 묘사가 나오는 경우
-    IF (ABL:0 + ABL:10 + ABL:13) >= 13 && CFLAG:99 == 0 && (CFLAG:8250 < 3 || FLAG:11 == 2)
+    IF (ABL:C감각 + ABL:순종 + ABL:봉사정신) >= 13 && CFLAG:99 == 0 && (CFLAG:8250 < 3 || FLAG:11 == 2)
         PRINTFORMW ……
         PRINTFORMW ………
         PRINTFORMW …………
@@ -4686,7 +4686,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 158
     ;V감각 Lv5 이상
-    IF ABL:1 >= 5 && (CFLAG:8258 < 2 || FLAG:11 == 2)
+    IF ABL:V감각 >= 5 && (CFLAG:8258 < 2 || FLAG:11 == 2)
         PRINTFORMW 「하윽, 그렇지 않아도 좋아하는 질인데, 이렇게 느껴지게 되다니……♪」
         PRINTFORMW 「하루종일, 섹스하고 싶어……♪」
         CFLAG:8258 = 2

@@ -59,9 +59,9 @@ IF TALENT:152 == 0 && CFLAG:18 == 0 && CFLAG:9003 != 7
         LOCAL += 3
     ENDIF
     ;순종 Lv4로 1포인트, Lv5로 3포인트
-    IF ABL:10 == 4
+    IF ABL:순종 == 4
         LOCAL += 1
-    ELSEIF ABL:10 >= 5
+    ELSEIF ABL:순종 >= 5
         LOCAL += 3
     ENDIF
     ;이상 경험  3이후,  1마다 1포인트
@@ -73,24 +73,24 @@ IF TALENT:152 == 0 && CFLAG:18 == 0 && CFLAG:9003 != 7
         LOCAL += 2
     ENDIF
     ;새디즘기분 Lv5나 드 S가 아닌 경우, 애무·성교계 커멘드 실행수와 봉사계 커멘드 실행수를 비교
-    IF ABL:20 < 5 && TALENT:177 == 0
+    IF ABL:새드끼 < 5 && TALENT:177 == 0
         ;봉사가 3배 이상 많으면+5포인트
         IF CFLAG:9003 > (3*CFLAG:9002)
             LOCAL += 5
             ;새디즘기분 Lv3 이상이라면 경감
-            SIF ABL:20 > 2
+            SIF ABL:새드끼 > 2
                 LOCAL -= 2
         ;봉사가 2배 이상 많으면+3포인트
         ELSEIF CFLAG:9003 > (2*CFLAG:9002)
             LOCAL += 3
             ;새디즘기분 Lv3 이상이라면 경감
-            SIF ABL:20 > 2
+            SIF ABL:새드끼 > 2
                 LOCAL -= 2
         ;봉사 쪽이 많으면+1포인트
         ELSEIF CFLAG:9003 > CFLAG:9002
             LOCAL += 1
             ;새디즘기분 Lv3 이상이라면 경감
-            SIF ABL:20 > 2
+            SIF ABL:새드끼 > 2
                 LOCAL -= 1
         ENDIF
     ENDIF
@@ -141,7 +141,7 @@ IF TALENT:152 == 0 && CFLAG:18 == 0 && CFLAG:9003 != 7
         CFLAG:9004 = 1
         RETURN 1
     ;순종 Lv4 이상으로 경고
-    ELSEIF ABL:10 > 3 && CFLAG:9005 == 0
+    ELSEIF ABL:순종 > 3 && CFLAG:9005 == 0
         IF FLAG:11 > 0
             PRINTFORML 「%MASTERNAME%에겐 이길 수 없지요…무슨 말을 해도 무심코 들어버리게 되니까」
             PRINTFORMW 「으응…오히려, 명령받고 싶어져버려. 등이 근질근질해」
@@ -156,7 +156,7 @@ IF TALENT:152 == 0 && CFLAG:18 == 0 && CFLAG:9003 != 7
         CFLAG:9005 = 1
         RETURN 1
     ;새디즘기분 Lv2 이하로, 봉사 쪽이 많다고 경고
-    ELSEIF CFLAG:9003 > CFLAG:9002 && ABL:20 < 3 && CFLAG:9006 == 0
+    ELSEIF CFLAG:9003 > CFLAG:9002 && ABL:새드끼 < 3 && CFLAG:9006 == 0
         IF FLAG:11 > 0
             PRINTFORML 「%MASTERNAME%, 오늘은 어디로 봉사해? 입?」
             PRINTFORMW 「왜? 나의 신체로 기분 좋고 나름대로 왔잖아?」
@@ -556,7 +556,7 @@ IF A == 0
             ENDIF
             RETURN 202
         ;Lv3 리메이크·요리 기능 Lv2 이상
-        ELSEIF A == 2 && ABL:70 >= 2
+        ELSEIF A == 2 && ABL:요리기능 >= 2
             IF FLAG:11 > 0
                 PRINTFORML 「스승, 기다렸어요―」
                 PRINTFORMW 문을 열면, 구수한 냄새가 코를 간질인다. 
@@ -682,7 +682,7 @@ ELSEIF A == 1
         ENDIF
         RETURN 111
     ;Lv3·기교＋새디즘기분＋레즈비언기합계 6이상, 조교 가능한 노예가 있는, 그 노예의 C감각·욕망 각 2이상, 체력 1000이상
-    ELSEIF CFLAG:9011 == 2 && LOCAL@KOGASA_ASSI && (ABL:12 + ABL:20 + ABL:22) >= 6 && ABL:LOCAL@KOGASA_ASSI:0 >= 2 && ABL:LOCAL@KOGASA_ASSI:11 >= 2 && BASE:LOCAL@KOGASA_ASSI:0 >= 1000
+    ELSEIF CFLAG:9011 == 2 && LOCAL@KOGASA_ASSI && (ABL:기교 + ABL:새드끼 + ABL:레즈끼) >= 6 && ABL:LOCAL@KOGASA_ASSI:0 >= 2 && ABL:LOCAL@KOGASA_ASSI:11 >= 2 && BASE:LOCAL@KOGASA_ASSI:0 >= 1000
         IF FLAG:11 > 0
             PRINTFORML 『여기, 어때? 몸이 놀라지요, 후후후』
             PRINTFORMW 「히야, 앗, 아앗… 안돼…」
@@ -721,7 +721,7 @@ ELSEIF A == 1
         ENDIF
         RETURN 113
     ;Lv5·기교 4이상, 새디즘기분·레즈비언기 각 2이상, 노예에 빈 곳이 있다
-    ELSEIF CFLAG:9011 == 4 && B && ABL:12 >= 4 && ABL:20 >= 2 && ABL:22 >= 2
+    ELSEIF CFLAG:9011 == 4 && B && ABL:기교 >= 4 && ABL:새드끼 >= 2 && ABL:레즈끼 >= 2
         LOCAL = FLAG:4
         FLAG:4 = 50
         LOCAL:1 = 0
@@ -759,19 +759,19 @@ ELSEIF A == 1
         ASSI = LOCAL:2
 
         ;마을 소녀를 적당? 에 조교합니다
-        ABL:10 += (2+RAND:2)
-        ABL:11 += (2+RAND:2)
-        ABL:12 += (1+RAND:2)
-        ABL:13 += RAND:3
-        ABL:0 += (2+RAND:2)
-        ABL:3 += RAND:3
-        ABL:14 += RAND:3
-        ABL:20 += RAND:2
-        ABL:21 += RAND:3
-        ABL:22 += (2+RAND:2)
-        ABL:30 += RAND:1
+        ABL:순종 += (2+RAND:2)
+        ABL:욕망 += (2+RAND:2)
+        ABL:기교 += (1+RAND:2)
+        ABL:봉사정신 += RAND:3
+        ABL:C감각 += (2+RAND:2)
+        ABL:B감각 += RAND:3
+        ABL:노출증 += RAND:3
+        ABL:새드끼 += RAND:2
+        ABL:마조끼 += RAND:3
+        ABL:레즈끼 += (2+RAND:2)
+        ABL:자위중독 += RAND:1
         IF TALENT:ASSI:121
-            ABL:31 += (1+RAND:2)
+            ABL:정액중독 += (1+RAND:2)
             MARK:2 += 1
             MARK:0 += 1
             EXP:4 += (3+RAND:20)
@@ -781,7 +781,7 @@ ELSEIF A == 1
             ENDIF
         ENDIF
         IF TALENT:처녀 == 0
-            ABL:1 += (2+RAND:2)
+            ABL:V감각 += (2+RAND:2)
             EXP:0 += (3+RAND:10)
         ENDIF
         MARK:2 += 1
@@ -924,21 +924,21 @@ ELSEIF A == 1
             ASSI = LOCAL:2
 
             ;마을의 딸(아가씨)를 적당? 에 조교합니다
-            ABL:10 += (2+RAND:2)
-            ABL:11 += (2+RAND:2)
-            ABL:12 += (1+RAND:2)
-            ABL:13 += RAND:3
-            ABL:0 += (2+RAND:2)
-            ABL:3 += RAND:3
-            ABL:14 += RAND:3
-            ABL:20 += RAND:2
-            ABL:21 += RAND:3
-            ABL:22 += (2+RAND:2)
-            ABL:30 += RAND:1
+            ABL:순종 += (2+RAND:2)
+            ABL:욕망 += (2+RAND:2)
+            ABL:기교 += (1+RAND:2)
+            ABL:봉사정신 += RAND:3
+            ABL:C감각 += (2+RAND:2)
+            ABL:B감각 += RAND:3
+            ABL:노출증 += RAND:3
+            ABL:새드끼 += RAND:2
+            ABL:마조끼 += RAND:3
+            ABL:레즈끼 += (2+RAND:2)
+            ABL:자위중독 += RAND:1
             
             ;억지로 처녀에게
             TALENT:처녀 = 1
-            ABL:1 = 0
+            ABL:V감각 = 0
             EXP:0 = 0
 
             MARK:2 += 1
@@ -1229,7 +1229,7 @@ ELSEIF A == 3
         ENDIF
         RETURN 132
     ;Lv3·바이브 사용 회수 5회 이상＆바이브를 소지＆V감각 3이상
-    ELSEIF CFLAG:9013 == 2 && CFLAG:7012 >= 5 && (ITEM:3 || NOITEM) && ABL:1 > 2
+    ELSEIF CFLAG:9013 == 2 && CFLAG:7012 >= 5 && (ITEM:3 || NOITEM) && ABL:V감각 > 2
         IF FLAG:11 > 0
             PRINTFORML 「스승, 들어봐 들어봐!」
             PRINTFORMW 코가사가 무언가 기쁜 듯이, 손에 든 바이브를 휘두르며 떠들고 있다. 
@@ -1300,11 +1300,11 @@ ELSEIF A == 3
         TALENT:ASSI:64 = 1
         CFLAG:ASSI:3201 = 0
         CFLAG:ASSI:3202 = 1
-        ABL:ASSI:0 = 3
-        ABL:ASSI:12 = 4
-        ABL:ASSI:13 = 3
-        ABL:ASSI:10 = 3
-        ABL:ASSI:11 = 3
+        ABL:ASSI:C감각 = 3
+        ABL:ASSI:기교 = 4
+        ABL:ASSI:봉사정신 = 3
+        ABL:ASSI:순종 = 3
+        ABL:ASSI:욕망 = 3
         
         PALAM:1 += 2000+RAND:3000
         PALAM:10 += 3000+RAND:5000
@@ -1442,11 +1442,11 @@ ELSEIF A == 3
             TALENT:ASSI:64 = 1
             CFLAG:ASSI:3201 = 0
             CFLAG:ASSI:3202 = 1
-            ABL:ASSI:0 = 3
-            ABL:ASSI:12 = 4
-            ABL:ASSI:13 = 3
-            ABL:ASSI:10 = 3
-            ABL:ASSI:11 = 3
+            ABL:ASSI:C감각 = 3
+            ABL:ASSI:기교 = 4
+            ABL:ASSI:봉사정신 = 3
+            ABL:ASSI:순종 = 3
+            ABL:ASSI:욕망 = 3
             
             PALAM:1 += 2000+RAND:3000
             PALAM:10 += 3000+RAND:5000

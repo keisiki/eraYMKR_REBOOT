@@ -26,7 +26,7 @@ SIF TALENT:120
     RETURN 0
 ;[작은체형]なら순종이 4이상かつ마조끼が4이상かつ확장경험10이상じゃないと実行できない
 IF TALENT:128
-    SIF ABL:10 < 4 || ABL:21 < 4 || EXP:32 < 10 || EXP:33 < 10
+    SIF ABL:순종 < 4 || ABL:마조끼 < 4 || EXP:32 < 10 || EXP:33 < 10
         RETURN 0
 ENDIF
 ;조교 대상이 [소인]일 경우에는 주인이 금단의 지식 보유자가 아니면 불가
@@ -34,7 +34,7 @@ SIF TALENT:127 && TALENT:MASTER:56 == 0
     RETURN 0
 ;ASSI일 경우, 순종4이상이거나 새드じゃないとできない。
 IF ASSIPLAY
-    SIF ABL:ASSI:10 < 4 && TALENT:ASSI:81 == 0
+    SIF ABL:ASSI:순종 < 4 && TALENT:ASSI:81 == 0
         RETURN 0
 ENDIF
 ;일정의 Ｖ · Ａ경험이 필요([巨躯]の場合は軽減)
@@ -102,19 +102,19 @@ SOURCE:31 = 2500
 SOURCE:17 = 2500
 
 ;ABL:V감각을 본다
-IF ABL:1 == 0
+IF ABL:V감각 == 0
     SOURCE:1 = 40
     SOURCE:11 = 50
-ELSEIF ABL:1 == 1
+ELSEIF ABL:V감각 == 1
     SOURCE:1 = 150
     SOURCE:11 = 150
-ELSEIF ABL:1 == 2
+ELSEIF ABL:V감각 == 2
     SOURCE:1 = 400
     SOURCE:11 = 250
-ELSEIF ABL:1 == 3
+ELSEIF ABL:V감각 == 3
     SOURCE:1 = 1000
     SOURCE:11 = 350
-ELSEIF ABL:1 == 4
+ELSEIF ABL:V감각 == 4
     SOURCE:1 = 1700
     SOURCE:11 = 600
 ELSE
@@ -123,23 +123,23 @@ ELSE
 ENDIF
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 10
     SOURCE:11 += 10
     SOURCE:22 += 100
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 30
     SOURCE:11 += 30
     SOURCE:22 += 700
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 500
     SOURCE:11 += 100
     SOURCE:22 += 1500
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 1000
     SOURCE:11 += 200
     SOURCE:22 += 3000
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 1700
     SOURCE:11 += 450
     SOURCE:22 += 5000
@@ -254,27 +254,27 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:1 , 0.50
     TIMES SOURCE:2 , 0.70
     TIMES SOURCE:11 , 0.60
     TIMES SOURCE:18, 2.00
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:1 , 0.80
     TIMES SOURCE:2 , 0.90
     TIMES SOURCE:11 , 0.80
     TIMES SOURCE:18, 1.20
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:1 , 1.00
     TIMES SOURCE:2 , 1.00
     TIMES SOURCE:11 , 1.00
     TIMES SOURCE:18, 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.10
     TIMES SOURCE:11 , 1.20
     TIMES SOURCE:18, 0.60
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:1 , 1.40
     TIMES SOURCE:2 , 1.20
     TIMES SOURCE:11 , 1.40
@@ -347,8 +347,8 @@ PRINTFORML %CALLNAME:TARGET%의 질과 항문은 %CALLNAME:PLAYER%의 주먹으�
 PRINTL
 ;LOCAL   = 대상의 V감각과 A감각의 비싼 (분)편
 ;LOCAL:1 = 대상의 V감각과 A감각의 합계 Lv
-LOCAL = MAX(ABL:1 , ABL:2)
-LOCAL:1 = ABL:1 + ABL:2
+LOCAL = MAX(ABL:V감각 , ABL:A감각)
+LOCAL:1 = ABL:V감각 + ABL:A감각
 IF LOCAL >= 5 && LOCAL:1 >= 10
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 2개의 주먹으로 몸 속을 유린당해, 격렬하게 느끼고 있다….
 ELSEIF LOCAL > 4
@@ -361,7 +361,7 @@ ENDIF
 IF LOCAL >= 5 && LOCAL:1 >= 10
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 완전히 벌려져 안을 훤히 보이고 있는, 질구와 항문의 주변을 양 손가락으로 어루만졌다….
 ELSE
-    SELECTCASE ABL:1
+    SELECTCASE ABL:V감각
         CASE 0, 1
             PRINTFORML %CALLNAME:TARGET%의 질은 경련하고 있는 것 같이 벌름거린다.
         CASE 2
@@ -375,18 +375,18 @@ ELSE
             PRINTFORML %CALLNAME:TARGET%의 질은 요염하게 열려 마치 %조사선택(CALLNAME:PLAYER, "를")% 빨아들일 것 같은 모양을 하고 있다….
     ENDSELECT
     PRINT 한편, 
-    SELECTCASE ABL:2
+    SELECTCASE ABL:A감각
         CASE 0, 1
-            PRINTFORMW 항문\@(ABL:1 > 1) ? 은 # 도\@ 경련하고 있는것 같이 벌름거린다….
+            PRINTFORMW 항문\@(ABL:V감각 > 1) ? 은 # 도\@ 경련하고 있는것 같이 벌름거린다….
         CASE 2
-            PRINTFORMW 항문\@(ABL:1 != 2) ? 은 # 도\@ 뻐끔 입을 열고 있다….
+            PRINTFORMW 항문\@(ABL:V감각 != 2) ? 은 # 도\@ 뻐끔 입을 열고 있다….
         CASE 3
-            PRINTFORMW 항문\@(ABL:1 != 3) ? 은 # 도\@ 벌려진 채로 좀처럼 돌아오지 않는다….
+            PRINTFORMW 항문\@(ABL:V감각 != 3) ? 은 # 도\@ 벌려진 채로 좀처럼 돌아오지 않는다….
         CASE 4
-            PRINTFORML 항문에서\@(ABL:1 != 4) ? 은 # 도\@ 살들이 밀려나와,
+            PRINTFORML 항문에서\@(ABL:V감각 != 4) ? 은 # 도\@ 살들이 밀려나와,
             PRINTW 장안이 훤히 들여다보이게 되어 있다….
         CASEELSE
-            PRINTFORML 항문\@(ABL:1 < 5) ? 은 # 도\@ 다 열려져 있어,
+            PRINTFORML 항문\@(ABL:V감각 < 5) ? 은 # 도\@ 다 열려져 있어,
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 손가락으로 거기를 어루만지고 돌리며 쾌감의 여운에 잠겨 있다….
     ENDSELECT
 ENDIF

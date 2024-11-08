@@ -40,7 +40,7 @@ SIF CFLAG:42 & 1
     RETURN 0
 ;기교 3 이하의 ASSI의 경우 주사할 수 없다(바늘 다루기라면 OK)
 IF ASSIPLAY
-    SIF ABL:ASSI:12 <= 3 && TALENT:ASSI:53 == 0
+    SIF ABL:ASSI:기교 <= 3 && TALENT:ASSI:53 == 0
         RETURN 0
 ENDIF
 ;주사 세트와 음핵 성장제를 가지고 있는지, 아이템 없음 설정이 아니면 안 됨
@@ -113,30 +113,30 @@ SOURCE:26 = 1500
 SOURCE:31 = 2000
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:31 , 2.00
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:31 , 1.80
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:31 , 1.50
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:31 , 1.20
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:31 , 1.00
 ELSE
     TIMES SOURCE:31 , 0.80
 ENDIF
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     TIMES SOURCE:0 , 0.50
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     TIMES SOURCE:0 , 0.75
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     TIMES SOURCE:0 , 1.00
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     TIMES SOURCE:0 , 1.25
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     TIMES SOURCE:0 , 1.50
     EX:0 += RAND:2
 ELSE
@@ -145,19 +145,19 @@ ELSE
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     TIMES SOURCE:24 , 0.80
     TIMES DOWNBASE:0 , 1.20
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     TIMES SOURCE:24 , 1.10
     TIMES DOWNBASE:0 , 1.10
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     TIMES SOURCE:24 , 1.30
     TIMES DOWNBASE:0 , 1.00
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     TIMES SOURCE:24 , 1.50
     TIMES DOWNBASE:0 , 0.90
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     TIMES SOURCE:24 , 1.70
     TIMES DOWNBASE:0 , 0.80
 ELSE
@@ -186,9 +186,9 @@ SIF TALENT:34
     TIMES SOURCE:20 , 1.10
 ;C민감
 IF TALENT:100
-    IF ABL:0 <= 3
+    IF ABL:C감각 <= 3
         TIMES SOURCE:0 , 1.20
-    ELSEIF ABL:0 == 4
+    ELSEIF ABL:C감각 == 4
         TIMES SOURCE:0 , 1.50
     ELSE
         TIMES SOURCE:0 , 1.80
@@ -197,9 +197,9 @@ IF TALENT:100
 ;C둔감
 ELSEIF TALENT:101
     EX:0 -= (EX:0 > 1) ?  1 # 0
-    IF ABL:0 <= 3
+    IF ABL:C감각 <= 3
         TIMES SOURCE:0 , 0.60
-    ELSEIF ABL:0 == 4
+    ELSEIF ABL:C감각 == 4
         TIMES SOURCE:0 , 0.70
     ELSE
         TIMES SOURCE:0 , 0.80
@@ -234,7 +234,7 @@ SIF PLAYER == MASTER
     TCVAR:41 += 2
 
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && ABL:21 >= 3
+SIF ASSIPLAY == 0 && ABL:마조끼 >= 3
     TFLAG:50 += 1
 
 ;음핵 성장제 1개 소비
@@ -299,7 +299,7 @@ IF TALENT:167 || TALENT:168 || TALENT:169
 ;속박되고 있다
 ELSEIF TEQUIP:40
     PRINT 자유를 빼앗긴 모습으로 
-    IF ABL:10 < 3 || MARK:2 < 1 || MARK:9 > 0
+    IF ABL:순종 < 3 || MARK:2 < 1 || MARK:9 > 0
         IF TALENT:반항적 || TALENT:꿋꿋함 || TALENT:16
             PRINTW 다부지게도 이쪽을 째려보고 있다….
         ELSEIF TALENT:겁쟁이 || TALENT:14
@@ -314,7 +314,7 @@ ELSEIF TEQUIP:40
     ENDIF
 ;속박되지 않았다
 ELSE
-    IF ABL:10 < 3 || MARK:2 < 1 || MARK:9 > 0
+    IF ABL:순종 < 3 || MARK:2 < 1 || MARK:9 > 0
         PRINT 도망치려다 억지로 붙잡혀 
         IF TALENT:반항적 || TALENT:꿋꿋함 || TALENT:16
             PRINTW 다부지게도 이쪽을 째려보고 있다.
@@ -349,7 +349,7 @@ PRINTL 클리토리스는 점점 부풀어간다.
 PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 그 광경을 
 IF TALENT:167 || TALENT:168 || TALENT:169
     PRINTW 보고 무엇을 생각하는 건지, 유리구슬 같은 눈동자로 뚫어져라 보고 있다.
-ELSEIF ABL:10 < 3 || MARK:2 < 1 || MARK:9 > 0
+ELSEIF ABL:순종 < 3 || MARK:2 < 1 || MARK:9 > 0
     IF TALENT:반항적 || TALENT:꿋꿋함 || TALENT:15
         PRINTW 보면서 당황하고 있다.
     ELSEIF TALENT:겁쟁이 || TALENT:14

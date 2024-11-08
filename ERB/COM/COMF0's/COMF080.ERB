@@ -25,7 +25,7 @@ SIF TALENT:206
     RETURN 0
 ;기교 3 이하의 ASSI의 경우 주사할 수 없다(바늘 다루기라면 OK)
 IF ASSIPLAY
-    SIF ABL:ASSI:12 <= 3 && TALENT:ASSI:53 == 0
+    SIF ABL:ASSI:기교 <= 3 && TALENT:ASSI:53 == 0
         RETURN 0
 ENDIF
 ;주사 세트와 미약을 가지고 있는지, 아이템 없음 설정이 아니면 안 됨
@@ -97,31 +97,31 @@ ELSEIF NOITEM == 0
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:31 , 3.00
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:31 , 2.50
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:31 , 2.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:31 , 1.50
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:31 , 1.00
 ELSE
     TIMES SOURCE:31 , 0.80
 ENDIF
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     TIMES SOURCE:0 , 0.50
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     TIMES SOURCE:0 , 1.00
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     TIMES SOURCE:0 , 1.50
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     TIMES SOURCE:0 , 2.00
     EX:0 += RAND:2
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     TIMES SOURCE:0 , 2.50
     EX:0 += 1
 ELSE
@@ -130,19 +130,19 @@ ELSE
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     TIMES SOURCE:24 , 0.80
     TIMES DOWNBASE:0 , 1.20
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     TIMES SOURCE:24 , 1.10
     TIMES DOWNBASE:0 , 1.10
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     TIMES SOURCE:24 , 1.30
     TIMES DOWNBASE:0 , 1.00
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     TIMES SOURCE:24 , 1.50
     TIMES DOWNBASE:0 , 0.90
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     TIMES SOURCE:24 , 1.70
     TIMES DOWNBASE:0 , 0.80
 ELSE
@@ -183,9 +183,9 @@ ELSE
 ENDIF
 ;C민감
 IF TALENT:100
-    IF ABL:0 <= 3
+    IF ABL:C감각 <= 3
         TIMES SOURCE:0 , 1.80
-    ELSEIF ABL:0 == 4
+    ELSEIF ABL:C감각 == 4
         TIMES SOURCE:0 , 2.00
         EX:0 += RAND:2
     ELSE
@@ -194,10 +194,10 @@ IF TALENT:100
     ENDIF
 ;C둔감
 ELSEIF TALENT:101
-    IF ABL:0 <= 3
+    IF ABL:C감각 <= 3
         TIMES SOURCE:0 , 0.70
         EX:0 -= (EX:0 > 1) ?  1 # 0
-    ELSEIF ABL:0 == 4
+    ELSEIF ABL:C감각 == 4
         TIMES SOURCE:0 , 0.75
         EX:0 -= (EX:0 > 1) ?  1 # 0
     ELSE
@@ -242,7 +242,7 @@ SIF PLAYER == MASTER
     TCVAR:41 += 2
 
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && ABL:21 >= 3
+SIF ASSIPLAY == 0 && ABL:마조끼 >= 3
     TFLAG:50 += 1
 
 RETURN 1
@@ -257,7 +257,7 @@ SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
 
 PRINTL
 PRINTFORM %CALLNAME:TARGET%의 
-SIF ABL:0 >= 4
+SIF ABL:C감각 >= 4
     PRINT 조교로 비대해진 
 SIF TALENT:100
     PRINT 민감한 
@@ -271,16 +271,16 @@ ENDIF
 PRINTL 주사바늘을 꽂았다….
 PRINTL
 PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-IF ABL:22 >= 3
+IF ABL:레즈끼 >= 3
     PRINT 날카로운 감각에 
 ELSE
     PRINT 통증에 
 ENDIF
 IF TFLAG:899 >= 1
     PRINT 실신하면서도 땀으로 흥건한 몸을 껴안고 
-ELSEIF ABL:0 >= 5
+ELSEIF ABL:C감각 >= 5
     PRINT 너무나도 강렬한 쾌감에 절규하며 
-ELSEIF ABL:0 >= 3
+ELSEIF ABL:C감각 >= 3
     PRINT 본의가 아닌 절정을 일으키며 
 ELSE
     PRINT 차 올라오는 열기에 전율하며 

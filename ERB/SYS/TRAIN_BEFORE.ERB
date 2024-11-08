@@ -337,16 +337,16 @@ SIF TARGET < 0
     RETURN 0
 ;売却や助手化が可能になったか
 ;ＣＶＡＢの各感覚Lvがいずれも3未満なら帰る
-SIF ABL:0 < 3 && ABL:1 < 3 && ABL:2 < 3 && ABL:3 < 3
+SIF ABL:C감각 < 3 && ABL:V감각 < 3 && ABL:A감각 < 3 && ABL:B감각 < 3
     RETURN 0
 ;従順と欲望Lvを合計して6未満なら帰る
-SIF ABL:10 + ABL:11 < 6
+SIF ABL:순종 + ABL:욕망 < 6
     RETURN 0
 ;反抗的か気丈を持っているなら従順Lvが4未満でも帰る
-SIF ABL:10 < 4 && (TALENT:반항적 || TALENT:12)
+SIF ABL:순종 < 4 && (TALENT:반항적 || TALENT:12)
     RETURN 0
 ;自制心か抑圧か抵抗を持っているなら欲望Lvが4未満でも帰る
-SIF ABL:11 < 4 && (TALENT:자제심 || TALENT:억압 || TALENT:34)
+SIF ABL:욕망 < 4 && (TALENT:자제심 || TALENT:억압 || TALENT:34)
     RETURN 0
 ;既に助手可能なら帰る
 SIF CFLAG:1 == 2
@@ -354,10 +354,10 @@ SIF CFLAG:1 == 2
 
 LOCAL = 0
 ;売却可能になったかをチェック
-SIF (ABL:12 >= 3 && ABL:13 >= 3) || (ABL:14 >= 3 && ABL:30 >= 2) || ABL:21 >= 3 || (ABL:0 + ABL:1 + ABL:2 + ABL:3 >= 13) || ABL:10 >= 5 || ABL:11 >= 5
+SIF (ABL:기교 >= 3 && ABL:봉사정신 >= 3) || (ABL:노출증 >= 3 && ABL:자위중독 >= 2) || ABL:마조끼 >= 3 || (ABL:C감각 + ABL:V감각 + ABL:A감각 + ABL:B감각 >= 13) || ABL:순종 >= 5 || ABL:욕망 >= 5
     LOCAL |= 1
 ;助手可能になったかをチェック
-SIF (ABL:0 >= 3 && ABL:10 >= 3 && ABL:11 >= 3 && ABL:12 >= 3 && ABL:(22 + TALENT:120) >= 3) || (ABL:10 >= 5 && ABL:11 >= 4)
+SIF (ABL:C감각 >= 3 && ABL:순종 >= 3 && ABL:욕망 >= 3 && ABL:기교 >= 3 && ABL:(22 + TALENT:남자) >= 3) || (ABL:순종 >= 5 && ABL:욕망 >= 4)
     LOCAL |= 2
 ;売却可能か助手可能であると判定され, 今まで売却可能でなかった場合
 IF (LOCAL & 1 || LOCAL & 2) && CFLAG:1 < 1
@@ -416,7 +416,7 @@ CALL SELF_KOJO, TARGET, 33
 ;[不思議な根]である
 IF TALENT:ASSI:120 == 0 && TALENT:ASSI:121 == 0 && TALENT:ASSI:122 && (CFLAG:ASSI:42 & 1) == 0
     ;Ｃ感覚LV5, 精液中毒LV3以上
-    IF ABL:ASSI:0 == 5 && ABL:ASSI:31 >= 3 && (FLAG:14 & 128) == 0
+    IF ABL:ASSI:C감각 == 5 && ABL:ASSI:정액중독 >= 3 && (FLAG:14 & 128) == 0
         DRAWLINE
         CALL SELF_KOJO, ASSI, 101
         PRINTFORML %조사처리(CALLNAME:ASSI,"는")% [후타나리]가 되었다.
@@ -493,9 +493,9 @@ ELSE
     TCVAR:ARG:50 += 1
 ENDIF
 ;[연모] · [복종] · [괴조인격]이 없을 경우에는 순종 Lv이 1 내려간다(최저 Lv0)
-IF ARG != MASTER && ABL:ARG:10 > 0 && TALENT:ARG:150 == 0 && TALENT:ARG:160 == 0 && TALENT:ARG:169 == 0
-    ABL:ARG:10 -= 1
-    PRINTFORMW %CALLNAME:ARG%의 %ABLNAME:10%가 {ABL:10}로 떨어졌다.
+IF ARG != MASTER && ABL:ARG:순종 > 0 && TALENT:ARG:150 == 0 && TALENT:ARG:160 == 0 && TALENT:ARG:169 == 0
+    ABL:ARG:순종 -= 1
+    PRINTFORMW %CALLNAME:ARG%의 %ABLNAME:10%가 {ABL:순종}로 떨어졌다.
 ENDIF
 ;[기생]한 촉수는 사라진다
 IF TALENT:ARG:146

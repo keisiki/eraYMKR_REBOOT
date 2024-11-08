@@ -14,7 +14,7 @@ TFLAG:202 = 0
 LOCAL = 1
 
 ;前提条件：[연모]と[복종]が無いかつ反発刻印がLv2以上または従順Lv5未満
-IF TALENT:MASTER:44 == 0 && TALENT:MASTER:206 == 0 && TALENT:150 == 0 && TALENT:160 == 0 && (MARK:9 >= 2 || ABL:10 < 5)
+IF TALENT:MASTER:44 == 0 && TALENT:MASTER:206 == 0 && TALENT:150 == 0 && TALENT:160 == 0 && (MARK:9 >= 2 || ABL:순종 < 5)
     ;対象が[弱味]を持っていないかつメディか[調合知識]か[禁断の知識]持ちの場合、確率は1/2
     IF (TALENT:조합지식 || TALENT:금단의지식 || NO:TARGET == 33) && TALENT:약점 == 0
         LOCAL = RAND:2
@@ -98,18 +98,18 @@ LOCAL = RAND:16
 LOCAL:1 = RAND:7
 
 ;ABL:기교를 본다
-LOCAL:2 = ABL:12 + 1
+LOCAL:2 = ABL:기교 + 1
 
 ;ABL:요리기능을 본다
-IF ABL:70 == 0
+IF ABL:요리기능 == 0
     TIMES LOCAL:2 , 1.00
-ELSEIF ABL:70 == 1
+ELSEIF ABL:요리기능 == 1
     TIMES LOCAL:2 , 1.10
-ELSEIF ABL:70 == 2
+ELSEIF ABL:요리기능 == 2
     TIMES LOCAL:2 , 1.20
-ELSEIF ABL:70 == 3
+ELSEIF ABL:요리기능 == 3
     TIMES LOCAL:2 , 1.30
-ELSEIF ABL:70 == 4
+ELSEIF ABL:요리기능 == 4
     TIMES LOCAL:2 , 1.40
 ELSE
     TIMES LOCAL:2 , 1.50
@@ -183,11 +183,11 @@ SIF MARK:8
 SIF MARK:9
     LOCAL:2 *= MARK:9
 ;奉仕精神
-SIF ABL:13
-    LOCAL:2 -= ABL:13
+SIF ABL:봉사정신
+    LOCAL:2 -= ABL:봉사정신
 ;従順
-SIF ABL:10
-    LOCAL:2 -= ABL:10
+SIF ABL:순종
+    LOCAL:2 -= ABL:순종
 
 LOCAL:2 = MAX(LOCAL:2, 4)
 
@@ -543,17 +543,17 @@ ELSE
     ENDIF
 ENDIF
 
-LOCAL:4 = ABL:70
+LOCAL:4 = ABL:요리기능
 ;습득의 구슬
 CALL COMMON_UP_JUEL, TARGET, 11, (LOCAL:1 * (LOCAL:4+1) * 4), 0
-LOCAL:3 = ABL:70 + (1 + RAND:5)
+LOCAL:3 = ABL:요리기능 + (1 + RAND:5)
 ;요리경험
 CALL COMMON_UP_EXP, TARGET, 70, LOCAL:3, 1
 
 CFLAG:65 = LIMIT(CFLAG:65, 0, 999999)
 
 IF BASE:MASTER:0 <= 0
-    IF TALENT:주정 || TALENT:봉래인 || MARK:10 || FLAG:5 & 1 || ((TALENT:81 || TALENT:177 || ABL:20 > 3) && RAND:2 == 0)
+    IF TALENT:주정 || TALENT:봉래인 || MARK:10 || FLAG:5 & 1 || ((TALENT:81 || TALENT:177 || ABL:새드끼 > 3) && RAND:2 == 0)
         CALL BADEND_7
     ELSE
         CALL BADEND_6
@@ -586,30 +586,30 @@ VARSET LOCAL, 0
 LOCAL = RAND:16
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     LOCAL:2 = 10
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     LOCAL:2 = 20
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     LOCAL:2 = 30
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     LOCAL:2 = 40
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     LOCAL:2 = 50
 ELSE
     LOCAL:2 = 60
 ENDIF
 
 ;ABL:요리기능을 본다
-IF ABL:70 == 0
+IF ABL:요리기능 == 0
     TIMES LOCAL:2 , 1.00
-ELSEIF ABL:70 == 1
+ELSEIF ABL:요리기능 == 1
     TIMES LOCAL:2 , 1.10
-ELSEIF ABL:70 == 2
+ELSEIF ABL:요리기능 == 2
     TIMES LOCAL:2 , 1.30
-ELSEIF ABL:70 == 3
+ELSEIF ABL:요리기능 == 3
     TIMES LOCAL:2 , 1.50
-ELSEIF ABL:70 == 4
+ELSEIF ABL:요리기능 == 4
     TIMES LOCAL:2 , 1.90
 ELSE
     TIMES LOCAL:2 , 2.40
@@ -660,7 +660,7 @@ SIF TALENT:164
     TIMES LOCAL:2 , 1.50
 
 ;LOCAL = 요리의 종류
-IF LOCAL == 0 && ABL:70 >= 5
+IF LOCAL == 0 && ABL:요리기능 >= 5
     ;キャラ固有チョコ
     LOCAL:4 = 700
 ELSEIF LOCAL == 1 || LOCAL == 2
@@ -716,7 +716,7 @@ PRINTL
 PRINTFORM %조사처리(CALLNAME:TARGET,"는")% 
 SIF TALENT:152 || TALENT:153
     PRINT 애정이 듬뿍 담긴 
-IF LOCAL == 0 && (ABL:70 >= 5 || LOCAL:1 == 1)
+IF LOCAL == 0 && (ABL:요리기능 >= 5 || LOCAL:1 == 1)
     ;毒を盛ったフラグON
     CFLAG:150 |= 64
     ;(専用)口上側で定義されている固有チョコが25%の確率で出る
@@ -1232,19 +1232,19 @@ ELSEIF RESULT == 1
         LOCAL:7 = 0
         ;感情乏しい、傀儡、精神崩壊、壊造人格の場合は反発刻印による従順ダウンはなし
         IF TALENT:감정결여 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0
-            IF ABL:10 > 0 && ABL:10 <= 2 && LOCAL:6 == 3
+            IF ABL:순종 > 0 && ABL:순종 <= 2 && LOCAL:6 == 3
                 LOCAL:7 = 1
-                ABL:10 = 0
-            ELSEIF ABL:10 == 3 && LOCAL:6 == 3
+                ABL:순종 = 0
+            ELSEIF ABL:순종 == 3 && LOCAL:6 == 3
                 LOCAL:7 = 1
-                ABL:10 = 2
-            ELSEIF ABL:10 && ABL:10 <= 2 && LOCAL:6 == 2
+                ABL:순종 = 2
+            ELSEIF ABL:순종 && ABL:순종 <= 2 && LOCAL:6 == 2
                 LOCAL:7 = 1
-                ABL:10 -= 1
+                ABL:순종 -= 1
             ENDIF
         ENDIF
         IF LOCAL:7 == 1
-            PRINTFORML 그리고 순종이 LV{ABL:10}(이)가 되었다.
+            PRINTFORML 그리고 순종이 LV{ABL:순종}(이)가 되었다.
             CALL JUJUN_UP_CHECK
         ENDIF
         ;질투 초콜렛으로 반발각인 취득
@@ -1259,7 +1259,7 @@ ENDIF
 
 CFLAG:65 = LIMIT(CFLAG:65, 0, 999999)
 
-LOCAL:6 = ABL:70 + 5 + LOCAL:1
+LOCAL:6 = ABL:요리기능 + 5 + LOCAL:1
 LOCAL:5 = LOCAL:6 + RAND:5
 ;습득의 구슬
 CALL COMMON_UP_JUEL, TARGET, 11, (LOCAL:2*LOCAL:6*2), 0
@@ -1267,7 +1267,7 @@ CALL COMMON_UP_JUEL, TARGET, 11, (LOCAL:2*LOCAL:6*2), 0
 CALL COMMON_UP_EXP, TARGET, 70, LOCAL:5, 1
 
 ;조건을 만족하면 식후의 운동 이벤트로
-IF TFLAG:202 == 1 && ABL:1 > 0 && (FLAG:12 & 8192) == 0
+IF TFLAG:202 == 1 && ABL:V감각 > 0 && (FLAG:12 & 8192) == 0
     CALL LUNCH_EXERCISE
     ;[친애], [상애]를 지니고 식후 이벤트 발생 확정시 얀데레 포인트가 감소
     ;또한 초기에 [질투]를 갖고 있지 않은 캐릭터의 경우, [질투]가 있고 광기가 없으면 [질투]가 사라진다

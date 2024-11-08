@@ -317,8 +317,8 @@ FOR TFLAG:900, 0, CHARANUM
     ;料理技能による回復量の違い(EASYの場合は修整なし)
     ;主人と(もしおれば)助手のうち高い方の料理技能が基準(ただし助手が反発持ちの場合は修整には考慮しない), 当然酔いつぶれていては….
     LOCAL:13 = (BASE:MASTER:8 > MAXBASE:MASTER:8) ? 0 # ABL:MASTER:70
-    SIF ASSI >= 0 && ABL:ASSI:70 > ABL:MASTER:70 && MARK:ASSI:9 == 0 && EQUIP:ASSI:14 == 0 && BASE:ASSI:8 <= MAXBASE:ASSI:8 && CFLAG:ASSI:4 == 0
-        LOCAL:13 = ABL:ASSI:70
+    SIF ASSI >= 0 && ABL:ASSI:요리기능 > ABL:MASTER:70 && MARK:ASSI:9 == 0 && EQUIP:ASSI:14 == 0 && BASE:ASSI:8 <= MAXBASE:ASSI:8 && CFLAG:ASSI:4 == 0
+        LOCAL:13 = ABL:ASSI:요리기능
     ;NORMALの場合当該奴隷(ただしその場におり, 睡眠薬の影響がなく, 酔いつぶれていないこと)の料理技能が高ければそっちが基準になる
     SIF FLAG:3 == 2 && TFLAG:900 != MASTER && TFLAG:900 != ASSI && ABL:(TFLAG:900):70 > LOCAL:13 && CFLAG:(TFLAG:900):4 == 0 && EQUIP:(TFLAG:900):14 == 0 && BASE:(TFLAG:900):8 <= MAXBASE:(TFLAG:900):8
             LOCAL:13 = ABL:(TFLAG:900):70
@@ -427,14 +427,14 @@ NEXT
 
 ;助手はその場に存在し, 睡眠薬の影響なくて, 酔いつぶれていなければ色々と手伝うので珠を入手するが, 同時にストレスも微量増加
 IF ASSI >= 0 && BASE:ASSI:8 <= MAXBASE:ASSI:8 && CFLAG:ASSI:4 == 0 && EQUIP:ASSI:14 == 0
-    CFLAG:ASSI:65 += (ABL:ASSI:10 + ABL:ASSI:13)*12
+    CFLAG:ASSI:65 += (ABL:ASSI:순종 + ABL:ASSI:봉사정신)*12
     DRAWLINE
     ;地の文章カット
     SIF CFLAG:ASSI:99 == 0
         PRINTFORML %CALLNAME:ASSI%에게 잔업을 도와달라고 부탁했다.
     ;習得（従順と技巧）, 恭順（従順と奉仕精神）, 否定（恐怖刻印と反発刻印の２倍）の珠獲得
-    CALL COMMON_UP_JUEL, ASSI, 11, ((ABL:ASSI:10 + ABL:ASSI:12)*5), 0
-    CALL COMMON_UP_JUEL, ASSI, 12, ((ABL:ASSI:10 + ABL:ASSI:13)*5), 0
+    CALL COMMON_UP_JUEL, ASSI, 11, ((ABL:ASSI:순종 + ABL:ASSI:기교)*5), 0
+    CALL COMMON_UP_JUEL, ASSI, 12, ((ABL:ASSI:순종 + ABL:ASSI:봉사정신)*5), 0
     CALL COMMON_UP_JUEL, ASSI, 100, ((MARK:ASSI:8 + (MARK:ASSI:9*2))*10), 0
 ENDIF
 
@@ -818,7 +818,7 @@ SIF TFLAG:212 > 0
 IF TARGET >= 0 && TALENT:143 == 0
     CALL MORNING_EVENT_JUDGMENT
     ;朝の搾りたてミルク.Ｂ系拡張コマンドを有効にした場合, ランダムで発生
-    SIF FLAG:15 & 8 && TALENT:134 && ABL:11 >= 4 && ABL:13 >= 4 && ABL:34 > 0 && RAND:3 == 0
+    SIF FLAG:15 & 8 && TALENT:134 && ABL:욕망 >= 4 && ABL:봉사정신 >= 4 && ABL:분유중독 > 0 && RAND:3 == 0
         CALL MORNING_EVENT_MILK
 ENDIF
 ;夜イベントとの同期処理
@@ -953,20 +953,20 @@ CALL CALC_GAUGE4_SLAVE, TARGET,1
 LOCAL = 0
 ;[幼児]を持っていない従順・欲望・マゾっ気が全て4以上で[幼稚]を持っているか異常経験が7以上だと[幼児退行]
 ;ただし[幼稚]を持っていないかつ, [蓬莱人]を持っている場合は異常経験が15以上必要
-IF ABL:10 >= 4 && ABL:11 >= 4 && ABL:21 >= 4 && TALENT:130 == 0 && (TALENT:131 || (TALENT:봉래인 == 0 && EXP:50 >= 7) || EXP:50 >= 15) && TALENT:159 == 0 && TALENT:167 == 0 && TALENT:168 == 0
+IF ABL:순종 >= 4 && ABL:욕망 >= 4 && ABL:마조끼 >= 4 && TALENT:130 == 0 && (TALENT:131 || (TALENT:봉래인 == 0 && EXP:50 >= 7) || EXP:50 >= 15) && TALENT:159 == 0 && TALENT:167 == 0 && TALENT:168 == 0
     LOCAL |= 1
     ;貞操帯なしの状態で露出が5のときはさらにおもらし癖がつく
-    SIF ABL:14 == 5 && TALENT:오줌싸개버릇 == 0 && (CFLAG:42 & 2) == 0
+    SIF ABL:노출증 == 5 && TALENT:오줌싸개버릇 == 0 && (CFLAG:42 & 2) == 0
         LOCAL |= 2
 ENDIF
 ;従順・マゾっ気が共に3以上, 異常経験が20以上, 薬物刻印と恥辱刻印が共に2以上, 恐怖刻印が3, かつストレスが5000以上で[精神崩壊]
-SIF ABL:10 >= 3 && ABL:21 >= 3 && EXP:50 >= 20 && MARK:3 >= 2 && MARK:4 >= 2 && MARK:8 == 3 && CFLAG:65 >= 5000 && TALENT:167 == 0 && TALENT:168 == 0
+SIF ABL:순종 >= 3 && ABL:마조끼 >= 3 && EXP:50 >= 20 && MARK:3 >= 2 && MARK:4 >= 2 && MARK:8 == 3 && CFLAG:65 >= 5000 && TALENT:167 == 0 && TALENT:168 == 0
     LOCAL |= 4
 ;異常経験が25以上, 苦痛刻印・快楽刻印・屈服刻印・薬物刻印・恥辱刻印・恐怖刻印が全て3の時
 IF EXP:50 >= 25 && (MARK:0+MARK:1+MARK:2+MARK:3+MARK:4+MARK:8 == 18) && TALENT:168 == 0
     ;[精神崩壊]を持っているかつ従順がLv5, または(以前の周回も含め)[精神崩壊]か[傀儡]を取得したことがあり, [服従]と[淫乱]を取得している状態で従順と奉仕精神が共にLv5
     ;または[狂気]か[幼児退行]を取得しており, かつ従順がLv3以上でストレスが10000以上の時[傀儡]
-    SIF (TALENT:167 && ABL:10 >= 5) || ((CFLAG:17 & 4 || CFLAG:17 & 8) && ABL:10 >= 5 && ABL:13 >= 5 && TALENT:160 && TALENT:170) || (ABL:10 >= 3 && (TALENT:158 || TALENT:159) && CFLAG:65 >= 10000)
+    SIF (TALENT:167 && ABL:순종 >= 5) || ((CFLAG:17 & 4 || CFLAG:17 & 8) && ABL:순종 >= 5 && ABL:봉사정신 >= 5 && TALENT:160 && TALENT:170) || (ABL:순종 >= 3 && (TALENT:158 || TALENT:159) && CFLAG:65 >= 10000)
         LOCAL |= 8
 ENDIF
 IF LOCAL

@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 ;中毒者曰く：
 ;調教器具を改造したり、改造した調教器具を使ったりしたときの処理群
-;CSVにABL:73「工作技能」を追加したので本当ににとり以外も高性能道具使えるように。
+;CSVにABL:공작기능「工作技能」を追加したので本当ににとり以外も高性能道具使えるように。
 ;ペニスバンドの性能向上は見送り：女主人問題。というかペニバンのがティンコより良いって悲しいだろjk
 ;
 ;以下関数群
@@ -327,7 +327,7 @@ LOCAL:1 = FLAG:1111
 LOCAL:2 = FLAG:1112
 LOCAL:3 = LOCAL:0 + 700
 LOCAL:4 = FLAG:1113
-IF ABL:(LOCAL:1):73 > 0
+IF ABL:(LOCAL:1):공작기능 > 0
     ;主人なら無条件で主人専用道具を使おうとする
     IF LOCAL:2 == 0
         IF CFLAG:(LOCAL:1):(LOCAL:3) & 8
@@ -345,9 +345,9 @@ IF ABL:(LOCAL:1):73 > 0
         ;調教対象の場合
         IF LOCAL:2 == 1
             ;[ドＭ]か[マゾ]か『[従順]Lv3以上＆[マゾっ気]Lv3以上』を確認＆開発状況確認
-            IF (TALENT:(LOCAL:1):178 || TALENT:(LOCAL:1):82 || (ABL:(LOCAL:1):10 > 3 && ABL:(LOCAL:1):21 > 3)) && (CFLAG:(LOCAL:1):(LOCAL:3) & 4)
+            IF (TALENT:(LOCAL:1):178 || TALENT:(LOCAL:1):82 || (ABL:(LOCAL:1):순종 > 3 && ABL:(LOCAL:1):마조끼 > 3)) && (CFLAG:(LOCAL:1):(LOCAL:3) & 4)
                 ;[ドＭ]か[マゾ]か『[マゾっ気]＋[従順]が8以上』で[露出癖]Lv2以上かつ特製品開発済みなら専用道具
-                IF (TALENT:(LOCAL:1):178 || TALENT:(LOCAL:1):82 || (ABL:(LOCAL:1):10 + ABL:(LOCAL:1):21) > 8) && ABL:(LOCAL:1):14 > 1 && (CFLAG:(LOCAL:1):(LOCAL:3) & 8)
+                IF (TALENT:(LOCAL:1):178 || TALENT:(LOCAL:1):82 || (ABL:(LOCAL:1):순종 + ABL:(LOCAL:1):마조끼) > 8) && ABL:(LOCAL:1):노출증 > 1 && (CFLAG:(LOCAL:1):(LOCAL:3) & 8)
                     FLAG:1120 = 2
                     RETURN 2
                 ;それ以外なら高性能／上質
@@ -363,11 +363,11 @@ IF ABL:(LOCAL:1):73 > 0
         ;助手の場合
         ELSE
             ;『[ドＳ]か[サド]か[サドっ気]Lv3以上』かつ『[技巧]がLv4以上』かつ専用開発済みならば専用道具
-            IF (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):20 > 3) && ABL:(LOCAL:1):12 > 4 && (CFLAG:(LOCAL:1):(LOCAL:3) & 8)
+            IF (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):새드끼 > 3) && ABL:(LOCAL:1):기교 > 4 && (CFLAG:(LOCAL:1):(LOCAL:3) & 8)
                 FLAG:1120 = 2
                 RETURN 2
             ;『[ドＳ]か[サド]か[サドっ気]Lv3以上』かつ『[技巧]がLv2以上』かつ改良済みならば高性能／上質
-            ELSEIF (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):20 > 3) && ABL:(LOCAL:1):12 > 2 && (CFLAG:(LOCAL:1):(LOCAL:3) & 4)
+            ELSEIF (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):새드끼 > 3) && ABL:(LOCAL:1):기교 > 2 && (CFLAG:(LOCAL:1):(LOCAL:3) & 4)
                 FLAG:1120 = 1
                 RETURN 1
             ;でなきゃ通常品
@@ -381,9 +381,9 @@ IF ABL:(LOCAL:1):73 > 0
         ;調教対象の場合
         IF LOCAL:2 == 1
             ;自分に自分の改造道具を使用するには[従順]Lv3以上が必要
-            IF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):10 > 2)
+            IF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):순종 > 2)
                 ;調教対象の特製品使用にはさらに[露出癖]Lv2以上が必要
-                IF (CFLAG:(LOCAL:1):(LOCAL:3) & 8) && (ABL:(LOCAL:1):14 > 1)
+                IF (CFLAG:(LOCAL:1):(LOCAL:3) & 8) && (ABL:(LOCAL:1):노출증 > 1)
                     FLAG:1120 = 2
                     RETURN 2
                 ;それ以外なら高性能／上質
@@ -399,11 +399,11 @@ IF ABL:(LOCAL:1):73 > 0
         ;助手の場合
         ELSE
             ;助手の特製品使用には[技巧]Lv3と『[ドＳ]か[サド]か[サドっ気]Lv4以上』か特製品開発時より1Lv高い工作技能が必要
-            IF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):12 > 2) && (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):20 > 3 || (LOCAL:4 & 2 == 0 && ABL:(LOCAL:1):73 > 3) || (LOCAL:4 & 2 == 2 && ABL:(LOCAL:1):73 > 4))
+            IF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):기교 > 2) && (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):새드끼 > 3 || (LOCAL:4 & 2 == 0 && ABL:(LOCAL:1):공작기능 > 3) || (LOCAL:4 & 2 == 2 && ABL:(LOCAL:1):공작기능 > 4))
                 FLAG:1120 = 2
                 RETURN 2
             ;助手の高性能／上質道具を使用するには[技巧]Lv2と『[ドＳ]か[サド]か[サドっ気]Lv2以上』か開発時より1Lv高い工作技能が必要
-            ELSEIF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):12 > 1) && (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):20 > 1 || (LOCAL:4 & 2 == 0 && ABL:(LOCAL:1):73 > 2) || (LOCAL:4 & 2 == 2 && ABL:(LOCAL:1):73 > 3))
+            ELSEIF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):기교 > 1) && (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):새드끼 > 1 || (LOCAL:4 & 2 == 0 && ABL:(LOCAL:1):공작기능 > 2) || (LOCAL:4 & 2 == 2 && ABL:(LOCAL:1):공작기능 > 3))
                 FLAG:1120 = 1
                 RETURN 1
             ;でなきゃ通常品
@@ -818,7 +818,7 @@ IF ARG:0 != 0
 ENDIF
 LOCAL:9 = 0
 ;調査対象開発レベルを設定 (0⇒0、1⇒4)
-IF ABL:73 > 0
+IF ABL:공작기능 > 0
     IF CFLAG:799 & 4
         LOCAL:0 = 4
     ELSEIF CFLAG:799 & 2
@@ -984,11 +984,11 @@ IF LOCAL:1 == 0
         ;特製品
         IF FLAG:(LOCAL:5) == TARGET
             ;調教対象特製品であれば自慰中毒に合わせて倍率変化
-            IF ABL:30 == 5
+            IF ABL:자위중독 == 5
                 TIMES LOCAL:4 , 1.75
-            ELSEIF ABL:30 == 4
+            ELSEIF ABL:자위중독 == 4
                 TIMES LOCAL:4 , 1.50
-            ELSEIF ABL:30 == 3
+            ELSEIF ABL:자위중독 == 3
                 TIMES LOCAL:4 , 1.35
             ELSE
                 TIMES LOCAL:4 , 1.25
@@ -1013,11 +1013,11 @@ ELSE
         ;特製品
         IF FLAG:(LOCAL:5) == TARGET
             ;調教対象特製品であれば自慰中毒に合わせて倍率変化
-            IF ABL:30 == 5
+            IF ABL:자위중독 == 5
                 TIMES LOCAL:4 , 1.75
-            ELSEIF ABL:30 == 4
+            ELSEIF ABL:자위중독 == 4
                 TIMES LOCAL:4 , 1.50
-            ELSEIF ABL:30 == 3
+            ELSEIF ABL:자위중독 == 3
                 TIMES LOCAL:4 , 1.35
             ELSE
                 TIMES LOCAL:4 , 1.25

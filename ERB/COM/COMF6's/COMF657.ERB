@@ -42,7 +42,7 @@ SIF TALENT:ASSI:127 && (TALENT:MASTER:56 == 0 && TALENT:PLAYER:127 == 0)
 SIF EXIST_BAR(MASTER) == 0 && ITEM:2 == 0 && NOITEM == 0
     RETURN 0
 ;縄使用中か순종이 3이상 없으면 안 됨
-SIF TEQUIP:40 == 0 && ABL:10 < 4
+SIF TEQUIP:40 == 0 && ABL:순종 < 4
     RETURN 0
 ;蜘蛛の巣にかけていないとダメ
 SIF TEQUIP:40 != 7
@@ -93,15 +93,15 @@ CALL TRAIN_MESSAGE_COM657
 LOCAL = 0
 
 ;조수의 ABL:기교를 본다
-IF ABL:ASSI:12 == 0
+IF ABL:ASSI:기교 == 0
     LOCAL = 50
-ELSEIF ABL:ASSI:12 == 1
+ELSEIF ABL:ASSI:기교 == 1
     LOCAL = 300
-ELSEIF ABL:ASSI:12 == 2
+ELSEIF ABL:ASSI:기교 == 2
     LOCAL = 800
-ELSEIF ABL:ASSI:12 == 3
+ELSEIF ABL:ASSI:기교 == 3
     LOCAL = 1500
-ELSEIF ABL:ASSI:12 == 4
+ELSEIF ABL:ASSI:기교 == 4
     LOCAL = 2000
 ELSE
     LOCAL = 3200
@@ -134,19 +134,19 @@ SOURCE:11 = 1200
 SOURCE:31 = 2800
 
 ;ABL:욕망을 본다
-IF ABL:11 == 0
+IF ABL:욕망 == 0
     SOURCE:19 = 75
     SOURCE:22 = 3200
-ELSEIF ABL:11 == 1
+ELSEIF ABL:욕망 == 1
     SOURCE:19 = 150
     SOURCE:22 = 3800
-ELSEIF ABL:11 == 2
+ELSEIF ABL:욕망 == 2
     SOURCE:19 = 300
     SOURCE:22 = 4600
-ELSEIF ABL:11 == 3
+ELSEIF ABL:욕망 == 3
     SOURCE:19 = 550
     SOURCE:22 = 5400
-ELSEIF ABL:11 == 4
+ELSEIF ABL:욕망 == 4
     SOURCE:19 = 800
     SOURCE:22 = 6200
 ELSE
@@ -156,19 +156,19 @@ ENDIF
 
 
 ;ABL:봉사 정신을 본다
-IF ABL:13 == 0
+IF ABL:봉사정신 == 0
     TIMES SOURCE:11 , 0.10
     TIMES SOURCE:19 , 0.50
-ELSEIF ABL:13 == 1
+ELSEIF ABL:봉사정신 == 1
     TIMES SOURCE:11 , 0.40
     TIMES SOURCE:19 , 0.80
-ELSEIF ABL:13 == 2
+ELSEIF ABL:봉사정신 == 2
     TIMES SOURCE:11 , 0.70
     TIMES SOURCE:19 , 1.00
-ELSEIF ABL:13 == 3
+ELSEIF ABL:봉사정신 == 3
     TIMES SOURCE:11 , 1.00
     TIMES SOURCE:19 , 1.50
-ELSEIF ABL:13 == 4
+ELSEIF ABL:봉사정신 == 4
     TIMES SOURCE:11 , 1.60
     TIMES SOURCE:19 , 2.00
 ELSE
@@ -202,9 +202,9 @@ IF TALENT:ASSI:0
             TCVAR:50 += 1
             CFLAG:21 |= 4
         ENDIF
-        IF ABL:10 < 2
+        IF ABL:순종 < 2
             PRINTFORML 그리고 %ABLNAME:10%이 2가 되었다. 
-            ABL:10 = 2
+            ABL:순종 = 2
         ENDIF
     ELSE
         TIMES SOURCE:22 , 15.00
@@ -227,15 +227,15 @@ TFLAG:91 = SAMEN_CHECK(PLAYER)
 IF TFLAG:91 >= 1
     ;커맨드 마다 고유의 처리는 이 아래에 쓴다
     ;ABL:정액 중독을 본다
-    IF ABL:31 == 0
+    IF ABL:정액중독 == 0
         TIMES SOURCE:22, 1.00
-    ELSEIF ABL:31 == 1
+    ELSEIF ABL:정액중독 == 1
         TIMES SOURCE:22, 1.20
-    ELSEIF ABL:31 == 2
+    ELSEIF ABL:정액중독 == 2
         TIMES SOURCE:22, 1.50
-    ELSEIF ABL:31 == 3
+    ELSEIF ABL:정액중독 == 3
         TIMES SOURCE:22, 2.00
-    ELSEIF ABL:31 == 4
+    ELSEIF ABL:정액중독 == 4
         TIMES SOURCE:22, 2.50
     ELSE
         TIMES SOURCE:22, 3.00
@@ -295,7 +295,7 @@ PRINTFORML %조사선택(CALLNAME:MASTER, "와")% %조사선택(CALLNAME:ASSI, "
 PRINTFORML 기분 나쁜 고요함이 퍼지는 중, %CALLNAME:TARGET%의 눈에 들어온 것은
 PRINTFORML 나무 위로부터 도롱이 벌레와 같이 실로 내려오면서 %CALLNAME:TARGET%에게 과시하면서,
 ;대상의 욕망 Lv와 봉사 정신 Lv가 모두 Lv4 이상 있는 경우
-IF ABL:11 > 3 && ABL:13 > 3
+IF ABL:욕망 > 3 && ABL:봉사정신 > 3
     PRINTFORML %조사선택(CALLNAME:ASSI, "를")% 계속 범하고 있는 %CALLNAME:MASTER%의 모습이었다.
     PRINTFORMW 그 모습을 부러운 듯이 보고 있는 %CALLNAME:TARGET%의 아랫입에서 주루룩 음액이 흘러내리고 있다….
 ;그 외의 경우
@@ -309,10 +309,10 @@ ENDIF
 @COM_ORDER_657, ARG
 LOCAL:99 = ARG
 ;ABL:욕망
-IF ABL:11
+IF ABL:욕망
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:11
+    LOCAL:99 = ABL:욕망
     TFLAG:240 += LOCAL:99 * 2
     RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 2})
 ENDIF
@@ -338,10 +338,10 @@ IF LOCAL:2
 ENDIF
 
 ;조수의 ABL:노출벽
-IF ABL:ASSI:14
+IF ABL:ASSI:노출증
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:ASSI:14
+    LOCAL:99 = ABL:ASSI:노출증
     TFLAG:240 += LOCAL:99 * 2
     RESULTS = %RESULTS% 조수의 %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 2})
 ENDIF

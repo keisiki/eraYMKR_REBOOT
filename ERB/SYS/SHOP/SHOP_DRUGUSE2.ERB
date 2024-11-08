@@ -380,7 +380,7 @@ NEXT
 
 ;条件を満たしている場合はなんらかの素質が追加
 ;技巧が5のときは習得スピードが1段階上昇
-IF ABL:ARG:12 >= 5 && TALENT:습득빠름 == 0
+IF ABL:ARG:기교 >= 5 && TALENT:습득빠름 == 0
     IF TALENT:51
         TALENT:습득느림 = 0
     ELSE
@@ -388,39 +388,39 @@ IF ABL:ARG:12 >= 5 && TALENT:습득빠름 == 0
     ENDIF
 ENDIF
 ;奉仕精神5で[献身的]取得
-SIF ABL:ARG:13 >= 5 && TALENT:63 == 0
+SIF ABL:ARG:봉사정신 >= 5 && TALENT:63 == 0
     TALENT:63 = 1
 ;露出癖5で[目立ちたがり]取得
-SIF ABL:ARG:14 >= 5 &&  TALENT:튀고싶어함 == 0
+SIF ABL:ARG:노출증 >= 5 &&  TALENT:튀고싶어함 == 0
     TALENT:튀고싶어함 = 1
 ;マゾっ気かサドっ気5かつレズっ気かＢＬっ気5で[倒錯的]取得
-SIF (ABL:ARG:20 >= 5 || ABL:ARG:21 >= 5) && (ABL:ARG:22 >= 5 || ABL:ARG:23 >= 5) && TALENT:80 == 0
+SIF (ABL:ARG:새드끼 >= 5 || ABL:ARG:마조끼 >= 5) && (ABL:ARG:레즈끼 >= 5 || ABL:ARG:BL끼 >= 5) && TALENT:80 == 0
     TALENT:80 = 1
 ;レズっ気5かつレズ中毒5で[男嫌い]取得
-SIF ABL:ARG:22 >= 5 && ABL:ARG:32 >= 5 && TALENT:남성혐오 == 0
+SIF ABL:ARG:레즈끼 >= 5 && ABL:ARG:레즈중독 >= 5 && TALENT:남성혐오 == 0
     TALENT:남성혐오 = 1
 ;ＢＬっ気5かつＢＬ中毒5で[女嫌い]取得
-SIF ABL:ARG:23 >= 5 && ABL:ARG:33 >= 5 && TALENT:여성혐오 == 0
+SIF ABL:ARG:BL끼 >= 5 && ABL:ARG:BL중독 >= 5 && TALENT:여성혐오 == 0
     TALENT:여성혐오 = 1
 ;自慰, 精液, レズ(またはＢＬ), 噴乳, 触手中毒が全て5なら[中毒しやすい]取得
-SIF ABL:ARG:30 >= 5 && ABL:ARG:31 >= 5 && (ABL:ARG:32 >= 5 || ABL:ARG:33 >= 5) && ABL:ARG:34 >= 5 && ABL:ARG:35 >= 5 && TALENT:84 == 0
+SIF ABL:ARG:자위중독 >= 5 && ABL:ARG:정액중독 >= 5 && (ABL:ARG:레즈중독 >= 5 || ABL:ARG:BL중독 >= 5) && ABL:ARG:분유중독 >= 5 && ABL:ARG:촉수중독 >= 5 && TALENT:84 == 0
     TALENT:84 = 1
 ;[복종]を持っていた場合, 従順が1上昇
 ;[妄信]を持っていた場合, 従順が2上昇
 IF TALENT:ARG:151 || TALENT:ARG:160
-    ABL:10 = MIN(ABL:10 + 1, 5)
+    ABL:순종 = MIN(ABL:순종 + 1, 5)
     SIF TALENT:ARG:151
-        ABL:10 = MIN(ABL:10 + 1, 5)
+        ABL:순종 = MIN(ABL:순종 + 1, 5)
 ENDIF
 ;[サド]を持っていた場合, 欲望とサドっ気が1上昇
 IF TALENT:ARG:81
-    ABL:11 = MIN(ABL:11 + 1, 5)
-    ABL:20 = MIN(ABL:20 + 1, 5)
+    ABL:욕망 = MIN(ABL:욕망 + 1, 5)
+    ABL:새드끼 = MIN(ABL:새드끼 + 1, 5)
 ENDIF
 ;[マゾ]を持っていた場合, 露出癖とマゾっ気が1上昇
 IF TALENT:ARG:82
-    ABL:14 = MIN(ABL:14 + 1, 5)
-    ABL:21 = MIN(ABL:21 + 1, 5)
+    ABL:노출증 = MIN(ABL:노출증 + 1, 5)
+    ABL:마조끼 = MIN(ABL:마조끼 + 1, 5)
 ENDIF
 ;[烙印]→[傷物]変換
 SIF TALENT:ARG:161
@@ -506,9 +506,9 @@ IF TALENT:ARG:150 == 0 && TALENT:ARG:160 == 0
     PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% 충격을 받았다＞
     SIF MARK:ARG:9 < 3
         CALL COMMON_MARK_UP, ARG, 9, 3, 0
-    SIF ABL:ARG:10 > 0
+    SIF ABL:ARG:순종 > 0
         PRINTW 그리고 순종이 LV0이 되었다
-    ABL:ARG:10 = 0
+    ABL:ARG:순종 = 0
 ENDIF
 
 ;素質[卵生][人魚]消滅
@@ -572,7 +572,7 @@ IF ARG == MASTER
         PRINTFORML 귀여워보이는 요정 소녀가 된 %CALLNAME:MASTER%의 모습이 비치고 있었다…….
     ENDIF
 ELSE
-    PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 요정화 사탕을 %CALLNAME:ARG%에게 \@(ABL:ARG:10 < 3) ? 억지로  # \@먹였다…….
+    PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 요정화 사탕을 %CALLNAME:ARG%에게 \@(ABL:ARG:순종 < 3) ? 억지로  # \@먹였다…….
     PRINTW  
     PRINTFORMW 잠시 있자 사탕의 효과인지 %조사처리(CALLNAME:ARG,"는")% 괴로운 듯이 그 자리에 웅크렸다…….
     IF TALENT:ARG:127 == 0 && TALENT:ARG:128 == 0
@@ -590,9 +590,9 @@ IF NO:ARG == 48
     PRINTFORML ＜%조사처리(CALLNAME:ARG,"는")% 커다란 쇼크를 받았다＞
     SIF MARK:ARG:9 < 3
         CALL COMMON_MARK_UP, ARG, 9, 3, 0
-    SIF ABL:ARG:10 > 0
+    SIF ABL:ARG:순종 > 0
         PRINTL 그리고 순종이 LV0으로 떨어졌다.
-    ABL:ARG:10 = 0
+    ABL:ARG:순종 = 0
 ENDIF
 PRINTW  
 
@@ -618,15 +618,15 @@ MARK:ARG:87 = 1
 IF TALENT:ARG:120
     TALENT:ARG:120 = 0
     TALENT:ARG:0 = 1
-    LOCAL:2 = ABL:ARG:22 + 3
-    IF ABL:ARG:23 <= LOCAL:2
-        LOCAL:2 = ABL:ARG:23
-        ABL:ARG:22 += 3
-        ABL:ARG:22 -= LOCAL:2
+    LOCAL:2 = ABL:ARG:레즈끼 + 3
+    IF ABL:ARG:BL끼 <= LOCAL:2
+        LOCAL:2 = ABL:ARG:BL끼
+        ABL:ARG:레즈끼 += 3
+        ABL:ARG:레즈끼 -= LOCAL:2
     ELSE
-        ABL:ARG:22 = 0
+        ABL:ARG:레즈끼 = 0
     ENDIF
-    ABL:ARG:23 = 0
+    ABL:ARG:BL끼 = 0
 ENDIF
 
 ;回復早く.もともと遅いと打ち消して普通.
@@ -761,7 +761,7 @@ ELSEIF NO:TARGET == 7
     IF TALENT:179
         CALL EX_CHARA07_1
     ;Ｃ感覚と触手中毒が共にLv3以上だとクリスタルこぁに
-    ELSEIF ABL:0 >= 3 && ABL:35 >= 3
+    ELSEIF ABL:C감각 >= 3 && ABL:촉수중독 >= 3
         CALL EX_CHARA07_3
     ELSE
         CALL EX_CHARA07_2
@@ -820,13 +820,13 @@ SIF TFLAG:225 == 1
 
 ;ＥＸ화の共通イベント.従順と奉仕精神は低下, パラメータ半減, 反発以外の刻印はリセット
 IF TARGET != MASTER
-    IF ABL:10 > 0
-        ABL:10 = (ABL:10 <= 2) ? 0 # ABL:10 - 2
-        PRINTFORML ＜%CALLNAME:TARGET%의 %조사처리(ABLNAME:10,"는")% %조사처리(TOSTR(ABL:10),"가")% 되었다＞
+    IF ABL:순종 > 0
+        ABL:순종 = (ABL:순종 <= 2) ? 0 # ABL:순종 - 2
+        PRINTFORML ＜%CALLNAME:TARGET%의 %조사처리(ABLNAME:10,"는")% %조사처리(TOSTR(ABL:순종),"가")% 되었다＞
     ENDIF
-    IF ABL:13 > 0
-        ABL:13 = (ABL:13 <= 2) ? 0 # ABL:13 - 2
-        PRINTFORML ＜%CALLNAME:TARGET%의 %조사처리(ABLNAME:13,"는")% %조사처리(TOSTR(ABL:13),"가")% 되었다＞
+    IF ABL:봉사정신 > 0
+        ABL:봉사정신 = (ABL:봉사정신 <= 2) ? 0 # ABL:봉사정신 - 2
+        PRINTFORML ＜%CALLNAME:TARGET%의 %조사처리(ABLNAME:13,"는")% %조사처리(TOSTR(ABL:봉사정신),"가")% 되었다＞
     ENDIF
     FOR LOCAL:1, 0, 20
         JUEL:(LOCAL:1) /= 2
@@ -920,7 +920,7 @@ RETURNF 0
 LOCAL = TARGET
 CALL SELF_KOJO, ARG, 336, 0
 
-PRINTFORML 흰색과 검은색이 뒤섞인 모양으로 만들어진 사탕을 %CALLNAME:ARG%에게 \@(ABL:ARG:10 < 3) ? 억지로  # \@먹였다…….
+PRINTFORML 흰색과 검은색이 뒤섞인 모양으로 만들어진 사탕을 %CALLNAME:ARG%에게 \@(ABL:ARG:순종 < 3) ? 억지로  # \@먹였다…….
 PRINTW  
 PRINTFORML %CALLNAME:ARG%의 눈매가 조금 변한 것 같이 보였다…….
 PRINTW  
