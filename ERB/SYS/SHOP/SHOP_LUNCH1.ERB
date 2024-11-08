@@ -16,20 +16,20 @@ LOCAL = 1
 ;前提条件：[연모]と[복종]が無いかつ反発刻印がLv2以上または従順Lv5未満
 IF TALENT:MASTER:44 == 0 && TALENT:MASTER:206 == 0 && TALENT:150 == 0 && TALENT:160 == 0 && (MARK:9 >= 2 || ABL:10 < 5)
     ;対象が[弱味]を持っていないかつメディか[調合知識]か[禁断の知識]持ちの場合、確率は1/2
-    IF (TALENT:55 || TALENT:56 || NO:TARGET == 33) && TALENT:39 == 0
+    IF (TALENT:조합지식 || TALENT:금단의지식 || NO:TARGET == 33) && TALENT:약점 == 0
         LOCAL = RAND:2
         ;反発刻印Lv3だと強制的に毒入り弁当に
         SIF MARK:9 >= 3
             LOCAL = 0
     ;対象が[弱味]を持っていないかつ[反抗的]か[抵抗]持ちの場合、確率は1/3
-    ELSEIF (TALENT:11 || TALENT:34) && TALENT:39 == 0
+    ELSEIF (TALENT:반항적 || TALENT:34) && TALENT:약점 == 0
         LOCAL = RAND:3
         ;反発刻印Lv3だと2/3の確率で毒入り弁当に
         SIF MARK:9 >= 3 && LOCAL == 2
             LOCAL = 0
     ;対象が[弱味]か恐怖刻印のどちらかを持っているかつ
     ;[調合知識]、[禁断の知識]、[嫉妬]、[狂気]いずれも持っていない場合、確率は1/6
-    ELSEIF TALENT:55 == 0 && TALENT:56 == 0 && TALENT:157 == 0 && TALENT:158 == 0 && (TALENT:39 || MARK:8)
+    ELSEIF TALENT:조합지식 == 0 && TALENT:금단의지식 == 0 && TALENT:157 == 0 && TALENT:158 == 0 && (TALENT:약점 || MARK:8)
         LOCAL = RAND:6
     ;それ以外の場合、確率は1/4
     ELSE
@@ -298,7 +298,7 @@ IF TALENT:MASTER:55 == 0 && RAND:(LOCAL:2) > 2
     ENDIF
 
     ;主人の死亡チェック(EASYでないとき主人が調合知識を持たず、毒を盛った奴隷が[弱味]持ちなおかつ恐怖と反発持ちで一定の確率で主人死亡)
-    SIF FLAG:3 != 1 && TALENT:MASTER:55 == 0 && TALENT:39 && MARK:8 && MARK:9 && RAND:20 == 0
+    SIF FLAG:3 != 1 && TALENT:MASTER:55 == 0 && TALENT:약점 && MARK:8 && MARK:9 && RAND:20 == 0
         CALL BADEND_8
 ELSE
     PRINTW      ・
@@ -471,10 +471,10 @@ ELSE
             PRINTW 언제까지고 하염없이 오열을 되풀이하고 있었다…….
         ENDIF
             LOCAL:2 += 12
-        IF TALENT:39 == 0
+        IF TALENT:약점 == 0
             IF RAND:3 == 0
                 PRINTFORMW %CALLNAME:TARGET%의 [약점]을 잡는 데 성공했다.
-                TALENT:39 = 1
+                TALENT:약점 = 1
                 CFLAG:12 |= 1024
                 TIMES LOCAL:2 , 2.00
             ENDIF
@@ -508,22 +508,22 @@ ELSE
         PRINTFORMW 심문에 단념했는지 %조사처리(CALLNAME:TARGET,"는")% 독을 넣었음을 인정했다.
         PRINTL 
         PRINTFORMW 방에서 떠나는 %CALLNAME:MASTER%의 뒷모습을 바라보며 
-        IF TALENT:39 == 0 && TALENT:25
+        IF TALENT:약점 == 0 && TALENT:25
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다음엔 잘 되기를 바라고 있었다…….
         ELSE
             PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 이후 어떤 보복이 기다리고 있을지를 상상했는지, 
             PRINTW 새파랗게 질려선 공포에 떨고 있었다…….
         ENDIF
-        IF TALENT:39 == 0
+        IF TALENT:약점 == 0
             IF RAND:8 == 0
                 PRINTFORMW %CALLNAME:TARGET%의 [약점]을 잡는 데 성공했다.
-                TALENT:39 = 1
+                TALENT:약점 = 1
                 CFLAG:12 |= 1024
                 TIMES LOCAL:2 , 2.00
             ENDIF
         ENDIF
         ;공포의 구슬
-        SIF TALENT:25 == 0 || TALENT:39
+        SIF TALENT:낙관적 == 0 || TALENT:39
             CALL COMMON_UP_JUEL, TARGET, 17, (LOCAL:2*2), 0
         ;굴복의 구슬
         CALL COMMON_UP_JUEL, TARGET, 14, (LOCAL:2*5), 1
@@ -553,7 +553,7 @@ CALL COMMON_UP_EXP, TARGET, 70, LOCAL:3, 1
 CFLAG:65 = LIMIT(CFLAG:65, 0, 999999)
 
 IF BASE:MASTER:0 <= 0
-    IF TALENT:48 || TALENT:49 || MARK:10 || FLAG:5 & 1 || ((TALENT:81 || TALENT:177 || ABL:20 > 3) && RAND:2 == 0)
+    IF TALENT:주정 || TALENT:봉래인 || MARK:10 || FLAG:5 & 1 || ((TALENT:81 || TALENT:177 || ABL:20 > 3) && RAND:2 == 0)
         CALL BADEND_7
     ELSE
         CALL BADEND_6
@@ -1231,7 +1231,7 @@ ELSEIF RESULT == 1
         CALL COMMON_MARK_UP, TARGET, 9, LOCAL:6, 0
         LOCAL:7 = 0
         ;感情乏しい、傀儡、精神崩壊、壊造人格の場合は反発刻印による従順ダウンはなし
-        IF TALENT:22 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0
+        IF TALENT:감정결여 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0
             IF ABL:10 > 0 && ABL:10 <= 2 && LOCAL:6 == 3
                 LOCAL:7 = 1
                 ABL:10 = 0

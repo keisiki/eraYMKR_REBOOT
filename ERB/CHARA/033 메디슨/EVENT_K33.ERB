@@ -110,8 +110,8 @@ IF RESULT == 0
     PRINTW ―도중, 조건을 충족시킴으로써 특수 이벤트가 발생합니다―
     ;수수하게 여성혐오 추가 (메디는 남자가 싫은 게 아니라【사람을 혐오하는 것】이야! )
     ;다만, 이미 여자 증오가 있다, 또는 주회 플레이등으로 남자·여자 증오 제거가 끝난 상태라면 추가하지 않는다
-    SIF TALENT:37 && TALENT:38 == 0 && (CFLAG:13 & 1536) == 0
-        TALENT:38 = 1
+    SIF TALENT:남성혐오 && TALENT:여성혐오 == 0 && (CFLAG:13 & 1536) == 0
+        TALENT:여성혐오 = 1
     CFLAG:5020 = 2
 ELSEIF RESULT == 1
     PRINTW ―통상 모드로 조교합니다―
@@ -134,9 +134,9 @@ SIF NO:TARGET != 33
 SIF CFLAG:5020 == 0
     CALL MEDICINE_EXTRA_KOUBUN
 
-;실신 패치 사용시, TALENT:0의 내용을 기억해 두는(실신중에 상실했을 경우의 분기에 사용) CFLAG5209
+;실신 패치 사용시, TALENT:처녀의 내용을 기억해 두는(실신중에 상실했을 경우의 분기에 사용) CFLAG5209
 SIF FLAG:3999
-    CFLAG:5209 = TALENT:0
+    CFLAG:5209 = TALENT:처녀
 
 ;--------------------------------------------------
 ;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, X1를 주인의 캐릭터 번호에 치환)
@@ -747,13 +747,13 @@ ELSEIF CFLAG:5001 < 6 && MARK:2 == 3 && TALENT:150
     IF CFLAG:5020 == 2
         ;마스터가 남자＋메디에 남자 싫지만 있다
         IF TALENT:MASTER:120 && TALENT:37
-            TALENT:37 = 0
+            TALENT:남성혐오 = 0
             CFLAG:13 |= 512
             PRINTW  
             PRINTW 메디슨은 [남성 혐오]를 잃었다
         ;마스터가 남자가 아닌＋메디에 여자 증오가 있다
         ELSEIF TALENT:MASTER:120 == 0 && TALENT:38
-            TALENT:38 = 0
+            TALENT:여성혐오 = 0
             CFLAG:13 |= 1024
             PRINTW  
             PRINTW 메디슨은 [여성 혐오]를 잃었다
@@ -1366,15 +1366,15 @@ ELSEIF ASSINO() == 29
                     PRINTFORMW 메디슨은 %CALLNAME:MASTER%의 상태 따위 신경쓰지 않은 것처럼 티없게 웃고 있었다
                     PRINTL 
                     ;최대 체력-100 다만 1000 미만은 되지 않는다
-                    SIF TALENT:55 == 0
+                    SIF TALENT:조합지식 == 0
                         MAXBASE:0 = MAX(MAXBASE:0 - 100, 1000)
                     ;체력-300 다만 500 미만은 되지 않는다
                     BASE:0 = MAX(BASE:0 - 300, 500)
                     ;기력-300
                     BASE:1 = MAX(BASE:1 - 300, 0)
-                    IF TALENT:55 == 0
+                    IF TALENT:조합지식 == 0
                         PRINTW 메디슨은[조제 지식]을 얻었다
-                        TALENT:55 = 1
+                        TALENT:조합지식 = 1
                     ENDIF
                     PRINTL 
                     PRINTW 메디슨은 조금 지친 것 같다……
@@ -1415,15 +1415,15 @@ ELSEIF ASSINO() == 29
                     ENDIF
                     PRINTL 
                     ;최대 체력-100 다만 1000 미만은 되지 않는다
-                    SIF TALENT:55 == 0
+                    SIF TALENT:조합지식 == 0
                         MAXBASE:0 = MAX(MAXBASE:0 - 100, 1000)
                     ;체력-300 다만 500 미만은 되지 않는다
                     BASE:0 = MAX(BASE:0 - 300, 500)
                     ;기력-300
                     BASE:1 = MAX(BASE:1 - 300, 0)
-                    IF TALENT:55 == 0
+                    IF TALENT:조합지식 == 0
                         PRINTW 메디슨은[조제 지식]을 얻었다
-                        TALENT:55 = 1
+                        TALENT:조합지식 = 1
                     ENDIF
                     PRINTL 
                     SIF TEQUIP:11
@@ -1469,7 +1469,7 @@ ELSEIF ASSINO() == 29
                     PRINTFORMW 『그리고……가능하면 나에게도, 다음에 포상을 주세요」
                     PRINTL 
                     ;최대 체력-100 다만 1000 미만은 되지 않는다
-                    SIF TALENT:59 == 0
+                    SIF TALENT:치료 == 0
                         MAXBASE:0 = MAX(MAXBASE:0 - 100, 1000)
                     ;체력-300 다만 500 미만은 되지 않는다
                     BASE:0 = MAX(BASE:0 - 300, 500)
@@ -1479,9 +1479,9 @@ ELSEIF ASSINO() == 29
                     PALAM:3 += 1000
                     PALAM:10 += 1500
                     PALAM:13 += 3000
-                    IF TALENT:59 == 0
+                    IF TALENT:치료 == 0
                         PRINTW 메디슨은[치료]를 얻었다
-                        TALENT:59 = 1
+                        TALENT:치료 = 1
                     ENDIF
                     PRINTL 
                     PRINTL 쾌C＋1000
@@ -1582,7 +1582,7 @@ ELSEIF ASSINO() == 34
         IF TALENT:150
             ;공부 이벤트유(소질 변화 이벤트) 공부 이벤트유용 CFLAG5101
             ;메디에 약에 들어 있는 독 내성이 있어, 한편 친애 or서로 사랑함＋음 단지 or키스마(과거의 주회에 취득에서도 가능), 유카에 연모＋기교 Lv5, 함락 이벤트가 끝난＋소질 변화 이벤트 허가(엑스트라 구문)
-            IF TALENT:44 && (TALENT:152 || TALENT:153) && (((TALENT:172 || CFLAG:16 & 4) && TALENT:0 == 0 && EXIST_PENIS(MASTER)) || TALENT:176 || CFLAG:16 & 64) && TALENT:ASSI:150 && ABL:ASSI:12 >= 5 && CFLAG:5001 >= 6 && CFLAG:5020 == 2 && CFLAG:5101 != 1
+            IF TALENT:약물내성 && (TALENT:152 || TALENT:153) && (((TALENT:172 || CFLAG:16 & 4) && TALENT:처녀 == 0 && EXIST_PENIS(MASTER)) || TALENT:176 || CFLAG:16 & 64) && TALENT:ASSI:150 && ABL:ASSI:12 >= 5 && CFLAG:5001 >= 6 && CFLAG:5020 == 2 && CFLAG:5101 != 1
                 PRINTFORMW 『그러고 보니, 그 아이는 미약이라든지 효과가 없지……? 」
                 PRINTFORMW 『있지, 주인님. 그 아이가 약으로 음란해지는 광경……보고 싶지 않아? 」
                 PRINTFORMW 『물론, 미약만이 아니어요. 저런 약이나 이런 약도……」
@@ -1697,7 +1697,7 @@ ELSEIF ASSINO() == 34
                     PALAM:10 += 1500
                     PALAM:13 += 3000
                     PRINTW 메디슨은[약독내성]을 잃었다
-                    TALENT:44 = 0
+                    TALENT:약물내성 = 0
                     PRINTL 
                     ;키스마
                     IF TALENT:176 || CFLAG:16 & 64
@@ -2895,7 +2895,7 @@ ENDIF
 ;처음
 IF CFLAG:9004 == 0
     ;처녀
-    IF TALENT:0 == 1
+    IF TALENT:처녀 == 1
         ;연모
         IF TALENT:150
             PRINTFORMW 메디슨의 신선한 핑크색의 질내에,%CALLNAME:MASTER%의 손가락은 삽입해 간다
@@ -2969,7 +2969,7 @@ ELSE
     ;연모
     ELSEIF TALENT:150 && (CFLAG:9004 <= 4 || FLAG:11 == 2)
         ;처녀가 아닌＋윤활 Lv3 이상＋2분의 1
-        IF TALENT:0 == 0 && PALAM:10 >= PALAMLV:3 && RAND:2 == 0
+        IF TALENT:처녀 == 0 && PALAM:10 >= PALAMLV:3 && RAND:2 == 0
             PRINTFORMW 「응……응, 응……이제,\@(SOURCE:20 > 80) ?  별로 # \@아프지 않아」
             PRINTFORMW 「또, 가득 해 줘─여기도 같이 기분 좋게 될 수 있도게♪」
         ELSE
@@ -4041,7 +4041,7 @@ ELSE
         IF RAND:2 == 0
             PRINTFORMW 「싫어!　아!　아……흐앗 앙♪」
             PRINTFORML 메디슨은 한층 더 고조되어 들썩거리는 허리를 로터로 꽉 눌렀다
-            SIF TALENT:0 == 0 && EXP:0 >= 10 && TALENT:120 == 0
+            SIF TALENT:처녀 == 0 && EXP:0 >= 10 && TALENT:120 == 0
                 PRINTW 그대로 냅두면, 계속 달아두고 다닐 기세다……
             PRINTFORMW 「%TSTR:306%♪　좀 더……♪」
         ELSE
@@ -4145,7 +4145,7 @@ IF TEQUIP:20 == 1
     ;처음
     IF CFLAG:9012 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모
             IF TALENT:150
                 PRINTFORMW 「%TSTR:300%, 그 방면도구는 뭐?」
@@ -4280,7 +4280,7 @@ IF TEQUIP:25 == 1
         IF TALENT:150
             PRINTFORMW 「그 이상한 봉 보고 싶은 것 무엇?　%TSTR:300%」
             ;처녀
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
                 PRINTFORMW 「그래서 기분 좋게 해 주는 거야?」
                 PRINTFORMW 「응, 가득 기분 좋게 해, %TSTR:300%♪」
             ;비처녀
@@ -4643,7 +4643,7 @@ ENDIF
 ;처음
 IF CFLAG:9020 == 0
     ;처녀
-    IF TALENT:0 == 1
+    IF TALENT:처녀 == 1
         ;연모
         IF TALENT:150
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 메디슨을 침대에 옆 참고들 키라고, 게다가에 지워져 갔다
@@ -4788,7 +4788,7 @@ ENDIF
 ;처음
 IF CFLAG:9021 == 0
     ;처녀
-    IF TALENT:0 == 1
+    IF TALENT:처녀 == 1
         ;연모
         IF TALENT:150
             PRINTFORMW 메디슨을 납죽 엎드게 해, 배후에서 비렬에 페니스를 앞에 밀착시켰다
@@ -5210,7 +5210,7 @@ ENDIF
 ;처음
 IF CFLAG:9024 == 0
     ;처녀
-    IF TALENT:0 == 1
+    IF TALENT:처녀 == 1
         ;연모
         IF TALENT:150
             PRINTFORML 「네?　이,이런 곳에 자지를 넣겠다고요?」
@@ -5706,10 +5706,10 @@ ENDIF
 ;처음
 IF CFLAG:9030 == 0
     ;처녀
-    IF TALENT:0 == 1
+    IF TALENT:처녀 == 1
         ;처녀＋정조 관념 소유(메디와는 관계없지만 왜일까 생각났다)
         ;개변이든지 다른 말에의 이식이든지 좋아하게 사용해 주세요
-;        IF TALENT:0 == 1 && EXP:0 == 0 && TALENT:30
+;        IF TALENT:처녀 == 1 && EXP:0 == 0 && TALENT:30
 ;            PRINTFORMW 「이나, 그만두어!　그런 곳삽없고!」
 ;            PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 어널에의 삽입을 거절하고 있다
 ;            PRINTFORMW 뒤가 안되면과%조사처리(CALLNAME:MASTER,"는")% 보지에와 페니스의 첨단을 헛디딜 수 있었다
@@ -6323,7 +6323,7 @@ ELSE
             PRINTFORMW 사정구가 되는 첨단을 쿡쿡 찌르고 있다
             PRINTL 
             ;숫처녀＋남자가 아닌＋정액 지식 있어
-            IF TALENT:0 == 1 && TALENT:120 == 0 && CFLAG:5202 == 2
+            IF TALENT:처녀 == 1 && TALENT:120 == 0 && CFLAG:5202 == 2
                 PRINTFORML 「응, 자지는 사실은 다음 구멍에 삽응이겠지?」
                 PRINTFORML 「그것은 언제 해 주는 거야?　가득한 째 없는 하면(자) 해 주어?」
                 PRINTFORMW 「이라면 노력해 가득 기분 좋게 해 준다♪」
@@ -6357,7 +6357,7 @@ ELSE
     ;봉사 정신 Lv3 이상
     ELSEIF ABL:13 >= 3 && (CFLAG:9041 <= 2 || FLAG:11 == 2)
         ;숫처녀(2분의 1)
-        IF TALENT:0 == 1 && RAND:2 == 0
+        IF TALENT:처녀 == 1 && RAND:2 == 0
             PRINTL 
             PRINTFORML 아직 진정한 의미로“남자를 모른다”소녀가 소레를 빨고 있을까하고 생각하면(자)
             PRINTFORMW 그 정도 만으로 흥분 당하는 것이 있다
@@ -6519,7 +6519,7 @@ IF CFLAG:9043 == 0
     SIF (CFLAG:6999 & 2) == 0
         CALL MEDICINE_HAZIMETE_PENIS
     ;처녀
-    IF TALENT:0 == 1 && EXP:0 == 0
+    IF TALENT:처녀 == 1 && EXP:0 == 0
         ;연모
         IF TALENT:150
             PRINTFORMW 「가랑이에 끼워 켜는 거야?」
@@ -7318,7 +7318,7 @@ IF CFLAG:9062 == 0
 ;2회째 이후
 ELSE
     ;연모+주되들 해 버릇
-    IF TALENT:150 && TALENT:45 && (CFLAG:9062 < 5 || FLAG:11 == 2)
+    IF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:9062 < 5 || FLAG:11 == 2)
         ;촉수
         IF TEQUIP:90 && RAND:4 == 0
             PRINTFORML 「히응!　(이)나, 오줌의 구멍으로부터 반대로 들어갈 수 있지 말아 」
@@ -7386,7 +7386,7 @@ ENDIF
 ;처음
 IF CFLAG:9066 == 0
     ;처녀(재생은 아니고 진짜 숫처녀)
-    IF TALENT:0 == 1
+    IF TALENT:처녀 == 1
         ;연모
         IF TALENT:150
             PRINTFORMW 「%TSTR:300%……」
@@ -7918,7 +7918,7 @@ ELSE
         ;그 이외
         ELSE
             ;숫처녀
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
                 IF RAND:2 == 0
                     ;마스터가 남자나 뚜껑이든지로, 처음의 페니스 이벤트 경험이 끝난 상태
                     IF EXIST_PENIS(MASTER) && CFLAG:6999 & 2
@@ -7953,7 +7953,7 @@ ELSE
             ;숫처녀는 아니다
             ELSE
                 ;처녀(재생)
-                IF TALENT:0
+                IF TALENT:처녀
                     ;마스터가 남자나 뚜껑이든지＋V조율 경험 있어(2분의 1)
                     IF EXIST_PENIS(MASTER) && EXP:42 >= 1 && RAND:2 == 0
                         PRINTFORML 「응, %TSTR:300%……모처럼 막도 치료해 주었다 해……」
@@ -8035,7 +8035,7 @@ ELSE
         PRINTFORML 「여자 아이의 여기 보는 것, 그렇게 드물어……?」
         PRINTFORMW 「이런 건, 몇번이나 봐도 어쩔 수 없지요……?」
         ;숫처녀가 아닌 경우 추가
-        SIF TALENT:0 != 1
+        SIF TALENT:처녀 != 1
             PRINTFORMW 「보는 것만으로 만족스러운들 , 이제 삽입충분하고 하지 않고」
         CFLAG:9110 = 2
     ENDIF
@@ -8047,11 +8047,11 @@ ENDIF
 ;화장실 미지근한 맥주와 같은 것(? )
 ;@MEDI_K33_COM_111
 ;연모+주되들 해 버릇+야외 플레이
-;IF TALENT:150 && TALENT:45 && TEQUIP:52 && (CFLAG:9111 < 5 || FLAG:11 == 2)
+;IF TALENT:150 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:9111 < 5 || FLAG:11 == 2)
 ;    PRINTFORMW 
 ;    CFLAG:9111 = 5
 ;연모+주되들 해 버릇
-;ELSEIF TALENT:150 && TALENT:45 && (CFLAG:9111 < 4 || FLAG:11 == 2)
+;ELSEIF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:9111 < 4 || FLAG:11 == 2)
 ;    PRINTFORMW 
 ;    CFLAG:9111 = 4
 ;노출버릇 Lv5
@@ -9053,8 +9053,8 @@ ELSE
         IF RAND:3 == 0
             PRINTFORMW 「이나다, %TSTR:302%. 그런 식으로 엉덩이 손대어지고 있으면(자) 음란한 기분이 되어 버려요」
             ;V감각 Lv3 이상(숫처녀는 아니다) 또는 A감각 Lv3 이상
-            IF (ABL:1 >= 3 && TALENT:0 != 1 && TALENT:120 == 0) || ABL:2 >= 3
-                PRINTFORMW 「어루만질 뿐(만큼)이 아니고,\@(ABL:1 >= 3 && TALENT:0 != 1 && TALENT:120 == 0) ?  보지 # 엉덩이안\@에도……삽라고♪」
+            IF (ABL:1 >= 3 && TALENT:처녀 != 1 && TALENT:120 == 0) || ABL:2 >= 3
+                PRINTFORMW 「어루만질 뿐(만큼)이 아니고,\@(ABL:1 >= 3 && TALENT:처녀 != 1 && TALENT:120 == 0) ?  보지 # 엉덩이안\@에도……삽라고♪」
             ELSE
                 PRINTFORMW 「 좀 더, 좀 더 해♪　힘겨운으로 어루만지고 하며♪」
             ENDIF
@@ -10070,7 +10070,7 @@ ELSE
                     IF RAND:2 == 0
                         PRINTFORMW 「은 우우, 이 술……대단해……」
                         PRINTFORMW 「처음엔 입속이 타버릴 것 같은 느낌이 들었는데, 왠지 지금은 달게 느껴져」
-                        PRINTFORMW 「\@(TALENT:0 == 1) ?  이게 어른의 맛인가?  # 독특해♪\@」
+                        PRINTFORMW 「\@(TALENT:처녀 == 1) ?  이게 어른의 맛인가?  # 독특해♪\@」
                     ELSE
                         PRINTFORML 「은 우우, 입속, 굉장하게 되어 버린다……」
                         PRINTFORMW 메디슨은 혀를 페로리라고 내, 입속을 식히도록(듯이) 톡톡손으로 부치고 있다
@@ -10540,7 +10540,7 @@ IF TEQUIP:55 == 2
         ;뱀장어가 질에 침입
         IF TFLAG:166
             ;숫처녀
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
                 ;연모
                 IF TALENT:150
                     PRINTFORMW 「이나다!　있고, 아픈 아프다!　무리, 그런 곳 들어가지 않아요!」
@@ -10564,7 +10564,7 @@ IF TEQUIP:55 == 2
                     PRINTFORMW 「, ……독만 사용할 수 있으면, 이런 일 시키지 않는데……. 스 씨……」
                 ENDIF
             ;재생 처녀
-            ELSEIF TALENT:0
+            ELSEIF TALENT:처녀
                 ;연모
                 IF TALENT:150
                     PRINTFORMW 「이나다 , 있고, 아프다!　부탁해요, 들어 오지 말고!」
@@ -10657,7 +10657,7 @@ IF TEQUIP:55 == 2
         ;뱀장어가 질에 침입
         IF TFLAG:166
             ;숫처녀(아마 이 분기는 그다지 의미가 없다)
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
                 ;연모
                 IF TALENT:150
                     PRINTFORMW 「이나다!　있고, 아픈 아프다!　무리, 그런 곳 들어가지 않아요!」
@@ -10681,7 +10681,7 @@ IF TEQUIP:55 == 2
                     PRINTFORMW 「, ……독만 사용할 수 있으면, 이런 일 시키지 않는데……. 스 씨……」
                 ENDIF
             ;재생 처녀
-            ELSEIF TALENT:0
+            ELSEIF TALENT:처녀
                 ;연모
                 IF TALENT:150
                     ;말빈도 MAX 또는 미독
@@ -11081,8 +11081,8 @@ ENDIF
 @MEDI_K33_COM_363
 ;개시시
 IF TEQUIP:55 == 4
-    ;TALENT:0의 내용을 기록(슬라임에 찢어졌는지 어떠했는지 해제시에 체크)
-    TCVAR:300 = TALENT:0
+    ;TALENT:처녀의 내용을 기록(슬라임에 찢어졌는지 어떠했는지 해제시에 체크)
+    TCVAR:300 = TALENT:처녀
 
     ;처음
     IF CFLAG:9363 == 0
@@ -11097,12 +11097,12 @@ IF TEQUIP:55 == 4
                 ;양구멍 침입
                 IF (TFLAG:155 & 3) == 3
                     PRINTFORMW 「엉덩이와 보지, 한번에 오고 있는……!」
-                    SIF TALENT:0
+                    SIF TALENT:처녀
                         PRINTFORMW 「응, ……에 그 하변까지, 들어가……!」
                 ;V만 침입
                 ELSEIF TFLAG:155 & 1
                     PRINTFORMW 「또로부터, 들어 오고 있는……!」
-                    SIF TALENT:0
+                    SIF TALENT:처녀
                         PRINTFORMW 「은 응, 안돼……그렇게 안쪽까지는……응!」
                 ;A만 침입
                 ELSEIF TFLAG:155 & 2
@@ -11112,7 +11112,7 @@ IF TEQUIP:55 == 4
                 PRINTFORMW 「있고, 아니……기분 나쁘다!　%TSTR:300%, 이런 욕실 싫어요 ……」
                 PRINTL 
                 PRINTFORML 혼란하는 메디슨을 뒷전으로, 슬라임은 자꾸자꾸그 태내로 기어들어 붐비어 가면(자)
-                PRINTFORMW \@(TFLAG:155 & 1 && TALENT:0 == 1) ?  아직 아무것도 받아들인 일이 없는──정액조차도 아직의 처녀의 자궁을, 가차 없이 # 소녀중의, 있는지 없는지라고 할 정도의 틈새를\@다 메워 갔다……
+                PRINTFORMW \@(TFLAG:155 & 1 && TALENT:처녀 == 1) ?  아직 아무것도 받아들인 일이 없는──정액조차도 아직의 처녀의 자궁을, 가차 없이 # 소녀중의, 있는지 없는지라고 할 정도의 틈새를\@다 메워 갔다……
             ;침입하지 않는다
             ELSE
                 PRINTFORMW 「%TSTR:301%, 무엇이야?　이 욕실, 무엇이야!」
@@ -11130,12 +11130,12 @@ IF TEQUIP:55 == 4
             ;슬라임 침입
             IF TFLAG:155 & 3
                 PRINTFORMW 「벗긴다……!　(이)나다……들어 오고 있다……!」
-                SIF TFLAG:155 & 1 && TALENT:0
+                SIF TFLAG:155 & 1 && TALENT:처녀
                     PRINTFORMW 「그런……안쪽까지……구!」
                 PRINTFORMW 「그 이상, 들어 오지 말고, ……!」
                 PRINTL 
                 PRINTFORML 혼란하는 메디슨을 뒷전으로, 슬라임은 자꾸자꾸그 태내로 기어들어 붐비어 가면(자)
-                PRINTFORMW \@(TFLAG:155 & 1 && TALENT:0 == 1) ?  아직 아무것도 받아들인 일이 없는──정액조차도 아직의 처녀의 자궁을, 가차 없이 # 소녀중의, 있는지 없는지라고 할 정도의 틈새를\@다 메워 갔다……
+                PRINTFORMW \@(TFLAG:155 & 1 && TALENT:처녀 == 1) ?  아직 아무것도 받아들인 일이 없는──정액조차도 아직의 처녀의 자궁을, 가차 없이 # 소녀중의, 있는지 없는지라고 할 정도의 틈새를\@다 메워 갔다……
                 PRINTFORMW 「아, 이런……(뜻)이유의 모르는 것에……」
             ;침입하지 않는다
             ELSE
@@ -11156,17 +11156,17 @@ IF TEQUIP:55 == 4
     ;2회째 이후
     ELSE
         ;연모＋처녀＋V에 슬라임 침입
-        IF TALENT:0 && TALENT:150 && TFLAG:155 & 1 && (CFLAG:9363 < 7 || FLAG:11 == 2)
+        IF TALENT:처녀 && TALENT:150 && TFLAG:155 & 1 && (CFLAG:9363 < 7 || FLAG:11 == 2)
             IF RAND:3 == 0
                 PRINTFORMW 「입는 ……!　좁으면 개, 무리하게 다니며……」
                 PRINTFORMW 「이나……아기의 방, 범하지 말고, ──는 응!」
                 PRINTL 
                 PRINTFORML 혼란하는 메디슨을 뒷전으로, 슬라임은 자꾸자꾸그 태내로 기어들어 붐비어 가면(자)
-                PRINTFORMW \@(TALENT:0 == 1 || CFLAG:8010 == 0) ?  아직 아무것도 받아들인 일이 없는──정액조차도 아직의 처녀의 자궁을, # 소녀의 자궁안을\@가차 없이 다 메워 갔다……
+                PRINTFORMW \@(TALENT:처녀 == 1 || CFLAG:8010 == 0) ?  아직 아무것도 받아들인 일이 없는──정액조차도 아직의 처녀의 자궁을, # 소녀의 자궁안을\@가차 없이 다 메워 갔다……
             ELSEIF RAND:2 == 0
                 PRINTL 
                 PRINTFORML 슬라임은, 마치 사정을 본떠 있는 것과 같게 질내에서 몇번이나 맥박쳐
-                PRINTFORMW 자궁 목표로 해 차례차례로 뛰쳐나와 가서는,\@(TALENT:0 == 1) ?  처녀 # 소녀\@의 자궁을 채워 간다
+                PRINTFORMW 자궁 목표로 해 차례차례로 뛰쳐나와 가서는,\@(TALENT:처녀 == 1) ?  처녀 # 소녀\@의 자궁을 채워 간다
                 PRINTFORMW 「히!　아″, 나″……!」
                 PRINTFORMW 「이나다……, 안쪽에, 들어 와! \@(EXP:42 > 0) ?  　%TSTR:300%래, 삽입일 없는데…… # \@」
             ELSE
@@ -11222,7 +11222,7 @@ IF TEQUIP:55 == 4
             ENDIF
             CFLAG:9363 = 5
         ;처녀＋V에 슬라임 침입
-        ELSEIF TALENT:0 && TFLAG:155 & 1 && (CFLAG:9363 < 4 || FLAG:11 == 2)
+        ELSEIF TALENT:처녀 && TFLAG:155 & 1 && (CFLAG:9363 < 4 || FLAG:11 == 2)
             IF RAND:2 == 0
                 PRINTFORML 「아, 나 , 나!　그런 곳까지 들어 오면 안돼--!」
                 PRINTFORMW 「 나의 아기도 아닌데, 그런 곳까지……!」
@@ -11275,14 +11275,14 @@ ELSEIF TEQUIP:55 == 0
     ;연모＋슬라임이 침입하고 있었다
     IF TALENT:150 && LOCAL & 3 && (CFLAG:8828 < 4 || FLAG:11 == 2)
         ;슬라임에 처녀를 물리쳐졌다
-        IF TALENT:0 == 0 && TCVAR:300 > 0
+        IF TALENT:처녀 == 0 && TCVAR:300 > 0
             PRINTFORMW 메디슨아래의 입으로부터는, 슬라임과 함께 파과의 피가 방울져 떨어져 떨어지고 있었다
             PRINTFORMW 「, ……, 아파」
             PRINTFORMW 「\@(TCVAR:300 == 1) ?  또, 상처 붙여져 버렸다 # %TSTR:300%로 해 받고 싶었는데\@……」
         ;그 이외
         ELSE
             ;처녀
-            IF TALENT:0 && RAND:3 == 0
+            IF TALENT:처녀 && RAND:3 == 0
                 PRINTFORML 「, 무엇인가 아직 이상한 느낌이 든다……」
                 PRINTFORMW 「안쪽까지 가득 들어 와 버려서 더해, 아직 안에 남기도 녹여 없지요?」
                 PRINTFORMW 조금 불안한 듯하게 말하면서, 제의 하변를 쓰다듬고 있었다……
@@ -11317,7 +11317,7 @@ ELSEIF TEQUIP:55 == 0
     ;슬라임이 침입하고 있었다
     ELSEIF LOCAL & 3 && (CFLAG:8828 < 2 || FLAG:11 == 2)
         ;슬라임에 처녀를 물리쳐졌다
-        IF TALENT:0 == 0 && TCVAR:300 > 0
+        IF TALENT:처녀 == 0 && TCVAR:300 > 0
             PRINTFORMW 메디슨아래의 입으로부터는, 슬라임과 함께 파과의 피가 방울져 떨어져 떨어지고 있었다
             PRINTL 
             PRINTFORML 「, ……이런 이상한데, 상처 붙여져 버렸다……」
@@ -11442,7 +11442,7 @@ IF TEQUIP:20 == 1
     ;처음
     IF CFLAG:9501 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모
             IF TALENT:150
                 PRINTFORMW 「이나다!　아픈 아프다!　%TSTR:300%, 부탁해요, 그만두게 해!」
@@ -11629,7 +11629,7 @@ IF TEQUIP:25 == 1
                 PRINTFORMW 촉수는 긴 stroke로 메디슨의 어널을 즐기도록(듯이) 범하고 있다
                 PRINTFORML 「응♪　응, 아……그렇게, 깊게 들어 오지 말고 ……!」
                 ;숫처녀는 아니다(2분의 1)
-                IF TALENT:0 != 1 && RAND:2 == 0
+                IF TALENT:처녀 != 1 && RAND:2 == 0
                     PRINTFORMW 「보지보다……!　기분 좋아져버린다!」
                 ;그 이외
                 ELSE
@@ -11952,7 +11952,7 @@ IF TEQUIP:30 == 2
             PRINTFORMW 이지만, 그 페니스는 본인의 의사와는 관계없이 딱딱하게 돋워 발, 벌벌맥동 하고 있었다
             PRINTFORMW 촉수는 거기로부터 무엇인가를 짜기 시작할까와 같이 집요하게 잡아당겨 간다……
             ;사정 경험의 유무＋비대음핵이 아니야?
-            PRINTFORMW 「이나!　\@(EXP:3 > 0 && TALENT:1 == 0) ?  나와버린다!　정자, 출 # 와 버린다!　무엇인가 와\@야!」
+            PRINTFORMW 「이나!　\@(EXP:3 > 0 && TALENT:비대음핵 == 0) ?  나와버린다!　정자, 출 # 와 버린다!　무엇인가 와\@야!」
         ;연모
         ELSEIF TALENT:150
             PRINTFORMW 「이나, 나다……%TSTR:300%, 이런 건에 자지를……응」
@@ -11974,7 +11974,7 @@ IF TEQUIP:30 == 2
             PRINTFORMW 메디슨의 페니스는 딱딱하게 젖혀져 돌아가, 마치 다른 생물과 같이 벌벌맥동 하고 있다
             PRINTL 
             ;사정 중독 Lv3 이상＋비대음핵은 아니다
-            IF ABL:37 >= 3 && TALENT:1 == 0 && RAND:2 == 0
+            IF ABL:37 >= 3 && TALENT:비대음핵 == 0 && RAND:2 == 0
                 PRINTFORML 「아는 , 대단히, 자지……기분이 좋아 ♪」
                 PRINTFORMW 「도 와 해♪　가득, 정자……사정시키며♪」
                 PRINTFORML 메디슨은 입길로부터 군침을 흘리면서, 페니스에 관련되어 붙는 촉수를 응시하고 있다
@@ -11988,7 +11988,7 @@ IF TEQUIP:30 == 2
         ;연모＋촉수 경험 20이상
         ELSEIF TALENT:150 && EXP:53 >= 20 && (CFLAG:9505 < 5 || FLAG:11 == 2)
             ;사정 중독 Lv3 이상＋비대음핵은 아니다
-            IF ABL:37 >= 3 && TALENT:1 == 0 && RAND:2 == 0
+            IF ABL:37 >= 3 && TALENT:비대음핵 == 0 && RAND:2 == 0
                 PRINTFORMW 「응, 는 ……!　자지, 벌벌 말하고 있다……」
                 PRINTFORMW 「안돼……인내 할 수 없게 되어버린다!　촉수에 만지작거려져, 정자……사정!」
                 PRINTFORMW 메디슨은 앞달리기를 흘러넘치고 되는 자신의 페니스를, 물기를 띤 눈동자로 내려다 보고 있었다……
@@ -12006,7 +12006,7 @@ IF TEQUIP:30 == 2
         ;C감각 Lv3 이상＋사정 중독 Lv1 이상
         ELSEIF ABL:0 >= 3 && ABL:37 >= 1 && (CFLAG:9505 < 3 || FLAG:11 == 2)
             PRINTFORMW 「응, 아, 나 , 안 됨!」
-            PRINTFORMW 「\@(TALENT:1 == 0) ?  나와버린다!　출 # 와 버린다!　와\@, 로부터……!」
+            PRINTFORMW 「\@(TALENT:비대음핵 == 0) ?  나와버린다!　출 # 와 버린다!　와\@, 로부터……!」
             CFLAG:9505 = 3
         ;그 이외
         ELSEIF CFLAG:9505 < 2 || FLAG:11 == 2
@@ -12387,9 +12387,9 @@ IF CFLAG:9509 == 0
     ENDIF
     PRINTFORMW 「응,!　응-, 응-, 응″응″--!」
     PRINTL 
-    LOCALS = \@(TALENT:0 == 1) ?  순결 # 처녀\@
+    LOCALS = \@(TALENT:처녀 == 1) ?  순결 # 처녀\@
     PRINTFORML 최조동작을 취하는 일마저도 실현되지 않고, 상도 차례차례로 쇄도해 나가는 촉수들에 의해,
-    PRINTFORMW \@(TALENT:0) ?  %LOCALS%로부터 무엇으로 모두를 가차 없이 빼앗겨 # 철저하게\@격렬하게 범해 뽑아져 갔어\@(TALENT:0 == 0) ?  …… # \@
+    PRINTFORMW \@(TALENT:처녀) ?  %LOCALS%로부터 무엇으로 모두를 가차 없이 빼앗겨 # 철저하게\@격렬하게 범해 뽑아져 갔어\@(TALENT:처녀 == 0) ?  …… # \@
     CFLAG:9509 = 1
 ;2회째 이후
 ELSE
@@ -12432,7 +12432,7 @@ ELSE
     ENDIF
     PRINTFORMW 메디슨은 확실히 인형과 같이 희롱해지고\@(TALENT:150 && ABL:21 >= 4 && ABL:35 >= 4) ?  (이)면서도, 어딘가 행복한 표정을 하고 있는 # , 이룰 방법도 없게 능욕다 되어 갔다……\@
 ENDIF
-IF TALENT:0
+IF TALENT:처녀
     PRINTL 
     PRINTFORMW \@(TALENT:150 && ABL:21 >= 4 && ABL:35 >= 4 && CFLAG:9509 > 1) ?  비소로부터 피가 방울져 떨어지고 있는 일도, 전혀 신경쓰지 않는 것 같다 # 메디슨은 비소로부터 피를 방울져 떨어지게 함과 동시에, 눈으로부터도 굵은 눈물을 흘리고 있었다\@……
 ENDIF
@@ -12729,7 +12729,7 @@ JUMP MEDI_K33_COM_41
 ;처음
 IF CFLAG:9605 == 0
     ;숫처녀
-    IF TALENT:0 == 1
+    IF TALENT:처녀 == 1
         ;연모
         IF TALENT:150
             PRINTFORMW %CALLNAME:MASTER%의 행위에, 메디슨은 이상할 것 같은 얼굴을 하고 있다
@@ -12779,7 +12779,7 @@ IF CFLAG:9605 == 0
 ;2회째 이후
 ELSE
     ;숫처녀가 아닌＋연모
-    IF TALENT:0 != 1 && TALENT:150 && (CFLAG:9605 < 5 || FLAG:11 == 2)
+    IF TALENT:처녀 != 1 && TALENT:150 && (CFLAG:9605 < 5 || FLAG:11 == 2)
         ;V조율 경험 있어
         IF EXP:42 > 0 && RAND:3 == 0
             PRINTFORML 「응……, 또……손가락 뿐이야?」
@@ -12825,7 +12825,7 @@ ELSE
         ENDIF
         CFLAG:9605 = 4
     ;숫처녀는 아니다
-    ELSEIF TALENT:0 != 1 && (CFLAG:9605 < 3 || FLAG:11 == 2)
+    ELSEIF TALENT:처녀 != 1 && (CFLAG:9605 < 3 || FLAG:11 == 2)
         IF RAND:2 == 0
             PRINTFORMW 메디슨은, 찢어지는 것은 아닌지와 걱정하면서도,%CALLNAME:MASTER%의 손가락에 몸을 진동시키고 작게 소리를 흘리고 있다
             PRINTFORMW 「응……다, 안돼, 거기……그렇게 만지작거리지 말고……, 」
@@ -13702,11 +13702,11 @@ JUMP MEDI_K33_COM_200
 ;-------------------------------------------------
 ;@MEDI_K33_COM_620
 ;연모+주되들 해 버릇+야외 플레이
-;IF TALENT:150 && TALENT:45 && TEQUIP:52 && (CFLAG:9620 < 5 || FLAG:11 == 2)
+;IF TALENT:150 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:9620 < 5 || FLAG:11 == 2)
 ;    PRINTFORMW 
 ;    CFLAG:9620 = 5
 ;연모+주되들 해 버릇
-;ELSEIF TALENT:150 && TALENT:45 && (CFLAG:9620 < 4 || FLAG:11 == 2)
+;ELSEIF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:9620 < 4 || FLAG:11 == 2)
 ;    PRINTFORMW 
 ;    CFLAG:9620 = 4
 ;노출버릇 Lv5
@@ -14580,7 +14580,7 @@ IF (TFLAG:8 > 0 && CFLAG:74 == 0) || CFLAG:74 == 8
                 PRINTFORMW 「―, 그렇게 더러운 것 걸지 말아 ……!」
             ELSE
                 PRINTFORML 「엉덩이에 내 방심 하게 하며」
-                PRINTFORML 「\@(TALENT:0 != 1 || CFLAG:5202 == 2 || CFLAG:9030 > 0) ?  삽 # 이상한 일 할\@작정(생각)은……아니어요……!」
+                PRINTFORML 「\@(TALENT:처녀 != 1 || CFLAG:5202 == 2 || CFLAG:9030 > 0) ?  삽 # 이상한 일 할\@작정(생각)은……아니어요……!」
                 PRINTFORMW 메디슨은 예같게 되돌아 봐,%CALLNAME:MASTER%의 움직임을 가만히 주시하고 있다
             ENDIF
             CFLAG:8028 = 2
@@ -15719,7 +15719,7 @@ IF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120 == 0)
                 ;그 이외
                 ELSE
                     ;숫처녀는 아닌, 또는 정액에 대해 가르치고 있다
-                    IF TALENT:0 != 1 || CFLAG:5202 == 2
+                    IF TALENT:처녀 != 1 || CFLAG:5202 == 2
                         PRINTFORML 「응아앙!　(이)나다, 다음 곳에 자지 맞혀, 삽 것이 아닌거야?」
                         PRINTFORMW 「조금 기대했는데……♪」
                         PRINTL 
@@ -15789,7 +15789,7 @@ IF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120 == 0)
                 PRINTFORML 「아는 , 있고!　철철은, 가득 나오고 있다」
                 PRINTFORMW 「응, 후후,%TSTR:300%, 기분이야 유혹한다♪」
                 ;처녀 또는 2분의 1의 확률
-                IF TALENT:0 == 1 || RAND:2 == 0
+                IF TALENT:처녀 == 1 || RAND:2 == 0
                     PRINTFORMW 「응, %TSTR:300%. 나중에는……주지 않는거야?」
                 ;그 이외
                 ELSE
@@ -15845,7 +15845,7 @@ IF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120 == 0)
                 ;그 이외
                 ELSE
                     ;숫처녀는 아닌, 또는 정액에 대해 가르치고 있다
-                    IF TALENT:0 != 1 || CFLAG:5202 == 2
+                    IF TALENT:처녀 != 1 || CFLAG:5202 == 2
                         PRINTFORML 「응!　응, 두껍다……」
                         PRINTFORML 「자지, 또에 맞혔기 때문에……삽라고 주는 것일까?　라는 생각했는데」
                         PRINTFORMW 「입구에 꽉 누르고 있을 뿐으로 내버린다는%TSTR:300%의 심술쟁이……」
@@ -15862,7 +15862,7 @@ IF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120 == 0)
                 PRINTFORMW 「정자가 흠뻑……♪」
                 PRINTL 
                 ;숫처녀는 아닌, 또는 정액에 대해 가르치고 있다
-                IF (TALENT:0 != 1 || CFLAG:5202 == 2) && RAND:2 == 0
+                IF (TALENT:처녀 != 1 || CFLAG:5202 == 2) && RAND:2 == 0
                     PRINTFORML 「 그렇지만, 어차피 돌어다나며 활약하려면……이 안에 냈으면 좋았다」
                     ;이미 질내에 정액 있어(V절정 경험 있어라면 3분의 1, 없으면 2분의 1)
                     IF STAIN:3 & 4 && TFLAG:103 && ((CFLAG:8006 > 0 && RAND:3 == 0) || (CFLAG:8006 == 0 && RAND:2 == 0))
@@ -15926,7 +15926,7 @@ IF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120 == 0)
                 ;그 이외
                 ELSE
                     PRINTFORML 「은 응……!　(이)나, 또에 자지 꽉 눌러, 어떻게 하는 거야?」
-                    PRINTFORMW 「응, 뜨겁다……!　\@(TALENT:0 != 1 || CFLAG:5202 == 2) ?  응……있고, 삽우노일까하고 생각했다 # 나, 또가 드로드로\@……응!」
+                    PRINTFORMW 「응, 뜨겁다……!　\@(TALENT:처녀 != 1 || CFLAG:5202 == 2) ?  응……있고, 삽우노일까하고 생각했다 # 나, 또가 드로드로\@……응!」
                 ENDIF
             ELSEIF RAND:2 == 0
                 PRINTFORML 「아……응, 자지, 실룩실룩 해……가득 나오고 있다」
@@ -15954,7 +15954,7 @@ IF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120 == 0)
                 ;그 이외
                 ELSE
                     PRINTFORML 「──!　(이)나, 나다, 그런 곳에 자지 접근해 어떻게 할 생각이야!」
-                    PRINTFORMW 「\@(TALENT:0 != 1 || CFLAG:5202 == 2) ?  , 정말 걸 뿐(만큼)이야!　, 절대로 삽충분하고 하지 않고!  # 만나는 , 뜨겁다……!　(이)나, 그런 곳에 걸지 말아! \@」
+                    PRINTFORMW 「\@(TALENT:처녀 != 1 || CFLAG:5202 == 2) ?  , 정말 걸 뿐(만큼)이야!　, 절대로 삽충분하고 하지 않고!  # 만나는 , 뜨겁다……!　(이)나, 그런 곳에 걸지 말아! \@」
                 ENDIF
             ELSEIF RAND:2 == 0
                 PRINTFORML 「어?　(이)나 , 나다……!　그만두며」
@@ -17715,7 +17715,7 @@ ELSE
             ENDIF
         ELSEIF RAND:4 == 0
             ;숫처녀는 아닌가 정액에 대해 가르치고 있다, 또는 A섹스 경험 있어
-            IF TALENT:0 != 1 || CFLAG:5202 == 2 || CFLAG:9030 > 0
+            IF TALENT:처녀 != 1 || CFLAG:5202 == 2 || CFLAG:9030 > 0
                 PRINTFORML 「어?　아앙, 이나다, 안에 내 주지 않았어?」
                 PRINTFORMW 「\@(TFLAG:703 == 1 || TFLAG:703 == 2) ?  모처럼“키쿠스”해 # 자지다음 근처까지 왔기 때문에, 그런가와 사\@의 것에∼」
             ;그 이외
@@ -17760,7 +17760,7 @@ ELSE
         ;그 이외
         ELSE
             IF RAND:3 == 0
-                PRINTFORML 「아앙……, 다리의 사이에 자지 왔기 때문에,\@(TALENT:0 != 1 || CFLAG:5202 == 2) ?  삽 # 어떻게 하는\@의 것인지라고 생각하면(자)……」
+                PRINTFORML 「아앙……, 다리의 사이에 자지 왔기 때문에,\@(TALENT:처녀 != 1 || CFLAG:5202 == 2) ?  삽 # 어떻게 하는\@의 것인지라고 생각하면(자)……」
                 PRINTFORML 「허벅지에 정자구 가득」
                 PRINTFORMW 「이나다, 가슴이 두근두근 하고 있다……. 무서웠으니까?　그렇지 않으면 흥분해 버린다의?」
             ELSE
@@ -18519,7 +18519,7 @@ SIF FLAG:11 <= 0
 SIF ASSI >= 0 && ASSIPLAY
     RETURN 0 
 ;체력 0으로 호라이인에서도 주정도 아니면 말을 스킵 한다
-SIF BASE:0 <= 0 && TALENT:48 == 0 && TALENT:49 == 0
+SIF BASE:0 <= 0 && TALENT:주정 == 0 && TALENT:봉래인 == 0
     RETURN 0
 ;볼 개그 착용시, 수면·실신중은 말을 스킵 한다(OFF라고 구를 차지해 마구 말한다)
 SIF EQUIP:14 || TEQUIP:42 || TFLAG:899 > 0
@@ -20589,10 +20589,10 @@ IF TCVAR:301 & 1
         ELSE
             PRINTL 
             ;기교 Lv5 또는 통산에서 메디가 이기고 있다(1개하의 V조율 경험의 조건도 채우고 있으면(자) 2분의 1의 확률)
-            IF (ABL:12 >= 5 || CFLAG:5211 > 0) && (TALENT:0 || TALENT:120 || EXP:42 < 100 || RAND:2 == 0)
+            IF (ABL:12 >= 5 || CFLAG:5211 > 0) && (TALENT:처녀 || TALENT:120 || EXP:42 < 100 || RAND:2 == 0)
                 PRINTFORML \@(CFLAG:5211 > 9) ?  %CALLNAME:MASTER%의 일을 다 안 것 같은 # 어느새 능숙해진 메디슨의\@허리의 움직임에
             ;V조율 경험 100이상
-            ELSEIF TALENT:0 == 0 && TALENT:120 == 0 && EXP:42 >= 100
+            ELSEIF TALENT:처녀 == 0 && TALENT:120 == 0 && EXP:42 >= 100
                 PRINTFORML 완전히%CALLNAME:MASTER%의 물건에 친숙해 진 메디슨의 보지의 좋은 점에
             ;그 이외
             ELSE
@@ -20644,11 +20644,11 @@ IF TCVAR:301 & 1
         ENDIF
     ENDIF
 ;V감각 Lv4 이상(남자나 처녀의 경우는 A감각)
-ELSEIF (((TALENT:0 || TALENT:120) && ABL:2 >= 4) || (TALENT:0 == 0 && TALENT:120 == 0 && ABL:1 >= 4)) && (CFLAG:8250 < 2 || FLAG:11 == 2)
+ELSEIF (((TALENT:처녀 || TALENT:120) && ABL:2 >= 4) || (TALENT:처녀 == 0 && TALENT:120 == 0 && ABL:1 >= 4)) && (CFLAG:8250 < 2 || FLAG:11 == 2)
     IF RAND:4 == 0
         PRINTL 
         PRINTFORML 「아, 또 가득 내 받아 버렸다♪」
-        PRINTFORML 넋을 잃고녹도록(듯이) 미소지으면서 메디슨은\@(TALENT:0 || TALENT:120) ?  엉덩이 # 고간\@에 손을 했다
+        PRINTFORML 넋을 잃고녹도록(듯이) 미소지으면서 메디슨은\@(TALENT:처녀 || TALENT:120) ?  엉덩이 # 고간\@에 손을 했다
         PRINTFORML 누르도록(듯이) 맞힌 손가락의 사이부터,%조사처리(CALLNAME:MASTER,"가")% 쏟은 백탁액이 흘러넘쳐 늘어져 온다
         IF RAND:2 == 0
             PRINTFORMW 그것을 본%CALLNAME:MASTER%은, 다시 고간에 피가 모여 오는 것을 느꼈다
@@ -20660,7 +20660,7 @@ ELSEIF (((TALENT:0 || TALENT:120) && ABL:2 >= 4) || (TALENT:0 == 0 && TALENT:120
             PRINTFORML 「아는,%TSTR:300%의 자지──아직 할 수 있겠죠?　해♪」
             PRINTFORM 그렇게 말해
         ENDIF
-        PRINTFORML 눈을 빛낼 수 있는이면서 스스로\@(TALENT:0 || TALENT:120) ?  국문 # 질구\@를 열어 보이면(자)
+        PRINTFORML 눈을 빛낼 수 있는이면서 스스로\@(TALENT:처녀 || TALENT:120) ?  국문 # 질구\@를 열어 보이면(자)
         PRINTFORML 다시%CALLNAME:MASTER%의 노장을 감추어 붐비어 갔다……
         PRINTFORMW 「응!　구는!　응……, 아 응♪」
     ELSEIF RAND:3 == 0
@@ -20792,7 +20792,7 @@ ENDIF
 ;-------------------------------------------------
 @MEDI_SELF_K33_161
 ;숫처녀
-IF TALENT:0 == 1
+IF TALENT:처녀 == 1
     ;연모＋촉수 중독 Lv3 이상
     IF TALENT:150 && ABL:35 >= 3
         PRINTFORMW 「은 , 응……이나, 언제까지 계속하는 거야……?　──응」
@@ -21558,7 +21558,7 @@ ELSEIF GET_NIGHT_KOJO() == 3
 ;※기입할 뿐(만큼) 시간의 쓸데없습니다(
 ELSEIF GET_NIGHT_KOJO() == 4
     ;진짜 처녀
-    IF TALENT:0 == 1
+    IF TALENT:처녀 == 1
         PRINTFORMW 「%TSTR:300%미안해요. 무엇인가 배의 안쪽이 이상한 느낌으로……」
         PRINTFORMW 「응은 해 버려서……이제(벌써), 참을 수 없는 것……응응, 응아!」
         PRINTFORML 메디슨은%조사처리(CALLNAME:MASTER,"가")% 멈추는 것보다도 빨리 앉아──처음의 남자를
@@ -21606,13 +21606,13 @@ IF GET_NIGHT_KOJO() == 1
     ;마스터가 남자나 뚜껑이든지
     IF EXIST_PENIS(MASTER)
         ;두 사람 모두 처녀
-        IF TALENT:0 && TALENT:GET_CHARA_M():0
+        IF TALENT:처녀 && TALENT:GET_CHARA_M():0
             PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 메디슨과 %CALLNAME:GET_CHARA_M()%를, 조개 대면시키게 하도록(듯이) 상하에 늘어놓으면(자),
             PRINTFORMW 두 명의 처녀의 와레메의 사이에 페니스를 찔러 넣었다
             PRINTFORML 「히아 응♪」
             PRINTFORMW 「응구아 ♪」
         ;메디만 처녀
-        ELSEIF TALENT:0
+        ELSEIF TALENT:처녀
             PRINTFORML 메디슨을 위로 향해, %CALLNAME:GET_CHARA_M()%를 엎드려로 해,
             PRINTFORML 두 명을 69의 몸의 자세로 하면(자),%조사처리(CALLNAME:MASTER,"는")% 메디슨의 바로 눈앞에서
             PRINTFORMW %CALLNAME:GET_CHARA_M()%의 밀 단지에 페니스를 찔러 넣었다
@@ -21669,7 +21669,7 @@ IF GET_NIGHT_KOJO() == 1
 ELSEIF GET_NIGHT_KOJO() == 2
     PRINTFORMW 「아, 아앙,%TSTR:302%, 기분이 좋아 ♪　좀 더, 좀 더 많이 하며♪」
     PRINTFORMW 「메디슨……」
-    IF TALENT:0 == 0 && EXIST_PENIS(MASTER)
+    IF TALENT:처녀 == 0 && EXIST_PENIS(MASTER)
         PRINTFORMW 「가득 찔러!　가득 뜨거운 것 줘!　아 응♪」
     ELSE
         PRINTFORMW 「 나도,%TSTR:300%……가득 기분 좋게 해 준다♪」
@@ -21732,7 +21732,7 @@ TFLAG:99 = 1
 @MEDI_SELF_K33_408
 LOCAL = EXIST_PENIS(MASTER) ?  1 # 0
 ;서로 사랑함(기본적으로 3분의 1의 확률, 다만 1개하의 조건을 채우지 않은 경우는 2분의 1의 확률)
-IF TALENT:153 && ((LOCAL == 1 && TALENT:0 == 0 && RAND:3 == 0) || ((LOCAL == 0 || TALENT:0) && RAND:2 == 0))
+IF TALENT:153 && ((LOCAL == 1 && TALENT:처녀 == 0 && RAND:3 == 0) || ((LOCAL == 0 || TALENT:처녀) && RAND:2 == 0))
     ;약혼 반지 사용시
     IF CFLAG:5201 == 1
         PRINTFORMW 메디슨 「내가 신부겠지?　나를 제일로 해♪」
@@ -21741,7 +21741,7 @@ IF TALENT:153 && ((LOCAL == 1 && TALENT:0 == 0 && RAND:3 == 0) || ((LOCAL == 0 |
         PRINTFORMW 메디슨 「%TSTR:300%, 나와 가득 서로 사랑합시다♪」
     ENDIF
 ;비처녀로, 마스터가 남자나 뚜껑이든지
-ELSEIF LOCAL == 1 && TALENT:0 == 0 && RAND:2 == 0
+ELSEIF LOCAL == 1 && TALENT:처녀 == 0 && RAND:2 == 0
     PRINTFORMW 메디슨 「%TSTR:302%, 나중에 최초로 흘러 들어가며……♪」
 ELSE
     PRINTFORMW 메디슨 「%TSTR:302%, 나에게 가득 정대……♪」
@@ -21758,7 +21758,7 @@ IF GET_NIGHT_KOJO() == 0
     IF TALENT:150
         IF RAND:3 == 0
             PRINTFORM 「응, 응응, 구……%TSTR:302%,
-            IF LOCAL == 1 && TALENT:0 != 1
+            IF LOCAL == 1 && TALENT:처녀 != 1
                 PRINTFORMW %TSTR:300%의 자지 갖고 싶어 ……」
             ELSE
                 PRINTFORMW %TSTR:300%과 함께 있고 싶어 ……」
@@ -21771,7 +21771,7 @@ IF GET_NIGHT_KOJO() == 0
     ;방에 돌아가 반찬에 자위
     ELSE
         ;주인과 상대의 노예가 V행위 가능해, 메디가 처녀
-        IF TALENT:0 == 1 && LOCAL == 1 && TALENT:GET_CHARA_G():0 == 0 && TALENT:GET_CHARA_G():120 == 0 && TALENT:GET_CHARA_G():127 == 0 && ABL:GET_CHARA_G():1 >= 2 && RAND:3 == 0
+        IF TALENT:처녀 == 1 && LOCAL == 1 && TALENT:GET_CHARA_G():0 == 0 && TALENT:GET_CHARA_G():120 == 0 && TALENT:GET_CHARA_G():127 == 0 && ABL:GET_CHARA_G():1 >= 2 && RAND:3 == 0
             PRINTFORML 「가랑이의 구멍의 곳에 자지 넣고 있었던……그건, 기분이 좋은 것일까?」
             PRINTFORMW 「……조금 손댈 뿐(만큼)이라면……, 구……!」
         ELSEIF RAND:2 == 0
@@ -25494,7 +25494,7 @@ TARGET = ARG
 
 ;연속 이벤트
 ;친애 또는 서로 사랑함으로, 무관심·감정 부족한·광기·정신 붕괴의 모두 없다. (발생율 3차 이벤트까지는30% 4차 이벤트가 되면15%)
-IF (TALENT:152 || TALENT:153) && TALENT:21 == 0 && TALENT:22 == 0 && TALENT:158 == 0 && TALENT:167 == 0 && CFLAG:5301 >= 0 && ((CFLAG:5301 < 3 && RAND:10 < 3) || (CFLAG:5301 == 3 && RAND:20 < 3))
+IF (TALENT:152 || TALENT:153) && TALENT:무관심 == 0 && TALENT:감정결여 == 0 && TALENT:158 == 0 && TALENT:167 == 0 && CFLAG:5301 >= 0 && ((CFLAG:5301 < 3 && RAND:10 < 3) || (CFLAG:5301 == 3 && RAND:20 < 3))
     ;전용 일상 이벤트가 처음의 경우, 이벤트 발생의 가부를 묻는다
     IF CFLAG:5300 == 0
         CALL MEDICINE_HAZIMETE_NICHIJO
@@ -26656,7 +26656,7 @@ RETURN 1
 ;무관심·감정 부족한·광기·정신 붕괴의 모두 없다
 ;-------------------------------------------------
 @MEDI_NICHIJO_TANPATSU_1
-SIF TALENT:21 || TALENT:22 || TALENT:158 || TALENT:167
+SIF TALENT:무관심 || TALENT:감정결여 || TALENT:158 || TALENT:167
     RETURN 0
 
 PRINTFORMW 무엇인가 종이와 같은 물건을 가진 메디슨과 만났다
@@ -27324,7 +27324,7 @@ ELSEIF TALENT:150
         LOCAL |= 16
     ;어린이의 날
     ELSEIF ((DAY:5 == 5 && DAY:6 == 5) || RESULT == 505) && ((LOCAL & 1024) == 0 || RAND:3 == 0)
-        PRINTSINGLEFORM 　　　「어린이의 날? 나\@(TALENT:0 == 1) ?  , 역시 어린이…… 인가?  # 는 아이가 아니야. %TSTR:300%에 의해서 어른이 됐는걸\@」
+        PRINTSINGLEFORM 　　　「어린이의 날? 나\@(TALENT:처녀 == 1) ?  , 역시 어린이…… 인가?  # 는 아이가 아니야. %TSTR:300%에 의해서 어른이 됐는걸\@」
         LOCAL |= 1024
     ;칠석
     ELSEIF ((DAY:5 == 7 && DAY:6 == 7) || RESULT == 707) && ((LOCAL & 4096) == 0 || RAND:3 == 0)
