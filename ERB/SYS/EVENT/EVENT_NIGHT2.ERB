@@ -2041,17 +2041,17 @@ REPEAT (LOCAL+1)
     LOCAL:1 = (COUNT == 0) ? MASTER # TARGET
     LOCAL:2 = (COUNT == 0) ? TARGET # MASTER
     ;自分以外の穴を使用可能な人数を取得する(LOCAL:15
-    SIF (TALENT:(LOCAL:2):120 == 0 && TALENT:(LOCAL:2):0 == 0 && (EXP:(LOCAL:2):0 > 12 || LOCAL:2 != MASTER)) || ((LOCAL:2 == MASTER && EXP:(LOCAL:2):1 > 12) || ABL:(LOCAL:2):A감각 > 1)
+    SIF (TALENT:(LOCAL:2):120 == 0 && TALENT:(LOCAL:2):0 == 0 && (EXP:(LOCAL:2):V경험 > 12 || LOCAL:2 != MASTER)) || ((LOCAL:2 == MASTER && EXP:(LOCAL:2):A경험 > 12) || ABL:(LOCAL:2):A감각 > 1)
         LOCAL:15 += 1
     SIF LOCAL:15 > 1
         LOCAL:15 = 0
 
     ;自身の使用可能な穴数（LOCAL:10.
     ;Ｖの場合.処女じゃなければおｋ.主人なら경험13以上
-    SIF TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):0 > 12 || LOCAL:1 != MASTER)
+    SIF TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):V경험 > 12 || LOCAL:1 != MASTER)
         LOCAL:10 += 1
     ;尻穴.主人は경험13以上.奴隷の場合ABL2以上、主人の2以上でもいい
-    SIF (LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1
+    SIF (LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1
         LOCAL:10 += 1
     ;棒の数を集計する(LOCAL:11
     SIF EXIST_PENIS(LOCAL:2)
@@ -2067,10 +2067,10 @@ REPEAT (LOCAL+1)
     ;Ｖ、Ａ、절정、사정、정액、레즈、ＢＬ、봉사、펠라、키스、Ａ쾌락、Ｂ쾌락かね・・・多いな
     ;今思えばコレもCALLすればよかった
     ;00V경험.誰か棒持ってないとダメ.計算しきれないケースがあるが、面倒なんで割愛
-    SIF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):0 > 12 || LOCAL:1 != MASTER)
+    SIF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):V경험 > 12 || LOCAL:1 != MASTER)
         CALL COMMON_UP_EXP, LOCAL:1, 0, (ARG*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15)), 0
     ;01A경험.誰か棒持ってないとダメ
-    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1)
+    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1)
         CALL COMMON_UP_EXP, LOCAL:1, 1, (ARG*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15)), 0
     ;02절정경험ARG/2＋V경험ボーナス＋A경험ボーナス
     IF LOCAL:10 > 0
@@ -2110,7 +2110,7 @@ REPEAT (LOCAL+1)
     LOCAL:12 = ARG
     CALL COMMON_UP_EXP, LOCAL:1, 23, LOCAL:12, 0
     ;43A쾌락경험
-    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1)
+    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1)
         CALL COMMON_UP_EXP, LOCAL:1, 43, (ARG*LOCAL:11*(3-LOCAL:10)*ABL:(LOCAL:1):A감각)/(3*(1+LOCAL:15)), 0
     ;44B쾌락경험
     IF TALENT:(LOCAL:1):120
@@ -2126,12 +2126,12 @@ REPEAT (LOCAL+1)
         ;00Ｃ의 구슬(最大で6000
         CALL COMMON_UP_JUEL, LOCAL:1, 0, 20*ARG*MAX(ABL:(LOCAL:1):C감각*ABL:(LOCAL:1):C감각, 1), 0
         ;01Ｖ의 구슬
-        IF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):0 > 12 || LOCAL:1 != MASTER)
+        IF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):V경험 > 12 || LOCAL:1 != MASTER)
             LOCAL:12 = (ARG*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15))
             CALL COMMON_UP_JUEL, LOCAL:1, 1, 20*LOCAL:12*ABL:(LOCAL:1):V감각*ABL:(LOCAL:1):V감각, 0
         ENDIF
         ;02Ａ의 구슬
-        IF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1)
+        IF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1)
             LOCAL:12 = (ARG*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15))
             CALL COMMON_UP_JUEL, LOCAL:1, 2, 20*LOCAL:12*ABL:(LOCAL:1):A감각*ABL:(LOCAL:1):A감각, 0
         ENDIF
@@ -2184,19 +2184,19 @@ REPEAT (LOCAL+1)
         LOCAL:3 = TARGET
     ENDIF
     ;自分以外の穴を使用可能な人数を取得する(LOCAL:15
-    SIF (TALENT:(LOCAL:2):120 == 0 && TALENT:(LOCAL:2):0 == 0 && (EXP:(LOCAL:2):0 > 12 || LOCAL:2 != MASTER)) || ((LOCAL:2 == MASTER && EXP:(LOCAL:2):1 > 12) || ABL:(LOCAL:2):A감각 > 1)
+    SIF (TALENT:(LOCAL:2):120 == 0 && TALENT:(LOCAL:2):0 == 0 && (EXP:(LOCAL:2):V경험 > 12 || LOCAL:2 != MASTER)) || ((LOCAL:2 == MASTER && EXP:(LOCAL:2):A경험 > 12) || ABL:(LOCAL:2):A감각 > 1)
         LOCAL:15 += 1
-    SIF (TALENT:(LOCAL:3):120 == 0 && TALENT:(LOCAL:3):0 == 0 && (EXP:(LOCAL:3):0 > 12 || LOCAL:3 != MASTER)) || ((LOCAL:3 == MASTER && EXP:(LOCAL:3):1 > 12) || ABL:(LOCAL:3):A감각 > 1)
+    SIF (TALENT:(LOCAL:3):120 == 0 && TALENT:(LOCAL:3):0 == 0 && (EXP:(LOCAL:3):V경험 > 12 || LOCAL:3 != MASTER)) || ((LOCAL:3 == MASTER && EXP:(LOCAL:3):A경험 > 12) || ABL:(LOCAL:3):A감각 > 1)
         LOCAL:15 += 1
     SIF LOCAL:15 > 2
         LOCAL:15 = 1
 
     ;自身の使用可能な穴数（LOCAL:10.
     ;Ｖの場合.処女じゃなければおｋ.主人なら경험13以上
-    SIF TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):0 > 12 || LOCAL:1 != MASTER)
+    SIF TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):V경험 > 12 || LOCAL:1 != MASTER)
         LOCAL:10 += 1
     ;尻穴.主人は경험13以上.奴隷の場合ABL2以上、主人の2以上でもいい
-    SIF (LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1
+    SIF (LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1
         LOCAL:10 += 1
     ;棒の数を集計する(LOCAL:11
     SIF EXIST_PENIS(LOCAL:2)
@@ -2215,10 +2215,10 @@ REPEAT (LOCAL+1)
     ;ＣＶ조율は調教じゃないし割愛.
     ;Ｖ、Ａ、절정、사정、정액、레즈、ＢＬ、봉사、펠라、키스、Ａ쾌락、Ｂ쾌락かね・・・多いな
     ;00V경험.誰か棒持ってないとダメ.計算しきれないケースがあるが、面倒なんで割愛
-    SIF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):0 > 12 || LOCAL:1 != MASTER)
+    SIF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):V경험 > 12 || LOCAL:1 != MASTER)
         CALL COMMON_UP_EXP, LOCAL:1, 0, (ARG:1*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15)), 0
     ;01A경험.誰か棒持ってないとダメ
-    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1)
+    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1)
         CALL COMMON_UP_EXP, LOCAL:1, 1, (ARG:1*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15)), 0
     ;02절정경험ARG:1/2＋V경험ボーナス＋A경험ボーナス
     IF LOCAL:10 > 0
@@ -2257,7 +2257,7 @@ REPEAT (LOCAL+1)
     LOCAL:12 = RAND:(LOCAL:12)
     CALL COMMON_UP_EXP, LOCAL:1, 23, LOCAL:12, 0
     ;43A쾌락경험
-    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1)
+    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1)
         CALL COMMON_UP_EXP, LOCAL:1, 43, (ARG:1*LOCAL:11*(3-LOCAL:10)*ABL:(LOCAL:1):A감각)/(3*(1+LOCAL:15)), 0
     ;44B쾌락경험
     IF TALENT:(LOCAL:1):120
@@ -2272,12 +2272,12 @@ REPEAT (LOCAL+1)
         ;00Ｃ의 구슬(最大で6000
         CALL COMMON_UP_JUEL, LOCAL:1, 0, 20*ARG:1*ABL:(LOCAL:1):C감각*ABL:(LOCAL:1):C감각, 0
         ;01Ｖ의 구슬
-        IF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):0 > 12 || LOCAL:1 != MASTER)
+        IF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):V경험 > 12 || LOCAL:1 != MASTER)
             LOCAL:12 = (ARG:1*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15))
             CALL COMMON_UP_JUEL, LOCAL:1, 1, 20*LOCAL:12*ABL:(LOCAL:1):V감각*ABL:(LOCAL:1):V감각, 0
         ENDIF
         ;02Ａ의 구슬
-        IF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1)
+        IF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1)
             LOCAL:12 = (ARG:1*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15))
             CALL COMMON_UP_JUEL, LOCAL:1, 2, 20*LOCAL:12*ABL:(LOCAL:1):A감각*ABL:(LOCAL:1):A감각, 0
         ENDIF
@@ -2323,23 +2323,23 @@ REPEAT (LOCAL+1)
     LOCAL:13 = 0
     
     ;自分以外の穴を使用可能な人数を取得する(LOCAL:15
-    SIF (TALENT:(LOCAL:2):120 == 0 && TALENT:(LOCAL:2):0 == 0 && (EXP:(LOCAL:2):0 > 12 || LOCAL:2 != MASTER)) || ((LOCAL:2 == MASTER && EXP:(LOCAL:2):1 > 12) || ABL:(LOCAL:2):A감각 > 1)
+    SIF (TALENT:(LOCAL:2):120 == 0 && TALENT:(LOCAL:2):0 == 0 && (EXP:(LOCAL:2):V경험 > 12 || LOCAL:2 != MASTER)) || ((LOCAL:2 == MASTER && EXP:(LOCAL:2):A경험 > 12) || ABL:(LOCAL:2):A감각 > 1)
         LOCAL:15 += 1
-    SIF (TALENT:(LOCAL:3):120 == 0 && TALENT:(LOCAL:3):0 == 0 && (EXP:(LOCAL:3):0 > 12 || LOCAL:3 != MASTER)) || ((LOCAL:3 == MASTER && EXP:(LOCAL:3):1 > 12) || ABL:(LOCAL:3):A감각 > 1)
+    SIF (TALENT:(LOCAL:3):120 == 0 && TALENT:(LOCAL:3):0 == 0 && (EXP:(LOCAL:3):V경험 > 12 || LOCAL:3 != MASTER)) || ((LOCAL:3 == MASTER && EXP:(LOCAL:3):A경험 > 12) || ABL:(LOCAL:3):A감각 > 1)
         LOCAL:15 += 1
-    SIF (TALENT:(LOCAL:4):120 == 0 && TALENT:(LOCAL:4):0 == 0 && (EXP:(LOCAL:4):0 > 12 || LOCAL:4 != MASTER)) || ((LOCAL:4 == MASTER && EXP:(LOCAL:4):1 > 12) || ABL:(LOCAL:4):A감각 > 1)
+    SIF (TALENT:(LOCAL:4):120 == 0 && TALENT:(LOCAL:4):0 == 0 && (EXP:(LOCAL:4):V경험 > 12 || LOCAL:4 != MASTER)) || ((LOCAL:4 == MASTER && EXP:(LOCAL:4):A경험 > 12) || ABL:(LOCAL:4):A감각 > 1)
         LOCAL:15 += 1
-    SIF (TALENT:(LOCAL:5):120 == 0 && TALENT:(LOCAL:5):0 == 0 && (EXP:(LOCAL:5):0 > 12 || LOCAL:5 != MASTER)) || ((LOCAL:5 == MASTER && EXP:(LOCAL:5):1 > 12) || ABL:(LOCAL:5):A감각 > 1)
+    SIF (TALENT:(LOCAL:5):120 == 0 && TALENT:(LOCAL:5):0 == 0 && (EXP:(LOCAL:5):V경험 > 12 || LOCAL:5 != MASTER)) || ((LOCAL:5 == MASTER && EXP:(LOCAL:5):A경험 > 12) || ABL:(LOCAL:5):A감각 > 1)
         LOCAL:15 += 1
     SIF LOCAL:15 > 3
         LOCAL:15 = 3
 
     ;自身の使用可能な穴数（LOCAL:10.
     ;Ｖの場合.処女じゃなければおｋ.主人なら경험13以上
-    SIF TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):0 > 12 || LOCAL:1 != MASTER)
+    SIF TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):V경험 > 12 || LOCAL:1 != MASTER)
         LOCAL:10 += 1
     ;尻穴.主人は경험13以上.奴隷の場合ABL2以上、主人の2以上でもいい
-    SIF (LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1
+    SIF (LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1
         LOCAL:10 += 1
     ;棒の数を集計する(LOCAL:11
     SIF EXIST_PENIS(LOCAL:2)
@@ -2366,10 +2366,10 @@ REPEAT (LOCAL+1)
     ;ＣＶ조율は調教じゃないし割愛.
     ;Ｖ、Ａ、절정、사정、정액、레즈、ＢＬ、봉사、펠라、키스、Ａ쾌락、Ｂ쾌락かね・・・多いな
     ;00V경험.誰か棒持ってないとダメ.計算しきれないケースがあるが、面倒なんで割愛
-    SIF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):0 > 12 || LOCAL:1 != MASTER)
+    SIF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):V경험 > 12 || LOCAL:1 != MASTER)
         CALL COMMON_UP_EXP, LOCAL:1, 0, (ARG*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15)), 0
     ;01A경험.誰か棒持ってないとダメ
-    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1)
+    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1)
         CALL COMMON_UP_EXP, LOCAL:1, 1, (ARG*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15)), 0
     ;02절정경험ARG/2＋V경험ボーナス＋A경험ボーナス
     IF LOCAL:10 > 0
@@ -2409,7 +2409,7 @@ REPEAT (LOCAL+1)
     LOCAL:12 = RAND:(LOCAL:12)
     CALL COMMON_UP_EXP, LOCAL:1, 23, LOCAL:12, 0
     ;43A쾌락경험
-    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1)
+    SIF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1)
         CALL COMMON_UP_EXP, LOCAL:1, 43, (ARG*LOCAL:11*(3-LOCAL:10)*ABL:(LOCAL:1):A감각)/(3*(1+LOCAL:15)), 0
     ;44B쾌락경험
     IF TALENT:(LOCAL:1):120
@@ -2424,12 +2424,12 @@ REPEAT (LOCAL+1)
         ;00Ｃ의 구슬(最大で6000
         CALL COMMON_UP_JUEL, LOCAL:1, 0, 20*ARG*ABL:(LOCAL:1):C감각*ABL:(LOCAL:1):C감각, 0
         ;01Ｖ의 구슬
-        IF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):0 > 12 || LOCAL:1 != MASTER)
+        IF LOCAL:11 > 0 && TALENT:(LOCAL:1):120 == 0 && TALENT:(LOCAL:1):0 == 0 && (EXP:(LOCAL:1):V경험 > 12 || LOCAL:1 != MASTER)
             LOCAL:12 = (ARG*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15))
             CALL COMMON_UP_JUEL, LOCAL:1, 1, 20*LOCAL:12*ABL:(LOCAL:1):V감각*ABL:(LOCAL:1):V감각, 0
         ENDIF
         ;02Ａ의 구슬
-        IF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):1 > 12) || ABL:(LOCAL:1):A감각 > 1)
+        IF LOCAL:11 > 0 && ((LOCAL:1 == MASTER && EXP:(LOCAL:1):A경험 > 12) || ABL:(LOCAL:1):A감각 > 1)
             LOCAL:12 = (ARG*LOCAL:11*(3-LOCAL:10))/(3*(1+LOCAL:15))
             CALL COMMON_UP_JUEL, LOCAL:1, 2, 20*LOCAL:12*ABL:(LOCAL:1):A감각*ABL:(LOCAL:1):A감각, 0
         ENDIF
@@ -2560,7 +2560,7 @@ REPEAT 2
     ;00V경험
     CALL COMMON_UP_EXP, LOCAL:1, 0, (ARG:1*LOCAL)/3, 0
     ;01A경험
-    SIF ABL:(LOCAL:1):A감각 > 1 || EXP:(LOCAL:1):1 > 12
+    SIF ABL:(LOCAL:1):A감각 > 1 || EXP:(LOCAL:1):A경험 > 12
         CALL COMMON_UP_EXP, LOCAL:1, 1, (ARG:1*LOCAL)/4, 0
     ;02절정경험
     CALL COMMON_UP_EXP, LOCAL:1, 2, ((ARG:1*LOCAL*ABL:(LOCAL:1):C감각/6)+(ARG:1*LOCAL*ABL:(LOCAL:1):V감각/3)+(ARG:1*LOCAL*ABL:(LOCAL:1):A감각/4)+(ARG:1*LOCAL*ABL:(LOCAL:1):B감각/5))/15, 0
@@ -2577,7 +2577,7 @@ REPEAT 2
     LOCAL:5 = RAND:(ARG:1*LOCAL)
     CALL COMMON_UP_EXP, LOCAL:1, 23, LOCAL:5, 0
     ;43A쾌락경험
-    SIF ABL:(LOCAL:1):A감각 > 1 || EXP:(LOCAL:1):1 > 12
+    SIF ABL:(LOCAL:1):A감각 > 1 || EXP:(LOCAL:1):A경험 > 12
         CALL COMMON_UP_EXP, LOCAL:1, 43, (ARG:1*LOCAL*ABL:(LOCAL:1):A감각)/4, 0
     ;44B쾌락경험
     CALL COMMON_UP_EXP, LOCAL:1, 44, ARG:1*LOCAL*ABL:(LOCAL:1):B감각/5, 0
@@ -2585,7 +2585,7 @@ REPEAT 2
 ;    LOCAL:5 = (ARG:1*LOCAL*ABL:(LOCAL:1):C감각)/90
 ;    SIF LOCAL:5 > (ARG:1*LOCAL*ABL:(LOCAL:1):V감각)/45
 ;        LOCAL:5 = (ARG:1*LOCAL*ABL:(LOCAL:1):V감각)/45
-;    SIF LOCAL:5 > (ARG:1*LOCAL*ABL:(LOCAL:1):A감각)/60 && (ABL:(LOCAL:1):A감각 > 1 || EXP:(LOCAL:1):1 > 12)
+;    SIF LOCAL:5 > (ARG:1*LOCAL*ABL:(LOCAL:1):A감각)/60 && (ABL:(LOCAL:1):A감각 > 1 || EXP:(LOCAL:1):A경험 > 12)
 ;        LOCAL:5 = (ARG:1*LOCAL*ABL:(LOCAL:1):A감각)/60
 ;    SIF LOCAL:5 > (ARG:1*LOCAL*ABL:(LOCAL:1):B감각)/75
 ;        LOCAL:5 = (ARG:1*LOCAL*ABL:(LOCAL:1):B감각)/75
@@ -2598,7 +2598,7 @@ REPEAT 2
         ;01쾌Ｖ
         CALL COMMON_UP_JUEL, LOCAL:1, 1, 40*ARG:1*(1+ABL:(LOCAL:1):V감각)*LOCAL, 0
         ;02쾌Ａ
-        SIF ABL:(LOCAL:1):A감각 > 1 || EXP:(LOCAL:1):1 > 12
+        SIF ABL:(LOCAL:1):A감각 > 1 || EXP:(LOCAL:1):A경험 > 12
             CALL COMMON_UP_JUEL, LOCAL:1, 2, 40*ARG:1*(1+ABL:(LOCAL:1):A감각)*LOCAL, 0
         ;03쾌Ｂ
         CALL COMMON_UP_JUEL, LOCAL:1, 3, 40*ARG:1*(1+ABL:(LOCAL:1):B감각)*LOCAL, 0
