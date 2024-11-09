@@ -14,7 +14,7 @@ SIF FLAG:15 & 16 && (TALENT:MASTER:158 || TALENT:MASTER:56 || TALENT:MASTER:81 |
     PRINTLC [0] 고문 교정 시설
 SIF FLAG:15 & 16384
     PRINTLC [1] 종족 개조 시설
-SIF TALENT:MASTER:197 && TALENT:MASTER:141 == 0 && ABL:MASTER:12 >= 3
+SIF TALENT:MASTER:197 && TALENT:MASTER:141 == 0 && ABL:MASTER:기교 >= 3
     PRINTLC [2] 마술의식용 지하실
 PRINTL 
 PRINTL [100] 돌아가기
@@ -28,7 +28,7 @@ ELSEIF RESULT == 0 && FLAG:15 & 16 && (TALENT:MASTER:158 || TALENT:MASTER:56 || 
 ELSEIF RESULT == 1 && FLAG:15 & 16384
     PRINTW 종족 개조 시설로 발걸음을 옮겼습니다.
     CALL CONVERT_RACE_MENU
-ELSEIF RESULT == 2 && TALENT:MASTER:197 && TALENT:MASTER:141 == 0 && ABL:MASTER:12 >= 3
+ELSEIF RESULT == 2 && TALENT:MASTER:197 && TALENT:MASTER:141 == 0 && ABL:MASTER:기교 >= 3
     PRINTW 마술의식용 지하실로 발걸음을 옮겼습니다.
     CALL CREATE_SLAVE_MENU
 ELSE
@@ -295,22 +295,22 @@ IF (CFLAG:20 & 32768) == 0
 ENDIF
 ;珠入手関連(基本的に主人のサドっ気Lvと対象の従順Lvが関係する)
 ;拷問対象の순종의 구슬
-CALL COMMON_UP_JUEL, TARGET, 12, (150 + ABL:MASTER:20*100 + ABL:순종*20), 0
+CALL COMMON_UP_JUEL, TARGET, 12, (150 + ABL:MASTER:새드끼*100 + ABL:순종*20), 0
 ;拷問対象の굴복의 구슬([気丈]で-修整あり)
-CALL COMMON_UP_JUEL, TARGET, 14, (200 + ABL:MASTER:20*80 - TALENT:12*50), 0
+CALL COMMON_UP_JUEL, TARGET, 14, (200 + ABL:MASTER:새드끼*80 - TALENT:12*50), 0
 ;苦痛快楽経験は入れない.快楽を覚えさせるための「調教」ではないので.
 ;拷問対象の苦痛의 구슬([痛みに強い]で-修整, [痛みに弱い]で+修整あり)
-CALL COMMON_UP_JUEL, TARGET, 16, (250 + ABL:MASTER:20*120 + TALENT:40*50 - TALENT:41*50), 0
+CALL COMMON_UP_JUEL, TARGET, 16, (250 + ABL:MASTER:새드끼*120 + TALENT:40*50 - TALENT:41*50), 0
 ;拷問対象の공포의 구슬([臆病]で+修整あり)
-CALL COMMON_UP_JUEL, TARGET, 17, (150 + ABL:MASTER:20*80 + TALENT:10*50), 0
+CALL COMMON_UP_JUEL, TARGET, 17, (150 + ABL:MASTER:새드끼*80 + TALENT:10*50), 0
 ;拷問対象の否定의 구슬(EASYでは入れない)
 SIF FLAG:3 > 1
-    CALL COMMON_UP_JUEL, TARGET, 100, (20 + ABL:MASTER:20*20 + ABL:순종*50), 0
+    CALL COMMON_UP_JUEL, TARGET, 100, (20 + ABL:MASTER:새드끼*20 + ABL:순종*50), 0
 
 ;拷問対象のストレスUP(主人のサドっ気Lvが関係する)
-CFLAG:65 += 50 + ABL:MASTER:20*100
+CFLAG:65 += 50 + ABL:MASTER:새드끼*100
 ;体力減少基礎(主人の技巧Lvとサドっ気Lvが関係する)
-LOCAL = ((200 - ABL:MASTER:12*20) + (ABL:MASTER:20 *40) + RAND:21) * 3
+LOCAL = ((200 - ABL:MASTER:기교*20) + (ABL:MASTER:새드끼 *40) + RAND:21) * 3
 ;気力減少基礎(基本的に体力減少基礎と同じ)
 LOCAL:1 = LOCAL
 ;[気丈]で[臆病]ないとき
@@ -342,7 +342,7 @@ SIF LOCAL & 1
     PRINTFORMW ＜교정 지도로 인해 %CALLNAME:TARGET%의 호감도가 내려갔다＞
 
 ;殺害チェック基礎(主人のサドっ気Lvと調教師Lvと技巧Lvが関係する)
-LOCAL:2 = 13 + ABL:MASTER:20 - (ABL:MASTER:99 + ABL:MASTER:12) 
+LOCAL:2 = 13 + ABL:MASTER:새드끼 - (ABL:MASTER:조교사Lv + ABL:MASTER:기교) 
 ;殺害チェック(体力と気力のいずれかが0以下であるとき, ただし蓬莱人と呪精ならば回避)
 IF (BASE:0 < 0 || BASE:1 < 0) && TALENT:봉래인 == 0 && TALENT:주정 == 0
     IF RAND:100 < LOCAL:2
@@ -578,7 +578,7 @@ LOCAL:0 = MAX(TALENT:MASTER:57, TALENT:MASTER:197, TALENT:MASTER:198)
 LOCAL:1 = MAX(TALENT:MASTER:59, TALENT:MASTER:81, TALENT:MASTER:197) && (FLAG:73 & 16)
 
 ;改造手術の条件    ：    主人が[家電使役知識]か[超常目算]を持ち, 技巧Lv5
-LOCAL:2 = MAX(TALENT:MASTER:189, TALENT:MASTER:198) && (ABL:MASTER:12 >= 5)
+LOCAL:2 = MAX(TALENT:MASTER:189, TALENT:MASTER:198) && (ABL:MASTER:기교 >= 5)
 
 ;魂魄昇華の条件    ：    主人が[狂気][魔術技能][超常目算]のいずれか
 LOCAL:3 = MAX(TALENT:MASTER:158, TALENT:MASTER:197, TALENT:MASTER:198)
@@ -619,7 +619,7 @@ LOCAL:1 = TALENT:(ARG:1):205
 ;改造手術の実行資格    ：    にとり, 理香子, 夢美, る～こと
 LOCAL:2 = MAX(NO:(ARG:1) == 40, NO:(ARG:1) == 106, NO:(ARG:1) == 108, NO:(ARG:1) == 127) 
     ;ただし工作技能Lv5の場合のみ
-LOCAL:2 = LOCAL:2 && (ABL:(ARG:1):73 >= 5)
+LOCAL:2 = LOCAL:2 && (ABL:(ARG:1):공작기능 >= 5)
 
 ;魂魄昇華の実行資格    ：    ゆゆ様(EX可), [死神]
 LOCAL:3 = MAX(NO:(ARG:1) == 20, TALENT:(ARG:1):224)
@@ -627,7 +627,7 @@ LOCAL:3 = MAX(NO:(ARG:1) == 20, TALENT:(ARG:1):224)
 ;生命封入の実行資格    :    アリス(EX不可), または[魔術技能]を持つ[工作名人]
 LOCAL:4 = MAX(NO:(ARG:1) == 14 && CFLAG:(ARG:1):0 == 0, TALENT:(ARG:1):195 && TALENT:(ARG:1):197)
     ;ただし技巧Lv5かつ工作技能Lv5の場合のみ
-LOCAL:4 = MIN(LOCAL:4, ABL:(ARG:1):12 >= 5, ABL:(ARG:1):73 >= 5)
+LOCAL:4 = MIN(LOCAL:4, ABL:(ARG:1):기교 >= 5, ABL:(ARG:1):공작기능 >= 5)
 
 ;デバッグ用
 SIF TALENT:(ARG:1):998
@@ -1418,23 +1418,23 @@ REPEAT CHARANUM
     SIF COUNT == MASTER && LOCAL != 9
         CONTINUE
 ;아나타 이외는 최소 순종 2이상 필요
-    SIF COUNT != MASTER && ABL:COUNT:10 < 2
+    SIF COUNT != MASTER && ABL:COUNT:순종 < 2
         CONTINUE
 ;동물귀 부여, 제거 - 태생이 동물귀가 아닌 경우에만 가능
 ;첸, 란, 미스치, 테위, 우동게, 모미지, 레이센2호, 오린, 나즈린, 쿄코, 마미조, 키나코, 로쿠, 빙어공주, 카게로, 범용캐릭터들
     IF LOCAL == 0 && (( NO:COUNT == 13 || NO:COUNT == 21 || NO:COUNT == 25 || NO:COUNT == 27 || NO:COUNT == 41 || NO:COUNT == 55 || NO:COUNT == 62 || NO:COUNT == 71 || NO:COUNT == 87 || NO:COUNT == 203 || NO:COUNT == 217 || NO:COUNT == 220 || NO:COUNT == 222) || ( NO:COUNT == 170 || NO:COUNT == 175 || NO:COUNT == 177 || NO:COUNT == 184 || NO:COUNT == 186 || NO:COUNT == 187 || NO:COUNT == 188 ))
         CONTINUE
 ;불결무시 부여 - 불결무시가 없고 기교 3이상
-    ELSEIF LOCAL == 1 && (TALENT:COUNT:64 || ABL:COUNT:12 < 3)
+    ELSEIF LOCAL == 1 && (TALENT:COUNT:64 || ABL:COUNT:기교 < 3)
         CONTINUE
 ;대유도 부여 - 캐릭터의 가슴 사이즈가 [거유] 나 [폭유]이고 기교가 4레벨 이상, 대유도가 없음
-    ELSEIF LOCAL == 2 && ((TALENT:COUNT:112 == 0 && TALENT:COUNT:113 == 0) || TALENT:COUNT:96 || ABL:COUNT:12 < 4)
+    ELSEIF LOCAL == 2 && ((TALENT:COUNT:112 == 0 && TALENT:COUNT:113 == 0) || TALENT:COUNT:96 || ABL:COUNT:기교 < 4)
         CONTINUE
 ;절벽가슴격추왕 부여 - 캐릭터의 가슴 사이즈가 [절벽]이나 [빈유]이고 기교가 4레벨 이상, 절벽가슴격추왕이 없음
-    ELSEIF LOCAL == 3 && ((TALENT:COUNT:110 == 0 && TALENT:COUNT:111 == 0) || TALENT:COUNT:97 || ABL:COUNT:12 < 4)
+    ELSEIF LOCAL == 3 && ((TALENT:COUNT:110 == 0 && TALENT:COUNT:111 == 0) || TALENT:COUNT:97 || ABL:COUNT:기교 < 4)
         CONTINUE
 ;오줌싸개버릇 - 이미 오줌싸개버릇이 있으면 안됨, 노출벽 4이상
-    ELSEIF LOCAL == 4 && (TALENT:COUNT:45 || ABL:COUNT:14 < 4)
+    ELSEIF LOCAL == 4 && (TALENT:COUNT:45 || ABL:COUNT:노출증 < 4)
         CONTINUE
 ;수상한 뿌리 - 남자가 아니고 수상한 뿌리나 구현, 훝타나리가 없을 것
     ELSEIF LOCAL == 5 && ( EXIST_PENIS(COUNT) || TALENT:COUNT:122 || TALENT:COUNT:123 )

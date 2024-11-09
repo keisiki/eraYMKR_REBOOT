@@ -335,7 +335,7 @@ IF TALENT:MASTER:126
 ELSE
     PRINT Lv
 ENDIF
-PRINTFORM {ABL:MASTER:73}
+PRINTFORM {ABL:MASTER:공작기능}
 COUNT = 0
 CALL ARRANGE_CHARALIST, 0
 PRINTL (주인)
@@ -444,11 +444,11 @@ ELSE
     PRINTL [ 0] 방으로 돌려보낸다
     PRINTL [ 1] 대기
 ENDIF
-SIF ABL:(LOCAL:2):73 > 2
+SIF ABL:(LOCAL:2):공작기능 > 2
     PRINTL [ 2] 공작 기능 교육
-;SIF ABL:(LOCAL:2):73 > 3
+;SIF ABL:(LOCAL:2):공작기능 > 3
 ;    PRINTL [ 3] 조교 도구 제작
-;SIF ABL:(LOCAL:2):73 > 4
+;SIF ABL:(LOCAL:2):공작기능 > 4
 ;    PRINTL [  4] 특수 조교 장치 제작
 PRINTL [100] 돌아간다
 FLAG:1111 = LOCAL:2
@@ -465,11 +465,11 @@ ELSEIF RESULT == 1
     IF LOCAL:2 == MASTER
         CFLAG:MASTER:690 = 5
     ENDIF
-ELSEIF RESULT == 2 && ABL:(LOCAL:2):73 > 2
+ELSEIF RESULT == 2 && ABL:(LOCAL:2):공작기능 > 2
     CALL TEACH_HANDYCRAFT
-;ELSEIF RESULT == 3 && ABL:(LOCAL:2):73 > 3
+;ELSEIF RESULT == 3 && ABL:(LOCAL:2):공작기능 > 3
 ;    CALL ORDER_CRAFT_ITEM
-;ELSEIF RESULT == 4 && ABL:(LOCAL:2):73 > 4
+;ELSEIF RESULT == 4 && ABL:(LOCAL:2):공작기능 > 4
 ;    CALL ORDER_CRAFT_MACHINE
 ELSEIF RESULT != 100
     GOTO INPUT_LOOP_2
@@ -569,14 +569,14 @@ LOCAL:1 = 0
 LOCAL:2 = 0
 LOCAL:3 = 0
 REPEAT CHARANUM
-    SIF CFLAG:COUNT:4 == 3 && (CFLAG:COUNT:690 == 0 || (CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109)) && ABL:COUNT:73 == 0
+    SIF CFLAG:COUNT:4 == 3 && (CFLAG:COUNT:690 == 0 || (CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109)) && ABL:COUNT:공작기능 == 0
         LOCAL:3 += 1
 REND
 $TEACH_HANDYCRAFT_TOP
 DRAWLINE
 PRINTFORML 교사역：%CALLNAME:(FLAG:1111)%
 DRAWLINE
-IF ABL:MASTER:73 == 0
+IF ABL:MASTER:공작기능 == 0
     CALL ARRANGE_CHARALIST, MASTER
     PRINTFORML %CALLNAME:MASTER% (주인)
     DRAWLINE
@@ -617,7 +617,7 @@ INPUT
 IF RESULT > -1 && RESULT < CHARANUM
     IF CFLAG:RESULT:4 != 3
         PRINTFORML %조사선택(CALLNAME:RESULT, "는")% 공방에 없습니다.
-    ELSEIF ABL:RESULT:73 > 0
+    ELSEIF ABL:RESULT:공작기능 > 0
         PRINTFORML %조사선택(CALLNAME:RESULT, "는")% 이미 공작 기능을 습득했습니다.
     ELSE
         LOCAL:4 = RESULT
@@ -658,17 +658,17 @@ ELSEIF RESULT == 1008 && (LOCAL:3) > 1
     REPEAT CHARANUM
         SIF COUNT == MASTER
             CONTINUE
-        IF CFLAG:COUNT:4 == 3 && CFLAG:COUNT:690 == 0 && ABL:COUNT:73 == 0
+        IF CFLAG:COUNT:4 == 3 && CFLAG:COUNT:690 == 0 && ABL:COUNT:공작기능 == 0
             CFLAG:COUNT:690 = 2
             CFLAG:COUNT:692 = CFLAG:(FLAG:1111):3109
             CFLAG:(FLAG:1111):694 += 1
-        ELSEIF CFLAG:COUNT:4 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109 && ABL:COUNT:73 == 0
+        ELSEIF CFLAG:COUNT:4 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109 && ABL:COUNT:공작기능 == 0
             CFLAG:(FLAG:1111):694 += 1
         ENDIF
     REND
     CFLAG:(FLAG:1111):690 = 1
     CFLAG:(FLAG:1111):692 = -1
-    IF ABL:MASTER:73 == 0
+    IF ABL:MASTER:공작기능 == 0
         CALL TEACH_HANDYCRAFT_WITH_MASTER
     ENDIF
     RETURN 2
@@ -721,7 +721,7 @@ WHILE 1
         BREAK
     LOCAL:0 = 0
     FOR LOCAL:3, 0, CHARANUM
-        IF (CFLAG:(LOCAL:3):4 == 3) && (CFLAG:(LOCAL:3):690 == 2) && (CFLAG:(LOCAL:3):692 == CFLAG:(LOCAL:2):3109) && (ABL:(LOCAL:3):73 == 0)
+        IF (CFLAG:(LOCAL:3):4 == 3) && (CFLAG:(LOCAL:3):690 == 2) && (CFLAG:(LOCAL:3):692 == CFLAG:(LOCAL:2):3109) && (ABL:(LOCAL:3):공작기능 == 0)
             LOCAL:0 += 1
             LOCAL:1 = LOCAL:3
         ENDIF
@@ -826,10 +826,10 @@ SIF (FLAG:1120 & 128)
 ;K = EXP:(FLAG:1111):94
 LOCAL:0 = 1
 ;電動品は工作技能Lv5必要
-SIF (FLAG:1120 & 2) && ABL:(FLAG:1111):73 < 5
+SIF (FLAG:1120 & 2) && ABL:(FLAG:1111):공작기능 < 5
     RETURN 0
 ;SM用品はSM系素養(ドＳ、ドＭ、サド、マゾ、サドっ気Lv1以上、マゾっ気Lv1以上のいずれか)が必要
-SIF (FLAG:1120 & 4) && (TALENT:(FLAG:1111):177 || TALENT:(FLAG:1111):178 || TALENT:(FLAG:1111):81 || TALENT:(FLAG:1111):82 || ABL:(FLAG:1111):20 || ABL:(FLAG:1111):21)
+SIF (FLAG:1120 & 4) && (TALENT:(FLAG:1111):177 || TALENT:(FLAG:1111):178 || TALENT:(FLAG:1111):81 || TALENT:(FLAG:1111):82 || ABL:(FLAG:1111):새드끼 || ABL:(FLAG:1111):마조끼)
     RETURN 0
 ;大道具は工作経験がある程度必要
 IF (FLAG:1120 & 8) 
@@ -909,12 +909,12 @@ REPEAT CHARANUM
         ;エロス要素確認
         LOCAL:0 = 0
         ;サディストチェック (サドっ気Lv3以上かサドかドＳ)
-        IF ABL:COUNT:20 > 2 || TALENT:COUNT:81 || TALENT:COUNT:177
+        IF ABL:COUNT:새드끼 > 2 || TALENT:COUNT:81 || TALENT:COUNT:177
             FLAG:1140 += 1
             LOCAL:0 += 1
         ENDIF
         ;マゾヒストチェック (マゾっ気Lv3以上かマゾかドＭ)
-        IF ABL:COUNT:21 > 2 || TALENT:COUNT:82 || TALENT:COUNT:178
+        IF ABL:COUNT:마조끼 > 2 || TALENT:COUNT:82 || TALENT:COUNT:178
             FLAG:1141 += 1
             LOCAL:0 += 1
         ENDIF
@@ -943,11 +943,11 @@ REPEAT CHARANUM
             FLAG:1133 += 1
         ENDIF
         ;レズっ気チェック
-        IF ABL:COUNT:22
+        IF ABL:COUNT:레즈끼
             FLAG:1146 += 1
         ENDIF
         ;ＢＬっ気チェック
-        IF ABL:COUNT:23
+        IF ABL:COUNT:BL끼
             FLAG:1147 += 1
         ENDIF
         ;ペニスチェック

@@ -151,11 +151,11 @@ FOR TFLAG:900, 0, CHARANUM
         TIMES LOCAL:11 , 0.75
         IF BASE:(TFLAG:900):6 < MAXBASE:(TFLAG:900):6
             ;寄生している触手は触手中毒によって若干成長
-            IF ABL:(TFLAG:900):35 == 0
+            IF ABL:(TFLAG:900):촉수중독 == 0
                 LOCAL:16 = 1
-            ELSEIF ABL:(TFLAG:900):35 <= 2
+            ELSEIF ABL:(TFLAG:900):촉수중독 <= 2
                 LOCAL:16 = 2
-            ELSEIF ABL:(TFLAG:900):35 <= 4
+            ELSEIF ABL:(TFLAG:900):촉수중독 <= 4
                 LOCAL:16 = 3
             ELSE
                 LOCAL:16 = 4
@@ -231,7 +231,7 @@ FOR TFLAG:900, 0, CHARANUM
             ;酔いつぶれていなければ自慰経験が増える(主人には知らせない)
             TIMES LOCAL:10 , 0.80
             TIMES LOCAL:11 , 0.80
-            EXP:(TFLAG:900):10 += ABL:(TFLAG:900):11 * 2
+            EXP:(TFLAG:900):10 += ABL:(TFLAG:900):욕망 * 2
         ENDIF
         ;嫉妬＆狂気だと体力・気力の回復が遅れる
         IF TALENT:(TFLAG:900):157 && TALENT:(TFLAG:900):158 && LOCAL:100 > 0
@@ -316,12 +316,12 @@ FOR TFLAG:900, 0, CHARANUM
 
     ;料理技能による回復量の違い(EASYの場合は修整なし)
     ;主人と(もしおれば)助手のうち高い方の料理技能が基準(ただし助手が反発持ちの場合は修整には考慮しない), 当然酔いつぶれていては….
-    LOCAL:13 = (BASE:MASTER:8 > MAXBASE:MASTER:8) ? 0 # ABL:MASTER:70
-    SIF ASSI >= 0 && ABL:ASSI:요리기능 > ABL:MASTER:70 && MARK:ASSI:9 == 0 && EQUIP:ASSI:14 == 0 && BASE:ASSI:8 <= MAXBASE:ASSI:8 && CFLAG:ASSI:4 == 0
+    LOCAL:13 = (BASE:MASTER:8 > MAXBASE:MASTER:8) ? 0 # ABL:MASTER:요리기능
+    SIF ASSI >= 0 && ABL:ASSI:요리기능 > ABL:MASTER:요리기능 && MARK:ASSI:9 == 0 && EQUIP:ASSI:14 == 0 && BASE:ASSI:8 <= MAXBASE:ASSI:8 && CFLAG:ASSI:4 == 0
         LOCAL:13 = ABL:ASSI:요리기능
     ;NORMALの場合当該奴隷(ただしその場におり, 睡眠薬の影響がなく, 酔いつぶれていないこと)の料理技能が高ければそっちが基準になる
-    SIF FLAG:3 == 2 && TFLAG:900 != MASTER && TFLAG:900 != ASSI && ABL:(TFLAG:900):70 > LOCAL:13 && CFLAG:(TFLAG:900):4 == 0 && EQUIP:(TFLAG:900):14 == 0 && BASE:(TFLAG:900):8 <= MAXBASE:(TFLAG:900):8
-            LOCAL:13 = ABL:(TFLAG:900):70
+    SIF FLAG:3 == 2 && TFLAG:900 != MASTER && TFLAG:900 != ASSI && ABL:(TFLAG:900):요리기능 > LOCAL:13 && CFLAG:(TFLAG:900):4 == 0 && EQUIP:(TFLAG:900):14 == 0 && BASE:(TFLAG:900):8 <= MAXBASE:(TFLAG:900):8
+            LOCAL:13 = ABL:(TFLAG:900):요리기능
     ;料理技能別の修整(EASYおよび技能Lv4以上およびコンフィグで弁当ライブOFFなら修整なし)
     IF FLAG:3 > 1 && FLAG:12 & 16
         IF LOCAL:13 == 3
@@ -696,10 +696,10 @@ IF FLAG:71 & 64
                 JUEL:(TFLAG:900):100 -= 10 + (10 * RAND:5)
         ELSE
             ;冬でなければ, 自制心と快感の否定を持たず, 精液中毒Lv持ちならば欲情の珠UP(射精と噴水を混同している)
-            SIF TALENT:(TFLAG:900):20 == 0 && TALENT:(TFLAG:900):71 == 0 && ABL:(TFLAG:900):31
+            SIF TALENT:(TFLAG:900):20 == 0 && TALENT:(TFLAG:900):71 == 0 && ABL:(TFLAG:900):정액중독
                 CALL COMMON_UP_JUEL, TFLAG:900, 13, 10 + (10 * RAND:5) , 2
             ;冬でなければ, 自制心と恥薄いを持たず, おもらし癖か排泄中毒Lv持ちならば恥情の珠UP(放尿と噴水を混同している)
-            SIF TALENT:(TFLAG:900):20 == 0 && TALENT:(TFLAG:900):36 == 0 && (TALENT:(TFLAG:900):45 || ABL:(TFLAG:900):36)
+            SIF TALENT:(TFLAG:900):20 == 0 && TALENT:(TFLAG:900):36 == 0 && (TALENT:(TFLAG:900):45 || ABL:(TFLAG:900):배설중독)
                 CALL COMMON_UP_JUEL, TFLAG:900, 15, 10 + (10 * RAND:5) , 2
         ENDIF
     ENDIF
