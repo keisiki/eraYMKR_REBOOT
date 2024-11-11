@@ -14,22 +14,22 @@ TFLAG:202 = 0
 LOCAL = 1
 
 ;前提条件：[연모]と[복종]が無いかつ反発刻印がLv2以上または従順Lv5未満
-IF TALENT:MASTER:44 == 0 && TALENT:MASTER:206 == 0 && TALENT:150 == 0 && TALENT:160 == 0 && (MARK:9 >= 2 || ABL:순종 < 5)
+IF TALENT:MASTER:44 == 0 && TALENT:MASTER:206 == 0 && TALENT:150 == 0 && TALENT:160 == 0 && (MARK:반발각인 >= 2 || ABL:순종 < 5)
     ;対象が[弱味]を持っていないかつメディか[調合知識]か[禁断の知識]持ちの場合、確率は1/2
     IF (TALENT:조합지식 || TALENT:금단의지식 || NO:TARGET == 33) && TALENT:약점 == 0
         LOCAL = RAND:2
         ;反発刻印Lv3だと強制的に毒入り弁当に
-        SIF MARK:9 >= 3
+        SIF MARK:반발각인 >= 3
             LOCAL = 0
     ;対象が[弱味]を持っていないかつ[反抗的]か[抵抗]持ちの場合、確率は1/3
     ELSEIF (TALENT:반항적 || TALENT:34) && TALENT:약점 == 0
         LOCAL = RAND:3
         ;反発刻印Lv3だと2/3の確率で毒入り弁当に
-        SIF MARK:9 >= 3 && LOCAL == 2
+        SIF MARK:반발각인 >= 3 && LOCAL == 2
             LOCAL = 0
     ;対象が[弱味]か恐怖刻印のどちらかを持っているかつ
     ;[調合知識]、[禁断の知識]、[嫉妬]、[狂気]いずれも持っていない場合、確率は1/6
-    ELSEIF TALENT:조합지식 == 0 && TALENT:금단의지식 == 0 && TALENT:157 == 0 && TALENT:158 == 0 && (TALENT:약점 || MARK:8)
+    ELSEIF TALENT:조합지식 == 0 && TALENT:금단의지식 == 0 && TALENT:157 == 0 && TALENT:158 == 0 && (TALENT:약점 || MARK:공포각인)
         LOCAL = RAND:6
     ;それ以外の場合、確率は1/4
     ELSE
@@ -174,14 +174,14 @@ SIF TALENT:MASTER:55
     TIMES LOCAL:2 , 2.00
 
 ;굴복각인
-SIF MARK:2
-    LOCAL:2 /= MARK:2
+SIF MARK:굴복각인
+    LOCAL:2 /= MARK:굴복각인
 ;恐怖刻印
-SIF MARK:8
-    LOCAL:2 /= MARK:8
+SIF MARK:공포각인
+    LOCAL:2 /= MARK:공포각인
 ;反発刻印
-SIF MARK:9
-    LOCAL:2 *= MARK:9
+SIF MARK:반발각인
+    LOCAL:2 *= MARK:반발각인
 ;奉仕精神
 SIF ABL:봉사정신
     LOCAL:2 -= ABL:봉사정신
@@ -298,7 +298,7 @@ IF TALENT:MASTER:55 == 0 && RAND:(LOCAL:2) > 2
     ENDIF
 
     ;主人の死亡チェック(EASYでないとき主人が調合知識を持たず、毒を盛った奴隷が[弱味]持ちなおかつ恐怖と反発持ちで一定の確率で主人死亡)
-    SIF FLAG:3 != 1 && TALENT:MASTER:55 == 0 && TALENT:약점 && MARK:8 && MARK:9 && RAND:20 == 0
+    SIF FLAG:3 != 1 && TALENT:MASTER:55 == 0 && TALENT:약점 && MARK:공포각인 && MARK:반발각인 && RAND:20 == 0
         CALL BADEND_8
 ELSE
     PRINTW      ・
@@ -553,7 +553,7 @@ CALL COMMON_UP_EXP, TARGET, 70, LOCAL:3, 1
 CFLAG:65 = LIMIT(CFLAG:65, 0, 999999)
 
 IF BASE:MASTER:0 <= 0
-    IF TALENT:주정 || TALENT:봉래인 || MARK:10 || FLAG:5 & 1 || ((TALENT:81 || TALENT:177 || ABL:새드끼 > 3) && RAND:2 == 0)
+    IF TALENT:주정 || TALENT:봉래인 || MARK:불사각인 || FLAG:5 & 1 || ((TALENT:81 || TALENT:177 || ABL:새드끼 > 3) && RAND:2 == 0)
         CALL BADEND_7
     ELSE
         CALL BADEND_6

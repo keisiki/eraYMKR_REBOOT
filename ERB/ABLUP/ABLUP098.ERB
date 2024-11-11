@@ -4,13 +4,13 @@
 ;未完成……というより未調整
 @ABLUP98
 DRAWLINE
-IF MARK:8 <= 0
+IF MARK:공포각인 <= 0
     PRINTW 공포각인이 없습니다.
     RETURN 0
 ENDIF
 
 ;恐怖刻印Lvと同じLvの快楽刻印と恐怖刻印Lv+2Lvの従順が必要
-PRINTFORML %MARKNAME:1% {MARK:8}LV 이상(현재 {MARK:1}), 그리고 %ABLNAME:10% {COST98(2)}LV 이상
+PRINTFORML %MARKNAME:1% {MARK:공포각인}LV 이상(현재 {MARK:쾌락각인}), 그리고 %ABLNAME:10% {COST98(2)}LV 이상
 
 PRINTFORM [0] - %PALAMNAME:12%의 구슬×{COST98(0)}\@(COST98(1) > 0) ? , %PALAMNAME:13%의 구슬×{COST98(1)} # \@……
 CALL SHOW_ISABLUP_COMMON, CAN98(0)
@@ -31,8 +31,8 @@ ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-MARK:8 -= 1
-PRINTFORMW %MARKNAME:8%의 레벨이 %조사처리(TOSTR(MARK:8),"가")% 되었습니다.
+MARK:공포각인 -= 1
+PRINTFORMW %MARKNAME:8%의 레벨이 %조사처리(TOSTR(MARK:공포각인),"가")% 되었습니다.
 
 @AUTO_ABLUP98
 #LOCALSIZE 1
@@ -44,7 +44,7 @@ RETURN 0
 ;レベルアップに必要な珠計算、レベルアップ予告処理
 ;--------------------------------------------------
 @ISABLUP98
-SIF MARK:8 <= 0
+SIF MARK:공포각인 <= 0
     RETURN 0
 
 CALLF CALC_COST98, "CALC"
@@ -63,13 +63,13 @@ SIF ARGS == "GET"
 ;必要な条件の算出
 VARSET LOCAL, 0
 
-IF MARK:8 == 1
+IF MARK:공포각인 == 1
     LOCAL:0 = 5000
     LOCAL:1 = 1000
-ELSEIF MARK:8 == 2
+ELSEIF MARK:공포각인 == 2
     LOCAL:0 = 10000
     LOCAL:1 = 2000
-ELSEIF MARK:8 == 3
+ELSEIF MARK:공포각인 == 3
     LOCAL:0 = 50000
     LOCAL:1 = 5000
 ENDIF
@@ -106,7 +106,7 @@ IF TALENT:150 || TALENT:160
 ENDIF
 
 ;恐怖刻印Lv+2Lvの従順が必要
-LOCAL:2 = MARK:8 + 2
+LOCAL:2 = MARK:공포각인 + 2
 
 ;難易度HARD이상の場合、必要な恭順의 구슬は減るが、欲情의 구슬も必要になってくる
 IF FLAG:3 > 2
@@ -127,7 +127,7 @@ SIF ARGS == "GET"
     RETURNF LOCAL:ARG
 VARSET LOCAL, 0
 ;恐怖刻印Lvと同じLvの快楽刻印が必要
-SIF MARK:8 > MARK:1
+SIF MARK:공포각인 > MARK:쾌락각인
     LOCAL:0 |= 8
 
 SIF COST98(2) > ABL:순종
