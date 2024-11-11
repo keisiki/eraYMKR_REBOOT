@@ -317,7 +317,7 @@ FOR TFLAG:900, 0, CHARANUM
     ;料理技能による回復量の違い(EASYの場合は修整なし)
     ;主人と(もしおれば)助手のうち高い方の料理技能が基準(ただし助手が反発持ちの場合は修整には考慮しない), 当然酔いつぶれていては….
     LOCAL:13 = (BASE:MASTER:8 > MAXBASE:MASTER:8) ? 0 # ABL:MASTER:요리기능
-    SIF ASSI >= 0 && ABL:ASSI:요리기능 > ABL:MASTER:요리기능 && MARK:ASSI:9 == 0 && EQUIP:ASSI:14 == 0 && BASE:ASSI:8 <= MAXBASE:ASSI:8 && CFLAG:ASSI:4 == 0
+    SIF ASSI >= 0 && ABL:ASSI:요리기능 > ABL:MASTER:요리기능 && MARK:ASSI:반발각인 == 0 && EQUIP:ASSI:14 == 0 && BASE:ASSI:8 <= MAXBASE:ASSI:8 && CFLAG:ASSI:4 == 0
         LOCAL:13 = ABL:ASSI:요리기능
     ;NORMALの場合当該奴隷(ただしその場におり, 睡眠薬の影響がなく, 酔いつぶれていないこと)の料理技能が高ければそっちが基準になる
     SIF FLAG:3 == 2 && TFLAG:900 != MASTER && TFLAG:900 != ASSI && ABL:(TFLAG:900):요리기능 > LOCAL:13 && CFLAG:(TFLAG:900):4 == 0 && EQUIP:(TFLAG:900):14 == 0 && BASE:(TFLAG:900):8 <= MAXBASE:(TFLAG:900):8
@@ -435,7 +435,7 @@ IF ASSI >= 0 && BASE:ASSI:8 <= MAXBASE:ASSI:8 && CFLAG:ASSI:4 == 0 && EQUIP:ASSI
     ;習得（従順と技巧）, 恭順（従順と奉仕精神）, 否定（恐怖刻印と反発刻印の２倍）の珠獲得
     CALL COMMON_UP_JUEL, ASSI, 11, ((ABL:ASSI:순종 + ABL:ASSI:기교)*5), 0
     CALL COMMON_UP_JUEL, ASSI, 12, ((ABL:ASSI:순종 + ABL:ASSI:봉사정신)*5), 0
-    CALL COMMON_UP_JUEL, ASSI, 100, ((MARK:ASSI:8 + (MARK:ASSI:9*2))*10), 0
+    CALL COMMON_UP_JUEL, ASSI, 100, ((MARK:ASSI:공포각인 + (MARK:ASSI:반발각인*2))*10), 0
 ENDIF
 
 SIF TARGET >= 0 && FLAG:0 == 0
@@ -543,20 +543,20 @@ SIF FLAG:0 || TARGET != ARG || ASSI != ARG
     TIMES LOCAL , 1.50
 
 ;反発刻印
-IF MARK:ARG:9 >= 3
+IF MARK:ARG:반발각인 >= 3
     TIMES LOCAL , 0.25
-ELSEIF MARK:ARG:9 == 2
+ELSEIF MARK:ARG:반발각인 == 2
     TIMES LOCAL , 0.50
-ELSEIF MARK:ARG:9 == 1
+ELSEIF MARK:ARG:반발각인 == 1
     TIMES LOCAL , 0.75
 ENDIF
 
 ;恐怖刻印
-IF MARK:ARG:8 >= 3
+IF MARK:ARG:공포각인 >= 3
     TIMES LOCAL , 0.25
-ELSEIF MARK:ARG:8 == 2
+ELSEIF MARK:ARG:공포각인 == 2
     TIMES LOCAL , 0.50
-ELSEIF MARK:ARG:8 == 1
+ELSEIF MARK:ARG:공포각인 == 1
     TIMES LOCAL , 0.75
 ENDIF
 
@@ -651,7 +651,7 @@ IF FLAG:71 & 4
     ;気丈と感情乏しいと嫉妬と狂気と精神崩壊をもたなくて…
     IF TALENT:(TFLAG:900):12 == 0 && TALENT:(TFLAG:900):22 == 0 && TALENT:(TFLAG:900):157 == 0 && TALENT:(TFLAG:900):158 == 0 && TALENT:(TFLAG:900):167 == 0
         ;臆病か悲観的か動物耳（本来動物を追い払うためのもの）か恐怖刻印持ちならば恐怖の珠UP
-        SIF TALENT:(TFLAG:900):10 || TALENT:(TFLAG:900):26 || TALENT:(TFLAG:900):116 || MARK:(TFLAG:900):8
+        SIF TALENT:(TFLAG:900):10 || TALENT:(TFLAG:900):26 || TALENT:(TFLAG:900):116 || MARK:(TFLAG:900):공포각인
             CALL COMMON_UP_JUEL, TFLAG:900, 17, 10 + (10 * RAND:5) , 2 
     ENDIF
 ENDIF
@@ -681,7 +681,7 @@ IF FLAG:71 & 32
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:71 & 2
         ;恐怖刻印と反発刻印がなく精神崩壊でない場合好感度UP
-        SIF MARK:(TFLAG:900):8 == 0 && MARK:(TFLAG:900):9 == 0 && TALENT:(TFLAG:900):167 == 0
+        SIF MARK:(TFLAG:900):공포각인 == 0 && MARK:(TFLAG:900):반발각인 == 0 && TALENT:(TFLAG:900):167 == 0
             CFLAG:(TFLAG:900):2 += RAND:5
     ENDIF
 ENDIF
@@ -709,7 +709,7 @@ IF FLAG:71 & 128
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:71 & 2
         ;恐怖刻印がなく, 幼児か幼稚か動物耳である場合先導の珠UP(昼間の場合は吸血鬼は日傘ないとNG)
-        SIF MARK:(TFLAG:900):8 <= 0 && (TALENT:(TFLAG:900):130 || TALENT:(TFLAG:900):131 || TALENT:(TFLAG:900):116) && (TALENT:(TFLAG:900):205 == 0 || TIME == 1 || NOITEM == 1 || ITEM:48)
+        SIF MARK:(TFLAG:900):공포각인 <= 0 && (TALENT:(TFLAG:900):130 || TALENT:(TFLAG:900):131 || TALENT:(TFLAG:900):116) && (TALENT:(TFLAG:900):205 == 0 || TIME == 1 || NOITEM == 1 || ITEM:48)
             CALL COMMON_UP_JUEL, TFLAG:900, 32, 10 + (10 * RAND:5) , 2
     ENDIF
 ENDIF
@@ -718,7 +718,7 @@ IF FLAG:71 & 256
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:71 & 2
         ;恐怖刻印がなく, 精神崩壊していない妖精の場合は様々な珠が変動し, 好感度も増加する
-        IF MARK:(TFLAG:900):8 <= 0 && TALENT:(TFLAG:900):167 == 0 && TALENT:(TFLAG:900):200
+        IF MARK:(TFLAG:900):공포각인 <= 0 && TALENT:(TFLAG:900):167 == 0 && TALENT:(TFLAG:900):200
             ;習得の珠UP
             CALL COMMON_UP_JUEL, TFLAG:900, 11, 10 + (10 * RAND:5) , 2
             ;恭順の珠UP

@@ -771,7 +771,7 @@ ENDIF
 
 ;창녀, 구애 의존을 취득합니다.
 ;창녀의 조건：매춘 경험 100이상, 반발 각인 이루어, 굴복 각인 3 LV, 인기 40이상
-IF EXP:COUNT:매춘경험 >= 100 && MARK:COUNT:9 == 0 && MARK:COUNT:2 == 3 && TALENT:COUNT:260 == 0 && EXP:COUNT:창관인기 >= 40
+IF EXP:COUNT:매춘경험 >= 100 && MARK:COUNT:반발각인 == 0 && MARK:COUNT:굴복각인 == 3 && TALENT:COUNT:260 == 0 && EXP:COUNT:창관인기 >= 40
     PRINTFORMW %CALLNAME:COUNT%의 매춘시 상태가 이상하다….
     PRINTFORML %조사처리(CALLNAME:COUNT,"는")% 매춘에 대해 보람을 느끼기 시작한 모양이다…….
     PRINTFORMW %조사처리(NAME:COUNT,"는")% 【창녀】를 얻었다.
@@ -779,7 +779,7 @@ IF EXP:COUNT:매춘경험 >= 100 && MARK:COUNT:9 == 0 && MARK:COUNT:2 == 3 && TA
     CALL SELF_KOJO, COUNT, 1801
 ENDIF
 ;구애 의존의 조건：매춘 경험 300이상, 반발 각인 이루어, 연모미취득, 인기 60이상
-IF EXP:COUNT:매춘경험 >= 300 && MARK:COUNT:9 == 0 && TALENT:COUNT:150 == 0 && TALENT:COUNT:261 == 0 && EXP:COUNT:창관인기 >= 60
+IF EXP:COUNT:매춘경험 >= 300 && MARK:COUNT:반발각인 == 0 && TALENT:COUNT:150 == 0 && TALENT:COUNT:261 == 0 && EXP:COUNT:창관인기 >= 60
     PRINTFORMW %CALLNAME:COUNT%의 매춘시 상태가 이상하다….
     PRINTFORML %조사처리(CALLNAME:COUNT,"는")% 창녀로서 사랑받는 쾌감에 의존하고 있는 듯하다…….
     PRINTFORMW %조사처리(NAME:COUNT,"는")% 【구애의존】을 얻었다.
@@ -1099,7 +1099,7 @@ TIMES LOCAL@SPRING_DUMMY:2 , 1.73
 IF JUEL:COUNT:100 > LOCAL@SPRING_DUMMY:2
     PRINTL 반발각인 LV3을 취득.
     PRINTFORML %조사처리(CALLNAME:COUNT,"는")% 이 이상 매춘을 계속할 수 없습니다.
-    MARK:COUNT:9 = 3
+    MARK:COUNT:반발각인 = 3
     CFLAG:COUNT:1501 = 0
     CFLAG:COUNT:4 -= 1024
     FLAG:3001 -= 1
@@ -1108,7 +1108,7 @@ IF JUEL:COUNT:100 > LOCAL@SPRING_DUMMY:2
 ELSEIF JUEL:COUNT:100 > LOCAL@SPRING_DUMMY:1
     PRINTL 반발각인 LV2를 취득.
     PRINTFORML %조사처리(CALLNAME:COUNT,"는")% 이 이상 매춘을 계속할 수 없습니다.
-    MARK:COUNT:9 = 2
+    MARK:COUNT:반발각인 = 2
     CFLAG:COUNT:1501 = 0
     CFLAG:COUNT:4 -= 1024
     FLAG:3001 -= 1
@@ -1120,15 +1120,15 @@ ELSEIF JUEL:COUNT:100 > LOCAL@SPRING_DUMMY:3
     CFLAG:COUNT:1501 = 0
     CFLAG:COUNT:4 -= 1024
     FLAG:3001 -= 1
-    MARK:COUNT:9 = 1
+    MARK:COUNT:반발각인 = 1
     TFLAG:200 = 1800
     CALL SELF_KOJO, COUNT
 ENDIF
 
 @SPRING_DOWNCHECK
 LOCAL = T:99
-IF EXP:LOCAL:매춘경험 && FLAG:3000 & 2048 && MARK:LOCAL:9
-    PRINTFORM 반발:{MARK:LOCAL:9}.
+IF EXP:LOCAL:매춘경험 && FLAG:3000 & 2048 && MARK:LOCAL:반발각인
+    PRINTFORM 반발:{MARK:LOCAL:반발각인}.
 ELSE
     LOCAL@SPRING_DUMMY:3 = ABL:LOCAL:순종
     SIF LOCAL@SPRING_DUMMY:3 > 5 && (FLAG:3000 & 8388608) == 0
@@ -1201,7 +1201,7 @@ IF BASE:COUNT:0 <= 0 && FLAG:3000 & 16777216
     PRINTFORMW 치료비로 {LOCAL@SPRING_DUMMY:0}원을 잃었습니다.
     MONEY -= LOCAL@SPRING_DUMMY:0
     BASE:COUNT:0 = 1
-    MARK:COUNT:9 = 3
+    MARK:COUNT:반발각인 = 3
     SIF ABL:COUNT:순종
         ABL:COUNT:순종 -= 1
     IF CFLAG:COUNT:1501
@@ -1330,10 +1330,10 @@ REPEAT CHARANUM
         SIF CFLAG:COUNT:1502 >= 100000
             CFLAG:COUNT:1502 -= 100000
     ELSE
-        IF (MARK:COUNT:9 || BASE:COUNT:0 < 500) && TALENT:COUNT:262
+        IF (MARK:COUNT:반발각인 || BASE:COUNT:0 < 500) && TALENT:COUNT:262
             ;중독증상입니다. 반감을 얻고 있다, 또는 체력 500 미만 상태에서는 굉장할 기세로 포인트가 쌓입니다
             CFLAG:COUNT:1502 += 100000
-        ELSEIF MARK:COUNT:9 == 0 && BASE:COUNT:0 >= 500
+        ELSEIF MARK:COUNT:반발각인 == 0 && BASE:COUNT:0 >= 500
             CFLAG:COUNT:1502 -= 2
             ;중독증상의 개선
             SIF CFLAG:COUNT:1502 >= 100000
@@ -1383,7 +1383,7 @@ REPEAT CHARANUM
             JUEL:COUNT:100 += 10000
             CFLAG:COUNT:1502 -= 600000
 ;        ENDIF
-    ELSEIF CFLAG:COUNT:1501 == 0 && TALENT:COUNT:262 == 1 && ITEM:90 > FLAG:3001 && MARK:COUNT:9 == 0 && CFLAG:COUNT:4 == 0 && CFLAG:COUNT:1502 > 160
+    ELSEIF CFLAG:COUNT:1501 == 0 && TALENT:COUNT:262 == 1 && ITEM:90 > FLAG:3001 && MARK:COUNT:반발각인 == 0 && CFLAG:COUNT:4 == 0 && CFLAG:COUNT:1502 > 160
         PRINTFORML %조사처리(CALLNAME:COUNT,"는")% 여러 사람들에게 사랑받는 쾌감을 잊지 못하는 모양이다다.
         PRINTFORM 문득 정신을 차리니 %조사처리(CALLNAME:COUNT,"는")% 
         SIF  BASE:COUNT:0 < 500
@@ -1397,7 +1397,7 @@ REPEAT CHARANUM
         CFLAG:COUNT:1502 += 3
         FLAG:3001 += 1
         CFLAG:COUNT:4 |= 1024
-    ELSEIF CFLAG:COUNT:1501 == 0 && TALENT:COUNT:262 == 1 && ITEM:90 > FLAG:3001 && MARK:COUNT:9 == 0 && BASE:COUNT:0 >= 500 && CFLAG:COUNT:4 == 0
+    ELSEIF CFLAG:COUNT:1501 == 0 && TALENT:COUNT:262 == 1 && ITEM:90 > FLAG:3001 && MARK:COUNT:반발각인 == 0 && BASE:COUNT:0 >= 500 && CFLAG:COUNT:4 == 0
         PRINTFORML %조사처리(CALLNAME:COUNT,"는")% 여러 사람들에게 사랑받는 쾌감을 잊지 못하는 모양이다.
         PRINTFORMW 문득 정신을 차리니 %조사처리(CALLNAME:COUNT,"는")% 멋대로 창관으로 발걸음을 옮기고 있었다…….
         SIF TARGET == COUNT
