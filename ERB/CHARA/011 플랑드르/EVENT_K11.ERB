@@ -126,10 +126,10 @@ IF CFLAG:5220 == 0
         ;CFLAG801を사용
         IF RESULT == 0
             PRINTFORML ―플랑쨩에게 전부 가르쳐줘버릴게 모드―
-            SIF EXP:30 == 50
-                EXP:30 = 0
-            SIF EXP:10 == 5
-                EXP:10 = 0
+            SIF EXP:고통쾌락경험 == 50
+                EXP:고통쾌락경험 = 0
+            SIF EXP:자위경험 == 5
+                EXP:자위경험 = 0
             SIF ABL:욕망 == 1
                 ABL:욕망 = 0
             TALENT:호기심 = 0
@@ -142,10 +142,10 @@ IF CFLAG:5220 == 0
         ELSEIF RESULT == 2
             PRINTFORML ―플랑쨩은 정말로 엉큼한 애구나 우  후      후
             ;495回……に했다ら, 一回で자위중독MAXにできたから自粛
-            SIF EXP:10 == 5
-                EXP:10 = 80
-            SIF EXP:1 == 0
-                EXP:1 = 1
+            SIF EXP:자위경험 == 5
+                EXP:자위경험 = 80
+            SIF EXP:A경험 == 0
+                EXP:A경험 = 1
             TALENT:60 = 1
         ELSE
             GOTO INPUT_LOOP_2
@@ -166,9 +166,9 @@ IF CFLAG:5220 == 0
                 PRINTFORML ―처녀막이 재생하고 V경험이 0으로 됩니다.―
                 TALENT:처녀 = 1
                 ABL:V감각 = 0
-                EXP:42 = 0
-                EXP:32 = 0
-                EXP:0 = 0
+                EXP:V조율경험 = 0
+                EXP:V확장경험 = 0
+                EXP:V경험 = 0
             ELSEIF RESULT == 1
                 PRINTFORML ―V 관련을 그대로 계승합니다.―
             ELSE
@@ -566,9 +566,9 @@ ELSEIF CFLAG:5837 == 1 || CFLAG:5838 == 1 || CFLAG:5839 == 1
         PALAM:13 = 8000
         PALAM:1 = 6000
         PALAM:2 = 7000
-        EXP:10 += 2
-        EXP:0 += 2
-        EXP:1 += 2
+        EXP:자위경험 += 2
+        EXP:V경험 += 2
+        EXP:A경험 += 2
         SIF ITEM:3 == 0
             ITEM:3 = 1
         SIF ITEM:9 == 0
@@ -594,8 +594,8 @@ ELSEIF CFLAG:5837 == 1 || CFLAG:5838 == 1 || CFLAG:5839 == 1
         PALAM:15 = 5000
         PALAM:13 = 6000
         PALAM:2 = 5000
-        EXP:10 += 1
-        EXP:1 += 1
+        EXP:자위경험 += 1
+        EXP:A경험 += 1
         SIF ITEM:9 == 0
             ITEM:9 = 1
         TEQUIP:25 = 1
@@ -619,8 +619,8 @@ ELSEIF CFLAG:5837 == 1 || CFLAG:5838 == 1 || CFLAG:5839 == 1
         PALAM:15 = 4000
         PALAM:13 = 5000
         PALAM:1 = 4000
-        EXP:10 += 1
-        EXP:0 += 1
+        EXP:자위경험 += 1
+        EXP:V경험 += 1
         SIF ITEM:3 == 0
             ITEM:3 = 1
         TEQUIP:20 = 1
@@ -1766,7 +1766,7 @@ ELSEIF EXP:MASTER:흡혈경험 >= 74 && TALENT:MASTER:205== 0 && CFLAG:5211 == 1
     PRINTFORMW 작은 지체를 꼭 껴안아, 혀를 기게 해간다
     PRINTFORMW 「%K11CO()%… 또 엣찌하는 거야? 후아! 응읏, 츄…」
     PRINTFORMW 플랑에게 격렬히 애무를 계속하지만, 전혀 수습되지 않는다
-    IF EXP:0 == 0
+    IF EXP:V경험 == 0
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 플랑의 다리를 움켜 쥐어 정말 좋아하는 애널에 삽입하고 격렬하게 움직임을 개시했다
     ELSE
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 플랑의 다리를 움켜 쥐어 비소에 삽입하고, 힘차게 움직임을 개시했다
@@ -1790,13 +1790,13 @@ ELSEIF EXP:MASTER:흡혈경험 >= 74 && TALENT:MASTER:205== 0 && CFLAG:5211 == 1
     WAIT
     DRAWLINE
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% ［흡혈귀］가 됐다.
-    IF EXP:0
-        EXP:0 += 3
+    IF EXP:V경험
+        EXP:V경험 += 3
         TALENT:처녀 = 0
     ELSE
-        EXP:1 += 3
+        EXP:A경험 += 3
     ENDIF
-    EXP:54 += 3
+    EXP:흡혈경험 += 3
     TALENT:MASTER:205= 1
 ;흡혈 이벤트(언니) 조수조교で레밀리아に吸血の仕方を教えてもらっていて, 호감도1500이상
 ELSEIF CFLAG:5815 == 1 && CFLAG:5831 == 1 && TALENT:150 == 1 && CFLAG:2 >= 1500 && CFLAG:5834 == 0
@@ -5061,7 +5061,7 @@ ENDIF
 ;개시시
 IF SELECTCOM == 224 && TEQUIP:40
     ;주지육림. 前
-    IF TFLAG:151 == 4 && EXP:0 > 0 && TALENT:170 == 1
+    IF TFLAG:151 == 4 && EXP:V경험 > 0 && TALENT:170 == 1
         PRINTFORMW 「하앗, 하앗! %K11CL()% 좀 더 꽉 조여줘엇!」
         PRINTFORMW 「플랑이 움직이지 못하게, 꼭, 해서, 꼬오옥 해」
         PRINTFORML 플랑이 숨을 난폭하게 하여 %조사처리(CALLNAME:PLAYER,"를")% 급하게 세운다
@@ -8661,7 +8661,7 @@ ENDIF
 ;女体盛り CFLAG164
 ;-------------------------------------------------
 IF SELECTCOM == 107 && TEQUIP:60
-    IF TFLAG:151 == 4 && EXP:0 > 0 && TALENT:170 == 1
+    IF TFLAG:151 == 4 && EXP:V경험 > 0 && TALENT:170 == 1
         PRINTFORMW 「읏하아……모두가 플랑을 보고 있어어…」
         PRINTFORMW 「빨릿…빨리, 참을 수 없어어…모두가 플랑을 먹어줘♪」
         PRINTFORMW 어린 균열은 이미 밀액을 떨어트려, 욕망에 휩싸여 범해지는 순간을 애타게 기다리고 있다
@@ -9422,12 +9422,12 @@ ENDIF
 ;-------------------------------------------------
 ;봉사１００ CFLAG805
 ;-----------------------------------------------
-IF EXP:20 > 100 && CFLAG:5805 == 0
+IF EXP:봉사쾌락경험 > 100 && CFLAG:5805 == 0
     PRINTFORMW 플랑은 봉사하는 즐거움을 알기 시작한 것인지 기뻐하면서 행위를 계속하고 있다
     PRINTFORMW 「엣찌라는 건, 혼자서가 아니라 두 명이서 기분 좋게 되는 거구나아…」
     PRINTFORMW 「우후후. 있지이…좀 더 잔뜩 엣찌해서, 함께 기분 좋게 되잣♪」
     CFLAG:5805 = 1
-ELSEIF EXP:20 > 200 && CFLAG:5805 == 1
+ELSEIF EXP:봉사쾌락경험 > 200 && CFLAG:5805 == 1
     PRINTFORMW 「있지,  기분 좋은거야?」
     PRINTFORMW 「후후……플랑도 기분 좋아…♪」
     PRINTFORMW 타인에게 봉사하는 쾌락을 기억해, 플랑의 행위 중의 눈빛이 변하였다
@@ -11521,7 +11521,7 @@ IF TFLAG:200 == 1
     ;기승위 
     ELSEIF SELECTCOM == 24
         ;처녀
-        IF EXP:0 == 0
+        IF EXP:V경험 == 0
         ;첫회
             IF (CFLAG:5266 & 8192) == 0
                 PRINTFORML 「위에 타는 거야?」
@@ -12664,14 +12664,14 @@ IF TFLAG:200 == 151
                 PRINTFORMW 「하앙…♪ 두 개나 바이브 넣는다니이…너무 엣찌 하다구웃♪」
                 PRINTFORMW 「싫엇! 보지도 응가 구멍도, 기분 좋앗! 자위 멈추지 않아아아!♪」
                 PRINTFORML ――플랑은 그대로 {LOCAL}회 두 구멍으로 바이브 자위를 한 것 같다
-                EXP:0 += LOCAL
+                EXP:V경험 += LOCAL
                 PRINTFORML %EXPNAME:0%＋{LOCAL}
                 PRINTFORML %PALAMNAME:1%의 구슬＋{LOCAL:1*500}
                 JUEL:1 += LOCAL:1*500
                 IF LOCAL:2 >= LOCAL:3
                     PRINTFORML %EXPNAME:1%＋{LOCAL}
                     PRINTFORML %PALAMNAME:2%의 구슬＋{LOCAL:1*500}
-                    EXP:1 += LOCAL
+                    EXP:A경험 += LOCAL
                     JUEL:2 += LOCAL:1*500
                 ENDIF
             ELSEIF CFLAG:5838 == 1
@@ -12681,14 +12681,14 @@ IF TFLAG:200 == 151
                 IF LOCAL:2 >= LOCAL:3
                     PRINTFORML %EXPNAME:1%＋{LOCAL}
                     PRINTFORML %PALAMNAME:2%의 구슬＋{LOCAL:1*500}
-                    EXP:1 += LOCAL
+                    EXP:A경험 += LOCAL
                     JUEL:2 += LOCAL:1*500
                 ENDIF
             ELSEIF CFLAG:5839 == 1
                 PRINTFORMW 「핫, 아아앗, 커다란 바이브가아 플랑의 안에에…♪」
                 PRINTFORMW 「응우읏, 보지 쿠츄쿠츗 소리 내버려어엇!♪」
                 PRINTFORML ――플랑은 그대로 {LOCAL}회 바이브 자위를 한 것 같다
-                EXP:0 += LOCAL
+                EXP:V경험 += LOCAL
                 PRINTFORML %EXPNAME:0%＋{LOCAL}
                 PRINTFORML %PALAMNAME:1%의 구슬＋{LOCAL:1*500}
             ENDIF
@@ -12706,13 +12706,13 @@ IF TFLAG:200 == 151
                     PRINTFORMW 「싫엇! 보지도 응가 구멍도, 기분 좋앗! 자위 멈추지 않아아아!♪」
                 ENDIF
                 PRINTFORML ――플랑은 그대로 {LOCAL}회 두 구멍으로 바이브 자위를 한 것 같다
-                EXP:0 += LOCAL
+                EXP:V경험 += LOCAL
                 PRINTFORML %EXPNAME:0%＋{LOCAL}
                 PRINTFORML %PALAMNAME:1%의 구슬＋{LOCAL:1*500}
                 JUEL:1 += LOCAL:1*500
                 PRINTFORML %EXPNAME:1%＋{LOCAL}
                 PRINTFORML %PALAMNAME:2%의 구슬＋{LOCAL:1*500}
-                EXP:1 += LOCAL
+                EXP:A경험 += LOCAL
                 JUEL:2 += LOCAL:1*500
             ELSEIF CFLAG:5838 == 1
                 IF RAND:2 == 0
@@ -12725,7 +12725,7 @@ IF TFLAG:200 == 151
                 PRINTFORML ――플랑은 그대로 {LOCAL}회 애널 바이브 자위를 한 것 같다
                 PRINTFORML %EXPNAME:1%＋{LOCAL}
                 PRINTFORML %PALAMNAME:2%의 구슬＋{LOCAL:1*500}
-                EXP:1 += LOCAL
+                EXP:A경험 += LOCAL
                 JUEL:2 += LOCAL:1*500
             ELSEIF CFLAG:5839 == 1
                 IF RAND:2 == 0
@@ -12737,7 +12737,7 @@ IF TFLAG:200 == 151
                     PRINTFORMW %CALLNAME:MASTER%의 물건이라고 상상하면서, 플랑은 바이브를 뺐다 넣었다 하고 있다
                 ENDIF
                 PRINTFORML ――플랑은 그대로 {LOCAL}회 바이브 자위를 한 것 같다
-                EXP:0 += LOCAL
+                EXP:V경험 += LOCAL
                 PRINTFORML %EXPNAME:0%＋{LOCAL}
                 PRINTFORML %PALAMNAME:1%의 구슬＋{LOCAL:1*500}
             ENDIF
@@ -12838,7 +12838,7 @@ IF TFLAG:200 == 152
                 PRINTFORMW 「하앙…♪ 두 개나 바이브 넣는다니이…너무 엣찌 하다구웃♪」
                 PRINTFORMW 「싫엇! 보지도 응가 구멍도, 기분 좋앗! 자위 멈추지 않아아아!♪」
                 PRINTFORML ――플랑은 그대로 {LOCAL}회 두 구멍으로 바이브 자위를 한 것 같다
-                EXP:0 += LOCAL
+                EXP:V경험 += LOCAL
                 PRINTFORML %EXPNAME:0%＋{LOCAL}
                 JUEL:1 += LOCAL:1*500
                 PRINTFORML %PALAMNAME:1%의 구슬＋{LOCAL:1*500}
@@ -12850,7 +12850,7 @@ IF TFLAG:200 == 152
                 PRINTFORMW 「핫, 아아앗, 커다란 바이브가아 플랑의 안에에…♪」
                 PRINTFORMW 「응우읏, 보지 쿠츄쿠츗 소리 내버려어엇!♪」
                 PRINTFORML ――플랑은 그대로 {LOCAL}회 바이브 자위를 한 것 같다
-                EXP:0 += LOCAL
+                EXP:V경험 += LOCAL
                 PRINTFORML %EXPNAME:0%＋{LOCAL}
                 PRINTFORML %PALAMNAME:1%의 구슬＋{LOCAL:1*500}
                 JUEL:1 += LOCAL:1*500
@@ -12869,7 +12869,7 @@ IF TFLAG:200 == 152
                     PRINTFORMW 「싫엇! 보지도 응가 구멍도, 기분 좋앗! 자위 멈추지 않아아아!♪」
                 ENDIF
                 PRINTFORML ――플랑은 그대로 {LOCAL}회 두 구멍으로 바이브 자위를 한 것 같다
-                EXP:0 += LOCAL
+                EXP:V경험 += LOCAL
                 PRINTFORML %EXPNAME:0%＋{LOCAL}
                 PRINTFORML %PALAMNAME:1%의 구슬＋{LOCAL:1*500}
                 JUEL:1 += LOCAL:1*500
@@ -12892,7 +12892,7 @@ IF TFLAG:200 == 152
                     PRINTFORMW %CALLNAME:MASTER%의 물건이라고 상상하면서, 플랑은 바이브를 뺐다 넣었다 하고 있다
                 ENDIF
                 PRINTFORML ――플랑은 그대로 {LOCAL}회 바이브 자위를 한 것 같다
-                EXP:0 += LOCAL
+                EXP:V경험 += LOCAL
                 JUEL:1 += LOCAL:1*500
                 PRINTFORML %EXPNAME:0%＋{LOCAL}
                 PRINTFORML %PALAMNAME:1%의 구슬＋{LOCAL:1*500}
@@ -13147,7 +13147,7 @@ IF TFLAG:200 == 150
         PRINTFORMW 생명을 빨리는 것처럼 %조사처리(CALLNAME:MASTER,"는")%  전부의 정액을 플랑에게 쏟아 부었다
         CALL K11_VAMPIRE
         PRINTL 정액 경험＋5
-        EXP:4 += 5
+        EXP:정액경험 += 5
     ;임신
     ELSEIF TALENT:140 && (CFLAG:5264 < 2 || FLAG:11 == 2)
         IF RAND:3 == 0
@@ -13204,7 +13204,7 @@ IF TFLAG:200 == 158
         PRINTFORMW 「맛있엇, %K11CO()%의 거 맛있, 엇……응, 후읏――후읏」
         CALL K11_VAMPIRE
         PRINTL 정액 경험＋8
-        EXP:4 += 8
+        EXP:정액경험 += 8
         CFLAG:5836 = 2
     ELSEIF TALENT:140 && (CFLAG:5265 < 3 || FLAG:11 == 2)
         IF RAND:2 == 0
@@ -13934,7 +13934,7 @@ IF TFLAG:200 == 406
                                     TALENT:LOCAL:0 = 0
                                     CFLAG:LOCAL:500 = 1
                                     CSTR:LOCAL:5 = %CALLNAME:MASTER%
-                                    EXP:0 += 1
+                                    EXP:V경험 += 1
                                     EXP:LOCAL:V경험 += 1
                                 ELSEIF RESULT == 1
                                     PRINTL 　
@@ -15733,7 +15733,7 @@ ELSE
             PRINTFORMW 　　　　―― Ending No.1011 (플랑드르 엔딩Ｃ ～495세 처녀상실의 날)
 
             TALENT:처녀 = 0
-            EXP:0 += 1
+            EXP:V경험 += 1
             CFLAG:500 = 1
             CSTR:5 = %CALLNAME:MASTER%
             CFLAG:5229 = 1
@@ -15785,7 +15785,7 @@ ELSE
         PRINTFORMW 그러나, 그런 일을 생각하는 것은, 정말로, 정말로 쓸데 없는 일이다――
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 플랑의 처녀의 조임에 취하면서 몇 번이나 자궁 내에 사정했다
         TALENT:처녀 = 0
-        EXP:0 += 1
+        EXP:V경험 += 1
         WAIT
         PRINTFORMW 　　　―― Ending No.1011 (플랑드르 엔딩Ｃ ～작은 성노예)
     ENDIF
@@ -16203,7 +16203,7 @@ RETURN 0
 @K11_VAMPIRE
 IF TALENT:MASTER:205== 1
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 답례로 플랑의 하얗고 가는 목덜미를 깨물었다
-    EXP:54 += 1
+    EXP:흡혈경험 += 1
     PRINTL 플랑드르 흡혈 경험＋1
 ENDIF
 PRINTFORML 체력+{MAXBASE:0 - BASE:0} 기력+{MAXBASE:1 - BASE:1}

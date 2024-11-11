@@ -1446,18 +1446,18 @@ ENDIF
 SIF ARG == 1 || CHECK_COM_MASTURBATION(SELECTCOM)
     TIMES LOCAL , 2.00
 
-;EXP:0를 본다
+;EXP:V경험를 본다
 ;処女はありえない
-IF EXP:0 < EXPLV:2
+IF EXP:V경험 < EXPLV:2
     TIMES LOCAL , 0.60
     LOCAL:1 = 150
-ELSEIF EXP:0 < EXPLV:3
+ELSEIF EXP:V경험 < EXPLV:3
     TIMES LOCAL , 1.00
     LOCAL:1 = 20
-ELSEIF EXP:0 < EXPLV:4
+ELSEIF EXP:V경험 < EXPLV:4
     TIMES LOCAL , 1.20
     LOCAL:1 = 0
-ELSEIF EXP:0 < EXPLV:5
+ELSEIF EXP:V경험 < EXPLV:5
     TIMES LOCAL , 1.40
     LOCAL:1 = 0
 ELSE
@@ -1750,20 +1750,20 @@ ENDIF
 SIF ARG == 1 || CHECK_COM_MASTURBATION(SELECTCOM)
     TIMES LOCAL , 2.00
 
-;EXP:1를 본다
-IF EXP:1 < EXPLV:1
+;EXP:A경험를 본다
+IF EXP:A경험 < EXPLV:1
     TIMES LOCAL , 0.50
     LOCAL:2 = 1000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES LOCAL , 1.00
     LOCAL:2 = 150
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES LOCAL , 1.10
     LOCAL:2 = 20
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES LOCAL , 1.20
     LOCAL:2 = 0
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES LOCAL , 1.40
     LOCAL:2 = 0
 ELSE
@@ -1836,7 +1836,7 @@ ELSEIF TALENT:104
 ENDIF
 
 ;処女で貞操観念
-SIF EXP:0 == 0 && TALENT:30
+SIF EXP:V경험 == 0 && TALENT:30
     LOCAL:1 /= 3
 
 SOURCE:2 += LOCAL
@@ -1990,7 +1990,7 @@ ELSE
     TIMES LOCAL , 2.00
 ENDIF
 
-;조수의 EXP:0orA경험을 본다
+;조수의 EXP:V경험orA경험을 본다
 IF LOCAL:4 < EXPLV:1
     TIMES LOCAL , 0.20
 ELSEIF LOCAL:4 < EXPLV:2
@@ -3577,7 +3577,7 @@ ELSEIF ARG:1 == 1 && LOCAL:2 == TARGET
 ELSEIF ARG:1 == 2
     PRINTL 　
     PRINTFORML 자위경험 ＋1
-    EXP:10 += 1
+    EXP:자위경험 += 1
     ;性感帯判定
     LOCAL = FAV_FEEL()
     ;Ｃの場合
@@ -3604,19 +3604,19 @@ ELSEIF ARG:1 == 2
 ELSEIF ARG:1 == 3
     PRINTL 　
     PRINTFORML 자위경험＋{ABL:자위중독}
-    EXP:10 += ABL:자위중독
+    EXP:자위경험 += ABL:자위중독
     PRINTFORML 절정경험＋{ABL:자위중독}
-    EXP:2 += ABL:자위중독
+    EXP:절정경험 += ABL:자위중독
     ;ペニスがある場合
     IF EXIST_PENIS(TARGET)
         PRINTFORML %EXPNAME:3%＋{ABL:자위중독}
         ;ふたなり初射精の処理
-        IF EXP:3 == 0 && TALENT:120 == 0
+        IF EXP:사정경험 == 0 && TALENT:120 == 0
             CFLAG:11 |= 1p2
-            EXP:50 += 1
+            EXP:이상경험 += 1
             PRINTL 이상경험 ＋1
         ENDIF
-        EXP:3 += ABL:자위중독
+        EXP:사정경험 += ABL:자위중독
         ;LUNATIC以上は射精するたびに体力が減少
         TRYCALL EXHAUST_EJAC, TARGET, ABL:자위중독
     ENDIF
@@ -3648,9 +3648,9 @@ ELSEIF ARG:1 == 3
 ELSEIF ARG:1 == 5
     PRINTL 　
     PRINTFORML 자위경험(%CALLNAME:TARGET%)＋1
-    EXP:10 += 1
+    EXP:자위경험 += 1
     PRINTFORML 절정경험(%CALLNAME:TARGET%)＋1
-    EXP:2 += 1
+    EXP:절정경험 += 1
     ;性感帯判定
     LOCAL = FAV_FEEL()
     ;Ｃの場合
@@ -3742,8 +3742,8 @@ ELSEIF ARG:1 == 5
 
     ;大量射精
     IF TFLAG:91 == 2
-        EXP:3 += 2
-        EXP:4 += 1
+        EXP:사정경험 += 2
+        EXP:정액경험 += 1
         PRINTFORML %CALLNAME:TARGET% 대량사정
         ;Ｐに精液汚れ
         STAIN:TARGET:2 |= 1p2
@@ -3754,7 +3754,7 @@ ELSEIF ARG:1 == 5
         PRINTL 　
     ;通常の射精
     ELSEIF TFLAG:91 == 1
-        EXP:3 += 1
+        EXP:사정경험 += 1
         PRINTFORML %CALLNAME:TARGET% 사정
         ;Ｐに精液汚れ
         STAIN:TARGET:2 |= 1p2
@@ -3766,9 +3766,9 @@ ELSEIF ARG:1 == 5
     ;LUNATIC以上は射精するたびに体力が減少
     TRYCALL EXHAUST_EJAC, ASSI, TFLAG:91
     ;ふたなり初射精の処理
-    IF EXP:3 == 0 && TALENT:120 == 0 && TFLAG:91 > 0
+    IF EXP:사정경험 == 0 && TALENT:120 == 0 && TFLAG:91 > 0
         CFLAG:11 |= 1p2
-        EXP:50 += 1
+        EXP:이상경험 += 1
         PRINTFORML 이상경험 (%CALLNAME:TARGET%)＋1
     ENDIF
     SIF TFLAG:91 > 0
@@ -3855,7 +3855,7 @@ ELSEIF SELECTCOM == 100
         CFLAG:ASSI:5215 = 1
 ENDIF
 ;処女喪失の記録
-IF TALENT:처녀 && EXP:0 == 1
+IF TALENT:처녀 && EXP:V경험 == 1
     ;정상위・후배위・기승위（ペニス使用）
     IF (SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 24) && EXIST_PENIS(ASSI)
         SIF TALENT:150

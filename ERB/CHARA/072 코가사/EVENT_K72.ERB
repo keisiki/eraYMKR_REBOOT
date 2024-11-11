@@ -294,18 +294,18 @@ IF CFLAG:5231 == 0
         PRINTFORMW ―소질, 경험, 능력을 변경합니다―
         ;素質：処女を削除、能力：V感覚、経験：V経験を増やします。
         TALENT:처녀 = 0
-        EXP:4 = 30
-        EXP:10 = 30
-        EXP:4 = 50
-        EXP:22 = 10
+        EXP:정액경험 = 30
+        EXP:자위경험 = 30
+        EXP:정액경험 = 50
+        EXP:펠라경험 = 10
     ELSEIF RESULT == 1
         PRINTFORMW ―통상 모드로 조교를 시작합니다―
         ;素質：処女を追加、能力：V感覚、経験：V経験をゼロに。
         TALENT:처녀 = 1
         ABL:V감각 = 0
-        EXP:10 = 0
-        EXP:4 = 0
-        EXP:22 = 0
+        EXP:자위경험 = 0
+        EXP:정액경험 = 0
+        EXP:펠라경험 = 0
     ELSE
         GOTO INPUT_LOOP_k721
     ENDIF
@@ -587,7 +587,7 @@ ELSEIF CFLAG:5222 & 1p2
 ENDIF
 
 ;조교중 이외의 이벤트로 첫사정을 끝마치고 있는 경우, 첫회 판정을 갱신(남자 이외)
-IF EXP:3 && TALENT:120 == 0
+IF EXP:사정경험 && TALENT:120 == 0
     ;파라미터 변화시의 첫사정 말
     SIF (CFLAG:5228 & 1p12) == 0
         CFLAG:5228 |= 1p12
@@ -674,15 +674,15 @@ IF SELECTCOM == 0 && CFLAG:5224 & 1p0
 ENDIF
 
 ;최초부터 처녀의 캐릭터는 CFLAG:5216&1을 세운다
-SIF EXP:0 == 0 && (CFLAG:5216 & 1p0) == 0
+SIF EXP:V경험 == 0 && (CFLAG:5216 & 1p0) == 0
     CFLAG:5216 |= 1p0
 
 ;절정 경험의 초기치를 보존한다
 SIF CFLAG:6000 == 0
-    CFLAG:5209 = EXP:2
+    CFLAG:5209 = EXP:절정경험
 
 ;어디선가 절정을 맞이하고 있었을 경우, 첫절정 말의 첫회 판정을 날린다(레어 케이스이지만)
-SIF EXP:2 > CFLAG:5209 && (CFLAG:5228 & 1p11) == 0
+SIF EXP:절정경험 > CFLAG:5209 && (CFLAG:5228 & 1p11) == 0
     CFLAG:5228 |= 1p11
 
 ;SIF FLAG:11 > 0
@@ -3075,7 +3075,7 @@ IF SELECTCOM == 500 && TEQUIP:90
     ;二回目以降
     ELSE
         ;恋慕+触手経験20以上（消費基本値が三分の一になる）
-        IF TALENT:150 == 1 && EXP:53 >= 20 && (CFLAG:5353 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && EXP:촉수경험 >= 20 && (CFLAG:5353 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「후아…… 촉수로 하는거…… 버릇되버렸어어……」
             CFLAG:5353 = 4
         ;恋慕
@@ -3092,7 +3092,7 @@ IF SELECTCOM == 500 && TEQUIP:90
 ;終了時
 ELSEIF SELECTCOM == 500 && TEQUIP:90 == 0
     ;恋慕+触手経験20以上（消費基本値が三分の一になる）
-    IF TALENT:150 == 1 && EXP:53 >= 20 && (CFLAG:5354 < 3 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && EXP:촉수경험 >= 20 && (CFLAG:5354 < 3 || FLAG:11 == 2)
         PRINTFORMW 「하아…… 하아……」
         PRINTFORMW 「벌써, 끝났어……?」
         CFLAG:5354 = 3
@@ -4257,7 +4257,7 @@ TRYCALL ASSIDATA_2
 ;DRAWLINE
 
 ;처녀 상실 커맨드 말을 부른다
-IF EXP:0 && TALENT:처녀 && TFLAG:1
+IF EXP:V경험 && TALENT:처녀 && TFLAG:1
 
     ;반발 각인의 취득 판정(사양 변경)
     ;TRYCALL MARK_PA
@@ -5343,7 +5343,7 @@ SIF FLAG:11 == (-3)
     FLAG:11 = 1
 
 ;여체 번화가 이벤트에 의한 처녀 상실 플래그의 갱신
-SIF EXP:0 && TALENT:처녀 && TFLAG:1 && TFLAG:200 == 9 && CFLAG:5216 & 1p0 && (CFLAG:5226 & 1) == 0
+SIF EXP:V경험 && TALENT:처녀 && TFLAG:1 && TFLAG:200 == 9 && CFLAG:5216 & 1p0 && (CFLAG:5226 & 1) == 0
     CFLAG:5216 |= 1p11
 
 ;커맨드 말을 날리는 이벤트의 경우는 재차 말을 퇴피
@@ -5839,7 +5839,7 @@ RETURN 0
 IF NO == 72 && CFLAG:5216 & 1p14 && CFLAG:5216 & 1p13
     CFLAG:5216 -= 1p13
 ;정액＆사정 경험이 0이면 정액 미경험 플래그를 세운다
-ELSEIF NO == 72 && EXP:4 == 0 && EXP:3 == 0 && (CFLAG:5216 & 1p13) == 0 && (CFLAG:5216 & 1p14) == 0
+ELSEIF NO == 72 && EXP:정액경험 == 0 && EXP:사정경험 == 0 && (CFLAG:5216 & 1p13) == 0 && (CFLAG:5216 & 1p14) == 0
     CFLAG:5216 |= 1p13
 ENDIF
 

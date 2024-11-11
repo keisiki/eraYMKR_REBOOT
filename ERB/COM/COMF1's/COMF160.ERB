@@ -12,11 +12,11 @@ SIF DITEMTYPE:999:160 > 0
 SIF FLAG:2 & 1
     RETURN 0
 ;조교 대상のV확장경험이 ない場合には, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && EXP:32 <= 1
+SIF FLAG:2 & 4 && EXP:V확장경험 <= 1
     RETURN 0
 ;V경험LVが1미만で, 조교자가 オトコではない場合
 ;이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && EXP:0 < EXPLV:1 && TALENT:PLAYER:120 == 0
+SIF FLAG:2 & 4 && EXP:V경험 < EXPLV:1 && TALENT:PLAYER:120 == 0
     RETURN 0
 ;탈자궁이 없으면 안됨
 SIF TALENT:탈자궁 == 0
@@ -39,7 +39,7 @@ IF ASSIPLAY
 ENDIF
 ;일정의 V경험이 필요([巨躯]の場合は軽減)
 LOCAL = (TALENT:129) ? 75 # 150
-SIF EXP:0 < LOCAL
+SIF EXP:V경험 < LOCAL
     RETURN 0
 ;자궁탈 외의 Ｖ계 장착구 사용 중에는 불가
 SIF TEQUIP:20 && TEQUIP:20 != 8
@@ -110,21 +110,21 @@ ELSE
 ENDIF
 
 ;EXP:V경험을 본다
-IF EXP:0 < EXPLV:1
+IF EXP:V경험 < EXPLV:1
     TIMES SOURCE:1 , 0.20
     SOURCE:20 += 2000
     SIF TALENT:PLAYER:120 == 0
         TCVAR:50 += 1
-ELSEIF EXP:0 < EXPLV:2
+ELSEIF EXP:V경험 < EXPLV:2
     TIMES SOURCE:1 , 0.60
     SOURCE:20 += 300
-ELSEIF EXP:0 < EXPLV:3
+ELSEIF EXP:V경험 < EXPLV:3
     TIMES SOURCE:1 , 1.00
     SOURCE:20 += 50
-ELSEIF EXP:0 < EXPLV:4
+ELSEIF EXP:V경험 < EXPLV:4
     TIMES SOURCE:1 , 1.20
     SOURCE:20 += 10
-ELSEIF EXP:0 < EXPLV:5
+ELSEIF EXP:V경험 < EXPLV:5
     TIMES SOURCE:1 , 1.40
     SOURCE:20 += 0
 ELSE
@@ -133,31 +133,31 @@ ELSE
 ENDIF
 
 ;EXP:자궁경험을 본다
-IF EXP:47 < EXPLV:1
+IF EXP:자궁경험 < EXPLV:1
     TIMES SOURCE:1 , 0.50
     TIMES SOURCE:20 , 1.00
     TIMES SOURCE:25 , 2.00
     TIMES DOWNBASE:0 , 1.50
     TIMES DOWNBASE:1 , 1.50
-ELSEIF EXP:47 < EXPLV:2
+ELSEIF EXP:자궁경험 < EXPLV:2
     TIMES SOURCE:1 , 0.75
     TIMES SOURCE:20 , 1.10
     TIMES SOURCE:25 , 1.50
     TIMES DOWNBASE:0 , 1.30
     TIMES DOWNBASE:1 , 1.30
-ELSEIF EXP:47 < EXPLV:3
+ELSEIF EXP:자궁경험 < EXPLV:3
     TIMES SOURCE:1 , 1.00
     TIMES SOURCE:20 , 1.25
     TIMES SOURCE:25 , 1.00
     TIMES DOWNBASE:0 , 1.00
     TIMES DOWNBASE:1 , 1.00
-ELSEIF EXP:47 < EXPLV:4
+ELSEIF EXP:자궁경험 < EXPLV:4
     TIMES SOURCE:1 , 1.25
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:25 , 0.75
     TIMES DOWNBASE:0 , 0.90
     TIMES DOWNBASE:1 , 0.90
-ELSEIF EXP:47 < EXPLV:5
+ELSEIF EXP:자궁경험 < EXPLV:5
     TIMES SOURCE:1 , 1.50
     TIMES SOURCE:20 , 1.75
     TIMES SOURCE:25 , 0.50
@@ -187,7 +187,7 @@ ELSEIF TALENT:103
     TIMES DOWNBASE:1 , 0.90
 ENDIF
 
-SIF EXP:32 == 0
+SIF EXP:V확장경험 == 0
     TCVAR:50 += 1
 
 ;자궁의 탈장과 회귀
@@ -265,13 +265,13 @@ SOURCE:20 += 200
 SOURCE:25 += 100
 
 ;EXP:자궁경험을 본다
-IF EXP:47 < 50
+IF EXP:자궁경험 < 50
     TIMES SOURCE:1, 0.90
     TIMES SOURCE:25, 0.90
-ELSEIF EXP:47 < 100
+ELSEIF EXP:자궁경험 < 100
     TIMES SOURCE:1, 1.00
     TIMES SOURCE:25, 0.80
-ELSEIF EXP:47 < 200
+ELSEIF EXP:자궁경험 < 200
     TIMES SOURCE:1, 1.50
     TIMES SOURCE:25, 0.70
 ELSE
@@ -307,7 +307,7 @@ SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
 
 IF TEQUIP:20 == 8
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% 손으로 %CALLNAME:TARGET%의 자궁구를 밀어넣었다.
-    IF ABL:V감각 == 5 && EXP:47 >= EXPLV:3
+    IF ABL:V감각 == 5 && EXP:자궁경험 >= EXPLV:3
         PRINTL 자궁구에 자꾸 손가락이 들어가 도로 집어넣기가 꽤나 힘들었다.
         PRINTFORMW 마치 %CALLNAME:TARGET%의 자궁이 손가락을 삼키려는 것 같았다.
     ELSEIF ABL:V감각 == 5
@@ -320,7 +320,7 @@ IF TEQUIP:20 == 8
 ELSE
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% 손으로 %CALLNAME:TARGET%의 질을 파고들어 자궁구를 끄집어냈다.
     PRINTFORM %CALLNAME:TARGET%의 
-    IF ABL:V감각 == 5 && EXP:47 >= EXPLV:3
+    IF ABL:V감각 == 5 && EXP:자궁경험 >= EXPLV:3
         PRINTL 자궁은 꽤나 길게 나왔다.
         PRINTFORMW 뒤집힌 질벽으로 이루어진 %CALLNAME:TARGET%의 자궁의 구멍은 크게 벌려진 채 성욕을 갈망하고 있다.
     ELSEIF ABL:V감각 == 5
