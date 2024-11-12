@@ -109,12 +109,12 @@ RESTART
 DRAWLINE
 PRINTL 「에―로 빠와아아―!!」
 BASE:0 = MAXBASE:0
-BASE:1 = MAXBASE:1
-BASE:MASTER:0 = MAXBASE:MASTER:0
-BASE:MASTER:1 = MAXBASE:MASTER:1
+BASE:기력 = MAXBASE:기력
+BASE:MASTER:체력 = MAXBASE:MASTER:체력
+BASE:MASTER:기력 = MAXBASE:MASTER:기력
 IF ASSI >= 0
-    BASE:ASSI:0 = MAXBASE:ASSI:0
-    BASE:ASSI:1 = MAXBASE:ASSI:1
+    BASE:ASSI:체력 = MAXBASE:ASSI:체력
+    BASE:ASSI:기력 = MAXBASE:ASSI:기력
 ENDIF
 
 ;--------------------------------------------------
@@ -650,13 +650,13 @@ IF RESULT == 100
     RETURN 0
 ELSEIF RESULT == 0
     DRAWLINE
-    PRINTFORML 현재 촉수 에너지 ({BASE:MASTER:6}τ)
+    PRINTFORML 현재 촉수 에너지 ({BASE:MASTER:촉수}τ)
     PRINTL 원하는 수치를 입력하세요(마이너스 값이라면 변경하지 않습니다)
     INPUT
     SIF RESULT < 0
         RESTART
-    BASE:MASTER:6 = RESULT
-    PRINTFORMW 현재 촉수 에너지를 {BASE:MASTER:6}τ로 변경했습니다.
+    BASE:MASTER:촉수 = RESULT
+    PRINTFORMW 현재 촉수 에너지를 {BASE:MASTER:촉수}τ로 변경했습니다.
 ELSEIF RESULT == 1
     DRAWLINE
     PRINTFORML 현재 촉수의 구슬({JUEL:MASTER:198}개)
@@ -694,9 +694,9 @@ RESTART
 ;--------------------------------------------------
 @EDIT_HEAL_ALL
 REPEAT CHARANUM
-    BASE:COUNT:0 = MAXBASE:COUNT:0
-    BASE:COUNT:1 = MAXBASE:COUNT:1
-    BASE:COUNT:8 = 0
+    BASE:COUNT:체력 = MAXBASE:COUNT:체력
+    BASE:COUNT:기력 = MAXBASE:COUNT:기력
+    BASE:COUNT:취기 = 0
 REND
 PRINTW 전원의 체력, 기력, 취기를 회복했습니다.
 
@@ -818,20 +818,20 @@ FOR LOCAL, 0, 100
     PRINTFORMLC [{LOCAL, 3}]%PALAMNAME:LOCAL% ({PALAM:LOCAL}) 
 NEXT
 PRINTFORMLC [100] 현재 체력 ({BASE:0}) 
-PRINTFORMLC [101] 현재 기력 ({BASE:1}) 
+PRINTFORMLC [101] 현재 기력 ({BASE:기력}) 
 SIF ( TALENT:120 || TALENT:121 )
-    PRINTFORMLC [102] 사정 게이지 ({BASE:2}) 
+    PRINTFORMLC [102] 사정 게이지 ({BASE:사정}) 
 SIF TALENT:134
-    PRINTFORMLC [103] 분유 게이지 ({BASE:3}) 
+    PRINTFORMLC [103] 분유 게이지 ({BASE:모유}) 
 SIF TALENT:오줌싸개버릇 && ((FLAG:15 & 4096 && FLAG:75 & 32768) == 0)
-    PRINTFORMLC [104] 요의 게이지 ({BASE:4}) 
+    PRINTFORMLC [104] 요의 게이지 ({BASE:뇨의}) 
 SIF TALENT:65 || CFLAG:36
-    PRINTFORMLC [105] 음모 ({BASE:5}) 
+    PRINTFORMLC [105] 음모 ({BASE:음모}) 
 SIF TALENT:146
-    PRINTFORMLC [106] 촉수기생 LV ({BASE:6})
+    PRINTFORMLC [106] 촉수기생 LV ({BASE:촉수})
 SIF TALENT:120 == 0 && TALENT:121 == 0
-    PRINTFORMLC [107] 음핵 성장 상태 ({BASE:7}) 
-PRINTFORMLC [108] 취기 게이지 ({BASE:8}) 
+    PRINTFORMLC [107] 음핵 성장 상태 ({BASE:음핵}) 
+PRINTFORMLC [108] 취기 게이지 ({BASE:취기}) 
 PRINTLC [199] 패러미터 리셋
 PRINTLC [200] 그만둔다
 
@@ -852,63 +852,63 @@ ELSEIF RESULT == 100
         BASE:0 = RESULT
 ELSEIF RESULT == 101
     DRAWLINE
-    PRINTFORML 기력 변경(현재 {BASE:1})
-    PRINTFORML 수치 입력[0-{MAXBASE:1}](무효값으로 취소)
+    PRINTFORML 기력 변경(현재 {BASE:기력})
+    PRINTFORML 수치 입력[0-{MAXBASE:기력}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:1
-        BASE:1 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:기력
+        BASE:기력 = RESULT
 ELSEIF RESULT == 102
     DRAWLINE
-    PRINTFORML 사정 게이지 변경(현재 {BASE:2})
-    PRINTFORML 수치 입력[0-{MAXBASE:2 - 1}](무효값으로 취소)
+    PRINTFORML 사정 게이지 변경(현재 {BASE:사정})
+    PRINTFORML 수치 입력[0-{MAXBASE:사정 - 1}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:2 - 1
-        BASE:2 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:사정 - 1
+        BASE:사정 = RESULT
 ELSEIF RESULT == 103
     DRAWLINE
-    PRINTFORML 분유 게이지 변경(현재 {BASE:3})
-    PRINTFORML 수치 입력[0-{MAXBASE:3 - 1}](무효값으로 취소)
+    PRINTFORML 분유 게이지 변경(현재 {BASE:모유})
+    PRINTFORML 수치 입력[0-{MAXBASE:모유 - 1}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:3 - 1
-        BASE:3 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:모유 - 1
+        BASE:모유 = RESULT
 ELSEIF RESULT == 104
     DRAWLINE
-    PRINTFORML 요의 게이지 변경(현재 {BASE:4})
-    PRINTFORML 수치 입력[0-{MAXBASE:4 - 1}](무효값으로 취소)
+    PRINTFORML 요의 게이지 변경(현재 {BASE:뇨의})
+    PRINTFORML 수치 입력[0-{MAXBASE:뇨의 - 1}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:4 - 1
-        BASE:4 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:뇨의 - 1
+        BASE:뇨의 = RESULT
 ELSEIF RESULT == 105
     DRAWLINE
-    PRINTFORML 음모 게이지 변경(현재 {BASE:5})
+    PRINTFORML 음모 게이지 변경(현재 {BASE:음모})
     PRINTFORML 제모 플레이용、0~50은 반들반들、51~250에서 나기 시작해서、251~1000부터 제모 가능.
     PRINTFORML 수치 입력[0-1000](무효값으로 취소)
     INPUT
     SIF RESULT >= 0 && RESULT <= 1000
-        BASE:5 = RESULT
+        BASE:음모 = RESULT
 ELSEIF RESULT == 106
     DRAWLINE
-    PRINTFORML 촉수기생 LV 변경(현재 {BASE:6})
-    PRINTFORML 수치 입력[0-{MAXBASE:6}](무효값으로 취소)
+    PRINTFORML 촉수기생 LV 변경(현재 {BASE:촉수})
+    PRINTFORML 수치 입력[0-{MAXBASE:촉수}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:6
-        BASE:6 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:촉수
+        BASE:촉수 = RESULT
 ELSEIF RESULT == 107
     SIF TALENT:120 || TALENT:121
         GOTO INPUT_LOOP
     DRAWLINE
-    PRINTFORML 음핵 성장 상태 변경(현재 {BASE:7})
+    PRINTFORML 음핵 성장 상태 변경(현재 {BASE:음핵})
     PRINTL 수치 입력[0-250](무효값으로 취소)
     INPUT
     SIF RESULT >= 0 && RESULT <= 250
-        BASE:7 = RESULT
+        BASE:음핵 = RESULT
 ELSEIF RESULT == 108
     DRAWLINE
-    PRINTFORML 취기 게이지 변경(현재 {BASE:8})
-    PRINTFORML 수치 입력[0-{MAXBASE:8 * 3}](무효값으로 취소)
+    PRINTFORML 취기 게이지 변경(현재 {BASE:취기})
+    PRINTFORML 수치 입력[0-{MAXBASE:취기 * 3}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:8 * 3
-        BASE:8 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:취기 * 3
+        BASE:취기 = RESULT
 ELSEIF RESULT < 0 || RESULT > 99
     GOTO INPUT_LOOP
 ELSE
@@ -942,16 +942,16 @@ FOR LOCAL, 0, 100
     PRINTFORMLC [{LOCAL, 3}]%ABLNAME:LOCAL% LV ({ABL:LOCAL})  
 NEXT
 PRINTFORMLC [100] 최대 체력 ({MAXBASE:0}) 
-PRINTFORMLC [101] 최대 기력 ({MAXBASE:1}) 
+PRINTFORMLC [101] 최대 기력 ({MAXBASE:기력}) 
 SIF ( TALENT:120 || TALENT:121 )
-    PRINTFORMLC [102] 최대 사정 게이지 ({MAXBASE:2}) 
+    PRINTFORMLC [102] 최대 사정 게이지 ({MAXBASE:사정}) 
 SIF TALENT:134
-    PRINTFORMLC [103] 최대 분유 게이지 ({MAXBASE:3}) 
+    PRINTFORMLC [103] 최대 분유 게이지 ({MAXBASE:모유}) 
 SIF TALENT:오줌싸개버릇 && ((FLAG:15 & 4096 && FLAG:75 & 32768) == 0)
-    PRINTFORMLC [104] 최대 요의 게이지 ({MAXBASE:4}) 
-;PRINTFORML [105] 최대 음모 게이지 ({MAXBASE:5}) 
+    PRINTFORMLC [104] 최대 요의 게이지 ({MAXBASE:뇨의}) 
+;PRINTFORML [105] 최대 음모 게이지 ({MAXBASE:음모}) 
 SIF TALENT:146
-    PRINTFORMLC [106] 최대 촉수기생 LV ({MAXBASE:6})
+    PRINTFORMLC [106] 최대 촉수기생 LV ({MAXBASE:촉수})
 PRINTLC [200] 그만둔다
 
 $INPUT_LOOP
@@ -972,61 +972,61 @@ IF RESULT == 100
     MAXBASE:0 = RESULT
 ELSEIF RESULT == 101
     DRAWLINE
-    PRINTFORML 최대 기력 변경(현재 {MAXBASE:1})
+    PRINTFORML 최대 기력 변경(현재 {MAXBASE:기력})
     PRINTFORML 수치 입력(마이너스 수치로 취소)
     INPUT
     SIF RESULT < 0
         RESTART
-    SIF RESULT < BASE:1
-        BASE:1 = RESULT
-    MAXBASE:1 = RESULT
+    SIF RESULT < BASE:기력
+        BASE:기력 = RESULT
+    MAXBASE:기력 = RESULT
 ELSEIF RESULT == 102
     DRAWLINE
-    PRINTFORML 최대 사정 게이지 변경(현재 {MAXBASE:2})
+    PRINTFORML 최대 사정 게이지 변경(현재 {MAXBASE:사정})
     PRINTFORML 수치 입력(마이너스 수치로 취소)
     INPUT
     SIF RESULT < 0
         RESTART
-    SIF RESULT < BASE:2
-        BASE:2 = RESULT - 1
-    MAXBASE:2 = RESULT
+    SIF RESULT < BASE:사정
+        BASE:사정 = RESULT - 1
+    MAXBASE:사정 = RESULT
 ELSEIF RESULT == 103
     DRAWLINE
-    PRINTFORML 최대 분유 게이지 변경(현재 {MAXBASE:3})
+    PRINTFORML 최대 분유 게이지 변경(현재 {MAXBASE:모유})
     PRINTFORML 수치 입력(마이너스 수치로 취소)
     INPUT
     SIF RESULT < 0
         RESTART
-    SIF RESULT < BASE:3
-        BASE:3 = RESULT - 1
-    MAXBASE:3 = RESULT
+    SIF RESULT < BASE:모유
+        BASE:모유 = RESULT - 1
+    MAXBASE:모유 = RESULT
 ELSEIF RESULT == 104
     DRAWLINE
-    PRINTFORML 최대 요의 게이지 변경(현재 {MAXBASE:4})
+    PRINTFORML 최대 요의 게이지 변경(현재 {MAXBASE:뇨의})
     PRINTFORML 수치 입력(마이너스 수치로 취소)
     INPUT
     SIF RESULT < 0
         RESTART
-    SIF RESULT < BASE:4
-        BASE:4 = RESULT - 1
-    MAXBASE:4 = RESULT
+    SIF RESULT < BASE:뇨의
+        BASE:뇨의 = RESULT - 1
+    MAXBASE:뇨의 = RESULT
 ;ELSEIF RESULT == 105
 ;    DRAWLINE
-;    PRINTFORML 최대 음모 게이지 변경(현재 {MAXBASE:5})
+;    PRINTFORML 최대 음모 게이지 변경(현재 {MAXBASE:음모})
 ;    PRINTFORML 수치 입력[0-1000](무효값으로 취소)
 ;    INPUT
 ;    SIF RESULT >= 0 && RESULT <= 1000
-;        MAXBASE:5 = RESULT
+;        MAXBASE:음모 = RESULT
 ELSEIF RESULT == 106
     DRAWLINE
-    PRINTFORML 최대 촉수기생 LV 변경(현재 {MAXBASE:6})
+    PRINTFORML 최대 촉수기생 LV 변경(현재 {MAXBASE:촉수})
     PRINTFORML 수치 입력(마이너스 수치로 취소)
     INPUT
     SIF RESULT < 0
         RESTART
-    SIF RESULT < BASE:6
-        BASE:6 = RESULT
-    MAXBASE:6 = RESULT
+    SIF RESULT < BASE:촉수
+        BASE:촉수 = RESULT
+    MAXBASE:촉수 = RESULT
 ELSE
     LOCAL = RESULT
     DRAWLINE

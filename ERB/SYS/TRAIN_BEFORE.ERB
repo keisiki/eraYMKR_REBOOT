@@ -18,22 +18,22 @@ COM_NAME =
 COM_TOOL_NAME = 
 COM_TOOL_CALLNAME = 
 
-IF ASSI >= 0 && BASE:ASSI:8 > MAXBASE:ASSI:8
+IF ASSI >= 0 && BASE:ASSI:취기 > MAXBASE:ASSI:취기
     PRINTFORML 술에 취해서인지 %CALLNAME:ASSI%의 얼굴이 시퍼렇다.
     PRINTFORMW 당분간 %조사처리(CALLNAME:ASSI,"를")% 쉬게 하기로 했다…….
     ASSI = -1
 ENDIF
 
 ;主人の射精ゲージを0に
-BASE:MASTER:2 = 0
+BASE:MASTER:사정 = 0
 ;いちおう調教対象と助手も
-BASE:2 = 0
+BASE:사정 = 0
 SIF ASSI >= 0
-    BASE:ASSI:2 = 0
+    BASE:ASSI:사정 = 0
 ;噴乳ゲージもリセット
-BASE:3 = 0
+BASE:모유 = 0
 ;尿意ゲージもリセット
-BASE:4 = 0
+BASE:뇨의 = 0
 
 ;睡眠プレイ開始
 SIF EQUIP:14
@@ -160,7 +160,7 @@ SIF CHARANUM < 1
     RETURN 0
 
 ;陰核肥大関連
-SIF BASE:7 > 0 && BASE:7 < 250
+SIF BASE:음핵 > 0 && BASE:음핵 < 250
     CALL CHECK_CLITORIS_GROWTH
 
 BASE:0 = MAX(BASE:0, 0)
@@ -170,7 +170,7 @@ IF TALENT:MASTER:998 && TALENT:998 && BASE:0 < 500
     ;元ネタ：セ○クションきとうしのセリフより
     PRINTFORMW \@(BASE:0 <= 0) ? 속삭임　－　좋아해　－　사랑해！ # 「P · O · W · E · R · －！！」\@
     BASE:0 = MAXBASE:0
-    BASE:1 = MAXBASE:1
+    BASE:기력 = MAXBASE:기력
 ENDIF
 ;불사각인 처리(봉래인과 주정보다 먼저 처리한다)
 SIF MARK:불사각인 && BASE:0 <= 0
@@ -189,7 +189,7 @@ IF BASE:0 <= 0
         JUMP EVENT_CHARA_DIE, TARGET
 ENDIF
 ;助手がいる場合, 最初に死亡判定(助手を捕獲しているわけではないので不死刻印は効果を発揮しない)
-IF ASSI >= 0 && BASE:ASSI:0 <= 0
+IF ASSI >= 0 && BASE:ASSI:체력 <= 0
     ;[봉래인]용
     IF TALENT:ASSI:49
         CALL IMMORTAL_REVIVAL, ASSI
@@ -197,11 +197,11 @@ IF ASSI >= 0 && BASE:ASSI:0 <= 0
     ELSEIF TALENT:ASSI:48
         CALL ZOMBIE_REVIVAL, ASSI
     ENDIF
-    SIF BASE:ASSI:0 <= 0
+    SIF BASE:ASSI:체력 <= 0
         JUMP EVENT_CHARA_DIE, ASSI
 ENDIF
 ;난이도 LUNATIC 이상일 경우, 주인이 사망하면 게임 오버
-IF FLAG:3 >= 4 && BASE:MASTER:0 <= 0
+IF FLAG:3 >= 4 && BASE:MASTER:체력 <= 0
     ;[봉래인]용
     IF TALENT:MASTER:49
         CALL IMMORTAL_REVIVAL, MASTER
@@ -209,35 +209,35 @@ IF FLAG:3 >= 4 && BASE:MASTER:0 <= 0
     ELSEIF TALENT:MASTER:48
         CALL ZOMBIE_REVIVAL, MASTER
     ENDIF
-    SIF BASE:MASTER:0 <= 0
+    SIF BASE:MASTER:체력 <= 0
         JUMP EVENT_CHARA_DIE, MASTER
-ELSEIF BASE:MASTER:0 <= 0
-    BASE:MASTER:0 = 1
+ELSEIF BASE:MASTER:체력 <= 0
+    BASE:MASTER:체력 = 1
 ENDIF
 ;奴隷の体力が切れ掛かっているので調教終了する処理へ
 SIF BASE:0 < 500
     CALL EVENT_LIFEOUT, TARGET
 ;助手の体力が切れ掛かっていると調教終了する処理へ
-SIF ASSI >= 0 && BASE:ASSI:0 < 500
+SIF ASSI >= 0 && BASE:ASSI:체력 < 500
     CALL EVENT_LIFEOUT, ASSI
 ;主人の体力が切れ掛かっているので調教終了する処理へ
-SIF BASE:MASTER:0 < 500
+SIF BASE:MASTER:체력 < 500
     CALL EVENT_LIFEOUT, MASTER
 ;以下どのようかな形で実装するか検討中
 ;奴隷の気力が切れているので調教終了する処理へ
-;SIF BASE:1 < 1
+;SIF BASE:기력 < 1
 ;    CALL EVENT_VITALOUT, TARGET
 ;助手の気力が切れていると調教終了する処理へ
-;SIF ASSI >= 0 && BASE:ASSI:1 < 1
+;SIF ASSI >= 0 && BASE:ASSI:기력 < 1
 ;    CALL EVENT_VITALOUT, ASSI
 ;主人の気力が切れているので調教終了する処理へ
-;SIF BASE:MASTER:1 < 1
+;SIF BASE:MASTER:기력 < 1
 ;    CALL EVENT_VITALOUT, MASTER
 ;奴隷の酔いをチェックする
-IF BASE:8 > MAXBASE:8 * 2
+IF BASE:취기 > MAXBASE:취기 * 2
     BASE:0 = 1
-    BASE:1 = 1
-    BASE:8 = MIN(BASE:8, MAXBASE:8 * 3)
+    BASE:기력 = 1
+    BASE:취기 = MIN(BASE:취기, MAXBASE:취기 * 3)
     ;酔いが回って調教終了するときの口上
     CALL SELF_KOJO, TARGET, 34
     ;지문 컷
@@ -480,7 +480,7 @@ REND
 SIF ARG != MASTER && MARK:ARG:97 > 0 && TALENT:ARG:150 == 0 && TALENT:ARG:160 == 0 && TALENT:ARG:169 == 0
     MARK:ARG:97 -= 1
 
-BASE:ARG:1 = 0
+BASE:ARG:기력 = 0
 
 ;--------------------------------------------------
 ;리저렉션 공통 처리
@@ -500,12 +500,12 @@ ENDIF
 ;[기생]한 촉수는 사라진다
 IF TALENT:ARG:146
     TALENT:ARG:146 = 0
-    BASE:ARG:6 = 0
-    MAXBASE:ARG:6 = 0
+    BASE:ARG:촉수 = 0
+    MAXBASE:ARG:촉수 = 0
     PRINTFORMW %CALLNAME:ARG%에게 기생하던 촉수는 소멸해버렸다.
 ENDIF
 EQUIP:2 = 0
-BASE:ARG:0 = 1
+BASE:ARG:체력 = 1
 
 ;--------------------------------------------------
 ;조교 중에 캐릭터가 사망했을 때의 처리

@@ -24,7 +24,7 @@
 @EVENT_GROWTH
 VARSET LOCAL,0
 LOCAL = MAXBASE:0 - BASE:0
-LOCAL:1 = MAXBASE:1 - BASE:1
+LOCAL:1 = MAXBASE:기력 - BASE:기력
 LOCAL:2 = RAND:5
 LOCAL:3 = 1
 LOCAL:6 = EXP:이상경험 * 2
@@ -66,9 +66,9 @@ IF CFLAG:4995
 ENDIF
 
 ;体力が大きい場合は気力が、気力が大きい場合は体力が成長する確率が上昇
-IF LOCAL:2 == 1 && MAXBASE:0 > MAXBASE:1 && RAND:3 == 0
+IF LOCAL:2 == 1 && MAXBASE:0 > MAXBASE:기력 && RAND:3 == 0
     LOCAL:2 = 2
-ELSEIF LOCAL:2 == 2 && MAXBASE:1 > MAXBASE:0 && RAND:3 == 0
+ELSEIF LOCAL:2 == 2 && MAXBASE:기력 > MAXBASE:0 && RAND:3 == 0
     LOCAL:2 = 1
 ENDIF
 
@@ -106,7 +106,7 @@ ELSEIF LOCAL:2 <= 1 && LOCAL != 0 && BASE:0 >= 300 && CFLAG:6 >= LOCAL:7
     LOCAL:2 = 0
 ENDIF
 
-IF (LOCAL:2 == 0 || LOCAL:2 == 2) && LOCAL:1 != 0 && BASE:1 >= 100 && CFLAG:7 < LOCAL:8
+IF (LOCAL:2 == 0 || LOCAL:2 == 2) && LOCAL:1 != 0 && BASE:기력 >= 100 && CFLAG:7 < LOCAL:8
     SIF LOCAL:1 > 0 && LOCAL:1 <= 300
         LOCAL:3 = 200
     SIF LOCAL:1 > 300 && LOCAL:1 <= 500
@@ -121,7 +121,7 @@ IF (LOCAL:2 == 0 || LOCAL:2 == 2) && LOCAL:1 != 0 && BASE:1 >= 100 && CFLAG:7 < 
         LOCAL:3 = 450
     SIF LOCAL:1 > 2500
         LOCAL:3 = 500
-    SIF BASE:1 < 300
+    SIF BASE:기력 < 300
         LOCAL:3 = 750
     LOCAL:5 = MIN(LOCAL:1 / LOCAL:3, 20)
     SIF TALENT:150 == 0 && TALENT:160 == 0
@@ -129,7 +129,7 @@ IF (LOCAL:2 == 0 || LOCAL:2 == 2) && LOCAL:1 != 0 && BASE:1 >= 100 && CFLAG:7 < 
     LOCAL:5 += LOCAL:6
     IF LOCAL:5 > 0
         CALL SELF_KOJO, TARGET, 121, LOCAL:5
-        MAXBASE:1 += LOCAL:5
+        MAXBASE:기력 += LOCAL:5
         CFLAG:7 += LOCAL:5
         ;지문 컷
         IF CFLAG:99 == 0
@@ -143,7 +143,7 @@ ENDIF
 ;=============================================================================
 ;음모 성장 관련
 ;=============================================================================
-;陰毛の成長具合(BASE:5)の増減処理や、状態判定をここで行う.細かくやると面倒なため、処理は大雑把に
+;陰毛の成長具合(BASE:음모)の増減処理や、状態判定をここで行う.細かくやると面倒なため、処理は大雑把に
 ;剃毛プレイ等を実行(つまり初期状態のときではない場合)または脱毛状態でないときは毛が生えてくるように
 ;大まかな目安として、0～50：ツルツル、51～250：生えかけ、251～1000：生えそろった(剃毛可能)……となっている
 ;--------------------------------------------------
@@ -178,8 +178,8 @@ ENDIF
 SIF TALENT:128
     LOCAL:5 /= 2
 
-BASE:5 = MIN(BASE:5 + MAX(LOCAL:5, 1), 1000)
-IF TALENT:65 && BASE:5 > 250
+BASE:음모 = MIN(BASE:음모 + MAX(LOCAL:5, 1), 1000)
+IF TALENT:65 && BASE:음모 > 250
     PRINTFORML %CALLNAME:TARGET%의 밑쪽 털이 다시 자라났습니다.
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:65%]에서 탈출했다.
     TALENT:65 = 0
@@ -191,7 +191,7 @@ TFLAG:900 = LOCAL:1
 ;=============================================================================
 ;음핵 성장 관련
 ;=============================================================================
-;陰核の成長具合(BASE:7)の増減処理や、状態判定をここで行う
+;陰核の成長具合(BASE:음핵)の増減処理や、状態判定をここで行う
 ;大まかな目安として、0：成長しない、1～50：ノーマル、51～100：小指サイズ、
 ;101～200：男性器サイズ(150以上になると挿入可能な[肥大陰核]が付く)、201～250(最大値)：異様なサイズ(初めての時は이상경험が付く)
 ;……となっている
@@ -203,7 +203,7 @@ LOCAL = TARGET
 LOCAL:1 = TFLAG:900
 TARGET = TFLAG:900
 
-BASE:7 += (TIME == 1) ? RAND:10 # RAND:5
+BASE:음핵 += (TIME == 1) ? RAND:10 # RAND:5
 
 CALL CHECK_CLITORIS_GROWTH
 
@@ -214,11 +214,11 @@ TFLAG:900 = LOCAL:1
 ;陰核成長判定処理
 ;--------------------------------------------------
 @CHECK_CLITORIS_GROWTH
-SIF BASE:7 >= 150 && TALENT:비대음핵 == 0
+SIF BASE:음핵 >= 150 && TALENT:비대음핵 == 0
     CALL HUGE_CLITORIS, TARGET
-SIF BASE:7 > 200 && (CFLAG:37 & 4) == 0
+SIF BASE:음핵 > 200 && (CFLAG:37 & 4) == 0
     CALL GIGATORIS, TARGET
-BASE:7 = MIN(BASE:7, 250)
+BASE:음핵 = MIN(BASE:음핵, 250)
 
 ;--------------------------------------------------
 ;陰核の成長具合150以上による[肥大陰核]付加処理

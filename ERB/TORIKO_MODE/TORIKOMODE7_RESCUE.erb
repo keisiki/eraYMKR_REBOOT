@@ -612,26 +612,26 @@ CALL BATTLECRY_TORIKOMODE, (NO:ARG), 1, LOCALS:1
 ;....................................................................................
 ;2회 이상 싸울 때를 위한 처리. 이렇게 하지 않으면 싸울 때 마다 체력이 늘어나버림.
 ;현재의 체력, 기력 %를 저장한다. (여러번 싸우고 있을때를 위해)
-LOCAL:11 = BASE:ARG:0 *100 /MAXBASE:ARG:0
-LOCAL:12 = BASE:ARG:1 *100 /MAXBASE:ARG:1
+LOCAL:11 = BASE:ARG:체력 *100 /MAXBASE:ARG:체력
+LOCAL:12 = BASE:ARG:기력 *100 /MAXBASE:ARG:기력
 ;체력, 기력을 SCV로 맞춤.
 DELCHARA CHARANUM-1
 ADDCHARA (LOCAL:10)
 TARGET = CHARANUM-1
 ;체력, 기력 %를 적용한다.
-BASE:ARG:0 = BASE:ARG:0*LOCAL:11/100
-BASE:ARG:1 = BASE:ARG:1*LOCAL:12/100
+BASE:ARG:체력 = BASE:ARG:체력*LOCAL:11/100
+BASE:ARG:기력 = BASE:ARG:기력*LOCAL:12/100
 ;....................................................................................
 ;난이도 보정. 난이도 1당 1.3배씩 체력이 오른다. 이지에서는 변화없음.
 ;기력(공격력)은 난이도에 따른 보정은 없다.
-MAXBASE:ARG:0 += MAXBASE:ARG:0 *(FLAG:3 -1)*30/100
-BASE:ARG:0 += BASE:ARG:0 *(FLAG:3 -1)*30/100
+MAXBASE:ARG:체력 += MAXBASE:ARG:체력 *(FLAG:3 -1)*30/100
+BASE:ARG:체력 += BASE:ARG:체력 *(FLAG:3 -1)*30/100
 
 ;주차보정. 2회차부터 주차당 체력 기력이 5% 씩 세진다.
-MAXBASE:ARG:0 += MAXBASE:ARG:0 * (FLAG:6-1)*10/100
-BASE:ARG:0 += BASE:ARG:0 * (FLAG:6-1)*10/100
-MAXBASE:ARG:1 += MAXBASE:ARG:1 * (FLAG:6-1)*10/100
-BASE:ARG:1 += BASE:ARG:1 * (FLAG:6-1)*10/100
+MAXBASE:ARG:체력 += MAXBASE:ARG:체력 * (FLAG:6-1)*10/100
+BASE:ARG:체력 += BASE:ARG:체력 * (FLAG:6-1)*10/100
+MAXBASE:ARG:기력 += MAXBASE:ARG:기력 * (FLAG:6-1)*10/100
+BASE:ARG:기력 += BASE:ARG:기력 * (FLAG:6-1)*10/100
 
 ;상성보정. 만약 타겟 = 경비대장일 경우. 역보정이 걸린다.
 IF ARG:1 == LOCAL:13 
@@ -657,10 +657,10 @@ IF ARG:1 == LOCAL:13
         RESETCOLOR
     ENDIF
     ;능력치 변화. 상성에 따른 체력상승은 무효가 되고, 상성 100당 공격력이 33% 씩 깎여나간다.
-    ;MAXBASE:ARG:0 += MAXBASE:ARG:0 * (LOCAL:9-100) /100
-    ;BASE:ARG:0 += BASE:ARG:0 * (LOCAL:9-100) /100
-    MAXBASE:ARG:1 -= MAXBASE:ARG:1 * (LOCAL:9-100) /300
-    BASE:ARG:1 -= BASE:ARG:1 * (LOCAL:9-100) /300
+    ;MAXBASE:ARG:체력 += MAXBASE:ARG:체력 * (LOCAL:9-100) /100
+    ;BASE:ARG:체력 += BASE:ARG:체력 * (LOCAL:9-100) /100
+    MAXBASE:ARG:기력 -= MAXBASE:ARG:기력 * (LOCAL:9-100) /300
+    BASE:ARG:기력 -= BASE:ARG:기력 * (LOCAL:9-100) /300
 ;상성보정. 
 ELSEIF LOCAL:9 > 100
     IF LOCAL:9 >= 300
@@ -685,17 +685,17 @@ ELSEIF LOCAL:9 > 100
         RESETCOLOR
     ENDIF
     ;능력치 변화. 상성이 100을 넘으면, 상성200일때 체력은 2배. 공격력은 1.33배로 강해진다.
-    MAXBASE:ARG:0 += MAXBASE:ARG:0 * (LOCAL:9-100) /100
-    BASE:ARG:0 += BASE:ARG:0 * (LOCAL:9-100) /100
-    MAXBASE:ARG:1 += MAXBASE:ARG:1 * (LOCAL:9-100) /300
-    BASE:ARG:1 += BASE:ARG:1 * (LOCAL:9-100) /300
+    MAXBASE:ARG:체력 += MAXBASE:ARG:체력 * (LOCAL:9-100) /100
+    BASE:ARG:체력 += BASE:ARG:체력 * (LOCAL:9-100) /100
+    MAXBASE:ARG:기력 += MAXBASE:ARG:기력 * (LOCAL:9-100) /300
+    BASE:ARG:기력 += BASE:ARG:기력 * (LOCAL:9-100) /300
 ENDIF
 ;날짜보정. 침입한 날짜에 따라 점점 세짐. 1%씩 세진다. 최대 100일까지만 추가됨.
 IF DAY <= 100
-    MAXBASE:ARG:0 += MAXBASE:ARG:0 * DAY / 100
-    BASE:ARG:0 += BASE:ARG:0 * DAY / 100
-    MAXBASE:ARG:1 += MAXBASE:ARG:1 * DAY / 100
-    BASE:ARG:1 += BASE:ARG:1 * DAY / 100
+    MAXBASE:ARG:체력 += MAXBASE:ARG:체력 * DAY / 100
+    BASE:ARG:체력 += BASE:ARG:체력 * DAY / 100
+    MAXBASE:ARG:기력 += MAXBASE:ARG:기력 * DAY / 100
+    BASE:ARG:기력 += BASE:ARG:기력 * DAY / 100
 ENDIF
 
 ;...........................................................................................
@@ -735,15 +735,15 @@ DO
     ENDIF
     PRINTL 퍼센트>
     ;체력
-    PRINTFORM ♡체력:({BASE:ARG:0}/{MAXBASE:ARG:0})
-    CALL PRINT_COLORBAR(BASE:ARG:0, MAXBASE:ARG:0, MAXBASE:ARG:0/40, BARCOLORSET("黄"), BARCOLORSET("赤"))
+    PRINTFORM ♡체력:({BASE:ARG:체력}/{MAXBASE:ARG:체력})
+    CALL PRINT_COLORBAR(BASE:ARG:체력, MAXBASE:ARG:체력, MAXBASE:ARG:체력/40, BARCOLORSET("黄"), BARCOLORSET("赤"))
     PRINTL
     ;기력
-    ;PRINTFORM ☆기력:({BASE:ARG:1}/{MAXBASE:ARG:1})
-    ;CALL PRINT_COLORBAR(BASE:ARG:1, MAXBASE:ARG:1, MAXBASE:ARG:1/40, BARCOLORSET("黄"), BARCOLORSET("赤"))
+    ;PRINTFORM ☆기력:({BASE:ARG:기력}/{MAXBASE:ARG:기력})
+    ;CALL PRINT_COLORBAR(BASE:ARG:기력, MAXBASE:ARG:기력, MAXBASE:ARG:기력/40, BARCOLORSET("黄"), BARCOLORSET("赤"))
     ;PRINTL
     ;공격력계산
-    LOCAL:6 = (MAXBASE:ARG:1 * 10/100)
+    LOCAL:6 = (MAXBASE:ARG:기력 * 10/100)
     PRINTFORM ☆공격력:{LOCAL:6}
     PRINTL
 
@@ -929,7 +929,7 @@ DO
         ;경비대장을 친다면
         ELSEIF LOCAL:2 == 10
         ;두들겨 맞을 경비대장의 현재 체력을 받아온다.
-            LOCAL:5 = BASE:(LOCAL:13):0
+            LOCAL:5 = BASE:(LOCAL:13):체력
             ;침입자가 공격실행
             CALL ATTACK_SLAVE_TORIKOMODE, ARG, LOCAL:6, CALLNAME:(LOCAL:13)
             ;대미지를 저장.
@@ -942,10 +942,10 @@ DO
             PRINTFORMW 대미지!!
             RESETCOLOR
             ;경비대장 체력감소.
-            BASE:(LOCAL:13):0 -= LOCAL:3
-            BASE:(LOCAL:13):0 = MAX(BASE:(LOCAL:13):0, 50)
+            BASE:(LOCAL:13):체력 -= LOCAL:3
+            BASE:(LOCAL:13):체력 = MAX(BASE:(LOCAL:13):체력, 50)
             ;경비대장이 빈사
-            IF BASE:(LOCAL:13):0 == 50
+            IF BASE:(LOCAL:13):체력 == 50
                 ;경비대장 배틀크라이 출력.쓰러짐.
                 CALL BATTLECRY_GUARDSMAN_TORIKOMODE, TOSTR(NO:(LOCAL:13)), 6
                 ;쓰러지기
@@ -1022,14 +1022,14 @@ DO
             SIF RAND:100 > 70
                 CALL BATTLECRY_TORIKOMODE, (NO:ARG), 3, LOCALS:1
             ;빈사 배틀크라이.
-            SIF BASE:ARG:0 < MAXBASE:ARG:0 *20/100
+            SIF BASE:ARG:체력 < MAXBASE:ARG:체력 *20/100
                 CALL BATTLECRY_TORIKOMODE, (NO:ARG), 5, LOCALS:1
             ;경비원 경험치 획득. 랜덤 1500 +2000을 획득한다.
             CALL GETEXP_GUARDSMAN_TORIKOMODE, 5051+LOCAL:99, (2000+RAND:1500)
             ;구출자 체력감소.
-            BASE:ARG:0 -= LOCAL:4
+            BASE:ARG:체력 -= LOCAL:4
             ;구출자가 쓰러졌다.
-            IF BASE:ARG:0 <= 2
+            IF BASE:ARG:체력 <= 2
                 CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 3
                 FONTBOLD
                 PRINTFORMW <%조사처리(CALLNAME:ARG,"가")% 쓰러졌다!>
@@ -1072,12 +1072,12 @@ DO
             SIF RAND:100 > 70
                 CALL BATTLECRY_TORIKOMODE, (NO:ARG), 3, CALLNAME:(LOCAL:13)
             ;빈사 배틀크라이.
-            SIF BASE:ARG:0 < MAXBASE:ARG:0 *20/100
+            SIF BASE:ARG:체력 < MAXBASE:ARG:체력 *20/100
                 CALL BATTLECRY_TORIKOMODE, (NO:ARG), 5, CALLNAME:(LOCAL:13)
             ;구출자 체력감소.
-            BASE:ARG:0 -= LOCAL:4
+            BASE:ARG:체력 -= LOCAL:4
             ;구출자가 쓰러졌다.
-            IF BASE:ARG:0 <= 2
+            IF BASE:ARG:체력 <= 2
                 CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 3
                 FONTBOLD
                 PRINTFORMW <%조사처리(CALLNAME:ARG,"가")% 쓰러졌다!>
@@ -1153,7 +1153,7 @@ ELSEIF ARG:1 == 2
     RESETCOLOR
     ;체력기력캐스팅.
     BASE:0 = MAXBASE:0*60/100
-    BASE:1 = MAXBASE:1*60/100
+    BASE:기력 = MAXBASE:기력*60/100
 ;윤간으로 획득
 ELSEIF ARG:1 == 3
     ;주인 이름 대피용
@@ -1343,7 +1343,7 @@ ELSEIF ARG:1 == 3
     EXP:주인조교경험 += 1
     ;체력기력캐스팅.
     BASE:0 = MAXBASE:0*30/100
-    BASE:1 = MAXBASE:1*30/100
+    BASE:기력 = MAXBASE:기력*30/100
 ENDIF
 WAIT
 
@@ -1360,9 +1360,9 @@ WAIT
 ;증가시킬 돈
 LOCAL:0 = 0
 ;최대체력획득
-LOCAL:1 = MAXBASE:ARG:0
+LOCAL:1 = MAXBASE:ARG:체력
 ;최대기력획득
-LOCAL:2 = MAXBASE:ARG:1
+LOCAL:2 = MAXBASE:ARG:기력
 ;..........................................................
 ;돈 = (기력 + 체력) *5
 LOCAL:0 = (LOCAL:1+LOCAL:2) *5

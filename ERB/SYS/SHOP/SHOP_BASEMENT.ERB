@@ -111,7 +111,7 @@ REPEAT CHARANUM
         SIF CFLAG:COUNT:4 != 16
             CONTINUE
         ;対象の体力と気力が500이상でないとダメ
-        SIF BASE:COUNT:0 < 500 || BASE:COUNT:1 < 500
+        SIF BASE:COUNT:체력 < 500 || BASE:COUNT:기력 < 500
             CONTINUE
         ;この収監されたばかりもしくはこのターンに拷問してたらダメ
         SIF CFLAG:COUNT:180 & 1 || CFLAG:COUNT:180 & 2
@@ -237,7 +237,7 @@ PRINTL
 IF CFLAG:99 == 0
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 지하감옥에 갇혀있는 %CALLNAME:TARGET%에게 갔다.
     ;체력/기력적으로 자력으로 움직일 수 없는 케이스
-    IF BASE:0 < 500 || BASE:1 < 500
+    IF BASE:0 < 500 || BASE:기력 < 500
         PRINTFORMW 그리고, 지하감옥을 열어 의식을 잃은 %조사처리(CALLNAME:TARGET,"를")% 껴안았다.
         PRINTFORML 지하감옥을 나와,%CALLNAME:TARGET%의 방까지 데리고 가, 
         PRINTW 침대에 눕혀줬다.
@@ -327,7 +327,7 @@ ENDIF
 ;拷問対象の体力減少
 BASE:0 -= LOCAL
 ;拷問対象の気力減少
-BASE:1 -= LOCAL:1
+BASE:기력 -= LOCAL:1
 PRINTFORML %CALLNAME:TARGET%의 체력이 {LOCAL}, 기력이 {LOCAL:1} 감소했다.
 ;今回拷問したフラグ
 CFLAG:180 |= 2
@@ -344,7 +344,7 @@ SIF LOCAL & 1
 ;殺害チェック基礎(主人のサドっ気Lvと調教師Lvと技巧Lvが関係する)
 LOCAL:2 = 13 + ABL:MASTER:새드끼 - (ABL:MASTER:조교사Lv + ABL:MASTER:기교) 
 ;殺害チェック(体力と気力のいずれかが0以下であるとき, ただし蓬莱人と呪精ならば回避)
-IF (BASE:0 < 0 || BASE:1 < 0) && TALENT:봉래인 == 0 && TALENT:주정 == 0
+IF (BASE:0 < 0 || BASE:기력 < 0) && TALENT:봉래인 == 0 && TALENT:주정 == 0
     IF RAND:100 < LOCAL:2
         PRINTFORMW 교정 지도 후 %CALLNAME:TARGET%의 모습이 이상하다….
         PRINTW 아무래도, 너무 지나쳤던 모양이다….
@@ -378,7 +378,7 @@ CALL COMMON_UP_JUEL, ARG, 17, 5*(10 + ABL:ARG:순종 + TALENT:ARG:10*5), LOCAL:1
 SIF CFLAG:ARG:2 > 0
     CFLAG:ARG:2 -= RAND:3
 ;발광 체크(完全ランダム)ただし, 既に狂気持ちorストレスフリーor気力0なら発狂しない
-IF TALENT:ARG:158 == 0 && CFLAG:ARG:65 && BASE:ARG:1
+IF TALENT:ARG:158 == 0 && CFLAG:ARG:65 && BASE:ARG:기력
     IF RAND:100 < 4
         PRINTFORMW 지하감옥에 수감 중인 %CALLNAME:ARG%의 모습이 이상하다….
         PRINTW 아무래도 지나친 불합리한 처사에 발광해 버린 모양이다.
@@ -390,7 +390,7 @@ IF TALENT:ARG:158 == 0 && CFLAG:ARG:65 && BASE:ARG:1
     ENDIF
 ENDIF
 ;病死チェック(体力と気力が500以下であるとき, ただし蓬莱人と呪精ならば回避)
-IF BASE:ARG:0 < 500 & BASE:ARG:1 < 500 && TALENT:ARG:49 == 0 && TALENT:ARG:48 == 0
+IF BASE:ARG:체력 < 500 & BASE:ARG:기력 < 500 && TALENT:ARG:49 == 0 && TALENT:ARG:48 == 0
     IF RAND:100 < 3
         PRINTFORMW 지하감옥에 수감 중인 %CALLNAME:ARG%의 모습이 이상하다….
         PRINTW 아무래도 병에 걸린 모양이다.
@@ -651,7 +651,7 @@ SIF MAX(ARG:1 == MASTER, CFLAG:(ARG:1):4, TALENT:(ARG:1):143)
 SIF MAX(TALENT:(ARG:1):152, TALENT:(ARG:1):161, TALENT:(ARG:1):168, TALENT:(ARG:1):169) == 0
     RETURNF 0
 ;対象の体力・気力が1点でも消耗していると除外
-SIF BASE:(ARG:1):0 < MAXBASE:(ARG:1):0 || BASE:(ARG:1):1 < MAXBASE:(ARG:1):1
+SIF BASE:(ARG:1):체력 < MAXBASE:(ARG:1):체력 || BASE:(ARG:1):기력 < MAXBASE:(ARG:1):기력
     RETURNF 0
 
 ;[妊娠][懐卵][寄生]に対して改造手術・魂魄昇華・生命封入は不可

@@ -273,7 +273,7 @@ IF TALENT:MASTER:55 == 0 && RAND:(LOCAL:2) > 2
         ;体力減少(小)
         ELSE
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 체력을 소모했다.
-            BASE:MASTER:0 -= 75 * (LOCAL:2/5)
+            BASE:MASTER:체력 -= 75 * (LOCAL:2/5)
         ENDIF
     ;体力減少
     ELSE
@@ -281,13 +281,13 @@ IF TALENT:MASTER:55 == 0 && RAND:(LOCAL:2) > 2
         SIF LOCAL >= 4
             PRINT 크게 
         PRINTW 소모되었다.
-        BASE:MASTER:0 -= 200 * (LOCAL:2/3)
+        BASE:MASTER:체력 -= 200 * (LOCAL:2/3)
     ENDIF
     IF NO:TARGET == 33
-        BASE:MASTER:0 /= 2
-        BASE:MASTER:0 -= 75 * (RAND:5 + 1)
+        BASE:MASTER:체력 /= 2
+        BASE:MASTER:체력 -= 75 * (RAND:5 + 1)
     ELSE
-        BASE:MASTER:0 -= 75 * (RAND:5 + 1)
+        BASE:MASTER:체력 -= 75 * (RAND:5 + 1)
     ENDIF
     ;ダメージを与えたフラグON
     CFLAG:150 |= 4
@@ -403,14 +403,14 @@ ELSE
                     SIF LOCAL >= 4
                         PRINT 크게 
                     PRINTW 소모되었다.
-                    BASE:(LOCAL:7):0 -= 200 * (LOCAL:2/3)
+                    BASE:(LOCAL:7):체력 -= 200 * (LOCAL:2/3)
                 ENDIF
                 ;メディは特殊修整あり
                 IF NO:TARGET == 33
-                    BASE:(LOCAL:7):0 /= 2
-                    BASE:(LOCAL:7):0 -= 75 * (RAND:5 + 1)
+                    BASE:(LOCAL:7):체력 /= 2
+                    BASE:(LOCAL:7):체력 -= 75 * (RAND:5 + 1)
                 ELSE
-                    BASE:(LOCAL:7):0 -= 75 * (RAND:5 + 1)
+                    BASE:(LOCAL:7):체력 -= 75 * (RAND:5 + 1)
                 ENDIF
             ENDIF
 
@@ -552,7 +552,7 @@ CALL COMMON_UP_EXP, TARGET, 70, LOCAL:3, 1
 
 CFLAG:65 = LIMIT(CFLAG:65, 0, 999999)
 
-IF BASE:MASTER:0 <= 0
+IF BASE:MASTER:체력 <= 0
     IF TALENT:주정 || TALENT:봉래인 || MARK:불사각인 || FLAG:5 & 1 || ((TALENT:81 || TALENT:177 || ABL:새드끼 > 3) && RAND:2 == 0)
         CALL BADEND_7
     ELSE
@@ -1116,15 +1116,15 @@ IF RESULT == 0
     PRINTW      ・
     LOCAL:5 *= ((LOCAL:2 * 5) + (LOCAL:3 / 5))
     LOCAL:5 = MAX(LOCAL:5 - LOCAL:5%100, 100)
-    BASE:MASTER:0 -= LOCAL:5
+    BASE:MASTER:체력 -= LOCAL:5
     PRINTFORML %CALLNAME:MASTER%의 체력이 {LOCAL:5} 감소했다.
-    IF BASE:MASTER:0 < 0
-        BASE:MASTER:0 = 1
+    IF BASE:MASTER:체력 < 0
+        BASE:MASTER:체력 = 1
         PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 사조성이 보인 느낌이 들었다…….
         ;이상경험
         CALL COMMON_UP_EXP, MASTER, 50, 1, 1
-    ELSEIF BASE:MASTER:0 < 10
-        BASE:MASTER:0 = 10
+    ELSEIF BASE:MASTER:체력 < 10
+        BASE:MASTER:체력 = 10
     ENDIF
     IF CFLAG:65
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 초콜릿을 먹어준 사실에 기뻐하는 것 같다.

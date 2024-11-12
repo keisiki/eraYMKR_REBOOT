@@ -213,8 +213,8 @@ ELSE
 ENDIF
 IF FLAG:15 & 4096 && TALENT:ARG:146
     PRINT 기생촉수성장LV:
-    BAR BASE:ARG:6, MAXBASE:ARG:6, 20
-    PRINTFORML ({BASE:ARG:6, 4}/{MAXBASE:ARG:6, 4})
+    BAR BASE:ARG:촉수, MAXBASE:ARG:촉수, 20
+    PRINTFORML ({BASE:ARG:촉수, 4}/{MAXBASE:ARG:촉수, 4})
 ENDIF
 
 ;칭호 표시
@@ -686,27 +686,27 @@ SIF NO:ARG == 36
     LOCAL:2 += 3
 
 ;체력
-IF MAXBASE:ARG:0 < 600
+IF MAXBASE:ARG:체력 < 600
     LOCAL += 3
     LOCAL:2 += 2
-ELSEIF MAXBASE:ARG:1 < 800
+ELSEIF MAXBASE:ARG:기력 < 800
     LOCAL += 2
     LOCAL:2 += 1
-ELSEIF MAXBASE:ARG:1 < 1100
+ELSEIF MAXBASE:ARG:기력 < 1100
     LOCAL += 1
-ELSEIF MAXBASE:ARG:1 < 2000
-ELSEIF MAXBASE:ARG:1 < 2500
+ELSEIF MAXBASE:ARG:기력 < 2000
+ELSEIF MAXBASE:ARG:기력 < 2500
     LOCAL -= 1
 ELSE
     LOCAL -= 2
 ENDIF
 ;기력
-IF MAXBASE:ARG:1 < 600
+IF MAXBASE:ARG:기력 < 600
     LOCAL += 2
     LOCAL:2 += 1
-ELSEIF MAXBASE:ARG:1 < 800
+ELSEIF MAXBASE:ARG:기력 < 800
     LOCAL += 1
-ELSEIF MAXBASE:ARG:1 < 1800
+ELSEIF MAXBASE:ARG:기력 < 1800
 ELSE
     LOCAL -= 1
 ENDIF
@@ -850,63 +850,63 @@ CALL NEW_DRAWLINE
 ;신장  · 체중 · 3사이즈의 표시 처리
 ;-------------------------------------------------
 ;신장 · 체중 · 3사이즈를 표시합니다
-;BASE:10 … 신장
-;BASE:11 … 체중
-;BASE:12 … 바스트
-;BASE:13 … 웨스트
-;BASE:14 … 히프
+;BASE:신장 … 신장
+;BASE:체중 … 체중
+;BASE:바스트 … 바스트
+;BASE:웨스트 … 웨스트
+;BASE:히프 … 히프
 ;LOCAL   … 변수의 일시 보존용
 @SHOW_SIZE, ARG
 ;신장 · 체중 · 3사이즈의 생성 처리
 CALL MAKE_SIZE, 1, ARG
 
 PRINTFORML \@(FLAG:12 & 2) ? □ 사이즈 # 사이즈:\@
-PRINTFORM  신장:{BASE:ARG:10 / 10}.{BASE:ARG:10 % 10} cm
+PRINTFORM  신장:{BASE:ARG:신장 / 10}.{BASE:ARG:신장 % 10} cm
 ;보테배상태의 경우 표시 수치 보정
 IF FLAG:1500 & 2 && (CFLAG:ARG:3502 % 1000000)
-    LOCAL:11 = BASE:ARG:11 + ((CFLAG:ARG:3502 % 1000000 ) * 10000) / 34
-    IF BASE:ARG:11 > 10000
+    LOCAL:11 = BASE:ARG:체중 + ((CFLAG:ARG:3502 % 1000000 ) * 10000) / 34
+    IF BASE:ARG:체중 > 10000
         PRINTFORM    체중:{LOCAL:11 / 10000}. {LOCAL:11 % 10000 / 1000} kg
-        PRINTFORML  임신전({BASE:ARG:11 / 10000}. {BASE:ARG:11 % 10000 / 1000} kg)
+        PRINTFORML  임신전({BASE:ARG:체중 / 10000}. {BASE:ARG:체중 % 10000 / 1000} kg)
     ELSE
         PRINTFORM    체중:{LOCAL:11 / 10}.{LOCAL:11 % 10} g
-        PRINTFORML  임신전({BASE:ARG:11 / 10}.{BASE:ARG:11 % 10} kg)
+        PRINTFORML  임신전({BASE:ARG:체중 / 10}.{BASE:ARG:체중 % 10} kg)
     ENDIF
 ;임신 소유의 경우 표시 수치 보정
 ELSEIF TALENT:ARG:140
-    LOCAL:11 = BASE:ARG:11 + CFLAG:ARG:3500
-    IF BASE:ARG:11 > 10000
+    LOCAL:11 = BASE:ARG:체중 + CFLAG:ARG:3500
+    IF BASE:ARG:체중 > 10000
         PRINTFORM    체중:{LOCAL:11 / 10000}.{LOCAL:11 % 10000 / 1000} kg
-        PRINTFORML  임신전({BASE:ARG:11 / 10000}.{BASE:ARG:11 % 10000 / 1000} kg)
+        PRINTFORML  임신전({BASE:ARG:체중 / 10000}.{BASE:ARG:체중 % 10000 / 1000} kg)
     ELSE
         PRINTFORM    체중:{LOCAL:11 / 10}.{LOCAL:11 % 10} g
-        PRINTFORML  임신전({BASE:ARG:11 / 10}.{BASE:ARG:11 % 10} g)
+        PRINTFORML  임신전({BASE:ARG:체중 / 10}.{BASE:ARG:체중 % 10} g)
     ENDIF
 ELSE
-    IF BASE:ARG:11 > 10000
-        PRINTFORML    체중:{BASE:ARG:11 / 10000}.{BASE:ARG:11 % 10000 / 1000} kg
+    IF BASE:ARG:체중 > 10000
+        PRINTFORML    체중:{BASE:ARG:체중 / 10000}.{BASE:ARG:체중 % 10000 / 1000} kg
     ELSE
-        PRINTFORML  체중:{BASE:ARG:11 / 10}.{BASE:ARG:11 % 10} g
+        PRINTFORML  체중:{BASE:ARG:체중 / 10}.{BASE:ARG:체중 % 10} g
     ENDIF
 ENDIF
 ;[남자]소유는 3 사이즈는 표시하지 않는다
 IF ! TALENT:ARG:120
-    PRINTFORM  B:{BASE:ARG:12 / 10}.{BASE:ARG:12 % 10} cm 
+    PRINTFORM  B:{BASE:ARG:바스트 / 10}.{BASE:ARG:바스트 % 10} cm 
     CALL PRINT_CUPSIZE , ARG
     ;보테배상태의 경우 표시 수치 보정
     IF FLAG:1500 & 2 && ( CFLAG:ARG:3502 % 1000000 )
-        LOCAL:13 = BASE:ARG:13 + (CFLAG:ARG:3502 % 1000000)
+        LOCAL:13 = BASE:ARG:웨스트 + (CFLAG:ARG:3502 % 1000000)
         PRINTFORM / W:{LOCAL:13 / 10}.{LOCAL:13 % 10} cm
-        PRINTFORM    임신전({BASE:ARG:13 / 10}.{BASE:ARG:13 % 10} cm) /
+        PRINTFORM    임신전({BASE:ARG:웨스트 / 10}.{BASE:ARG:웨스트 % 10} cm) /
     ;임신 소유의 경우 표시 수치 보정
     ELSEIF TALENT:ARG:140
-        LOCAL:13 = BASE:ARG:13 + CFLAG:ARG:3500 * 3 / 1000 ;체중 1kg 에  30 mm 정도 허리둘레가 늘어난다고 치자
+        LOCAL:13 = BASE:ARG:웨스트 + CFLAG:ARG:3500 * 3 / 1000 ;체중 1kg 에  30 mm 정도 허리둘레가 늘어난다고 치자
         PRINTFORM / W:{LOCAL:13 / 10}.{LOCAL:13 % 10} cm
-        PRINTFORM  임신전({BASE:ARG:13 / 10}.{BASE:ARG:13 % 10} cm) /
+        PRINTFORM  임신전({BASE:ARG:웨스트 / 10}.{BASE:ARG:웨스트 % 10} cm) /
     ELSE
-        PRINTFORM / W:{BASE:ARG:13 / 10}.{BASE:ARG:13 % 10} cm /
+        PRINTFORM / W:{BASE:ARG:웨스트 / 10}.{BASE:ARG:웨스트 % 10} cm /
     ENDIF
-    PRINTFORML  H:{BASE:ARG:14 / 10}.{BASE:ARG:14 % 10} cm
+    PRINTFORML  H:{BASE:ARG:히프 / 10}.{BASE:ARG:히프 % 10} cm
 ENDIF
 CALL NEW_DRAWLINE
 
@@ -916,7 +916,7 @@ VARSET LOCALS,""
 SPLIT "(-) , (AAA) , (AA) , (A) , (B) , (C) , (D) , (E) , (F) , (G) , (H) , (I) , (J) , (K) , (L) , (M) , (N) , (O) , (P) , (Q) , (R) , (S) , (T) , (U) , (V) , (W) , (X) , (Y) , (Z) , (Z+) ",",", LOCALS
 ;A컵은 10 +- 1.25 cm,  8.8 cm ~ 11.3 cm, AA컵은 7.5 +- 1.25 cm, AAA컵은 5 +- 1.25 cm
 ;컵 크기는 키와 관계없다.
-LOCAL = (BASE:ARG:12 - MAXBASE:ARG:12 + 12) / 25
+LOCAL = (BASE:ARG:바스트 - MAXBASE:ARG:바스트 + 12) / 25
 LOCAL = LIMIT(LOCAL - 1 , 0 , 29) ;AAAA컵 (2.5 cm)이 없는 점을 주의
 LOCALS:0 = %LOCALS:(LOCAL)%
 
@@ -1017,7 +1017,7 @@ SIF LOCAL
 SIF FLAG:12 & 2
     PRINTL □ 촉수 관련
 
-PRINTFORML 　%ABLNAME:98% Lv: {ABL:ARG:촉수사역}　　　　　　　　　%PALAMNAME:198%의 구슬:{JUEL:ARG:198, 7}　촉수 에너지:{BASE:ARG:6, 5}τ
+PRINTFORML 　%ABLNAME:98% Lv: {ABL:ARG:촉수사역}　　　　　　　　　%PALAMNAME:198%의 구슬:{JUEL:ARG:198, 7}　촉수 에너지:{BASE:ARG:촉수, 5}τ
 PRINTFORML 　촉수 산제물:{FLAG:33, 3}명(누계:{FLAG:99, 3}명)
 PRINTFORM 　촉수능력　 :
 CALL SHOW_TENTACLE_ABL
@@ -1450,7 +1450,7 @@ CALL NEW_DRAWLINE
 @PRINT_GROWTH_SLAVE_CLITORIS, ARG
 PRINTFORML \@(FLAG:12 & 2) ?  □ 음핵 성장 상태 # 음핵 성장 상태:\@
 
-PRINTFORML \@(BASE:ARG:7 >= 250) ?  《Lv.MAX》 # 《Lv. {BASE:ARG:7 / 50}》 \@
+PRINTFORML \@(BASE:ARG:음핵 >= 250) ?  《Lv.MAX》 # 《Lv. {BASE:ARG:음핵 / 50}》 \@
 
 CALL NEW_DRAWLINE
 
@@ -1466,14 +1466,14 @@ IF (TALENT:ARG:127 || TALENT:ARG:128) && CFLAG:ARG:36 != 2
 ;소인이나 작은 몸집 이외로 데포라면 나 있다
 ELSEIF TALENT:ARG:127 == 0 && TALENT:ARG:128 == 0 && CFLAG:ARG:36 == 0 && TALENT:ARG:65 == 0
     PRINTL 음모가 가지런하게 나 있습니다.
-;그 이외는 BASE:5를 참조
-ELSEIF BASE:ARG:5 > 500
+;그 이외는 BASE:음모를 참조
+ELSEIF BASE:ARG:음모 > 500
     PRINTFORML 음모가 풍성하게 우거져 있습니다. \@(CFLAG:ARG:36 == 1) ? 탈모 처리는 하고 있으므로 향후 더 자라지는 않을 겁니다. # \@
-ELSEIF BASE:ARG:5 > 250
+ELSEIF BASE:ARG:음모 > 250
     PRINTFORML 음모가 가지런하게 나 있습니다. \@(CFLAG:ARG:36 == 1) ? 탈모 처리는 하고 있으므로 향후 더 자라지는 않을 겁니다.  # \@
-ELSEIF BASE:ARG:5 > 125
+ELSEIF BASE:ARG:음모 > 125
     PRINTFORML 음모가 꽤 자라는 중인 것 \@(CFLAG:ARG:36 == 1) ? 같지만, 탈모 처리가 되었으므로 향후 더 자라지는 않을 겁니다.  # 같습니다. \@
-ELSEIF BASE:ARG:5 > 51
+ELSEIF BASE:ARG:음모 > 51
     PRINTFORML 음모가 곳곳에 자라는 중인 것 \@(CFLAG:ARG:36 == 1) ? 같지만, 탈모 처리되었으므로 향후 더 자라지는 않을 겁니다.  # 같습니다. \@
 ELSE
     PRINTFORML 음모는 나지 않았습니다. \@(CFLAG:ARG:36 == 1) ? 탈모 처리가 되었으므로 향후 자랄 일은 없을 겁니니다. # 향후 자라게 될 겁니다. \@
@@ -2478,30 +2478,30 @@ ELSE
     IF (ARG:1 & 4) == 0
         PRINTFORM 체력
         ;60%까지는 초록
-        IF BASE:ARG:0 > (MAXBASE:ARG:0 * 60) / 100
+        IF BASE:ARG:체력 > (MAXBASE:ARG:체력 * 60) / 100
             CALL SETCOLOR_TORIKOMODE, "GREEN", 4
         ;30%까지는 노랑
-        ELSEIF BASE:ARG:0 > (MAXBASE:ARG:0 * 30) / 100
+        ELSEIF BASE:ARG:체력 > (MAXBASE:ARG:체력 * 30) / 100
             CALL SETCOLOR_TORIKOMODE, "YELLOW", 4
         ;그 밑으론 빨강
         ELSE
             CALL SETCOLOR_TORIKOMODE, "RED", 4
         ENDIF
-        PRINTFORM ({BASE:ARG:0, 4}/{MAXBASE:ARG:0, 4}) 
+        PRINTFORM ({BASE:ARG:체력, 4}/{MAXBASE:ARG:체력, 4}) 
         RESETCOLOR
 
         PRINTFORM 기력
         ;60%까지는 초록
-        IF BASE:ARG:1 > (MAXBASE:ARG:1 * 60) / 100
+        IF BASE:ARG:기력 > (MAXBASE:ARG:기력 * 60) / 100
             CALL SETCOLOR_TORIKOMODE, "GREEN", 4
         ;30%까지는 노랑
-        ELSEIF BASE:ARG:1 > (MAXBASE:ARG:1 * 30) / 100
+        ELSEIF BASE:ARG:기력 > (MAXBASE:ARG:기력 * 30) / 100
             CALL SETCOLOR_TORIKOMODE, "YELLOW", 4
         ;그 밑으론 빨강
         ELSE
             CALL SETCOLOR_TORIKOMODE, "RED", 4
         ENDIF
-        PRINTFORM ({BASE:ARG:1, 4}/{MAXBASE:ARG:1, 4}) 
+        PRINTFORM ({BASE:ARG:기력, 4}/{MAXBASE:ARG:기력, 4}) 
         RESETCOLOR
     ENDIF
     ;만약 식사 시스템 사용중이라면

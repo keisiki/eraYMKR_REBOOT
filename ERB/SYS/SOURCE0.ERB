@@ -74,7 +74,7 @@ ENDIF
 ;-------------------------------------------------
 ;기력 오링에 따른 시간 정지의 강제 해제
 ;-------------------------------------------------
-SIF TEQUIP:71 == 1 && BASE:(TFLAG:158):1 <= 0
+SIF TEQUIP:71 == 1 && BASE:(TFLAG:158):기력 <= 0
     CALL TIMESTOP_RELEASE
 
 ;-------------------------------------------------
@@ -402,13 +402,13 @@ ENDIF
 ;-------------------------------------------------
 ;酒酔いチェック
 ;-------------------------------------------------
-SIF BASE:8 > 0
+SIF BASE:취기 > 0
     CALL ALCOHOL_DRUNK_CHECK,TARGET
 ;もし主人が酔っていたら
-SIF BASE:MASTER:8 > 0
+SIF BASE:MASTER:취기 > 0
     CALL ALCOHOL_DRUNK_CHECK,MASTER
 ;もし助手が酔っていたら
-SIF ASSI >= 0 && BASE:ASSI:8 > 0
+SIF ASSI >= 0 && BASE:ASSI:취기 > 0
     CALL ALCOHOL_DRUNK_CHECK,ASSI
 
 ;-------------------------------------------------
@@ -471,14 +471,14 @@ CALL CHECK_TRAIN_PAIN
 ;-------------------------------------------------
 ;기력이 0이하일 경우
 ;-------------------------------------------------
-IF BASE:1 <= 0
+IF BASE:기력 <= 0
     ;음마가 없으면 체력 추가소모
     IF TALENT:180 == 0
         TIMES DOWNBASE:0 , 1.50
         DOWNBASE:0 += (FLAG:3 == 4 || FLAG:3 == 5) ? 100 # 80
     ENDIF
 
-    DOWNBASE:1 = 0
+    DOWNBASE:기력 = 0
 ENDIF
 
 ;-------------------------------------------------
@@ -546,9 +546,9 @@ CALL CHECK_TRAIN_LIFE_SLAVE
 ;체력 · 기력의 감소 보정(공통 처리)及び減少処理
 ;-------------------------------------------------
 CALL CHECK_TRAIN_LIFE, TARGET
-SIF (DOWNBASE:MASTER:0 || DOWNBASE:MASTER:1)
+SIF (DOWNBASE:MASTER:체력 || DOWNBASE:MASTER:기력)
     CALL CHECK_TRAIN_LIFE, MASTER
-SIF ASSI >= 0 && (DOWNBASE:ASSI:0 || DOWNBASE:ASSI:1)
+SIF ASSI >= 0 && (DOWNBASE:ASSI:체력 || DOWNBASE:ASSI:기력)
     CALL CHECK_TRAIN_LIFE, ASSI
 
 ;-------------------------------------------------
@@ -664,7 +664,7 @@ PREVCOM = SELECTCOM
 TFLAG:133 = (ASSIPLAY) ? 1 # 0
 
 ;기력 ０
-IF BASE:1 <= 0
+IF BASE:기력 <= 0
     SETCOLOR 255,10,10
     PRINTFORML ★%CALLNAME:TARGET%의 기력０★
     RESETCOLOR
@@ -680,11 +680,11 @@ IF FLAG:5000 & 1
 ;일반모드
 ELSE    
     FONTBOLD
-    PRINTFORML 체력－{DOWNBASE:0, 3, LEFT} 기력－{DOWNBASE:1, 3, LEFT}
-    SIF (DOWNBASE:MASTER:0 || DOWNBASE:MASTER:1)
-        PRINTFORML %CALLNAME:MASTER%의 체력－{DOWNBASE:MASTER:0, 3, LEFT} 기력－{DOWNBASE:MASTER:1, 3, LEFT}
-    SIF ASSI >= 0 && (DOWNBASE:ASSI:0 || DOWNBASE:ASSI:1)
-        PRINTFORML %CALLNAME:ASSI%의 체력－{DOWNBASE:ASSI:0, 3, LEFT} 기력－{DOWNBASE:ASSI:1, 3, LEFT}
+    PRINTFORML 체력－{DOWNBASE:0, 3, LEFT} 기력－{DOWNBASE:기력, 3, LEFT}
+    SIF (DOWNBASE:MASTER:체력 || DOWNBASE:MASTER:기력)
+        PRINTFORML %CALLNAME:MASTER%의 체력－{DOWNBASE:MASTER:체력, 3, LEFT} 기력－{DOWNBASE:MASTER:기력, 3, LEFT}
+    SIF ASSI >= 0 && (DOWNBASE:ASSI:체력 || DOWNBASE:ASSI:기력)
+        PRINTFORML %CALLNAME:ASSI%의 체력－{DOWNBASE:ASSI:체력, 3, LEFT} 기력－{DOWNBASE:ASSI:기력, 3, LEFT}
     FONTREGULAR
 ENDIF
 
@@ -979,7 +979,7 @@ IF TALENT:PLAYER:53 && TEQUIP:90 == 0 && SELECTCOM == 222
 ENDIF
 
 DOWNBASE:0 += LOCAL:0
-DOWNBASE:1 += LOCAL:1
+DOWNBASE:기력 += LOCAL:1
 
 ;-------------------------------------------------
 ;技師パッチ：改造苦痛系調教器具による体力消耗・気力消耗減少の補正
@@ -994,32 +994,32 @@ ENDIF
 @CHECK_TRAIN_LIFE_SLAVE
 ;조교 대상이 [覚](心の目を閉ざしているか[精神崩壊]は除く)
 SIF TALENT:213 == 1 && TALENT:167 == 0
-    TIMES DOWNBASE:1 , 1.25
+    TIMES DOWNBASE:기력 , 1.25
 ;主人による[使い魔]調教時
 IF PLAYER == MASTER && TALENT:164
     TIMES DOWNBASE:0 , 0.95
-    TIMES DOWNBASE:1 , 0.95
+    TIMES DOWNBASE:기력 , 0.95
 ENDIF
 ;ベリージュエル装着時
 IF CFLAG:42 & 4
     TIMES DOWNBASE:0 , 0.90
-    TIMES DOWNBASE:1 , 0.90
+    TIMES DOWNBASE:기력 , 0.90
 ENDIF
 ;조교 대상이 [淫魔]
 IF TALENT:180
-    IF DOWNBASE:0 > DOWNBASE:1
+    IF DOWNBASE:0 > DOWNBASE:기력
         TIMES DOWNBASE:0 , 0.75
     ELSE
-        TIMES DOWNBASE:1 , 0.75
+        TIMES DOWNBASE:기력 , 0.75
     ENDIF
 ENDIF
 ;조교 대상이 勝手にコマンドを実行した場合は체력 · 기력の消費が軽減される
 IF TFLAG:699 > 0
     TIMES DOWNBASE:0 , 0.80
-    TIMES DOWNBASE:1 , 0.80
+    TIMES DOWNBASE:기력 , 0.80
 ENDIF
 ;EASYの場合、体調が万全だと1回の調教でいきなり体力が0にならない(ただしキャラ共通補正は受ける)
-SIF FLAG:3 == 1 && BASE:0 == MAXBASE:0 && BASE:1 == MAXBASE:1 && DOWNBASE:0 >= MAXBASE:0
+SIF FLAG:3 == 1 && BASE:0 == MAXBASE:0 && BASE:기력 == MAXBASE:기력 && DOWNBASE:0 >= MAXBASE:0
     DOWNBASE:0 = MAXBASE:0 - 1
 
 ;-------------------------------------------------
@@ -1031,22 +1031,22 @@ SIF FLAG:3 == 1 && BASE:0 == MAXBASE:0 && BASE:1 == MAXBASE:1 && DOWNBASE:0 >= M
 ;………………………………………………
 ;[천식]
 SIF TALENT:ARG:47
-    TIMES DOWNBASE:ARG:0 , 1.20
+    TIMES DOWNBASE:ARG:체력 , 1.20
 ;[거구]
 SIF TALENT:ARG:129
-    TIMES DOWNBASE:ARG:0 , 0.75
+    TIMES DOWNBASE:ARG:체력 , 0.75
 ;[영체]
 IF TALENT:ARG:207
-    TIMES DOWNBASE:ARG:0 , 0.50
-    TIMES DOWNBASE:ARG:1 , 1.50
+    TIMES DOWNBASE:ARG:체력 , 0.50
+    TIMES DOWNBASE:ARG:기력 , 1.50
 ENDIF
 ;[구문지]
 SIF TALENT:ARG:216
-    TIMES DOWNBASE:ARG:0 , 1.20
+    TIMES DOWNBASE:ARG:체력 , 1.20
 ;[신령]
 IF TALENT:ARG:222
-    TIMES DOWNBASE:ARG:0 , 0.90
-    TIMES DOWNBASE:ARG:1 , 0.90
+    TIMES DOWNBASE:ARG:체력 , 0.90
+    TIMES DOWNBASE:ARG:기력 , 0.90
 ENDIF
 
 ;………………………………………………

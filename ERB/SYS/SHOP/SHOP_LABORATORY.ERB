@@ -18,14 +18,14 @@
 ;-----------------------------------------------
 @TENTACLE_LABORATORY
 DRAWLINE
-PRINTFORML 현재의 촉수 에너지({BASE:MASTER:6}τ)
+PRINTFORML 현재의 촉수 에너지({BASE:MASTER:촉수}τ)
 PRINTFORML 현재 주인이 보유한 %PALAMNAME:198%의 구슬:{JUEL:MASTER:198, 7}
 DRAWLINE
 PRINTL 무엇을 하겠습니까?
 PRINTL  [0] 기생촉수
 SIF SPECIALTENTACLE_CHECK() < 19 || CHARATENTACLE_CHECK() < 17
     PRINTL  [1] 촉수개발
-SIF BASE:MASTER:6 && FLAG:75 & 2048
+SIF BASE:MASTER:촉수 && FLAG:75 & 2048
     PRINTL  [2] 촉수연금
 SIF FLAG:75 & 4096 && CHARANUM > 1 && TIME == 1
     PRINTL  [3] 촉수에 절이기
@@ -92,7 +92,7 @@ LOCALS:2 = 기력강화
 LOCALS:99 = 촉수처분
 
 DRAWLINE
-PRINTFORML 현재의 촉수 에너지 ({BASE:MASTER:6}τ)
+PRINTFORML 현재의 촉수 에너지 ({BASE:MASTER:촉수}τ)
 PRINTL 무엇을 하겠습니까?
 DRAWLINE
 PRINTL  [0] 촉수적출
@@ -132,11 +132,11 @@ REPEAT CHARANUM
         CONTINUE
     SIF TALENT:COUNT:146 == 0
         CONTINUE
-    SIF (LOCAL == 1 || LOCAL == 2 || LOCAL == 3) && BASE:COUNT:6 == 0
+    SIF (LOCAL == 1 || LOCAL == 2 || LOCAL == 3) && BASE:COUNT:촉수 == 0
         CONTINUE
-    SIF LOCAL == 1 && MAXBASE:COUNT:0 >= 5000
+    SIF LOCAL == 1 && MAXBASE:COUNT:체력 >= 5000
         CONTINUE
-    SIF LOCAL == 2 && MAXBASE:COUNT:1 >= 5000
+    SIF LOCAL == 2 && MAXBASE:COUNT:기력 >= 5000
         CONTINUE
     SIF LOCAL == 3 && TALENT:COUNT:162
         CONTINUE
@@ -207,18 +207,18 @@ ENDIF
 
 PRINTFORM %CALLNAME:TARGET%에 
 IF LOCAL == 0
-    LOCAL:2 = BASE:6
-    SIF BASE:6 == MAXBASE:6
+    LOCAL:2 = BASE:촉수
+    SIF BASE:촉수 == MAXBASE:촉수
         TIMES LOCAL:2 , 1.50
     PRINTL 기생 중인 촉수를 적출하여 에너지로 변환했습니다.
     PRINTFORML 촉수 에너지＋{LOCAL:2}τ
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:146%]을 잃었다.
-    BASE:MASTER:6 += LOCAL:2
-    BASE:6 = 0
+    BASE:MASTER:촉수 += LOCAL:2
+    BASE:촉수 = 0
     TALENT:146 = 0
 ELSEIF LOCAL == 1 || LOCAL == 2
     PRINTL 기생 중이던 촉수는 비축해놓은 영양분을 모두 방출했다.
-    LOCAL:2 = BASE:6
+    LOCAL:2 = BASE:촉수
     IF LOCAL:2 < 5
         LOCAL:3 = 0
     ELSEIF LOCAL:2 < 10
@@ -239,7 +239,7 @@ ELSEIF LOCAL == 1 || LOCAL == 2
         LOCAL:3 = 100
     ENDIF
     ;촉수寄生LVが溜められる値の最大値まであった場合, 成長値は増加
-    SIF BASE:6 == MAXBASE:6
+    SIF BASE:촉수 == MAXBASE:촉수
         TIMES LOCAL:3 , 1.50
     ;ベリージュエルを装着していると成長値は減少
     SIF CFLAG:42 & 4
@@ -253,19 +253,19 @@ ELSEIF LOCAL == 1 || LOCAL == 2
             PRINTFORMW %CALLNAME:TARGET%：체력증가＋{LOCAL:3}
         ELSEIF LOCAL == 2
             LOCAL:3 = MAX(LOCAL:3 / 5, 1)
-            MAXBASE:1 += LOCAL:3
-            BASE:1 += LOCAL:3
+            MAXBASE:기력 += LOCAL:3
+            BASE:기력 += LOCAL:3
             PRINTFORML 영양분이 %CALLNAME:TARGET%의 체내를 돌며 마음을 더 강인하게 단련시켰다.
             PRINTFORMW %CALLNAME:TARGET%：기력증가＋{LOCAL:3}
         ENDIF
     ELSE
         PRINTFORMW 유감스럽게도 %조사처리(CALLNAME:TARGET,"를")% 성장시키기엔 영양이 다소 부족한 듯하다…….
     ENDIF
-    BASE:6 = 0
+    BASE:촉수 = 0
 ELSEIF LOCAL == 99
     PRINTL 기생 중인 촉수를 처분합니다.
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:146%]을 잃었다.
-    BASE:6 = 0
+    BASE:촉수 = 0
     TALENT:146 = 0
 ENDIF
 DRAWLINE
@@ -301,7 +301,7 @@ REPEAT 20
     ENDIF
     CALL ARRANGE_CHARALIST, LOCAL
     CALL ARRANGE_CHARALIFE, LOCAL
-    PRINTFORM  기생촉수성장 LV({BASE:LOCAL:6, 4}/{MAXBASE:LOCAL:6, 4})
+    PRINTFORM  기생촉수성장 LV({BASE:LOCAL:촉수, 4}/{MAXBASE:LOCAL:촉수, 4})
     SIF TALENT:LOCAL:145
         PRINT [회란]
     PRINTL 
@@ -314,7 +314,7 @@ REND
 ;Eは不死刻印取得に必要な条件, Fはそのために必要な촉수幼生
 @TENTACLE_LABORATORY_CONSTITUTION
 DRAWLINE
-PRINTFORML %CALLNAME:TARGET%의 체질을 어떻게 변화시키겠습니까? (기생촉수성장 LV:{BASE:6})
+PRINTFORML %CALLNAME:TARGET%의 체질을 어떻게 변화시키겠습니까? (기생촉수성장 LV:{BASE:촉수})
 DRAWLINE
 LOCAL = 0
 SIF TALENT:113 == 0
@@ -439,13 +439,13 @@ IF RESULT == 1
 ELSEIF RESULT != 0
     GOTO INPUT_LOOP_1
 ENDIF
-IF BASE:6 < LOCAL:2
+IF BASE:촉수 < LOCAL:2
     PRINTW 필요한 기생촉수성장 LV에 도달하지 못했습니다.
     RESTART
 ELSEIF LOCAL:3 == 99 && LOCAL:1
     CALL TENTACLE_GAIN_IMMORTAL, LOCAL:1, LOCAL:2
 ELSE
-    BASE:6 -= LOCAL:2
+    BASE:촉수 -= LOCAL:2
     PRINTFORML %CALLNAME:TARGET%의 체내에 기생 중이던 촉수는 
     PRINTW 그 동안 축적했었던 영양분을 사용해 특수한 호르몬을 분비하기 시작했다.
 ENDIF
@@ -456,7 +456,7 @@ SELECTCASE LOCAL:3
     CASE 1
         PRINTFORMW %CALLNAME:TARGET%에게서 모유가 나오지 않게 되었다.
         TALENT:134 = 0
-        MAXBASE:ARG:3 = 0 ;모유 게이지
+        MAXBASE:ARG:모유 = 0 ;모유 게이지
     CASE 2
         CALL BUSTSIZE_UP(TARGET)
     CASE 3
@@ -547,7 +547,7 @@ DRAWLINE
 PRINTL 현재 촉수의 능력:
 CALL SHOW_TENTACLE_ABL
 DRAWLINE
-PRINTFORML 현재의 촉수 에너지:{BASE:MASTER:6}τ　　소지금:{MONEY}원
+PRINTFORML 현재의 촉수 에너지:{BASE:MASTER:촉수}τ　　소지금:{MONEY}원
 PRINTL 어떤 능력을 개발하겠습니까?
 PRINTL (덧붙여 주인의 촉수사역 Lv이 부족해 개발할 수 없는 촉수능력은 표시되지 않습니다)
 DRAWLINE
@@ -782,10 +782,10 @@ ENDIF
 LOCAL = RESULT
 SIF TALENT:MASTER:998
     LOCAL:1 = 0
-IF BASE:MASTER:6 < LOCAL:1 || MONEY < LOCAL:2
-    IF BASE:MASTER:6 < LOCAL:1 && MONEY < LOCAL:2
+IF BASE:MASTER:촉수 < LOCAL:1 || MONEY < LOCAL:2
+    IF BASE:MASTER:촉수 < LOCAL:1 && MONEY < LOCAL:2
         PRINT 필요한 에너지와 자금이 
-    ELSEIF BASE:MASTER:6 < LOCAL:1
+    ELSEIF BASE:MASTER:촉수 < LOCAL:1
         PRINT 필요한 에너지가 
     ELSEIF MONEY < LOCAL:2
         PRINT 필요한 자금이 
@@ -793,7 +793,7 @@ IF BASE:MASTER:6 < LOCAL:1 || MONEY < LOCAL:2
     PRINTW 부족합니다.
     RESTART
 ENDIF
-BASE:MASTER:6 -= LOCAL:1
+BASE:MASTER:촉수 -= LOCAL:1
 MONEY -= LOCAL:2
 ;現し身촉수
 IF LOCAL == 99
@@ -942,19 +942,19 @@ ELSE
     LOCAL = 50
 ENDIF
 PRINTFORML 촉수가 비축한 에너지를 소비하여 금화를 만들 수 있습니다. (환금비율:1τ당＝{LOCAL}원)
-PRINTFORML 현재의 촉수 에너지:{BASE:MASTER:6}τ　　소지금:{MONEY}원
-PRINTFORML 얼마나 에너지를 사용하겠습니까? (1-{BASE:MASTER:6}닢, 무효 수치로 취소)
+PRINTFORML 현재의 촉수 에너지:{BASE:MASTER:촉수}τ　　소지금:{MONEY}원
+PRINTFORML 얼마나 에너지를 사용하겠습니까? (1-{BASE:MASTER:촉수}닢, 무효 수치로 취소)
 DRAWLINE
 PRINTLC [0] 돌아가기
 PRINTLC [1] 1닢
-SIF BASE:MASTER:6 >= 5
+SIF BASE:MASTER:촉수 >= 5
     PRINTLC [5] 5닢
-SIF BASE:MASTER:6 >= 10
+SIF BASE:MASTER:촉수 >= 10
     PRINTLC [10] 10닢
-SIF BASE:MASTER:6 != 1 && BASE:MASTER:6 != 5 && BASE:MASTER:6 != 10
-    PRINTFORMLC [{BASE:MASTER:6}] 가능한 만큼
+SIF BASE:MASTER:촉수 != 1 && BASE:MASTER:촉수 != 5 && BASE:MASTER:촉수 != 10
+    PRINTFORMLC [{BASE:MASTER:촉수}] 가능한 만큼
 INPUT
-IF RESULT > BASE:MASTER:6
+IF RESULT > BASE:MASTER:촉수
     PRINTW 에너지가 부족합니다.
     RETURN 0
 ELSEIF RESULT <= 0
@@ -976,7 +976,7 @@ ELSEIF RESULT != 0
 ENDIF
 
 MONEY:1 = LOCAL:1 * LOCAL
-BASE:MASTER:6 -= LOCAL:1
+BASE:MASTER:촉수 -= LOCAL:1
 MONEY += MONEY:1
 PRINTFORML ＜%조사처리(CALLNAME:MASTER,"는")% 촉수연금으로 만들어낸 금화를 팔았다＞
 PRINTFORMW ＜자금이 {MONEY:1}원 늘어났습니다＞
@@ -1030,10 +1030,10 @@ REPEAT CHARANUM
     SIF ABL:COUNT:촉수중독 > 1
         CONTINUE
     ;[養分注入촉수]が無い状態では体力500未満の奴隷を連れ込めない
-    SIF BASE:COUNT:0 < 500 && (FLAG:75 & 32) == 0
+    SIF BASE:COUNT:체력 < 500 && (FLAG:75 & 32) == 0
         CONTINUE
     ;体力, 気力の最大値のどちらかが500未満のの場合も奴隷を連れ込めない
-    SIF MAXBASE:COUNT:0 < 500 || MAXBASE:COUNT:1 < 500
+    SIF MAXBASE:COUNT:체력 < 500 || MAXBASE:COUNT:기력 < 500
         CONTINUE
     ;楽して快感の否定持ちを堕とそうなんて考えないように
     SIF TALENT:COUNT:71 && MARK:COUNT:반발각인
@@ -1147,7 +1147,7 @@ LOCAL:1 = MIN(LOCAL:1, 1000)
 ;補正用
 TIMES LOCAL:1 , 3.50
 PRINTFORML %CALLNAME:TARGET%에게 하룻밤 동안 촉수의 매력을 가르치겠습니까?
-PRINTFORML 현재의 촉수 에너지:{BASE:MASTER:6}τ　　({LOCAL:1}τ 필요)
+PRINTFORML 현재의 촉수 에너지:{BASE:MASTER:촉수}τ　　({LOCAL:1}τ 필요)
 SIF TALENT:처녀
     PRINTFORML (※예를 선택하면 %조사처리(CALLNAME:TARGET,"는")% 처녀를 잃게 됩니다)
 PRINTC [0] 예
@@ -1161,12 +1161,12 @@ IF RESULT == 1
     TARGET = LOCAL:98
     RESTART
 ELSEIF RESULT == 0
-    IF BASE:MASTER:6 < LOCAL:1
+    IF BASE:MASTER:촉수 < LOCAL:1
         PRINTW 촉수 에너지가 부족합니다.
         TARGET = LOCAL:98
         RETURN 0
     ELSE
-        BASE:MASTER:6 -= LOCAL:1
+        BASE:MASTER:촉수 -= LOCAL:1
     ENDIF
 ELSE
     GOTO INPUT_LOOP_1
@@ -1268,8 +1268,8 @@ SIF TALENT:MASTER:998
 CFLAG:65 = MIN(CFLAG:65 + LOCAL, 999999)
 
 MAXBASE:0 -= MAX(TFLAG:232 * 50, MAXBASE:0 - 700)
-MAXBASE:1 -= MAX(TFLAG:232 * 10, MAXBASE:1 - 500)
-BASE:1 = MIN(BASE:1, MAXBASE:1)
+MAXBASE:기력 -= MAX(TFLAG:232 * 10, MAXBASE:기력 - 500)
+BASE:기력 = MIN(BASE:기력, MAXBASE:기력)
 BASE:0 = 1
 PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 심각하게 지쳤다….
 PRINTFORMW %CALLNAME:TARGET%의 체력과 기력이 격감했다.
@@ -1321,13 +1321,13 @@ REPEAT CHARANUM
         SIF MARK:COUNT:반발각인
             CONTINUE
         ;体力が全快でないと奴隷を連れ込めない
-        SIF BASE:COUNT:0 < MAXBASE:COUNT:0
+        SIF BASE:COUNT:체력 < MAXBASE:COUNT:체력
             CONTINUE
         ;[養分注入촉수]が無い状態では体力1000未満の奴隷を連れ込めない
-        SIF BASE:COUNT:0 < 1000 && (FLAG:75 & 32) == 0
+        SIF BASE:COUNT:체력 < 1000 && (FLAG:75 & 32) == 0
             CONTINUE
         ;体力, 気力の最大値のどちらかが500未満のの場合も奴隷を連れ込めない
-        SIF MAXBASE:COUNT:0 < 500 || MAXBASE:COUNT:1 < 500
+        SIF MAXBASE:COUNT:체력 < 500 || MAXBASE:COUNT:기력 < 500
             CONTINUE
     ENDIF
 
@@ -1462,7 +1462,7 @@ SIF LOCAL:2
 ;補正用
 TIMES LOCAL:1 , 2.50
 PRINTFORML %CALLNAME:TARGET%에게 시간을 충분히 들여 촉수의 매력을 가르치겠습니까?
-PRINTFORML 현재의 촉수 에너지:{BASE:MASTER:6}τ　　({LOCAL:1}τ 필요)
+PRINTFORML 현재의 촉수 에너지:{BASE:MASTER:촉수}τ　　({LOCAL:1}τ 필요)
 SIF TALENT:처녀
     PRINTFORML (※예를 선택하면 %조사처리(CALLNAME:TARGET,"는")% 처녀를 잃게 됩니다)
 PRINTC [0] 예
@@ -1476,12 +1476,12 @@ IF RESULT == 1
     TARGET = LOCAL
     RETURN 0
 ELSEIF RESULT == 0
-    IF BASE:MASTER:6 < LOCAL:1
+    IF BASE:MASTER:촉수 < LOCAL:1
         PRINTW 촉수 에너지가 부족합니다.
         TARGET = LOCAL
         RETURN 0
     ELSE
-        BASE:MASTER:6 -= LOCAL:1
+        BASE:MASTER:촉수 -= LOCAL:1
     ENDIF
 ELSE
     GOTO INPUT_LOOP_1
@@ -1656,7 +1656,7 @@ IF LOCAL:1 < 0 || LOCAL:1 == ARG
 ELSE
     ASSI = (LOCAL:1 > ARG) ? (LOCAL:1 - 1) # LOCAL:1
 ENDIF
-BASE:MASTER:6 += LOCAL:2
+BASE:MASTER:촉수 += LOCAL:2
 JUEL:MASTER:198 += LOCAL:3
 FLAG:33 += 1
 FLAG:99 += 1
@@ -1700,10 +1700,10 @@ REPEAT CHARANUM
         SIF MARK:COUNT:반발각인 > 2
             CONTINUE
         ;体力, 気力の最大値のどちらかが1000未満の場合は奴隷を連れ込めない
-        SIF MAXBASE:COUNT:0 < 1000 || MAXBASE:COUNT:1 < 1000
+        SIF MAXBASE:COUNT:체력 < 1000 || MAXBASE:COUNT:기력 < 1000
             CONTINUE
         ;現在の体力, 気力のどちらかが1000未満の場合も奴隷を連れ込めない
-        SIF BASE:COUNT:0 < 1000 || BASE:COUNT:1 < 1000
+        SIF BASE:COUNT:체력 < 1000 || BASE:COUNT:기력 < 1000
             CONTINUE
     ENDIF
 
@@ -1821,7 +1821,7 @@ IF LOCAL:97 < 0 || LOCAL:97 == LOCAL
 ELSE
     ASSI = (LOCAL:97 > LOCAL) ? (LOCAL:97 - 1) # LOCAL:97
 ENDIF
-BASE:MASTER:6 += TFLAG:233
+BASE:MASTER:촉수 += TFLAG:233
 JUEL:MASTER:198 += TFLAG:234
 FLAG:33 += 1
 FLAG:99 += 1
@@ -1837,7 +1837,7 @@ RETURN 1
 ;※なお産んだ촉수を用いる機能は現段階では未実装
 @TENTACLE_LABORATORY_BREED
 DRAWLINE
-PRINTFORML 현재의 촉수 에너지({BASE:MASTER:6}τ)
+PRINTFORML 현재의 촉수 에너지({BASE:MASTER:촉수}τ)
 PRINTL 무엇을 하겠습니까?
 SIF CHARANUM > 1
     PRINTL  [0] 촉수수정
@@ -1895,10 +1895,10 @@ REPEAT CHARANUM
         ;必要体力, 気力を算出(寄生されているかどうかで分岐)
         LOCAL:3 = (TALENT:COUNT:146) ? 1500 # 1000
         ;体力, 気力の最大値のどちらかが1000(촉수寄生中の場合は1500)未満の場合は奴隷を連れ込めない
-        SIF MAXBASE:COUNT:0 < LOCAL:3 || MAXBASE:COUNT:1 < LOCAL:3
+        SIF MAXBASE:COUNT:체력 < LOCAL:3 || MAXBASE:COUNT:기력 < LOCAL:3
             CONTINUE
         ;現在の体力が1000(촉수寄生中の場合は1500)未満の場合も奴隷を連れ込めない
-        SIF BASE:COUNT:0 < LOCAL:3
+        SIF BASE:COUNT:체력 < LOCAL:3
             CONTINUE
         ;[작은체형]は精液放出量強化必須(妊娠パッチの[작은체형]は妊娠しにくいの特性より)
         SIF TALENT:COUNT:128 && (FLAG:75 & 16384) == 0
@@ -2059,7 +2059,7 @@ LOCAL:1 = MAX(LOCAL:1, 100)
 LOCAL:1 /= 10
 DRAWLINE
 PRINTFORML ※%CALLNAME:LOCAL%에게 촉수의 유체를 임신하게 합니다.
-PRINTFORML 현재의 촉수 에너지:{BASE:MASTER:6}τ　　({LOCAL:1}τ 필요)
+PRINTFORML 현재의 촉수 에너지:{BASE:MASTER:촉수}τ　　({LOCAL:1}τ 필요)
 PRINTL 실행하겠습니까?
 PRINTC [0] 예
 PRINTC [1] 아니오
@@ -2071,11 +2071,11 @@ INPUT
 IF RESULT == 1
     RESTART
 ELSEIF RESULT == 0
-    IF BASE:MASTER:6 < LOCAL:1
+    IF BASE:MASTER:촉수 < LOCAL:1
         PRINTW 촉수 에너지가 부족합니다.
         RETURN 0
     ELSE
-        BASE:MASTER:6 -= LOCAL:1
+        BASE:MASTER:촉수 -= LOCAL:1
     ENDIF
 ELSE
     GOTO INPUT_LOOP_1

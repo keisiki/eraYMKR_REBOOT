@@ -37,7 +37,7 @@ IF NO:TARGET == 19
     SIF MARK:LOCAL:공포각인 > 2 || MARK:LOCAL:반발각인
         RETURN 0
     ;반령의 체력과 기력이 일정 이하だとダメ
-    SIF BASE:LOCAL:0 < 500 || BASE:LOCAL:1 < 200
+    SIF BASE:LOCAL:체력 < 500 || BASE:LOCAL:기력 < 200
         RETURN 0
     ;요우무がオトコではなくて, 반령もオトコではない場合
     IF TALENT:120 == 0 && TALENT:LOCAL:120 == 0
@@ -79,7 +79,7 @@ ELSEIF NO:TARGET == 70
     SIF MARK:LOCAL:공포각인 > 2 || MARK:LOCAL:반발각인
         RETURN 0
     ;반령의 체력과 기력이 일정이하だとダメ
-    SIF BASE:LOCAL:0 < 500 || BASE:LOCAL:1 < 200
+    SIF BASE:LOCAL:체력 < 500 || BASE:LOCAL:기력 < 200
         RETURN 0
     ;요우키がオトコではなくて, 반령(요우키)もオトコではない場合
     IF TALENT:120 == 0 && TALENT:LOCAL:120 == 0
@@ -152,7 +152,7 @@ LOCAL = EJACULATIONCHECK_ABL_11_1(TARGET, LOCAL)
 LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
 
 SIF EXIST_PENIS(PLAYER)
-    BASE:PLAYER:2 += LOCAL
+    BASE:PLAYER:사정 += LOCAL
 
 ;-------------------------------------------------
 ;소스의 계산
@@ -161,10 +161,10 @@ SIF EXIST_PENIS(PLAYER)
 ;본체와 반령이 모두 남자가 아닌 경우
 IF TALENT:120 == 0 && TALENT:(TARGET:1):120 == 0
     DOWNBASE:0 += 0
-    DOWNBASE:1 += 200
+    DOWNBASE:기력 += 200
     ;반령의 체력 기력 소모를 여기서 해 버린다
-    BASE:(TARGET:1):0 = LIMIT(BASE:(TARGET:1):0 - 50, 0, MAXBASE:(TARGET:1):0)
-    BASE:(TARGET:1):1 = LIMIT(BASE:(TARGET:1):1 - 100, 0, MAXBASE:(TARGET:1):1)
+    BASE:(TARGET:1):체력 = LIMIT(BASE:(TARGET:1):체력 - 50, 0, MAXBASE:(TARGET:1):체력)
+    BASE:(TARGET:1):기력 = LIMIT(BASE:(TARGET:1):기력 - 100, 0, MAXBASE:(TARGET:1):기력)
     PRINTFORML %CALLNAME:(TARGET:1)%의 체력이 50 감소했다.
     PRINTFORML %CALLNAME:(TARGET:1)%의 기력이 100 감소했다.
 
@@ -266,10 +266,10 @@ IF TALENT:120 == 0 && TALENT:(TARGET:1):120 == 0
 ;그 이외의 경우
 ELSE
     DOWNBASE:0 += 0
-    DOWNBASE:1 += 240
+    DOWNBASE:기력 += 240
     ;반령의 체력 기력 소모를 여기서 해 버린다
-    BASE:(TARGET:1):0 = LIMIT(BASE:(TARGET:1):0 - 100, 0, MAXBASE:(TARGET:1):0)
-    BASE:(TARGET:1):1 = LIMIT(BASE:(TARGET:1):1 - 150, 0, MAXBASE:(TARGET:1):1)
+    BASE:(TARGET:1):체력 = LIMIT(BASE:(TARGET:1):체력 - 100, 0, MAXBASE:(TARGET:1):체력)
+    BASE:(TARGET:1):기력 = LIMIT(BASE:(TARGET:1):기력 - 150, 0, MAXBASE:(TARGET:1):기력)
     PRINTFORML %CALLNAME:(TARGET:1)%의 체력이 100 감소했다.
     PRINTFORML %CALLNAME:(TARGET:1)%의 기력이 150 감소했다.
 
@@ -306,27 +306,27 @@ ELSE
     IF EXP:(TARGET:1):A경험 < EXPLV:1
         TIMES SOURCE:2 , 0.50
         SOURCE:20 = 2500
-        DOWNBASE:1 += 50
+        DOWNBASE:기력 += 50
     ELSEIF EXP:(TARGET:1):A경험 < EXPLV:2
         TIMES SOURCE:2 , 0.60
         SOURCE:20 = 2000
-        DOWNBASE:1 += 40
+        DOWNBASE:기력 += 40
     ELSEIF EXP:(TARGET:1):A경험 < EXPLV:3
         TIMES SOURCE:2 , 0.70
         SOURCE:20 = 1500
-        DOWNBASE:1 += 30
+        DOWNBASE:기력 += 30
     ELSEIF EXP:(TARGET:1):A경험 < EXPLV:4
         TIMES SOURCE:2 , 0.80
         SOURCE:20 = 1000
-        DOWNBASE:1 += 20
+        DOWNBASE:기력 += 20
     ELSEIF EXP:(TARGET:1):A경험 < EXPLV:5
         TIMES SOURCE:2 , 0.90
         SOURCE:20 = 500
-        DOWNBASE:1 += 10
+        DOWNBASE:기력 += 10
     ELSE
         TIMES SOURCE:2 , 1.00
         SOURCE:20 = 0
-        DOWNBASE:1 += 0
+        DOWNBASE:기력 += 0
     ENDIF
 
     ;조교자가 후타나리
@@ -404,7 +404,7 @@ ELSEIF TFLAG:91 == 1
     ;P에 정액 더러움
     STAIN:PLAYER:2 |= 4
 ENDIF
-BASE:PLAYER:2 = LIMIT(BASE:PLAYER:2 - EJAC*(TFLAG:91), 0, EJAC-1)
+BASE:PLAYER:사정 = LIMIT(BASE:PLAYER:사정 - EJAC*(TFLAG:91), 0, EJAC-1)
 
 ;섹스로 사정 플래그
 ;TFLAG:10 = TFLAG:91

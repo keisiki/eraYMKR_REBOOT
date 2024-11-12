@@ -649,7 +649,7 @@ ELSEIF NO:ASSI == 32
     ELSE
         ;[보도자]취득 이벤트 1
         ;외도 무늬나
-        IF CFLAG:8102 == 1 && ABL:촬영기능 >= 3 && TALENT:196 == 0 && BASE:1 >= 1500 && CFLAG:8105 == 0
+        IF CFLAG:8102 == 1 && ABL:촬영기능 >= 3 && TALENT:196 == 0 && BASE:기력 >= 1500 && CFLAG:8105 == 0
         PRINTFORMW 「저기- 있지―, 좋은 영상을 찍는 요령이라든지, 그런 걸 가르쳐 줘」
         PRINTFORMW 『싫어요. 어째서 굳이 자신의 기업 비밀을 타인에게 가르쳐야 하죠?』
         PRINTFORMW 「그건 뭐랄까. 우리도 당신의 취재에 협력해 줬잖아」
@@ -672,7 +672,7 @@ ELSEIF NO:ASSI == 32
         PRINTFORML 촬영경험(아야) + 1 
         PRINTFORML 
         CFLAG:8105 = 1
-        BASE:1 -= 1000
+        BASE:기력 -= 1000
         EXP:조교자위경험 +=1
         EXP:절정경험 += 1
         EXP:피사경험 += 1
@@ -705,7 +705,7 @@ ELSEIF NO:ASSI == 32
         
         ;[보도자]취득 이벤트 3
         ;소악마 리리카
-        ELSEIF CFLAG:8105 == 2 && BASE:0 >= 1000 && BASE:1 >= 1000
+        ELSEIF CFLAG:8105 == 2 && BASE:0 >= 1000 && BASE:기력 >= 1000
         PRINTFORMW 『어라, 주인님, 오늘은 내가 조수잖아요? 어째서 내가 묶여 있죠?』
         PRINTFORMW 「그건 말이야―, 내가 주인님에게 부탁했어. 이제 실전 촬영이 필요한 것 같아서.」
         PRINTFORMW 「지금까지 여러 가지 가르쳐 줬으니, 그 답례도 겸해서… 자, 찍어 줄게」
@@ -727,7 +727,7 @@ ELSEIF NO:ASSI == 32
         PRINTFORMW 
         CFLAG:8105 = 3
         BASE:0 -= 500
-        BASE:1 -= 500
+        BASE:기력 -= 500
         TALENT:196 = 1
         EXP:촬영경험 += 1
         EXP:SM교육경험 += 1
@@ -850,7 +850,7 @@ IF TALENT:150 == 1 && FLAG:11 == 2
         PRINTFORMW 리리카의 페니스는 배꼽에 닿을 만큼 발기했고, 끝은 쿠퍼액 투성이가 되었다.
         PRINTFORMW 「그래도, 꾹 참고 있었어…. 저기, 부탁이야. 주인님이 보내줘…」
         PALAM:욕정 += 10000
-        BASE:2 = MAXBASE:2 - 1
+        BASE:사정 = MAXBASE:사정 - 1
     ;난수 분기:5
     ELSEIF RAND:5 == 0 && TALENT:120 == 0
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 알몸의 리리카를 침대 위에 앉히고 속이 비칠 듯한 소녀의 지체를 물끄러미 바라보았다.
@@ -14485,15 +14485,15 @@ IF SELECTCOM == 348
         ;연모
         IF TALENT:150 == 1 && (CFLAG:8437 <= 2 || FLAG:11 == 2)
             ;만취 이상
-            IF (BASE:8 *100) / MAXBASE:8 >= 80
+            IF (BASE:취기 *100) / MAXBASE:취기 >= 80
                 PRINTFORMW 「흐냐아아, 쥬잉닝~, 빙빙 도라~, 메르랑 엉니 땜인가~?」
                 PRINTFORMW 리리카는 만취해서 휘청거리고 있다….
             ;聆瓔
-            ELSEIF (BASE:8 *100) / MAXBASE:8 >= 40
+            ELSEIF (BASE:취기 *100) / MAXBASE:취기 >= 40
                 PRINTFORMW 「즈인님~, 에헤헤―, 으에헤헤헤헤~♪」
                 PRINTFORMW 취해서 그런지 리리카는 평소 이상으로 끈적하게 붙어왔다….
             ;미취
-            ELSEIF (BASE:8 *100) / MAXBASE:8 > 0
+            ELSEIF (BASE:취기 *100) / MAXBASE:취기 > 0
                 PRINTFORMW 「소령을 취하게 해서 어떻게 할 생각이야? 뭐래~」
             ;그 외의 경우
             ELSE
@@ -14504,11 +14504,11 @@ IF SELECTCOM == 348
         ;그 외의 경우
         ELSEIF CFLAG:8437 <= 1 || FLAG:11 == 2
             ;만취 이상
-            IF (BASE:8 *100) / MAXBASE:8 >= 80
+            IF (BASE:취기 *100) / MAXBASE:취기 >= 80
                 PRINTFORMW 「으아~, 이제 마실 수 없어―. 끄윽…, 하앗」
                 PRINTFORMW 리리카는 취기로 꾸벅거리면서도 %조사처리(CALLNAME:MASTER,"를")% 경계해 쓰러지려 하지 않는다….
             ;聆瓔
-            ELSEIF (BASE:8 *100) / MAXBASE:8 >= 40
+            ELSEIF (BASE:취기 *100) / MAXBASE:취기 >= 40
                 PRINTFORMW 「아―, 기분 좋아졌긴 해도, 술 때문이야!」
             ;그 외의 경우
             ELSE
@@ -27111,11 +27111,11 @@ SIF FLAG:11 <= 0
 SIF MAXBASE:0 > 0
     LOCAL:1 = (100 * BASE:0) / MAXBASE:0
 ;기력 소모
-SIF MAXBASE:1 > 0
-    LOCAL:2 = (100 * BASE:1) / MAXBASE:1
+SIF MAXBASE:기력 > 0
+    LOCAL:2 = (100 * BASE:기력) / MAXBASE:기력
 ;취기 상태
-SIF MAXBASE:8 > 0
-    LOCAL:3 = (100 * BASE:8) / MAXBASE:8
+SIF MAXBASE:취기 > 0
+    LOCAL:3 = (100 * BASE:취기) / MAXBASE:취기
 ;자고 있는 경우
 IF EQUIP:14
     PRINTSINGLEFORM 　　　「(음냐음냐…)」

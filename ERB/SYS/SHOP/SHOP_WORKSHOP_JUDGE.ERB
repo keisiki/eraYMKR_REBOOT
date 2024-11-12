@@ -116,14 +116,14 @@ REND
 ;2. エロス判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:0 < 500
+    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_EROTICISM
 REND
 ;3. 誘惑対象判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:0 < 500
+    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_TEMPTATION_TARGET
     IF RESULT == 0
@@ -138,14 +138,14 @@ REND
 ;4. 誘惑実行判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:0 < 500
+    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_TEMPTATION
 REND
 ;5. 便乗誘惑判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:0 < 500
+    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_PHORESIS
 REND
@@ -174,7 +174,7 @@ REPEAT CHARANUM
     IF CFLAG:COUNT:792 != -1
         ;乱交仲間を設定する
         CALL JUDGE_WORKSHOP_PROMISCUITY_WITH
-    ELSEIF BASE:COUNT:0 > 499
+    ELSEIF BASE:COUNT:체력 > 499
         ;乱交状況に対して不関与であるか疎外されているキャラのうち、体力が残っている者は自慰判定
         CALL JUDGE_WORKSHOP_ONANISM
     ENDIF
@@ -286,7 +286,7 @@ GOTO INPUT_LOOP
 SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
     PRINTFORML ;;; %CALLNAME:COUNT%의 게으름 판정 개시 작업내용：{CFLAG:COUNT:690}
 ;体力が底をついていたら作業できない
-IF BASE:COUNT:0 < 500
+IF BASE:COUNT:체력 < 500
     SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
         PRINTFORML ;;; %CALLNAME:COUNT%의 게으름 판정 완료 (닥터 스톱)
     RETURN 0
@@ -336,7 +336,7 @@ IF COUNT != MASTER || FLAG:1138 == 3 || FLAG:1138 == 4
             SIF FLAG:1131 > FLAG:1130 / 2
                 TIMES CFLAG:COUNT:695 , 0.66
     ENDSELECT
-    IF BASE:COUNT:0 < (MAXBASE:COUNT:0 / 2)
+    IF BASE:COUNT:체력 < (MAXBASE:COUNT:체력 / 2)
         ;体力が半減しているならやる気半減
         CFLAG:COUNT:695 /= 2
     ENDIF
@@ -452,7 +452,7 @@ SIF CFLAG:COUNT:691 & 1p2
 ;環境に合わせてエロス値が変動
 CALL JUDGE_WORKSHOP_ENVIRONMENT, COUNT, CFLAG:COUNT:696
 CFLAG:COUNT:696 = RESULT
-IF BASE:COUNT:0 < (MAXBASE:COUNT:0 / 2)
+IF BASE:COUNT:체력 < (MAXBASE:COUNT:체력 / 2)
     ;体力が半減しているならエロス値半減
     CFLAG:COUNT:696 /= 2
 ENDIF
@@ -527,7 +527,7 @@ IF CFLAG:COUNT:690 == 1 && CFLAG:COUNT:692 > -1
         CFLAG:COUNT:697 /= 100
     ENDIF
     ;生徒の体力が無ければドクターストップ、悶々とした気持ちそのままに他に視線を移す (難易度HARD以上の場合生徒が再選択されることがある)
-    IF BASE:(LOCAL:0):0 > 499
+    IF BASE:(LOCAL:0):체력 > 499
         ;初回エロス判定中なら問答無用で、便乗エロス判定中なら生徒がエロス暴走中か生徒がサボりでない場合に限り、生徒をターゲットする
         IF (CFLAG:COUNT:691 & 1p5) == 0 || (CFLAG:COUNT:691 & 1p5 && ((CFLAG:(LOCAL:0):691 & 1p3) || (CFLAG:(LOCAL:0):691 & 1p2) == 0))
             LOCAL:2 = LOCAL:0
@@ -549,7 +549,7 @@ ELSEIF CFLAG:COUNT:690 == 2
             CFLAG:COUNT:697 /= 100
         ENDIF
         ;先生の体力が無ければドクターストップ、悶々とした気持ちそのままに他に視線を移す (難易度HARD以上の場合先生が再選択されることがある)
-        IF BASE:(LOCAL:0):0 > 499
+        IF BASE:(LOCAL:0):체력 > 499
             ;初回エロス判定中なら問答無用で、便乗エロス判定中なら先生がエロス暴走中かサボりでない場合に限り、先生をターゲットする
             IF (CFLAG:COUNT:691 & 1p5) == 0 || (CFLAG:COUNT:691 & 1p5 && ((CFLAG:(LOCAL:0):691 & 1p3) || (CFLAG:(LOCAL:0):691 & 1p2) == 0))
                 LOCAL:2 = LOCAL:0
@@ -608,7 +608,7 @@ SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
 LOCAL:0 = 0
 LOCAL:1 = 0
 ;主人がいる場合、主人を選ぶ率を変動する (HARD以下の難易度の場合は主人の体力不足の場合に選択肢から外す)
-IF CFLAG:MASTER:4 == 3 && (FLAG:1111) != MASTER && (FLAG:3 > 3 || BASE:MASTER:0 > 499)
+IF CFLAG:MASTER:4 == 3 && (FLAG:1111) != MASTER && (FLAG:3 > 3 || BASE:MASTER:체력 > 499)
     ;自分と主人の相性値を確認して誘惑値に加算する(誘惑値50保障)
     CALL JUDGE_WORKSHOP_CONGENIAL, FLAG:1111, MASTER
     LOCAL:0 += RESULT + 50
@@ -635,10 +635,10 @@ FOR LOCAL:5, 0, CHARANUM
     SIF CFLAG:(LOCAL:5):4 != 3
         CONTINUE
     ;HARD以下の難易度の場合は主人の体力不足の場合に選択肢から外す
-    SIF LOCAL:5 == MASTER && FLAG:3 < 4 && BASE:MASTER:0 < 500
+    SIF LOCAL:5 == MASTER && FLAG:3 < 4 && BASE:MASTER:체력 < 500
         CONTINUE
     ;NORMAL以下の難易度の場合は対象の体力不足の場合に対象を無視する
-    SIF FLAG:3 < 3 && BASE:(LOCAL:5):0 < 500
+    SIF FLAG:3 < 3 && BASE:(LOCAL:5):체력 < 500
         CONTINUE
     ;便乗エロス判定中の場合、エロス自制中かつサボりは相手にしない
     SIF (CFLAG:(FLAG:1111):691 & 1p6) && (CFLAG:(FLAG:1111):691 & 1p2) && (CFLAG:(LOCAL:5):691 & 1p3) == 0 && (CFLAG:(LOCAL:5):691 & 1p2)
@@ -1043,7 +1043,7 @@ IF CFLAG:COUNT:691 & 1p8
     CFLAG:COUNT:699 *= (ABL:COUNT:자위중독 + 5) * 10
     CFLAG:COUNT:699 /= 100
 ENDIF
-IF BASE:COUNT:0 < (MAXBASE:COUNT:0 / 2)
+IF BASE:COUNT:체력 < (MAXBASE:COUNT:체력 / 2)
     ;体力が半減しているなら自慰値半減
     CFLAG:COUNT:699 /= 2
 ENDIF

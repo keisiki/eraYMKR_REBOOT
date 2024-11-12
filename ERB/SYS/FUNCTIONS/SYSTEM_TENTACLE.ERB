@@ -33,7 +33,7 @@ ELSEIF EXP:촉수경험 > 7499
     LOCAL *= 2
 ENDIF
 LOCAL = MIN(LOCAL, 10000)
-MAXBASE:6 = LOCAL
+MAXBASE:촉수 = LOCAL
 
 ;-----------------------------------------------
 ;촉수성장 LV의 표시
@@ -41,16 +41,16 @@ MAXBASE:6 = LOCAL
 @SHOW_INFO_TENTACLE
 CALL SHOW_TENTACLE_ABL
 CALL NEW_DRAWLINE
-PRINTFORML 현재의 촉수 에너지({BASE:MASTER:6}τ)
+PRINTFORML 현재의 촉수 에너지({BASE:MASTER:촉수}τ)
 IF TALENT:146
     PRINTFORM 기생촉수성장LV(%CALLNAME:TARGET%)
-    BAR BASE:6,MAXBASE:6,10
-    PRINTFORML ({BASE:6, 4}/{MAXBASE:6, 4})
+    BAR BASE:촉수,MAXBASE:촉수,10
+    PRINTFORML ({BASE:촉수, 4}/{MAXBASE:촉수, 4})
 ENDIF
 IF ASSI >= 0 && TALENT:ASSI:146
     PRINTFORM 기생촉수성장LV(%CALLNAME:ASSI%)
-    BAR BASE:ASSI:6,MAXBASE:ASSI:6,10
-    PRINTFORML ({BASE:ASSI:6, 4}/{MAXBASE:ASSI:6, 4})
+    BAR BASE:ASSI:촉수,MAXBASE:ASSI:촉수,10
+    PRINTFORML ({BASE:ASSI:촉수, 4}/{MAXBASE:ASSI:촉수, 4})
 ENDIF
 CALL NEW_DRAWLINE
 WAIT
@@ -63,7 +63,7 @@ WAIT
 ;その後, 촉수경험や촉수중독で補正をかけた値が成長値になる.
 ;また기생中は촉수調教の체력기력の消費が低下, それ以外のときは増加する処理もここで行う.
 @PARASITIC_TENTACLE_TARGET
-IF BASE:6 < MAXBASE:6
+IF BASE:촉수 < MAXBASE:촉수
     LOCAL = 1
     IF TEQUIP:90
         IF SELECTCOM >= 500 && SELECTCOM < 510
@@ -146,18 +146,18 @@ IF BASE:6 < MAXBASE:6
     ELSE
         TIMES LOCAL , 3.50
     ENDIF
-    BASE:6 += LOCAL
-    BASE:6 = MIN(BASE:6, MAXBASE:6)
+    BASE:촉수 += LOCAL
+    BASE:촉수 = MIN(BASE:촉수, MAXBASE:촉수)
 ENDIF
 
 ;촉수に対する抵抗感が薄れる効果(消費체력 · 기력軽減)
 ;(기생をスムーズにするため麻薬効果があるような変なホルモンを分泌しているってことで)
 IF TEQUIP:90
     TIMES DOWNBASE:0 , 0.80
-    TIMES DOWNBASE:1 , 0.60
+    TIMES DOWNBASE:기력 , 0.60
 ELSE
     TIMES DOWNBASE:0 , 1.20
-    TIMES DOWNBASE:1 , 1.10
+    TIMES DOWNBASE:기력 , 1.10
 ENDIF
 
 ;-----------------------------------------------
@@ -167,7 +167,7 @@ ENDIF
 ;その後촉수조교 중ならボーナス1点を追加.
 @PARASITIC_TENTACLE_ASSI
 LOCAL = 0
-IF BASE:ASSI:6 < MAXBASE:ASSI:6
+IF BASE:ASSI:촉수 < MAXBASE:ASSI:촉수
     ;촉수중독
     IF ABL:ASSI:촉수중독 == 0
         LOCAL = 1
@@ -180,8 +180,8 @@ IF BASE:ASSI:6 < MAXBASE:ASSI:6
     ENDIF
     SIF TEQUIP:90
         LOCAL += 1
-    BASE:ASSI:6 += LOCAL
-    BASE:ASSI:6 = MIN(BASE:ASSI:6, MAXBASE:ASSI:6)
+    BASE:ASSI:촉수 += LOCAL
+    BASE:ASSI:촉수 = MIN(BASE:ASSI:촉수, MAXBASE:ASSI:촉수)
 ENDIF
 
 ;-----------------------------------------------
@@ -528,7 +528,7 @@ IF CFLAG:99 == 0
 
 ENDIF
 CALL COMMON_MARK_UP, TARGET, 10, ARG, 0
-BASE:6 -= ARG:1
+BASE:촉수 -= ARG:1
 ;대사 호출,TFLAG:200의 270～272를 사용. 다른 각인 취득과 다른 이벤트 취급
 CALL SELF_KOJO, TARGET, 269+ARG, LOCAL
 ;불사각인 누계 카운트
@@ -548,11 +548,11 @@ ENDIF
 ;불사각인 LV1～2では촉수エネルギーを消費してしまうが, LV3以上になるとエネルギーの『消費』は無くなる(使ったものが全て還元されるため)
 ;なお, 妊娠や懐卵による消費の低下(체력の最大値の低下によるもの)は仕様.強制的に消滅って手もありかも知れないが処理がややこしくなりそうなのでパス.
 @TENTACLIC_REVIVAL
-IF BASE:0 <= 0 && MARK:불사각인 == 3 && BASE:MASTER:6 > 0
+IF BASE:0 <= 0 && MARK:불사각인 == 3 && BASE:MASTER:촉수 > 0
     LOCAL = 3
-ELSEIF BASE:0 <= 0 && MARK:불사각인 == 2 && BASE:MASTER:6 >= MAXBASE:0 / 10
+ELSEIF BASE:0 <= 0 && MARK:불사각인 == 2 && BASE:MASTER:촉수 >= MAXBASE:0 / 10
     LOCAL = 2
-ELSEIF BASE:0 <= 0 && MARK:불사각인 == 1 && BASE:MASTER:6 >= MAXBASE:0 / 5 && (TEQUIP:90 || TALENT:146 || TALENT:145)
+ELSEIF BASE:0 <= 0 && MARK:불사각인 == 1 && BASE:MASTER:촉수 >= MAXBASE:0 / 5 && (TEQUIP:90 || TALENT:146 || TALENT:145)
     LOCAL = 1
 ELSE
     RETURN 0
@@ -572,7 +572,7 @@ IF LOCAL == 3
     ENDIF
 ;불사각인 LV2
 ELSEIF LOCAL == 2
-    BASE:MASTER:6 -= MAXBASE:0 / 10
+    BASE:MASTER:촉수 -= MAXBASE:0 / 10
     TCVAR:50 += 1
     IF ABL:순종 > 0 && TALENT:150 == 0
         ABL:순종 -= 1
@@ -585,7 +585,7 @@ ELSEIF LOCAL == 2
     ENDIF
 ;불사각인 LV1
 ELSE
-    BASE:MASTER:6 -= MAXBASE:0 / 5
+    BASE:MASTER:촉수 -= MAXBASE:0 / 5
     TCVAR:50 += 1
     IF ABL:순종 > 0 && TALENT:150 == 0
         ABL:순종 -= 1
@@ -600,8 +600,8 @@ ENDIF
 
 IF TALENT:146
     TALENT:146 = 0
-    MAXBASE:6 = 0
-    BASE:6 = MAXBASE:6
+    MAXBASE:촉수 = 0
+    BASE:촉수 = MAXBASE:촉수
     PRINTFORML %CALLNAME:TARGET%에게 기생하던 촉수는 소멸해버렸다.
 ENDIF
 BASE:0 = 1
@@ -626,11 +626,11 @@ ELSE
     LOCAL += 4
 ENDIF
 
-LOCAL *= BASE:6
+LOCAL *= BASE:촉수
 LOCAL /= 100
 BASE:0 += LOCAL
 BASE:0 = MIN(BASE:0, MAXBASE:0)
-BASE:6 = 0
+BASE:촉수 = 0
 PRINTFORMW %CALLNAME:TARGET%에게 기생하고 있던 촉수는 모든 영양분을 방출했다.
 
 ;=============================================================================
@@ -1045,7 +1045,7 @@ ELSE
     TIMES LOCAL:4 , 0.50
 ENDIF
 ;촉수エネルギーが切れていると効果ダウン
-IF BASE:MASTER:6 <= 0
+IF BASE:MASTER:촉수 <= 0
     LOCAL:3 /= 2
     LOCAL:13 /= 2
     LOCAL:1 /= 2
@@ -1119,22 +1119,22 @@ IF LOCAL:4 > 0
 ENDIF
 ;기력 · 체력の消費
 IF LOCAL:6
-    IF BASE:ARG:0 > 1
-        BASE:ARG:0 = MAX(BASE:ARG:0 - LOCAL:6, 1)
-    ELSEIF BASE:ARG:0 <= 1 && MAXBASE:ARG:0 > 1000
-        BASE:ARG:0 = 1
-        MAXBASE:ARG:0 = MAX(MAXBASE:ARG:0 - (LOCAL:6)/5, 750)
+    IF BASE:ARG:체력 > 1
+        BASE:ARG:체력 = MAX(BASE:ARG:체력 - LOCAL:6, 1)
+    ELSEIF BASE:ARG:체력 <= 1 && MAXBASE:ARG:체력 > 1000
+        BASE:ARG:체력 = 1
+        MAXBASE:ARG:체력 = MAX(MAXBASE:ARG:체력 - (LOCAL:6)/5, 750)
     ENDIF
-    IF BASE:ARG:1 > 0
-        BASE:ARG:1 = MAX(BASE:ARG:1 - (LOCAL:6)/2, 0)
-    ELSEIF BASE:ARG:1 <= 0 && MAXBASE:ARG:1 > 750
-        BASE:ARG:1 = 0
-        MAXBASE:ARG:0 = MAX(MAXBASE:ARG:0 - (LOCAL:6)/10, 500)
+    IF BASE:ARG:기력 > 0
+        BASE:ARG:기력 = MAX(BASE:ARG:기력 - (LOCAL:6)/2, 0)
+    ELSEIF BASE:ARG:기력 <= 0 && MAXBASE:ARG:기력 > 750
+        BASE:ARG:기력 = 0
+        MAXBASE:ARG:체력 = MAX(MAXBASE:ARG:체력 - (LOCAL:6)/10, 500)
     ENDIF
 ENDIF
 ;촉수エネルギーの消費(1人につき-100～50ずつ.0未満にはならない)
-SIF BASE:MASTER:6
-    BASE:MASTER:6 = MAX(BASE:MASTER:6 - (100 - 50 * ABL:ARG:촉수중독), 0)
+SIF BASE:MASTER:촉수
+    BASE:MASTER:촉수 = MAX(BASE:MASTER:촉수 - (100 - 50 * ABL:ARG:촉수중독), 0)
 WAIT
 ;-----------------------------------------------
 ;촉수 임플란트 · 동화 플래그
@@ -1238,7 +1238,7 @@ TFLAG:233 = 0
 TFLAG:234 = 0
 ;체력 · 기력
     TFLAG:233 += MAXBASE:0 / 200
-    TFLAG:233 += MAXBASE:1 / 200
+    TFLAG:233 += MAXBASE:기력 / 200
 
 ;순종
     TFLAG:233 += 120 * ABL:순종

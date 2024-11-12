@@ -2,16 +2,16 @@
 ;신장 · 체중 · 3사이즈의 생성 처리
 ;=============================================================================
 ;신장 · 체중 · 3사이즈를 생성하고, 이하의 변수에 격납합니다.
-;BASE:10 … 신장
-;BASE:11 … 체중
-;BASE:12 … 바스트
-;BASE:13 … 웨스트
-;BASE:14 … 힙
-;MAXBASE:10 … 신장의 계산시의 난수값
-;MAXBASE:11 … 미사용
-;MAXBASE:12 … 미사용
-;MAXBASE:13 … 미사용
-;MAXBASE:14 … 미사용
+;BASE:신장 … 신장
+;BASE:체중 … 체중
+;BASE:바스트 … 바스트
+;BASE:웨스트 … 웨스트
+;BASE:히프 … 힙
+;MAXBASE:신장 … 신장의 계산시의 난수값
+;MAXBASE:체중 … 미사용
+;MAXBASE:바스트 … 미사용
+;MAXBASE:웨스트 … 미사용
+;MAXBASE:히프 … 미사용
 ;CFLAG:3500 … 임신에 따른 추가 사이즈
 ;LOCAL:0 ～ 4 … 최종 계산 결과의 임시 보존용
 ;LOCAL:10 ～ 14 … 계산 도중의 임시 보존용
@@ -34,11 +34,11 @@ SIF CFLAG:(LOCAL:99):8
 
 ;===신장의 산출===
 ;난수값이 존재하지 않을 경우에는 계산하고, 그것을 평생에 걸쳐 사용한다.
-IF MAXBASE:(LOCAL:99):10 <= 0
+IF MAXBASE:(LOCAL:99):신장 <= 0
     LOCAL:10 = 1 + RAND:70 + RAND:70 + RAND:70 + RAND:70 + RAND:70
-    MAXBASE:(LOCAL:99):10 = LOCAL:10
+    MAXBASE:(LOCAL:99):신장 = LOCAL:10
 ELSE
-    LOCAL:10 = MAXBASE:(LOCAL:99):10
+    LOCAL:10 = MAXBASE:(LOCAL:99):신장
 ENDIF
 ;난수값＋성별에 따른 기초가 신장이다(mm)
 LOCAL:10 += (TALENT:(LOCAL:99):120) ? 1450 # 1300
@@ -58,7 +58,7 @@ IF BODYSIZE(LOCAL:99)
 ENDIF
 
 ;신장 결정
-BASE:(LOCAL:99):10 = LOCAL:10
+BASE:(LOCAL:99):신장 = LOCAL:10
 
 
 ;===웨스트의 산출===
@@ -73,7 +73,7 @@ SIF TALENT:(LOCAL:99):128
     TIMES LOCAL:13, 1.05
 
 ;웨스트 결정 (mm)
-BASE:(LOCAL:99):13 = LOCAL:13
+BASE:(LOCAL:99):웨스트 = LOCAL:13
 
 ;===바스트의 산출===
 ;언더 바스트 산출
@@ -99,9 +99,9 @@ ELSE
 ENDIF
 ;바스트 결정 
 ;키 160 cm를 기준으로 키에 비례해서 계산
-BASE:(LOCAL:99):12 = (LOCAL:15 + LOCAL:16) * LOCAL:10 / 1600
+BASE:(LOCAL:99):바스트 = (LOCAL:15 + LOCAL:16) * LOCAL:10 / 1600
 ;언더 바스트 저장
-MAXBASE:(LOCAL:99):12 = LOCAL:15 * LOCAL:10 / 1600
+MAXBASE:(LOCAL:99):바스트 = LOCAL:15 * LOCAL:10 / 1600
 
 ;===힙의 산출===
 ;힙의 기초값 산출
@@ -115,7 +115,7 @@ SIF TALENT:(LOCAL:99):128
     TIMES LOCAL:14, 0.95
 
 ;힙 결정
-BASE:(LOCAL:99):14 = LOCAL:14
+BASE:(LOCAL:99):히프 = LOCAL:14
 
 ;===체중의 산출===
 ;체중의 기초값 산출(남자 160 cm 에 48.0 kg(180 cm에 68 kg), 여자 47.0 kg 라고 치자.)
@@ -160,7 +160,7 @@ SIF TALENT:(LOCAL:99):222
 
 ;체중 결정
 ;체중은 키의 3제곱에 비례 (둘레가 키에 비례하므로)
-BASE:(LOCAL:99):11 = LOCAL:11 * LOCAL:10 / 1600 * LOCAL:10 / 1600 * LOCAL:10 / 1600
+BASE:(LOCAL:99):체중 = LOCAL:11 * LOCAL:10 / 1600 * LOCAL:10 / 1600 * LOCAL:10 / 1600
 
 ;신체측정 플래그를 켠다
 CFLAG:(LOCAL:99):8 = 1
@@ -174,7 +174,7 @@ CFLAG:(LOCAL:99):8 = 1
 @MAKE_BABY_SIZE, ARG
 CFLAG:ARG:8 = 0
 CALL MAKE_SIZE, 1, ARG
-LOCAL:11 = BASE:ARG:11 ;몸무게 획득
+LOCAL:11 = BASE:ARG:체중 ;몸무게 획득
 
 ;CFLAG:77 = 출산 예정일
 LOCAL:0 = (FLAG:600 - (CFLAG:ARG:77 - DAY) + 1) * 100 / FLAG:600 ;임신 진행도(%)
@@ -293,7 +293,7 @@ SELECTCASE ARG:1
         ;절벽은 모유가 나오지 않는다. 그러나 [확장유두]는 모유가 멈추지 않는다.
         IF TALENT:ARG:134 && !TALENT:ARG:2
             TALENT:ARG:134 = 0 ;[모유체질]
-            MAXBASE:ARG:3 = 0 ;모유 게이지
+            MAXBASE:ARG:모유 = 0 ;모유 게이지
             SIF ARG:2 & 4
                 PRINTFORMW 가슴이 너무 작아 모유가 나오지 않게 되었다.
         ENDIF

@@ -545,18 +545,18 @@ SIF CFLAG:41 & 1
     TIMES LOCAL , 1.25
 
 LOCAL = 500 + LOCAL / 2
-BASE:2 += LOCAL
+BASE:사정 += LOCAL
 
 TFLAG:91 = SAMEN_CHECK(TARGET)
 
 ;Ｃ계 확장コマンド有効の場合, Ｃ刺激かＧスポット（前立腺ぽく）責めでないと사정できない(感覚増幅薬効果中は사정できる)
 IF TFLAG:91 >= 1 && FLAG:15 & 1 && UP:0 == 0 && NOWEX:20 == 0 && SELECTCOM != 520 && SELECTCOM != 600 && SELECTCOM != 414 && TEQUIP:20 != 2
-    SOURCE:18 += ((BASE:2 * 30) / MAXBASE:2)
-    SOURCE:20 += ((BASE:2 * 15) / MAXBASE:2)
+    SOURCE:18 += ((BASE:사정 * 30) / MAXBASE:사정)
+    SOURCE:20 += ((BASE:사정 * 15) / MAXBASE:사정)
     TIMES SOURCE:18 , 1.10
     TIMES SOURCE:20 , 1.10
     PRINTL ＜사정갈망중＞
-    BASE:2 = EJAC-1
+    BASE:사정 = EJAC-1
     ;사정갈망중의 이벤트 대사 호출
     CALL SELF_KOJO, TARGET, 20
 ;대량사정저지
@@ -564,7 +564,7 @@ ELSEIF TFLAG:91 == 2 && TEQUIP:68
     SOURCE:20 += 800
     SOURCE:22 += 1000
     PRINTFORML %CALLNAME:TARGET% 대량사정저지
-    BASE:2 = EJAC-1
+    BASE:사정 = EJAC-1
     NOWEX:30 += 2
     EX:30 += 2
 ;통상의 사정저지
@@ -572,27 +572,27 @@ ELSEIF TFLAG:91 == 1 && TEQUIP:68
     SOURCE:20 += 300
     SOURCE:22 += 500
     PRINTFORML %CALLNAME:TARGET% 사정저지
-    BASE:2 = EJAC-1
+    BASE:사정 = EJAC-1
     NOWEX:30 += 1
     EX:30 += 1
 ;강헛사정
 ELSEIF TFLAG:91 == 2 && (TEQUIP:69 || SELECTCOM == 128)
-    SOURCE:18 += ((BASE:2 * 60) / MAXBASE:2)
-    SOURCE:20 += ((BASE:2 * 30) / MAXBASE:2)
+    SOURCE:18 += ((BASE:사정 * 60) / MAXBASE:사정)
+    SOURCE:20 += ((BASE:사정 * 30) / MAXBASE:사정)
     TIMES SOURCE:18 , 1.20
     TIMES SOURCE:20 , 1.20
     PRINTFORML %CALLNAME:TARGET% 강헛사정
-    BASE:2 -= EJAC*2
+    BASE:사정 -= EJAC*2
     NOWEX:40 += 2
     EX:40 += 2
 ;헛사정
 ELSEIF TFLAG:91 == 1 && (TEQUIP:69 || SELECTCOM == 128)
-    SOURCE:18 += ((BASE:2 * 30) / MAXBASE:2)
-    SOURCE:20 += ((BASE:2 * 15) / MAXBASE:2)
+    SOURCE:18 += ((BASE:사정 * 30) / MAXBASE:사정)
+    SOURCE:20 += ((BASE:사정 * 15) / MAXBASE:사정)
     TIMES SOURCE:18 , 1.10
     TIMES SOURCE:20 , 1.10
     PRINTFORML %CALLNAME:TARGET% 헛사정
-    BASE:2 -= EJAC
+    BASE:사정 -= EJAC
     NOWEX:40 += 1
     EX:40 += 1
 ;대량사정
@@ -600,7 +600,7 @@ ELSEIF TFLAG:91 == 2
     LOCAL:1 = 20 - (2 * ABL:사정중독)
     LOCAL:2 = 100 - (10 * ABL:사정중독)
     DOWNBASE:0 += LOCAL:1
-    DOWNBASE:1 += LOCAL:2
+    DOWNBASE:기력 += LOCAL:2
 
     ;対象の사정経験を見る
     IF EXP:사정경험 < EXPLV:1
@@ -639,7 +639,7 @@ ELSEIF TFLAG:91 == 2
     STAIN:2 |= 4
     CALL PLAYER_SAMEN_STAIN_FROM_TARGET
 
-    BASE:2 -= EJAC*2
+    BASE:사정 -= EJAC*2
 
     ;조교 대상이 사정 플래그
     TFLAG:30 = 2
@@ -648,7 +648,7 @@ ELSEIF TFLAG:91 == 2
 ;통상의 사정
 ELSEIF TFLAG:91 == 1
     LOCAL:2 = 40 - (4 * ABL:사정중독)
-    DOWNBASE:1 += LOCAL:2
+    DOWNBASE:기력 += LOCAL:2
 
     ;対象の사정経験を見る
     IF EXP:사정경험 < EXPLV:1
@@ -686,14 +686,14 @@ ELSEIF TFLAG:91 == 1
     STAIN:2 |= 4
     CALL PLAYER_SAMEN_STAIN_FROM_TARGET
 
-    BASE:2 -= EJAC
+    BASE:사정 -= EJAC
 
     ;조교 대상이 사정 플래그
     TFLAG:30 = 1
     NOWEX:11 += 1
     EX:11 += 1
 ENDIF
-BASE:2 = MIN(BASE:2, EJAC - 1)
+BASE:사정 = MIN(BASE:사정, EJAC - 1)
 
 ;-------------------------------------------------
 ;조교 대상의 분유 체크
@@ -761,10 +761,10 @@ SIF CFLAG:41 & 8
     TIMES LOCAL , 1.25
 
 LOCAL = 500 + LOCAL / 2
-BASE:3 += LOCAL
+BASE:모유 += LOCAL
 
-LOCAL:1 = BASE:3
-EJAC = MAXBASE:3
+LOCAL:1 = BASE:모유
+EJAC = MAXBASE:모유
 
 IF LOCAL:1 > EJAC * 2
     LOCAL:2 = 2
@@ -776,12 +776,12 @@ ENDIF
 
 ;Ｂ계 확장コマンド有効の場合, Ｂ刺激がないと분유できない(感覚増幅薬効果中は분유できる)
 IF LOCAL:2 >= 1 && FLAG:15 & 8 && UP:3 == 0 && NOWEX:23 == 0
-    SOURCE:18 += ((BASE:3 * 10) / MAXBASE:3)
-    SOURCE:20 += ((BASE:3 * 5) / MAXBASE:3)
+    SOURCE:18 += ((BASE:모유 * 10) / MAXBASE:모유)
+    SOURCE:20 += ((BASE:모유 * 5) / MAXBASE:모유)
     TIMES SOURCE:18 , 1.10
     TIMES SOURCE:20 , 1.10
     PRINTL ＜분유갈망중＞
-    BASE:3 = EJAC-1
+    BASE:모유 = EJAC-1
     ;분유갈망중における이벤트 대사 호출
     CALL SELF_KOJO, TARGET, 21
 ;대량분유저지
@@ -789,7 +789,7 @@ ELSEIF LOCAL:2 == 2 && TEQUIP:68
     SOURCE:18 += 400
     SOURCE:22 += 500
     PRINTFORML %CALLNAME:TARGET% 대량분유저지
-    BASE:3 = EJAC-1
+    BASE:모유 = EJAC-1
     NOWEX:31 += 2
     EX:31 += 2
 ;통상의 분유저지
@@ -797,13 +797,13 @@ ELSEIF LOCAL:2 == 1 && TEQUIP:68
     SOURCE:18 += 150
     SOURCE:22 += 250
     PRINTFORML %CALLNAME:TARGET% 분유저지
-    BASE:3 = EJAC-1
+    BASE:모유 = EJAC-1
     NOWEX:31 += 1
     EX:31 += 1
 ;대량분유
 ELSEIF LOCAL:2 == 2
     DOWNBASE:0 += 20
-    DOWNBASE:1 += 100
+    DOWNBASE:기력 += 100
 
     ;対象の분유経験を見る
     IF EXP:분유경험 < EXPLV:1
@@ -833,7 +833,7 @@ ELSEIF LOCAL:2 == 2
     ;Ｂに母乳汚れ
     STAIN:5 |= 16
 
-    BASE:3 -= EJAC*2
+    BASE:모유 -= EJAC*2
 
     ;조교 대상が분유フラグ
     TFLAG:31 += 2
@@ -845,7 +845,7 @@ ELSEIF LOCAL:2 == 2
         TFLAG:126 += 2
 ;통상의 분유
 ELSEIF LOCAL:2 == 1
-    DOWNBASE:1 += 40
+    DOWNBASE:기력 += 40
 
     ;対象の분유経験を見る
     IF EXP:분유경험 < EXPLV:1
@@ -875,7 +875,7 @@ ELSEIF LOCAL:2 == 1
     ;Ｂに母乳汚れ
     STAIN:5 |= 16
 
-    BASE:3 -= EJAC
+    BASE:모유 -= EJAC
 
     ;조교 대상が분유フラグ
     TFLAG:31 += 1
@@ -886,7 +886,7 @@ ELSEIF LOCAL:2 == 1
     SIF TEQUIP:35 == 2
         TFLAG:126 += 1
 ENDIF
-BASE:3 = MIN(BASE:3, EJAC - 1)
+BASE:모유 = MIN(BASE:모유, EJAC - 1)
 
 ;母乳回収
 SIF LOCAL:2 > 0 && FLAG:12 & 8 && TEQUIP:68 == 0
@@ -960,10 +960,10 @@ SIF CFLAG:41 & 64
     TIMES LOCAL , 1.50
 
 LOCAL /= 2
-BASE:4 += LOCAL
+BASE:뇨의 += LOCAL
 
-LOCAL:1 = BASE:4
-EJAC = MAXBASE:4
+LOCAL:1 = BASE:뇨의
+EJAC = MAXBASE:뇨의
 
 IF LOCAL:1 > EJAC * 2
     LOCAL:2 = 2
@@ -975,12 +975,12 @@ ENDIF
 
 ;Ｃ계 확장コマンド有効の場合, Ｃ刺激がないと방뇨できない(感覚増幅薬効果中は방뇨できる)
 IF LOCAL:2 >= 1 && FLAG:15 & 1 && UP:0 == 0 && NOWEX:20 == 0
-    SOURCE:18 += ((BASE:4 * 30) / MAXBASE:4)
-    SOURCE:20 += ((BASE:4 * 15) / MAXBASE:4)
+    SOURCE:18 += ((BASE:뇨의 * 30) / MAXBASE:뇨의)
+    SOURCE:20 += ((BASE:뇨의 * 15) / MAXBASE:뇨의)
     TIMES SOURCE:18 , 1.10
     TIMES SOURCE:20 , 1.10
     PRINTL ＜방뇨갈망중＞
-    BASE:4 = EJAC-1
+    BASE:뇨의 = EJAC-1
     ;방뇨갈망중における이벤트 대사 호출
     CALL SELF_KOJO, TARGET, 22
 ;대량방뇨저지
@@ -988,7 +988,7 @@ ELSEIF LOCAL:2 == 2 && TEQUIP:68
     SOURCE:18 += 800
     SOURCE:22 += 1000
     PRINTFORML %CALLNAME:TARGET% 대량방뇨저지
-    BASE:4 = EJAC-1
+    BASE:뇨의 = EJAC-1
     NOWEX:32 += 2
     EX:32 += 2
 ;통상의 방뇨저지
@@ -996,33 +996,33 @@ ELSEIF LOCAL:2 == 1 && TEQUIP:68
     SOURCE:18 += 300
     SOURCE:22 += 500
     PRINTFORML %CALLNAME:TARGET% 방뇨저지
-    BASE:4 = EJAC-1
+    BASE:뇨의 = EJAC-1
     NOWEX:32 += 1
     EX:32 += 1
 ;강헛방뇨(オトコのみ)
 ELSEIF LOCAL:2 == 2 && TALENT:120 && (TEQUIP:69 || SELECTCOM == 128)
-    SOURCE:18 += ((BASE:4 * 60) / MAXBASE:4)
-    SOURCE:20 += ((BASE:4 * 30) / MAXBASE:4)
+    SOURCE:18 += ((BASE:뇨의 * 60) / MAXBASE:뇨의)
+    SOURCE:20 += ((BASE:뇨의 * 30) / MAXBASE:뇨의)
     TIMES SOURCE:18 , 1.20
     TIMES SOURCE:20 , 1.20
     PRINTFORML %CALLNAME:TARGET% 강헛방뇨
-    BASE:4 -= EJAC*2
+    BASE:뇨의 -= EJAC*2
     NOWEX:43 += 2
     EX:43 += 2
 ;헛방뇨(オトコのみ)
 ELSEIF LOCAL:2 == 1 && TALENT:120 && (TEQUIP:69 || SELECTCOM == 128)
-    SOURCE:18 += ((BASE:4 * 30) / MAXBASE:4)
-    SOURCE:20 += ((BASE:4 * 15) / MAXBASE:4)
+    SOURCE:18 += ((BASE:뇨의 * 30) / MAXBASE:뇨의)
+    SOURCE:20 += ((BASE:뇨의 * 15) / MAXBASE:뇨의)
     TIMES SOURCE:18 , 1.10
     TIMES SOURCE:20 , 1.10
     PRINTFORML %CALLNAME:TARGET% 헛방뇨
-    BASE:4 -= EJAC
+    BASE:뇨의 -= EJAC
     NOWEX:43 += 1
     EX:43 += 1
 ;대량방뇨
 ELSEIF LOCAL:2 == 2
     DOWNBASE:0 += 10
-    DOWNBASE:1 += 120
+    DOWNBASE:기력 += 120
 
     ;対象の방뇨経験を見る
     IF EXP:방뇨경험 < EXPLV:1
@@ -1054,7 +1054,7 @@ ELSEIF LOCAL:2 == 2
     ENDIF
     TCVAR:6 += 2
 
-    BASE:4 -= EJAC*2
+    BASE:뇨의 -= EJAC*2
 
     ;利尿薬を解除
     SIF TEQUIP:12
@@ -1073,7 +1073,7 @@ ELSEIF LOCAL:2 == 2
         CALL URINATION_IN_PLAYER
 ;통상의 방뇨
 ELSEIF LOCAL:2 == 1
-    DOWNBASE:1 += 50
+    DOWNBASE:기력 += 50
 
     ;対象の방뇨経験を見る
     IF EXP:방뇨경험 < EXPLV:1
@@ -1105,7 +1105,7 @@ ELSEIF LOCAL:2 == 1
     ENDIF
     TCVAR:6 += 1
 
-    BASE:4 -= EJAC
+    BASE:뇨의 -= EJAC
 
     ;조교 대상이 방뇨 플래그
     TFLAG:32 = 1
@@ -1119,7 +1119,7 @@ ELSEIF LOCAL:2 == 1
     SIF TFLAG:102
         CALL URINATION_IN_PLAYER
 ENDIF
-BASE:4 = MIN(BASE:4, EJAC - 1)
+BASE:뇨의 = MIN(BASE:뇨의, EJAC - 1)
 
 ;-------------------------------------------------
 ;조교 대상に挿しっぱなしでおしっこされた調教者 체크
@@ -1333,7 +1333,7 @@ ENDIF
 IF TALENT:66 == 0
     PRINTL 강제정음절정
     DOWNBASE:0 += 10
-    DOWNBASE:1 += 20
+    DOWNBASE:기력 += 20
 
     ;정액중독を見る
     IF ABL:정액중독 < 2
@@ -1358,14 +1358,14 @@ ENDIF
 ;정음절정경험의 회수 추가
 IF ARG == 2
     PRINTFORML %CALLNAME:TARGET% 정음강절정
-    DOWNBASE:1 += 10
+    DOWNBASE:기력 += 10
     LOCAL = 2000
     LOCAL:1 = 2000
     LOCAL:2 = 5000
     LOCAL:3 = 8000
 ELSE
     PRINTFORML %CALLNAME:TARGET% 정음절정
-    DOWNBASE:1 += 5
+    DOWNBASE:기력 += 5
     LOCAL = 800
     LOCAL:1 = 1000
     LOCAL:2 = 2500
@@ -2394,13 +2394,13 @@ ENDIF
 @UP_VIGOR_CVA_CHECK
 ;残り気力補正
 ;残り気力が0
-IF BASE:1 <= 0
+IF BASE:기력 <= 0
     LOCAL = 0
 ;残り気力が25％以下
-ELSEIF BASE:1 <= MAXBASE:1 / 4
+ELSEIF BASE:기력 <= MAXBASE:기력 / 4
     LOCAL = 1
 ;残り気力が50％以下
-ELSEIF BASE:1 <= MAXBASE:1 / 2
+ELSEIF BASE:기력 <= MAXBASE:기력 / 2
     LOCAL = 2
 ;残り気力が50％ 이상
 ELSE
@@ -2489,13 +2489,13 @@ ENDIF
 @UP_VIGOR_CHECK
 ;残り気力補正
 ;残り気力が0
-IF BASE:1 <= 0
+IF BASE:기력 <= 0
     LOCAL = 0
 ;残り気力が25％以下
-ELSEIF BASE:1 <= MAXBASE:1 / 4
+ELSEIF BASE:기력 <= MAXBASE:기력 / 4
     LOCAL = 1
 ;残り気力が50％以下
-ELSEIF BASE:1 <= MAXBASE:1 / 2
+ELSEIF BASE:기력 <= MAXBASE:기력 / 2
     LOCAL = 2
 ;残り気力が50％ 이상
 ELSE
@@ -2685,7 +2685,7 @@ IF TEQUIP:95 & 4
 ENDIF
 
 ;陰核が成長しすぎていると感度減少
-SIF BASE:7 > 200
+SIF BASE:음핵 > 200
     TIMES UP:0 , 0.75
 
 ;肥大陰核
@@ -2827,7 +2827,7 @@ IF TALENT:65
     TIMES UP:14 , 1.20
     TIMES UP:15 , 2.50
     TIMES UP:22 , 1.50
-    IF BASE:5 > 50 && BASE:5 <= 250
+    IF BASE:음모 > 50 && BASE:음모 <= 250
         ;生えかけ
         UP:16 += 100
         UP:21 += 100
@@ -2873,7 +2873,7 @@ IF EQUIP:14 || TFLAG:899 > 0
     TIMES UP:20 , 0.00
     TIMES UP:21 , 0.10
     TIMES UP:22 , 0.00
-    TIMES DOWNBASE:1 , 0.25
+    TIMES DOWNBASE:기력 , 0.25
 ENDIF
 ;荊
 IF TEQUIP:40 == 5
@@ -4128,11 +4128,11 @@ IF ARG == TARGET
     ELSE
         LOCAL *= 10
     ENDIF
-    BASE:ARG:8 += LOCAL
+    BASE:ARG:취기 += LOCAL
 ENDIF
 
 ;酔いにおけるパラメーター上昇下降補正
-LOCAL = (BASE:ARG:8 *100) / MAXBASE:ARG:8
+LOCAL = (BASE:ARG:취기 *100) / MAXBASE:ARG:취기
 IF LOCAL < 40
     ;微酔
     LOCAL:1 = 110
@@ -4212,7 +4212,7 @@ REPEAT 4
         LOCAL += 200
 REND
 ;苦痛が10000 이상上昇した, あるいは気力が最大値の半分以下の時に苦痛が3000 이상上昇した場合
-SIF UP:16 >= 10000 || (BASE:1 <= MAXBASE:1 / 2 && UP:16 >= 3000)
+SIF UP:16 >= 10000 || (BASE:기력 <= MAXBASE:기력 / 2 && UP:16 >= 3000)
     LOCAL += 1000
 ;[해방]もなく, 露出癖がLv3 미만で야외 플레이またはビデオ撮影中, 恥情が10000 이상(이)가 되었다あるいは恥情が2000 이상上昇した場合
 SIF TALENT:해방 == 0 && ABL:노출증 < 3 && (TEQUIP:50 || TEQUIP:52) && (PALAM:15 >= 10000 || UP:15 >= 2000)
@@ -4233,12 +4233,12 @@ IF LOCAL > 0
         CALL COMMON_UP_EXP, TARGET, 50, 1, 0, 2
     ENDIF
     DOWNBASE:0 += LOCAL
-    DOWNBASE:1 += LOCAL/2
-    DOWNBASE:MASTER:0 += LOCAL
-    DOWNBASE:MASTER:1 += LOCAL/2
+    DOWNBASE:기력 += LOCAL/2
+    DOWNBASE:MASTER:체력 += LOCAL
+    DOWNBASE:MASTER:기력 += LOCAL/2
     IF ASSI >= 0
-        DOWNBASE:ASSI:0 += LOCAL
-        DOWNBASE:ASSI:1 += LOCAL/2
+        DOWNBASE:ASSI:체력 += LOCAL
+        DOWNBASE:ASSI:기력 += LOCAL/2
     ENDIF
 ENDIF
 
@@ -4252,18 +4252,18 @@ ENDIF
 ;………………………………………………
 IF TEQUIP:89 == 1 || TEQUIP:89 == 6
     TIMES DOWNBASE:0 , 0.90
-    TIMES DOWNBASE:MASTER:0 , 0.90
+    TIMES DOWNBASE:MASTER:체력 , 0.90
     SIF ASSI >= 0
-        TIMES DOWNBASE:ASSI:0 , 0.90
+        TIMES DOWNBASE:ASSI:체력 , 0.90
 ENDIF
 ;………………………………………………
 ;気力消費軽減(ペパーミント・フランキンセンス)
 ;………………………………………………
 IF TEQUIP:89 == 2 || TEQUIP:89 == 6
-    TIMES DOWNBASE:1 , 0.90
-    TIMES DOWNBASE:MASTER:1 , 0.90
+    TIMES DOWNBASE:기력 , 0.90
+    TIMES DOWNBASE:MASTER:기력 , 0.90
     SIF ASSI >= 0
-        TIMES DOWNBASE:ASSI:1 , 0.90
+        TIMES DOWNBASE:ASSI:기력 , 0.90
 ENDIF
 ;………………………………………………
 ;ネガティブパラメーターの上昇量を軽減(ラヴェンダー・フランキンセンス)
@@ -5067,5 +5067,5 @@ PRINTFORMW %조사처리(CALLNAME:TARGET,"가")% 실신했기 때문에 방에 �
 ;조교자의 体力・気力が若干減少
 LOCAL:0 = 20
 LOCAL:1 = 10
-BASE:PLAYER:0 = MAX(BASE:PLAYER:0 - LOCAL:0, 0)
-BASE:PLAYER:1 = MAX(BASE:PLAYER:1 - LOCAL:1, 0)
+BASE:PLAYER:체력 = MAX(BASE:PLAYER:체력 - LOCAL:0, 0)
+BASE:PLAYER:기력 = MAX(BASE:PLAYER:기력 - LOCAL:1, 0)

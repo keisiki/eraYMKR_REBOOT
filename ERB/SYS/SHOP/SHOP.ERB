@@ -144,8 +144,8 @@ ELSE
                 CALL CALC_TENTACLE_GAUGE
                 PRINT 　
                 PRINT 기생
-                BAR MAX(BASE:6, 0), MAXBASE:6, 32
-                PRINTFORML ({BASE:6, 5}/{MAXBASE:6, 5})
+                BAR MAX(BASE:촉수, 0), MAXBASE:촉수, 32
+                PRINTFORML ({BASE:촉수, 5}/{MAXBASE:촉수, 5})
         ENDIF
 
         ;만복도모드
@@ -161,7 +161,7 @@ ELSE
         ;촉수 표시, 토리코모드
         IF FLAG:15 & 4096 && TALENT:146 && FLAG:5000 & 1
                 PRINT 기생:
-                PRINTFORM ({BASE:6, 5}/{MAXBASE:6, 5})
+                PRINTFORM ({BASE:촉수, 5}/{MAXBASE:촉수, 5})
         ENDIF
         ;대사 존재 여부를 플래그에 넣는다
         RESULT = -1
@@ -309,7 +309,7 @@ ELSE
     ;조교 돌입 커맨드지만, 네이밍은 식중 함수에서 오려냈다.
     
 
-    SIF TARGET >= 0 && BASE:8 <= MAXBASE:8 && BASE:MASTER:8 <= MAXBASE:MASTER:8 && CFLAG:MASTER:1501 == 0 && TALENT:MASTER:262 == 0
+    SIF TARGET >= 0 && BASE:취기 <= MAXBASE:취기 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기 && CFLAG:MASTER:1501 == 0 && TALENT:MASTER:262 == 0
         PRINTFORMLC [100] - %NAME_SHOPCOMMAND_100()%
     SIF CHARANUM > 0
         PRINTLC [101] - 능력 보기
@@ -382,10 +382,10 @@ ELSE
     SIF LOCAL:9 >= 30
         PRINTLC [162] - 요정목욕을 한다
     ;CONFIG의 「고문계, 정신조작계 커맨드」가 유효하고 비밀 지하실이 설치되어 있으며, 주인이 술에 떡이 되어 있지 않을 경우
-    SIF FLAG:15 & 16 && FLAG:73 & 1 && BASE:MASTER:8 <= MAXBASE:MASTER:8
+    SIF FLAG:15 & 16 && FLAG:73 & 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTLC [163] - 비밀 지하실
     ;주인 외에 캐릭터가 존재하고, 허브 농장이 설치되어 있으며, 주인이 술에 떡이 되어 있지 않을 경우
-    SIF FLAG:79 > 1 && CHARANUM > 1 && BASE:MASTER:8 <= MAXBASE:MASTER:8
+    SIF FLAG:79 > 1 && CHARANUM > 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTLC [165] - 꽃밭으로 간다
     ;Ｓ패치 추가분
     SIF FLAG:13 & 1024 && ITEM:90 && TIME == 0
@@ -417,7 +417,7 @@ ELSE
         PRINTLC [170] - 육아실로 간다
     SIF (FLAG:1100 & 1) && (FLAG:1100 & 8) && FLAG:1102 > 0
         PRINTFORMLC [171] - \@(FLAG:1102 < 2) ? 공방을 연다 # 공방에 간다\@
-    SIF CHARANUM > 4 && TARGET >= 0 && TIME == 0 && TALENT:TARGET:120 == 0 && MARK:반발각인 <= 0 && MAXBASE:TARGET:0 * 8 / 10 <= BASE:TARGET:0  && MAXBASE:TARGET:1 * 8/10 <= BASE:TARGET:1
+    SIF CHARANUM > 4 && TARGET >= 0 && TIME == 0 && TALENT:TARGET:120 == 0 && MARK:반발각인 <= 0 && MAXBASE:TARGET:체력 * 8 / 10 <= BASE:TARGET:체력  && MAXBASE:TARGET:기력 * 8/10 <= BASE:TARGET:기력
         PRINTLC [180] - 윤간시킨다
 
     ;스케쥴 시스템 사용중이고, 노예가 1명 이상 있을 때.
@@ -484,11 +484,11 @@ IF CFLAG:MASTER:4 == 3
 ELSE
     IF RESULT == 100 && TARGET >= 0
         ;조교 대상이 술에 떡이 되어 있을 경우(이 경우에는 주인이 떡이 되어 있을 상황은 표시되지 않음)
-        IF BASE:8 > MAXBASE:8
+        IF BASE:취기 > MAXBASE:취기
             PRINTFORML 취한 탓인지 %CALLNAME:TARGET%의 얼굴이 새파랗다.
             PRINTW 잠시 쉬게 하는 편이 좋으리라…….
         ;주인이 술에 떡이 되어 있을 경우
-        ELSEIF BASE:MASTER:8 > MAXBASE:MASTER:8
+        ELSEIF BASE:MASTER:취기 > MAXBASE:MASTER:취기
             PRINTFORML 취한 탓인지 속이 좋지 않다.
             PRINTW 잠시 쉬는 편이 좋을 것 같다…….
         ELSEIF CFLAG:MASTER:4 == 2 ;주인이 육아실
@@ -591,7 +591,7 @@ ELSE
     ELSEIF RESULT == 162 && FLAG:15 & 1024 && FLAG:74 & 8192 && GET_LIST(9) >= 30
         PRINTW 요정목욕을 하러 갔다.
         CALL FAIRIES_BATH
-    ELSEIF RESULT == 163 && FLAG:15 & 16 && FLAG:73 & 1 && BASE:MASTER:8 <= MAXBASE:MASTER:8
+    ELSEIF RESULT == 163 && FLAG:15 & 16 && FLAG:73 & 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTW 비밀의 지하실로 갔다.
         CALL HIDDEN_BASEMENT_MENU
     ;Ｓ패치 추가분
@@ -616,7 +616,7 @@ ELSE
         PRINTW 조교중인 노예의 매각가를 체크해보자.
         CALL RESEARCH_CHARASALE_CALC_TORIKOMODE
 
-    ELSEIF RESULT == 165 && FLAG:79 > 1 && CHARANUM > 1 && BASE:MASTER:8 <= MAXBASE:MASTER:8
+    ELSEIF RESULT == 165 && FLAG:79 > 1 && CHARANUM > 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTW 꽃밭으로 갔다.
         CALL SHOP_HARB_MENU
     ELSEIF RESULT == 170 && FLAG:17 > 0 && TFLAG:700 == 0
@@ -682,7 +682,7 @@ ELSE
         PRINTW 디버그 메뉴를 불러온다.
         CALL DEBUG_MENU_SHOP
     ELSEIF RESULT == 180
-    SIF CHARANUM > 4 && TARGET >= 0 && TIME == 0 && TALENT:TARGET:120 == 0 && MARK:반발각인 <= 0 && MAXBASE:TARGET:0 * 8 / 10 <= BASE:TARGET:0 && MAXBASE:TARGET:1 * 8/10 <= BASE:TARGET:1
+    SIF CHARANUM > 4 && TARGET >= 0 && TIME == 0 && TALENT:TARGET:120 == 0 && MARK:반발각인 <= 0 && MAXBASE:TARGET:체력 * 8 / 10 <= BASE:TARGET:체력 && MAXBASE:TARGET:기력 * 8/10 <= BASE:TARGET:기력
         CALL RINKAN
     ELSE
         REUSELASTLINE  
@@ -809,7 +809,7 @@ REPEAT CHARANUM
     SIF CFLAG:COUNT:1 < 2
         CONTINUE
     ;술에 떡이 됐을 경우에도 제외
-    SIF BASE:COUNT:8 > MAXBASE:COUNT:8
+    SIF BASE:COUNT:취기 > MAXBASE:COUNT:취기
         CONTINUE
 
     CALLF SET_LIST, LOCAL:2, COUNT
@@ -989,7 +989,7 @@ IF FLAG:5000 & 1
     PRINTL 
 ;일반모드
 ELSE
-    PRINTFORML 　체력:({BASE:ARG:0, 4}/{MAXBASE:ARG:0, 4})　기력:({BASE:ARG:1, 4}/{MAXBASE:ARG:1, 4})
+    PRINTFORML 　체력:({BASE:ARG:체력, 4}/{MAXBASE:ARG:체력, 4})　기력:({BASE:ARG:기력, 4}/{MAXBASE:ARG:기력, 4})
 ENDIF
 
 IF ARG != MASTER && FLAG:12 & 4
@@ -1682,15 +1682,15 @@ ELSEIF TFLAG:0 == 2
 ELSEIF TFLAG:0 == 7
     CALL MAKE_SIZE, 1, ARG
     IF LOCAL:2 == 10
-        STR:2 = {BASE:ARG:10 / 10}.{BASE:ARG:10 % 10}cm
+        STR:2 = {BASE:ARG:신장 / 10}.{BASE:ARG:신장 % 10}cm
     ELSEIF LOCAL:2 == 11
-        STR:2 = {BASE:ARG:11 / 10}.{BASE:ARG:11 % 10}kg
+        STR:2 = {BASE:ARG:체중 / 10}.{BASE:ARG:체중 % 10}kg
     ELSEIF LOCAL:2 == 12
-        STR:2 = {BASE:ARG:12 / 10}.{BASE:ARG:12 % 10}cm
+        STR:2 = {BASE:ARG:바스트 / 10}.{BASE:ARG:바스트 % 10}cm
     ELSEIF LOCAL:2 == 13
-        STR:2 = {BASE:ARG:13 / 10}.{BASE:ARG:13 % 10}cm
+        STR:2 = {BASE:ARG:웨스트 / 10}.{BASE:ARG:웨스트 % 10}cm
     ELSEIF LOCAL:2 == 14
-        STR:2 = {BASE:ARG:14 / 10}.{BASE:ARG:14 % 10}cm
+        STR:2 = {BASE:ARG:히프 / 10}.{BASE:ARG:히프 % 10}cm
     ELSE
         STR:2 = ({LOCAL})
     ENDIF

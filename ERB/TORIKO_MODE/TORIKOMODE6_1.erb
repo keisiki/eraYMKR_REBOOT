@@ -82,13 +82,13 @@ ENDIF
 ;EASY가 아니면 제작자의 체력 소모, 기력 소모, 취해, 스트레스에 의한 마이나스 보정이 있다
 IF FLAG:3 != 1
     ;체력 소모 상태
-    SIF MAXBASE:ARG:0 > 0 && (100 * BASE:ARG:0) / MAXBASE:ARG:0 <= 25
+    SIF MAXBASE:ARG:체력 > 0 && (100 * BASE:ARG:체력) / MAXBASE:ARG:체력 <= 25
         TIMES LOCAL:2 , 0.90
     ;기력 소모 상태
-    SIF MAXBASE:ARG:1 > 0 && (100 * BASE:ARG:1) / MAXBASE:ARG:1 <= 25
+    SIF MAXBASE:ARG:기력 > 0 && (100 * BASE:ARG:기력) / MAXBASE:ARG:기력 <= 25
         TIMES LOCAL:2 , 0.90
     ;취하고 있다
-    SIF MAXBASE:ARG:8 > 0 && (100 * BASE:ARG:8) / MAXBASE:ARG:8 >= 80
+    SIF MAXBASE:ARG:취기 > 0 && (100 * BASE:ARG:취기) / MAXBASE:ARG:취기 >= 80
         TIMES LOCAL:2 , 0.50
 
     ;스트레스가 10000이상
@@ -2057,10 +2057,10 @@ IF FLAG:3 != 1
     SIF MAXBASE:0 > 0 && (100 * BASE:0) / MAXBASE:0 <= 25
         LOCAL:1 -= 1
     ;気力消耗状態
-    SIF MAXBASE:1 > 0 && (100 * BASE:1) / MAXBASE:1 <= 25
+    SIF MAXBASE:기력 > 0 && (100 * BASE:기력) / MAXBASE:기력 <= 25
         LOCAL:1 -= 1
     ;酔っている
-    SIF MAXBASE:8 > 0 && (100 * BASE:8) / MAXBASE:8 >= 80
+    SIF MAXBASE:취기 > 0 && (100 * BASE:취기) / MAXBASE:취기 >= 80
         LOCAL:1 -= 2
 
     ;ストレスが10000以上
@@ -2246,14 +2246,14 @@ IF LOCAL:0 > MONEY
     PRINTFORMW 스케쥴을 실행할 수가 없다.
     PRINTFORMW {LOCAL:0}원이 필요하다... (현재 잔고:{MONEY}원)
 ELSE
-    SIF MAXBASE:ARG:0 >= 2000
-        LOCAL:0 += (MAXBASE:ARG:0%2000)*3 + ((MAXBASE:ARG:0/2000)-1)*10000
+    SIF MAXBASE:ARG:체력 >= 2000
+        LOCAL:0 += (MAXBASE:ARG:체력%2000)*3 + ((MAXBASE:ARG:체력/2000)-1)*10000
     ;디버그
-    ;PRINTFORML {(MAXBASE:ARG:0%2000)*3} 중간보정값  / {((MAXBASE:ARG:1/2000)-1)*10000} 끝보정값
+    ;PRINTFORML {(MAXBASE:ARG:체력%2000)*3} 중간보정값  / {((MAXBASE:ARG:기력/2000)-1)*10000} 끝보정값
     ;판정치1. 최대체력 기반. 2이하:걸어다니는 시체수준 3이하 :약골 4이하 : 보통 5이하 : 강하다  그 이상 : 초사이어인?
-    LOCAL:1 = MAXBASE:ARG:0 / 500
+    LOCAL:1 = MAXBASE:ARG:체력 / 500
     ;판정치2. 현재체력/최대체력. 30%이하:위험  50%이하:지쳤다 70%이하:보통 그이상:충전완료
-    LOCAL:2 = BASE:ARG:0 *100 / MAXBASE:ARG:0 / 100
+    LOCAL:2 = BASE:ARG:체력 *100 / MAXBASE:ARG:체력 / 100
     ;체력 상승량.
     LOCAL:3 = 10+RAND:10
 
@@ -2336,8 +2336,8 @@ ELSE
         PRINTFORM {LOCAL:3}
         RESETCOLOR
         PRINTFORML 점 상승했다.
-        PRINTFORMW ※최대체력[{MAXBASE:ARG:0}] → [{MAXBASE:ARG:0+LOCAL:3}]
-        MAXBASE:ARG:0 += LOCAL:3
+        PRINTFORMW ※최대체력[{MAXBASE:ARG:체력}] → [{MAXBASE:ARG:체력+LOCAL:3}]
+        MAXBASE:ARG:체력 += LOCAL:3
         PRINTL
     ENDIF
     ;스케쥴 공통 결과 처리.
@@ -2360,12 +2360,12 @@ IF LOCAL:0 > MONEY
     PRINTFORMW 스케쥴을 실행할 수가 없다.
     PRINTFORMW {LOCAL:0}원이 필요하다... (현재 잔고:{MONEY}원)
 ELSE
-    SIF MAXBASE:ARG:1 >= 1500
-        LOCAL:0 += (MAXBASE:ARG:1%1500)*3 + ((MAXBASE:ARG:1/1500)-1)*10000
+    SIF MAXBASE:ARG:기력 >= 1500
+        LOCAL:0 += (MAXBASE:ARG:기력%1500)*3 + ((MAXBASE:ARG:기력/1500)-1)*10000
     ;판정치1. 최대기력 기반. 2이하:아키리신지 3이하:유리멘탈 4이하:보통 5이하:대인배 그이상:부처
-    LOCAL:1 = MAXBASE:ARG:0 / 400
+    LOCAL:1 = MAXBASE:ARG:체력 / 400
     ;판정치2. 현재체력/최대체력. 30%이하:위험  50%이하:지쳤다 70%이하:보통 그이상:충전완료
-    LOCAL:2 = BASE:ARG:0 *100 / MAXBASE:ARG:0 /100
+    LOCAL:2 = BASE:ARG:체력 *100 / MAXBASE:ARG:체력 /100
     ;체력 상승량.
     LOCAL:3 = 8+RAND:8
     ;물건형 아이템 이름
@@ -2468,8 +2468,8 @@ ELSE
         PRINTFORM {LOCAL:3}
         RESETCOLOR
         PRINTFORML 점 상승했다.
-        PRINTFORMW ※최대기력[{MAXBASE:ARG:1}] → [{MAXBASE:ARG:1+LOCAL:3}]
-        MAXBASE:ARG:1 += LOCAL:3
+        PRINTFORMW ※최대기력[{MAXBASE:ARG:기력}] → [{MAXBASE:ARG:기력+LOCAL:3}]
+        MAXBASE:ARG:기력 += LOCAL:3
         PRINTL
     ENDIF
     ;스케쥴 공통 결과 처리.
