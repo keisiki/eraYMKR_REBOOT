@@ -128,7 +128,7 @@ IF CFLAG:MASTER:98 >= 5 && TALENT:MASTER:92 == 0
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% [수수께끼의 매력]을 몸에 익혔다.
     TALENT:MASTER:92 = 1
 ;その周回で堕とした人数が50人以上または累計で200人以上で, 大甲斐性が付く
-ELSEIF (CFLAG:MASTER:98 >= 50 || FLAG:30 >= 200) && TALENT:MASTER:98 == 0
+ELSEIF (CFLAG:MASTER:98 >= 50 || FLAG:함락총계 >= 200) && TALENT:MASTER:98 == 0
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% [대범함]을 몸에 익혔다.
     TALENT:MASTER:98 = 1
 ENDIF
@@ -645,7 +645,7 @@ CALL SELF_KOJO, TARGET, 89
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [음마]를 얻었다.
 TALENT:180 = 1
 CFLAG:16 |= 1024
-FLAG:38 += 1
+FLAG:음마총계 += 1
 
 ;-------------------------------------------------
 ;薬物と快楽により素質[薬毒耐性]を破壊する処理
@@ -844,23 +844,23 @@ REND
 @FALLEN_SLAVE_COUNTER
 ;既に一度堕としていると累計のカウントは進まない
 IF (CFLAG:20 & 32) == 0
-    FLAG:30 += 1
+    FLAG:함락총계 += 1
     CFLAG:20 |= 32
 ENDIF
 CFLAG:3115 = DAY
 CFLAG:MASTER:98 += 1
 ;初期段階では変動しない
-IF FLAG:90 == 0
+IF FLAG:자택 == 0
     LOCAL = 0
 ;豪邸では＋10人まで
-ELSEIF FLAG:90 == 1
-    LOCAL = MIN ((FLAG:30 / 2), 10)
+ELSEIF FLAG:자택 == 1
+    LOCAL = MIN ((FLAG:함락총계 / 2), 10)
 ;小城では＋30人まで
-ELSEIF FLAG:90 == 2
-    LOCAL = MIN ((FLAG:30 / 2), 30)
+ELSEIF FLAG:자택 == 2
+    LOCAL = MIN ((FLAG:함락총계 / 2), 30)
 ;隠れ里以上では制限なし
 ELSE
-    LOCAL = FLAG:30 / 2
+    LOCAL = FLAG:함락총계 / 2
 ENDIF
 FLAG:91 = 1 + LOCAL
 
@@ -868,42 +868,42 @@ FLAG:91 = 1 + LOCAL
 SIF TALENT:200
     CALL SLAVE_FAIRY_COUNTER
 ;へる子撃破記念
-SIF NO:TARGET == 497 && (FLAG:76 & 16) == 0
+SIF NO:TARGET == 497 && (FLAG:주인칭호 & 16) == 0
     CALL INFERNO_GATE
 
 ;-------------------------------------------------
 ;堕ちたのが妖精なのかをチェック
 ;-------------------------------------------------
 @SLAVE_FAIRY_COUNTER
-FLAG:32 += 1
+FLAG:요정함락총계 += 1
 
-IF FLAG:32 == 1000
+IF FLAG:요정함락총계 == 1000
     CALL GET_NICK, MASTER, \@(TALENT:MASTER:120) ? 『오베론』 # 『티타니아』\@
     PRINTFORML 아무래도 %조사처리(NAME:MASTER,"는")% 요정의 몸도 마음도 지배하에 두는 능력을 갖게 된 것 같다….
     PRINTFORML %NAME:MASTER%에겐 요정들에게 존경과 경외를 받는, 
     PRINTFORMW 요정을 통치하는 자 《%NICKNAME:MASTER%》의 칭호가 부여되었다!
-    FLAG:76 |= 8
-ELSEIF FLAG:32 == 500
+    FLAG:주인칭호 |= 8
+ELSEIF FLAG:요정함락총계 == 500
     CALL GET_NICK, MASTER, "『페어리즈 로드』"
     PRINTFORML %조사처리(NAME:MASTER,"는")% 요정의 마음을 장악하는 방법을 속속들이 알게 되었다….
     PRINTFORMW %조사처리(NAME:MASTER,"는")% %NICKNAME:MASTER%의 칭호를 얻었다.
-    FLAG:76 |= 4
-ELSEIF FLAG:32 == 100
+    FLAG:주인칭호 |= 4
+ELSEIF FLAG:요정함락총계 == 100
     CALL GET_NICK, MASTER, "『페어리 마스터』"
     PRINTFORML %조사처리(NAME:MASTER,"는")% 요정의 몸을 속속들이 알고 있다….
     PRINTFORMW %조사처리(NAME:MASTER,"는")% %NICKNAME:MASTER%의 칭호를 얻었다.
-    FLAG:76 |= 2
-ELSEIF FLAG:32 >= 50 && FLAG:게임모드 <= 1 && (FLAG:70 & 1) == 0
+    FLAG:주인칭호 |= 2
+ELSEIF FLAG:요정함락총계 >= 50 && FLAG:게임모드 <= 1 && (FLAG:주인종족변경 & 1) == 0
     PRINTFORML %조사처리(NAME:MASTER,"는")% 요정의 마음에 동조하는 방법을 알았다….
     PRINTFORMW ※강하게 뉴 게임 개시시에 %NAME:MASTER%의 종족을 [요정]으로 선택할 수 있게 되었습니다.
-    FLAG:70 |= 1
-ELSEIF FLAG:32 == 10
+    FLAG:주인종족변경 |= 1
+ELSEIF FLAG:요정함락총계 == 10
     CALL GET_NICK, MASTER, "『페어리 테이머』"
     PRINTFORML %조사처리(NAME:MASTER,"는")% 요정을 취급하는데 능숙해진 것 같다….
     PRINTFORMW %조사처리(NAME:MASTER,"는")% %NICKNAME:MASTER%의 칭호를 얻었다.
-    FLAG:76 |= 1
+    FLAG:주인칭호 |= 1
 ENDIF
-IF TALENT:MASTER:57 == 0 && FLAG:32 >= 100
+IF TALENT:MASTER:57 == 0 && FLAG:요정함락총계 >= 100
     PRINTFORMW %조사처리(NAME:MASTER,"는")% [요정지식]을 몸에 익혔다.
     TALENT:MASTER:57 = 1
 ENDIF
@@ -924,7 +924,7 @@ ENDIF
 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %NICKNAME:MASTER%의 칭호를 얻었다.
 CALL GET_NICK, MASTER, "『헤루코의 서방』"
 DRAWLINE
-FLAG:76 |= 16
+FLAG:주인칭호 |= 16
 
 ;=============================================================================
 ;巨大化・縮小処理関連

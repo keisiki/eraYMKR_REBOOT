@@ -36,7 +36,7 @@ ENDIF
 ;口上によるCOUNT:0破壊対策としてメインカウンターをTFLAG化
 FOR TFLAG:900, 0, CHARANUM
     ;庭園による効果(REPEATを２回回す不合理さを解消するために移動した)
-    SIF FLAG:71 & 4 || FLAG:71 & 8 || FLAG:71 & 16 || FLAG:71 & 32 || FLAG:71 & 64 || FLAG:71 & 128 || FLAG:71 & 256
+    SIF FLAG:정원개조 & 4 || FLAG:정원개조 & 8 || FLAG:정원개조 & 16 || FLAG:정원개조 & 32 || FLAG:정원개조 & 64 || FLAG:정원개조 & 128 || FLAG:정원개조 & 256
         CALL GARDEN_EFFECT
 
     ;睡眠薬の効果は時間経過で半減.夜の休みを経由した場合は解除
@@ -112,16 +112,16 @@ FOR TFLAG:900, 0, CHARANUM
     ;休憩フラグ（「何もしない」を選択, もしくは調教対象でない）
     IF FLAG:휴식 || TARGET != TFLAG:900
         ;家によって体力の回復量が増加
-        IF FLAG:90 == 4
+        IF FLAG:자택 == 4
             LOCAL:10 += 300
             LOCAL:11 += 500
-        ELSEIF FLAG:90 == 3
+        ELSEIF FLAG:자택 == 3
             LOCAL:10 += 250
             LOCAL:11 += 400
-        ELSEIF FLAG:90 == 2
+        ELSEIF FLAG:자택 == 2
             LOCAL:10 += 200
             LOCAL:11 += 300
-        ELSEIF FLAG:90 == 1
+        ELSEIF FLAG:자택 == 1
             LOCAL:10 += 150
             LOCAL:11 += 200
         ELSE
@@ -643,7 +643,7 @@ ENDIF
 SIF TFLAG:900 == MASTER || CFLAG:(TFLAG:900):4 == 1 || CFLAG:(TFLAG:900):4 == 4 || CFLAG:(TFLAG:900):4 == 16 || CFLAG:(TFLAG:900):4 == 1024 || CFLAG:(TFLAG:900):4 == 2048 || CFLAG:(TFLAG:900):4 == 4096 || EQUIP:(TFLAG:900):14||대상_제외됨(TFLAG:900)
     RETURN 0
 ;添水の効果（ストレス解消と恐怖の珠UP）
-IF FLAG:71 & 4
+IF FLAG:정원개조 & 4
     ;動物耳がない場合にはストレス解消効果あり
     IF TALENT:(TFLAG:900):116 == 0
         CFLAG:(TFLAG:900):65 = MAX(CFLAG:(TFLAG:900):65 - RAND:10, 0)
@@ -656,9 +656,9 @@ IF FLAG:71 & 4
     ENDIF
 ENDIF
 ;茶室の効果（習得もしくは恭順の珠UP）
-IF FLAG:71 & 8
+IF FLAG:정원개조 & 8
     ;昼であるか, 石燈籠がある
-    IF TIME == 0 || FLAG:71 & 2
+    IF TIME == 0 || FLAG:정원개조 & 2
         ;好奇心もしくは習得早いもしくは教育者もしくは博麗の巫女もしくは風祝の場合は習得の珠UP
         SIF TALENT:(TFLAG:900):23 || TALENT:(TFLAG:900):50 || TALENT:(TFLAG:900):126 || TALENT:(TFLAG:900):218 || TALENT:(TFLAG:900):219
             CALL COMMON_UP_JUEL, TFLAG:900, 11, 10 + (10 * RAND:5) , 2
@@ -668,27 +668,27 @@ IF FLAG:71 & 8
     ENDIF
 ENDIF
 ;池の効果（否定の珠DOWN）
-IF FLAG:71 & 16
+IF FLAG:정원개조 & 16
     ;昼であるか, 石燈籠がある
-    IF TIME == 0 || FLAG:71 & 2
+    IF TIME == 0 || FLAG:정원개조 & 2
         ;寄生でも嫉妬でも狂気でも精神崩壊でもない場合否定の珠DOWN
         SIF TALENT:(TFLAG:900):146 == 0 || TALENT:(TFLAG:900):157 == 0 || TALENT:(TFLAG:900):158 == 0 || TALENT:(TFLAG:900):167 == 0
             JUEL:(TFLAG:900):100 -= 10 + (10 * RAND:5)
     ENDIF
 ENDIF
 ;魚の効果（好感度上昇）
-IF FLAG:71 & 32
+IF FLAG:정원개조 & 32
     ;昼であるか, 石燈籠がある
-    IF TIME == 0 || FLAG:71 & 2
+    IF TIME == 0 || FLAG:정원개조 & 2
         ;恐怖刻印と反発刻印がなく精神崩壊でない場合好感度UP
         SIF MARK:(TFLAG:900):공포각인 == 0 && MARK:(TFLAG:900):반발각인 == 0 && TALENT:(TFLAG:900):167 == 0
             CFLAG:(TFLAG:900):2 += RAND:5
     ENDIF
 ENDIF
 ;噴水の効果（否定の珠Downもしくは欲情もしくは恥情の珠UP）
-IF FLAG:71 & 64
+IF FLAG:정원개조 & 64
     ;昼であるか, 石燈籠がある
-    IF TIME == 0 || FLAG:71 & 2
+    IF TIME == 0 || FLAG:정원개조 & 2
         ;冬ならば水が凍る
         IF DAY:5 == 12 || DAY:5 == 1 || DAY:5 == 2
             ;チルノ, レティのみ（子孫はNG）は精神崩壊してなければ凍った噴水に癒されて否定の珠DOWN(ってか氷精とか雪女の種族フラグないんやね？)
@@ -705,18 +705,18 @@ IF FLAG:71 & 64
     ENDIF
 ENDIF
 ;築山の効果（先導の珠UP）
-IF FLAG:71 & 128
+IF FLAG:정원개조 & 128
     ;昼であるか, 石燈籠がある
-    IF TIME == 0 || FLAG:71 & 2
+    IF TIME == 0 || FLAG:정원개조 & 2
         ;恐怖刻印がなく, 幼児か幼稚か動物耳である場合先導の珠UP(昼間の場合は吸血鬼は日傘ないとNG)
         SIF MARK:(TFLAG:900):공포각인 <= 0 && (TALENT:(TFLAG:900):130 || TALENT:(TFLAG:900):131 || TALENT:(TFLAG:900):116) && (TALENT:(TFLAG:900):205 == 0 || TIME == 1 || NOITEM == 1 || ITEM:48)
             CALL COMMON_UP_JUEL, TFLAG:900, 32, 10 + (10 * RAND:5) , 2
     ENDIF
 ENDIF
 ;大樹の効果（対妖精最終兵器,習得の珠と恭順の珠UP,否定の珠DOWN,好感度UP,ストレスDOWN）
-IF FLAG:71 & 256
+IF FLAG:정원개조 & 256
     ;昼であるか, 石燈籠がある
-    IF TIME == 0 || FLAG:71 & 2
+    IF TIME == 0 || FLAG:정원개조 & 2
         ;恐怖刻印がなく, 精神崩壊していない妖精の場合は様々な珠が変動し, 好感度も増加する
         IF MARK:(TFLAG:900):공포각인 <= 0 && TALENT:(TFLAG:900):167 == 0 && TALENT:(TFLAG:900):200
             ;習得の珠UP
@@ -782,7 +782,7 @@ IF FLAG:5003 & 1
     CALL EVENT_COMEBACK_TORIKOMODE
 ;노말 모드
 ELSE
-    SIF FLAG:39 > 0
+    SIF FLAG:구입총계 > 0
         ;버그수정을 위해 마지막 인수를 0으로 수정함. 만약 버그나면 다시 1로 고쳐야 함. (131001_V.K)
         LOCAL = FINDCHARA(CFLAG:4, 1, 0)
     IF LOCAL > 0
@@ -1098,10 +1098,10 @@ PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:168%]를 얻었다
 TALENT:168 = 1
 CFLAG:17 |= 8
 FLAG:405 += 1
-IF FLAG:405 >= 50 && FLAG:게임모드 <= 1 && (FLAG:70 & 32) == 0
+IF FLAG:405 >= 50 && FLAG:게임모드 <= 1 && (FLAG:주인종족변경 & 32) == 0
     PRINTFORML %CALLNAME:MASTER%의 마음은 악마 그 자체라고 할 수 있을 것이다….
     PRINTFORMW ※강하게 뉴게임 개시시에 %CALLNAME:MASTER%의 종족을 [악마]로 선택할 수 있습니다.
-    FLAG:70 |= 32
+    FLAG:주인종족변경 |= 32
 ENDIF
 
 ;-----------------------------------------------
@@ -1254,13 +1254,13 @@ SIF TIME == 0 && DAY > 1
 ;--------------------------------------------------
 @EVENT_EVERYDAY_COST
 ;施設の維持費計算
-IF FLAG:90 == 0
+IF FLAG:자택 == 0
     LOCAL = 500
-ELSEIF FLAG:90 == 1
+ELSEIF FLAG:자택 == 1
     LOCAL = 1000
-ELSEIF FLAG:90 == 2
+ELSEIF FLAG:자택 == 2
     LOCAL = 2000
-ELSEIF FLAG:90 == 3
+ELSEIF FLAG:자택 == 3
     LOCAL = 3000
 ELSE
     LOCAL = 5000
@@ -1479,14 +1479,14 @@ RETURN LOCAL:3
 ;-----------------------------------------------
 ;ビデオの流行ジャンル変化処理
 ;-----------------------------------------------
-;FLAG:77・FLAG:78の値によって流行, 不人気のジャンルが決まる(ビデオのタイトルボーナスと同じ判定)
+;FLAG:현재비디오유행・FLAG:78の値によって流行, 不人気のジャンルが決まる(ビデオのタイトルボーナスと同じ判定)
 ;0～3:特になし ,4:Ｃ系, 5:Ｖ系, 6:Ａ系, 7:Ｂ系, 8:ＳＭ系, 9:薬品系, 10:恥辱系
 ;11:ウフフ系, 12:触手系, 13:獣姦系, 14:Ｐ系, 15:Ｕ系
 @VIDEO_CHANGE_POPULAR_TITLE
-FLAG:77 = RAND:16
-FLAG:78 = RAND:16
+FLAG:현재비디오유행 = RAND:16
+FLAG:현재비디오불유행 = RAND:16
 ;人気不人気のジャンルが同じ場合は再度判定
-SIF FLAG:77 == FLAG:78 && (FLAG:77 < 6 || FLAG:77 > 9)
+SIF FLAG:현재비디오유행 == FLAG:현재비디오불유행 && (FLAG:현재비디오유행 < 6 || FLAG:현재비디오유행 > 9)
     RESTART
 
 ;主人か助手可能キャラに[超常目算]がいると流行ジャンルが分かるようになる
@@ -1515,5 +1515,5 @@ LOCALS:13 = 수간물
 LOCALS:14 = SM플레이
 LOCALS:15 = 약품계
 
-PRINTFORML %조사처리(CALLNAME:LOCAL,"는")% \@(FLAG:77 <= 3) ? 특별히 유행하는 장르가 없다고 # %LOCALS:(FLAG:77)%의 장르가 유행할 것 같다고\@ 생각했다
-PRINTFORMW 또, \@(FLAG:78 <= 3) ? 경원시 되는 장르는 없다고 # 현재 %LOCALS:(FLAG:78)%의 장르는 경원시 될 거라\@ 생각했다.
+PRINTFORML %조사처리(CALLNAME:LOCAL,"는")% \@(FLAG:현재비디오유행 <= 3) ? 특별히 유행하는 장르가 없다고 # %LOCALS:(FLAG:현재비디오유행)%의 장르가 유행할 것 같다고\@ 생각했다
+PRINTFORMW 또, \@(FLAG:현재비디오불유행 <= 3) ? 경원시 되는 장르는 없다고 # 현재 %LOCALS:(FLAG:현재비디오불유행)%의 장르는 경원시 될 거라\@ 생각했다.

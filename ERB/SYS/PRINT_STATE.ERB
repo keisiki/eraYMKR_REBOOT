@@ -17,17 +17,17 @@ FOR LOCAL, 600, 617
         LOCALS = %LOCALS%%ITEMNAME:LOCAL%×{ITEM:LOCAL}%RESULTS:0%
 NEXT
 
-SIF FLAG:커맨드확장 & 16 && FLAG:73 & 1
-    LOCALS = %LOCALS% \@(FLAG:73 & 2) ? 삼각목마 # \@ \@(FLAG:73 & 4) ? 말뚝 # \@ \@(FLAG:73 & 8) ? 나이프 # \@ \@(FLAG:73 & 16) ? 나타 # \@ \@(FLAG:73 & 32) ? 아이언메이든 # \@ %RESULTS:0%
+SIF FLAG:커맨드확장 & 16 && FLAG:지하실개조 & 1
+    LOCALS = %LOCALS% \@(FLAG:지하실개조 & 2) ? 삼각목마 # \@ \@(FLAG:지하실개조 & 4) ? 말뚝 # \@ \@(FLAG:지하실개조 & 8) ? 나이프 # \@ \@(FLAG:지하실개조 & 16) ? 나타 # \@ \@(FLAG:지하실개조 & 32) ? 아이언메이든 # \@ %RESULTS:0%
 
-SIF FLAG:커맨드확장 & 8192 && FLAG:72 & 1
-    LOCALS = %LOCALS% \@(FLAG:72 & 2) ? 「개」 # \@ \@(FLAG:72 & 4) ? 「돼지」 # \@ \@(FLAG:72 & 8) ? 「말」 # \@ %RESULTS:0%
+SIF FLAG:커맨드확장 & 8192 && FLAG:보유한동물 & 1
+    LOCALS = %LOCALS% \@(FLAG:보유한동물 & 2) ? 「개」 # \@ \@(FLAG:보유한동물 & 4) ? 「돼지」 # \@ \@(FLAG:보유한동물 & 8) ? 「말」 # \@ %RESULTS:0%
 
-SIF FLAG:71
-    LOCALS = %LOCALS%「정원」 \@(FLAG:71 & 2) ? 석등롱 # \@ \@(FLAG:71 & 4) ?  대나무물받이 # \@ \@(FLAG:71 & 8) ? 다실 # \@ \@(FLAG:71 & 16) ? 연못 # \@\@(FLAG:71 & 32) ?  (물고기) # \@ \@(FLAG:71 & 64) ? 분수 # \@ \@(FLAG:71 & 128) ? 석가산 # \@ \@(FLAG:71 & 256) ? (큰 나무) # \@%RESULTS:0%
+SIF FLAG:정원개조
+    LOCALS = %LOCALS%「정원」 \@(FLAG:정원개조 & 2) ? 석등롱 # \@ \@(FLAG:정원개조 & 4) ?  대나무물받이 # \@ \@(FLAG:정원개조 & 8) ? 다실 # \@ \@(FLAG:정원개조 & 16) ? 연못 # \@\@(FLAG:정원개조 & 32) ?  (물고기) # \@ \@(FLAG:정원개조 & 64) ? 분수 # \@ \@(FLAG:정원개조 & 128) ? 석가산 # \@ \@(FLAG:정원개조 & 256) ? (큰 나무) # \@%RESULTS:0%
 
-SIF FLAG:79
-    LOCALS = %LOCALS%「허브농장」 \@(FLAG:79 & 2) ? 허브 개발시설 # \@ \@(FLAG:79 & 4) ? 허브 생산시설 # \@ %RESULTS:0%
+SIF FLAG:허브농원
+    LOCALS = %LOCALS%「허브농장」 \@(FLAG:허브농원 & 2) ? 허브 개발시설 # \@ \@(FLAG:허브농원 & 4) ? 허브 생산시설 # \@ %RESULTS:0%
 
 ;[プールパッチ]
 SIF FLAG:89
@@ -94,13 +94,13 @@ RETURNF 1
 ;-------------------------------------------------
 @SHOW_HOUSE
 PRINT 거주지:
-IF FLAG:90 >= 4
+IF FLAG:자택 >= 4
     PRINTSL SAVESTR:1
-ELSEIF FLAG:90 == 3
+ELSEIF FLAG:자택 == 3
     PRINTL 숨겨진 마을
-ELSEIF FLAG:90 == 2
+ELSEIF FLAG:자택 == 2
     PRINTL 작은 성
-ELSEIF FLAG:90 == 1
+ELSEIF FLAG:자택 == 1
     PRINTL 호화저택
 ELSE
     STRLENS CSTR:MASTER:1
@@ -115,26 +115,26 @@ PRINTFORML \@(LOCAL > 0) ? (최대 {LOCAL}명 노예구입가능) #  (노예의 
 ;-------------------------------------------------
 @PRINT_MASTER_STATUS, ARG
 PRINT 함락된 노예 총수　　　　　　:
-IF FLAG:30 > 9999
+IF FLAG:함락총계 > 9999
     ;이로 경 「니토리 박사, 사정을 설명할 수 있겠나?」
     ;니토리 박사 「현재 조금 (자위를 할) 시간과 (로터를 살) 예산을 받을 수 있으면……」
     ;에로 경「변명은 죄악임을 알도록」
     ;PRINT [에로 경의 콜렉션]
     PRINT [만 간 전 적]
-ELSEIF FLAG:30 > 999
+ELSEIF FLAG:함락총계 > 999
     PRINT [밀레니엄]
-ELSEIF FLAG:30 > 99
+ELSEIF FLAG:함락총계 > 99
     PRINT [백인베기]
 ELSE
-    PRINTFORM {FLAG:30, 5}명
+    PRINTFORM {FLAG:함락총계, 5}명
 ENDIF
 PRINTFORML 　(이번에 함락한 수:{CFLAG:ARG:98, 5}명)
-SIF FLAG:34
-    PRINTFORML 지금까지 매각한 노예 총수　 :{FLAG:34, 5}명
-SIF FLAG:31
-    PRINTFORML 이번에 낙인을 찍은 노예 수　:{FLAG:31, 5}명
-SIF FLAG:33
-    PRINTFORML 이번에 산제물로 바친 노예 수:{FLAG:33, 5}명
+SIF FLAG:매각총계
+    PRINTFORML 지금까지 매각한 노예 총수　 :{FLAG:매각총계, 5}명
+SIF FLAG:현낙인총계
+    PRINTFORML 이번에 낙인을 찍은 노예 수　:{FLAG:현낙인총계, 5}명
+SIF FLAG:현산제물총계
+    PRINTFORML 이번에 산제물로 바친 노예 수:{FLAG:현산제물총계, 5}명
 ;마지막으로 조교 받은 캐릭터를 표시
 IF FLAG:422 != CFLAG:MASTER:3109 && FLAG:422 != 0
     LOCAL = SEARCH_CHARA_ID(FLAG:422 , 1)
@@ -933,41 +933,41 @@ SIF ARG:1 == 0
 LOCALS:0 = %" " * 2%
 LOCALS:1 = ○
 
-IF FLAG:32
-    PRINTS LOCALS:((FLAG:70 & 1) > 0)
+IF FLAG:요정함락총계
+    PRINTS LOCALS:((FLAG:주인종족변경 & 1) > 0)
     ;요정 함락 수의 표시
     CALL PRINT_FAIRY_NUMBER
 ENDIF
 IF FLAG:401
-    PRINTS LOCALS:((FLAG:70 & 16) > 0)
+    PRINTS LOCALS:((FLAG:주인종족변경 & 16) > 0)
     PRINTFORML 인형으로 바꾼 인원수 합계　: {FLAG:401, 5}명
 ENDIF
 IF FLAG:402
-    PRINTS LOCALS:((FLAG:70 & 2) > 0)
+    PRINTS LOCALS:((FLAG:주인종족변경 & 2) > 0)
     PRINTFORML 흡혈귀화시킨 인원수의 합계 : {FLAG:402, 5}명
 ENDIF
 IF FLAG:403
-    PRINTS LOCALS:((FLAG:70 & 4) > 0)
+    PRINTS LOCALS:((FLAG:주인종족변경 & 4) > 0)
     PRINTFORML 기계로 개조한 인원수 합계　: {FLAG:403, 5}명
 ENDIF
 IF FLAG:404
-    PRINTS LOCALS:((FLAG:70 & 8) > 0)
+    PRINTS LOCALS:((FLAG:주인종족변경 & 8) > 0)
     PRINTFORML 망령화시킨 인원수 합계　　 : {FLAG:404, 5}명
 ENDIF
 IF FLAG:405
-    PRINTS LOCALS:((FLAG:70 & 32) > 0)
+    PRINTS LOCALS:((FLAG:주인종족변경 & 32) > 0)
     PRINTFORML 괴뢰로 만든 인원수 합계　　: {FLAG:405, 5}명
 ENDIF
 IF FLAG:406
-    PRINTS LOCALS:((FLAG:70 & 64) > 0)
+    PRINTS LOCALS:((FLAG:주인종족변경 & 64) > 0)
     PRINTFORML 뽑아낸 시리코다마 합계　 　: {FLAG:406, 5}개
 ENDIF
 IF FLAG:408
-    PRINTS LOCALS:((FLAG:70 & 256) > 0)
+    PRINTS LOCALS:((FLAG:주인종족변경 & 256) > 0)
     PRINTFORML 백택화를 본 회수　　　　 　: {FLAG:408, 5}회
 ENDIF
 IF FLAG:409
-    PRINTS LOCALS:((FLAG:70 & 512) > 0)
+    PRINTS LOCALS:((FLAG:주인종족변경 & 512) > 0)
     PRINTFORML 불사각인을 찍은 회수　　 　: {FLAG:409, 5}회
 ENDIF
 IF FLAG:400
@@ -984,17 +984,17 @@ CALL NEW_DRAWLINE
 ;-------------------------------------------------
 @PRINT_FAIRY_NUMBER
 PRINT 요정을 함락한 수　　　　　　 : 
-IF FLAG:32 > 9999
+IF FLAG:요정함락총계 > 9999
     ;All your fairy are belong to us. 라면 너무 길었으므로
     PRINTL [All Your Fairy]
-ELSEIF FLAG:32 > 999
+ELSEIF FLAG:요정함락총계 > 999
     PRINTL [가리질 않음]
-ELSEIF FLAG:32 > 499
+ELSEIF FLAG:요정함락총계 > 499
     PRINTL [별의 수만큼]
-ELSEIF FLAG:32 > 99
+ELSEIF FLAG:요정함락총계 > 99
     PRINTL [헤아릴 수 없음]
 ELSE
-    PRINTFORML {FLAG:32, 5}마리
+    PRINTFORML {FLAG:요정함락총계, 5}마리
 ENDIF
 
 ;-------------------------------------------------
@@ -1018,7 +1018,7 @@ SIF FLAG:SHOP이벤트확장 & 2
     PRINTL □ 촉수 관련
 
 PRINTFORML 　%ABLNAME:98% Lv: {ABL:ARG:촉수사역}　　　　　　　　　%PALAMNAME:198%의 구슬:{JUEL:ARG:198, 7}　촉수 에너지:{BASE:ARG:촉수, 5}τ
-PRINTFORML 　촉수 산제물:{FLAG:33, 3}명(누계:{FLAG:99, 3}명)
+PRINTFORML 　촉수 산제물:{FLAG:현산제물총계, 3}명(누계:{FLAG:촉수산제물총계, 3}명)
 PRINTFORM 　촉수능력　 :
 CALL SHOW_TENTACLE_ABL
 
@@ -1199,25 +1199,25 @@ SIF FLAG:게임모드 > 1 || FLAG:난이도 < 1
 
 PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 종족 지식 # 종족 지식:\@
 
-SIF FLAG:70 & 1
+SIF FLAG:주인종족변경 & 1
     PRINT [요정] 
-SIF FLAG:70 & 2
+SIF FLAG:주인종족변경 & 2
     PRINT [흡혈귀] 
-SIF FLAG:70 & 4
+SIF FLAG:주인종족변경 & 4
     PRINT [기계] 
-SIF FLAG:70 & 8
+SIF FLAG:주인종족변경 & 8
     PRINT [망령] 
-SIF FLAG:70 & 16
+SIF FLAG:주인종족변경 & 16
     PRINT [인형] 
-SIF FLAG:70 & 32
+SIF FLAG:주인종족변경 & 32
     PRINT [악마] 
-SIF FLAG:70 & 64
+SIF FLAG:주인종족변경 & 64
     PRINT [캇파] 
-SIF FLAG:70 & 128
+SIF FLAG:주인종족변경 & 128
     PRINT [요호] 
-SIF FLAG:70 & 256
+SIF FLAG:주인종족변경 & 256
     PRINT [백택] 
-SIF FLAG:70 & 512
+SIF FLAG:주인종족변경 & 512
     PRINT [좀비 페어리] 
 SIF FLAG:400 > 99
     PRINT [사람] 
@@ -1903,20 +1903,20 @@ SIF CHARANUM > 1 && SUMCARRAY(CFLAG:ARG:2, 1, CHARANUM) > 0
     PRINTFORML 　현 보유 노예의 호감도 종합계　　:{SUMCARRAY(CFLAG:ARG:2,1,CHARANUM)}
 SIF CHARANUM > 1 && SUMCARRAY(CFLAG:ARG:65, 1, CHARANUM) > 0
     PRINTFORML 　현 보유 노예의 스트레스 종합계　:{SUMCARRAY(CFLAG:ARG:65,1,CHARANUM)}
-SIF FLAG:39
-    PRINTFORML 　지금까지 구입한 노예의 총수　　 :{FLAG:39, 5}명
-SIF FLAG:35
-    PRINTFORML 　지금까지 상애가 된 노예의 총수　:{FLAG:35, 5}명
-SIF FLAG:36
-    PRINTFORML 　지금까지 예속시킨 노예의 총수　:{FLAG:36, 5}명
-SIF FLAG:37
-    PRINTFORML 　지금까지 인격괴조한 노예의 총수:{FLAG:37, 5}명
-SIF FLAG:38
-    PRINTFORML 　지금까지 음마가 된 노예의 총수　:{FLAG:38, 5}명
-SIF FLAG:30 > 99
-    PRINTFORML 　지금까지 {FLAG:30, 5}명의 대량의 노예를 함락했다.
-SIF FLAG:32 > 99
-    PRINTFORML 　지금까지 {FLAG:32, 5}마리 가량의 요정을 함락해서 매우 기뻐하고 있다.
+SIF FLAG:구입총계
+    PRINTFORML 　지금까지 구입한 노예의 총수　　 :{FLAG:구입총계, 5}명
+SIF FLAG:상애총계
+    PRINTFORML 　지금까지 상애가 된 노예의 총수　:{FLAG:상애총계, 5}명
+SIF FLAG:예속총계
+    PRINTFORML 　지금까지 예속시킨 노예의 총수　:{FLAG:예속총계, 5}명
+SIF FLAG:괴조총계
+    PRINTFORML 　지금까지 인격괴조한 노예의 총수:{FLAG:괴조총계, 5}명
+SIF FLAG:음마총계
+    PRINTFORML 　지금까지 음마가 된 노예의 총수　:{FLAG:음마총계, 5}명
+SIF FLAG:함락총계 > 99
+    PRINTFORML 　지금까지 {FLAG:함락총계, 5}명의 대량의 노예를 함락했다.
+SIF FLAG:요정함락총계 > 99
+    PRINTFORML 　지금까지 {FLAG:요정함락총계, 5}마리 가량의 요정을 함락해서 매우 기뻐하고 있다.
 SIF CFLAG:ARG:50
     PRINTFORML 　지금까지 {CFLAG:ARG:50, 5}회 정도, 코스프레를 했던 적이 있다.
 SIF CFLAG:ARG:55
@@ -1993,7 +1993,7 @@ IF FLAG:SHOP이벤트확장 & 64
         PRINTFORML 　노예로부터 {CFLAG:ARG:1623, 5}개 정도, 모자나 머플러를 선물 받은 적이 있다..
 ENDIF
 ;촉수 관련
-SIF FLAG:75 || FLAG:98
+SIF FLAG:촉수능력 || FLAG:촉수특수능력
     PRINTL 　촉수에 특수한 능력을 부여해 즐기고 있다.
 ;디버그 모드 전용
 SIF TALENT:MASTER:998
@@ -2414,10 +2414,10 @@ RETURNF @"\@(ARG >= 3200 && ARG < 3400) ?  %STR:(ARG - 3100)% # 혼혈\@"
 ;-------------------------------------------------
 @ARRANGE_CHARALIST, ARG
 IF STRLENS(CALLNAME:ARG) <= 18
-    PRINTFORM [\@(FLAG:90 >= 3 && FLAG:게임모드 < 50) ?  {ARG, 3} # {ARG, 2}\@]%CALLNAME:ARG, 18, LEFT%
+    PRINTFORM [\@(FLAG:자택 >= 3 && FLAG:게임모드 < 50) ?  {ARG, 3} # {ARG, 2}\@]%CALLNAME:ARG, 18, LEFT%
 ELSE
     LOCALS = \@(STRLENS(SUBSTRING(CALLNAME:ARG, 0,16)) == 16) ?  %SUBSTRING(CALLNAME:ARG, 0,16)%.. # %SUBSTRING(CALLNAME:ARG, 0,15)%...\@
-    PRINTFORM [\@(FLAG:90 >= 3 && FLAG:게임모드 < 50) ?  {ARG, 3} # {ARG, 2}\@]%LOCALS%
+    PRINTFORM [\@(FLAG:자택 >= 3 && FLAG:게임모드 < 50) ?  {ARG, 3} # {ARG, 2}\@]%LOCALS%
 ENDIF
 
 ;-------------------------------------------------

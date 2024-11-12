@@ -231,7 +231,7 @@ ELSE
     SIF (TARGET >= 0 && CFLAG:42) || (ASSI >= 0 && CFLAG:ASSI:42)
         CALL SHOW_SPECIAL_EQUIPMENT
     ;소지 아이템 표시가 유효할 때에는 소유하고 있는 아이템이 자동적으로 표시된다
-    SIF FLAG:21 & 1
+    SIF FLAG:SHOP아이템표시 & 1
         CALL ARRANGE_PRINT_ITEM
     DRAWLINE
 
@@ -267,7 +267,7 @@ ELSE
             SIF COUNT != TARGET
                 LOCAL:2 += 1
             ;요정 목욕의 조건. 한 글자 변수는 요정(FAIRY)의 떡밥
-            IF FLAG:커맨드확장 & 1024 && FLAG:74 & 8192
+            IF FLAG:커맨드확장 & 1024 && FLAG:욕탕개조 & 8192
                 ;남자, 임신, 포란, 회란이 없는 요정 캐릭터를 본다
                 SIF TALENT:COUNT:120 == 0 && TALENT:COUNT:140 == 0 && TALENT:COUNT:143 == 0 && TALENT:COUNT:145 == 0 && TALENT:COUNT:200
                     LOCAL:9 += 1
@@ -345,7 +345,7 @@ ELSE
     SIF TALENT:MASTER:56 && LOCAL:4 > 0
         PRINTFORMLC [113] - \@(NO:MASTER == 21 || NO:MASTER == 22) ? 식신으로 삼는다 # 사역마로 삼는다\@
     ;자금이 있으며, CHALLENGE 모드이거나 아니면 지금까지 매각한 노예가 10명 이상일 경우
-    SIF (FLAG:34 >= 10 || FLAG:게임모드 >= 50) && MONEY > 0
+    SIF (FLAG:매각총계 >= 10 || FLAG:게임모드 >= 50) && MONEY > 0
         PRINTLC [120] - 비밀 도구점
     ;CONFIG에서 「기능훈련사를 이용할 수 없게 한다」가 무효에, 자금이 있을 경우
     SIF (FLAG:SHOP이벤트확장 & 65536) == 0 && MONEY > 0
@@ -382,10 +382,10 @@ ELSE
     SIF LOCAL:9 >= 30
         PRINTLC [162] - 요정목욕을 한다
     ;CONFIG의 「고문계, 정신조작계 커맨드」가 유효하고 비밀 지하실이 설치되어 있으며, 주인이 술에 떡이 되어 있지 않을 경우
-    SIF FLAG:커맨드확장 & 16 && FLAG:73 & 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
+    SIF FLAG:커맨드확장 & 16 && FLAG:지하실개조 & 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTLC [163] - 비밀 지하실
     ;주인 외에 캐릭터가 존재하고, 허브 농장이 설치되어 있으며, 주인이 술에 떡이 되어 있지 않을 경우
-    SIF FLAG:79 > 1 && CHARANUM > 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
+    SIF FLAG:허브농원 > 1 && CHARANUM > 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTLC [165] - 꽃밭으로 간다
     ;Ｓ패치 추가분
     SIF FLAG:아이템확장 & 1024 && ITEM:90 && TIME == 0
@@ -543,7 +543,7 @@ ELSE
         CALL CHARA_SALE
     ELSEIF RESULT == 113 && TALENT:MASTER:56 && GET_LIST(4) > 0
         CALL FAMILIAR_SELECT
-    ELSEIF RESULT == 120 && (FLAG:34 >= 10 || FLAG:게임모드 >= 50) && MONEY > 0
+    ELSEIF RESULT == 120 && (FLAG:매각총계 >= 10 || FLAG:게임모드 >= 50) && MONEY > 0
         DRAWLINE
         DRAWLINE
         CALL BUY_SPECIAL_ITEM
@@ -588,10 +588,10 @@ ELSE
             WAIT
             DRAWLINE
         ENDIF
-    ELSEIF RESULT == 162 && FLAG:커맨드확장 & 1024 && FLAG:74 & 8192 && GET_LIST(9) >= 30
+    ELSEIF RESULT == 162 && FLAG:커맨드확장 & 1024 && FLAG:욕탕개조 & 8192 && GET_LIST(9) >= 30
         PRINTW 요정목욕을 하러 갔다.
         CALL FAIRIES_BATH
-    ELSEIF RESULT == 163 && FLAG:커맨드확장 & 16 && FLAG:73 & 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
+    ELSEIF RESULT == 163 && FLAG:커맨드확장 & 16 && FLAG:지하실개조 & 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTW 비밀의 지하실로 갔다.
         CALL HIDDEN_BASEMENT_MENU
     ;Ｓ패치 추가분
@@ -616,7 +616,7 @@ ELSE
         PRINTW 조교중인 노예의 매각가를 체크해보자.
         CALL RESEARCH_CHARASALE_CALC_TORIKOMODE
 
-    ELSEIF RESULT == 165 && FLAG:79 > 1 && CHARANUM > 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
+    ELSEIF RESULT == 165 && FLAG:허브농원 > 1 && CHARANUM > 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTW 꽃밭으로 갔다.
         CALL SHOP_HARB_MENU
     ELSEIF RESULT == 170 && FLAG:육아실해금 > 0 && TFLAG:700 == 0
@@ -1031,7 +1031,7 @@ GOTO PRINT_PAGE
 @CALC_SLAVE_CAPACITY
 #FUNCTION
 ;챌린지 모드인지 아닌지
-RETURNF (FLAG:게임모드 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:93 + FLAG:94, BORDER_SLAVE_CAPACITY())
+RETURNF (FLAG:게임모드 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:자택증축 + FLAG:94, BORDER_SLAVE_CAPACITY())
 
 ;--------------------------------------------------
 ;집의 수용 가능한 노예의 한계 인원수
@@ -1039,13 +1039,13 @@ RETURNF (FLAG:게임모드 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:93 + FLAG
 ;RETURNF로 구입 가능한 노예의 인원수를 반사하도록
 @BORDER_SLAVE_CAPACITY
 #FUNCTION
-IF FLAG:90 == 5
+IF FLAG:자택 == 5
     RETURNF 1000
-ELSEIF FLAG:90 == 3 || FLAG:90 == 4
+ELSEIF FLAG:자택 == 3 || FLAG:자택 == 4
     RETURNF 501 + FLAG:94
-ELSEIF FLAG:90 == 2
+ELSEIF FLAG:자택 == 2
     RETURNF 101
-ELSEIF FLAG:90 == 1
+ELSEIF FLAG:자택 == 1
     RETURNF 51
 ELSE
     RETURNF 31

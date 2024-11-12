@@ -32,7 +32,7 @@ TARGET = -1
 ASSI = -1
 ;購入した土地の数をここで先にリセット
 FLAG:250 = 0
-FLAG:93 = 0
+FLAG:자택증축 = 0
 
 ;--------------------------------------------------
 ;특정 조건을 만족하면 주인에게 새로운 소질이 추가되는 처리
@@ -51,7 +51,7 @@ ELSEIF FLAG:주회수 >= 1 && FLAG:4002 && TALENT:MASTER:93 == 0
 ELSEIF FLAG:주회수 >= 3 && CFLAG:MASTER:98 >= 20 && TALENT:MASTER:91 == 0
     LOCAL:1 = 91
 ;5回以上クリアかつその周回で烙印を押した人数が9人以上のとき、針さばきを取得可能
-ELSEIF FLAG:주회수 >= 5 && FLAG:31 >= 9 && TALENT:MASTER:53 == 0
+ELSEIF FLAG:주회수 >= 5 && FLAG:현낙인총계 >= 9 && TALENT:MASTER:53 == 0
     LOCAL:1 = 53
 ;7回以上クリアかつ蒐集品を12種全て30種類以上集めたとき、調合知識を取得可能
 ELSEIF FLAG:주회수 >= 7 && TALENT:MASTER:55 == 0
@@ -255,7 +255,7 @@ MASTER = 0
 DELCHARA CHARANUM-1
 
 ;주인의 종족 변경 처리
-SIF FLAG:70
+SIF FLAG:주인종족변경
     CALL CHANGE_RACE_MASTER
 
 ;봉래인 인계 처리
@@ -298,7 +298,7 @@ SIF MONEY:991 >= 10000000 && (FLAG:계승가능조수수 & 32) == 0
 SIF MONEY:997 >= 400000 && (FLAG:계승가능조수수 & 64) == 0
     FLAG:계승가능조수수 |= 64
 ;주인이 요정, 흡혈귀, 기계, 망령, 인형, 악마, 캇파, 요호, 반백택, 좀비 페어리로 전생할 수 있다
-SIF FLAG:70 & 1 && FLAG:70 & 2 && FLAG:70 & 4 && FLAG:70 & 8 && FLAG:70 & 16 && FLAG:70 & 32 && FLAG:70 & 64 && FLAG:70 & 256 && FLAG:70 & 512 && (FLAG:계승가능조수수 & 128) == 0
+SIF FLAG:주인종족변경 & 1 && FLAG:주인종족변경 & 2 && FLAG:주인종족변경 & 4 && FLAG:주인종족변경 & 8 && FLAG:주인종족변경 & 16 && FLAG:주인종족변경 & 32 && FLAG:주인종족변경 & 64 && FLAG:주인종족변경 & 256 && FLAG:주인종족변경 & 512 && (FLAG:계승가능조수수 & 128) == 0
     FLAG:계승가능조수수 |= 128
 ;개발한 목욕탕과 촉수의 능력의 총수가 45이상
 SIF (FLAG:계승가능조수수 & 256) == 0
@@ -310,14 +310,14 @@ SIF FLAG:500 >= 500 && (FLAG:계승가능조수수 & 512) == 0
 SIF FLAG:4000 >= 20 && (FLAG:계승가능조수수 & 1024) == 0
     FLAG:계승가능조수수 |= 1024
 ;과거에 1번 환상향을 손에 넣었다
-SIF FLAG:90 == 5 && (FLAG:계승가능조수수 & 2048) == 0
+SIF FLAG:자택 == 5 && (FLAG:계승가능조수수 & 2048) == 0
     FLAG:계승가능조수수 |= 2048
 ;과거에 촉수공주 엔딩을 보았다
 SIF FLAG:4004 > 0 && (FLAG:계승가능조수수 & 4096) == 0
     FLAG:계승가능조수수 |= 4096
 ;동시에 10종 이상의 하렘 엔딩의 조건을 채웠다(bit8192)
 ;오베론이나 티타니아의 칭호 자격을 얻고 있다
-SIF FLAG:32 >= 1000 && (FLAG:계승가능조수수 & 16384) == 0
+SIF FLAG:요정함락총계 >= 1000 && (FLAG:계승가능조수수 & 16384) == 0
     FLAG:계승가능조수수 |= 16384
 ;[지옥의 훈장]을 소지
 SIF TALENT:MASTER:834 && (FLAG:계승가능조수수 & 32768) == 0
@@ -333,8 +333,8 @@ SIF TALENT:MASTER:834 && (FLAG:계승가능조수수 & 32768) == 0
 ;周回数-1だけ引き継ぎ可能人数が増える(最大5人)
 LOCAL:6 = LIMIT(FLAG:주회수 - 1, 0, 5)
 ;함락 인원의 1/10 만 인수 가능 인원이 증가 (최대 4명)
-SIF FLAG:30 >= 10
-    LOCAL:6 += MIN(FLAG:30 / 10, 4)
+SIF FLAG:함락총계 >= 10
+    LOCAL:6 += MIN(FLAG:함락총계 / 10, 4)
 ;[대범함]을 가지고 인수 가능 인원 증가
 IF TALENT:MASTER:98
     FOR LOCAL, 0, 17
@@ -482,7 +482,7 @@ ENDIF
 ;촉수의 능력·τ탈취 처리
 ;미리 τ(주인의 BASE:촉수)를 저장하고 인수하는 것을 선택하지 않은 경우는 0으로 처리
 ;비트 연산 LOCAL:2가 2의 경우 플래그 재설정 프로세스에서 촉수 설정 플래그(촉수 능력)이 삭제되지 않게된다
-IF FLAG:75 > 0
+IF FLAG:촉수능력 > 0
     DRAWLINE
     PRINTL 촉수의 능력을 인계하겠습니까?
     PRINTLC [0] 예
@@ -779,25 +779,25 @@ IF FLAG:400 > 99 && CFLAG:MASTER:5
 ELSE
     PRINTL ※최악의 경우 원래대로 돌아갈 수 없을 가능성도 있습니다.
 ENDIF
-SIF FLAG:70 & 1
+SIF FLAG:주인종족변경 & 1
     PRINTLC [01] 요정
-SIF FLAG:70 & 2
+SIF FLAG:주인종족변경 & 2
     PRINTLC [02] 흡혈귀
-SIF FLAG:70 & 4
+SIF FLAG:주인종족변경 & 4
     PRINTLC [03] 기계
-SIF FLAG:70 & 8
+SIF FLAG:주인종족변경 & 8
     PRINTLC [04] 망령
-SIF FLAG:70 & 16
+SIF FLAG:주인종족변경 & 16
     PRINTLC [05] 인형
-SIF FLAG:70 & 32
+SIF FLAG:주인종족변경 & 32
     PRINTLC [06] 악마
-SIF FLAG:70 & 64
+SIF FLAG:주인종족변경 & 64
     PRINTLC [07] 캇파
-SIF FLAG:70 & 128
+SIF FLAG:주인종족변경 & 128
     PRINTLC [08] 요호
-SIF FLAG:70 & 256
+SIF FLAG:주인종족변경 & 256
     PRINTLC [09] 백택
-SIF FLAG:70 & 512
+SIF FLAG:주인종족변경 & 512
     PRINTLC [10] 좀비페어리
 PRINTLC [100] 그만둔다
 PRINTL 
@@ -810,34 +810,34 @@ IF RESULT == 100
 ELSEIF RESULT == 0 && FLAG:400 > 99 && CFLAG:MASTER:5
     PRINTW 주인의 종족을 원래대로 되돌렸습니다.
     LOCAL = 0
-ELSEIF RESULT == 1 && FLAG:70 & 1
+ELSEIF RESULT == 1 && FLAG:주인종족변경 & 1
     LOCAL = 200
     LOCAL:1 = 3203
-ELSEIF RESULT == 2 && FLAG:70 & 2
+ELSEIF RESULT == 2 && FLAG:주인종족변경 & 2
     LOCAL = 205
     LOCAL:1 = 3206
-ELSEIF RESULT == 3 && FLAG:70 & 4
+ELSEIF RESULT == 3 && FLAG:주인종족변경 & 4
     LOCAL = 206
     LOCAL:1 = 3246
-ELSEIF RESULT == 4 && FLAG:70 & 8
+ELSEIF RESULT == 4 && FLAG:주인종족변경 & 8
     LOCAL = 207
     LOCAL:1 = 3211
-ELSEIF RESULT == 5 && FLAG:70 & 16
+ELSEIF RESULT == 5 && FLAG:주인종족변경 & 16
     LOCAL = 208
     LOCAL:1 = 3221
-ELSEIF RESULT == 6 && FLAG:70 & 32
+ELSEIF RESULT == 6 && FLAG:주인종족변경 & 32
     LOCAL = 209
     LOCAL:1 = 3204
-ELSEIF RESULT == 7 && FLAG:70 & 64
+ELSEIF RESULT == 7 && FLAG:주인종족변경 & 64
     LOCAL = 210
     LOCAL:1 = 3227
-ELSEIF RESULT == 8 && FLAG:70 & 128
+ELSEIF RESULT == 8 && FLAG:주인종족변경 & 128
     LOCAL = 211
     LOCAL:1 = 3212
-ELSEIF RESULT == 9 && FLAG:70 & 256
+ELSEIF RESULT == 9 && FLAG:주인종족변경 & 256
     ;ワーハクタクは専用処理するのでLOCAL:1は設定しない
     LOCAL = 212
-ELSEIF RESULT == 10 && FLAG:70 & 512
+ELSEIF RESULT == 10 && FLAG:주인종족변경 & 512
     LOCAL = 48
     LOCAL:1 = 3245
 ELSE
@@ -1069,7 +1069,7 @@ SIF LOCAL:3 < LOCAL:1 || CHARANUM > LOCAL:1 + 1
 
 ;10人以上引き継いだ場合は購入できる奴隷数追加のため、ここで土地を追加させる
 SIF LOCAL:3 > 9
-    FLAG:93 = LOCAL:3 - 9
+    FLAG:자택증축 = LOCAL:3 - 9
 
 ;--------------------------------------------------
 ;조수의 능력 인계용 리셋 처리
@@ -1353,7 +1353,7 @@ IF RESULT == 0
     PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% [괴조인격]을 얻었다.
     TALENT:ASSI:169 = 1
     CALL GET_NICK, MASTER, "『귀축』"
-    FLAG:37 += 1
+    FLAG:괴조총계 += 1
     CFLAG:MASTER:157 |= 8
     ;主人との相性が500％に(解釈は各自ご自由に)
     IF RELATION:ASSI:MASTER < 500
@@ -1367,7 +1367,7 @@ ELSE
     GOTO INPUT_LOOP_CONVERTED_ASSI
 ENDIF
 SIF (CFLAG:ASSI:17 & 32) == 0
-    FLAG:37 += 1
+    FLAG:괴조총계 += 1
 CFLAG:ASSI:17 |= 32
 
 RETURN ARG
