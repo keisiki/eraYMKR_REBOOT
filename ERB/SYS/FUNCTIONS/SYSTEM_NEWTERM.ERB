@@ -11,15 +11,15 @@
 @START_NEWGAME
 VARSET LOCAL, 0
 ;初回周回でEASYからの引き継ぎ時のみ調合知識と魅惑は消滅
-IF FLAG:3 == 1 && FLAG:6 == 1
+IF FLAG:난이도 == 1 && FLAG:주회수 == 1
     TALENT:MASTER:55 = 0
     TALENT:MASTER:91 = 0
 ENDIF
 ;初回周回でLUNATIC/PHANTASMクリアならば偉業を称えて称号贈呈
-IF FLAG:3 == 5 && FLAG:6 == 1
+IF FLAG:난이도 == 5 && FLAG:주회수 == 1
     CFLAG:MASTER:157 |= 2
     NICKNAME:MASTER = 공전절후의 천재 조교사
-ELSEIF FLAG:3 == 4 && FLAG:6 == 1
+ELSEIF FLAG:난이도 == 4 && FLAG:주회수 == 1
     CFLAG:MASTER:157 |= 1
     NICKNAME:MASTER = 기대의 수재 조교사
 ENDIF
@@ -42,19 +42,19 @@ FLAG:93 = 0
 ;ここでのローカル変数LOCAL:1は追加される素質番号を示す
 LOCAL:1 = 0
 ;1回以上クリアかつ単体エンドを見た場合、舌使いを取得可能
-IF FLAG:6 >= 1 && (ITEM:98 || ITEM:99) && TALENT:MASTER:52 == 0
+IF FLAG:주회수 >= 1 && (ITEM:98 || ITEM:99) && TALENT:MASTER:52 == 0
     LOCAL:1 = 52
 ;1回以上クリアかつノーマルハーレムエンドを見た場合、小悪魔を取得可能
-ELSEIF FLAG:6 >= 1 && FLAG:4002 && TALENT:MASTER:93 == 0
+ELSEIF FLAG:주회수 >= 1 && FLAG:4002 && TALENT:MASTER:93 == 0
     LOCAL:1 = 93
 ;3回以上クリアかつ堕とした人数がその周回で20人以上のとき、魅惑を取得可能
-ELSEIF FLAG:6 >= 3 && CFLAG:MASTER:98 >= 20 && TALENT:MASTER:91 == 0
+ELSEIF FLAG:주회수 >= 3 && CFLAG:MASTER:98 >= 20 && TALENT:MASTER:91 == 0
     LOCAL:1 = 91
 ;5回以上クリアかつその周回で烙印を押した人数が9人以上のとき、針さばきを取得可能
-ELSEIF FLAG:6 >= 5 && FLAG:31 >= 9 && TALENT:MASTER:53 == 0
+ELSEIF FLAG:주회수 >= 5 && FLAG:31 >= 9 && TALENT:MASTER:53 == 0
     LOCAL:1 = 53
 ;7回以上クリアかつ蒐集品を12種全て30種類以上集めたとき、調合知識を取得可能
-ELSEIF FLAG:6 >= 7 && TALENT:MASTER:55 == 0
+ELSEIF FLAG:주회수 >= 7 && TALENT:MASTER:55 == 0
     LOCAL:2 = 0
     FOR LOCAL, 0, 12
         SIF FLAG:(501 + LOCAL) >= 30
@@ -63,7 +63,7 @@ ELSEIF FLAG:6 >= 7 && TALENT:MASTER:55 == 0
     SIF LOCAL:2 >= 12
         LOCAL:1 = 55
 ;9回以上クリアかつ恋慕か服従の付いた奴隷の中で調合知識または治療持ちが4人以上いたとき、治療を取得可能
-ELSEIF FLAG:6 >= 9 && TALENT:MASTER:59 == 0
+ELSEIF FLAG:주회수 >= 9 && TALENT:MASTER:59 == 0
     LOCAL:2 = 0
     FOR LOCAL, 0, CHARANUM
         ;主人あるいは失踪中のキャラは対象外
@@ -83,7 +83,7 @@ ENDIF
 ;奴隷全員が絶壁または貧乳を持っているとつるぺた堕しを取得可能
 ;同様の条件で奴隷全員が巨乳または爆乳の場合は大乳導を取得可能
 ;※あくまでも引き継いだ時点で所有している奴隷の能力です
-IF FLAG:3 >= 3 && FLAG:4000 >= 20 && TALENT:MASTER:96 == 0 && TALENT:MASTER:97 == 0 && LOCAL:1 == 0
+IF FLAG:난이도 >= 3 && FLAG:4000 >= 20 && TALENT:MASTER:96 == 0 && TALENT:MASTER:97 == 0 && LOCAL:1 == 0
     LOCAL:2 = 0
     LOCAL:3 = 0
     FOR LOCAL, 0, CHARANUM
@@ -111,7 +111,7 @@ ENDIF
 SIF LOCAL:1 > 0 && TALENT:MASTER:(LOCAL:1) == 0
     CALL NEWTERM_TALENT_MASTER, LOCAL:1
 ;지옥의 훈장(別名：へる子購入する権利)
-SIF TALENT:MASTER:834 == 0 && CFLAG:MASTER:157 & 2 && FLAG:6 == 1
+SIF TALENT:MASTER:834 == 0 && CFLAG:MASTER:157 & 2 && FLAG:주회수 == 1
     CALL NEWTERM_TALENT_MASTER, 834
 
 ;--------------------------------------------------
@@ -226,7 +226,7 @@ NEXT
 
 ;ABNORMAL용
 ;역조교의 성격은 대상 외
-IF FLAG:4 == 1
+IF FLAG:게임모드 == 1
     TALENT:처녀 = TALENT:MASTER:0
     TALENT:남성혐오 = TALENT:MASTER:37
     TALENT:여성혐오 = TALENT:MASTER:38
@@ -277,51 +277,51 @@ ENDIF
 ;--------------------------------------------------
 ;FLAG:8을 사용. 한 번이라도 인원수 증가의 조건을 채웠으면 그 다음부터는 따로 조건을 채울 필요가 없어진다
 ;[대범함]을 가지고 있다
-SIF TALENT:MASTER:98 && (FLAG:8 & 1) == 0
-    FLAG:8 |= 1
+SIF TALENT:MASTER:98 && (FLAG:계승가능조수수 & 1) == 0
+    FLAG:계승가능조수수 |= 1
 ;난이도 PHANTASM를 1번이라도 클리어했던 적이 있다
-SIF FLAG:9 & 16 && (FLAG:8 & 2) == 0
-    FLAG:8 |= 2
+SIF FLAG:엔딩도달 & 16 && (FLAG:계승가능조수수 & 2) == 0
+    FLAG:계승가능조수수 |= 2
 ;조교사 Lv가 5가 되어 있다
-SIF ABL:MASTER:조교사Lv > 4 && (FLAG:8 & 4) == 0
-    FLAG:8 |= 4
+SIF ABL:MASTER:조교사Lv > 4 && (FLAG:계승가능조수수 & 4) == 0
+    FLAG:계승가능조수수 |= 4
 ;조교중에 연모 처녀를 빼앗은 인원수의 누계가 100명 이상
-SIF FLAG:400 >= 100 && (FLAG:8 & 8) == 0
-    FLAG:8 |= 8
+SIF FLAG:400 >= 100 && (FLAG:계승가능조수수 & 8) == 0
+    FLAG:계승가능조수수 |= 8
 ;노예 매각으로 번 금액의 누계가 25000000원이상
-SIF MONEY:990 >= 25000000 && (FLAG:8 & 16) == 0
-    FLAG:8 |= 16
+SIF MONEY:990 >= 25000000 && (FLAG:계승가능조수수 & 16) == 0
+    FLAG:계승가능조수수 |= 16
 ;고급 노예 매각으로 번 금액의 누계가 10000000원이상
-SIF MONEY:991 >= 10000000 && (FLAG:8 & 32) == 0
-    FLAG:8 |= 32
+SIF MONEY:991 >= 10000000 && (FLAG:계승가능조수수 & 32) == 0
+    FLAG:계승가능조수수 |= 32
 ;노예 매각으로 번 최고 금액이 400000원이상
-SIF MONEY:997 >= 400000 && (FLAG:8 & 64) == 0
-    FLAG:8 |= 64
+SIF MONEY:997 >= 400000 && (FLAG:계승가능조수수 & 64) == 0
+    FLAG:계승가능조수수 |= 64
 ;주인이 요정, 흡혈귀, 기계, 망령, 인형, 악마, 캇파, 요호, 반백택, 좀비 페어리로 전생할 수 있다
-SIF FLAG:70 & 1 && FLAG:70 & 2 && FLAG:70 & 4 && FLAG:70 & 8 && FLAG:70 & 16 && FLAG:70 & 32 && FLAG:70 & 64 && FLAG:70 & 256 && FLAG:70 & 512 && (FLAG:8 & 128) == 0
-    FLAG:8 |= 128
+SIF FLAG:70 & 1 && FLAG:70 & 2 && FLAG:70 & 4 && FLAG:70 & 8 && FLAG:70 & 16 && FLAG:70 & 32 && FLAG:70 & 64 && FLAG:70 & 256 && FLAG:70 & 512 && (FLAG:계승가능조수수 & 128) == 0
+    FLAG:계승가능조수수 |= 128
 ;개발한 목욕탕과 촉수의 능력의 총수가 45이상
-SIF (FLAG:8 & 256) == 0
+SIF (FLAG:계승가능조수수 & 256) == 0
     CALL CHECK_BATH_AND_TENTACLE
 ;환상향 비보관이 될 때까지 전시실을 발전시켰다
-SIF FLAG:500 >= 500 && (FLAG:8 & 512) == 0
-    FLAG:8 |= 512
+SIF FLAG:500 >= 500 && (FLAG:계승가능조수수 & 512) == 0
+    FLAG:계승가능조수수 |= 512
 ;노멀·하렘 엔드를 20 종류 이상 보았다
-SIF FLAG:4000 >= 20 && (FLAG:8 & 1024) == 0
-    FLAG:8 |= 1024
+SIF FLAG:4000 >= 20 && (FLAG:계승가능조수수 & 1024) == 0
+    FLAG:계승가능조수수 |= 1024
 ;과거에 1번 환상향을 손에 넣었다
-SIF FLAG:90 == 5 && (FLAG:8 & 2048) == 0
-    FLAG:8 |= 2048
+SIF FLAG:90 == 5 && (FLAG:계승가능조수수 & 2048) == 0
+    FLAG:계승가능조수수 |= 2048
 ;과거에 촉수공주 엔딩을 보았다
-SIF FLAG:4004 > 0 && (FLAG:8 & 4096) == 0
-    FLAG:8 |= 4096
+SIF FLAG:4004 > 0 && (FLAG:계승가능조수수 & 4096) == 0
+    FLAG:계승가능조수수 |= 4096
 ;동시에 10종 이상의 하렘 엔딩의 조건을 채웠다(bit8192)
 ;오베론이나 티타니아의 칭호 자격을 얻고 있다
-SIF FLAG:32 >= 1000 && (FLAG:8 & 16384) == 0
-    FLAG:8 |= 16384
+SIF FLAG:32 >= 1000 && (FLAG:계승가능조수수 & 16384) == 0
+    FLAG:계승가능조수수 |= 16384
 ;[지옥의 훈장]을 소지
-SIF TALENT:MASTER:834 && (FLAG:8 & 32768) == 0
-    FLAG:8 |= 32768
+SIF TALENT:MASTER:834 && (FLAG:계승가능조수수 & 32768) == 0
+    FLAG:계승가능조수수 |= 32768
 
 ;--------------------------------------------------
 ;조수 인계 처리
@@ -331,14 +331,14 @@ SIF TALENT:MASTER:834 && (FLAG:8 & 32768) == 0
 ; 그러나 계승되는 조수의 수는 [대범함]을 가지지 않는 경우, 최대 9 명까지로한다.
 ;LOCAL:5～7とTFLAG:0を判定に使用.
 ;周回数-1だけ引き継ぎ可能人数が増える(最大5人)
-LOCAL:6 = LIMIT(FLAG:6 - 1, 0, 5)
+LOCAL:6 = LIMIT(FLAG:주회수 - 1, 0, 5)
 ;함락 인원의 1/10 만 인수 가능 인원이 증가 (최대 4명)
 SIF FLAG:30 >= 10
     LOCAL:6 += MIN(FLAG:30 / 10, 4)
 ;[대범함]을 가지고 인수 가능 인원 증가
 IF TALENT:MASTER:98
     FOR LOCAL, 0, 17
-        LOCAL:6 += GETBIT(FLAG:8, LOCAL)
+        LOCAL:6 += GETBIT(FLAG:계승가능조수수, LOCAL)
     NEXT
 ENDIF
 ;대체 인원의 한계 값 설정
@@ -458,7 +458,7 @@ LOCAL:1 = TABLE_CALC2(LOCAL:1, 100000, 10)
 MONEY = LOCAL:1
 ;周回を重ねていく毎に引き継いだ分以外にボーナスが入る様に
 ;ただし引き継ぎボーナスの最高額は100万までとする(そこまで周回を重ねるのも困難な話だが)
-LOCAL:1 = MIN(1000 + 500 * FLAG:6, 1000000)
+LOCAL:1 = MIN(1000 + 500 * FLAG:주회수, 1000000)
 MONEY += LOCAL:1
 
 ;蒐集品引き継ぎ処理
@@ -532,7 +532,7 @@ IF (LOCAL:2 & 1) == 0
         NEXT
     NEXT
 ENDIF
-IF FLAG:4 == 0
+IF FLAG:게임모드 == 0
     ;YMモードの場合、どうするか尋ねる
     DRAWLINE
     PRINTL eratohoYM 모드가 아니라 PROSTITUTE 모드로 들어가시겠습니까?
@@ -543,18 +543,18 @@ IF FLAG:4 == 0
     INPUT
     IF RESULT == 0
         PRINTW eratohoYM 본래의 모드로 계속합니다.
-        FLAG:4 = 0
+        FLAG:게임모드 = 0
     ELSEIF RESULT == 1
         PRINTW “PROSTITUTE” 모드로 들어왔습니다.
         ITEM:90 = 1
-        FLAG:4 = 4
-        FLAG:13 |= 1024
+        FLAG:게임모드 = 4
+        FLAG:아이템확장 |= 1024
         MONEY += 200
         MONEY:100 = 2000000
     ELSE
         GOTO INPUT_LOOP_6
     ENDIF
-ELSEIF FLAG:4 == 4
+ELSEIF FLAG:게임모드 == 4
     ;PROモードの場合、どうするか尋ねる
     DRAWLINE
     PRINTL PROSTITUTE 모드를 그만두고、통상 플레이로 돌아가겠습니까?
@@ -566,12 +566,12 @@ ELSEIF FLAG:4 == 4
     IF RESULT == 0
         PRINTW eratohoYM 본래의 모드로 돌아갑니다
         MONEY:100 = 1000000
-        FLAG:4 = 0
+        FLAG:게임모드 = 0
     ELSEIF RESULT == 1
         PRINTW “PROSTITUTE” 모드로 이어서 하겠습니다.
         PRINTW 창관 관계의 컨피그 설정은 이어지지 않으므로 주의하세요.
         ITEM:90 = 1
-        FLAG:13 |= 1024
+        FLAG:아이템확장 |= 1024
         MONEY += 200
     ELSE
         GOTO INPUT_LOOP_7
@@ -615,14 +615,14 @@ IF RESULT == 0
         ENDSELECT
     NEXT
 ELSEIF RESULT == 1 || RESULT == 2
-    FLAG:12 = 0
-    FLAG:13 = 0
-    FLAG:14 = 0
-    FLAG:15 = 0
-    FLAG:18 = 4
-    FLAG:19 = 9
+    FLAG:SHOP이벤트확장 = 0
+    FLAG:아이템확장 = 0
+    FLAG:조교모드 = 0
+    FLAG:커맨드확장 = 0
+    FLAG:사정장소선택및임신기능 = 4
+    FLAG:사정선택기본장소 = 9
     IF RESULT == 1
-        FLAG:12 |= 8192
+        FLAG:SHOP이벤트확장 |= 8192
         PRINTW 설정을 변경합니다.
         CALL NEWGAME_CONFIGURATION_RESET
     ENDIF
@@ -630,7 +630,7 @@ ELSE
     GOTO INPUT_LOOP_3
 ENDIF
 
-IF FLAG:4 == 1
+IF FLAG:게임모드 == 1
     ;ABNORMALの場合、最初から始めたときに選択した設定を変更するかどうかを訪ねる
     DRAWLINE
     PRINTL 주인의 성별·체격 등의 설정은 지금 이대로 인계하겠습니까?
@@ -655,8 +655,8 @@ VARSET TFLAG, 0
 FLAG:91 = 1
 FLAG:92 = 10
 ;周回フラグ
-FLAG:6 += 1
-PRINTFORMW 강하게 뉴 게임을 시작합니다.　({FLAG:6}주차)
+FLAG:주회수 += 1
+PRINTFORMW 강하게 뉴 게임을 시작합니다.　({FLAG:주회수}주차)
 ;念のためもう一度リセット
 TARGET = -1
 ASSI = -1
@@ -678,9 +678,9 @@ PRINTL [2] NORMAL  （90일 기한）
 PRINTL [3] HARD    （99일 기한）
 PRINTL [4] LUNATIC （90일 기한）
 PRINTL [5] PHANTASM（60일 기한）
-;SIF FLAG:3 >= 4
+;SIF FLAG:난이도 >= 4
 ;    PRINTL [6]PRO     （30日＋α期限）
-;SIF FLAG:3 >= 5 && FLAG:6 <= 2
+;SIF FLAG:난이도 >= 5 && FLAG:주회수 <= 2
 ;    PRINTL [7]ULTRA（14日＋α期限）
 PRINTL [100] HELP  （각 난이도의 간단한 설명）
 $INPUT_LOOP_2
@@ -715,14 +715,14 @@ ELSEIF RESULT == 5
     ABL:MASTER:기교 = 1
     ;禁断の知識没収
     TALENT:MASTER:56 = 0
-;ELSEIF RESULT == 4 && FLAG:3 >= 4
+;ELSEIF RESULT == 4 && FLAG:난이도 >= 4
 ;    PRINTW “Welcome to Special Round”
-;ELSEIF RESULT == 5 && FLAG:3 >= 5 && FLAG:6 <= 2
+;ELSEIF RESULT == 5 && FLAG:난이도 >= 5 && FLAG:주회수 <= 2
 ;    PRINTW “지옥에 어서오세요”
 ELSE
     GOTO INPUT_LOOP_2
 ENDIF
-FLAG:3 = RESULT
+FLAG:난이도 = RESULT
 
 ;=============================================================================
 ;주차 플레이에서 주인의 소질 취득 · 변경 처리
@@ -927,7 +927,7 @@ LOCAL:1 += CHARATENTACLE_CHECK()
 LOCAL:1 += SPECIALBATH_CHECK()
 ;合計45以上なら付与
 SIF LOCAL:1 >= 45
-    FLAG:8 |= 256
+    FLAG:계승가능조수수 |= 256
 
 ;=============================================================================
 ;조수를 인계하지 않을 때의 처리
@@ -1085,7 +1085,7 @@ FOR ASSI, 0, CHARANUM
     ;조수가 즉각함락을 갖고 있지 않음＋(과거 주회 플레이를 포함해)지금까지 淫乱、淫核／淫茎、淫壷、淫尻、淫乳、尿道狂、キス魔、ドＳ、ドＭを全て([オトコ]の場合、[淫壷]は不要)취득、
     ;혹은 지금까지 [연모] [친애] [상애] [복종] [낙인] [예속] [사역마] [음란]을 전부 취득
     ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも即落ちを覚えさせた場合最初から即落ちが付加されるようになる. (이미 즉각함락 존재 시 유지 여부 추가. T(220213))
-    IF (((TALENT:ASSI:120 && CFLAG:ASSI:16 == 507) || CFLAG:ASSI:16 == 511) && FLAG:3 >= 3) || CFLAG:ASSI:16 & 512
+    IF (((TALENT:ASSI:120 && CFLAG:ASSI:16 == 507) || CFLAG:ASSI:16 == 511) && FLAG:난이도 >= 3) || CFLAG:ASSI:16 & 512
         CALL FALLEN_ASSI, LOCAL:4
         LOCAL:4 = RESULT
     ELSEIF CFLAG:ASSI:14 >= 15 && CFLAG:ASSI:15 >= 15 && (CFLAG:ASSI:16 & 1) > 0 && TALENT:ASSI:179 == 0
@@ -1094,13 +1094,13 @@ FOR ASSI, 0, CHARANUM
     ENDIF
     ;助手が壊造人格を持っていない＋(過去の周回プレイを含め)今までに幼児退行、狂気、精神崩壊、傀儡を全て取得し、記憶消去薬を1回以上飲ませ、
     ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも壊造人格を覚えさせた場合最初から壊造人格が付加されるようになる.
-    IF ((CFLAG:ASSI:17 == 31 && FLAG:3 >= 3) || CFLAG:ASSI:17 & 32) && TALENT:ASSI:169 == 0
+    IF ((CFLAG:ASSI:17 == 31 && FLAG:난이도 >= 3) || CFLAG:ASSI:17 & 32) && TALENT:ASSI:169 == 0
         CALL CONVERTED_ASSI, LOCAL:4
         LOCAL:4 = RESULT
     ENDIF
     ;助手がオトコでも生娘ではなく、好感度が1万以上、現在[相愛]を持っている＋(過去の周回プレイを含め)今までに恋慕、妄信、親愛、相愛を全て取得し、
     ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも生娘化を実行した場合、生娘化にするか選択できるようになる.
-    SIF (((CFLAG:ASSI:14 & 15) > 0 && FLAG:3 >= 3) || CFLAG:ASSI:14 & 16) && CFLAG:ASSI:2 > 9999 && TALENT:ASSI:0 != 1 && TALENT:ASSI:120 == 0 && TALENT:ASSI:153
+    SIF (((CFLAG:ASSI:14 & 15) > 0 && FLAG:난이도 >= 3) || CFLAG:ASSI:14 & 16) && CFLAG:ASSI:2 > 9999 && TALENT:ASSI:0 != 1 && TALENT:ASSI:120 == 0 && TALENT:ASSI:153
         CALL VIRGIN_ASSI
 
     ;캐릭터 전용 대사 내에 특수 인계 설정 처리가 있을 경우에는 그쪽 처리를 우선한다. 그 외에는 통상 인계 처리.

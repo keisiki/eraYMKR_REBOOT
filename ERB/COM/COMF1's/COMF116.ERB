@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:116 > 0
     RETURN 0
 ;수치 플레이계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 512) == 0
+SIF (FLAG:커맨드확장 & 512) == 0
     RETURN 0
 ;조수가 없으면 불가
 SIF ASSI < 0
@@ -18,7 +18,7 @@ SIF ASSI < 0
 SIF ASSIPLAY
     RETURN 0
 ;野外もしくは公開自慰を行ったことがない場合の野外およびビデオ撮影中は, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && (CFLAG:ASSI:21 & 1) == 0 && (TEQUIP:50 || TEQUIP:52)
+SIF FLAG:VA이상조교필터 & 4 && (CFLAG:ASSI:21 & 1) == 0 && (TEQUIP:50 || TEQUIP:52)
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -178,7 +178,7 @@ ENDIF
 ;독심의 경우 에로 있고 기분이 옮기는지 과시하고 효과 업(1.8배)
 ;-------------------------------------------------
 ;캐릭터 전용 커맨드가 온의 경우, 대상이[연모]와 마음의 눈을 닫지 않은[깨닫고]소유라면 변화
-IF TALENT:213 == 1 && TALENT:150 && (FLAG:15 & 16384)
+IF TALENT:213 == 1 && TALENT:150 && (FLAG:커맨드확장 & 16384)
     TIMES SOURCE:15 , 1.80
     TIMES SOURCE:18 , 1.80
 ENDIF
@@ -315,12 +315,12 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM116
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 ;연모 득도함응에 과시하면(자) 득도함응도 대흥분
-IF TALENT:213 == 1 && TALENT:150 && (FLAG:15 & 16384)
+IF TALENT:213 == 1 && TALENT:150 && (FLAG:커맨드확장 & 16384)
     PRINTFORML %조사선택(CALLNAME:MASTER, "와")% %조사선택(CALLNAME:ASSI, "는")% 각각 %CALLNAME:TARGET%에게 과시하듯이 눈앞에서 자위를 시작했다.
     PRINTFORMW 자위 행위로 흥분하고 있는 두 명의 욕정에 동화되어 %CALLNAME:TARGET%도 한층 더 격렬하게 욕정하고 있다….
 ;반발 Lv2 이상 소유이지만 욕정이 튀고 있는[해방][쾌감에 솔직]를 가지지 않는 비함락 노예 상대에게

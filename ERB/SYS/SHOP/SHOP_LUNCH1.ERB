@@ -38,7 +38,7 @@ IF TALENT:MASTER:44 == 0 && TALENT:MASTER:206 == 0 && TALENT:150 == 0 && TALENT:
 ENDIF
 IF LOCAL == 0
     CALL POISONED_LUNCH
-ELSEIF FLAG:14 & 4
+ELSEIF FLAG:조교모드 & 4
     CALL CHOCOLATE_JUDGE
 ELSE
     CALL LUNCH_SALE
@@ -298,7 +298,7 @@ IF TALENT:MASTER:55 == 0 && RAND:(LOCAL:2) > 2
     ENDIF
 
     ;主人の死亡チェック(EASYでないとき主人が調合知識を持たず、毒を盛った奴隷が[弱味]持ちなおかつ恐怖と反発持ちで一定の確率で主人死亡)
-    SIF FLAG:3 != 1 && TALENT:MASTER:55 == 0 && TALENT:약점 && MARK:공포각인 && MARK:반발각인 && RAND:20 == 0
+    SIF FLAG:난이도 != 1 && TALENT:MASTER:55 == 0 && TALENT:약점 && MARK:공포각인 && MARK:반발각인 && RAND:20 == 0
         CALL BADEND_8
 ELSE
     PRINTW      ・
@@ -553,7 +553,7 @@ CALL COMMON_UP_EXP, TARGET, 70, LOCAL:3, 1
 CFLAG:65 = LIMIT(CFLAG:65, 0, 999999)
 
 IF BASE:MASTER:체력 <= 0
-    IF TALENT:주정 || TALENT:봉래인 || MARK:불사각인 || FLAG:5 & 1 || ((TALENT:81 || TALENT:177 || ABL:새드끼 > 3) && RAND:2 == 0)
+    IF TALENT:주정 || TALENT:봉래인 || MARK:불사각인 || FLAG:엔드리스 & 1 || ((TALENT:81 || TALENT:177 || ABL:새드끼 > 3) && RAND:2 == 0)
         CALL BADEND_7
     ELSE
         CALL BADEND_6
@@ -561,7 +561,7 @@ IF BASE:MASTER:체력 <= 0
 ENDIF
 
 ;휴식 플래그를 켠다
-FLAG:0 = 1
+FLAG:휴식 = 1
 BEGIN TURNEND
 RETURN 1
 
@@ -932,7 +932,7 @@ IF LOCAL == 0 && (ABL:요리기능 >= 5 || LOCAL:1 == 1)
             ;미약 1개 소비
             IF NOITEM == 0
                 ITEM:61 -= 1
-                SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+                SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                     CALL FILL_PLURAL_ITEM, 61
             ENDIF
             TFLAG:202 = 1
@@ -1017,7 +1017,7 @@ ELSEIF LOCAL == 11 && TALENT:134
     IF (ITEM:61 > 0 || NOITEM) && TALENT:170 && RAND:4 == 0
         IF NOITEM == 0
             ITEM:61 -= 1
-            SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+            SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                 CALL FILL_PLURAL_ITEM, 61
         ENDIF
         TFLAG:202 = 1
@@ -1029,7 +1029,7 @@ ELSE
     IF (ITEM:61 > 0 || NOITEM) && TALENT:170 && RAND:4 == 0
         IF NOITEM == 0
             ITEM:61 -= 1
-            SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+            SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                 CALL FILL_PLURAL_ITEM, 61
         ENDIF
         TFLAG:202 = 1
@@ -1044,7 +1044,7 @@ PRINTW 를(을) 만들었다.
 ;-------------------------------------------------
 ;일반 도시락보다 보정은 큼
 LOCAL:3 = (LOCAL:2 * LOCAL:4) / 25
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL:3 = TABLE_CALC(LOCAL:3, 5000, 2)
     LOCAL:3 = TABLE_CALC(LOCAL:3, 10000, 4)
     LOCAL:3 = TABLE_CALC(LOCAL:3, 50000, 8)
@@ -1083,9 +1083,9 @@ PRINTL [1] - 위험물은 처분하자.
 DRAWLINE
 PRINTL 
 $INPUT_LOOP
-IF FLAG:12 & 4096 && FLAG:12 & 8192
+IF FLAG:SHOP이벤트확장 & 4096 && FLAG:SHOP이벤트확장 & 8192
     RESULT = 1
-ELSEIF FLAG:12 & 4096
+ELSEIF FLAG:SHOP이벤트확장 & 4096
     RESULT = 0
 ELSE
     INPUT
@@ -1267,7 +1267,7 @@ CALL COMMON_UP_JUEL, TARGET, 11, (LOCAL:2*LOCAL:6*2), 0
 CALL COMMON_UP_EXP, TARGET, 70, LOCAL:5, 1
 
 ;조건을 만족하면 식후의 운동 이벤트로
-IF TFLAG:202 == 1 && ABL:V감각 > 0 && (FLAG:12 & 8192) == 0
+IF TFLAG:202 == 1 && ABL:V감각 > 0 && (FLAG:SHOP이벤트확장 & 8192) == 0
     CALL LUNCH_EXERCISE
     ;[친애], [상애]를 지니고 식후 이벤트 발생 확정시 얀데레 포인트가 감소
     ;또한 초기에 [질투]를 갖고 있지 않은 캐릭터의 경우, [질투]가 있고 광기가 없으면 [질투]가 사라진다
@@ -1292,6 +1292,6 @@ ELSE
 ENDIF
 
 ;휴식 플래그를 켠다
-FLAG:0 = 1
+FLAG:휴식 = 1
 BEGIN TURNEND
 RETURN 1

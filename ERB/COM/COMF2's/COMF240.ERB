@@ -9,10 +9,10 @@
 SIF DITEMTYPE:999:240 > 0
     RETURN 0
 ;고문계, 정신조작계 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16) == 0
+SIF (FLAG:커맨드확장 & 16) == 0
     RETURN 0
 ;이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4
+SIF FLAG:VA이상조교필터 & 4
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
@@ -115,7 +115,7 @@ IF TEQUIP:25 == 7
     ELSE
         LOCAL = 1
     ENDIF
-    IF FLAG:14 & 256
+    IF FLAG:조교모드 & 256
         TCVAR:7 += 0
     ELSE
         TCVAR:7 += LOCAL
@@ -163,7 +163,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM240
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -184,7 +184,7 @@ IF TEQUIP:12
     PRINTFORMW %CALLNAME:TARGET%의 고간에서 주륵주륵 노란 물이 흘러내리고 있다.
 ENDIF
 ;배설물/이물 역류
-IF FLAG:14 & 256
+IF FLAG:조교모드 & 256
     IF TEQUIP:25 == 7
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 복부에의 충격을 결국 참지 못하고, 관장물을 흘려 버렸다.
         PRINTL

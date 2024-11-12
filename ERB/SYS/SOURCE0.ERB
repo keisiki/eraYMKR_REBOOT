@@ -18,7 +18,7 @@ SIF TFLAG:899 == 0
 IF EQUIP:14 == 0
     CALL SOURCE_SEX_CHECK
     IF ASSIPLAY == 0 && TALENT:PLAYER:120 && TALENT:120 == 0 && TALENT:150
-        IF FLAG:3 == 1
+        IF FLAG:난이도 == 1
             CALL SOURCE_SEX_MALE_CHECK_EASY
         ELSE
             CALL SOURCE_SEX_MALE_CHECK_NORMAL
@@ -29,7 +29,7 @@ IF EQUIP:14 == 0
     SIF CFLAG:41
         CALL SOURCE_INPLANT
     ;EASY가 아니며, 실신 중이 아니면 스트레스에 따른 영향이 있다
-    SIF FLAG:3 > 1 && TFLAG:899 > 0
+    SIF FLAG:난이도 > 1 && TFLAG:899 > 0
         CALL SOURCE_STRESS_CHECK
 ENDIF
 
@@ -65,7 +65,7 @@ IF TCVAR:0 && TALENT:처녀 && TFLAG:1
     ;처녀 상실 플래그(비디오 촬영)
     SIF TEQUIP:50
         TFLAG:120 |= 1
-    SIF FLAG:12 & 8
+    SIF FLAG:SHOP이벤트확장 & 8
         CALL SWEET_POTATO_VIRGIN_BLOOD
 
     CALL LOST_VIRGIN, TARGET, PLAYER
@@ -392,7 +392,7 @@ SIF ASSI >= 0 && SOURCE:ASSI:42
 ;-------------------------------------------------
 ;触手を寄生させているときの処理
 ;-------------------------------------------------
-IF FLAG:15 & 4096
+IF FLAG:커맨드확장 & 4096
     SIF TALENT:146
         CALL PARASITIC_TENTACLE_TARGET
     SIF ASSI >= 0 && TALENT:ASSI:146
@@ -449,7 +449,7 @@ SIF SELECTCOM == PREVCOM && TFLAG:96 == 0
 ;ルーチンワークなコマンド実行を糾弾する嫁
 ;-------------------------------------------------
 ;HARD以上の難易度の時に呼び出す
-SIF FLAG:3 > 2
+SIF FLAG:난이도 > 2
     CALL CRITICISM_ROUTINE_WORK
 
 ;-------------------------------------------------
@@ -475,7 +475,7 @@ IF BASE:기력 <= 0
     ;음마가 없으면 체력 추가소모
     IF TALENT:180 == 0
         TIMES DOWNBASE:0 , 1.50
-        DOWNBASE:0 += (FLAG:3 == 4 || FLAG:3 == 5) ? 100 # 80
+        DOWNBASE:0 += (FLAG:난이도 == 4 || FLAG:난이도 == 5) ? 100 # 80
     ENDIF
 
     DOWNBASE:기력 = 0
@@ -577,7 +577,7 @@ CALL TRAIN_MESSAGE_A
 ;パラメータ変動による口上
 ;-------------------------------------------------
 IF TFLAG:899 == 0
-    SIF FLAG:11 > 0 || CFLAG:5000 & 1
+    SIF FLAG:캐릭터대사표시 > 0 || CFLAG:5000 & 1
         CALL KOJO_MESSAGE_PALAMCNG
 
 ;-------------------------------------------------
@@ -595,7 +595,7 @@ IF TFLAG:899 == 0
 ;-------------------------------------------------
     IF EQUIP:14 == 0
         CALL MARK_GOT_CHECK
-        SIF FLAG:11 > 0 || CFLAG:5000 & 1
+        SIF FLAG:캐릭터대사표시 > 0 || CFLAG:5000 & 1
             CALL KOJO_MESSAGE_MARKCNG
     ENDIF
 
@@ -718,7 +718,7 @@ IF TFLAG:899 < 1
     SIF FLAG:3999
         CALL PASSOUT_TEXT
     ;焦らしプレイ中は不自然になるため呼ばない
-    SIF TEQUIP:68 == 0 && FLAG:10 && CFLAG:99 == 0 && NOT_PRINT_ADDITIONAL_TEXT(SELECTCOM) == 1
+    SIF TEQUIP:68 == 0 && FLAG:조교시텍스트표시 && CFLAG:99 == 0 && NOT_PRINT_ADDITIONAL_TEXT(SELECTCOM) == 1
         TRYCALLFORM TEXT_{SELECTCOM}
 ELSEIF TFLAG:899 >= 1
     CALL PASSOUT_TEXT
@@ -727,7 +727,7 @@ ELSEIF TFLAG:899 >= 1
     IF TFLAG:896 == 3 || TFLAG:897 == 3 || TFLAG:898 == 3
         CALL PASSOUT_PALAM_UP
         CALL MARK_GOT_CHECK
-        SIF FLAG:11 > 0
+        SIF FLAG:캐릭터대사표시 > 0
             CALL KOJO_MESSAGE_MARKCNG
     ENDIF
 ENDIF
@@ -838,7 +838,7 @@ SIF CFLAG:62 >= 2500 && TALENT:104 == 0
 SIF CFLAG:63 >= 5000 && TALENT:106 == 0
     TFLAG:106 |= 8
 IF CFLAG:64 >= 10000 && TALENT:66 == 0
-    SIF FLAG:10 && (TFLAG:106 & 16) == 0
+    SIF FLAG:조교시텍스트표시 && (TFLAG:106 & 16) == 0
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 완전히 정액의 맛을 익혀 버린 것 같다……
     TFLAG:106 |= 16
 ENDIF
@@ -854,8 +854,8 @@ CALL ADD_TRAINING_TIME, 2
 ;EASYか時間停止発動中か自動レベルアップモードONの時は時間経過なし
 ;NORMALの時はまだゆっくりと時間は流れていく.
 @ADD_TRAINING_TIME, ARG
-SIF FLAG:3 != 1 && TEQUIP:71 == 0 && TALENT:998 == 0
-    TFLAG:107 += (FLAG:3 == 2) ? 1 # ARG
+SIF FLAG:난이도 != 1 && TEQUIP:71 == 0 && TALENT:998 == 0
+    TFLAG:107 += (FLAG:난이도 == 2) ? 1 # ARG
 
 ;-------------------------------------------------
 ;상성 처리
@@ -1019,7 +1019,7 @@ IF TFLAG:699 > 0
     TIMES DOWNBASE:기력 , 0.80
 ENDIF
 ;EASYの場合、体調が万全だと1回の調教でいきなり体力が0にならない(ただしキャラ共通補正は受ける)
-SIF FLAG:3 == 1 && BASE:0 == MAXBASE:0 && BASE:기력 == MAXBASE:기력 && DOWNBASE:0 >= MAXBASE:0
+SIF FLAG:난이도 == 1 && BASE:0 == MAXBASE:0 && BASE:기력 == MAXBASE:기력 && DOWNBASE:0 >= MAXBASE:0
     DOWNBASE:0 = MAXBASE:0 - 1
 
 ;-------------------------------------------------

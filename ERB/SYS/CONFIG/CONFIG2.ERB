@@ -10,45 +10,45 @@ PRINTL 현재, 조교 모드 확장 기능 설정은 이하와 같이 되어 있
 $INPUT_LOOP_0
 PRINTL 변경하고 싶은 내용을 선택해 주세요.
 DRAWLINE
-PRINTFORML %LOCALS:((FLAG:14 & 1) > 0)%[ 0] 조교 커맨드 필터
+PRINTFORML %LOCALS:((FLAG:조교모드 & 1) > 0)%[ 0] 조교 커맨드 필터
 ;-------------------------------------------------
-SIF FLAG:14 & 1
-    PRINTFORML %LOCALS:((FLAG:2 & 1) > 0)%[ 1] Ｖ계 조교 필터
+SIF FLAG:조교모드 & 1
+    PRINTFORML %LOCALS:((FLAG:VA이상조교필터 & 1) > 0)%[ 1] Ｖ계 조교 필터
 ;-------------------------------------------------
-SIF FLAG:14 & 1
-    PRINTFORML %LOCALS:((FLAG:2 & 2) > 0)%[ 2] Ａ계 조교 필터
+SIF FLAG:조교모드 & 1
+    PRINTFORML %LOCALS:((FLAG:VA이상조교필터 & 2) > 0)%[ 2] Ａ계 조교 필터
 ;-------------------------------------------------
-SIF FLAG:14 & 1
-    PRINTFORML %LOCALS:((FLAG:2 & 4) > 0)%[ 3] 이상경험계 조교 필터
+SIF FLAG:조교모드 & 1
+    PRINTFORML %LOCALS:((FLAG:VA이상조교필터 & 4) > 0)%[ 3] 이상경험계 조교 필터
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:14 & 2) > 0)%[ 4] 체력 · 기력 상승
+PRINTFORML %LOCALS:((FLAG:조교모드 & 2) > 0)%[ 4] 체력 · 기력 상승
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:14 & 4) > 0)%[ 5] 얀데레 모드 <주의!>
+PRINTFORML %LOCALS:((FLAG:조교모드 & 4) > 0)%[ 5] 얀데레 모드 <주의!>
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:14 & 8) > 0)%[ 6] 랜덤성 배제
+PRINTFORML %LOCALS:((FLAG:조교모드 & 8) > 0)%[ 6] 랜덤성 배제
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:14 & 16) > 0)%[ 7] 고양이 펠라 패치
+PRINTFORML %LOCALS:((FLAG:조교모드 & 16) > 0)%[ 7] 고양이 펠라 패치
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:14 & 32) > 0)%[ 8] 후타나리 불알 패치
+PRINTFORML %LOCALS:((FLAG:조교모드 & 32) > 0)%[ 8] 후타나리 불알 패치
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:14 & 64) > 0)%[ 9] 조교 메뉴 등록
+PRINTFORML %LOCALS:((FLAG:조교모드 & 64) > 0)%[ 9] 조교 메뉴 등록
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:18 & 1) > 0)%[10] 사정 장소 선택 기능
+PRINTFORML %LOCALS:((FLAG:사정장소선택및임신기능 & 1) > 0)%[10] 사정 장소 선택 기능
 ;-------------------------------------------------
-IF FLAG:18 & 1
+IF FLAG:사정장소선택및임신기능 & 1
     CALL CHECK_SAMEN_PLACE
     PRINTL [11] 사정 장소 자동선택 설정
 ENDIF
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:14 & 128) > 0)%[12] 후타나리 이벤트 억제
+PRINTFORML %LOCALS:((FLAG:조교모드 & 128) > 0)%[12] 후타나리 이벤트 억제
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:14 & 256) > 0)%[13] 조교배설경험 억제
+PRINTFORML %LOCALS:((FLAG:조교모드 & 256) > 0)%[13] 조교배설경험 억제
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:14 & 512) > 0)%[14] 인체개조 패치
+PRINTFORML %LOCALS:((FLAG:조교모드 & 512) > 0)%[14] 인체개조 패치
 ;-------------------------------------------------
-SIF FLAG:14 < LOCAL
+SIF FLAG:조교모드 < LOCAL
     PRINTL 　[98] 전부 유효
-SIF FLAG:14
+SIF FLAG:조교모드
     PRINTL 　[99] 전부 무효
 PRINTL  [100] 돌아간다
 
@@ -56,62 +56,62 @@ $INPUT_LOOP_1
 INPUT
 IF RESULT == 100
     RETURN 0
-ELSEIF RESULT == 98 && FLAG:14 < LOCAL
+ELSEIF RESULT == 98 && FLAG:조교모드 < LOCAL
     PRINTW 조교 모드 확장 기능을 모두 사용할 수 있도록 설정했습니다.
-    FLAG:14 = LOCAL
-    FLAG:2 |= 7
-    FLAG:18 |= 1
-ELSEIF RESULT == 99 && FLAG:14
+    FLAG:조교모드 = LOCAL
+    FLAG:VA이상조교필터 |= 7
+    FLAG:사정장소선택및임신기능 |= 1
+ELSEIF RESULT == 99 && FLAG:조교모드
     PRINTW 조교 모드 확장 기능을 모두 사용할 수 없도록 설정했습니다.
     CALL CONFIGURATION_MODE_NONE
-    FLAG:14 = 0
-    FLAG:2 = 0
-    FLAG:18 &= ~1
+    FLAG:조교모드 = 0
+    FLAG:VA이상조교필터 = 0
+    FLAG:사정장소선택및임신기능 &= ~1
 ELSEIF RESULT == 0
-    PRINTFORMW 조교 커맨드 필터 기능을 \@(FLAG:14 & 1) ? 무효 # 유효 \@로 합니다.
-    SIF FLAG:14 & 1
-        FLAG:2 = 0
-    FLAG:14 ^= 1
-ELSEIF RESULT == 1 && FLAG:14 & 1
-    PRINTFORMW Ｖ계 조교 필터를 \@(FLAG:2 & 1) ? 무효 # 유효 \@로 합니다.
-    FLAG:2 ^= 1
-ELSEIF RESULT == 2 && FLAG:14 & 1
-    PRINTFORMW Ａ계 조교 필터를 \@(FLAG:2 & 2) ? 무효 # 유효 \@로 합니다.
-    FLAG:2 ^= 2
-ELSEIF RESULT == 3 && FLAG:14 & 1
-    PRINTFORMW 이상경험계 조교 필터를 \@(FLAG:2 & 4) ? 무효 # 유효 \@로 합니다.
-    FLAG:2 ^= 4
+    PRINTFORMW 조교 커맨드 필터 기능을 \@(FLAG:조교모드 & 1) ? 무효 # 유효 \@로 합니다.
+    SIF FLAG:조교모드 & 1
+        FLAG:VA이상조교필터 = 0
+    FLAG:조교모드 ^= 1
+ELSEIF RESULT == 1 && FLAG:조교모드 & 1
+    PRINTFORMW Ｖ계 조교 필터를 \@(FLAG:VA이상조교필터 & 1) ? 무효 # 유효 \@로 합니다.
+    FLAG:VA이상조교필터 ^= 1
+ELSEIF RESULT == 2 && FLAG:조교모드 & 1
+    PRINTFORMW Ａ계 조교 필터를 \@(FLAG:VA이상조교필터 & 2) ? 무효 # 유효 \@로 합니다.
+    FLAG:VA이상조교필터 ^= 2
+ELSEIF RESULT == 3 && FLAG:조교모드 & 1
+    PRINTFORMW 이상경험계 조교 필터를 \@(FLAG:VA이상조교필터 & 4) ? 무효 # 유효 \@로 합니다.
+    FLAG:VA이상조교필터 ^= 4
 ELSEIF RESULT == 4
-    PRINTFORMW 조교 종료시 체력 · 기력의 상승이 \@(FLAG:14 & 2) ? 일어나지 않게 # 일어나게 \@ 합니다.
-    FLAG:14 ^= 2
+    PRINTFORMW 조교 종료시 체력 · 기력의 상승이 \@(FLAG:조교모드 & 2) ? 일어나지 않게 # 일어나게 \@ 합니다.
+    FLAG:조교모드 ^= 2
 ELSEIF RESULT == 5
-    PRINTFORMW 얀데레 모드를 \@(FLAG:14 & 4) ? 무효 # 유효 \@로 합니다.
-    FLAG:14 ^= 4
+    PRINTFORMW 얀데레 모드를 \@(FLAG:조교모드 & 4) ? 무효 # 유효 \@로 합니다.
+    FLAG:조교모드 ^= 4
 ELSEIF RESULT == 6
-    PRINTFORMW 일부 커맨드 및 이벤트의 효과를 \@(FLAG:14 & 8) ? 랜덤하게 # 선택 가능하게 \@ 합니다.
-    FLAG:14 ^= 8
+    PRINTFORMW 일부 커맨드 및 이벤트의 효과를 \@(FLAG:조교모드 & 8) ? 랜덤하게 # 선택 가능하게 \@ 합니다.
+    FLAG:조교모드 ^= 8
 ELSEIF RESULT == 7
-    PRINTFORMW 고양이 펠라 패치의 기능을 \@(FLAG:14 & 16) ? 무효 # 유효 \@로 합니다.
-    FLAG:14 ^= 16
+    PRINTFORMW 고양이 펠라 패치의 기능을 \@(FLAG:조교모드 & 16) ? 무효 # 유효 \@로 합니다.
+    FLAG:조교모드 ^= 16
 ELSEIF RESULT == 8
-    PRINTFORMW 후타나리 불알 패치의 기능을 \@(FLAG:14 & 32) ? 무효 # 유효 \@로 합니다.
-    FLAG:14 ^= 32
+    PRINTFORMW 후타나리 불알 패치의 기능을 \@(FLAG:조교모드 & 32) ? 무효 # 유효 \@로 합니다.
+    FLAG:조교모드 ^= 32
 ELSEIF RESULT == 9
-    PRINTFORMW 조교 메뉴의 등록 기능을 \@(FLAG:14 & 64) ? 무효 # 유효 \@로 합니다.
-    FLAG:14 ^= 64
+    PRINTFORMW 조교 메뉴의 등록 기능을 \@(FLAG:조교모드 & 64) ? 무효 # 유효 \@로 합니다.
+    FLAG:조교모드 ^= 64
 ELSEIF RESULT == 10
     CALL CHANGE_SAMEN_FLAG
-ELSEIF RESULT == 11 && FLAG:18 & 1
+ELSEIF RESULT == 11 && FLAG:사정장소선택및임신기능 & 1
     CALL CHANGE_SAMEN_PLACE
 ELSEIF RESULT == 12
-    PRINTFORMW 후타나리 이벤트를 \@(FLAG:14 & 128) ? 활성화 # 억제\@합니다.
-    FLAG:14 ^= 128
+    PRINTFORMW 후타나리 이벤트를 \@(FLAG:조교모드 & 128) ? 활성화 # 억제\@합니다.
+    FLAG:조교모드 ^= 128
 ELSEIF RESULT == 13
-    PRINTFORMW 조교배설경험의 습득을 \@(FLAG:14 & 256) ? 유효 # 무효\@로 합니다.
-    FLAG:14 ^= 256
+    PRINTFORMW 조교배설경험의 습득을 \@(FLAG:조교모드 & 256) ? 유효 # 무효\@로 합니다.
+    FLAG:조교모드 ^= 256
 ELSEIF RESULT == 14
-    PRINTFORMW 각종 인체개조를 \@(FLAG:14 & 512) ? 무효 # 유효\@로 합니다.
-    FLAG:14 ^= 512
+    PRINTFORMW 각종 인체개조를 \@(FLAG:조교모드 & 512) ? 무효 # 유효\@로 합니다.
+    FLAG:조교모드 ^= 512
 ELSE
     CLEARLINE 1
     REUSELASTLINE 올바른 값을 입력해 주세요.
@@ -133,45 +133,45 @@ PRINTL 현재, 커맨드 확장 기능 설정은 이하와 같이 되어 있습�
 $INPUT_LOOP_0
 PRINTL 변경하고 싶은 내용을 선택해 주세요.
 DRAWLINE
-PRINTFORML %LOCALS:((FLAG:15 & 1) > 0)%[ 0] Ｃ계 확장 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 1) > 0)%[ 0] Ｃ계 확장 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 2) > 0)%[ 1] Ｖ계 확장 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 2) > 0)%[ 1] Ｖ계 확장 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 4) > 0)%[ 2] Ａ계 확장 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 4) > 0)%[ 2] Ａ계 확장 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 8) > 0)%[ 3] Ｂ계 확장 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 8) > 0)%[ 3] Ｂ계 확장 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 16) > 0)%[ 4] 고문계, 정신조작계 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 16) > 0)%[ 4] 고문계, 정신조작계 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 32) > 0)%[ 5] 약품계 확장 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 32) > 0)%[ 5] 약품계 확장 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 64) > 0)%[ 6] 주사계 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 64) > 0)%[ 6] 주사계 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 128) > 0)%[ 7] 촬영 커맨드 확장
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 128) > 0)%[ 7] 촬영 커맨드 확장
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 256) > 0)%[ 8] 야외 조교 커맨드 확장
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 256) > 0)%[ 8] 야외 조교 커맨드 확장
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 512) > 0)%[ 9] 수치 플레이계 확장 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 512) > 0)%[ 9] 수치 플레이계 확장 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 1024) > 0)%[10] 특수목욕계 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 1024) > 0)%[10] 특수목욕계 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 2048) > 0)%[11] 조교자 봉사 · 우후후계 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 2048) > 0)%[11] 조교자 봉사 · 우후후계 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 4096) > 0)%[12] 신사적인 촉수계 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 4096) > 0)%[12] 신사적인 촉수계 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 8192) > 0)%[13] 수간계 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 8192) > 0)%[13] 수간계 커맨드
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:15 & 16384) > 0)%[14] 캐릭터 전용 커맨드
+PRINTFORML %LOCALS:((FLAG:커맨드확장 & 16384) > 0)%[14] 캐릭터 전용 커맨드
 ;-------------------------------------------------
-IF FLAG:15 & 16384
-    PRINTFORML %LOCALS:((FLAG:15 & 32768) > 0)%[15] caved!!!! 이벤트
+IF FLAG:커맨드확장 & 16384
+    PRINTFORML %LOCALS:((FLAG:커맨드확장 & 32768) > 0)%[15] caved!!!! 이벤트
 ;-------------------------------------------------
-    PRINTFORML \@(FLAG:15 & 65536) ? ◆[16] 야마메의 스커트 속은 거미 다리 # ◇[16] 야마메의 스커트 속은 보통 다리\@
+    PRINTFORML \@(FLAG:커맨드확장 & 65536) ? ◆[16] 야마메의 스커트 속은 거미 다리 # ◇[16] 야마메의 스커트 속은 보통 다리\@
 ENDIF
 ;-------------------------------------------------
-SIF FLAG:15 < LOCAL
+SIF FLAG:커맨드확장 < LOCAL
     PRINTL 　[98] 전부 유효
-SIF FLAG:15
+SIF FLAG:커맨드확장
     PRINTL 　[99] 전부 무효
 PRINTL [100] 돌아간다
 
@@ -179,66 +179,66 @@ $INPUT_LOOP_1
 INPUT
 IF RESULT == 100
     RETURN 0
-ELSEIF RESULT == 98 && FLAG:15 < LOCAL
+ELSEIF RESULT == 98 && FLAG:커맨드확장 < LOCAL
     PRINTFORMW 커맨드 확장 기능을 모두 사용할 수 있도록 설정했습니다.
-    FLAG:15 = LOCAL
-ELSEIF RESULT == 99 && FLAG:15
+    FLAG:커맨드확장 = LOCAL
+ELSEIF RESULT == 99 && FLAG:커맨드확장
     PRINTFORMW 커맨드 확장 기능을 모두 사용하지 않게 설정했습니다.
     CALL CONFIGURATION_TRAIN_NONE
-    FLAG:15 = 0
+    FLAG:커맨드확장 = 0
 ELSEIF RESULT == 0
-    PRINTFORMW Ｃ계 확장 커맨드를 \@(FLAG:15 & 1) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 1
+    PRINTFORMW Ｃ계 확장 커맨드를 \@(FLAG:커맨드확장 & 1) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 1
 ELSEIF RESULT == 1
-    PRINTFORMW Ｖ계 확장 커맨드를 \@(FLAG:15 & 2) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 2
+    PRINTFORMW Ｖ계 확장 커맨드를 \@(FLAG:커맨드확장 & 2) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 2
 ELSEIF RESULT == 2
-    PRINTFORMW Ａ계 확장 커맨드를 \@(FLAG:15 & 4) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 4
+    PRINTFORMW Ａ계 확장 커맨드를 \@(FLAG:커맨드확장 & 4) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 4
 ELSEIF RESULT == 3
-    PRINTFORMW Ｂ계 확장 커맨드를 \@(FLAG:15 & 8) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 8
+    PRINTFORMW Ｂ계 확장 커맨드를 \@(FLAG:커맨드확장 & 8) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 8
 ELSEIF RESULT == 4
-    PRINTFORMW 고문계, 정신조작계 커맨드를 \@(FLAG:15 & 16) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 16
+    PRINTFORMW 고문계, 정신조작계 커맨드를 \@(FLAG:커맨드확장 & 16) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 16
 ELSEIF RESULT == 5
-    PRINTFORMW 약품계 확장 커맨드를 \@(FLAG:15 & 32) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 32
+    PRINTFORMW 약품계 확장 커맨드를 \@(FLAG:커맨드확장 & 32) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 32
 ELSEIF RESULT == 6
-    PRINTFORMW 주사계 커맨드를 \@(FLAG:15 & 64) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 64
+    PRINTFORMW 주사계 커맨드를 \@(FLAG:커맨드확장 & 64) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 64
 ELSEIF RESULT == 7
-    PRINTFORMW 촬영 커맨드 확장을 \@(FLAG:15 & 64) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 128
+    PRINTFORMW 촬영 커맨드 확장을 \@(FLAG:커맨드확장 & 64) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 128
 ELSEIF RESULT == 8
-    PRINTFORMW 야외 조교 커맨드 확장을 \@(FLAG:15 & 256) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 256
+    PRINTFORMW 야외 조교 커맨드 확장을 \@(FLAG:커맨드확장 & 256) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 256
 ELSEIF RESULT == 9
-    PRINTFORMW 수치 플레이계 확장 커맨드를 \@(FLAG:15 & 512) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 512
+    PRINTFORMW 수치 플레이계 확장 커맨드를 \@(FLAG:커맨드확장 & 512) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 512
 ELSEIF RESULT == 10
-    PRINTFORMW 특수목욕계 커맨드를 \@(FLAG:15 & 1024) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 1024
+    PRINTFORMW 특수목욕계 커맨드를 \@(FLAG:커맨드확장 & 1024) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 1024
 ELSEIF RESULT == 11
-    PRINTFORMW 조교자 봉사 · 우후후계 커맨드를 \@(FLAG:15 & 2048) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 2048
+    PRINTFORMW 조교자 봉사 · 우후후계 커맨드를 \@(FLAG:커맨드확장 & 2048) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 2048
 ELSEIF RESULT == 12
-    PRINTFORMW 신사적인 촉수계 커맨드를 \@(FLAG:15 & 4096) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 4096
+    PRINTFORMW 신사적인 촉수계 커맨드를 \@(FLAG:커맨드확장 & 4096) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 4096
 ELSEIF RESULT == 13
-    PRINTFORMW 수간계 커맨드를 \@(FLAG:15 & 8192) ? 무효 # 유효 \@로 합니다.
-    FLAG:15 ^= 8192
+    PRINTFORMW 수간계 커맨드를 \@(FLAG:커맨드확장 & 8192) ? 무효 # 유효 \@로 합니다.
+    FLAG:커맨드확장 ^= 8192
 ELSEIF RESULT == 14
-    PRINTFORMW 캐릭터 전용 커맨드를 \@(FLAG:15 & 16384) ? 무효 # 유효 \@로 합니다.
-    SIF FLAG:15 & 16384
-        FLAG:15 &= ~229376
-    FLAG:15 ^= 16384
-ELSEIF RESULT == 15 && FLAG:15 & 16384
-    PRINTFORMW caved!!!! 이벤트를 \@(FLAG:15 & 32768) ? 일어나지 않게 # 일어나게 \@ 합니다.
-    FLAG:15 ^= 32768
-ELSEIF RESULT == 16 && FLAG:15 & 16384
-    PRINTFORMW 야마메 씨의 치마 속은 \@(FLAG:15 & 65536) ? 보통 다리  # 거미 다리 \@ 설정으로 합니다.
-    FLAG:15 ^= 65536
+    PRINTFORMW 캐릭터 전용 커맨드를 \@(FLAG:커맨드확장 & 16384) ? 무효 # 유효 \@로 합니다.
+    SIF FLAG:커맨드확장 & 16384
+        FLAG:커맨드확장 &= ~229376
+    FLAG:커맨드확장 ^= 16384
+ELSEIF RESULT == 15 && FLAG:커맨드확장 & 16384
+    PRINTFORMW caved!!!! 이벤트를 \@(FLAG:커맨드확장 & 32768) ? 일어나지 않게 # 일어나게 \@ 합니다.
+    FLAG:커맨드확장 ^= 32768
+ELSEIF RESULT == 16 && FLAG:커맨드확장 & 16384
+    PRINTFORMW 야마메 씨의 치마 속은 \@(FLAG:커맨드확장 & 65536) ? 보통 다리  # 거미 다리 \@ 설정으로 합니다.
+    FLAG:커맨드확장 ^= 65536
 ELSE
     CLEARLINE 1
     REUSELASTLINE 올바른 값을 입력해 주세요.
@@ -261,10 +261,10 @@ $INPUT_LOOP_0
 PRINTL 변경하고 싶은 내용을 선택해주세요.
 DRAWLINE
 ;-------------------------------------------------
-PRINTFORM %LOCALS:((FLAG:18 & 2) > 0)%[ 0] 임신 · 출산 · 육아기능　　
-IF FLAG:18 & 2
-    PRINTFORML 　　 %LOCALS:((FLAG:18 & 4) > 0)%알 양육 패치　
-;    PRINTFORML 　　 %LOCALS:((FLAG:18 & 8) > 0)%육아실 확장 기능
+PRINTFORM %LOCALS:((FLAG:사정장소선택및임신기능 & 2) > 0)%[ 0] 임신 · 출산 · 육아기능　　
+IF FLAG:사정장소선택및임신기능 & 2
+    PRINTFORML 　　 %LOCALS:((FLAG:사정장소선택및임신기능 & 4) > 0)%알 양육 패치　
+;    PRINTFORML 　　 %LOCALS:((FLAG:사정장소선택및임신기능 & 8) > 0)%육아실 확장 기능
 ELSE
     PRINTL 
 ENDIF
@@ -542,16 +542,16 @@ GOTO INPUT_LOOP_0
 ;임신 기능의 사용 유무의 변경
 ;---------------------------------------------------------
 @NINSHIN_CHECK
-PRINTFORML [ 0] 임신·출산·육아 기능을 \@(FLAG:18 & 2) ? 무효 # 유효\@로 한다.
-IF (FLAG:18 & 2) == 0
+PRINTFORML [ 0] 임신·출산·육아 기능을 \@(FLAG:사정장소선택및임신기능 & 2) ? 무효 # 유효\@로 한다.
+IF (FLAG:사정장소선택및임신기능 & 2) == 0
     PRINTL [ 1] 임신 기능 및 알 기르기 패치를 유효로 한다.
-ELSEIF FLAG:18 & 4
+ELSEIF FLAG:사정장소선택및임신기능 & 4
     PRINTL [ 1] 알 기르기 패치를 무효로 한다.
 ELSE
     PRINTL [ 1] 알 기르기 패치를 유효로 한다.
 ENDIF
-;SIF (FLAG:18 & 2) == 2
-;    PRINTFORML [ 2] 육아실 확장 기능을 \@(FLAG:18 & 8) ? 무효 # 유효\@로 한다
+;SIF (FLAG:사정장소선택및임신기능 & 2) == 2
+;    PRINTFORML [ 2] 육아실 확장 기능을 \@(FLAG:사정장소선택및임신기능 & 8) ? 무효 # 유효\@로 한다
 PRINTL [100] 돌아간다
 
 $INPUT_LOOP_1
@@ -559,20 +559,20 @@ INPUT
 IF RESULT == 100
     RETURN 0
 ELSEIF RESULT == 0
-    PRINTFORMW 임신·출산·육아 기능을 \@(FLAG:18 & 2) ? 무효 # 유효\@로 했습니다.
-    SIF FLAG:18 & 2
-        FLAG:18 &= ~12
-    FLAG:18 ^= 2
+    PRINTFORMW 임신·출산·육아 기능을 \@(FLAG:사정장소선택및임신기능 & 2) ? 무효 # 유효\@로 했습니다.
+    SIF FLAG:사정장소선택및임신기능 & 2
+        FLAG:사정장소선택및임신기능 &= ~12
+    FLAG:사정장소선택및임신기능 ^= 2
 ELSEIF RESULT == 1
-    IF (FLAG:18 & 2) == 0
+    IF (FLAG:사정장소선택및임신기능 & 2) == 0
         PRINTW 임신·출산·육아 기능을 유효하게 했습니다.
-        FLAG:18 |= 2
+        FLAG:사정장소선택및임신기능 |= 2
     ENDIF
-    PRINTFORMW 알 기르기 패치를 \@(FLAG:18 & 4) ? 무효 # 유효\@로 했습니다.
-    FLAG:18 ^= 4
-;ELSEIF RESULT == 2 && (FLAG:18 & 2) == 2
-;    PRINTFORMW 육아실 확장 기능을\@(FLAG:18 & 8) ?  무효 # 유효\@로 했습니다
-;    FLAG:18 ^= 8
+    PRINTFORMW 알 기르기 패치를 \@(FLAG:사정장소선택및임신기능 & 4) ? 무효 # 유효\@로 했습니다.
+    FLAG:사정장소선택및임신기능 ^= 4
+;ELSEIF RESULT == 2 && (FLAG:사정장소선택및임신기능 & 2) == 2
+;    PRINTFORMW 육아실 확장 기능을\@(FLAG:사정장소선택및임신기능 & 8) ?  무효 # 유효\@로 했습니다
+;    FLAG:사정장소선택및임신기능 ^= 8
 ELSE
     CLEARLINE 1
     REUSELASTLINE 올바른 값을 입력해 주세요.

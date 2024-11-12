@@ -11,7 +11,7 @@
 ;남자 주인인 경우에는 레즈경험이 1000 이하, 여주인의 경우에는 BL경험이 1000 이하에다 호감도 500 이상이면 소질 변화
 ;※대상이 인계한 캐릭터일 경우, 레즈경험과 BL경험의 제한은 걸리지 않는다
 ;※바이라면 성별제한 무시. 동성간에는 경험제한이 반전
-SIF ((TALENT:MASTER:120 == 0 && ((TALENT:120 && EXP:BL경험 <= 1000) || ((TALENT:120 == 0 && EXP:레즈경험 >= 1000) || TALENT:83))) || (TALENT:MASTER:120 && ((TALENT:120 == 0 && EXP:레즈경험 <= 1000) || ((TALENT:120 && EXP:BL경험 >= 1000) || TALENT:83))) || CFLAG:18) && CFLAG:11 == 0 && CFLAG:2 >= 500 && MARK:굴복각인 && MARK:약물각인 == 0 && MARK:공포각인 == 0 && MARK:반발각인 == 0 && TALENT:163 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0 && FLAG:12 & 32
+SIF ((TALENT:MASTER:120 == 0 && ((TALENT:120 && EXP:BL경험 <= 1000) || ((TALENT:120 == 0 && EXP:레즈경험 >= 1000) || TALENT:83))) || (TALENT:MASTER:120 && ((TALENT:120 == 0 && EXP:레즈경험 <= 1000) || ((TALENT:120 && EXP:BL경험 >= 1000) || TALENT:83))) || CFLAG:18) && CFLAG:11 == 0 && CFLAG:2 >= 500 && MARK:굴복각인 && MARK:약물각인 == 0 && MARK:공포각인 == 0 && MARK:반발각인 == 0 && TALENT:163 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0 && FLAG:SHOP이벤트확장 & 32
     CALL EVENT_PURE_LOVE
 
 LOCAL = 0
@@ -93,7 +93,7 @@ SIF TFLAG:106
 TFLAG:106 = 0
 
 ;条件を満たすと媚薬中毒を追加
-IF TALENT:미약중독 == 0 && CFLAG:32 > 100 && (FLAG:15 & 32 || FLAG:3 >= 3)
+IF TALENT:미약중독 == 0 && CFLAG:32 > 100 && (FLAG:커맨드확장 & 32 || FLAG:난이도 >= 3)
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 미약이 가져다주는 쾌감의 포로가 된 것 같다….
     CALL SELF_KOJO, TARGET, 105
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [미약중독]을 얻었다.
@@ -116,7 +116,7 @@ ELSEIF TALENT:83 == 0 && TALENT:120 == 0 && TALENT:MASTER:120 == 0 && EXP:주인
         LOCAL = 1
 ENDIF
 ;条件満たすと[両刀]追加(ただしゲームモードはABNORMALかEXTRA限定)
-IF LOCAL == 1 && (FLAG:4 == 1 || FLAG:4 == 2)
+IF LOCAL == 1 && (FLAG:게임모드 == 1 || FLAG:게임모드 == 2)
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% \@ TALENT:120 ? 남자 # 여자 \@끼리의 관계에 눈을 뜬 것 같다…….
     CALL SELF_KOJO, TARGET, 109
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [바이]가 되었다.
@@ -134,7 +134,7 @@ ELSEIF (CFLAG:MASTER:98 >= 50 || FLAG:30 >= 200) && TALENT:MASTER:98 == 0
 ENDIF
 
 ;パンツハンター“あなた”
-SIF TALENT:120 == 0 && TALENT:170 && (CFLAG:10 & 32) == 0 && FLAG:12 & 8
+SIF TALENT:120 == 0 && TALENT:170 && (CFLAG:10 & 32) == 0 && FLAG:SHOP이벤트확장 & 8
     CALL SWEET_POTATO_PANTY
 
 ;仕送り判定
@@ -269,7 +269,7 @@ ENDIF
 
 ;周回おまけイベント
 ;(2周目以降で)難易度Lunatic以上を1回はクリアかつ好感度5000以上で発生
-IF CFLAG:2 >= 5000 && (FLAG:9 & 8 || FLAG:9 & 16) && (TALENT:157 || TALENT:158)
+IF CFLAG:2 >= 5000 && (FLAG:엔딩도달 & 8 || FLAG:엔딩도달 & 16) && (TALENT:157 || TALENT:158)
     ;変数使い回し
     LOCAL = 0
 
@@ -312,7 +312,7 @@ CALL SELF_KOJO, TARGET, 72
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [친애]를 얻었다.
 TALENT:152 = 1
 CFLAG:14 |= 4
-IF FLAG:12 & 32
+IF FLAG:SHOP이벤트확장 & 32
     IF TALENT:71 && EXP:봉사쾌락경험 >= 500 && MARK:쾌락각인 >= 3
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"가")% 주는 쾌락을 받아들이는 것 같다….
         PRINTFORMW %조사처리(NAME:TARGET,"는")% [쾌감의 부정]을 잃었다.
@@ -442,39 +442,39 @@ ENDIF
 @EVENT_PLURIENT_SLAVE
 LOCAL = 0
 ;Ｃ系拡張コマンド有効時にＣ感覚5以上, 露出癖4以上, 自慰中毒3以上, Ｃ調律経験200以上, 今回調教中にＣ절정30回以上で淫核／淫茎
-IF FLAG:15 & 1 && TFLAG:104 & 1
+IF FLAG:커맨드확장 & 1 && TFLAG:104 & 1
     SIF ABL:C감각 >= 5 && ABL:노출증 >= 4 && ABL:자위중독 >= 3 && EXP:C조율경험 >= 200 && TALENT:171 == 0
         LOCAL |= 1
 ENDIF
 ;Ｖ系拡張コマンド有効時にＶ感覚4以上, Ｖ経験400以上, Ｖ調律経験250以上, 主人がオトコかふたなりかつ調教対象がオトコではない, 今回調教中にＶ절정30回以上で淫壷
-IF FLAG:15 & 2 && TFLAG:104 & 2
+IF FLAG:커맨드확장 & 2 && TFLAG:104 & 2
     SIF ABL:V감각 >= 4 && EXP:V경험 >= 400 && EXP:V조율경험 >= 250 && EXIST_PENIS(MASTER) && TALENT:120 == 0 && TALENT:172 == 0
         LOCAL |= 2
 ENDIF
 ;Ａ系拡張コマンド有効時にＡ感覚4以上, Ａ経験450以上, Ａ快楽経験300以上, 今回調教中にＡ절정30回以上で淫尻
-IF FLAG:15 & 4 && TFLAG:104 & 4
+IF FLAG:커맨드확장 & 4 && TFLAG:104 & 4
     SIF ABL:A감각 >= 4 && EXP:A경험 >= 450 && EXP:A쾌락경험 >= 300 && TALENT:173 == 0
         LOCAL |= 4
 ENDIF
 ;Ｂ系拡張コマンド有効時にＢ感覚5以上, Ｂ快楽経験300以上, Ｂ敏感を持っているか噴乳経験と乳腺開発経験の合計が100を超えている, 今回調教中にＢ절정30回以上で淫乳
-IF FLAG:15 & 8 && TFLAG:104 & 8
+IF FLAG:커맨드확장 & 8 && TFLAG:104 & 8
     SIF ABL:B감각 >= 5 && EXP:B쾌락경험 >= 300 && (TALENT:106 || EXP:분유경험 + EXP:유선개발경험 >= 100) && TALENT:174 == 0
         LOCAL |= 8
 ENDIF
 ;Ｃ系拡張コマンド有効時にＣ感覚4以上, 放尿経験250以上, Ｕ拡張経験10以上, 尿道開発経験300以上, おもらし癖あり, 今回調教中に放尿10回以上かつ恥情が30000以上で尿道狂
-IF FLAG:15 & 1 && TFLAG:104 & 16
+IF FLAG:커맨드확장 & 1 && TFLAG:104 & 16
     SIF ABL:C감각 >= 4 && EXP:방뇨경험 >= 250 && EXP:U확장경험 >= 10 && EXP:요도개발경험 >= 300 && TALENT:오줌싸개버릇 && TALENT:175 == 0
         LOCAL |= 16
 ENDIF
 ;純愛モード有効時に従順5以上, 露出癖3以上, 奉仕快楽経験250以上, 愛情経験100以上150以下(2週目以降は100以上300以下, 5週目以降は100以上に緩和), キス経験300以上, ＶＡ異常経験の変動なし, 
 ;媚薬を使うことなくその調教中に助手がいない状態で恭順と欲情が100000, 習得が30000を超えるとキス魔
-IF FLAG:12 & 32 && TFLAG:104 & 32
-    SIF ASSI < 0 && ABL:순종 >= 5 && ABL:노출증 >= 3 && EXP:봉사쾌락경험 >= 250 && EXP:애정경험 >= 100 && (EXP:애정경험 <= 150 || (EXP:애정경험 <= 300 && FLAG:6 > 1) || FLAG:6 > 4) && EXP:키스경험 >= 300 && CFLAG:11 == 0 && TALENT:176 == 0
+IF FLAG:SHOP이벤트확장 & 32 && TFLAG:104 & 32
+    SIF ASSI < 0 && ABL:순종 >= 5 && ABL:노출증 >= 3 && EXP:봉사쾌락경험 >= 250 && EXP:애정경험 >= 100 && (EXP:애정경험 <= 150 || (EXP:애정경험 <= 300 && FLAG:주회수 > 1) || FLAG:주회수 > 4) && EXP:키스경험 >= 300 && CFLAG:11 == 0 && TALENT:176 == 0
         LOCAL |= 32
 ENDIF
 ;拷問系, 精神操作系コマンド有効時に欲情3以上, サドっ気5以上(サド持ちなら3以上), 苦痛刻印3, 緊縛経験とＳＭ教育経験が両方とも150以上, 異常経験が10以上, 媚薬を使うことなく今回調教中に苦痛と欲情が30000以上でドＳ
 ;拷問系, 精神操作系コマンド有効時に露出癖3以上, マゾっ気5以上(マゾ持ちなら3以上), 苦痛刻印3, 緊縛経験と苦痛快楽経験が両方とも150以上, 異常経験が10以上, 媚薬を使うことなく今回調教中に苦痛と屈服が30000以上でドＭ
-IF FLAG:15 & 16
+IF FLAG:커맨드확장 & 16
     SIF ABL:욕망 >= 3 && (ABL:새드끼 >= 5 || (TALENT:81 && ABL:새드끼 >= 3)) && EXP:긴박경험 >= 150 && EXP:SM교육경험 >= 150 && EXP:이상경험 >= 10 && MARK:고통각인 >= 3 && TALENT:177 == 0 && TFLAG:104 & 64
         LOCAL |= 128
     SIF ABL:노출증 >= 3 && (ABL:마조끼 >= 5 || (TALENT:82 && ABL:마조끼 >= 3)) && EXP:고통쾌락경험 >= 150 && EXP:긴박경험 >= 150 && EXP:이상경험 >= 10 && MARK:고통각인 >= 3 && TALENT:178 == 0 && TFLAG:104 & 128
@@ -893,7 +893,7 @@ ELSEIF FLAG:32 == 100
     PRINTFORML %조사처리(NAME:MASTER,"는")% 요정의 몸을 속속들이 알고 있다….
     PRINTFORMW %조사처리(NAME:MASTER,"는")% %NICKNAME:MASTER%의 칭호를 얻었다.
     FLAG:76 |= 2
-ELSEIF FLAG:32 >= 50 && FLAG:4 <= 1 && (FLAG:70 & 1) == 0
+ELSEIF FLAG:32 >= 50 && FLAG:게임모드 <= 1 && (FLAG:70 & 1) == 0
     PRINTFORML %조사처리(NAME:MASTER,"는")% 요정의 마음에 동조하는 방법을 알았다….
     PRINTFORMW ※강하게 뉴 게임 개시시에 %NAME:MASTER%의 종족을 [요정]으로 선택할 수 있게 되었습니다.
     FLAG:70 |= 1

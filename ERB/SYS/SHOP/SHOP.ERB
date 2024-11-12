@@ -58,7 +58,7 @@ ENDIF
 SIF TALENT:MASTER:998
     PRINT ＊Debug＊
 ;기한 표시
-SIF FLAG:4 <= 1
+SIF FLAG:게임모드 <= 1
     CALL SHOW_DEADLINE
 
 ;노 모어 글레이즈 옵션표시
@@ -70,7 +70,7 @@ ENDIF
 
 PRINTL 
 ;Ｓ패치 추가분
-SIF DAY:7 == 1 && FLAG:13 & 1024 && ITEM:90
+SIF DAY:7 == 1 && FLAG:아이템확장 & 1024 && ITEM:90
     PRINTFORML ☆매주 일요일은 창관의 날☆
 CALL SHOW_HOUSE
 FLAG:996 = -1
@@ -140,7 +140,7 @@ ELSE
         ENDIF
 
         ;촉수 게이지 표시, 토리코모드 아님
-        IF FLAG:15 & 4096 && TALENT:146 && (FLAG:5000 & 1) == 0
+        IF FLAG:커맨드확장 & 4096 && TALENT:146 && (FLAG:5000 & 1) == 0
                 CALL CALC_TENTACLE_GAUGE
                 PRINT 　
                 PRINT 기생
@@ -159,7 +159,7 @@ ELSE
         ENDIF
 
         ;촉수 표시, 토리코모드
-        IF FLAG:15 & 4096 && TALENT:146 && FLAG:5000 & 1
+        IF FLAG:커맨드확장 & 4096 && TALENT:146 && FLAG:5000 & 1
                 PRINT 기생:
                 PRINTFORM ({BASE:촉수, 5}/{MAXBASE:촉수, 5})
         ENDIF
@@ -209,7 +209,7 @@ ELSE
     RESETCOLOR
     PRINTFORM 원
     ;목표 금액 표시
-    SIF FLAG:4 <= 1 && FLAG:5 == 0
+    SIF FLAG:게임모드 <= 1 && FLAG:엔드리스 == 0
         CALL SHOW_GOAL
     PRINTL 
 
@@ -261,13 +261,13 @@ ELSE
                     LOCAL:3 |= 2
             ENDIF
             ;매각 또는 해방 가능한 캐릭터 수 확인
-            SIF ((FLAG:12 & 32 && (CFLAG:COUNT:20 & 16) == 0) || (CFLAG:COUNT:1 >= 1 && CFLAG:COUNT:3 == 0 && TALENT:COUNT:161 == 0 && TALENT:COUNT:169 == 0)) && TALENT:COUNT:164 == 0
+            SIF ((FLAG:SHOP이벤트확장 & 32 && (CFLAG:COUNT:20 & 16) == 0) || (CFLAG:COUNT:1 >= 1 && CFLAG:COUNT:3 == 0 && TALENT:COUNT:161 == 0 && TALENT:COUNT:169 == 0)) && TALENT:COUNT:164 == 0
                 LOCAL:1 += 1
             ;TIME에 맞는 조교 캐릭터가 있는가(주인공과 노예는 배제)
             SIF COUNT != TARGET
                 LOCAL:2 += 1
             ;요정 목욕의 조건. 한 글자 변수는 요정(FAIRY)의 떡밥
-            IF FLAG:15 & 1024 && FLAG:74 & 8192
+            IF FLAG:커맨드확장 & 1024 && FLAG:74 & 8192
                 ;남자, 임신, 포란, 회란이 없는 요정 캐릭터를 본다
                 SIF TALENT:COUNT:120 == 0 && TALENT:COUNT:140 == 0 && TALENT:COUNT:143 == 0 && TALENT:COUNT:145 == 0 && TALENT:COUNT:200
                     LOCAL:9 += 1
@@ -299,7 +299,7 @@ ELSE
 
     ;엔딩으로 넘어가는가 마는가.
     ;토리코모드 사양. 빚이 있으면 엔딩불가.
-    SIF (FLAG:4 == 0 || FLAG:4 == 1) && FLAG:5 == 0 && MONEY >= MONEY:100 && FLAG:5030 == 0
+    SIF (FLAG:게임모드 == 0 || FLAG:게임모드 == 1) && FLAG:엔드리스 == 0 && MONEY >= MONEY:100 && FLAG:5030 == 0
         LOCAL:6 = 1
 
     FOR COUNT, 0, 9
@@ -314,7 +314,7 @@ ELSE
     SIF CHARANUM > 0
         PRINTLC [101] - 능력 보기
     ;일상생활 확장 플래그가 켜져 있으면 휴식 명령어 표시가 바뀜. 그뿐.
-    PRINTFORMLC [102] - \@(FLAG:12 & 64) ? 일상생활(휴식) # 휴식\@
+    PRINTFORMLC [102] - \@(FLAG:SHOP이벤트확장 & 64) ? 일상생활(휴식) # 휴식\@
     ;주인 외에 캐릭터가 있을 경우
     SIF CHARANUM > 1
         PRINTLC [103] - 능력 상승
@@ -335,26 +335,26 @@ ELSE
     SIF MONEY > 0
         PRINTLC [110] - 아이템 구입
     ;CHALLENGE 모드가 아니고, 자금이 있으며, 마련할 수 있는 노예에 여유가 있을 경우
-    SIF CHARANUM < LOCAL:5 && MONEY > 0 && FLAG:4 < 50
+    SIF CHARANUM < LOCAL:5 && MONEY > 0 && FLAG:게임모드 < 50
         PRINTLC [111] - 노예 구입
     ;매각 또는 해방 가능한 노예가 존재할 경우
     ;PROSTITUTE 모드에선 불가
-    SIF LOCAL:1 >= 1 && FLAG:4 != 4
-        PRINTFORMLC [112] - \@(FLAG:12 & 32) ? 노예 판매·해방 # 노예 판매\@
+    SIF LOCAL:1 >= 1 && FLAG:게임모드 != 4
+        PRINTFORMLC [112] - \@(FLAG:SHOP이벤트확장 & 32) ? 노예 판매·해방 # 노예 판매\@
     ;주인이 [금단의 지식]을 보유하고 노예 중에 [사역마(또는 식)]이 될 자격을 가진 자가 있을 경우
     SIF TALENT:MASTER:56 && LOCAL:4 > 0
         PRINTFORMLC [113] - \@(NO:MASTER == 21 || NO:MASTER == 22) ? 식신으로 삼는다 # 사역마로 삼는다\@
     ;자금이 있으며, CHALLENGE 모드이거나 아니면 지금까지 매각한 노예가 10명 이상일 경우
-    SIF (FLAG:34 >= 10 || FLAG:4 >= 50) && MONEY > 0
+    SIF (FLAG:34 >= 10 || FLAG:게임모드 >= 50) && MONEY > 0
         PRINTLC [120] - 비밀 도구점
     ;CONFIG에서 「기능훈련사를 이용할 수 없게 한다」가 무효에, 자금이 있을 경우
-    SIF (FLAG:12 & 65536) == 0 && MONEY > 0
+    SIF (FLAG:SHOP이벤트확장 & 65536) == 0 && MONEY > 0
         PRINTLC [121] - 기능훈련사
     ;주인 또는 그 자리에 있으며 조수 가능한 노예 중 누구 한 명이 [조합지식]이나 [금단의 지식]을 가지고 있고, 자금이 있을 경우
     SIF LOCAL:3 && MONEY > 0
         PRINTLC [122] - 약방
     ;조교 대상이 존재하고, CONFIG의 「도시락 · 라이브」가 유효할 경우
-    IF TARGET >= 0 && FLAG:12 & 16
+    IF TARGET >= 0 && FLAG:SHOP이벤트확장 & 16
         ;조교 대상의 순종 Lv이 2 이상일 경우
         SIF ABL:순종 >= 2
             PRINTFORMLC [130] - \@(TALENT:150) ? 애정요리 # 요리를 시킨다\@
@@ -370,25 +370,25 @@ ELSE
     SIF TALENT:MASTER:9
         PRINTLC [140] - 주인 성별 변경
     ;수집품을 500종 이상 갖추면 전시실의 이름이 변경. 그뿐
-    SIF FLAG:500 > 0 && FLAG:12 & 8
+    SIF FLAG:500 > 0 && FLAG:SHOP이벤트확장 & 8
         PRINTFORMLC [150] - \@(FLAG:500 >= 500) ? 환상향 비보관 # 전시실로 간다\@
     ;CONFIG의 「신사적인 촉수계 커맨드」가 유효하고, 진화의 비법이 있거나 아이템 없음 모드일 경우
-    SIF FLAG:15 & 4096 && (ITEM:59 || NOITEM)
+    SIF FLAG:커맨드확장 & 4096 && (ITEM:59 || NOITEM)
         PRINTLC [160] - 촉수개발·배양시설
     ;CONFIG의 「특수 목욕탕계 커맨드」가 유효한 경우
-    SIF FLAG:15 & 1024
+    SIF FLAG:커맨드확장 & 1024
         PRINTFORMLC [161] - \@(SPECIALBATH_CHECK() < 16) ? 목욕탕 개장 # 목욕탕을 본다\@
     ;요정이 30마리 이상 필요
     SIF LOCAL:9 >= 30
         PRINTLC [162] - 요정목욕을 한다
     ;CONFIG의 「고문계, 정신조작계 커맨드」가 유효하고 비밀 지하실이 설치되어 있으며, 주인이 술에 떡이 되어 있지 않을 경우
-    SIF FLAG:15 & 16 && FLAG:73 & 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
+    SIF FLAG:커맨드확장 & 16 && FLAG:73 & 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTLC [163] - 비밀 지하실
     ;주인 외에 캐릭터가 존재하고, 허브 농장이 설치되어 있으며, 주인이 술에 떡이 되어 있지 않을 경우
     SIF FLAG:79 > 1 && CHARANUM > 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTLC [165] - 꽃밭으로 간다
     ;Ｓ패치 추가분
-    SIF FLAG:13 & 1024 && ITEM:90 && TIME == 0
+    SIF FLAG:아이템확장 & 1024 && ITEM:90 && TIME == 0
         PRINTLC [166] - 창관으로 간다
 
     ;토리코모드 추가분
@@ -413,7 +413,7 @@ ELSE
         TFLAG:702 = -1
     ENDIF
     ;육아실이 ON인 상태(누군가가 임신 · 육아중인 경우 등)이며, 육아실 플래그가 켜져 있지 않을 경우
-    SIF FLAG:17 > 0 && TFLAG:700 == 0
+    SIF FLAG:육아실해금 > 0 && TFLAG:700 == 0
         PRINTLC [170] - 육아실로 간다
     SIF (FLAG:1100 & 1) && (FLAG:1100 & 8) && FLAG:1102 > 0
         PRINTFORMLC [171] - \@(FLAG:1102 < 2) ? 공방을 연다 # 공방에 간다\@
@@ -451,13 +451,13 @@ ELSE
     SIF CHARANUM > 0
         PRINTLC [400] - 캐릭터 검색
     ;주차수가 2주 이상일 경우
-    SIF FLAG:6 > 1
+    SIF FLAG:주회수 > 1
         PRINTLC [500] - 엔딩 일람
     ;엔드리스에 돌입하지 않은 NORMAL이나 ANNORMAL 모드에서, 자금을 엔딩 조건 이상으로 만들었을 경우
     SIF LOCAL:6 == 1
         PRINTLC [543] - 지금이다!
     ;CONFIG의 「강하게 뉴 게임」이 유효하며, 추가로 이번 주차에서 이미 BAD와 WRONG가 아닌 엔딩을 봤을 경우
-    SIF FLAG:5 & 2 && FLAG:12 & 1 && (FLAG:5 & 4) == 0
+    SIF FLAG:엔드리스 & 2 && FLAG:SHOP이벤트확장 & 1 && (FLAG:엔드리스 & 4) == 0
         PRINTLC [555] - 새 게임 시작
     ;주인과 조교 대상 외에 TIME에 맞는 조교 가능한 노예가 1명 이상 있을 경우
     SIF LOCAL:2 >= 1
@@ -513,9 +513,9 @@ ELSE
         PRINTFORML \@(TIME == 0) ? 밤까지 # 날이 밝을 때까지\@ 쉬기로 했다.
         DRAWLINE
         ;휴식 플래그를 세운다
-        FLAG:0 = 1
+        FLAG:휴식 = 1
         ;조교 대상이 존재하고, CONFIG의 [일상생활]이 유효할 경우
-        IF FLAG:12 & 64 && TARGET >= 0
+        IF FLAG:SHOP이벤트확장 & 64 && TARGET >= 0
             CALL DAILY_EVENT_JUDGMENT
             ;일상 에로 이벤트가 일어나지 않았을 경우
             SIF RESULT <= 0
@@ -532,48 +532,48 @@ ELSE
         CALL CHANGE_SLAVE_NICKNAME
     ELSEIF RESULT == 108 && GET_LIST(0) >= 1
         CALL SELECT_ASSI
-    ELSEIF RESULT == 109 && (GET_LIST(2) >= 1 || TARGET >= 0) && FLAG:4 != 18
+    ELSEIF RESULT == 109 && (GET_LIST(2) >= 1 || TARGET >= 0) && FLAG:게임모드 != 18
         CALL CHANGE_TARGET
     ELSEIF RESULT == 110 && MONEY > 0
         CALL TOOL_BUY_MAIN
-    ELSEIF RESULT == 111 && MONEY > 0 && CHARANUM < GET_LIST(5) && FLAG:4 < 50 && FLAG:4 != 18
+    ELSEIF RESULT == 111 && MONEY > 0 && CHARANUM < GET_LIST(5) && FLAG:게임모드 < 50 && FLAG:게임모드 != 18
         CALL CHARA_BUY_MAIN
     ;Ｓ패치 추가분
-    ELSEIF RESULT == 112 && GET_LIST(1) >= 1 && FLAG:4 != 4 && FLAG:4 != 18
+    ELSEIF RESULT == 112 && GET_LIST(1) >= 1 && FLAG:게임모드 != 4 && FLAG:게임모드 != 18
         CALL CHARA_SALE
     ELSEIF RESULT == 113 && TALENT:MASTER:56 && GET_LIST(4) > 0
         CALL FAMILIAR_SELECT
-    ELSEIF RESULT == 120 && (FLAG:34 >= 10 || FLAG:4 >= 50) && MONEY > 0
+    ELSEIF RESULT == 120 && (FLAG:34 >= 10 || FLAG:게임모드 >= 50) && MONEY > 0
         DRAWLINE
         DRAWLINE
         CALL BUY_SPECIAL_ITEM
-    ELSEIF RESULT == 121 && (FLAG:12 & 65536) == 0 && MONEY > 0
+    ELSEIF RESULT == 121 && (FLAG:SHOP이벤트확장 & 65536) == 0 && MONEY > 0
         CALL BUY_SKILL
     ELSEIF RESULT == 122 && GET_LIST(3) && MONEY > 0
         CALL BUY_DRUG
-    ELSEIF RESULT == 130 && TARGET >= 0 && ABL:순종 >= 2 && FLAG:12 & 16
+    ELSEIF RESULT == 130 && TARGET >= 0 && ABL:순종 >= 2 && FLAG:SHOP이벤트확장 & 16
         CALL LUNCH_JUDGE
         RETURN 1
-    ELSEIF RESULT == 131 && TARGET >= 0 && ABL:MASTER:기교 > 3 && CFLAG:1 == 2 && FLAG:12 & 16
+    ELSEIF RESULT == 131 && TARGET >= 0 && ABL:MASTER:기교 > 3 && CFLAG:1 == 2 && FLAG:SHOP이벤트확장 & 16
         CALL LUNCH_SELF
         RETURN 1
-    ELSEIF RESULT == 132 && TARGET >= 0 && (ITEM:52 || NOITEM) && TFLAG:154 == 0 && ABL:노출증 >= 3 && (TALENT:150 || ABL:순종 >= 5)  && (TIME == 1 || TALENT:205 == 0 || (TALENT:205 && (ITEM:48 || NOITEM))) && FLAG:12 & 16
+    ELSEIF RESULT == 132 && TARGET >= 0 && (ITEM:52 || NOITEM) && TFLAG:154 == 0 && ABL:노출증 >= 3 && (TALENT:150 || ABL:순종 >= 5)  && (TIME == 1 || TALENT:205 == 0 || (TALENT:205 && (ITEM:48 || NOITEM))) && FLAG:SHOP이벤트확장 & 16
         CALL CONCERT_JUDGE
         RETURN 1
     ELSEIF RESULT == 140 && TALENT:MASTER:9
         CALL CHANGE_SEX, MASTER
         RETURN 1
-    ELSEIF RESULT == 150 && FLAG:500 > 0 && FLAG:12 & 8
+    ELSEIF RESULT == 150 && FLAG:500 > 0 && FLAG:SHOP이벤트확장 & 8
         PRINTFORMW \@(FLAG:500 >= 500) ? 환상향비보관으 # 전시실\@로 갔다.
         DRAWLINE
         DRAWLINE
         CALL COLLECTION_ROOM_MENU
-    ELSEIF RESULT == 160 && FLAG:15 & 4096 && (ITEM:59 || NOITEM)
+    ELSEIF RESULT == 160 && FLAG:커맨드확장 & 4096 && (ITEM:59 || NOITEM)
         PRINTW 촉수개발·배양시설로 이동했다.
         DRAWLINE
         DRAWLINE
         CALL TENTACLE_LABORATORY
-    ELSEIF RESULT == 161 && FLAG:15 & 1024
+    ELSEIF RESULT == 161 && FLAG:커맨드확장 & 1024
         ;개장 가능한 특수 목욕탕이 아직 남아 있을 경우
         IF SPECIALBATH_CHECK() < 16
             PRINTW 목욕탕으로 갔다.
@@ -588,14 +588,14 @@ ELSE
             WAIT
             DRAWLINE
         ENDIF
-    ELSEIF RESULT == 162 && FLAG:15 & 1024 && FLAG:74 & 8192 && GET_LIST(9) >= 30
+    ELSEIF RESULT == 162 && FLAG:커맨드확장 & 1024 && FLAG:74 & 8192 && GET_LIST(9) >= 30
         PRINTW 요정목욕을 하러 갔다.
         CALL FAIRIES_BATH
-    ELSEIF RESULT == 163 && FLAG:15 & 16 && FLAG:73 & 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
+    ELSEIF RESULT == 163 && FLAG:커맨드확장 & 16 && FLAG:73 & 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTW 비밀의 지하실로 갔다.
         CALL HIDDEN_BASEMENT_MENU
     ;Ｓ패치 추가분
-    ELSEIF RESULT == 166 && FLAG:13 & 1024 && ITEM:90 && TIME == 0
+    ELSEIF RESULT == 166 && FLAG:아이템확장 & 1024 && ITEM:90 && TIME == 0
         PRINTW 창관으로 갔다.
         CALL SPRING_1
 
@@ -619,7 +619,7 @@ ELSE
     ELSEIF RESULT == 165 && FLAG:79 > 1 && CHARANUM > 1 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         PRINTW 꽃밭으로 갔다.
         CALL SHOP_HARB_MENU
-    ELSEIF RESULT == 170 && FLAG:17 > 0 && TFLAG:700 == 0
+    ELSEIF RESULT == 170 && FLAG:육아실해금 > 0 && TFLAG:700 == 0
         PRINTW 육아실로 갔다.
         DRAWLINE
         DRAWLINE
@@ -660,12 +660,12 @@ ELSE
         CALL LOADGAME_EX
     ELSEIF RESULT == 400 && CHARANUM > 0
         CALL SEARCH_CHARADATA_MENU
-    ELSEIF RESULT == 500 && FLAG:6 > 1
+    ELSEIF RESULT == 500 && FLAG:주회수 > 1
         CALL ENDING_LIST
     ;빚이 있으면 안됨 (토리코모드사양)
     ELSEIF RESULT == 543 && GET_LIST(6) == 1 && FLAG:5030 == 0
         CALL ENDING_CONFIRM
-    ELSEIF RESULT == 555 && FLAG:5 & 2 && FLAG:12 & 1
+    ELSEIF RESULT == 555 && FLAG:엔드리스 & 2 && FLAG:SHOP이벤트확장 & 1
         CALL NEWGAME_SELECT
         RETURN 0
     ELSEIF RESULT == 666 && GET_LIST(2) >= 1
@@ -992,9 +992,9 @@ ELSE
     PRINTFORML 　체력:({BASE:ARG:체력, 4}/{MAXBASE:ARG:체력, 4})　기력:({BASE:ARG:기력, 4}/{MAXBASE:ARG:기력, 4})
 ENDIF
 
-IF ARG != MASTER && FLAG:12 & 4
+IF ARG != MASTER && FLAG:SHOP이벤트확장 & 4
     CALL PRINT_SLAVE_STATUS, ARG
-ELSEIF ARG == MASTER && FLAG:12 & 4
+ELSEIF ARG == MASTER && FLAG:SHOP이벤트확장 & 4
     CALL PRINT_MASTER_STATUS, ARG
 ENDIF
 CALLFORM SHOW_INFO_PAGE_{LOCAL}, ARG
@@ -1031,7 +1031,7 @@ GOTO PRINT_PAGE
 @CALC_SLAVE_CAPACITY
 #FUNCTION
 ;챌린지 모드인지 아닌지
-RETURNF (FLAG:4 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:93 + FLAG:94, BORDER_SLAVE_CAPACITY())
+RETURNF (FLAG:게임모드 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:93 + FLAG:94, BORDER_SLAVE_CAPACITY())
 
 ;--------------------------------------------------
 ;집의 수용 가능한 노예의 한계 인원수
@@ -1055,29 +1055,29 @@ ENDIF
 ;기한 표시 처리
 ;--------------------------------------------------
 @SHOW_DEADLINE
-IF FLAG:5 & 1
+IF FLAG:엔드리스 & 1
     PRINT  ∞
     RETURN 0
 ENDIF
-IF FLAG:3 == 1
+IF FLAG:난이도 == 1
     ;EASY(1주차에만 기한＋20일)
-    LOCAL = (FLAG:6 == 1) ? 140 # 120
-ELSEIF FLAG:3 == 2
+    LOCAL = (FLAG:주회수 == 1) ? 140 # 120
+ELSEIF FLAG:난이도 == 2
     ;NORMAL(1주차에만 기한＋10일)
-    LOCAL = (FLAG:6 == 1) ? 100 # 90
-ELSEIF FLAG:3 == 3
+    LOCAL = (FLAG:주회수 == 1) ? 100 # 90
+ELSEIF FLAG:난이도 == 3
     ;HARD
     LOCAL = 99
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     ;LUNATIC
     LOCAL = 90
-ELSEIF FLAG:3 == 5
+ELSEIF FLAG:난이도 == 5
     ;PHANTASM
     LOCAL = 60
-ELSEIF FLAG:3 == 6
+ELSEIF FLAG:난이도 == 6
     ;PRO
     LOCAL = 30
-ELSEIF FLAG:3 == 7
+ELSEIF FLAG:난이도 == 7
     ;ULTRA
     LOCAL = 14
 ELSE
@@ -1416,7 +1416,7 @@ ELSEIF TFLAG:0 != 10 && TFLAG:0 != 11
                 CONTINUE
             SIF (COUNT == 31 || (COUNT >= 60 && COUNT <= 64)) && TALENT:MASTER:198 == 0 && TALENT:MASTER:998 == 0
                 CONTINUE
-            SIF (COUNT == 80 || COUNT == 81) && FLAG:13 & 1024 == 0
+            SIF (COUNT == 80 || COUNT == 81) && FLAG:아이템확장 & 1024 == 0
                 CONTINUE
             COM_NAME = %CFLAGNAME:COUNT%
         ELSEIF TFLAG:0 == 9
@@ -1483,7 +1483,7 @@ ELSEIF TFLAG:0 == 6
 ELSEIF TFLAG:0 == 7
     COM_NAME = %BASENAME:RESULT%
 ELSEIF TFLAG:0 == 8
-    SIF (RESULT == 80 || RESULT == 81) && FLAG:13 & 1024 == 0
+    SIF (RESULT == 80 || RESULT == 81) && FLAG:아이템확장 & 1024 == 0
         GOTO INPUT_LOOP_0
     COM_NAME = %CFLAGNAME:RESULT%
 ELSEIF TFLAG:0 == 9

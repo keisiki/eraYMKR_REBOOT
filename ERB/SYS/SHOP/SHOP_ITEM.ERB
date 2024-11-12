@@ -78,28 +78,28 @@ VARSET ITEMSALES, 0
 REPEAT 60
     ITEMSALES:COUNT = 1
     ;봉인 아이템 · 커맨드
-    IF (COUNT == 1 || COUNT == 6 || COUNT == 15 || COUNT == 20 || COUNT == 21 || COUNT == 37 || COUNT == 41 || COUNT == 43 || COUNT == 44 || COUNT == 46 || COUNT == 48 || COUNT == 50 || COUNT == 53 || COUNT == 75) && (FLAG:13 & 2) == 0
+    IF (COUNT == 1 || COUNT == 6 || COUNT == 15 || COUNT == 20 || COUNT == 21 || COUNT == 37 || COUNT == 41 || COUNT == 43 || COUNT == 44 || COUNT == 46 || COUNT == 48 || COUNT == 50 || COUNT == 53 || COUNT == 75) && (FLAG:아이템확장 & 2) == 0
         ITEMSALES:COUNT = 0
     ;Ｖ계 확장 커맨드
-    ELSEIF (COUNT >= 4 && COUNT <= 8) && (FLAG:15 & 2) == 0
+    ELSEIF (COUNT >= 4 && COUNT <= 8) && (FLAG:커맨드확장 & 2) == 0
         ITEMSALES:COUNT = 0
     ;Ａ계 확장 커맨드
-    ELSEIF (COUNT == 4 || COUNT >= 10 && COUNT <= 14) && (FLAG:15 & 4) == 0
+    ELSEIF (COUNT == 4 || COUNT >= 10 && COUNT <= 14) && (FLAG:커맨드확장 & 4) == 0
         ITEMSALES:COUNT = 0
     ;Ｃ계 확장 커맨드
-    ELSEIF ((COUNT >= 17 && COUNT <= 19) || (COUNT >= 25 && COUNT <= 28) || (COUNT >= 38 && COUNT <= 39)) && (FLAG:15 & 1) == 0
+    ELSEIF ((COUNT >= 17 && COUNT <= 19) || (COUNT >= 25 && COUNT <= 28) || (COUNT >= 38 && COUNT <= 39)) && (FLAG:커맨드확장 & 1) == 0
         ITEMSALES:COUNT = 0
     ;Ｂ계 확장 커맨드
-    ELSEIF (COUNT >= 21 && COUNT <= 24) && (FLAG:15 & 8) == 0
+    ELSEIF (COUNT >= 21 && COUNT <= 24) && (FLAG:커맨드확장 & 8) == 0
         ITEMSALES:COUNT = 0
     ;羞恥プレイ계 확장 커맨드
-    ELSEIF (COUNT == 40 || (COUNT >= 43 && COUNT <= 47) || COUNT == 49) && (FLAG:15 & 512) == 0
+    ELSEIF (COUNT == 40 || (COUNT >= 43 && COUNT <= 47) || COUNT == 49) && (FLAG:커맨드확장 & 512) == 0
         ITEMSALES:COUNT = 0
     ;撮影계 확장 커맨드
-    ELSEIF COUNT == 51 && (FLAG:15 & 128) == 0
+    ELSEIF COUNT == 51 && (FLAG:커맨드확장 & 128) == 0
         ITEMSALES:COUNT = 0
     ;注射계 확장 커맨드
-    ELSEIF COUNT == 53 && (FLAG:15 & 64) == 0
+    ELSEIF COUNT == 53 && (FLAG:커맨드확장 & 64) == 0
         ITEMSALES:COUNT = 0
     ;購入済み・未定義
     ELSEIF ITEM:COUNT || ITEMPRICE:COUNT == 0
@@ -108,7 +108,7 @@ REPEAT 60
 REND
 
 ;強力アイテム販売設定
-SIF FLAG:3 >= 3 && TALENT:MASTER:998 == 0 && FLAG:13 & 2
+SIF FLAG:난이도 >= 3 && TALENT:MASTER:998 == 0 && FLAG:아이템확장 & 2
     CALL SALEITEM_CHECK_EX
 
 ;スタンガンは失神パッチ無効ならここで弾く
@@ -117,16 +117,16 @@ SIF FLAG:3999 == 0
 
 ;編集機材(ビデオカメラがあり, 編集機材が未購入で, 撮影コマンド拡張が有効な場合には店頭に並ぶ)
 ITEMSALES:58 = 0
-SIF ITEM:50 && ITEM:58 == 0 && FLAG:15 & 128
+SIF ITEM:50 && ITEM:58 == 0 && FLAG:커맨드확장 & 128
     ITEMSALES:58 = 1
 
 ;進化の秘法(進化の秘法未購入で, 主人が禁断の知識と触手使役術を持っており, 紳士的な触手系コマンドが有効の場合は店頭に並ぶ)
 ITEMSALES:59 = 0
-SIF TALENT:MASTER:56 && TALENT:MASTER:149 && ITEM:59 == 0 && FLAG:15 & 4096
+SIF TALENT:MASTER:56 && TALENT:MASTER:149 && ITEM:59 == 0 && FLAG:커맨드확장 & 4096
     ITEMSALES:59 = 1
 ;Ｓパッチ追加分, 娼館はコンフィグのみで制御
 ITEMSALES:90 = 0
-SIF ITEM:90 == 0 && FLAG:13 & 1024
+SIF ITEM:90 == 0 && FLAG:아이템확장 & 1024
     ITEMSALES:90 = 1
 ;ローション, 媚薬, ビデオテープはとりあえず99個まで
 FOR LOCAL, 60, 90
@@ -135,31 +135,31 @@ FOR LOCAL, 60, 90
     IF ITEMPRICE:LOCAL == 0
         ITEMSALES:LOCAL = 0
     ;特殊な薬系(特殊な薬が無効なら販売されない)
-    ELSEIF LOCAL >= 62 && LOCAL < 75 && (FLAG:13 & 1) == 0
+    ELSEIF LOCAL >= 62 && LOCAL < 75 && (FLAG:아이템확장 & 1) == 0
         ITEMSALES:LOCAL = 0
     ;ビデオテープ(既にビデオカメラを購入してないと販売されない)
     ELSEIF LOCAL == 75 && ITEM:50 == 0
         ITEMSALES:LOCAL = 0
     ;フィルム(既にカメラを購入していないと販売されないし, 撮影コマンド拡張を無効にしていても販売されない)
-    ELSEIF LOCAL == 76 && (ITEM:51 == 0 || (FLAG:15 & 128) == 0)
+    ELSEIF LOCAL == 76 && (ITEM:51 == 0 || (FLAG:커맨드확장 & 128) == 0)
         ITEMSALES:LOCAL = 0
     ;具材セット(羞恥プレイ계 확장 커맨드無効なら販売されない)
-    ELSEIF LOCAL == 77 && (FLAG:15 & 512) == 0
+    ELSEIF LOCAL == 77 && (FLAG:커맨드확장 & 512) == 0
         ITEMSALES:LOCAL = 0
     ;コンドーム(調教者奉仕・ウフフ계 확장 커맨드無効なら販売されない)
-    ELSEIF LOCAL == 78 && (FLAG:15 & 2048) == 0
+    ELSEIF LOCAL == 78 && (FLAG:커맨드확장 & 2048) == 0
         ITEMSALES:LOCAL = 0
     ;綿棒(Ｃ계 확장 커맨드とＡ계 확장 커맨드がいずれも無効なら販売されない)
-    ELSEIF LOCAL == 79 && (FLAG:15 & 1) == 0 && (FLAG:15 & 4) == 0
+    ELSEIF LOCAL == 79 && (FLAG:커맨드확장 & 1) == 0 && (FLAG:커맨드확장 & 4) == 0
         ITEMSALES:LOCAL = 0
     ;蓋付き瓶(展示室が無効なら販売されない)
-    ELSEIF LOCAL == 81 && (FLAG:12 & 8) == 0
+    ELSEIF LOCAL == 81 && (FLAG:SHOP이벤트확장 & 8) == 0
         ITEMSALES:LOCAL = 0
     ;ヲトナのオムツ(羞恥プレイ계 확장 커맨드無効なら販売されない)
-    ELSEIF LOCAL == 82 && (FLAG:15 & 512) == 0
+    ELSEIF LOCAL == 82 && (FLAG:커맨드확장 & 512) == 0
         ITEMSALES:LOCAL = 0
     ;フリスク(Ａ계 확장 커맨드無効だと販売されない)
-    ELSEIF LOCAL == 83 && (FLAG:15 & 4) == 0
+    ELSEIF LOCAL == 83 && (FLAG:커맨드확장 & 4) == 0
         ITEMSALES:LOCAL = 0
     ENDIF
     ;既に99個持っているアイテムは販売されない
@@ -169,11 +169,11 @@ NEXT
 
 ;공정석 목걸이
 ITEMSALES:95 = 0
-IF TALENT:MASTER:998 && CHARANUM > 1 && ITEM:98 == 0 && FLAG:15 & 16
+IF TALENT:MASTER:998 && CHARANUM > 1 && ITEM:98 == 0 && FLAG:커맨드확장 & 16
     ;デバッグモードのときは動作チェック用に販売
     ITEMSALES:95 = 1
 ;大甲斐性必須・赤い首輪を所持していないも条件
-ELSEIF TALENT:MASTER:98 && CHARANUM > 1 && ITEM:98 == 0 && FLAG:15 & 16
+ELSEIF TALENT:MASTER:98 && CHARANUM > 1 && ITEM:98 == 0 && FLAG:커맨드확장 & 16
     ;通常の예속イベント用
     REPEAT CHARANUM
         SIF SALE_ITEM_95(COUNT)
@@ -183,11 +183,11 @@ ENDIF
 
 ;청산호의 반지
 ITEMSALES:96 = 0
-IF TALENT:MASTER:998 && CHARANUM > 1 && ITEM:99 == 0 && FLAG:15 & 2048
+IF TALENT:MASTER:998 && CHARANUM > 1 && ITEM:99 == 0 && FLAG:커맨드확장 & 2048
     ;デバッグモードのときは動作チェック用に販売
     ITEMSALES:96 = 1
 ;大甲斐性必須
-ELSEIF TALENT:MASTER:98 && CHARANUM > 1 && ITEM:99 == 0 && FLAG:15 & 2048
+ELSEIF TALENT:MASTER:98 && CHARANUM > 1 && ITEM:99 == 0 && FLAG:커맨드확장 & 2048
     ;通常の상애イベント用
     REPEAT CHARANUM
         SIF SALE_ITEM_96(COUNT)
@@ -211,7 +211,7 @@ ENDIF
 ;붉은 개목걸이(노예 엔딩 조건은 여기서 처리)
 ITEMSALES:98 = 0
 ;渡したい相手が調教対象であり, ゲームモードがeratohoYMかABNORMALかREVERSALでまだエンディングを迎えておらず, エンゲージリングと赤い首輪を未所持であること
-IF TARGET >= 0 && (FLAG:4 < 2 || FLAG:4 == 9) && FLAG:5 == 0 && ITEM:98 == 0 && ITEM:99 == 0
+IF TARGET >= 0 && (FLAG:게임모드 < 2 || FLAG:게임모드 == 9) && FLAG:엔드리스 == 0 && ITEM:98 == 0 && ITEM:99 == 0
     IF TALENT:MASTER:998
         ;デバッグモードのときは動作チェック用に販売
         ITEMSALES:98 = 1
@@ -219,7 +219,7 @@ IF TARGET >= 0 && (FLAG:4 < 2 || FLAG:4 == 9) && FLAG:5 == 0 && ITEM:98 == 0 && 
     ELSEIF (TALENT:150 || TALENT:160 || TALENT:169) && TALENT:170 && TALENT:161 == 0 && TALENT:162 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && MARK:굴복각인 >= 3 && MARK:반발각인 == 0 && (ABL:순종+ABL:욕망+ABL:봉사정신 >= 15) && (ABL:기교+ABL:마조끼+ABL:정액중독 >= 13) && (EXP:V경험+EXP:A경험 >= 200) && EXP:조교자위경험 >= 150 && EXP:펠라경험 >= 150 && CFLAG:2 >= 2500
         ;通常の奴隷エンド用
         ;主人が大甲斐性を持ち, この周回が５周目以降であり対象が引き継ぎキャラであるor主人が男の場合には対象のレズ経験が500未満であること.主人が女の場合には対象のＢＬ経験が500未満であること.
-        SIF (TALENT:MASTER:120 && EXP:레즈경험 < 500) || (TALENT:MASTER:120 == 0 && EXP:BL경험 < 500) || (TALENT:MASTER:98 && FLAG:6 >= 5 && CFLAG:18)
+        SIF (TALENT:MASTER:120 && EXP:레즈경험 < 500) || (TALENT:MASTER:120 == 0 && EXP:BL경험 < 500) || (TALENT:MASTER:98 && FLAG:주회수 >= 5 && CFLAG:18)
             ITEMSALES:98 = 1
     ENDIF
 ENDIF
@@ -227,7 +227,7 @@ ENDIF
 ;약혼 반지(단독 엔딩 조건은 여기서 처리)
 ITEMSALES:99 = 0
 ;渡したい相手が調教対象であり, 助手がおらず, ゲームモードがeratohoYMかABNORMALかREVERSALでまだエンディングを迎えておらず, エンゲージリングと赤い首輪と青珊瑚の指輪を未所持であること.
-IF ASSI < 0 && TARGET >= 0 && (FLAG:4 < 2 || FLAG:4 == 9) && FLAG:5 == 0 && ITEM:96 == 0 && ITEM:98 == 0 && ITEM:99 == 0
+IF ASSI < 0 && TARGET >= 0 && (FLAG:게임모드 < 2 || FLAG:게임모드 == 9) && FLAG:엔드리스 == 0 && ITEM:96 == 0 && ITEM:98 == 0 && ITEM:99 == 0
     RESULT = 0
     ;口上呼び出し.口上側で単体エンディングが設定されておればその帰り値によってはエンゲージリングが購入可能になる.
     TRYCALLFORM EX_ENDING_{NO:TARGET}
@@ -248,7 +248,7 @@ IF ASSI < 0 && TARGET >= 0 && (FLAG:4 < 2 || FLAG:4 == 9) && FLAG:5 == 0 && ITEM
         ;연모があり, 상애, 낙인, 예속, 사역마, 정신붕괴, 괴뢰, 괴조인격のいずれもなく, 약물각인과 공포각인과 반발각인이 0で, 対象の순종＋욕망＋기교＋봉사정신Lv의 합계가 17이상で, 호감도가 3500이상ある
         IF TALENT:150 && TALENT:153 == 0 && TALENT:161 == 0 && TALENT:162 == 0 && TALENT:164 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0 && MARK:약물각인 == 0 && MARK:공포각인 == 0 && MARK:반발각인 == 0 && (ABL:순종+ABL:욕망+ABL:기교+ABL:봉사정신 >= 17) && CFLAG:2 >= 3500
             ;この周回が５周目以降であり対象が引き継ぎキャラであるor主人が男の場合には対象のレズ経験が500未満であること.主人が女の場合には対象のＢＬ経験が500未満であること.
-            SIF (TALENT:MASTER:120 && EXP:레즈경험 < 500) || (TALENT:MASTER:120 == 0 && EXP:BL경험 < 500) || (FLAG:6 >= 5 && CFLAG:18)
+            SIF (TALENT:MASTER:120 && EXP:레즈경험 < 500) || (TALENT:MASTER:120 == 0 && EXP:BL경험 < 500) || (FLAG:주회수 >= 5 && CFLAG:18)
                 ITEMSALES:99 = 1
         ENDIF
     ELSEIF RESULT
@@ -359,7 +359,7 @@ SIF LOCAL & 64 && ITEM:44 == 0
 IF LOCAL & 128
     SIF ITEM:46 == 0
         ITEMSALES:46 = 1
-    SIF FLAG:15 & 64 && ITEM:53 == 0
+    SIF FLAG:커맨드확장 & 64 && ITEM:53 == 0
         ITEMSALES:53 = 1
 ENDIF
 SIF LOCAL & 256 && ITEM:48 == 0
@@ -603,7 +603,7 @@ SIF MARK:ARG:굴복각인 < 3 || MARK:ARG:반발각인 || (ABL:ARG:순종 + ABL:
 ;男主人なら対象のレズ経験が, 女主人なら対象のＢＬ経験が500未満じゃないとダメ
 ;ただしこのプレイが5周目이상, 引き継ぎキャラであった場合はレズ経験, ＢＬ経験の判定は免除
 ;相手が[両刀]で男主人のときは対象のＢＬ中毒がLV5이상, 女主人のときは対象のレズ中毒がLV5の場合もレズ経験, ＢＬ経験の判定は免除
-SIF (TALENT:MASTER:120 && ((TALENT:ARG:83 && ABL:ARG:BL중독 >= 5) || EXP:ARG:레즈경험 < 500)) || (TALENT:MASTER:120 == 0 && ((TALENT:ARG:83 && ABL:ARG:레즈중독 >= 5) || EXP:ARG:BL경험 < 500)) || (FLAG:6 >= 5 && CFLAG:ARG:18)
+SIF (TALENT:MASTER:120 && ((TALENT:ARG:83 && ABL:ARG:BL중독 >= 5) || EXP:ARG:레즈경험 < 500)) || (TALENT:MASTER:120 == 0 && ((TALENT:ARG:83 && ABL:ARG:레즈중독 >= 5) || EXP:ARG:BL경험 < 500)) || (FLAG:주회수 >= 5 && CFLAG:ARG:18)
     RETURNF 1
 RETURNF 0
 
@@ -634,7 +634,7 @@ SIF TALENT:ARG:162 && TALENT:ARG:179 == 0 && (CFLAG:ARG:2 < 35000 || EXP:ARG:애
 ;男主人なら対象のレズ経験が, 女主人なら対象のＢＬ経験が500未満じゃないとダメ
 ;ただしこのプレイが5周目이상, 引き継ぎキャラであった場合はレズ経験, ＢＬ経験の判定は免除
 ;相手が[両刀]で男主人のときは対象のＢＬ中毒がLV5이상, 女主人のときは対象のレズ中毒がLV5の場合もレズ経験, ＢＬ経験の判定は免除
-SIF (TALENT:MASTER:120 && ((TALENT:ARG:83 && ABL:ARG:BL중독 >= 5) || EXP:ARG:레즈경험 < 500)) || (TALENT:MASTER:120 == 0 && ((TALENT:ARG:83 && ABL:ARG:레즈중독 >= 5) || EXP:ARG:BL경험 < 500)) || (FLAG:6 >= 5 && CFLAG:ARG:18)
+SIF (TALENT:MASTER:120 && ((TALENT:ARG:83 && ABL:ARG:BL중독 >= 5) || EXP:ARG:레즈경험 < 500)) || (TALENT:MASTER:120 == 0 && ((TALENT:ARG:83 && ABL:ARG:레즈중독 >= 5) || EXP:ARG:BL경험 < 500)) || (FLAG:주회수 >= 5 && CFLAG:ARG:18)
     RETURNF 1
 RETURNF 0
 
@@ -661,7 +661,7 @@ SIF (ABL:ARG:순종 + ABL:ARG:욕망 < 8) || (ABL:ARG:기교 + ABL:ARG:봉사정
     RETURNF 0
 ;男主人なら対象のレズ経験が, 女主人なら対象のＢＬ経験が1500未満じゃないとダメ
 ;ただし主人が[大甲斐性]持ちで, このプレイが5周目이상, 引き継ぎキャラであった場合はレズ経験, ＢＬ経験の判定は免除
-SIF (TALENT:MASTER:120 && ((TALENT:ARG:83 && ABL:ARG:BL중독 >= 5) || EXP:ARG:레즈경험 < 1500)) || (TALENT:MASTER:120 == 0 && ((TALENT:ARG:83 && ABL:ARG:레즈중독 >= 5) || EXP:ARG:BL경험 < 1500)) || (TALENT:MASTER:98 && FLAG:6 >= 5 && CFLAG:ARG:18)
+SIF (TALENT:MASTER:120 && ((TALENT:ARG:83 && ABL:ARG:BL중독 >= 5) || EXP:ARG:레즈경험 < 1500)) || (TALENT:MASTER:120 == 0 && ((TALENT:ARG:83 && ABL:ARG:레즈중독 >= 5) || EXP:ARG:BL경험 < 1500)) || (TALENT:MASTER:98 && FLAG:주회수 >= 5 && CFLAG:ARG:18)
     RETURNF 1
 RETURNF 0
 
@@ -728,11 +728,11 @@ ELSE
     CALL GET_NICK, TARGET, "『가장 사랑하는 아내』"
 ENDIF
 
-IF FLAG:5 == 0 && TFLAG:124 == 0
+IF FLAG:엔드리스 == 0 && TFLAG:124 == 0
     ;단독 엔딩 판별용
     LOCAL = 4500 + NO:TARGET
     FLAG:LOCAL |= 1
-    IF FLAG:11 > 0
+    IF FLAG:캐릭터대사표시 > 0
         CALL SINGLE_ENDING
     ELSE
         PRINTW ―――단독 엔딩 조건 달성―――
@@ -744,7 +744,7 @@ IF FLAG:5 == 0 && TFLAG:124 == 0
         LOCAL = 1000 + NO:TARGET
     CALL GAME_CONTINUE, 0, LOCAL
     ;단독 엔딩 계속 대사
-    SIF FLAG:11 > 0 && !TFLAG:994
+    SIF FLAG:캐릭터대사표시 > 0 && !TFLAG:994
         CALL SINGLE_ENDING_AFTER
 ENDIF
 RETURN 1
@@ -828,11 +828,11 @@ CFLAG:3114 = DAY
 ;칭호 ＧＥＴ!
 CALL GET_NICK, TARGET, "『최고의 종자』"
 
-IF FLAG:5 == 0 && TFLAG:124 == 0
+IF FLAG:엔드리스 == 0 && TFLAG:124 == 0
     ;노예 엔딩 판별용
     LOCAL = 4500 + NO:TARGET
     FLAG:LOCAL |= 2
-    IF FLAG:11 > 0
+    IF FLAG:캐릭터대사표시 > 0
         CALL SLAVE_ENDING
     ELSE
         PRINTW ―――노예 엔딩 조건 달성―――
@@ -844,7 +844,7 @@ IF FLAG:5 == 0 && TFLAG:124 == 0
         LOCAL = 2000 + NO:TARGET
     CALL GAME_CONTINUE, 0, LOCAL
     ;노예 엔딩 계속 대사
-    SIF FLAG:11 > 0 && !TFLAG:994
+    SIF FLAG:캐릭터대사표시 > 0 && !TFLAG:994
         CALL SLAVE_ENDING_AFTER
 ENDIF
 RETURN 1
@@ -857,7 +857,7 @@ PRINTFORMW ※주의！　%CALLNAME:TARGET%에게 낙인을 찍으면 두 번 �
 PRINTW 그래도 되겠습니까?
 DRAWLINE
 PRINTFORML [0] - %CALLNAME:TARGET%에게 낙인을 찍는다
-IF FLAG:15 & 16
+IF FLAG:커맨드확장 & 16
     ;고문계, 정신조작계 커맨드 유효면 선택지 증가
     PRINTFORML [1] - %CALLNAME:TARGET%의 몸에 매직으로 낙인을 그린다
     PRINTFORML [2] - %CALLNAME:TARGET%에게 인두로 낙인 시술을 한다
@@ -870,7 +870,7 @@ $INPUT_LOOP
 INPUT
 IF RESULT == 100
     RETURN 0
-ELSEIF RESULT == 0 || (RESULT >= 1 && RESULT <= 4 && FLAG:15 & 16)
+ELSEIF RESULT == 0 || (RESULT >= 1 && RESULT <= 4 && FLAG:커맨드확장 & 16)
     LOCAL = RESULT
 ELSE
     GOTO INPUT_LOOP
@@ -881,13 +881,13 @@ IF CFLAG:99 == 1
     CALL SELF_KOJO, TARGET, 202, LOCAL
 ;지문 표시
 ELSE
-    IF LOCAL == 1 && FLAG:15 & 16
+    IF LOCAL == 1 && FLAG:커맨드확장 & 16
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 특수 매직펜으로 %CALLNAME:TARGET%의 몸에 낙인을 그려넣었다.
-    ELSEIF LOCAL == 2 && FLAG:15 & 16
+    ELSEIF LOCAL == 2 && FLAG:커맨드확장 & 16
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 인두로 %CALLNAME:TARGET%에게 낙인을 찍었다.
-    ELSEIF LOCAL == 3 && FLAG:15 & 16
+    ELSEIF LOCAL == 3 && FLAG:커맨드확장 & 16
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:TARGET%에게 %CALLNAME:MASTER%의 낙인으로 문신을 새겼다.
-    ELSEIF LOCAL == 4 && FLAG:15 & 16
+    ELSEIF LOCAL == 4 && FLAG:커맨드확장 & 16
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:TARGET,"를")% 끌어당겨 목에 검은 쵸커를 걸어줬다.
     ELSE
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:TARGET%에게 낙인을 찍었다.

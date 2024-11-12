@@ -8,12 +8,12 @@
 ; 게임 시작시 모드셋.
 @CONFIGURATION_TORIKOMODE_BASIC
 ;토리코모드 기본세트
-FLAG:10 = 1
-FLAG:11 = 2
-FLAG:12 = 131583
-FLAG:13 = 1027
-FLAG:14 = 115
-FLAG:15 = 131071
+FLAG:조교시텍스트표시 = 1
+FLAG:캐릭터대사표시 = 2
+FLAG:SHOP이벤트확장 = 131583
+FLAG:아이템확장 = 1027
+FLAG:조교모드 = 115
+FLAG:커맨드확장 = 131071
 FLAG:21 = 3
 FLAG:1200 = 2
 FLAG:1700 = 1
@@ -24,13 +24,13 @@ FLAG:5010 = 2
 
 @CONFIGURATION_TORIKOMODE_ON
 ;위키셋 + 일상생활, 밤이벤트확장,  얀데레, 창관
-FLAG:10 = 1
-FLAG:12 = 16767
-FLAG:13 = 1204
-FLAG:14 = 68
-FLAG:15 = 15
+FLAG:조교시텍스트표시 = 1
+FLAG:SHOP이벤트확장 = 16767
+FLAG:아이템확장 = 1204
+FLAG:조교모드 = 68
+FLAG:커맨드확장 = 15
 ;사정장소 선택
-FLAG:19 = 9
+FLAG:사정선택기본장소 = 9
 ;토리코모드
 FLAG:5000 = 2047
 ;토리코모드- 칼라
@@ -40,7 +40,7 @@ FLAG:5005 = 1
 ;실신모드
 FLAG:1200 = 2
 ;임신 - 임신회란가능.
-FLAG:18 = 6
+FLAG:사정장소선택및임신기능 = 6
 ;딸조교
 FLAG:1300 = 1
 ;실신패치
@@ -48,18 +48,18 @@ FLAG:3999 = 1
 ;의뢰소
 FLAG:5010 = 2
 ;커맨드전부사용
-FLAG:15 = 131071
+FLAG:커맨드확장 = 131071
 
 @CONFIGURATION_TORIKOMODE_GUARD
 ;토리코모드 세트 + 경비 시스템 추가
 ;위키셋 + 일상생활, 밤이벤트확장,  얀데레, 창관
-FLAG:10 = 1
-FLAG:12 = 16767
-FLAG:13 = 1204
-FLAG:14 = 68
-FLAG:15 = 15
+FLAG:조교시텍스트표시 = 1
+FLAG:SHOP이벤트확장 = 16767
+FLAG:아이템확장 = 1204
+FLAG:조교모드 = 68
+FLAG:커맨드확장 = 15
 ;사정장소 선택
-FLAG:19 = 9
+FLAG:사정선택기본장소 = 9
 ;토리코모드
 FLAG:5000 = 2047
 ;토리코모드- 칼라
@@ -71,7 +71,7 @@ FLAG:5005 = 1
 ;실신모드
 FLAG:1200 = 2
 ;임신 - 임신회란가능.
-FLAG:18 = 6
+FLAG:사정장소선택및임신기능 = 6
 ;딸조교
 FLAG:1300 = 1
 ;실신패치
@@ -79,7 +79,7 @@ FLAG:3999 = 1
 ;의뢰소
 FLAG:5010 = 2
 ;커맨드전부사용
-FLAG:15 = 131071
+FLAG:커맨드확장 = 131071
 
 ;만약 이로인해 만복도 모드가 켜지면, 지금 만복도 시스템 정보가 없는 캐릭터들을 일괄 세팅 해 준다.
 SIF FLAG:5000 & 32 
@@ -256,7 +256,7 @@ SIF ASSI >= 0 && EXIST_PENIS(ASSI)
 SIF TEQUIP:90 || TEQUIP:55 == 1
     CALL CALC_GAUGE2_OTHERS_TORIKOMODE
 ;촉수기생
-IF FLAG:15 & 4096 && TALENT:146
+IF FLAG:커맨드확장 & 4096 && TALENT:146
     CALL CALC_TENTACLE_GAUGE
     ;PRINTFORM 촉수기생LV（%CALLNAME:TARGET%）
     ;BAR BASE:촉수,MAXBASE:촉수,32
@@ -1018,11 +1018,11 @@ REND
 IF ARG:2 >= 1
     DRAWLINE
     PRINT 　　　☆:조교중 ★:조수 ○:조수가능 ●:전 조수
-    SIF FLAG:15 & 4096 && FLAG:75 & 32768 && LOCAL:3 & 1
+    SIF FLAG:커맨드확장 & 4096 && FLAG:75 & 32768 && LOCAL:3 & 1
         PRINT  ◆:촉수 유폐중
     SIF FLAG:73 & 1 && LOCAL:3 & 4
         PRINT  ■:지하실 수감중
-;    SIF FLAG:15 & 4096 && LOCAL:3 & 2
+;    SIF FLAG:커맨드확장 & 4096 && LOCAL:3 & 2
 ;        PRINT  ▲:우리 유폐중
     SIF FLAG:79 & 1 && LOCAL:3 & 8
         PRINT  ▽:허브 작업중
@@ -2342,7 +2342,7 @@ LOCAL:99 = RESULT-1
 ;최대 10명
 LOCAL:99 = LIMIT(LOCAL:99, 0, 10)
 ;난이도보정
-LOCAL:10 = FLAG:3
+LOCAL:10 = FLAG:난이도
 LOCAL:10 = LIMIT(LOCAL:10, 1, 7)
 ;굶긴다
 LOCAL:0 = 0
@@ -2953,23 +2953,23 @@ SETCOLOR LOCAL:0, LOCAL:1, LOCAL:2
 
 ;………………………………………………
 ; 조교시간의 턴을 난이도에 따라 변경 체크하는 함수.
-; FLAG:3 = 난이도 , TFLAG:107 = 조교후 경과시간
+; FLAG:난이도 = 난이도 , TFLAG:107 = 조교후 경과시간
 ;………………………………………………
 @CHECK_TIMEOUT_TORIKOMODE
 
-IF FLAG:3 == 1
+IF FLAG:난이도 == 1
     SIF TFLAG:107 > 50
         CALL EVENT_TIMEOUT
-ELSEIF FLAG:3 == 2
+ELSEIF FLAG:난이도 == 2
     SIF TFLAG:107 > 50
         CALL EVENT_TIMEOUT
-ELSEIF FLAG:3 == 3
+ELSEIF FLAG:난이도 == 3
     SIF TFLAG:107 > 50
         CALL EVENT_TIMEOUT
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     SIF TFLAG:107 > 50
         CALL EVENT_TIMEOUT
-ELSEIF FLAG:3 == 5
+ELSEIF FLAG:난이도 == 5
     SIF TFLAG:107 > 50
         CALL EVENT_TIMEOUT
 ELSE
@@ -2999,7 +2999,7 @@ MAXBASE:ASSI:사정 = CALC_GAUGE2_COMMON(ASSI)
 ;PRINT 사정（조수）
 ;BAR BASE:ASSI:사정,MAXBASE:ASSI:사정,32
 ;PRINTFORM ({BASE:ASSI:사정, 5}/{MAXBASE:ASSI:사정, 5})
-IF FLAG:18 & 1 && TALENT:MASTER:120 == 0 && TALENT:MASTER:121 == 0
+IF FLAG:사정장소선택및임신기능 & 1 && TALENT:MASTER:120 == 0 && TALENT:MASTER:121 == 0
     ;PRINT 사정선택:
     ;CALL CHECK_SAMEN_PLACE
 ENDIF
@@ -3412,19 +3412,19 @@ ENDSELECT
 ;현재의 난이도를 문자열로 반환하는 함수.
 ;여기저기 난이도 보정이 걸리는 곳에서 출력용으로 쓴다.
 @PRINT_DIFFIICULT_TORIKOMODE
-IF FLAG:3 == 1
+IF FLAG:난이도 == 1
     LOCALS:0 = EASY
-ELSEIF FLAG:3 == 2
+ELSEIF FLAG:난이도 == 2
     LOCALS:0 = NORMAL
-ELSEIF FLAG:3 == 3
+ELSEIF FLAG:난이도 == 3
     LOCALS:0 = HARD
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     LOCALS:0 = LUNATIC
-ELSEIF FLAG:3 == 5
+ELSEIF FLAG:난이도 == 5
     LOCALS:0 = PHANTASM
-ELSEIF FLAG:3 == 6
+ELSEIF FLAG:난이도 == 6
     LOCALS:0 = PRO
-ELSEIF FLAG:3 == 7
+ELSEIF FLAG:난이도 == 7
     LOCALS:0 = ULTRA
 ELSE
     LOCALS:0 = UNKNOWN

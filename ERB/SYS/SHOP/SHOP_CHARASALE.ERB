@@ -22,7 +22,7 @@ REPEAT CHARANUM
         CONTINUE
     SIF TALENT:COUNT:164
         CONTINUE
-    IF FLAG:12 & 32
+    IF FLAG:SHOP이벤트확장 & 32
         SIF (CFLAG:COUNT:3 || TALENT:COUNT:161 || TALENT:COUNT:164 || TALENT:COUNT:169) && CFLAG:COUNT:20 & 16
             CONTINUE
     ELSE
@@ -38,7 +38,7 @@ LOCAL:1 = (LOCAL:2 - 1) / 20
 
 $PRINT_LIST
 DRAWLINE
-PRINTFORML \@(FLAG:12 & 32) ? 누구를 판매 또는 해방 # 판매\@하겠습니까? ＜page.{LOCAL+1}/{LOCAL:1+1}＞
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 32) ? 누구를 판매 또는 해방 # 판매\@하겠습니까? ＜page.{LOCAL+1}/{LOCAL:1+1}＞
 DRAWLINE
 CALL SALE_LIST, LOCAL
 DRAWLINE
@@ -61,7 +61,7 @@ ELSEIF RESULT <= 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
 ENDIF
 
 LOCAL = RESULT
-IF FLAG:12 & 32
+IF FLAG:SHOP이벤트확장 & 32
     IF NO:LOCAL == 401
         SIF FLAG:570 & 16
                 PRINTFORMW ※이 노예를 매각, 또는 해방하게 되면 %조사처리(NAME:MASTER,"는")% 【촉수사역술】을 잃게 됩니다.
@@ -85,7 +85,7 @@ ENDIF
 
 IF FLAG:570 & 8
     FLAG:570 &= 55
-    FLAG:0 = 1
+    FLAG:휴식 = 1
     BEGIN TURNEND
     RETURN 1
 ENDIF
@@ -234,7 +234,7 @@ IF CHARANUM < LOCAL:1
 ENDIF
 
 ;범용 리스트의 0～148에 소지하고 있지 않은 궁합이 좋은 캐릭터의 캐릭터 번호, LOCAL:2는 그 인원수
-IF LOCAL:2 > 0 && FLAG:4 < 50
+IF LOCAL:2 > 0 && FLAG:게임모드 < 50
     LOCAL:3 = GET_LIST(RAND:(LOCAL:2))
     CFLAG:ARG:155 |= 4
     PRINTL 
@@ -374,7 +374,7 @@ IF RESULT == 0
     TFLAG:0 = 0
 
     ;「매각시 대사 표시」가 유효하다
-    IF (FLAG:12 & 16384) == 0
+    IF (FLAG:SHOP이벤트확장 & 16384) == 0
         CALL SELF_KOJO, ARG, TFLAG:200, LOCAL
 ;    ELSEIF (TALENT:ARG:151 || TALENT:ARG:152) && TALENT:MASTER:158
 ;        PRINTFORML 매각되어 떠나는 %조사처리(CALLNAME:ARG,"가")% 문득 돌아보더니, 무슨 말을 한 것처럼 보였다.
@@ -416,7 +416,7 @@ IF RESULT == 0
     ENDIF
 
     ;각부
-    SIF FLAG:3 == 6 || FLAG:3 == 7
+    SIF FLAG:난이도 == 6 || FLAG:난이도 == 7
         CALL TIME_LIMIT_BONUS, ARG
 
     IF LOCAL:3 == 0
@@ -443,7 +443,7 @@ VARSET LOCALS, ""
 
 IF !TFLAG:207
     ;얀데레 모드 유효일 때에 수면제의 영향 없으면 TALENT:연모를 본다
-    IF FLAG:14 & 4 && TALENT:ARG:150 && EQUIP:ARG:14 == 0 && TALENT:ARG:160 == 0 && TALENT:ARG:164 == 0 && TALENT:ARG:167 == 0 && TALENT:ARG:168 == 0 && TALENT:ARG:169 == 0
+    IF FLAG:조교모드 & 4 && TALENT:ARG:150 && EQUIP:ARG:14 == 0 && TALENT:ARG:160 == 0 && TALENT:ARG:164 == 0 && TALENT:ARG:167 == 0 && TALENT:ARG:168 == 0 && TALENT:ARG:169 == 0
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")%, 매각하려고 하자 미친듯이 날뛰었다.
         ;심하게 당황하는 노예의 이벤트 대사 호출
         CALL SELF_KOJO, ARG, 194
@@ -472,7 +472,7 @@ IF !TFLAG:207
 ENDIF
 
 ;난이도 PHANTASM일 때 표시 없음
-SIF FLAG:3 == 5 && TFLAG:207 == 0
+SIF FLAG:난이도 == 5 && TFLAG:207 == 0
     TFLAG:207 = 1
 
 ;캐릭터 원가의 1/5을 베이스로 한다
@@ -2001,7 +2001,7 @@ SIF TALENT:ARG:830 && !TFLAG:207
 
 ;매각치 보정(HARD 이상이거나 NORMAL 이하로 내용이 다름)
 IF !TFLAG:207
-    IF FLAG:3 >= 3
+    IF FLAG:난이도 >= 3
         LOCAL:1 = PRICE_LIMIT_HARD(ARG, LOCAL:1)
     ELSE
         LOCAL:1 = PRICE_LIMIT_NORMAL(ARG, LOCAL:1)
@@ -2049,18 +2049,18 @@ RETURN LOCAL:1
 ;한 문자 변수 V를 매각한계치로, LOCAL을 해당 난이도의 기한일수에 사용
 @PRICE_LIMIT_HARD(ARG, ARG:1)
 #FUNCTION
-IF FLAG:3 == 3
+IF FLAG:난이도 == 3
     LOCALS:0 = HARD
     LOCAL = 99
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     LOCALS:0 = LUNATIC
     LOCAL = 90
-ELSEIF FLAG:3 == 5
+ELSEIF FLAG:난이도 == 5
     LOCALS:0 = PHANTASM
     LOCAL = 60
-ELSEIF FLAG:3 == 6
+ELSEIF FLAG:난이도 == 6
     LOCALS:0 = PRO
-ELSEIF FLAG:3 == 7
+ELSEIF FLAG:난이도 == 7
     LOCALS:0 = ULTRA
 ELSE
     LOCALS:0 = UNKNOWN
@@ -2088,7 +2088,7 @@ IF ARG:1 > LOCAL:1
         PRINTFORML %LOCALS:0, 16, RIGHT%：Counter Stop! {LOCAL:1}원
 ENDIF
 
-SIF FLAG:3 == 6 || FLAG:3 == 7
+SIF FLAG:난이도 == 6 || FLAG:난이도 == 7
     RETURNF 0
 
 ;일자 보너스(한계 보정 후에 적용된다)

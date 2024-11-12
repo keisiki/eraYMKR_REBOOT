@@ -230,7 +230,7 @@ ENDIF
 
 
 ;EASY가 아니면 제작자의 체력 소모, 기력 소모, 취해, 스트레스에 의한 마이나스 보정이 있다
-IF FLAG:3 != 1
+IF FLAG:난이도 != 1
     ;체력 소모 상태
     SIF MAXBASE:0 > 0 && (100 * BASE:0) / MAXBASE:0 <= 25
         TIMES LOCAL:2 , 0.90
@@ -537,7 +537,7 @@ IF LOCAL == 0 && (ABL:요리기능 >= 4 || LOCAL:1 == 1)
             IF (ITEM:61 > 0 || NOITEM) && TALENT:170
                 IF NOITEM == 0
                     ITEM:61 -= 1
-                    SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+                    SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                         CALL FILL_PLURAL_ITEM, 61
                 ENDIF
                 TFLAG:202 = 1
@@ -1800,7 +1800,7 @@ IF LOCAL == 0 && (ABL:요리기능 >= 4 || LOCAL:1 == 1)
         IF (ITEM:61 > 0 || NOITEM) && TALENT:170 && LOCAL:6 == 0
             IF NOITEM == 0
                 ITEM:61 -= 1
-                SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+                SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                     CALL FILL_PLURAL_ITEM, 61
             ENDIF
             TFLAG:202 = 1
@@ -2570,7 +2570,7 @@ ELSEIF LOCAL == 7 && TALENT:134
     IF (ITEM:61 > 0 || NOITEM) && TALENT:170 && RAND:4 == 0
         IF NOITEM == 0
             ITEM:61 -= 1
-            SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+            SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                 CALL FILL_PLURAL_ITEM, 61
         ENDIF
         TFLAG:202 = 1
@@ -2583,7 +2583,7 @@ ELSEIF LOCAL == 9 && (TALENT:135 || TALENT:136)
     IF (ITEM:61 > 0 || NOITEM) && TALENT:170 && RAND:4 == 0
         IF NOITEM == 0
             ITEM:61 = 1
-            SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+            SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                 CALL FILL_PLURAL_ITEM, 61
         ENDIF
         TFLAG:202 = 1
@@ -2596,7 +2596,7 @@ ELSE
     IF (ITEM:61 > 0 || NOITEM) && TALENT:170 && RAND:4 == 0
         IF NOITEM == 0
             ITEM:61 -= 1
-            SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+            SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                 CALL FILL_PLURAL_ITEM, 61
         ENDIF
         TFLAG:202 = 1
@@ -2712,7 +2712,7 @@ ELSE
 
     ELSEIF RESULT == 1
         LOCAL:3 = (LOCAL:2 * LOCAL:4) / 40
-        IF FLAG:3 >= 3
+        IF FLAG:난이도 >= 3
             LOCAL:3 = TABLE_CALC(LOCAL:3, 5000, 3)
             LOCAL:3 = TABLE_CALC(LOCAL:3, 10000, 5)
             LOCAL:3 = TABLE_CALC(LOCAL:3, 50000, 10)
@@ -2776,14 +2776,14 @@ ENDIF
 CALL COMMON_UP_EXP, TARGET, 70, LOCAL:5, 1
 
 ;조건을 채우면(자) 식후의 운동 이벤트에
-IF (TFLAG:202 >= 1 && TFLAG:202 <= 2) && ABL:욕망 > 0 && (FLAG:12 & 8192) == 0
+IF (TFLAG:202 >= 1 && TFLAG:202 <= 2) && ABL:욕망 > 0 && (FLAG:SHOP이벤트확장 & 8192) == 0
     CALL LUNCH_EXERCISE
 ELSE
     TFLAG:202 = 0
 ENDIF
 
 ;휴식 플래그를 세운다
-FLAG:0 = 1
+FLAG:휴식 = 1
 BEGIN TURNEND
 RETURN 1
 
@@ -2859,7 +2859,7 @@ SIF TALENT:MASTER:63
     TIMES LOCAL:1 , 1.20
 
 ;EASY가 아니면 제작자의 체력 소모, 기력 소모, 취해, 스트레스에 의한 마이나스 보정이 있다
-IF FLAG:3 != 1
+IF FLAG:난이도 != 1
     ;체력 소모 상태
     SIF MAXBASE:0 > 0 && (100 * BASE:0) / MAXBASE:0 <= 25
         TIMES LOCAL:1 , 0.90
@@ -3104,7 +3104,7 @@ ELSEIF ASSI >= 0 && RESULT == 1
 
 ELSEIF RESULT == 2
     LOCAL:2 = (LOCAL:1 * LOCAL:3) / 40
-    IF FLAG:3 >= 3
+    IF FLAG:난이도 >= 3
         LOCAL:2 = TABLE_CALC(LOCAL:2, 5000, 3)
         LOCAL:2 = TABLE_CALC(LOCAL:2, 10000, 5)
         LOCAL:2 = TABLE_CALC(LOCAL:2, 50000, 10)
@@ -3145,14 +3145,14 @@ SIF BUY_SKILL_MASTER_COOKING_PRICE() > 0 && ABL:MASTER:요리기능 < 5
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 조리의 오의에 손이 가닿을 것 같다는 생각이 들기 시작했다.
 
 ;조건을 채우면(자) 식후의 운동 이벤트에
-IF TFLAG:202 == 1 && ABL:욕망 > 0 && (FLAG:12 & 8192) == 0
+IF TFLAG:202 == 1 && ABL:욕망 > 0 && (FLAG:SHOP이벤트확장 & 8192) == 0
     CALL LUNCH_EXERCISE
 ELSE
     TFLAG:202 = 0
 ENDIF
 
 ;휴식 플래그를 세운다
-FLAG:0 = 1
+FLAG:휴식 = 1
 BEGIN TURNEND
 RETURN 1
 
@@ -3250,7 +3250,7 @@ IF RESULT == 0
         LOCAL += 5
 
     ;애널 자위 패치가 유효해 게다가 A조교 피르타가 오프라면이라면 애널 자위의 가능성 있어, 다만 통상보다 애널 자위의 가능성을 줄이고 있다
-    IF FLAG:15 & 4 && (FLAG:2 & 2) == 0
+    IF FLAG:커맨드확장 & 4 && (FLAG:VA이상조교필터 & 2) == 0
         ;자위, 애널 자위 판정. 포인트가 같은 경우는 자위 우선(C감각이 0의 경우는 애널 자위만)
         ;A감각 본다
         LOCAL:1 = ABL:A감각

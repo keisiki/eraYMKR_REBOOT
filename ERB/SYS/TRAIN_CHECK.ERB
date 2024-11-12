@@ -142,10 +142,10 @@ IF LOCAL:1 > 0 && LOCAL:1 != 100 && TFLAG:97 > 0
 ENDIF
 
 ;반발각인 보정
-TFLAG:97 -= (FLAG:3 < 3) ? 2 * MARK:반발각인 # 5 * MARK:반발각인
+TFLAG:97 -= (FLAG:난이도 < 3) ? 2 * MARK:반발각인 # 5 * MARK:반발각인
 
 ;非陥落なら, 恐怖각인 보정(難易度HARD 이상のみ)
-SIF FLAG:3 > 2 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0
+SIF FLAG:난이도 > 2 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0
     TFLAG:97 -= 2 * MARK:공포각인
 
 ;ふぉーゆーっ！がしつこすぎると嫌われる
@@ -233,7 +233,7 @@ SIF TEQUIP:90 == 0 && TFLAG:59 == 0
     TCVAR:98 += 1
 
 ;호감도 표시
-SIF FLAG:12 & 4 && TFLAG:97 != 0
+SIF FLAG:SHOP이벤트확장 & 4 && TFLAG:97 != 0
     PRINTFORML \@(TFLAG:97 >= 0) ? 호감도＋{TFLAG:97} # －호감도{-TFLAG:97}\@
 
 ;-------------------------------------------------
@@ -316,7 +316,7 @@ IF (TALENT:150 || TALENT:152) && TALENT:처녀 == 1 && TFLAG:2
     SIF TEQUIP:40 == 0 && TEQUIP:41 == 0 && TEQUIP:42 == 0 && TEQUIP:43 == 0 && TEQUIP:50 == 0 && TEQUIP:51 == 0 && TEQUIP:52 == 0 && TEQUIP:54 == 0 && TEQUIP:55 == 0 && TEQUIP:60 == 0 && TEQUIP:90 == 0
         LOCAL:1 += 1
     ;上の３条件を満たしてなおかつ調教テキストを表示する設定であるならば幸福を感じていることを表示し, なおかつ반발각인回避フラグを立てる
-    IF LOCAL:1 == 3 && FLAG:10
+    IF LOCAL:1 == 3 && FLAG:조교시텍스트표시
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%에게 처녀를 바칠 수 있어서 행복해하고 있다.
         TFLAG:105 = 1
     ENDIF
@@ -550,7 +550,7 @@ BASE:사정 += LOCAL
 TFLAG:91 = SAMEN_CHECK(TARGET)
 
 ;Ｃ계 확장コマンド有効の場合, Ｃ刺激かＧスポット（前立腺ぽく）責めでないと사정できない(感覚増幅薬効果中は사정できる)
-IF TFLAG:91 >= 1 && FLAG:15 & 1 && UP:0 == 0 && NOWEX:20 == 0 && SELECTCOM != 520 && SELECTCOM != 600 && SELECTCOM != 414 && TEQUIP:20 != 2
+IF TFLAG:91 >= 1 && FLAG:커맨드확장 & 1 && UP:0 == 0 && NOWEX:20 == 0 && SELECTCOM != 520 && SELECTCOM != 600 && SELECTCOM != 414 && TEQUIP:20 != 2
     SOURCE:18 += ((BASE:사정 * 30) / MAXBASE:사정)
     SOURCE:20 += ((BASE:사정 * 15) / MAXBASE:사정)
     TIMES SOURCE:18 , 1.10
@@ -775,7 +775,7 @@ ELSE
 ENDIF
 
 ;Ｂ계 확장コマンド有効の場合, Ｂ刺激がないと분유できない(感覚増幅薬効果中は분유できる)
-IF LOCAL:2 >= 1 && FLAG:15 & 8 && UP:3 == 0 && NOWEX:23 == 0
+IF LOCAL:2 >= 1 && FLAG:커맨드확장 & 8 && UP:3 == 0 && NOWEX:23 == 0
     SOURCE:18 += ((BASE:모유 * 10) / MAXBASE:모유)
     SOURCE:20 += ((BASE:모유 * 5) / MAXBASE:모유)
     TIMES SOURCE:18 , 1.10
@@ -889,7 +889,7 @@ ENDIF
 BASE:모유 = MIN(BASE:모유, EJAC - 1)
 
 ;母乳回収
-SIF LOCAL:2 > 0 && FLAG:12 & 8 && TEQUIP:68 == 0
+SIF LOCAL:2 > 0 && FLAG:SHOP이벤트확장 & 8 && TEQUIP:68 == 0
     CALL SWEET_POTATO_MILK
 
 ;-------------------------------------------------
@@ -974,7 +974,7 @@ ELSE
 ENDIF
 
 ;Ｃ계 확장コマンド有効の場合, Ｃ刺激がないと방뇨できない(感覚増幅薬効果中は방뇨できる)
-IF LOCAL:2 >= 1 && FLAG:15 & 1 && UP:0 == 0 && NOWEX:20 == 0
+IF LOCAL:2 >= 1 && FLAG:커맨드확장 & 1 && UP:0 == 0 && NOWEX:20 == 0
     SOURCE:18 += ((BASE:뇨의 * 30) / MAXBASE:뇨의)
     SOURCE:20 += ((BASE:뇨의 * 15) / MAXBASE:뇨의)
     TIMES SOURCE:18 , 1.10
@@ -2752,25 +2752,25 @@ IF TALENT:226
 ENDIF
 
 ;1週目
-IF FLAG:6 == 1
+IF FLAG:주회수 == 1
     FOR COUNT, 0, 4
         TIMES UP:COUNT , 1.20
     NEXT
 ENDIF
 ;HARD
-IF FLAG:3 == 3
+IF FLAG:난이도 == 3
     TIMES UP:0 , 0.60
     TIMES UP:1 , 0.60
     TIMES UP:2 , 0.60
     TIMES UP:3 , 0.60
 ;LUNATIC
-ELSEIF FLAG:3 == 4 || FLAG:3 == 6
+ELSEIF FLAG:난이도 == 4 || FLAG:난이도 == 6
     TIMES UP:0 , 0.50
     TIMES UP:1 , 0.50
     TIMES UP:2 , 0.50
     TIMES UP:3 , 0.50
 ;PHANTASM
-ELSEIF FLAG:3 >= 5
+ELSEIF FLAG:난이도 >= 5
     TIMES UP:0 , 0.40
     TIMES UP:1 , 0.40
     TIMES UP:2 , 0.40
@@ -3308,7 +3308,7 @@ IF TALENT:PLAYER:231
 ENDIF
 
 ;1주차
-IF FLAG:6 == 1
+IF FLAG:주회수 == 1
     FOR COUNT, 11, 18
         TIMES UP:COUNT , 1.25
     NEXT
@@ -3317,21 +3317,21 @@ IF FLAG:6 == 1
     TIMES UP:22 , 0.75
 ENDIF
 ;HARD
-IF FLAG:3 == 3
+IF FLAG:난이도 == 3
     TIMES UP:12 , 0.75
     TIMES UP:13 , 0.75
     TIMES UP:14 , 0.75
     TIMES UP:17 , 0.75
     TIMES UP:21 , 3.00
 ;LUNATIC
-ELSEIF FLAG:3 == 4 || FLAG:3 == 6
+ELSEIF FLAG:난이도 == 4 || FLAG:난이도 == 6
     TIMES UP:12 , 0.50
     TIMES UP:13 , 0.50
     TIMES UP:14 , 0.50
     TIMES UP:17 , 0.50
     TIMES UP:21 , 5.00
 ;PHANTASM
-ELSEIF FLAG:3 >= 5
+ELSEIF FLAG:난이도 >= 5
     TIMES UP:12 , 0.30
     TIMES UP:13 , 0.30
     TIMES UP:14 , 0.30
@@ -3474,7 +3474,7 @@ ENDIF
 IF MARK:반발각인 < LOCAL:1 && MARK:97 < LOCAL:1 && TFLAG:105 == 0
     TFLAG:44 = LOCAL:1
 ;HARD 이상の場合, あまりに反感および不快を味合わせると履歴に関わらず反発３を取得
-ELSEIF LOCAL >= 40000000 && FLAG:3 > 2 && TFLAG:105 == 0
+ELSEIF LOCAL >= 40000000 && FLAG:난이도 > 2 && TFLAG:105 == 0
     LOCAL:1 = 3
     TFLAG:44 = LOCAL:1
 ENDIF
@@ -3663,7 +3663,7 @@ ENDIF
 IF MARK:공포각인 < LOCAL:1 && MARK:96 < LOCAL:1 && TFLAG:105 == 0
     TFLAG:43 = LOCAL:1
 ;HARD 이상の場合, あまりに苦痛および恐怖を味合わせると履歴に関わらず恐怖３を取得
-ELSEIF LOCAL >= 50000000 && FLAG:3 > 2 && TFLAG:105 == 0
+ELSEIF LOCAL >= 50000000 && FLAG:난이도 > 2 && TFLAG:105 == 0
     LOCAL:1 = 3
     TFLAG:43 = LOCAL:1
 ENDIF
@@ -3716,7 +3716,7 @@ ELSE
 ENDIF
 
 ;難易度HARD 이상のとき不快のパラ上昇を見る
-IF FLAG:3 > 2
+IF FLAG:난이도 > 2
     IF UP:21 < 300
         TIMES LOCAL , 1.00
     ELSEIF UP:21 < 1000
@@ -3784,7 +3784,7 @@ ELSE
 ENDIF
 
 ;難易度HARD 이상のとき不快のパラ上昇を見る
-IF FLAG:3 > 2
+IF FLAG:난이도 > 2
     IF UP:21 < 300
         TIMES LOCAL , 1.00
     ELSEIF UP:21 < 1000
@@ -3868,7 +3868,7 @@ ELSE
 ENDIF
 
 ;難易度HARD 이상のとき反感のパラ上昇を見る
-IF FLAG:3 > 2
+IF FLAG:난이도 > 2
     IF UP:20 < 300
         TIMES LOCAL , 1.00
     ELSEIF UP:20 < 1000

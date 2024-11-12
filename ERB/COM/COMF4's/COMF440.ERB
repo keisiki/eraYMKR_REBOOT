@@ -12,7 +12,7 @@ TARGET:1 = -1
 SIF DITEMTYPE:999:440 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;조교 대상이 요우무 · 요우키でないとダメ
 SIF NO:TARGET != 19 && NO:TARGET != 70
@@ -42,7 +42,7 @@ IF NO:TARGET == 19
     ;요우무がオトコではなくて, 반령もオトコではない場合
     IF TALENT:120 == 0 && TALENT:LOCAL:120 == 0
         ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-        SIF FLAG:2 & 1
+        SIF FLAG:VA이상조교필터 & 1
             RETURN 0
         ;반령이 처녀라면 안 됨
         SIF TALENT:LOCAL:0
@@ -53,7 +53,7 @@ IF NO:TARGET == 19
     ;그 외의 경우
     ELSE
         ;Ａ조교 필터가 오프되어 있지 않으면 불가
-        SIF FLAG:2 & 2
+        SIF FLAG:VA이상조교필터 & 2
             RETURN 0
         ;반령에게 일정의 A경험이 필요
         SIF EXP:LOCAL:A경험 < EXPLV:3
@@ -84,7 +84,7 @@ ELSEIF NO:TARGET == 70
     ;요우키がオトコではなくて, 반령(요우키)もオトコではない場合
     IF TALENT:120 == 0 && TALENT:LOCAL:120 == 0
         ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-        SIF FLAG:2 & 1
+        SIF FLAG:VA이상조교필터 & 1
             RETURN 0
         ;반령이 처녀라면 안 됨
         SIF TALENT:LOCAL:0
@@ -95,7 +95,7 @@ ELSEIF NO:TARGET == 70
     ;그 외의 경우
     ELSE
         ;Ａ조교 필터가 오프되어 있지 않으면 불가
-        SIF FLAG:2 & 2
+        SIF FLAG:VA이상조교필터 & 2
             RETURN 0
         ;반령에게 일정의 A경험이 필요
         SIF EXP:LOCAL:A경험 < EXPLV:3
@@ -386,7 +386,7 @@ ENDIF
 ;-------------------------------------------------
 TFLAG:91 = SAMEN_CHECK(PLAYER)
 
-SIF TFLAG:91 >= 1 && ABL:순종 >= 3 && ABL:욕망 >= 3 && FLAG:10
+SIF TFLAG:91 >= 1 && ABL:순종 >= 3 && ABL:욕망 >= 3 && FLAG:조교시텍스트표시
     PRINTFORML %CALLNAME:TARGET%의 반령은 %CALLNAME:PLAYER%에게 끌려왔다….
 
 ;대량 사정
@@ -428,7 +428,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM440
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

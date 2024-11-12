@@ -6,7 +6,7 @@
 ;LOCAL:1 = 비디오의 처리　0-판다,1-색시와 감상,2-보관한다 (촬영 확장이 유효할 때만. 무효일 때에는 팔 수밖에 없다)
 @SELL_VIDEO
 ;컨피그에서 촬영 확장 기능을 유효로 하고 있는지 아닌지로 변화
-IF FLAG:15 & 128
+IF FLAG:커맨드확장 & 128
     ;ビデオを嫁と見る？YESなら口上へ, NOならビデオ売却, 一度見たビデオは消滅します
     IF TFLAG:121 > 1
         CALL LOOKVIDEO_1
@@ -18,7 +18,7 @@ ENDIF
 ;テープの減数は촬영後処理のため
 IF TEQUIP:50 && NOITEM == 0
     ITEM:75 -= 1
-    SIF FLAG:13 & 16 && MONEY:0 >= ITEMPRICE:75
+    SIF FLAG:아이템확장 & 16 && MONEY:0 >= ITEMPRICE:75
         CALL FILL_PLURAL_ITEM, 75
 ENDIF
 
@@ -29,7 +29,7 @@ SIF TFLAG:121 == 1
 LOCAL = CALC_VIDEO_PRICE(LOCAL:1)
 
 ;ビデオのボーナス
-IF FLAG:15 & 128
+IF FLAG:커맨드확장 & 128
     LOCAL = VIDEO_EDIT_BONUS(LOCAL)
 ELSE
     TIMES LOCAL , 1.50
@@ -43,7 +43,7 @@ ENDIF
 
 
 ;HARD 모드 이상
-SIF FLAG:3 >= 3 && LOCAL > 75000
+SIF FLAG:난이도 >= 3 && LOCAL > 75000
     LOCAL = 75000
 ;売却価格が1圓未満の場合は売り物にならないので処理終了(嫁と一緒に鑑賞や保管や경험値獲得処理もしない)
 IF LOCAL < 1
@@ -51,7 +51,7 @@ IF LOCAL < 1
     RETURN 0
 ENDIF
 
-IF FLAG:15 & 128
+IF FLAG:커맨드확장 & 128
     ;ビデオを売却する場合
     IF LOCAL:1 == 0
         ;イベント口上呼び出し
@@ -135,7 +135,7 @@ SIF ASSI >= 0
     LOCAL:2 = NO:ASSI
 
 ;eratohoYMかABNORMAL모드에서는 비디오 매매가에 출연 캐릭터의 가격의 일부를 가산 (노예と조수のみ)
-IF FLAG:4 == 0 || FLAG:4 == 1
+IF FLAG:게임모드 == 0 || FLAG:게임모드 == 1
     LOCAL:3 += MIN(ITEMPRICE:(100 + LOCAL:1) / 10, 1000)
     SIF ARG == 0
         PRINTFORML 출연자　　：%CALLNAME:TARGET, 28, LEFT%　＋{MIN(ITEMPRICE:(100 + LOCAL:1) / 10, 1000), 7}원
@@ -2059,7 +2059,7 @@ LOCAL:3 = MAX(LOCAL:3, 0)
 ;매각치 조정
 ;-------------------------------------------------
 ;HARD 모드 이상
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL:3 = TABLE_CALC(LOCAL:3, 5000, 2)
     LOCAL:3 = TABLE_CALC(LOCAL:3, 10000, 5)
     LOCAL:3 = TABLE_CALC(LOCAL:3, 50000, 10)
@@ -2273,7 +2273,7 @@ LOCAL = 0
 PRINTFORML %조사처리(CALLNAME:TARGET,"과")%의 난행을 녹화한 비디오를…
 PRINTL [0] - 판다
 PRINTFORML [1] - %조사처리(CALLNAME:TARGET,"과")% 같이 감상한다
-IF FLAG:12 & 8
+IF FLAG:SHOP이벤트확장 & 8
     PRINTFORML [2] - 비디오를 전시실에 보관한다\@(CFLAG:10 & 128) ? (%CALLNAME:TARGET%의 비디오는 보관되고 있습니다) # (%CALLNAME:TARGET%의 비디오는 없습니다)\@
 ELSE
     PRINTL [2] - 비디오를 보관한다(최대 한 편까지)
@@ -2287,7 +2287,7 @@ ELSEIF RESULT == 1
     LOCAL = 1
 ELSEIF RESULT == 2
     LOCAL = 2
-    SIF FLAG:12 & 8
+    SIF FLAG:SHOP이벤트확장 & 8
         TFLAG:996 |= 32
 ELSE
     GOTO INPUT_LOOP

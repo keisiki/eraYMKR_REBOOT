@@ -360,7 +360,7 @@ IF CFLAG:5231 == 0 && A == 1
 ENDIF
 
 ;난이도 변경 on로 말표시 오프의 경우에 경고
-IF FLAG:11 <= 0 && CFLAG:5231 == 1 && CFLAG:5232 == 0
+IF FLAG:캐릭터대사표시 <= 0 && CFLAG:5231 == 1 && CFLAG:5232 == 0
     DRAWLINE
     PRINTFORMW 【%NAME% 대사에 대해】
     PRINTFORMW 이 대사는, 대사 표시 오프시 부자연스러울수 있다.
@@ -375,10 +375,10 @@ IF FLAG:11 <= 0 && CFLAG:5231 == 1 && CFLAG:5232 == 0
         PRINTFORMW ―대사 표시 · 오프인 채 조교를 개시합니다―
     ELSEIF RESULT == 1
         PRINTFORMW ―대사 표시 · 온으로 변경. 조교를 개시합니다―
-        FLAG:11 = 1
+        FLAG:캐릭터대사표시 = 1
     ELSEIF RESULT == 2
         PRINTFORMW ―대사 표시 · MAX로 변경. 조교를 개시합니다―
-        FLAG:11 = 2
+        FLAG:캐릭터대사표시 = 2
     ELSEIF RESULT == 3
         PRINTFORMW ―대사 표시 · 오프인 채. 향후 이 경고를 표시하지 않습니다―
         CFLAG:5232 = 1
@@ -484,8 +484,8 @@ RETURN 1
 ;-------------------------------------------------
 @EVENTTRAIN
 #PRI
-SIF FLAG:11 == 0
-    FLAG:11 = 2
+SIF FLAG:캐릭터대사표시 == 0
+    FLAG:캐릭터대사표시 = 2
 
 ;코가사 전용의 처리
 ;코가사의 존재 판정
@@ -528,7 +528,7 @@ TARGET = LOCAL
 
 
 @EVENTTRAIN
-SIF FLAG:11 == 0
+SIF FLAG:캐릭터대사표시 == 0
     RETURN 0
 SIF NO != 72
     RETURN 0
@@ -685,7 +685,7 @@ SIF CFLAG:6000 == 0
 SIF EXP:절정경험 > CFLAG:5209 && (CFLAG:5228 & 1p11) == 0
     CFLAG:5228 |= 1p11
 
-;SIF FLAG:11 > 0
+;SIF FLAG:캐릭터대사표시 > 0
 ;    DRAWLINE
 
 LOCAL@KOJO_D_A4_72 = 0
@@ -714,7 +714,7 @@ CFLAG:6000 = 1
 ;        LOCAL@KOJO_D_A4_72 = 411
 ;        RETURN 0
 ;    ELSEIF RESULT == 1
-;        SIF FLAG:11 > 0
+;        SIF FLAG:캐릭터대사표시 > 0
 ;            DRAWLINE
 ;    ENDIF
 ;ENDIF
@@ -836,7 +836,7 @@ TRYCALL TARGETSAVE(72)
 ;--------------------------------------------------
 ;말표시 관계
 ;--------------------------------------------------
-SIF FLAG:11 == 0
+SIF FLAG:캐릭터대사표시 == 0
     RETURN 0
 SIF NO != 72
     RETURN 0
@@ -848,10 +848,10 @@ SIF CFLAG:9104 > 0
 TRYCALL KOJO_END_72
 
 ;말퇴피를 바탕으로 되돌린다
-SIF FLAG:11 == (-2)
-    FLAG:11 = 2
-SIF FLAG:11 == (-3)
-    FLAG:11 = 1
+SIF FLAG:캐릭터대사표시 == (-2)
+    FLAG:캐릭터대사표시 = 2
+SIF FLAG:캐릭터대사표시 == (-3)
+    FLAG:캐릭터대사표시 = 1
 
 ;조교한 일자를 보존
 CFLAG:5206 = DAY
@@ -859,7 +859,7 @@ CFLAG:5206 = DAY
 RETURN 0
 
 @KOJO_END_72
-;SIF FLAG:11 > 0
+;SIF FLAG:캐릭터대사표시 > 0
 ;    DRAWLINE
 
 ;강정신약의 반동이 남아 있는 경우
@@ -871,18 +871,18 @@ IF EX:21 || EX:22 || EX:23 || EX:30
     RETURN 0
 ;기브업 말을 표시하고 있는 경우
 ELSEIF LOCAL@KOJO_MESSAGE_MARKCNG_72:10 == 1
-    SIF FLAG:11 == 2
-        FLAG:11 = (-2)
-    SIF FLAG:11 == 1
-        FLAG:11 = (-3)
+    SIF FLAG:캐릭터대사표시 == 2
+        FLAG:캐릭터대사표시 = (-2)
+    SIF FLAG:캐릭터대사표시 == 1
+        FLAG:캐릭터대사표시 = (-3)
 ELSE
     ;없으면 뒷정리 말을 부른다
     TRYCCALL KOJO_A_3_2_72
         IF RESULT == 2
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ELSEIF RESULT == 1
             DRAWLINE
         ENDIF
@@ -939,22 +939,22 @@ IF SELECTCOM == 0
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5301 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5301 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「후아…… %CALLNAME:MASTER%……」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 적극적으로 혀로 핥자, 코가사도 거기에 응했다
             CFLAG:5301 = 5
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5301 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5301 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「응응읏…… 기분, 좋아……」
             PRINTFORMW 코가사는 %조사처리(CALLNAME:MASTER,"가")% 해주는 대로 있다
             CFLAG:5301 = 4
         ;屈服刻印Lv2
-        ELSEIF MARK:굴복각인 == 2 && (CFLAG:5301 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 2 && (CFLAG:5301 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「앗……햐아앗……」
             PRINTFORMW 코가사의 저항이 점차 약해지고 있다
             CFLAG:5301 = 3
         ;それ以外
-        ELSEIF MARK:굴복각인 <= 1 && (CFLAG:5301 <= 1 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 <= 1 && (CFLAG:5301 <= 1 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「싫엇, 놔줘!」
             PRINTFORMW 코가사는 있을까 말까한 힘으로 저항해 왔다
             CFLAG:5301 = 2
@@ -984,16 +984,16 @@ IF SELECTCOM == 1
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5302 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5302 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「싫어…… 기분좋아 ……기분좋아아……」
             CFLAG:5302 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5302 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5302 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「앗…… 거긴……」
             PRINTFORMW 주름을 핥을 때 마다, 흠칫흠칫하며 몸을 떨고 있다
             CFLAG:5302 = 3
         ;それ以外
-        ELSEIF CFLAG:5302 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5302 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「싫어어…… 이젠 핥지마……」
             CFLAG:5302 = 2
         ENDIF
@@ -1004,23 +1004,23 @@ ENDIF
 [SKIPSTART]
 IF SELECTCOM == 611 || (SELECTCOM == 1 && TEQUIP:56)
     ;恋慕+露出癖Lv3以上+C感覚Lv3以上
-    IF TALENT:150 == 1 && ABL:노출증 >= 3 && ABL:C감각 >= 3 && (CFLAG:5303 <= 5 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && ABL:노출증 >= 3 && ABL:C감각 >= 3 && (CFLAG:5303 <= 5 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5303 = 6
     ;恋慕
-    ELSEIF TALENT:150 == 1 && (CFLAG:5303 <= 4 || FLAG:11 == 2)
+    ELSEIF TALENT:150 == 1 && (CFLAG:5303 <= 4 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5303 = 5
     ;屈服刻印Lv3+露出癖Lv3以上+C感覚Lv3以上
-    ELSEIF MARK:굴복각인 == 3 && ABL:C감각 >= 3 && ABL:노출증 >= 3 && (CFLAG:5303 <= 3 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && ABL:C감각 >= 3 && ABL:노출증 >= 3 && (CFLAG:5303 <= 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5303 = 4
     ;屈服刻印Lv3
-    ELSEIF MARK:굴복각인 == 3 && (CFLAG:5303 <= 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && (CFLAG:5303 <= 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5303 = 3
     ;それ以外
-    ELSEIF CFLAG:5303 <= 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5303 <= 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5303 = 2
     ENDIF
@@ -1048,22 +1048,22 @@ IF SELECTCOM == 2
     ELSE
         P = PALAM:10 + UP:10
         ;恋慕+潤滑Lv2以上+A感覚Lv3以上
-        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5304 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5304 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「후아아…… 엉덩이 꾹꾹 문질러 주는거…… 기분좋아……」
             PRINTFORMW 단청하지 못한 얼굴로, 입에서 침을 흘리면서 쾌락을 탐하는 코가사
             PRINTFORMW 완전히 애널에 의한 쾌감에 눈을 뜬 모양이다
             CFLAG:5304 = 5
         ;恋慕+潤滑Lv2未満
-        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5304 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5304 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「응그읏…… 괘, 괜찮아……계속해줘……」
             PRINTFORMW %CALLNAME:MASTER%에게 신경쓰이게 하지 않도록, 코가사는 고통을 참고 있다
             CFLAG:5304 = 4
         ;潤滑Lv2以上＋A感覚Lv3以上
-        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5304 <= 2 || FLAG:11 == 2)
+        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5304 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「하앗…… 응아앗, 그 이상 만지작 거리지 말아줘어……」
             CFLAG:5304 = 3
         ;それ以外
-        ELSEIF CFLAG:5304 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5304 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「응크읏, 아파아……」
             CFLAG:5304 = 2
         ENDIF
@@ -1086,24 +1086,24 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0
     ;二回目以降
     ELSE
         ;恋慕＋自慰中毒Lv3以上
-        IF TALENT:150 == 1 && ABL:자위중독 >= 3 && (CFLAG:5305 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:자위중독 >= 3 && (CFLAG:5305 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「하아……하아……」
             PRINTFORMW 「%CALLNAME:MASTER%……이젠 더 참을수 없어……」
             PRINTFORMW 이미 질척질척하게 된 그곳을 만지작 거리면서, 코가사는 %조사처리(CALLNAME:MASTER,"를")% 원해했다
             CFLAG:5305 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5305 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5305 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「후아…, %CALLNAME:MASTER%, %CALLNAME:MASTER%……!」
             PRINTFORMW 코가사는 몇번이고 %CALLNAME:MASTER%의 이름를 부르면서, 스스로를 위로했다
             CFLAG:5305 = 4
         ;自慰中毒Lv3以上
-        ELSEIF ABL:자위중독 >= 3 && (CFLAG:5305 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:자위중독 >= 3 && (CFLAG:5305 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「(싫어어……)」
             PRINTFORMW 「(싫은데…… 어째서……!?)」
             PRINTFORMW 코가사는, 생각과는 반대로 그곳이 점점 젖어가는 것을 느꼈다
             CFLAG:5305 = 3
         ;それ以外
-        ELSEIF CFLAG:5305 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5305 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「싫어어…… 보지말아줘……」
             CFLAG:5305 = 2
         ENDIF
@@ -1120,19 +1120,19 @@ ELSEIF SELECTCOM == 7 && TEQUIP:54
     ;二回目以降
     ELSE
         ;恋慕＋自慰中毒Lv3以上
-        IF TALENT:150 == 1 && ABL:자위중독 >= 3 && (CFLAG:5306 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:자위중독 >= 3 && (CFLAG:5306 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5306 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5306 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5306 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5306 = 4
         ;自慰中毒Lv3以上
-        ELSEIF ABL:자위중독 >= 3 && (CFLAG:5306 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:자위중독 >= 3 && (CFLAG:5306 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5306 = 3
         ;それ以外
-        ELSEIF CFLAG:5306 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5306 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5306 = 2
         ENDIF
@@ -1160,15 +1160,15 @@ IF SELECTCOM == 5
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5307 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5307 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5307 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5307 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5307 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5307 = 3
         ;それ以外
-        ELSEIF CFLAG:5307 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5307 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5307 = 2
         ENDIF
@@ -1219,7 +1219,7 @@ IF SELECTCOM == 3
         ;巨乳の場合
         IF TALENT:112 == 1
             ;恋慕
-            IF TALENT:150 == 1 && (CFLAG:5308 <= 3 || FLAG:11 == 2)
+            IF TALENT:150 == 1 && (CFLAG:5308 <= 3 || FLAG:캐릭터대사표시 == 2)
                 IF RAND:3 == 0
                     PRINTFORMW 「우후후……」
                     PRINTFORMW 코가사는 %CALLNAME:MASTER%의 위에 올라 타있다
@@ -1250,27 +1250,27 @@ IF SELECTCOM == 3
                 ENDIF
                 CFLAG:5308 = 4
             ;B感覚Lv3以上
-            ELSEIF ABL:B감각 >= 3 && (CFLAG:5308 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:B감각 >= 3 && (CFLAG:5308 <= 2 || FLAG:캐릭터대사표시 == 2)
                 PRINTFORMW 「아아아앗……후아, 아아앙……」
                 CFLAG:5308 = 3
             ;それ以外
-            ELSEIF CFLAG:5308 <= 1 || FLAG:11 == 2
+            ELSEIF CFLAG:5308 <= 1 || FLAG:캐릭터대사표시 == 2
                 PRINTFORMW 「싫어…… 하지마……」
                 CFLAG:5308 = 2
             ENDIF
         ;貧乳の場合
         ELSE
             ;恋慕
-            IF TALENT:150 == 1 && (CFLAG:5308 <= 3 || FLAG:11 == 2)
+            IF TALENT:150 == 1 && (CFLAG:5308 <= 3 || FLAG:캐릭터대사표시 == 2)
                 PRINTFORMW 「후아…… %CALLNAME:MASTER%의 손, 기분좋아……」
                 PRINTFORMW 유두를 자극하자, 전격을 받은 것처럼 흠칫흠칫 떨었다
                 CFLAG:5308 = 4
             ;B感覚Lv3以上
-            ELSEIF ABL:B감각 >= 3 && (CFLAG:5308 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:B감각 >= 3 && (CFLAG:5308 <= 2 || FLAG:캐릭터대사표시 == 2)
                 PRINTFORMW 「앗…… 가슴, 뜨거워……」
                 CFLAG:5308 = 3
             ;それ以外
-            ELSEIF CFLAG:5308 <= 1 || FLAG:11 == 2
+            ELSEIF CFLAG:5308 <= 1 || FLAG:캐릭터대사표시 == 2
                 PRINTFORMW 「할꺼라면 상냥하게…… 응응읏……」
                 CFLAG:5308 = 2
             ENDIF
@@ -1301,7 +1301,7 @@ IF SELECTCOM == 6
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5309 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5309 <= 3 || FLAG:캐릭터대사표시 == 2)
             IF RAND:2 == 0
                 PRINTFORMW 「응읏……」
                 PRINTFORMW 코가사는 살짝 입술을 포개자, 그대로 안겨 왔다
@@ -1311,12 +1311,12 @@ IF SELECTCOM == 6
             ENDIF
             CFLAG:5309 = 4
         ;従順Lv2以上
-        ELSEIF ABL:순종 >=2 && (CFLAG:5309 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:순종 >=2 && (CFLAG:5309 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「응……츄우……」
             PRINTFORMW 코가사는 키스하는 것에 대해 저항하는 모습이 없어진 것 같다
             CFLAG:5309 = 3
         ;それ以外
-        ELSEIF CFLAG:5309 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5309 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「응응읏……」
             PRINTFORMW 코가사는 아직 약간 저항할 의사가 있는듯 하다
             CFLAG:5309 = 2
@@ -1356,7 +1356,7 @@ IF SELECTCOM == 9
     ;二回目以降
     ELSE
         ;恋慕＋欲情Lv3以上
-        IF TALENT:150 == 1 && PALAM:13 >= PALAMLV:3 && (CFLAG:5310 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && PALAM:13 >= PALAMLV:3 && (CFLAG:5310 <= 3 || FLAG:캐릭터대사표시 == 2)
             IF RAND:2 == 0
                 ;巨乳の場合
                 IF TALENT:112 == 1
@@ -1381,12 +1381,12 @@ IF SELECTCOM == 9
             ENDIF
             CFLAG:5310 = 4
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5310 <= 2 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5310 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「후후, 쉬는시간이야?」
             PRINTFORMW 「또 시작할거면 말해줘?」
             CFLAG:5310 = 3
         ;それ以外
-        ELSEIF CFLAG:5310 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5310 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「우우……」
             PRINTFORMW 코가사는 이쪽의 모습을 힐끔힐끔 엿보고 있다
             CFLAG:5310 = 2
@@ -1415,16 +1415,16 @@ IF SELECTCOM == 10
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5311 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5311 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아아앙…… 좀더, 좀더 해줘어……」
             PRINTFORMW 로터의 자극만으로는 부족했는지, 코가사는 %CALLNAME:MASTER%에게 보채기 시작했다
             CFLAG:5311 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5311 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5311 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아아아앗…… 부들부들거려……」
             CFLAG:5311 = 3
         ;それ以外
-        ELSEIF CFLAG:5311 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5311 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「우으……응……」
             CFLAG:5311 = 2
         ENDIF
@@ -1468,15 +1468,15 @@ IF SELECTCOM == 12 && TEQUIP:20 == 1
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5312 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5312 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아아아앙…… 대단해, 찌릿찌릿해……」
             CFLAG:5312 = 4
         ;V感覚Lv3以上
-        ELSEIF ABL:V감각 >= 3 && (CFLAG:5312 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:V감각 >= 3 && (CFLAG:5312 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아아앙, 왠지…… 좋을지도……」
             CFLAG:5312 = 3
         ;それ以外
-        ELSEIF CFLAG:5312 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5312 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「아그읏……으우…… 아파아……」
             CFLAG:5312 = 2
         ENDIF
@@ -1485,11 +1485,11 @@ IF SELECTCOM == 12 && TEQUIP:20 == 1
 ;脱着時
 ELSEIF SELECTCOM == 12 && TEQUIP:20 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5313 < 2 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5313 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「다음엔…… %CALLNAME:MASTER%것이, 갖구싶은데……」
         CFLAG:5313 = 2
     ;それ以外
-    ELSEIF CFLAG:5313 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5313 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 「하아…… 겨우 끝났다……」
         CFLAG:5313 = 1
     ENDIF
@@ -1515,15 +1515,15 @@ IF SELECTCOM == 11
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5314 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5314 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5314 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5314 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5314 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5314 = 3
         ;それ以外
-        ELSEIF CFLAG:5314 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5314 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5314 = 2
         ENDIF
@@ -1552,19 +1552,19 @@ IF SELECTCOM == 13 && TEQUIP:25 == 1
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上
-        IF TALENT:150 == 1 && ABL:A감각 >= 3 && (CFLAG:5315 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:A감각 >= 3 && (CFLAG:5315 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5315 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5315 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5315 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5315 = 4
         ;A感覚Lv3以上
-        ELSEIF ABL:A감각 >= 3 && (CFLAG:5315 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:5315 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5315 = 3
         ;それ以外
-        ELSEIF  CFLAG:5315 <= 1 || FLAG:11 == 2
+        ELSEIF  CFLAG:5315 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5315 = 2
         ENDIF
@@ -1573,15 +1573,15 @@ IF SELECTCOM == 13 && TEQUIP:25 == 1
 ;脱着時
 ELSEIF SELECTCOM == 13 && TEQUIP:25 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5316 < 3 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5316 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5316 = 3
     ;A感覚Lv3以上
-    ELSEIF ABL:A감각 >= 3 && (CFLAG:5316 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && (CFLAG:5316 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5316 = 2
     ;それ以外
-    ELSEIF CFLAG:5316 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5316 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5316 = 1
     ENDIF
@@ -1609,11 +1609,11 @@ IF SELECTCOM == 14 && TEQUIP:30 == 1
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5317 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5317 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5317 = 3
         ;それ以外
-        ELSEIF CFLAG:5317 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5317 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5317 = 2
         ENDIF
@@ -1622,11 +1622,11 @@ IF SELECTCOM == 14 && TEQUIP:30 == 1
 ;脱着時
 ELSEIF SELECTCOM == 14 && TEQUIP:30 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5318 < 2 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5318 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5318 = 2
     ;それ以外
-    ELSEIF CFLAG:5318 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5318 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5318 = 1
     ENDIF
@@ -1654,11 +1654,11 @@ IF SELECTCOM == 15 && TEQUIP:35 == 1
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5319 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5319 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5319 = 3
         ;それ以外
-        ELSEIF CFLAG:5319 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5319 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5319 = 2
         ENDIF
@@ -1667,11 +1667,11 @@ IF SELECTCOM == 15 && TEQUIP:35 == 1
 ;脱着時
 ELSEIF SELECTCOM == 15 && TEQUIP:35 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5320 < 2 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5320 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5320 = 2
     ;それ以外
-    ELSEIF CFLAG:5320 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5320 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5320 = 1
     ENDIF
@@ -1699,11 +1699,11 @@ IF SELECTCOM == 191 && TEQUIP:35 == 2
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5321 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5321 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5321 = 3
         ;それ以外
-        ELSEIF CFLAG:5321 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5321 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5321 = 2
         ENDIF
@@ -1712,11 +1712,11 @@ IF SELECTCOM == 191 && TEQUIP:35 == 2
 ;脱着時
 ELSEIF SELECTCOM == 191 && TEQUIP:35 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5322 < 2 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5322 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5322 = 2
     ;それ以外
-    ELSEIF CFLAG:5322 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5322 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5322 = 1
     ENDIF
@@ -1744,11 +1744,11 @@ IF SELECTCOM == 16 && TEQUIP:30 == 2
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5323 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5323 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5323 = 3
         ;それ以外
-        ELSEIF CFLAG:5323 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5323 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5323 = 2
         ENDIF
@@ -1757,11 +1757,11 @@ IF SELECTCOM == 16 && TEQUIP:30 == 2
 ;終了時
 ELSEIF SELECTCOM == 16 && TEQUIP:30 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5324 < 2 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5324 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5324 = 2
     ;それ以外
-    ELSEIF CFLAG:5324 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5324 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5324 = 1
     ENDIF
@@ -1813,7 +1813,7 @@ IF SELECTCOM == 20
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5325 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5325 <= 4 || FLAG:캐릭터대사표시 == 2)
             IF RAND:3 == 0
                 PRINTFORMW 「응…… 괜찮아, 와줘……」
                 PRINTFORMW 코가사를 침대에 눞히고, 다리를 벌리게 했다
@@ -1839,18 +1839,18 @@ IF SELECTCOM == 20
             ENDIF
             CFLAG:5325 = 5
         ;屈服刻印Lv3＋V感覚Lv3以上
-        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:5325 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:5325 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 코가사의 질내에 삽입하자, 상태가 평소랑은 다르다는걸 눈치챘다
             PRINTFORMW 「응크읏……하아……아아앗……」
             PRINTFORMW 안쪽을 쑤셔질 때마다, 작게 신음을 내는 코가사였다
             CFLAG:5325 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5325 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5325 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「싫어어……앗, 아아앙……」
             PRINTFORMW 「(거짓말…… 느낄리가…… 느낄리 없는데……)」
             CFLAG:5325 = 3
         ;それ以外
-        ELSEIF CFLAG:5325 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5325 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「싫어어! 빼줘, 빼줘!」
             CFLAG:5325 = 2
         ENDIF
@@ -1908,7 +1908,7 @@ IF SELECTCOM == 21
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5326 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5326 <= 4 || FLAG:캐릭터대사표시 == 2)
             IF RAND:3 == 0
                 PRINTFORMW 「아아아앗, 안쪽까지…… 가득……」
                 PRINTFORMW 평상시 자극받지 않는 곳까지 찔려서, 코가사는 기쁨에 잠겨 있었다
@@ -1939,17 +1939,17 @@ IF SELECTCOM == 21
             ENDIF
             CFLAG:5326 = 5
         ;屈服刻印Lv3＋V感覚Lv3以上
-        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:5326 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:5326 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「하아아……응응읏……」
             PRINTFORMW 스스로 엉덩이를 내밀자, 그대로 그곳이 빼꼼하고 벌려저 있었다
             PRINTFORMW 더이상, 쾌락의 특급열차를 멈출수 없을 것 같다
             CFLAG:5326 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5326 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5326 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「이, 이런짓을…… 아앗」
             CFLAG:5326 = 3
         ;それ以外
-        ELSEIF CFLAG:5326 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5326 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「싫어어…… 왠지, 동물같아……」
             CFLAG:5326 = 2
         ENDIF
@@ -1978,22 +1978,22 @@ IF SELECTCOM == 30
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上
-        IF TALENT:150 == 1 && ABL:A감각 >= 3 && (CFLAG:5327 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:A감각 >= 3 && (CFLAG:5327 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「하아아앗…… 이거…… 기분좋을지도……」
             PRINTFORMW 코가사는 스스로 허리를 흔들며 항문을 쥐어 졸라, %CALLNAME:MASTER%에게 한층 더 쾌락을 주려 했다
             CFLAG:5327 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5327 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5327 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「후아…… 아직 아프지만…… 견딜테니……까」
             PRINTFORMW 낯설은 감각에 당황하면서도, 코가사는 애널에서 오는 쾌락을 느끼고 있었다
             CFLAG:5327 = 4
         ;A感覚Lv3以上
-        ELSEIF ABL:A감각 >= 3 && (CFLAG:5327 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:5327 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「(우으…… 엉덩이까지 범해지는데……)」
             PRINTFORMW 「(어째서…… 기분좋은거야……)」
             CFLAG:5327 = 3
         ;それ以外
-        ELSEIF  CFLAG:5327 <= 1 || FLAG:11 == 2
+        ELSEIF  CFLAG:5327 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「아으읏…… 아파…… 아파아……」
             PRINTFORMW 아직은 쾌락보다는 고통쪽이 더 심한듯 하다
             CFLAG:5327 = 2
@@ -2022,11 +2022,11 @@ IF SELECTCOM == 25
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5328 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5328 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5328 = 3
         ;それ以外
-        ELSEIF CFLAG:5328 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5328 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5328 = 2
         ENDIF
@@ -2058,7 +2058,7 @@ IF SELECTCOM == 40
     ;二回目以降
     ELSE
         ;恋慕＋奉仕精神Lv5
-        IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5329 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5329 <= 3 || FLAG:캐릭터대사표시 == 2)
             IF RAND:3 == 0
                 PRINTFORMW 열심히 페니스를 문지르던 코가사였지만, 갑자기 속도를 떨어뜨렸다
                 PRINTFORMW 초조해 하는 감각이 계속될 쯔음, 천천히 다시 손을 움직이기 시작했다
@@ -2084,12 +2084,12 @@ IF SELECTCOM == 40
             ENDIF
             CFLAG:5329 = 4
         ;奉仕精神Lv3以上
-        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5329 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5329 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「응읏…… 좀더 빨리? 아님 천천히?」
             PRINTFORMW 점차 요령을 터득한 듯 하다
             CFLAG:5329 = 3
         ;それ以外
-        ELSEIF CFLAG:5329 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5329 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「응응읏…… 어떻게 해야할지 모르겠어……」
             CFLAG:5329 = 2
         ENDIF
@@ -2121,7 +2121,7 @@ IF SELECTCOM == 41
     ;二回目以降
     ELSE
         ;恋慕＋奉仕精神Lv5
-        IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5330 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5330 <= 3 || FLAG:캐릭터대사표시 == 2)
             IF RAND:3 == 0
                 PRINTFORMW 코가사가 페니스를 꺼내자, 아직 발기한 상태는 아니었다
                 PRINTFORMW 부드럽게 어루어만지면서, 귀두에 키스를 하며 애무해갔다
@@ -2139,12 +2139,12 @@ IF SELECTCOM == 41
             ENDIF
             CFLAG:5330 = 4
         ;奉仕精神Lv3以上
-        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5330 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5330 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「응읍……쮸읍, 응응……」
             PRINTFORMW 코가사는 눈을 치켜 뜨면서 이쪽을 올려 보면서 봉사하고 있다
             CFLAG:5330 = 3
         ;それ以外
-        ELSEIF CFLAG:5330 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5330 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「하음……응읏……」
             PRINTFORMW 아직 어색한 움직임이었지만, 거부감은 없는듯 하다
             CFLAG:5330 = 2
@@ -2192,7 +2192,7 @@ IF SELECTCOM == 42
         ;巨乳の場合
         IF TALENT:112 == 1
             ;恋慕＋奉仕精神Lv5
-            IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5331 <= 3 || FLAG:11 == 2)
+            IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5331 <= 3 || FLAG:캐릭터대사표시 == 2)
                 ;調教開始直後、「パイズリ」を選択した場合
                 IF PREVCOM == -1 && (ASSIPLAY == 0 && TFLAG:133 == 0)
                     PRINTFORMW 흔들흔들하고 흔들리는 코가사의 가슴에, 단번에 발기한 %CALLNAME:MASTER%의 페니스
@@ -2262,30 +2262,30 @@ IF SELECTCOM == 42
                 ENDIF
                 CFLAG:5331 = 4
             ;奉仕精神Lv3以上
-            ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5331 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5331 <= 2 || FLAG:캐릭터대사표시 == 2)
                 PRINTFORMW 「이렇게 사이에 두어서…… 움직이면……」
                 PRINTFORMW 「엄청, 어렵네…… 응, 하아……」
                 CFLAG:5331 = 3
             ;それ以外
-            ELSEIF  CFLAG:5331 <= 1 || FLAG:11 == 2
+            ELSEIF  CFLAG:5331 <= 1 || FLAG:캐릭터대사표시 == 2
                 PRINTFORMW 「우우…… 또야……?」
                 CFLAG:5331 = 2
             ENDIF
         ;貧乳の場合
         ELSE
             ;恋慕＋奉仕精神Lv5
-            IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5331 <= 3 || FLAG:11 == 2)
+            IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5331 <= 3 || FLAG:캐릭터대사표시 == 2)
                 PRINTFORMW 「내 가슴, 작아서 미안해……?」
                 PRINTFORMW 「그래도 이렇게 해서…… 응읏」
                 PRINTFORMW 유두를 중심적으로 해서 문지르고 있는 탓인지, 코가사도 민감하게 반응하는듯 했다
                 CFLAG:5331 = 4
             ;奉仕精神Lv3以上
-            ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5331 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5331 <= 2 || FLAG:캐릭터대사표시 == 2)
                 PRINTFORMW 「응읏…… 하아…… 이렇게 해서……」
                 PRINTFORMW 가슴이 작아도 어떻게 문질러야 하는지 배우고 있는듯 하다
                 CFLAG:5331 = 3
             ;それ以外
-            ELSEIF  CFLAG:5331 <= 1 || FLAG:11 == 2
+            ELSEIF  CFLAG:5331 <= 1 || FLAG:캐릭터대사표시 == 2
                 PRINTFORMW 「하우……」
                 PRINTFORMW 코가사는 시종일관 고갤 떨군 상태였다
                 CFLAG:5331 = 2
@@ -2320,12 +2320,12 @@ IF SELECTCOM == 43
     ;二回目以降
     ELSE
         ;恋慕有り
-        IF TALENT:150 == 1 && (CFLAG:5332 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5332 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「후아…… 대단해, 이거……」
             PRINTFORMW 「왠지…… 정말로 질내에 들어오는것만 같아……」
             CFLAG:5332 = 3
         ;それ以外
-        ELSEIF CFLAG:5332 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5332 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「이런게 기분 좋은건가……」
             CFLAG:5332 = 2
         ENDIF
@@ -2373,7 +2373,7 @@ IF SELECTCOM == 24
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5333 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5333 <= 4 || FLAG:캐릭터대사표시 == 2)
             IF RAND:3 == 0
                 PRINTFORMW 「하후우…… 이렇게 하면, %CALLNAME:MASTER%의 기분좋아 보이는 얼굴도 잘보여……」
                 PRINTFORMW 「좀더…… 좀더 움직여 줄께……♪」
@@ -2394,15 +2394,15 @@ IF SELECTCOM == 24
             ENDIF
             CFLAG:5333 = 5
         ;屈服刻印Lv3+奉仕精神Lv3以上＋V感覚Lv3以上
-        ELSEIF MARK:굴복각인 == 3 && ABL:봉사정신 >= 3 && ABL:V감각 >= 3 && (CFLAG:5333 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:봉사정신 >= 3 && ABL:V감각 >= 3 && (CFLAG:5333 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아아아앗…… 지금, 안에서 떨렸어……」
             CFLAG:5333 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5333 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5333 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「응응읏…… 후아, 앗……」
             CFLAG:5333 = 3
         ;それ以外
-        ELSEIF CFLAG:5333 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5333 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「으그윽…… 싫어……」
             CFLAG:5333 = 2
         ENDIF
@@ -2432,21 +2432,21 @@ IF SELECTCOM == 220
     ;二回目以降
     ELSE
         ;恋慕＋マゾっ気Lv5以上
-        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5334 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5334 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아앗! 맞는거 기분좋아아! 기분좋아아아!!」
             PRINTFORMW 완전히 '매저키스트'에 눈을 뜬 코가사의 몸에, 새빨간 손자국을 남겼다
             CFLAG:5334 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5334 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5334 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「우우…… 조금만 더 상냥하게 해줘……」
             CFLAG:5334 = 4
         ;マゾっ気Lv3以上
-        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5334 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5334 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「우웃……아앗……」
             PRINTFORMW 「(어라…… 아픈데…… 어째서……?)」
             CFLAG:5334 = 3
         ;それ以外
-        ELSEIF CFLAG:5334 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5334 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「으우우웃…… 이제 그만해, 그만해줘……」
             PRINTFORMW 코가사는 부들부들 울면서 간절히 부탁했다
             CFLAG:5334 = 2
@@ -2475,23 +2475,23 @@ IF SELECTCOM == 221
     ;二回目以降
     ELSE
         ;恋慕＋マゾっ気Lv5以上
-        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5335 <= 5 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5335 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5335 = 6
         ;恋慕＋マゾっ気Lv3以上
-        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5335 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5335 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5335 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5335 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5335 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5335 = 4
         ;マゾっ気Lv3以上
-        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5335 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5335 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5335 = 3
         ;それ以外
-        ELSEIF CFLAG:5335 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5335 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5335 = 2
         ENDIF
@@ -2519,23 +2519,23 @@ IF SELECTCOM == 222
     ;二回目以降
     ELSE
         ;恋慕＋マゾっ気Lv5以上
-        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5336 <= 5 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5336 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5336 = 6
         ;恋慕＋マゾっ気Lv3以上
-        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5336 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5336 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5336 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5336 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5336 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5336 = 4
         ;マゾっ気Lv3以上
-        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5336 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5336 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5336 = 3
         ;それ以外
-        ELSEIF CFLAG:5336 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5336 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5336 = 2
         ENDIF
@@ -2564,23 +2564,23 @@ IF SELECTCOM == 225 && TEQUIP:41 == 1
     ;二回目以降
     ELSE
         ;恋慕＋マゾっ気Lv5以上
-        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5337 <= 5 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5337 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5337 = 6
         ;恋慕＋マゾっ気Lv3以上
-        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5337 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5337 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5337 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5337 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5337 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5337 = 4
         ;マゾっ気Lv3以上
-        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5337 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5337 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5337 = 3
         ;それ以外
-        ELSEIF CFLAG:5337 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5337 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5337 = 2
         ENDIF
@@ -2589,11 +2589,11 @@ IF SELECTCOM == 225 && TEQUIP:41 == 1
 ;終了時
 ELSEIF SELECTCOM == 225 && TEQUIP:41 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5338 < 2 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5338 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5338 = 2
     ;それ以外
-    ELSEIF CFLAG:5338 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5338 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5338 = 1
     ENDIF
@@ -2621,23 +2621,23 @@ IF SELECTCOM == 224 && TEQUIP:40
     ;二回目以降
     ELSE
         ;恋慕＋マゾっ気Lv5以上
-        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5339 <= 5 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5339 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5339 = 6
         ;恋慕＋マゾっ気Lv3以上
-        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5339 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5339 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5339 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5339 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5339 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5339 = 4
         ;マゾっ気Lv3以上
-        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5339 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5339 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5339 = 3
         ;それ以外
-        ELSEIF CFLAG:5339 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5339 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5339 = 2
         ENDIF
@@ -2646,11 +2646,11 @@ IF SELECTCOM == 224 && TEQUIP:40
 ;終了時
 ELSEIF SELECTCOM == 224 && TEQUIP:40 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5340 < 2 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5340 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5340 = 2
     ;それ以外
-    ELSEIF CFLAG:5340 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5340 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5340 = 1
     ENDIF
@@ -2678,23 +2678,23 @@ IF SELECTCOM == 226 && TEQUIP:42 == 1
     ;二回目以降
     ELSE
         ;恋慕＋マゾっ気Lv5以上
-        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5341 <= 5 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5341 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5341 = 6
         ;恋慕＋マゾっ気Lv3以上
-        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5341 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5341 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5341 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5341 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5341 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5341 = 4
         ;マゾっ気Lv3以上
-        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5341 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5341 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5341 = 3
         ;それ以外
-        ELSEIF CFLAG:5341 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5341 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5341 = 2
         ENDIF
@@ -2703,11 +2703,11 @@ IF SELECTCOM == 226 && TEQUIP:42 == 1
 ;終了時
 ELSEIF SELECTCOM == 226 && TEQUIP:42 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5342 < 2 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5342 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5342 = 2
     ;それ以外
-    ELSEIF CFLAG:5342 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5342 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5342 = 1
     ENDIF
@@ -2735,19 +2735,19 @@ IF SELECTCOM == 174 && TEQUIP:25 == 7
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
-        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5343 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5343 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5343 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5343 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5343 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5343 = 4
         ;A感覚Lv3以上＋マゾっ気Lv3以上
-        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5343 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5343 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5343 = 3
         ;それ以外
-        ELSEIF  CFLAG:5343 <= 1 || FLAG:11 == 2
+        ELSEIF  CFLAG:5343 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5343 = 2
         ENDIF
@@ -2775,19 +2775,19 @@ IF TEQUIP:25 == 0 && SELECTCOM == 174
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
-        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5344 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5344 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5344 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5344 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5344 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5344 = 4
         ;A感覚Lv3以上＋マゾっ気Lv3以上
-        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5344 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5344 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5344 = 3
         ;それ以外
-        ELSEIF  CFLAG:5344 <= 1 || FLAG:11 == 2
+        ELSEIF  CFLAG:5344 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5344 = 2
         ENDIF
@@ -2810,12 +2810,12 @@ IF SELECTCOM == 60
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5345 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5345 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「후우……응읏……」
             PRINTFORMW 「미안해…… 나 잘 안젖어서……」
             CFLAG:5345 = 3
         ;それ以外
-        ELSEIF CFLAG:5345 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5345 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「또 그거야……?」
             CFLAG:5345 = 2
         ENDIF
@@ -2842,12 +2842,12 @@ IF SELECTCOM == 61
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5346 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5346 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「사실은 %CALLNAME:MASTER%에게 느끼게 해주고 싶은데……」
             PRINTFORMW 「아니면, %조사처리(CALLNAME:MASTER,"는")% 날 더 기분좋게 해주고 싶은거야?」
             CFLAG:5346 = 3
         ;それ以外
-        ELSEIF CFLAG:5346 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5346 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「앗……, 또……」
             CFLAG:5346 = 2
         ENDIF
@@ -2881,12 +2881,12 @@ IF SELECTCOM == 100 && TEQUIP:50
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5347 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5347 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「……찍은건 팔아버리는거지?」
             PRINTFORMW 「……안돼?」
             CFLAG:5347 = 3
         ;それ以外
-        ELSEIF CFLAG:5347 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5347 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「우으읏…… 와아아아앗……」
             PRINTFORMW 촬영시작 전에, 먼저 코가사의 비위를 맞춰주는 %CALLNAME:MASTER%였다
             CFLAG:5347 = 2
@@ -2915,15 +2915,15 @@ IF SELECTCOM == 104 && TEQUIP:52
     ;二回目以降
     ELSE
         ;恋慕＋露出癖Lv3以上
-        IF TALENT:150 == 1 && ABL:노출증 >= 3 && (CFLAG:5348 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:노출증 >= 3 && (CFLAG:5348 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5348 = 4
         ;露出癖Lv3以上
-        ELSEIF ABL:노출증 >= 3 && (CFLAG:5348 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:노출증 >= 3 && (CFLAG:5348 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5348 = 3
         ;それ以外
-        ELSEIF CFLAG:5348 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5348 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5348 = 2
         ENDIF
@@ -2932,11 +2932,11 @@ IF SELECTCOM == 104 && TEQUIP:52
 ;終了時
 ELSEIF SELECTCOM == 104 && TEQUIP:52 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5349 < 2 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5349 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5349 = 2
     ;それ以外
-    ELSEIF CFLAG:5349 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5349 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5349 = 1
     ENDIF
@@ -2963,11 +2963,11 @@ IF SELECTCOM == 26
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5350 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5350 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5350 = 3
         ;それ以外
-        ELSEIF CFLAG:5350 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5350 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5350 = 2
         ENDIF
@@ -2995,15 +2995,15 @@ IF SELECTCOM == 230
     ;二回目以降
     ELSE
         ;恋慕＋奉仕精神Lv5
-        IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5351 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5351 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5351 = 4
         ;奉仕精神Lv3以上
-        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5351 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5351 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5351 = 3
         ;それ以外
-        ELSEIF CFLAG:5351 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5351 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5351 = 2
         ENDIF
@@ -3031,23 +3031,23 @@ IF SELECTCOM == 231 || SELECTCOM == 232 || SELECTCOM == 233
     ;二回目以降
     ELSE
         ;恋慕＋マゾっ気Lv5以上
-        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5352 <= 5 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:마조끼 >= 5 && (CFLAG:5352 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5352 = 6
         ;恋慕＋マゾっ気Lv3以上
-        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5352 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && ABL:마조끼 >= 3 && (CFLAG:5352 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5352 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5352 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5352 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5352 = 4
         ;マゾっ気Lv3以上
-        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5352 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:5352 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5352 = 3
         ;それ以外
-        ELSEIF CFLAG:5352 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5352 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5352 = 2
         ENDIF
@@ -3075,15 +3075,15 @@ IF SELECTCOM == 500 && TEQUIP:90
     ;二回目以降
     ELSE
         ;恋慕+触手経験20以上（消費基本値が三分の一になる）
-        IF TALENT:150 == 1 && EXP:촉수경험 >= 20 && (CFLAG:5353 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && EXP:촉수경험 >= 20 && (CFLAG:5353 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「후아…… 촉수로 하는거…… 버릇되버렸어어……」
             CFLAG:5353 = 4
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5353 <= 2 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5353 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「우우…… 실은 %CALLNAME:MASTER%걸 갖구 싶은데……」
             CFLAG:5353 = 3
         ;それ以外
-        ELSEIF CFLAG:5353 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5353 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「싫어어, 무서워 살려줘엇!」
             CFLAG:5353 = 2
         ENDIF
@@ -3092,17 +3092,17 @@ IF SELECTCOM == 500 && TEQUIP:90
 ;終了時
 ELSEIF SELECTCOM == 500 && TEQUIP:90 == 0
     ;恋慕+触手経験20以上（消費基本値が三分の一になる）
-    IF TALENT:150 == 1 && EXP:촉수경험 >= 20 && (CFLAG:5354 < 3 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && EXP:촉수경험 >= 20 && (CFLAG:5354 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「하아…… 하아……」
         PRINTFORMW 「벌써, 끝났어……?」
         CFLAG:5354 = 3
     ;恋慕
-    ELSEIF TALENT:150 == 1 && (CFLAG:5354 < 2 || FLAG:11 == 2)
+    ELSEIF TALENT:150 == 1 && (CFLAG:5354 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「우와아아앙…… 무서웠어……」
         PRINTFORMW 코가사는 그대로 %CALLNAME:MASTER%에게 안겨왔다
         CFLAG:5354 = 2
     ;それ以外
-    ELSEIF CFLAG:5354 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5354 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 「우아아앗…… 으아아아앙……」
         PRINTFORMW 어지간히 무서웠는지, 우는걸 그칠때까지 상당한 시간이 필요했다……
         CFLAG:5354 = 1
@@ -3123,15 +3123,15 @@ IF SELECTCOM == 4 || SELECTCOM == 600
     ;Gスポット刺激
     IF SELECTCOM == 600 || (PREVCOM == 4 && ABL:PLAYER:기교 >= 3 || PREVCOM == 600)
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5356 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5356 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5356 = 4
         ;V感覚Lv3以上
-        ELSEIF ABL:V감각 >= 3 && (CFLAG:5356 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:V감각 >= 3 && (CFLAG:5356 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5356 = 3
         ;それ以外
-        ELSEIF CFLAG:5356 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5356 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5356 = 2
         ENDIF
@@ -3169,15 +3169,15 @@ IF SELECTCOM == 4 || SELECTCOM == 600
         ;二回目以降
         ELSE
             ;恋慕
-            IF TALENT:150 == 1 && (CFLAG:5355 <= 3 || FLAG:11 == 2)
+            IF TALENT:150 == 1 && (CFLAG:5355 <= 3 || FLAG:캐릭터대사표시 == 2)
                 PRINTFORMW 
                 CFLAG:5355 = 4
             ;V感覚Lv3以上
-            ELSEIF ABL:V감각 >= 3 && (CFLAG:5355 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:V감각 >= 3 && (CFLAG:5355 <= 2 || FLAG:캐릭터대사표시 == 2)
                 PRINTFORMW 
                 CFLAG:5355 = 3
             ;それ以外
-            ELSEIF CFLAG:5355 <= 1 || FLAG:11 == 2
+            ELSEIF CFLAG:5355 <= 1 || FLAG:캐릭터대사표시 == 2
                 PRINTFORMW 
                 CFLAG:5355 = 2
             ENDIF
@@ -3206,11 +3206,11 @@ IF SELECTCOM == 351 &&  TEQUIP:54
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5357 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5357 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5357 = 3
         ;それ以外
-        ELSEIF CFLAG:5357 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5357 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5357 = 2
         ENDIF
@@ -3238,19 +3238,19 @@ IF SELECTCOM == 22
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5358 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5358 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5358 = 5
         ;屈服刻印Lv3＋V感覚Lv3以上
-        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:5358 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:5358 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5358 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5358 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5358 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5358 = 3
         ;それ以外
-        ELSEIF CFLAG:5358 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5358 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5358 = 2
         ENDIF
@@ -3280,19 +3280,19 @@ IF SELECTCOM == 23 && TEQUIP:56 == 0
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5359 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5359 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5359 = 5
         ;屈服刻印Lv3＋V感覚Lv3以上
-        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:5359 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:5359 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5359 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5359 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5359 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5359 = 3
         ;それ以外
-        ELSEIF CFLAG:5359 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5359 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5359 = 2
         ENDIF
@@ -3315,23 +3315,23 @@ IF SELECTCOM == 612 || (SELECTCOM == 23 && TEQUIP:56)
     ;二回目以降
     ELSE
         ;恋慕+露出癖Lv3以上+V感覚Lv3以上
-        IF TALENT:150 == 1 && ABL:노출증 >= 3 && ABL:V감각 >= 3 && (CFLAG:5360 <= 5 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:노출증 >= 3 && ABL:V감각 >= 3 && (CFLAG:5360 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5360 = 6
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5360 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5360 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5360 = 5
         ;屈服刻印Lv3+露出癖Lv3以上+V感覚Lv3以上
-        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && ABL:노출증 >= 3 && (CFLAG:5360 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && ABL:노출증 >= 3 && (CFLAG:5360 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5360 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5360 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5360 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5360 = 3
         ;それ以外
-        ELSEIF CFLAG:5360 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5360 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5360 = 2
         ENDIF
@@ -3359,15 +3359,15 @@ IF SELECTCOM == 352
     ;二回目以降
     ELSE
         ;恋慕＋奉仕精神Lv5
-        IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5361 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:봉사정신 >= 5 && (CFLAG:5361 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5361 = 4
         ;奉仕精神Lv3以上
-        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5361 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5361 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5361 = 3
         ;それ以外
-        ELSEIF  CFLAG:5361 <= 1 || FLAG:11 == 2
+        ELSEIF  CFLAG:5361 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5361 = 2
         ENDIF
@@ -3382,19 +3382,19 @@ ENDIF
 [SKIPSTART]
 IF SELECTCOM == 62
     ;恋慕+おもらし癖
-    IF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:5362 < 4 || FLAG:11 == 2)
+    IF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:5362 < 4 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5362 = 4
     ;恋慕
-    ELSEIF TALENT:150 && (CFLAG:5362 < 3 || FLAG:11 == 2)
+    ELSEIF TALENT:150 && (CFLAG:5362 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5362 = 3
     ;屈服刻印Lv3
-    ELSEIF MARK:굴복각인 == 3 && (CFLAG:5362 < 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && (CFLAG:5362 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5362 = 2
     ;それ以外
-    ELSEIF CFLAG:5362 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5362 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5362 = 1
     ENDIF
@@ -3423,11 +3423,11 @@ IF SELECTCOM == 103 && TEQUIP:56
     ;二回目以降
     ELSE
         ;恋慕+露出癖Lv3以上
-        IF TALENT:150 == 1 && ABL:노출증 >= 3 && (CFLAG:5363 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:노출증 >= 3 && (CFLAG:5363 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5363 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5363 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5363 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5363 = 4
         ;露出癖Lv3以上
@@ -3435,7 +3435,7 @@ IF SELECTCOM == 103 && TEQUIP:56
             PRINTFORMW 
             CFLAG:5363 = 3
         ;それ以外
-        ELSEIF CFLAG:5272 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5272 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5363 = 2
         ENDIF
@@ -3457,11 +3457,11 @@ ELSEIF SELECTCOM == 103 && TEQUIP:56 == 0
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5364 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5364 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5364 = 3
         ;それ以外
-        ELSEIF CFLAG:5364 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5364 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5364 = 2
         ENDIF
@@ -3489,11 +3489,11 @@ IF SELECTCOM == 350 && TEQUIP:53
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5365 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5365 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5365 = 3
         ;それ以外
-        ELSEIF CFLAG:5365 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5365 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5365 = 2
         ENDIF
@@ -3515,11 +3515,11 @@ ELSEIF SELECTCOM == 350 && TEQUIP:53 == 0
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5366 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5366 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5366 = 3
         ;それ以外
-        ELSEIF CFLAG:5366 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5366 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5366 = 2
         ENDIF
@@ -3548,11 +3548,11 @@ IF SELECTCOM == 90 && TEQUIP:59
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5367 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5367 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5367 = 3
         ;それ以外
-        ELSEIF CFLAG:5367 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5367 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5367 = 2
         ENDIF
@@ -3574,11 +3574,11 @@ ELSEIF SELECTCOM == 90 && TEQUIP:59 == 0
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5368 <= 2 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5368 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5368 = 3
         ;それ以外
-        ELSEIF CFLAG:5368 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5368 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5368 = 2
         ENDIF
@@ -3596,46 +3596,46 @@ IF SELECTCOM == 111 || SELECTCOM == 620
     ;強制放尿
     IF SELECTCOM == 620 || SELECTCOM == 111 && ((TALENT:오줌싸개버릇 == 0 && ABL:순종 >= 4 && ABL:욕망 >= 3 && ABL:마조끼 >= 3) || (TALENT:오줌싸개버릇 && TEQUIP:12 == 0))
         ;恋慕+おもらし癖+野外プレイ
-        IF TALENT:150 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:5370 < 5 || FLAG:11 == 2)
+        IF TALENT:150 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:5370 < 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5370 = 5
         ;恋慕+おもらし癖
-        ELSEIF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:5370 < 4 || FLAG:11 == 2)
+        ELSEIF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:5370 < 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5370 = 4
         ;露出癖Lv5
-        ELSEIF ABL:노출증 >= 5 && (CFLAG:5370 < 3 || FLAG:11 == 2)
+        ELSEIF ABL:노출증 >= 5 && (CFLAG:5370 < 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5370 = 3
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5370 < 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5370 < 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5370 = 2
         ;それ以外
-        ELSEIF CFLAG:5370 < 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5370 < 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5370 = 1
         ENDIF
     ;放尿
     ELSE
         ;恋慕+おもらし癖+野外プレイ
-        IF TALENT:150 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:5369 < 5 || FLAG:11 == 2)
+        IF TALENT:150 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:5369 < 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5369 = 5
         ;恋慕+おもらし癖
-        ELSEIF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:5369 < 4 || FLAG:11 == 2)
+        ELSEIF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:5369 < 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5369 = 4
         ;露出癖Lv5
-        ELSEIF ABL:노출증 >= 5 && (CFLAG:5369 < 3 || FLAG:11 == 2)
+        ELSEIF ABL:노출증 >= 5 && (CFLAG:5369 < 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5369 = 3
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5369 < 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5369 < 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5369 = 2
         ;それ以外
-        ELSEIF CFLAG:5369 < 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5369 < 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5369 = 1
         ENDIF
@@ -3666,15 +3666,15 @@ IF SELECTCOM == 180
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5371 <= 3 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5371 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5371 = 4
         ;A感覚Lv3以上
-        ELSEIF ABL:A감각 >= 3 && (CFLAG:5371 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:5371 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5371 = 3
         ;それ以外
-        ELSEIF CFLAG:5371 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5371 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5371 = 2
         ENDIF
@@ -3703,19 +3703,19 @@ IF SELECTCOM == 172 && TEQUIP:25 == 5
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
-        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5372 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5372 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5372 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5372 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5372 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5372 = 4
         ;A感覚Lv3以上＋マゾっ気Lv3以上
-        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5372 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5372 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5372 = 3
         ;それ以外
-        ELSEIF  CFLAG:5372 <= 1 || FLAG:11 == 2
+        ELSEIF  CFLAG:5372 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5372 = 2
         ENDIF
@@ -3724,15 +3724,15 @@ IF SELECTCOM == 172 && TEQUIP:25 == 5
 ;脱着時
 ELSEIF SELECTCOM == 172 && TEQUIP:25 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5373 < 3 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5373 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5373 = 3
     ;A感覚Lv3以上＋マゾっ気Lv3以上
-    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5373 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5373 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5373 = 2
     ;それ以外
-    ELSEIF CFLAG:5373 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5373 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5373 = 1
     ENDIF
@@ -3760,19 +3760,19 @@ IF SELECTCOM == 30
     ELSE
         P = PALAM:10 + UP:10
         ;恋慕+潤滑Lv2以上
-        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5374 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5374 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5374 = 5
         ;恋慕+潤滑Lv2未満
-        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5374 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5374 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5374 = 4
         ;潤滑Lv2以上＋A感覚Lv3以上
-        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5374 <= 2 || FLAG:11 == 2)
+        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5374 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5374 = 3
         ;それ以外
-        ELSEIF CFLAG:5374 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5374 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5374 = 2
         ENDIF
@@ -3801,19 +3801,19 @@ IF SELECTCOM == 31
     ELSE
         P = PALAM:10 + UP:10
         ;恋慕+潤滑Lv2以上
-        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5375 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5375 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5375 = 5
         ;恋慕+潤滑Lv2未満
-        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5375 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5375 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5375 = 4
         ;潤滑Lv2以上＋A感覚Lv3以上
-        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5375 <= 2 || FLAG:11 == 2)
+        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5375 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5375 = 3
         ;それ以外
-        ELSEIF CFLAG:5375 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5375 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5375 = 2
         ENDIF
@@ -3842,19 +3842,19 @@ IF SELECTCOM == 32
     ELSE
         P = PALAM:10 + UP:10
         ;恋慕+潤滑Lv2以上
-        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5376 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5376 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5376 = 5
         ;恋慕+潤滑Lv2未満
-        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5376 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5376 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5376 = 4
         ;潤滑Lv2以上＋A感覚Lv3以上
-        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5376 <= 2 || FLAG:11 == 2)
+        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5376 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5376 = 3
         ;それ以外
-        ELSEIF CFLAG:5376 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5376 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5376 = 2
         ENDIF
@@ -3883,19 +3883,19 @@ IF SELECTCOM == 33
     ELSE
         P = PALAM:10 + UP:10
         ;恋慕+潤滑Lv2以上
-        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5377 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5377 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5377 = 5
         ;恋慕+潤滑Lv2未満
-        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5377 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5377 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5377 = 4
         ;潤滑Lv2以上＋A感覚Lv3以上
-        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5377 <= 2 || FLAG:11 == 2)
+        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5377 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5377 = 3
         ;それ以外
-        ELSEIF CFLAG:5377 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5377 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5377 = 2
         ENDIF
@@ -3924,19 +3924,19 @@ IF SELECTCOM == 34
     ELSE
         P = PALAM:10 + UP:10
         ;恋慕+潤滑Lv2以上
-        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5378 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && P >= PALAMLV:2 && (CFLAG:5378 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5378 = 5
         ;恋慕+潤滑Lv2未満
-        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5378 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && P < PALAMLV:2 && (CFLAG:5378 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5378 = 4
         ;潤滑Lv2以上＋A感覚Lv3以上
-        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5378 <= 2 || FLAG:11 == 2)
+        ELSEIF P >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:5378 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5378 = 3
         ;それ以外
-        ELSEIF CFLAG:5378 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5378 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5378 = 2
         ENDIF
@@ -3965,19 +3965,19 @@ IF SELECTCOM == 175 && TEQUIP:25 == 8
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
-        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5379 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5379 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5379 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5379 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5379 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5379 = 4
         ;A感覚Lv3以上＋マゾっ気Lv3以上
-        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5379 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5379 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5379 = 3
         ;それ以外
-        ELSEIF  CFLAG:5379 <= 1 || FLAG:11 == 2
+        ELSEIF  CFLAG:5379 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5379 = 2
         ENDIF
@@ -3986,15 +3986,15 @@ IF SELECTCOM == 175 && TEQUIP:25 == 8
 ;脱着時
 ELSEIF SELECTCOM == 175 && TEQUIP:25 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5380 < 3 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5380 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5380 = 3
     ;A感覚Lv3以上＋マゾっ気Lv3以上
-    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5380 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5380 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5380 = 2
     ;それ以外
-    ELSEIF CFLAG:5380 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5380 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5380 = 1
     ENDIF
@@ -4022,19 +4022,19 @@ IF SELECTCOM == 173 && TEQUIP:25 == 6
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
-        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5381 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5381 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5381 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5381 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5381 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5381 = 4
         ;A感覚Lv3以上＋マゾっ気Lv3以上
-        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5381 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5381 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5381 = 3
         ;それ以外
-        ELSEIF  CFLAG:5381 <= 1 || FLAG:11 == 2
+        ELSEIF  CFLAG:5381 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5381 = 2
         ENDIF
@@ -4043,15 +4043,15 @@ IF SELECTCOM == 173 && TEQUIP:25 == 6
 ;脱着時
 ELSEIF SELECTCOM == 173 && TEQUIP:25 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5382 < 3 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5382 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5382 = 3
     ;A感覚Lv3以上＋マゾっ気Lv3以上
-    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5382 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5382 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5382 = 2
     ;それ以外
-    ELSEIF CFLAG:5382 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5382 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5382 = 1
     ENDIF
@@ -4079,19 +4079,19 @@ IF SELECTCOM == 171 && TEQUIP:25 == 4
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上
-        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5383 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5383 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5383 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5383 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5383 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5383 = 4
         ;A感覚Lv3以上＋マゾっ気Lv3以上
-        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5383 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5383 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5383 = 3
         ;それ以外
-        ELSEIF  CFLAG:5383 <= 1 || FLAG:11 == 2
+        ELSEIF  CFLAG:5383 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5383 = 2
         ENDIF
@@ -4100,15 +4100,15 @@ IF SELECTCOM == 171 && TEQUIP:25 == 4
 ;脱着時
 ELSEIF SELECTCOM == 171 && TEQUIP:25 == 0
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:5384 < 3 || FLAG:11 == 2)
+    IF TALENT:150 == 1 && (CFLAG:5384 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5384 = 3
     ;A感覚Lv3以上＋マゾっ気Lv3以上
-    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5384 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:5384 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:5384 = 2
     ;それ以外
-    ELSEIF CFLAG:5384 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:5384 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:5384 = 1
     ENDIF
@@ -4135,19 +4135,19 @@ IF SELECTCOM == 44
     ;二回目以降
     ELSE
         ;恋慕+従順Lv5以上
-        IF TALENT:150 == 1 && ABL:순종 >= 5 && (CFLAG:5385 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:순종 >= 5 && (CFLAG:5385 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5385 = 5
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5385 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5385 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5385 = 4
         ;奉仕精神Lv3以上
-        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5385 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:5385 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5385 = 3
         ;それ以外
-        ELSEIF CFLAG:5385 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5385 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5385 = 2
         ENDIF
@@ -4179,19 +4179,19 @@ IF SELECTCOM == 610
     ;二回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5386 <= 4 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && (CFLAG:5386 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5386 = 5
         ;V感覚Lv3以上＋A感覚Lv3以上
-        ELSEIF ABL:V감각 >= 3 && ABL:A감각 >= 3 && (CFLAG:5386 <= 3 || FLAG:11 == 2)
+        ELSEIF ABL:V감각 >= 3 && ABL:A감각 >= 3 && (CFLAG:5386 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5386 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5386 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5386 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5386 = 3
         ;それ以外
-        ELSEIF CFLAG:5386 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5386 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5386 = 2
         ENDIF
@@ -4218,23 +4218,23 @@ IF SELECTCOM == 602
             RETURN 0
     ELSE
         ;恋慕+奉仕精神Lv3以上+C感覚Lv3以上
-        IF TALENT:150 == 1 && ABL:봉사정신 >= 3 && ABL:C감각 >= 3 && (CFLAG:5387 <= 5 || FLAG:11 == 2)
+        IF TALENT:150 == 1 && ABL:봉사정신 >= 3 && ABL:C감각 >= 3 && (CFLAG:5387 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5387 = 6
         ;恋慕
-        ELSEIF TALENT:150 == 1 && (CFLAG:5387 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:150 == 1 && (CFLAG:5387 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5387 = 5
         ;屈服刻印Lv3+奉仕精神Lv3以上+C感覚Lv3以上
-        ELSEIF MARK:굴복각인 == 3 && ABL:봉사정신 >= 3 && ABL:C감각 >= 3 && (CFLAG:5387 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:봉사정신 >= 3 && ABL:C감각 >= 3 && (CFLAG:5387 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5387 = 4
         ;屈服刻印Lv3
-        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5387 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:5387 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:5387 = 3
         ;それ以外
-        ELSEIF CFLAG:5387 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:5387 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:5387 = 2
         ENDIF
@@ -4265,10 +4265,10 @@ IF EXP:V경험 && TALENT:처녀 && TFLAG:1
     ;처녀 상실 커맨드 말
     TRYCCALL KOJO_A_4_1_72
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4317,10 +4317,10 @@ ENDIF
 IF CFLAG:5221 & 1p0
     TRYCCALL KOJO_D_A1_72
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4335,10 +4335,10 @@ TRYCALL KOJO_MESSAGE_COM_72_2
 CALL KOJO_MESSAGE_COM_72_3
 
 ;말퇴피를 바탕으로 되돌린다
-SIF FLAG:11 == (-2)
-    FLAG:11 = 2
-SIF FLAG:11 == (-3)
-    FLAG:11 = 1
+SIF FLAG:캐릭터대사표시 == (-2)
+    FLAG:캐릭터대사표시 = 2
+SIF FLAG:캐릭터대사표시 == (-3)
+    FLAG:캐릭터대사표시 = 1
 
 ;※추가 기능 A2 「장비품 텍스트 추가 기능」유효시
 ;아이템 장비 상태(바이브래이터·미약등 )에 응해 지문을 자동 생성합니다
@@ -4430,10 +4430,10 @@ LOCAL:1 = 0
 IF SELECTCOM >= 2000
     TRYCCALL KOJO_D_D2_72
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
             ;삽입 서포트 플레이가 발생하면(자) 로컬 플래그 1을 세운다
             SIF RESULT == 2
                 LOCAL:1 = 1
@@ -4446,10 +4446,10 @@ IF SELECTCOM >= 2000
 ELSEIF SELECTCOM > 0
     TRYCCALL KOJO_D_D1_72
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
             ;삽입 재즈 악단 플레이가 발생하면(자) 로컬 플래그를 세운다
             SIF RESULT == 2
                 LOCAL = 1
@@ -4461,13 +4461,13 @@ ENDIF
 
 ;※추가 기능 C1 「오나금기능」유효시
 ;오나금커맨드 말을 부른다
-IF CFLAG:5223 & 1p0 && FLAG:11 > (-2)
+IF CFLAG:5223 & 1p0 && FLAG:캐릭터대사표시 > (-2)
     TRYCCALL KOJO_D_C1C_72
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4476,13 +4476,13 @@ ENDIF
 
 ;※추가 기능 B4 「안면별 대  조수 말」유효시
 ;안면별 커맨드 말을 부른다
-IF CFLAG:5222 & 1p4 && FLAG:11 > (-2)
+IF CFLAG:5222 & 1p4 && FLAG:캐릭터대사표시 > (-2)
     TRYCCALL KOJO_D_B4B_72
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4493,10 +4493,10 @@ ENDIF
 ;플래그 체크를 위해, 특수 말시도 말표시를 오프로 해 부른다
 TRYCCALLFORM KOJO_C_2_72
     IF RESULT
-        SIF FLAG:11 == 2
-            FLAG:11 = (-2)
-        SIF FLAG:11 == 1
-            FLAG:11 = (-3)
+        SIF FLAG:캐릭터대사표시 == 2
+            FLAG:캐릭터대사표시 = (-2)
+        SIF FLAG:캐릭터대사표시 == 1
+            FLAG:캐릭터대사표시 = (-3)
     ENDIF
 CATCH
     RESULT = 0
@@ -4508,10 +4508,10 @@ ENDCATCH
 ;플래그 체크를 위해, 특수 말시도 말표시를 오프로 해 부른다
 TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_PLAY{NO:PLAYER}
     IF RESULT
-        SIF FLAG:11 == 2
-            FLAG:11 = (-2)
-        SIF FLAG:11 == 1
-            FLAG:11 = (-3)
+        SIF FLAG:캐릭터대사표시 == 2
+            FLAG:캐릭터대사표시 = (-2)
+        SIF FLAG:캐릭터대사표시 == 1
+            FLAG:캐릭터대사표시 = (-3)
     ENDIF
 CATCH
     RESULT = 0
@@ -4522,10 +4522,10 @@ ENDCATCH
 IF !ASSIPLAY
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_PLAYMASTER
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4537,10 +4537,10 @@ ENDIF
 IF TALENT:PLAYER:120
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_PLAYMALE
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4552,10 +4552,10 @@ ENDIF
 IF TALENT:PLAYER:121
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_PLAYTWIN
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4567,10 +4567,10 @@ ENDIF
 IF EXIST_PENIS(PLAYER)
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_PLAYMALE
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4582,10 +4582,10 @@ ENDIF
 IF !TALENT:PLAYER:120
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_PLAYFEMALE
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4599,10 +4599,10 @@ ENDIF
 IF TALENT:120
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_MALE
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4614,10 +4614,10 @@ ENDIF
 IF TALENT:121
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_TWIN
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4629,10 +4629,10 @@ ENDIF
 IF EXIST_PENIS(TARGET)
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_PLAYMALE
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4645,10 +4645,10 @@ ENDIF
 IF !TALENT:120
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_FEMALE
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4660,10 +4660,10 @@ ENDIF
 IF LUST(2)
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_LUST2
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4675,10 +4675,10 @@ ENDIF
 IF TALENT:150
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_LOVE
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4690,10 +4690,10 @@ ENDIF
 IF LUST()
     TRYCCALLFORM KOJO_C_2_72_COM{SELECTCOM}_LUST1
         IF RESULT
-            SIF FLAG:11 == 2
-                FLAG:11 = (-2)
-            SIF FLAG:11 == 1
-                FLAG:11 = (-3)
+            SIF FLAG:캐릭터대사표시 == 2
+                FLAG:캐릭터대사표시 = (-2)
+            SIF FLAG:캐릭터대사표시 == 1
+                FLAG:캐릭터대사표시 = (-3)
         ENDIF
     CATCH
         RESULT = 0
@@ -4710,7 +4710,7 @@ ENDCATCH
 
 ;※추가 기능 A3 「자동 허덕여 기능」유효시
 ;자동 허덕여 함수를 부른다
-SIF CFLAG:5221 & 1p4 && FLAG:11 > 0 && RESULT == 0
+SIF CFLAG:5221 & 1p4 && FLAG:캐릭터대사표시 > 0 && RESULT == 0
     TRYCALL TRAINVOICE
 
 RETURN 0
@@ -4738,10 +4738,10 @@ TRYCALL COMBOPLAY_2
 
 ;볼 개그·촉수구욕·촉수 관통중은 말을 퇴피
 IF TEQUIP:42 == 1 || TEQUIP:42 == 2 || TEQUIP:25 == 3
-    SIF FLAG:11 == 1
-        FLAG:11 = (-3)
-    SIF FLAG:11 == 2
-        FLAG:11 = (-2)
+    SIF FLAG:캐릭터대사표시 == 1
+        FLAG:캐릭터대사표시 = (-3)
+    SIF FLAG:캐릭터대사표시 == 2
+        FLAG:캐릭터대사표시 = (-2)
 ENDIF
 
 ;시나리오 말을 부른다
@@ -5163,10 +5163,10 @@ CFLAG:5230 = 0
 CFLAG:5204 = 0
 
 ;말퇴피를 바탕으로 되돌린다
-SIF FLAG:11 == (-2)
-    FLAG:11 = 2
-SIF FLAG:11 == (-3)
-    FLAG:11 = 1
+SIF FLAG:캐릭터대사표시 == (-2)
+    FLAG:캐릭터대사표시 = 2
+SIF FLAG:캐릭터대사표시 == (-3)
+    FLAG:캐릭터대사표시 = 1
 
 RETURN 0
 
@@ -5179,10 +5179,10 @@ RETURN 0
 @KOJO_MESSAGE_MARKCNG_72
 ;볼 개그·촉수구욕·촉수 관통중은 말을 퇴피
 IF TEQUIP:42 == 1 || TEQUIP:42 == 2 || TEQUIP:25 == 3
-    SIF FLAG:11 == 1
-        FLAG:11 = (-3)
-    SIF FLAG:11 == 2
-        FLAG:11 = (-2)
+    SIF FLAG:캐릭터대사표시 == 1
+        FLAG:캐릭터대사표시 = (-3)
+    SIF FLAG:캐릭터대사표시 == 2
+        FLAG:캐릭터대사표시 = (-2)
 ENDIF
 
 
@@ -5197,10 +5197,10 @@ TRYCALL KOJO_A_5_72
 IF RESULT == 1
     TFLAG:44 = 0
     IF A == 0
-        SIF FLAG:11 == 1
-            FLAG:11 = (-3)
-        SIF FLAG:11 == 2
-            FLAG:11 = (-2)
+        SIF FLAG:캐릭터대사표시 == 1
+            FLAG:캐릭터대사표시 = (-3)
+        SIF FLAG:캐릭터대사표시 == 2
+            FLAG:캐릭터대사표시 = (-2)
     ENDIF
     ;오나 궁중에서 연모 없음이라고 방폐합니다
     IF CFLAG:5208 && TALENT:150 == 0 && CFLAG:5223 & 1p0
@@ -5215,10 +5215,10 @@ ENDIF
 IF RESULT == 2
     TFLAG:42 = 0
     IF A == 0
-        SIF FLAG:11 == 1
-            FLAG:11 = (-3)
-        SIF FLAG:11 == 2
-            FLAG:11 = (-2)
+        SIF FLAG:캐릭터대사표시 == 1
+            FLAG:캐릭터대사표시 = (-3)
+        SIF FLAG:캐릭터대사표시 == 2
+            FLAG:캐릭터대사표시 = (-2)
     ENDIF
     ;다시 각인계 말을 부른다
     RESULT = 0
@@ -5229,10 +5229,10 @@ ENDIF
 IF RESULT == 3
     TFLAG:41 = 0
     IF A == 0
-        SIF FLAG:11 == 1
-            FLAG:11 = (-3)
-        SIF FLAG:11 == 2
-            FLAG:11 = (-2)
+        SIF FLAG:캐릭터대사표시 == 1
+            FLAG:캐릭터대사표시 = (-3)
+        SIF FLAG:캐릭터대사표시 == 2
+            FLAG:캐릭터대사표시 = (-2)
     ENDIF
     ;다시 각인계 말을 부른다
     RESULT = 0
@@ -5244,10 +5244,10 @@ SIF RESULT == 4
     TFLAG:40 = 0
 
 ;말퇴피를 바탕으로 되돌린다
-SIF FLAG:11 == (-2)
-    FLAG:11 = 2
-SIF FLAG:11 == (-3)
-    FLAG:11 = 1
+SIF FLAG:캐릭터대사표시 == (-2)
+    FLAG:캐릭터대사표시 = 2
+SIF FLAG:캐릭터대사표시 == (-3)
+    FLAG:캐릭터대사표시 = 1
 
 ;LOCAL:10 = 0
 ;기브업 말을 부른다
@@ -5255,7 +5255,7 @@ SIF FLAG:11 == (-3)
 ;    DRAWLINE
 ;    RESULT = 0
 ;    TRYCALL KOJO_A_3_1_72
-;    SIF RESULT != 2 && FLAG:11 > 0
+;    SIF RESULT != 2 && FLAG:캐릭터대사표시 > 0
 ;        DRAWLINE
 ;
 ;    ;조르는 말의 첫회 판정을 갱신(다음의 커맨드가 없어지기 (위해)때문에)
@@ -5290,10 +5290,10 @@ SIF FLAG:11 == (-3)
 @SELF_KOJO_K72
 ;볼 개그·촉수구욕·촉수 관통중은 말을 퇴피
 IF TEQUIP:42 == 1 || TEQUIP:42 == 2 || TEQUIP:25 == 3
-    SIF FLAG:11 == 1
-        FLAG:11 = (-3)
-    SIF FLAG:11 == 2
-        FLAG:11 = (-2)
+    SIF FLAG:캐릭터대사표시 == 1
+        FLAG:캐릭터대사표시 = (-3)
+    SIF FLAG:캐릭터대사표시 == 2
+        FLAG:캐릭터대사표시 = (-2)
 ENDIF
 
 ;통칭 변경 함수를 부른다
@@ -5337,10 +5337,10 @@ RESULT = 0
 TRYCALL SELF_KOJO_2_K72
 
 ;말퇴피를 바탕으로 되돌린다
-SIF FLAG:11 == (-2)
-    FLAG:11 = 2
-SIF FLAG:11 == (-3)
-    FLAG:11 = 1
+SIF FLAG:캐릭터대사표시 == (-2)
+    FLAG:캐릭터대사표시 = 2
+SIF FLAG:캐릭터대사표시 == (-3)
+    FLAG:캐릭터대사표시 = 1
 
 ;여체 번화가 이벤트에 의한 처녀 상실 플래그의 갱신
 SIF EXP:V경험 && TALENT:처녀 && TFLAG:1 && TFLAG:200 == 9 && CFLAG:5216 & 1p0 && (CFLAG:5226 & 1) == 0
@@ -5348,10 +5348,10 @@ SIF EXP:V경험 && TALENT:처녀 && TFLAG:1 && TFLAG:200 == 9 && CFLAG:5216 & 1p
 
 ;커맨드 말을 날리는 이벤트의 경우는 재차 말을 퇴피
 IF TFLAG:200 == 4 || TFLAG:200 == 9 || TFLAG:200 == 5 || TFLAG:200 == 7
-    SIF FLAG:11 == 1
-        FLAG:11 = (-3)
-    SIF FLAG:11 == 2
-        FLAG:11 = (-2)
+    SIF FLAG:캐릭터대사표시 == 1
+        FLAG:캐릭터대사표시 = (-3)
+    SIF FLAG:캐릭터대사표시 == 2
+        FLAG:캐릭터대사표시 = (-2)
 ENDIF
 
 ;다시 통칭 변경 함수를 부른다
@@ -5426,7 +5426,7 @@ IF TFLAG:200 == 99 && (CFLAG:5221 & 1p5) && !TCVAR:300
         CFLAG:5202 |= 1p6
 
     ;표시했을 경우는 선을 그어 플래그를 세운다
-    SIF RESULT && FLAG:11 > 0
+    SIF RESULT && FLAG:캐릭터대사표시 > 0
 ;        DRAWLINE
     TCVAR:300 = RESULT
 ENDIF
@@ -5505,19 +5505,19 @@ IF RESULT:1 == 1
     ENDIF
     IF H == 0
         TRYCALL SELFPLAY_72_A
-        SIF FLAG:11 > 0
+        SIF FLAG:캐릭터대사표시 > 0
             PRINTFORML 　
     ELSEIF H == 1
         TRYCALL SELFPLAY_72_B
-        SIF FLAG:11 > 0
+        SIF FLAG:캐릭터대사표시 > 0
             PRINTFORML 　
     ELSEIF H == 2
         TRYCALL SELFPLAY_72_C
-        SIF FLAG:11 > 0
+        SIF FLAG:캐릭터대사표시 > 0
             PRINTFORML 　
     ELSEIF H == 3
         TRYCALL SELFPLAY_72_D
-        SIF FLAG:11 > 0
+        SIF FLAG:캐릭터대사표시 > 0
             PRINTFORML 　
     ENDIF
     IF J:3
@@ -5563,11 +5563,11 @@ ELSE
             ENDIF
             IF H == 0
                 TRYCALL SELFPLAY_72_E
-                SIF FLAG:11 > 0
+                SIF FLAG:캐릭터대사표시 > 0
                     PRINTFORML 　
             ELSEIF H == 1
                 TRYCALL SELFPLAY_72_F
-                SIF FLAG:11 > 0
+                SIF FLAG:캐릭터대사표시 > 0
                     PRINTFORML 　
             ENDIF
             IF J:3
@@ -5608,11 +5608,11 @@ ELSE
             ENDIF
             IF H == 0
                 TRYCALL SELFPLAY_72_G
-                SIF FLAG:11 > 0
+                SIF FLAG:캐릭터대사표시 > 0
                     PRINTFORML 　
             ELSEIF H == 1
                 TRYCALL SELFPLAY_72_H
-                SIF FLAG:11 > 0
+                SIF FLAG:캐릭터대사표시 > 0
                     PRINTFORML 　
             ENDIF
             IF J:3
@@ -5664,18 +5664,18 @@ IF NO:MASTER != 72
             TRYCALL SELFPLAY_5
             IF RESULT == 1
                 TRYCALL SELFPLAY_72_ASSI_1
-                SIF FLAG:11 == 1
-                    FLAG:11 = (-3)
-                SIF FLAG:11 == 2
-                    FLAG:11 = (-2)
+                SIF FLAG:캐릭터대사표시 == 1
+                    FLAG:캐릭터대사표시 = (-3)
+                SIF FLAG:캐릭터대사표시 == 2
+                    FLAG:캐릭터대사표시 = (-2)
             ;두번째로 멈추었을 경우,1/3그리고 인내 말
             ELSEIF !RAND:2
                 TRYCALL SELFPLAY_72_ASSI_2
                 IF RESULT == 0
-                    SIF FLAG:11 == 1
-                        FLAG:11 = (-3)
-                    SIF FLAG:11 == 2
-                        FLAG:11 = (-2)
+                    SIF FLAG:캐릭터대사표시 == 1
+                        FLAG:캐릭터대사표시 = (-3)
+                    SIF FLAG:캐릭터대사표시 == 2
+                        FLAG:캐릭터대사표시 = (-2)
                 ENDIF
             ENDIF
         ENDIF
@@ -5695,10 +5695,10 @@ ENDIF
 
 
 ;말퇴피를 바탕으로 되돌린다
-SIF FLAG:11 == (-2)
-    FLAG:11 = 2
-SIF FLAG:11 == (-3)
-    FLAG:11 = 1
+SIF FLAG:캐릭터대사표시 == (-2)
+    FLAG:캐릭터대사표시 = 2
+SIF FLAG:캐릭터대사표시 == (-3)
+    FLAG:캐릭터대사표시 = 1
 
 RETURN 0
 
@@ -5729,19 +5729,19 @@ ELSE
 ENDIF
 IF H == 0
     TRYCALL SELFPLAY_72_I
-    SIF FLAG:11 > 0
+    SIF FLAG:캐릭터대사표시 > 0
         PRINTFORML 　
 ELSEIF H == 1
     TRYCALL SELFPLAY_72_J
-    SIF FLAG:11 > 0
+    SIF FLAG:캐릭터대사표시 > 0
         PRINTFORML 　
 ELSEIF H == 2
     TRYCALL SELFPLAY_72_K
-    SIF FLAG:11 > 0
+    SIF FLAG:캐릭터대사표시 > 0
         PRINTFORML 　
 ELSEIF H == 3
     TRYCALL SELFPLAY_72_L
-    SIF FLAG:11 > 0
+    SIF FLAG:캐릭터대사표시 > 0
         PRINTFORML 　
 ENDIF
 
@@ -5801,19 +5801,19 @@ IF J:3
 ENDIF
 IF H == 0
     TRYCALL SELFPLAY_72_M
-    SIF FLAG:11 > 0
+    SIF FLAG:캐릭터대사표시 > 0
         PRINTFORML 　
 ELSEIF H == 1
     TRYCALL SELFPLAY_72_N
-    SIF FLAG:11 > 0
+    SIF FLAG:캐릭터대사표시 > 0
         PRINTFORML 　
 ELSEIF H == 2
     TRYCALL SELFPLAY_72_O
-    SIF FLAG:11 > 0
+    SIF FLAG:캐릭터대사표시 > 0
         PRINTFORML 　
 ELSEIF H == 3
     TRYCALL SELFPLAY_72_P
-    SIF FLAG:11 > 0
+    SIF FLAG:캐릭터대사표시 > 0
         PRINTFORML 　
 ENDIF
 IF J:3

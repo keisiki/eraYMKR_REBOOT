@@ -11,11 +11,11 @@
 ;--------------------------------------------------
 @EVENTTURNEND
 #LATER
-IF FLAG:5 == 0
+IF FLAG:엔드리스 == 0
     ;주인의 피강간 경험과 피윤간 경험의 합계가 일정 이상을 넘고 있어, 게다가 타락도가 256이상이라면 배드 엔딩 7에
     SIF (EXP:MASTER:피강간경험 + EXP:MASTER:피윤간경험) >= EXPLV:4 && CFLAG:MASTER:66 >= 256
         CALL BADEND_4
-    IF (FLAG:4 == 0 || FLAG:4 == 1 || FLAG:4 == 4)
+    IF (FLAG:게임모드 == 0 || FLAG:게임모드 == 1 || FLAG:게임모드 == 4)
         CALL ENDING_TIMEUP
         SIF RESULT == 1
             CALL ENDING_CHECK_START
@@ -46,37 +46,37 @@ CALL ENDING_CHECK_START
 ;--------------------------------------------------
 @ENDING_TIMEUP
 ;NORMAL(남자 주인 모드), ABNORMAL 이외의 게임 모드 및 엔드리스 모드는 제외
-SIF (FLAG:4 != 0 && FLAG:4 != 1 && FLAG:4 != 4) || FLAG:5
+SIF (FLAG:게임모드 != 0 && FLAG:게임모드 != 1 && FLAG:게임모드 != 4) || FLAG:엔드리스
     RETURN 0
 ;난이도：EASY는 120일 이내
-IF FLAG:3 == 1
+IF FLAG:난이도 == 1
     LOCAL = 120
 ;난이도：NORMAL는 90일 이내
-ELSEIF FLAG:3 == 2
+ELSEIF FLAG:난이도 == 2
     LOCAL = 90
 ;난이도：HARD는 99일 이내
-ELSEIF FLAG:3 == 3
+ELSEIF FLAG:난이도 == 3
     LOCAL = 99
 ;난이도：LUNATIC는 90일 이내
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     LOCAL = 90
 ;난이도：PHANTASM는 60일 이내
-ELSEIF FLAG:3 == 5
+ELSEIF FLAG:난이도 == 5
     LOCAL = 60
 ;난이도：PRO는 30일 이내
-ELSEIF FLAG:3 == 6
+ELSEIF FLAG:난이도 == 6
     LOCAL = 30
 ;난이도：ULTRA는 14일 이내
-ELSEIF FLAG:3 == 7
+ELSEIF FLAG:난이도 == 7
     LOCAL = 14
 ELSE
     RETURN 0
 ENDIF
 ;EASY는 1주째만 기한＋20일
-IF FLAG:3 == 1 && FLAG:6 == 1
+IF FLAG:난이도 == 1 && FLAG:주회수 == 1
     LOCAL += 20
 ;NORMAL는 1주째만 기한＋10일
-ELSEIF FLAG:3 == 2 && FLAG:6 == 1
+ELSEIF FLAG:난이도 == 2 && FLAG:주회수 == 1
     LOCAL += 10
 ENDIF
 RETURN (LOCAL < DAY)
@@ -127,8 +127,8 @@ NEXT
 ;엔딩 선택 처리
 ;--------------------------------------------------
 ;인계 가능 조수＋1의 조건(동시에 10종 이상의 하렘 엔딩의 조건을 채웠다)
-SIF TFLAG:1 > 10 && (FLAG:8 & 8192) == 0
-    FLAG:8 |= 8192
+SIF TFLAG:1 > 10 && (FLAG:계승가능조수수 & 8192) == 0
+    FLAG:계승가능조수수 |= 8192
 
 IF TFLAG:1 == 1
     RESULT = 1
@@ -205,29 +205,29 @@ TFLAG:201 = 0
 ;특정 난이도 클리어 판정 추가 처리
 ;--------------------------------------------------
 ;판정은 FLAG:9를 이용. 비트 연산으로 1=EASY, 2=NORMAL, 4=HARD, 8=LUNATIC, 16=PAHANTASM, 32=PRO, 64=ULTRA의 난이도에 대응하고 있다
-IF FLAG:3 == 1 && (FLAG:9 & 1) == 0
-    FLAG:9 |= 1
+IF FLAG:난이도 == 1 && (FLAG:엔딩도달 & 1) == 0
+    FLAG:엔딩도달 |= 1
     MONEY += 50000
-ELSEIF FLAG:3 == 2 && (FLAG:9 & 2) == 0
-    FLAG:9 |= 2
+ELSEIF FLAG:난이도 == 2 && (FLAG:엔딩도달 & 2) == 0
+    FLAG:엔딩도달 |= 2
     MONEY += 50000
-ELSEIF FLAG:3 == 3 && (FLAG:9 & 4) == 0
-    FLAG:9 |= 4
+ELSEIF FLAG:난이도 == 3 && (FLAG:엔딩도달 & 4) == 0
+    FLAG:엔딩도달 |= 4
     MONEY += 50000
-ELSEIF FLAG:3 == 4 && (FLAG:9 & 8) == 0
-    FLAG:9 |= 8
+ELSEIF FLAG:난이도 == 4 && (FLAG:엔딩도달 & 8) == 0
+    FLAG:엔딩도달 |= 8
     MONEY += 50000
-ELSEIF FLAG:3 == 5 && (FLAG:9 & 16) == 0
-    FLAG:9 |= 16
+ELSEIF FLAG:난이도 == 5 && (FLAG:엔딩도달 & 16) == 0
+    FLAG:엔딩도달 |= 16
     MONEY += 50000
-ELSEIF FLAG:9 == 31 && (FLAG:9 & 32) == 0
-    FLAG:9 |= 32
+ELSEIF FLAG:엔딩도달 == 31 && (FLAG:엔딩도달 & 32) == 0
+    FLAG:엔딩도달 |= 32
     MONEY += 500000
-ELSEIF FLAG:3 == 6 && (FLAG:9 & 64) == 0
-    FLAG:9 |= 64
+ELSEIF FLAG:난이도 == 6 && (FLAG:엔딩도달 & 64) == 0
+    FLAG:엔딩도달 |= 64
     MONEY += 50000
-ELSEIF FLAG:3 == 7 && (FLAG:9 & 128) == 0
-    FLAG:9 |= 128
+ELSEIF FLAG:난이도 == 7 && (FLAG:엔딩도달 & 128) == 0
+    FLAG:엔딩도달 |= 128
     MONEY += 50000
 ENDIF
 FLAG:598 = ARG:1
@@ -243,7 +243,7 @@ RETURN 1
 PRINTL 게임을 계속하겠습니까?
 PRINTLC [0] 끝낸다
 PRINTLC [1] 계속한다
-SIF FLAG:4 < 50 && FLAG:12 & 1
+SIF FLAG:게임모드 < 50 && FLAG:SHOP이벤트확장 & 1
     PRINTLC [2] 강하게 뉴 게임
 PRINTL 
 $INPUT_LOOP
@@ -253,9 +253,9 @@ IF RESULT == 0
     CALL SHOW_AFTERWARDS, ARG:1
     QUIT
 ELSEIF RESULT == 1
-    FLAG:5 |= 1
-    FLAG:5 |= 2
-ELSEIF RESULT == 2 && FLAG:4 < 50 && FLAG:12 & 1
+    FLAG:엔드리스 |= 1
+    FLAG:엔드리스 |= 2
+ELSEIF RESULT == 2 && FLAG:게임모드 < 50 && FLAG:SHOP이벤트확장 & 1
     ;노예의 에피소드를 표시
     CALL SHOW_AFTERWARDS, ARG:1
     ;단독 엔딩 이외로부터 날아 왔을 경우, 목표 금액분 (초기라면 100만원)을 되돌린다
@@ -404,7 +404,7 @@ RETURN 0
 ;-------------------------------------------------
 @SET_AFTERWARDS, ARG
 ;얀데레 ON 또한 실종의 경우, 돌아오므로 매각 취급해 하지 않는다
-SIF FLAG:14 & 4 && CFLAG:ARG:4 == 1
+SIF FLAG:조교모드 & 4 && CFLAG:ARG:4 == 1
     RETURN 0
 ;표시 캐릭터의 등록 캐릭터 번호를 TFLAG:710에 넣어 둔다(말측에서 참조할 수 있도록(듯이))
 TFLAG:710 = ARG

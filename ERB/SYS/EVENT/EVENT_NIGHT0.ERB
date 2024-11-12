@@ -46,7 +46,7 @@ SIF TALENT:MASTER:94
     LOCAL:21 += 5
 
 ;노예의 랜덤 판정 있음이라면 위의 처리, 없음이라면 아래의 처리. 없음이라면 조금 판정이 엄격해짐
-IF FLAG:12 & 512
+IF FLAG:SHOP이벤트확장 & 512
     LOCAL:20 = NIGHT_CHECK2(LOCAL:21)
     LOCAL:21 = RAND:100
 ELSE
@@ -175,7 +175,7 @@ ENDIF
 
 ;RETURN 0対策としてここで夜這いの奴隷を記録してしまう. ランダム機能が有りの場合のみ
 ;同フォルダ内の「朝に起こるイベント」処理の前に, ここに記録した奴隷をTARGETに戻す
-SIF FLAG:12 & 256
+SIF FLAG:SHOP이벤트확장 & 256
     TFLAG:212 = TARGET
 
 ;もし実効値が0になってしまっている場合は強制終了
@@ -215,7 +215,7 @@ REPEAT CHARANUM
     SIF BASE:COUNT:취기 > MAXBASE:COUNT:취기 || BASE:COUNT:체력 < 500 || BASE:COUNT:기력 < 1 || CFLAG:COUNT:65 >= PALAMLV:3
         CONTINUE
     ;反発刻印持ち排除システム発動
-    SIF MARK:COUNT:반발각인 && FLAG:12 & 1024 && FLAG:3 < 4
+    SIF MARK:COUNT:반발각인 && FLAG:SHOP이벤트확장 & 1024 && FLAG:난이도 < 4
         CONTINUE
 
     ;101以上の相性の奴隷を保存 ※TARGETとMが同一キャラにならないようにTARGETと登録順番号が同じならはじく
@@ -312,10 +312,10 @@ ELSE
         CALL NIGHT_HANTEI_M, LOCAL:5, LOCAL:6, LOCAL:1, LOCAL:2
     ;奉仕精神Lv4以上, 触手中毒Lv1以上の禁断or触手操作術持ちの奴隷が触手で一緒に楽しみに来る. 
     ;但し, 紳士的触手を解放しており, 主人が貞操帯をしていない場合のみ. 
-    ELSEIF RAND:5 == 0 && ABL:봉사정신 > 3 && ABL:촉수중독 > 0 && (TALENT:금단의지식 || TALENT:149) && (CFLAG:MASTER:42 & 2) == 0 && FLAG:15 & 4096
+    ELSEIF RAND:5 == 0 && ABL:봉사정신 > 3 && ABL:촉수중독 > 0 && (TALENT:금단의지식 || TALENT:149) && (CFLAG:MASTER:42 & 2) == 0 && FLAG:커맨드확장 & 4096
         CALL NIGHT_HANTEI_SHOKUSHU
     ;禁断, 触手操作を持っていなくても, 仲の良いMが禁断持ちの場合, 低確率で教えて貰ってくる. 
-    ELSEIF LOCAL:22 > 0 && TALENT:(LOCAL:15):56 && RAND:20 == 0 && ABL:봉사정신 > 3 && ABL:촉수중독 > 0 && (TALENT:금단의지식 == 0 || TALENT:149 == 0) && (CFLAG:MASTER:42 & 2) == 0 && FLAG:15 & 4096
+    ELSEIF LOCAL:22 > 0 && TALENT:(LOCAL:15):56 && RAND:20 == 0 && ABL:봉사정신 > 3 && ABL:촉수중독 > 0 && (TALENT:금단의지식 == 0 || TALENT:149 == 0) && (CFLAG:MASTER:42 & 2) == 0 && FLAG:커맨드확장 & 4096
         CALL NIGHT_HANTEI_SHOKUSHU
     ;SM系に必要なABLを3→2に. 
     ;マゾな奴隷が主人に叩かれにくる. もしくは仲の良い奴隷に叩かれに行く
@@ -384,7 +384,7 @@ SIF TALENT:149
 LOCAL = (RAND:2 == 0 && RAND:10 > LOCAL) ? 0 # 1
 
 ;CONFIG에서 랜덤성을 배제했더라면 선택 가능함.
-IF FLAG:14 & 8
+IF FLAG:조교모드 & 8
 ;선택에 따른 분기를 실행한다.
     PRINTL 자, 그럼 어떻게 할까?
     PRINTFORML [0] \@(LOCAL) ? %CALLNAME:TARGET%에게 기분 좋게 봉사를 받자 # 불길한 예감이 들지만 모처럼이니까…\@
@@ -551,7 +551,7 @@ ENDIF
 ;選択による宴会と乱交への分岐を行う. 
 PRINTL 그럼 어떻게 할까. 모처럼 이렇게 와줬는데……
 ;CONFIG에서 랜덤성을 배제했더라면 선택 가능함.
-IF FLAG:14 & 8
+IF FLAG:조교모드 & 8
     PRINTFORML [0] \@(ARG:3 == 1) ? 난교한다 # 침대로 이끈다\@
     ;鬼殺しを除いて, 酒が10本以上ないと宴会できない. 
     SIF  ITEM:600+ITEM:601+ITEM:602+ITEM:603+ITEM:604 > 9
@@ -605,7 +605,7 @@ SIF CFLAG:99 == 0
     PRINTFORML %조사처리(CALLNAME:ASSI,"는")% 인사를 하고, %CALLNAME:MASTER%의 방을 떠나려 했다. 
 
 ;CONFIG에서 랜덤성을 배제했더라면 선택 가능함.
-IF FLAG:14 & 8
+IF FLAG:조교모드 & 8
     PRINTL 
 PRINTL [0] 불러세운다.
 PRINTL [1] 배웅한다.
@@ -652,7 +652,7 @@ TARGET = ASSI
 
 PRINTL 자아 어떻게 할까. 
 ;CONFIG에서 랜덤성을 배제했더라면 선택 가능함.
-IF FLAG:14 & 8
+IF FLAG:조교모드 & 8
     IF TALENT:ASSI:150
         PRINTL [0] 새러데잇 나이트 피버!
     ELSEIF GET_AGG(TARGET) > 90
@@ -781,7 +781,7 @@ IF ARG:3 > 6
     ENDIF
 ELSE
     ;禁断or触手持ちで, 相手が貞操帯を付けていない女なら触手陵辱(紳士的な触手がOFFならだめ）
-    IF RAND:2 == 0 && (TALENT:금단의지식 || TALENT:149) && (TALENT:ARG:120 == 0 && (CFLAG:ARG:42 & 2) == 0) && FLAG:15 & 4096
+    IF RAND:2 == 0 && (TALENT:금단의지식 || TALENT:149) && (TALENT:ARG:120 == 0 && (CFLAG:ARG:42 & 2) == 0) && FLAG:커맨드확장 & 4096
         CALL NIGHT_SHOKUSHU, ARG, ARG:1
     ;それ以外の場合
     ELSE
@@ -946,7 +946,7 @@ SIF BASE:취기 > MAXBASE:취기 || BASE:0 < 500 || BASE:기력 < 1 || CFLAG:65 
     LOCAL = 0
 
 ;反発刻印持ち排除システム発動
-SIF MARK:반발각인 && FLAG:12 & 1024 && FLAG:3 < 4
+SIF MARK:반발각인 && FLAG:SHOP이벤트확장 & 1024 && FLAG:난이도 < 4
     LOCAL = 0
 
 CALLF SET_AGG(TARGET, LOCAL)
@@ -1087,7 +1087,7 @@ REPEAT CHARANUM
         PRINTFORML %조사처리(CALLNAME:COUNT,"가")% 행동을 일으킬 확률：{LOCAL}％
 
     ;反発刻印持ち排除システム発動
-    SIF MARK:COUNT:반발각인 && FLAG:12 & 1024 && FLAG:3 < 4
+    SIF MARK:COUNT:반발각인 && FLAG:SHOP이벤트확장 & 1024 && FLAG:난이도 < 4
         LOCAL = 0
 
     CALLF SET_AGG(COUNT, LOCAL)

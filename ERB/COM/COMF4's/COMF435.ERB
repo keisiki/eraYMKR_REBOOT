@@ -9,13 +9,13 @@
 SIF DITEMTYPE:999:435 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;조교자가 助手でその조수가 オトコではなくV경험Lvが0일 경우, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && EXP:V경험 < EXPLV:1 && ASSIPLAY && TALENT:PLAYER:120 == 0
+SIF FLAG:VA이상조교필터 & 4 && EXP:V경험 < EXPLV:1 && ASSIPLAY && TALENT:PLAYER:120 == 0
     RETURN 0
 ;조교자가 助手でcaved!!!!イベントを体験しているとトラウマで実行できない
 SIF ASSIPLAY && CFLAG:PLAYER:20 & 4096
@@ -76,7 +76,7 @@ RETURN 1
 ;--------------------------------------------------
 @COM435
 ;조교 대상이 긴박 하고 있지 않는 반발 각인 3의 하크타크였던 경우, 역습 될 가능성대
-IF NO:TARGET == 26 && TFLAG:199 && MARK:반발각인 >= 3 && TEQUIP:40 == 0 && FLAG:15 & 32768
+IF NO:TARGET == 26 && TFLAG:199 && MARK:반발각인 >= 3 && TEQUIP:40 == 0 && FLAG:커맨드확장 & 32768
     IF RAND:4 > 0 && (TFLAG:140 & 32) == 0
         TFLAG:140 |= 32
         JUMP CAVED
@@ -234,7 +234,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM435
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

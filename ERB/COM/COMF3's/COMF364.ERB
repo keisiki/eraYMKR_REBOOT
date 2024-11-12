@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:364 > 0
     RETURN 0
 ;特殊風呂系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 1024) == 0
+SIF (FLAG:커맨드확장 & 1024) == 0
     RETURN 0
 ;風呂を改装していないとダメ
 SIF (FLAG:74 & 16) == 0
@@ -97,8 +97,8 @@ IF TEQUIP:55 == 5
     RETURN 1
 ENDIF
 
-LOCAL:2 = (FLAG:3 >= 3) ?  600 # 350
-LOCAL:3 = (FLAG:3 >= 3) ?  800 # 400
+LOCAL:2 = (FLAG:난이도 >= 3) ?  600 # 350
+LOCAL:3 = (FLAG:난이도 >= 3) ?  800 # 400
 
 ;조제 지식이 있으면 소비를 억제한다
 IF TALENT:MASTER:55 || (ASSI >= 0 && TALENT:ASSI:55)
@@ -116,7 +116,7 @@ DOWNBASE:기력 += LOCAL:3
 TFLAG:156 = 0
 IF NOITEM == 0
     ITEM:61 -= 5
-    SIF FLAG:13 & 4 && MONEY:0 >= (5 * ITEMPRICE:61)
+    SIF FLAG:아이템확장 & 4 && MONEY:0 >= (5 * ITEMPRICE:61)
         CALL FILL_PLURAL_ITEM, 61, 5
 ENDIF
 IF TEQUIP:11 == 0
@@ -279,7 +279,7 @@ TFLAG:156 = 0
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM364
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

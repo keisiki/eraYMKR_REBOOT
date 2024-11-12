@@ -25,13 +25,13 @@ ELSEIF TEQUIP:90
 ELSEIF (TALENT:135 || TALENT:136) && TALENT:140 == 0 && TALENT:145 == 0 && (CFLAG:71 > 0 || TFLAG:128)
     CALL EVENT_LAY_EGG
 ;それ以外のときはCONFIGで調教後行為を抑制するがＯＮでなければ押し倒しイベントを見る
-ELSEIF (FLAG:12 & 4096) == 0
+ELSEIF (FLAG:SHOP이벤트확장 & 4096) == 0
     CALL SELF_CHECK2
     TFLAG:128 = 0
     LOCAL = 1
 ENDIF
 ;調教終了時に眠っているまたは失神している場合, アイアンメイデン幽閉終了もしくは調教後行為を抑制している場合ここで処理を終わらせる
-SIF EQUIP:14 || TFLAG:899 > 0 || TFLAG:198 & 16 || FLAG:12 & 4096 || SELECTCOM == 252
+SIF EQUIP:14 || TFLAG:899 > 0 || TFLAG:198 & 16 || FLAG:SHOP이벤트확장 & 4096 || SELECTCOM == 252
     RETURN 0
 
 ;調教後自慰
@@ -59,7 +59,7 @@ ENDIF
 ;TFLAG:220 == 0 とすることでレズプレイとの排他
 IF TFLAG:220 == 0 && TFLAG:107 <= 100
     ;CONFIGで夜イベント拡張がＯＮでないなら調教後夜這い処理へ
-    SIF (FLAG:12 & 256) == 0
+    SIF (FLAG:SHOP이벤트확장 & 256) == 0
         CALL SELF_CHECK8
 ENDIF
 
@@ -498,7 +498,7 @@ SIF LOCAL < 1
     RETURN 0
 
 ;Ａ系拡張コマンドＯＮのときにはアナニーをする可能性がある
-IF FLAG:15 & 4
+IF FLAG:커맨드확장 & 4
     ;自慰, アナニー判定.ポイントが同じ場合は自慰優先(Ｃ感覚が０の場合はアナニーのみ)
     ;Ａ感覚見る
     LOCAL:2 = ABL:A감각
@@ -743,7 +743,7 @@ CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL*50), 1
 IF ABL:순종 + ABL:노출증 + ABL:마조끼 >= 10
     PRINTFORML 그 모유를 %조사처리(CALLNAME:TARGET,"는")% 그릇에 담아 가지고 왔다.
     ;CONFIGで展示室がＯＮであり蓋付き瓶があるかアイテムなし設定のとき対象奴隷の母乳蒐集がまだなら蒐集する
-    IF (CFLAG:10 & 256) == 0 && (ITEM:81 > 0 || NOITEM) && FLAG:12 & 8
+    IF (CFLAG:10 & 256) == 0 && (ITEM:81 > 0 || NOITEM) && FLAG:SHOP이벤트확장 & 8
         CALL SWEET_POTATO_MILK_2, LOCAL
     ELSE
         PRINTFORML %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:TARGET,"가")% 가지고 온 모유를 모조리 마셨다.
@@ -1329,7 +1329,7 @@ IF ABL:순종+ABL:노출증+ABL:마조끼 >= 10
 ENDIF
 
 ;触手寄生LV
-IF FLAG:15 & 4096 && TALENT:146
+IF FLAG:커맨드확장 & 4096 && TALENT:146
     BASE:촉수 += LOCAL:5*50
     BASE:촉수 = MIN(BASE:촉수, MAXBASE:촉수)
 ENDIF
@@ -1424,7 +1424,7 @@ LOCAL:6 = 5 - (ABL:순종 + ABL:촉수중독) + MARK:반발각인 * 3
 CALL COMMON_UP_JUEL, TARGET, 100, (((LOCAL:7)/2)+(LOCAL:5*LOCAL:6*800)), 1
 
 ;触手寄生LV
-IF FLAG:15 & 4096 && TALENT:146
+IF FLAG:커맨드확장 & 4096 && TALENT:146
     BASE:촉수 += LOCAL:5*50
     BASE:촉수 = MIN(BASE:촉수, MAXBASE:촉수)
 ENDIF
@@ -1593,7 +1593,7 @@ ELSE
                 LOCAL += 3
             SIF EXP:A경험 < 50
                 LOCAL = 0
-            SIF (FLAG:15 & 4) == 0
+            SIF (FLAG:커맨드확장 & 4) == 0
                 LOCAL = 0
 
             LOCAL:1 = RAND:10 + ABL:V감각

@@ -9,10 +9,10 @@
 SIF DITEMTYPE:999:174 > 0
     RETURN 0
 ;Ａ계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 4) == 0
+SIF (FLAG:커맨드확장 & 4) == 0
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
@@ -140,7 +140,7 @@ IF TFLAG:99 == 2
     
     IF NOITEM == 0
         ITEM:61 -= 1
-        SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+        SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
             CALL FILL_PLURAL_ITEM, 61
     ENDIF
 
@@ -157,7 +157,7 @@ ELSEIF TFLAG:99 == 3
     ;이뇨제 소비
     IF TEQUIP:90 == 0 && NOITEM == 0
         ITEM:62 -= 1
-        SIF FLAG:13 & 8 && MONEY:0 >= ITEMPRICE:62
+        SIF FLAG:아이템확장 & 8 && MONEY:0 >= ITEMPRICE:62
             CALL FILL_PLURAL_ITEM, 62
     ENDIF
 
@@ -232,7 +232,7 @@ ELSE
 ENDIF
 
 ;조교배설 억제/비억제
-IF FLAG:14 & 256
+IF FLAG:조교모드 & 256
 ;ABL:마조끼를 본다
     IF ABL:마조끼 == 0
         SOURCE:20 = 2000
@@ -416,7 +416,7 @@ ENDIF
 
 TCVAR:1 += 5
 IF LOCAL > 0
-    IF FLAG:14 & 256
+    IF FLAG:조교모드 & 256
         TCVAR:7 += 0
     ELSE
         TCVAR:7 += LOCAL
@@ -598,12 +598,12 @@ TFLAG:172 += 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM174
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 ;조교배설경험 억제
-IF FLAG:14 & 256
+IF FLAG:조교모드 & 256
     IF TEQUIP:25 == 7
         IF TEQUIP:90
             PRINTFORML 항문에서 촉수가 뽑아 내지자, %조사선택(CALLNAME:TARGET, "는")% 장내의 내용물을 흩뿌려대고 있다….
@@ -684,7 +684,7 @@ ENDIF
 
 [IF ENABLE_KOJO_EQUIP_MESSAGE]
 CALL KOJO_EQUIP_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
     RETURN 0
 [ENDIF]
 
@@ -692,7 +692,7 @@ PRINTL
 PRINTFORML %CALLNAME:TARGET%의 항문에 대량의 관장액을 집어넣은 후, 마개로 막은 후 계속 괴롭혔다….
 PRINTL
 PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-IF FLAG:14 & 256
+IF FLAG:조교모드 & 256
     IF ABL:마조끼 == 0
         PRINTW 고뇌의 표정을 짓고 있다.
     ELSEIF ABL:마조끼 == 1

@@ -624,14 +624,14 @@ BASE:ARG:기력 = BASE:ARG:기력*LOCAL:12/100
 ;....................................................................................
 ;난이도 보정. 난이도 1당 1.3배씩 체력이 오른다. 이지에서는 변화없음.
 ;기력(공격력)은 난이도에 따른 보정은 없다.
-MAXBASE:ARG:체력 += MAXBASE:ARG:체력 *(FLAG:3 -1)*30/100
-BASE:ARG:체력 += BASE:ARG:체력 *(FLAG:3 -1)*30/100
+MAXBASE:ARG:체력 += MAXBASE:ARG:체력 *(FLAG:난이도 -1)*30/100
+BASE:ARG:체력 += BASE:ARG:체력 *(FLAG:난이도 -1)*30/100
 
 ;주차보정. 2회차부터 주차당 체력 기력이 5% 씩 세진다.
-MAXBASE:ARG:체력 += MAXBASE:ARG:체력 * (FLAG:6-1)*10/100
-BASE:ARG:체력 += BASE:ARG:체력 * (FLAG:6-1)*10/100
-MAXBASE:ARG:기력 += MAXBASE:ARG:기력 * (FLAG:6-1)*10/100
-BASE:ARG:기력 += BASE:ARG:기력 * (FLAG:6-1)*10/100
+MAXBASE:ARG:체력 += MAXBASE:ARG:체력 * (FLAG:주회수-1)*10/100
+BASE:ARG:체력 += BASE:ARG:체력 * (FLAG:주회수-1)*10/100
+MAXBASE:ARG:기력 += MAXBASE:ARG:기력 * (FLAG:주회수-1)*10/100
+BASE:ARG:기력 += BASE:ARG:기력 * (FLAG:주회수-1)*10/100
 
 ;상성보정. 만약 타겟 = 경비대장일 경우. 역보정이 걸린다.
 IF ARG:1 == LOCAL:13 
@@ -1268,7 +1268,7 @@ ELSEIF ARG:1 == 3
         PRINTFORMW 다른 경비원은 %CALLNAME:TARGET%의 옆에서 약간 구부정하게 앉아, 한쪽의 유두를 입으로 빨고 
         PRINTFORMW 혀끝으로 튕기거나 살짝 물거나 하면서, 다른 한쪽의 유두를 손가락 끝으로 집고, 튕기고, 비틀었다. 
         SELECTCOM = 201
-        FLAG:11 = 2
+        FLAG:캐릭터대사표시 = 2
         CALL KOJO_JUSTSAY_TORIKOMODE, TARGET, 230
         SELECTCOM = 0
 
@@ -1375,7 +1375,7 @@ ELSEIF ARG:1 == 5
     TIMES LOCAL:0, 0.5
 ENDIF
 ;난이도에 따른 보정. 난이도가 1오를 때 마다, 들어오는 돈은 분모분 줄어든다. 2/1, 2/2, 2/3, 2/4, 2/5....
-LOCAL:0 = LOCAL:0 *200/(FLAG:3*100)
+LOCAL:0 = LOCAL:0 *200/(FLAG:난이도*100)
 ;반환
 RESULT = LOCAL:0
 RETURN RESULT
@@ -1483,7 +1483,7 @@ FOR COUNT, 100, 600
     ITEMSALES:COUNT = ITEMPRICE:COUNT
 NEXT
 ;난이도가 LUNATIC 미만이면 헬코 컷
-SIF FLAG:3 < 4
+SIF FLAG:난이도 < 4
     ITEMSALES:597 = 0
 ;지옥의 훈장이 없다면 세이세이히메 컷
 SIF TALENT:MASTER:834 == 0
@@ -1503,7 +1503,7 @@ ITEMSALES:196 = 0
 ITEMSALES:197 = 0
 ITEMSALES:199 = 0
 ;ビビットを購入するには紳士的な触手のONと進化の秘法を所持することが必要である.
-SIF (FLAG:15 & 4096) == 0 || (ITEM:59 == 0 && NOITEM == 0)
+SIF (FLAG:커맨드확장 & 4096) == 0 || (ITEM:59 == 0 && NOITEM == 0)
     ITEMSALES:236 = 0
 
 ;アリスがいたら

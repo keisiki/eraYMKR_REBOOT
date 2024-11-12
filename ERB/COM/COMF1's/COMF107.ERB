@@ -9,13 +9,13 @@
 SIF DITEMTYPE:999:107 > 0
     RETURN 0
 ;수치 플레이계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 512) == 0
+SIF (FLAG:커맨드확장 & 512) == 0
     RETURN 0
 ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;조수가 없으면 불가
 SIF ASSI < 0
@@ -97,7 +97,7 @@ STRLENS CSTR:2
 SIF RESULT >= 1
     TFLAG:153 = 90
 
-IF FLAG:14 & 8
+IF FLAG:조교모드 & 8
     PRINTL 어떤 음식을 올릴까?
     SIF ABL:PLAYER:요리기능 >= 5 && TFLAG:153 == 90
         PRINTFORML [0] - %CALLNAME:TARGET%의 %CSTR:2%
@@ -253,7 +253,7 @@ ENDIF
 
 IF NOITEM == 0
     ITEM:77 -= 1
-    SIF FLAG:13 & 16 && MONEY:0 >= ITEMPRICE:77
+    SIF FLAG:아이템확장 & 16 && MONEY:0 >= ITEMPRICE:77
         CALL FILL_PLURAL_ITEM, 77
 ENDIF
 TEQUIP:60 = 1
@@ -265,7 +265,7 @@ RETURN 1
 ;-------------------------------------------------
 @EQUIP_COM107
 LOCAL:2 = RAND:8
-IF FLAG:15 & 256
+IF FLAG:커맨드확장 & 256
     IF (LOCAL:2 == 0 || TFLAG:151 == 4) && TALENT:120 == 0 && TEQUIP:40 && TEQUIP:52 && TFLAG:150
         ;줄로 긴박＋야외 플레이 때 일정 확률로 발생. 다만, 집단시간중은 자동 발생, 안뜰에서는 발생하지 않는다.
         PRINTL <주치육륜>
@@ -405,7 +405,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM107
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

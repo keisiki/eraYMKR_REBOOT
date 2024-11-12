@@ -6,7 +6,7 @@
 ;-------------------------------------------------
 @SAVEINFO
 PUTFORM {DAY}일째\@(TIME == 0) ? 낮 # 밤\@ 
-SIF FLAG:4 == 2 || TALENT:MASTER:998 || NO:MASTER != 0
+SIF FLAG:게임모드 == 2 || TALENT:MASTER:998 || NO:MASTER != 0
     PUTFORM 주인:%CALLNAME:MASTER% 
 IF TARGET >= 0 && (TALENT:152 || TALENT:153)
     PUTFORM %CALLNAME:TARGET% 열애중 
@@ -15,23 +15,23 @@ ELSEIF TARGET >= 0
 ENDIF
 IF TALENT:MASTER:998
     PUTFORM DEBUG     
-ELSEIF FLAG:4 == 1
+ELSEIF FLAG:게임모드 == 1
     PUTFORM ABNORMAL  
-ELSEIF FLAG:4 == 2
+ELSEIF FLAG:게임모드 == 2
     PUTFORM EXTRA     
-ELSEIF FLAG:4 == 4
+ELSEIF FLAG:게임모드 == 4
     PUTFORM PROSTITUTE
 ELSE
     PUTFORM eratohoYM 
 ENDIF
 VARSET LOCALS,""
 SPLIT "謎 ,易 ,普 ,難 ,狂 ,厄 ,獄 ,超 ,謎 ",",",LOCALS
-LOCAL = LIMIT(FLAG:3 , 0, 8)
+LOCAL = LIMIT(FLAG:난이도 , 0, 8)
 ;ＰＬＨＥＮの表記を変更
 PUTFORM %LOCALS:LOCAL%
-SIF FLAG:4 == 0 || FLAG:4 == 1
-    PUTFORM ({FLAG:6}周目)
-SIF FLAG:5 & 1
+SIF FLAG:게임모드 == 0 || FLAG:게임모드 == 1
+    PUTFORM ({FLAG:주회수}周目)
+SIF FLAG:엔드리스 & 1
     PUTFORM  ∞
 
 ;-------------------------------------------------
@@ -42,11 +42,11 @@ SIF FLAG:5 & 1
 ;調教中での能力表示はこのページが表示される
 @SHOW_INFO_PAGE_1, ARG
 ;弐型表示
-IF FLAG:12 & 2
+IF FLAG:SHOP이벤트확장 & 2
     ;能力
     CALL NEW_PRINT_ABL, ARG
     ;素質
-    SIF FLAG:3 < 4 || ARG == MASTER || TALENT:MASTER:198 || TALENT:MASTER:998
+    SIF FLAG:난이도 < 4 || ARG == MASTER || TALENT:MASTER:198 || TALENT:MASTER:998
         CALL NEW_PRINT_TALENT, ARG
     ;刻印
     SIF ARG != MASTER
@@ -58,7 +58,7 @@ ELSE
     ;能力
     CALL SHOW_INFO_ABL, ARG
     ;素質
-    SIF FLAG:3 < 4 || ARG == MASTER || TALENT:MASTER:198 || TALENT:MASTER:998
+    SIF FLAG:난이도 < 4 || ARG == MASTER || TALENT:MASTER:198 || TALENT:MASTER:998
         CALL SHOW_INFO_TALENT, ARG
     ;刻印
     SIF ARG != MASTER
@@ -76,7 +76,7 @@ IF ARG == MASTER
     ;主人の○○数
     CALL PRINT_MASTER_NUMBER
     ;主人の触手関連のステータス
-    SIF FLAG:15 & 4096
+    SIF FLAG:커맨드확장 & 4096
         CALL PRINT_MASTER_JUEL, ARG
 ELSE
   ;매각치 표시
@@ -85,7 +85,7 @@ ELSE
       CALL PRINT_CALCCHARA, ARG
   ENDIF
     ;珠
-    IF FLAG:12 & 2
+    IF FLAG:SHOP이벤트확장 & 2
         CALL NEW_PRINT_JUEL, ARG
     ELSE
         CALL SHOW_INFO_JUEL, ARG
@@ -118,7 +118,7 @@ IF ARG == MASTER
     SIF FLAG:70
         CALL PRINT_MASTER_CHANGEABLE_RACE
     ;助手引継ぎ人数関連
-    SIF FLAG:8
+    SIF FLAG:계승가능조수수
         CALL PRINT_ASSISTANT_SUCCESSION
     ;収入金額の最高額
     SIF MONEY:998 > 0
@@ -130,7 +130,7 @@ ELSE
     SIF CFLAG:ARG:14 || CFLAG:ARG:15 || CFLAG:ARG:16 || CFLAG:ARG:17
         CALL PRINT_SLAVE_TALENT_FALL, ARG
     ;蒐集品
-    SIF FLAG:500 > 0 && FLAG:12 & 8
+    SIF FLAG:500 > 0 && FLAG:SHOP이벤트확장 & 8
         CALL PRINT_COLLECTION_YN, ARG
     ;陰核成長具合
     SIF BASE:ARG:음핵 && TALENT:ARG:120 == 0 && TALENT:ARG:121 == 0
@@ -160,7 +160,7 @@ SIF FLAG:1500 & 1
     CALL SHOW_SIZE, ARG
 IF ARG == MASTER
     ;蒐集品の総計
-    SIF FLAG:500 > 0 && FLAG:12 & 8
+    SIF FLAG:500 > 0 && FLAG:SHOP이벤트확장 & 8
         CALL MASTER_COLLECTION_STATUS
 ELSE
     ;노예ごとの収入金額の最高額
@@ -243,7 +243,7 @@ SELECTCASE COUNT
         SIF FLAG:89 & 1
             LOCAL = 78
     CASE 24
-        SIF ARG == MASTER && FLAG:15 & 4096
+        SIF ARG == MASTER && FLAG:커맨드확장 & 4096
             LOCAL = 98
     CASE 25
         SIF ARG == MASTER
@@ -375,7 +375,7 @@ REPEAT 54 ;CSV에 존재하는 경험치 종류 = 56, 그중 이상경험과 레
         CASE 32 TO 36 ;EXP51~55
             LOCAL = COUNT + 19
         CASE 37 ;EXP:동물성애경험
-            SIF FLAG:15 & 8192 ;수간 컨피그 켜졌을 때만 표시
+            SIF FLAG:커맨드확장 & 8192 ;수간 컨피그 켜졌을 때만 표시
                 LOCAL = 56
         CASE 38 TO 46  ;EXP70~78
             LOCAL = COUNT + 32
@@ -421,15 +421,15 @@ SIF FLAG:5000 & 512
 ;토리코모드용 추가부분. 난이도에 따라 남은 시간이 달라진다.
 LOCAL:99 = 100
 IF FLAG:5000 & 16
-    IF FLAG:3 == 1
+    IF FLAG:난이도 == 1
         LOCAL:99 = 50
-    ELSEIF FLAG:3 == 2
+    ELSEIF FLAG:난이도 == 2
         LOCAL:99 = 50
-    ELSEIF FLAG:3 == 3
+    ELSEIF FLAG:난이도 == 3
         LOCAL:99 = 50
-    ELSEIF FLAG:3 == 4
+    ELSEIF FLAG:난이도 == 4
         LOCAL:99 = 50
-    ELSEIF FLAG:3 >= 5
+    ELSEIF FLAG:난이도 >= 5
         LOCAL:99 = 50
     ELSE
     ENDIF
@@ -438,7 +438,7 @@ ENDIF
 
 VARSET LOCALS,""
 SPLIT "미 ,역 ,보 ,난 ,광 ,액 ,옥 ,초 ,미 ",",",LOCALS
-LOCALS:0 = %LOCALS:(LIMIT(FLAG:3 , 0, 8))%
+LOCALS:0 = %LOCALS:(LIMIT(FLAG:난이도 , 0, 8))%
 DRAWLINE
 PRINTFORM {DAY}일째
 CALL CALENDAR_PRINT, 1
@@ -448,19 +448,19 @@ IF TALENT:MASTER:998
     PRINT Debug
     SIF TALENT:998
         PRINT  ★
-ELSEIF FLAG:4 == 1
+ELSEIF FLAG:게임모드 == 1
     PRINT ABNORMAL
-ELSEIF FLAG:4 == 2
+ELSEIF FLAG:게임모드 == 2
     PRINT EXTRA
 ELSE
     PRINT eratohoYM
 ENDIF
-SIF FLAG:4 <= 1
+SIF FLAG:게임모드 <= 1
     CALL SHOW_DEADLINE
 PRINTL 
 ;남은시간을 LOCAL:99로 당긴다는 것에 주의. (토리코모드 사양)
 PRINTFORML 조교 대상 :%CALLNAME:TARGET% \@(NO:TARGET >= 150 && NO:TARGET < 200 && CALLNAME:TARGET != NAME:TARGET) ?  (%ITEMNAME:(100+NO:TARGET)%)　 # \@　조교자 :%CALLNAME:PLAYER%\@(ASSIPLAY) ? (조수) # (주인)\@　남은 시간:{TFLAG:107}/{LOCAL:99}　난이도：%LOCALS%
-IF FLAG:12 & 4
+IF FLAG:SHOP이벤트확장 & 4
     IF ASSIPLAY
         ;토리코모드 스트레스 시스템 사양
         IF FLAG:5000 & 64
@@ -549,10 +549,10 @@ ENDIF
         CALL CALC_GAUGEX_SLAVE
 
     ;옵션에 따라 표시 타입 변경
-    IF (FLAG:12 & 2) && FLAG:1122
+    IF (FLAG:SHOP이벤트확장 & 2) && FLAG:1122
         ;③형 표시
         CALL NEW_PRINT_PALAM_BAR
-    ELSEIF FLAG:12 & 2
+    ELSEIF FLAG:SHOP이벤트확장 & 2
         ;②형 표시
         CALL NEW_PRINT_PALAM
     ELSE
@@ -561,7 +561,7 @@ ENDIF
     ENDIF
 
     ;好感度表示が有効のときは調教者の体力も表示
-    IF FLAG:12 & 4
+    IF FLAG:SHOP이벤트확장 & 4
         PRINTFORM 체력\@(ASSIPLAY) ? (조수) # (주인)\@
         LOCAL = MAX(BASE:PLAYER:체력, 0)
         BAR LOCAL,MAXBASE:PLAYER:체력,32
@@ -580,7 +580,7 @@ ENDIF
     SIF TEQUIP:90 || TEQUIP:55 == 1
         CALL CALC_GAUGE2_OTHERS
 
-    IF FLAG:15 & 4096 && TALENT:146
+    IF FLAG:커맨드확장 & 4096 && TALENT:146
         CALL CALC_TENTACLE_GAUGE
         PRINTFORM 촉수기생LV(%CALLNAME:TARGET%)
         BAR BASE:촉수,MAXBASE:촉수,32
@@ -735,7 +735,7 @@ SIF TEQUIP:43
     PRINT [삼각목마 승마중]
 IF TEQUIP:50
     LOCAL = 10 - TFLAG:121 + 1
-    IF FLAG:15 & 128
+    IF FLAG:커맨드확장 & 128
         PRINTFORM [촬영중({LOCAL}회 촬영자:\@(FLAG:61 == 2) ?  %CALLNAME:ASSI% # %CALLNAME:MASTER%\@)]
     ELSE
         PRINTFORM [촬영중({LOCAL}회)]
@@ -1275,7 +1275,7 @@ MAXBASE:MASTER:사정 = CALC_GAUGE2_COMMON(MASTER)
 PRINT 사정(주인)
 BAR BASE:MASTER:사정,MAXBASE:MASTER:사정,32
 PRINTFORM ({BASE:MASTER:사정, 5}/{MAXBASE:MASTER:사정, 5})
-IF FLAG:18 & 1
+IF FLAG:사정장소선택및임신기능 & 1
     PRINT 　자동사정선택:
     CALL CHECK_SAMEN_PLACE
 ENDIF
@@ -1300,7 +1300,7 @@ MAXBASE:ASSI:사정 = CALC_GAUGE2_COMMON(ASSI)
 PRINT 사정(조수)
 BAR BASE:ASSI:사정,MAXBASE:ASSI:사정,32
 PRINTFORM ({BASE:ASSI:사정, 5}/{MAXBASE:ASSI:사정, 5})
-IF FLAG:18 & 1 && TALENT:MASTER:120 == 0 && TALENT:MASTER:121 == 0
+IF FLAG:사정장소선택및임신기능 & 1 && TALENT:MASTER:120 == 0 && TALENT:MASTER:121 == 0
     PRINT 사정선택:
     CALL CHECK_SAMEN_PLACE
 ENDIF

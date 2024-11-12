@@ -17,10 +17,10 @@ FOR LOCAL, 600, 617
         LOCALS = %LOCALS%%ITEMNAME:LOCAL%×{ITEM:LOCAL}%RESULTS:0%
 NEXT
 
-SIF FLAG:15 & 16 && FLAG:73 & 1
+SIF FLAG:커맨드확장 & 16 && FLAG:73 & 1
     LOCALS = %LOCALS% \@(FLAG:73 & 2) ? 삼각목마 # \@ \@(FLAG:73 & 4) ? 말뚝 # \@ \@(FLAG:73 & 8) ? 나이프 # \@ \@(FLAG:73 & 16) ? 나타 # \@ \@(FLAG:73 & 32) ? 아이언메이든 # \@ %RESULTS:0%
 
-SIF FLAG:15 & 8192 && FLAG:72 & 1
+SIF FLAG:커맨드확장 & 8192 && FLAG:72 & 1
     LOCALS = %LOCALS% \@(FLAG:72 & 2) ? 「개」 # \@ \@(FLAG:72 & 4) ? 「돼지」 # \@ \@(FLAG:72 & 8) ? 「말」 # \@ %RESULTS:0%
 
 SIF FLAG:71
@@ -48,43 +48,43 @@ PRINTFORML \@(STRLENS(LOCALS)<= 0) ? 없음 # %LOCALS%\@
 @CHECK_ITEM_IS_VALID(ARG)
 #FUNCTION
 ;전시품
-IF ARG == 81 && (FLAG:12 & 8) == 0
+IF ARG == 81 && (FLAG:SHOP이벤트확장 & 8) == 0
     RETURNF 0
 ;특수한 약품계
-ELSEIF (ARG >= 62 && ARG <= 74) && (FLAG:13 & 1) == 0
+ELSEIF (ARG >= 62 && ARG <= 74) && (FLAG:아이템확장 & 1) == 0
     RETURNF 0
 ;Ｃ계 확장 커맨드
-ELSEIF ((ARG >= 17 && ARG <= 19) || (ARG >= 25 && ARG <= 28)) && (FLAG:15 & 1) == 0
+ELSEIF ((ARG >= 17 && ARG <= 19) || (ARG >= 25 && ARG <= 28)) && (FLAG:커맨드확장 & 1) == 0
     RETURNF 0
 ;Ｖ계 확장 커맨드
-ELSEIF (ARG >= 5 && ARG <= 8) && (FLAG:15 & 2) == 0
+ELSEIF (ARG >= 5 && ARG <= 8) && (FLAG:커맨드확장 & 2) == 0
     RETURNF 0
 ;Ａ계 확장 커맨드
-ELSEIF (ARG >= 10 && ARG <= 14 || ARG == 83) && (FLAG:15 & 4) == 0
+ELSEIF (ARG >= 10 && ARG <= 14 || ARG == 83) && (FLAG:커맨드확장 & 4) == 0
     RETURNF 0
 ;Ｃ系とＡ系の両方に絡むもの
-ELSEIF ARG == 79 && (FLAG:15 & 1) == 0 && (FLAG:15 & 4) == 0
+ELSEIF ARG == 79 && (FLAG:커맨드확장 & 1) == 0 && (FLAG:커맨드확장 & 4) == 0
     RETURNF 0
 ;Ｖ系とＡ系の両方に絡むもの
-ELSEIF ARG == 4 && (FLAG:15 & 2) == 0 && (FLAG:15 & 4) == 0
+ELSEIF ARG == 4 && (FLAG:커맨드확장 & 2) == 0 && (FLAG:커맨드확장 & 4) == 0
     RETURNF 0
 ;Ｂ계 확장 커맨드
-ELSEIF (ARG >= 21 && ARG <= 24) && (FLAG:15 & 8) == 0
+ELSEIF (ARG >= 21 && ARG <= 24) && (FLAG:커맨드확장 & 8) == 0
     RETURNF 0
 ;注射系コマンド
-ELSEIF ARG == 53 && (FLAG:15 & 64) == 0
+ELSEIF ARG == 53 && (FLAG:커맨드확장 & 64) == 0
     RETURNF 0
 ;撮影コマンド拡張
-ELSEIF (ARG == 51 || ARG == 58 || ARG == 76) && (FLAG:15 & 128) == 0
+ELSEIF (ARG == 51 || ARG == 58 || ARG == 76) && (FLAG:커맨드확장 & 128) == 0
     RETURNF 0
 ;羞恥プレイ계 확장 커맨드
-ELSEIF (ARG == 40 || (ARG >= 43 && ARG <= 47) || ARG == 49 || ARG == 77 || ARG == 82) && (FLAG:15 & 512) == 0
+ELSEIF (ARG == 40 || (ARG >= 43 && ARG <= 47) || ARG == 49 || ARG == 77 || ARG == 82) && (FLAG:커맨드확장 & 512) == 0
     RETURNF 0
 ;調教者奉仕 · ウフフ계 확장 커맨드
-ELSEIF ARG == 78 && (FLAG:15 & 2048) == 0
+ELSEIF ARG == 78 && (FLAG:커맨드확장 & 2048) == 0
     RETURNF 0
 ;紳士的な触手系コマンド
-ELSEIF ARG == 59 && (FLAG:15 & 4096) == 0
+ELSEIF ARG == 59 && (FLAG:커맨드확장 & 4096) == 0
     RETURNF 0
 ENDIF
 RETURNF 1
@@ -153,7 +153,7 @@ SIF EQUIP:ARG:1 > 0
     
 ;칭호 · 엔딩 도달 표시
 STRLENS NICKNAME:MASTER
-SIF FLAG:9 || RESULT > 0
+SIF FLAG:엔딩도달 || RESULT > 0
     CALL PRINT_MASTER_MEDAL
 
 CALL NEW_DRAWLINE
@@ -168,27 +168,27 @@ SIF RESULT > 0
     PRINTFORM 칭호:%NICKNAME:MASTER% 
 
 ;EASY
-SIF FLAG:9 & 1
+SIF FLAG:엔딩도달 & 1
     PRINT ＞ 
 ;NORMAL
-SIF FLAG:9 & 2
+SIF FLAG:엔딩도달 & 2
     PRINT Ｇ 
 ;HARD
-SIF FLAG:9 & 4
+SIF FLAG:엔딩도달 & 4
     PRINT Ｋ 
 ;LUNATIC
-SIF FLAG:9 & 8
+SIF FLAG:엔딩도달 & 8
     PRINT ＊ 
 ;PHANTASM
-SIF FLAG:9 & 16
+SIF FLAG:엔딩도달 & 16
     PRINT α 
 ;NORMAL～PHANTASM까지 전 제패
-SIF FLAG:9 & 32
+SIF FLAG:엔딩도달 & 32
     PRINT Α 
 ;겉 2주와 뒤 2주가 있어도 좋잖아
-SIF FLAG:9 & 64
+SIF FLAG:엔딩도달 & 64
     PRINT † 
-SIF FLAG:9 & 128
+SIF FLAG:엔딩도달 & 128
     PRINT ‡ 
 SIF CFLAG:MASTER:157 & 1
     PRINT 수재
@@ -211,7 +211,7 @@ IF FLAG:5000 & 64
 ELSE
     PRINTFORML (주인조교경험:{EXP:ARG:주인조교경험} 호감도:{CFLAG:ARG:2} 스트레스:{CFLAG:ARG:65} 이상경험:{EXP:ARG:이상경험})
 ENDIF
-IF FLAG:15 & 4096 && TALENT:ARG:146
+IF FLAG:커맨드확장 & 4096 && TALENT:ARG:146
     PRINT 기생촉수성장LV:
     BAR BASE:ARG:촉수, MAXBASE:ARG:촉수, 20
     PRINTFORML ({BASE:ARG:촉수, 4}/{MAXBASE:ARG:촉수, 4})
@@ -253,13 +253,13 @@ CALL NEW_DRAWLINE
 ;노예 매각 정보의 표시
 ;-------------------------------------------------
 @PRINT_CALCCHARA, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ %CALLNAME:ARG%의 매각 및 조교 관련 정보 # %CALLNAME:ARG%의 매각 및 조교 관련 정보:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ %CALLNAME:ARG%의 매각 및 조교 관련 정보 # %CALLNAME:ARG%의 매각 및 조교 관련 정보:\@
 VARSET LOCALS,""
 LOCAL = 0
 LOCAL:2 = 0
 
 ;난이도 PHANTASM일 때 표시 없음
-IF FLAG:3 == 5
+IF FLAG:난이도 == 5
     COM_NAME = ―
     TSTR:1 = ―
     TSTR:2 = ―
@@ -860,7 +860,7 @@ CALL NEW_DRAWLINE
 ;신장 · 체중 · 3사이즈의 생성 처리
 CALL MAKE_SIZE, 1, ARG
 
-PRINTFORML \@(FLAG:12 & 2) ? □ 사이즈 # 사이즈:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ? □ 사이즈 # 사이즈:\@
 PRINTFORM  신장:{BASE:ARG:신장 / 10}.{BASE:ARG:신장 % 10} cm
 ;보테배상태의 경우 표시 수치 보정
 IF FLAG:1500 & 2 && (CFLAG:ARG:3502 % 1000000)
@@ -1014,7 +1014,7 @@ SIF LOCAL
 ;주인의 촉수 관련의 스테이터스 표시 처리
 ;-------------------------------------------------
 @PRINT_MASTER_JUEL, ARG
-SIF FLAG:12 & 2
+SIF FLAG:SHOP이벤트확장 & 2
     PRINTL □ 촉수 관련
 
 PRINTFORML 　%ABLNAME:98% Lv: {ABL:ARG:촉수사역}　　　　　　　　　%PALAMNAME:198%의 구슬:{JUEL:ARG:198, 7}　촉수 에너지:{BASE:ARG:촉수, 5}τ
@@ -1028,7 +1028,7 @@ CALL NEW_DRAWLINE
 ;기념일 표시 처리
 ;-------------------------------------------------
 @PRINT_MEMORIALDAY, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 기념일 # 기념일:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 기념일 # 기념일:\@
 IF CFLAG:ARG:3110 > 0
     CALL CALENDAR_CALC, CFLAG:ARG:3110
     PRINTFORM 생일은 
@@ -1091,7 +1091,7 @@ CALL NEW_DRAWLINE
 ;LOCAL:3 모친의 제×자
 ;LOCAL:4 양친
 @PRINT_PARENT, ARG
-SIF FLAG:12 & 2
+SIF FLAG:SHOP이벤트확장 & 2
     PRINTL □ 자녀관계
 LOCAL:2 = CFLAG:ARG:3104
 LOCAL:3 = CFLAG:ARG:3102
@@ -1120,7 +1120,7 @@ CALL NEW_DRAWLINE
 ;캐릭터 간의 상성 표시 처리
 ;-------------------------------------------------
 @PRINT_RELATION, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 상성 # 상성:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 상성 # 상성:\@
 
 CALL SET_CALLNAME
 LOCAL = 0
@@ -1167,10 +1167,10 @@ CALL NEW_DRAWLINE
 ;난이도 표시 처리
 ;--------------------------------------------------
 @SHOW_DIFFICULTY
-PRINTFORML \@(FLAG:12 & 2) ?  □ 현재 난이도 # 현재 난이도:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 현재 난이도 # 현재 난이도:\@
 VARSET LOCALS, ""
 SPLIT "UNDEFINED, EASY, NORMAL, HARD, LUNATIC, PHANTASM, PRO, ULTRA, UNDEFINED", ",", LOCALS
-LOCAL = LIMIT(FLAG:3 , 0, 8)
+LOCAL = LIMIT(FLAG:난이도 , 0, 8)
 PRINTSL LOCALS:LOCAL
 CALL NEW_DRAWLINE
 
@@ -1178,7 +1178,7 @@ CALL NEW_DRAWLINE
 ;맞이한 엔딩 표시 처리
 ;--------------------------------------------------
 @SHOW_ENDING
-PRINTFORML \@(FLAG:12 & 2) ?  □ 이 주차에 본 엔딩 # 이 주차에 본 엔딩:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 이 주차에 본 엔딩 # 이 주차에 본 엔딩:\@
 ;현상 FLAG:598은 0~：통상·하렘 엔딩, 1001~：단독 엔딩, 2001~：노예 엔딩이므로, 이것으로 분기 해 본다
 IF FLAG:598 < 1001
     STR:0 = %STR:(1000+FLAG:598)%\@(FLAG:599 & 2) ?  Ⅱ#\@
@@ -1194,10 +1194,10 @@ CALL NEW_DRAWLINE
 ;주인의 인계시에 변화 가능한 종족의 표시 처리
 ;-------------------------------------------------
 @PRINT_MASTER_CHANGEABLE_RACE
-SIF FLAG:4 > 1 || FLAG:3 < 1
+SIF FLAG:게임모드 > 1 || FLAG:난이도 < 1
     RETURN 0
 
-PRINTFORML \@(FLAG:12 & 2) ?  □ 종족 지식 # 종족 지식:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 종족 지식 # 종족 지식:\@
 
 SIF FLAG:70 & 1
     PRINT [요정] 
@@ -1230,44 +1230,44 @@ CALL NEW_DRAWLINE
 ;-------------------------------------------------
 @PRINT_ASSISTANT_SUCCESSION
 ;게임 모드가 eratohoYM, ABNORMAL, PROSTITUE만
-SIF FLAG:4 != 0 && FLAG:4 != 1 && FLAG:4 != 4
+SIF FLAG:게임모드 != 0 && FLAG:게임모드 != 1 && FLAG:게임모드 != 4
     RETURN 0
 ;콘피그로 강해서 뉴 게임을 ON가 아니면 안돼
-SIF (FLAG:12 & 1) == 0
+SIF (FLAG:SHOP이벤트확장 & 1) == 0
     RETURN 0
 
-PRINTFORML \@(FLAG:12 & 2) ?  □ 조수 계승 수 증가상황 # 조수 계승 수 증가상황:\@
-SIF FLAG:8 & 1
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 조수 계승 수 증가상황 # 조수 계승 수 증가상황:\@
+SIF FLAG:계승가능조수수 & 1
     PRINTL 대범함 소유
-SIF FLAG:8 & 2
+SIF FLAG:계승가능조수수 & 2
     PRINTL PHANTASM 클리어
-SIF FLAG:8 & 4
+SIF FLAG:계승가능조수수 & 4
     PRINTL 조교사 Lv5 도달
-SIF FLAG:8 & 8
+SIF FLAG:계승가능조수수 & 8
     PRINTL 연모 처녀 백명 따먹기 달성
-SIF FLAG:8 & 16
+SIF FLAG:계승가능조수수 & 16
     PRINTL 노예 매각 자금 누계 2500만원 달성
-SIF FLAG:8 & 32
+SIF FLAG:계승가능조수수 & 32
     PRINTL 고급 노예 매각 자금 누계 1000만원 달성
-SIF FLAG:8 & 64
+SIF FLAG:계승가능조수수 & 64
     PRINTL 노예 매각 최고 금액 40만원 달성
-SIF FLAG:8 & 128
+SIF FLAG:계승가능조수수 & 128
     PRINTL 주인의 종족 전생 자격 전종 취득
-SIF FLAG:8 & 256
+SIF FLAG:계승가능조수수 & 256
     PRINTL 목욕탕 개장＆특수 촉수 부가 45종 이상 달성
-SIF FLAG:8 & 512
+SIF FLAG:계승가능조수수 & 512
     PRINTL 환상향 비보관 개관!
-SIF FLAG:8 & 1024
+SIF FLAG:계승가능조수수 & 1024
     PRINTL 노멀 하렘 엔딩 20 달성
-SIF FLAG:8 & 2048
+SIF FLAG:계승가능조수수 & 2048
     PRINTL 환상향 정ㅋ벅ㅋ 경험 있음
-SIF FLAG:8 & 4096
+SIF FLAG:계승가능조수수 & 4096
     PRINTL 촉수공주 엔딩 도달
-SIF FLAG:8 & 8192
+SIF FLAG:계승가능조수수 & 8192
     PRINTL 10종 이상 하렘 동시 조건 달성
-SIF FLAG:8 & 16384
+SIF FLAG:계승가능조수수 & 16384
     PRINTL 요정을 다스리는 자가 되었음
-SIF FLAG:8 & 32768
+SIF FLAG:계승가능조수수 & 32768
     PRINTL [지옥의 훈장]을 입수
 
 CALL NEW_DRAWLINE
@@ -1277,7 +1277,7 @@ CALL NEW_DRAWLINE
 ;--------------------------------------------------
 ;MONEY:970~998을 사용
 @INCOME_LIST
-PRINTFORML \@(FLAG:12 & 2) ?  □ 각 수입의 최고 금액 일람 # 각 수입의 최고 금액 일람:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 각 수입의 최고 금액 일람 # 각 수입의 최고 금액 일람:\@
 SIF MONEY:997 > 0
     PRINTFORML 노예 매각으로 번 최고 금액　　　:{MONEY:997}원
 SIF MONEY:970 > 0
@@ -1328,7 +1328,7 @@ CALL NEW_DRAWLINE
 ;취기 상태 표시 처리
 ;-------------------------------------------------
 @PRINT_DRUNK_LIQUOR, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 취기 상태 # 취기 상태:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 취기 상태 # 취기 상태:\@
 
 CALL CALC_GAUGE8, ARG, 1
 CALL NEW_DRAWLINE
@@ -1337,7 +1337,7 @@ CALL NEW_DRAWLINE
 ;습득 끝난 함락계 소질 표시 처리
 ;-------------------------------------------------
 @PRINT_SLAVE_TALENT_FALL, ARG
-PRINTFORML \@(FLAG:12 & 2) ? □ 취득 완료된 함락계 소질 # 취득 완료된 함락계 소질:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ? □ 취득 완료된 함락계 소질 # 취득 완료된 함락계 소질:\@
 
 ;연모계 소질 색설정
 CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
@@ -1411,7 +1411,7 @@ CALL NEW_DRAWLINE
 ;또 조교중 이외에 SHOP 메뉴로부터도 호출할 수 있도록(듯이) 변경
 ;수집품의 유무는 원패치 같이, 전시실에 있는가로 판단(무명 캐릭터 등 2겹에 회수할 수 있는 것은 고려하지 않는다)
 @PRINT_COLLECTION_YN, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ %CALLNAME:ARG%로부터 입수한 수집품 # %CALLNAME:ARG%로부터 입수한 수집품:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ %CALLNAME:ARG%로부터 입수한 수집품 # %CALLNAME:ARG%로부터 입수한 수집품:\@
 VARSET LOCALS, ""
 SPLIT " 시리코다마, 황금수　　, 애액　　　, 혈액　　　, 파과혈　　, 팬티      , 사진집　　, 비디오　　, 모유　　　, 알　　　　, 촉수　　　, 음모　　　",",", LOCALS
 LOCAL:1 = 0
@@ -1448,7 +1448,7 @@ CALL NEW_DRAWLINE
 ;음핵 성장 상태 표시 처리
 ;-------------------------------------------------
 @PRINT_GROWTH_SLAVE_CLITORIS, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 음핵 성장 상태 # 음핵 성장 상태:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 음핵 성장 상태 # 음핵 성장 상태:\@
 
 PRINTFORML \@(BASE:ARG:음핵 >= 250) ?  《Lv.MAX》 # 《Lv. {BASE:ARG:음핵 / 50}》 \@
 
@@ -1458,7 +1458,7 @@ CALL NEW_DRAWLINE
 ;음모 상태 표시 처리
 ;-------------------------------------------------
 @PRINT_PUBIC_HAIR, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 음모 상태 # 음모 상태:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 음모 상태 # 음모 상태:\@
 
 ;[소인]이나 [작은체형]의 경우는 데포라면 반들반들
 IF (TALENT:ARG:127 || TALENT:ARG:128) && CFLAG:ARG:36 != 2
@@ -1485,7 +1485,7 @@ CALL NEW_DRAWLINE
 ;낙인 캐릭터용 특수 장비 표시 처리
 ;-------------------------------------------------
 @PRINT_BRAND_SLAVE_EQUIPMENT, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 특수 장착도구 # 특수 장착도구:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 특수 장착도구 # 특수 장착도구:\@
 
 SIF CFLAG:ARG:42 & 1
     PRINT 《클리토리스 링》 
@@ -1507,7 +1507,7 @@ CALL NEW_DRAWLINE
 ;촉수 이식 표시 처리
 ;-------------------------------------------------
 @PRINT_TENTACLE_INPLANT_SLAVE, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 촉수 이식 # 촉수 이식 개소:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 촉수 이식 # 촉수 이식 개소:\@
 
 SIF CFLAG:ARG:41 & 1
     PRINT 《클리토리스》 
@@ -1537,7 +1537,7 @@ CALL NEW_DRAWLINE
 ;각종 개발도 표시 처리
 ;-------------------------------------------------
 @PRINT_DEVELOPMENT_LEVEL_SLAVE, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 각종 개발도 # 각종 개발도:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 각종 개발도 # 각종 개발도:\@
 
 LOCAL:1 = 0
 REPEAT 6
@@ -1581,7 +1581,7 @@ CALL NEW_DRAWLINE
 ;노예 조교의 진행 상황 표시 처리
 ;-------------------------------------------------
 @PRINT_SLAVE_TRAIN_PROCESS, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 노예 조교의 진행 상황 # 노예 조교의 진행 상황:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 노예 조교의 진행 상황 # 노예 조교의 진행 상황:\@
 
 ;어떻게 여기에 왔는지?
 STRLENS CSTR:ARG:3
@@ -1675,7 +1675,7 @@ CALL NEW_DRAWLINE
 ;전시 총수 표시 표시 처리
 ;--------------------------------------------------
 @MASTER_COLLECTION_STATUS
-PRINTFORML \@(FLAG:12 & 2) ?  □ 지금까지 모은 수집품 # 지금까지 모은 수집품:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 지금까지 모은 수집품 # 지금까지 모은 수집품:\@
 VARSET LOCALS,""
 SPLIT "손에 넣은 시리코다마 숫자 :, 손에 넣은 황금수　　 　　 :, 손에 넣은 애액　　　 　　 :, 손에 넣은 혈액의 숫자　 　:, 손에 넣은 순결의 숫자　 　:, 모은 팬티 　 　　 　　　　:, 사진의 앨범　　　 　　　　:, 촬영한 비디오　　　 　　　:, 손에 넣은 모유 숫자　　 　:, 손에 넣은 알　　　　　　　:, 낳게 한 촉수　　　　　　　:, 손에 넣은 음모　　　 　　 :",",", LOCALS
 LOCAL = 0
@@ -1740,7 +1740,7 @@ CALL NEW_DRAWLINE
 ;노예로부터 본 주인의 상성 표시
 ;-------------------------------------------------
 @PRINT_RERELATION, ARG
-IF FLAG:12 & 2
+IF FLAG:SHOP이벤트확장 & 2
     PRINTFORML □ \@(ARG == MASTER) ? 노예로부터의 역상성 # 주인 및 노예로부터의 역상성\@
 ELSE
     PRINTFORML \@(ARG == MASTER) ?  노예로부터의 역상성 # 주인 및 노예로부터의 역상성\@:
@@ -1788,7 +1788,7 @@ CALL NEW_DRAWLINE
 ;--------------------------------------------------
 ;CFLAG:80~CFLAG:97을 사용
 @INCOME_LIST_SLAVE, ARG
-IF FLAG:12 & 2
+IF FLAG:SHOP이벤트확장 & 2
     PRINTL □ 노예별 각 수입의 최고 금액 목록
 ELSE
     PRINTL 노예별 각 수입의 최고 금액 목록:
@@ -1844,7 +1844,7 @@ CALL NEW_DRAWLINE
 ;--------------------------------------------------
 ;CFLAG:80~CFLAG:97을 사용
 @PRINT_INCOME_ALLSLAVE, ARG
-IF FLAG:12 & 2
+IF FLAG:SHOP이벤트확장 & 2
     PRINTL □ 현재 전노예의 종류별 수입 총금액 일람
 ELSE
     PRINTL 현재 전노예의 종류별 수입 총금액 일람:
@@ -1891,7 +1891,7 @@ CALL NEW_DRAWLINE
 ;주인의 각종 플래그 관련 표시
 ;--------------------------------------------------
 @PRINT_MASTER_FLAG, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 그 외 주인에 관한 정보 # 그 외 주인에 관한 정보:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 그 외 주인에 관한 정보 # 그 외 주인에 관한 정보:\@
 ;디버그 모드 전용
 SIF TALENT:MASTER:998
     PRINTFORML 　캐릭터 고유 번호:{CFLAG:ARG:3109}
@@ -1974,7 +1974,7 @@ SIF CFLAG:ARG:154 & 8 || CFLAG:ARG:154 & 16 || CFLAG:ARG:154 & 32 || CFLAG:ARG:1
 SIF CFLAG:ARG:154 & 128
     PRINTL 　하루의 시작을 풋잡으로 시작했던 적이 있다.
 ;여기로부터 일상생활 관련
-IF FLAG:12 & 64
+IF FLAG:SHOP이벤트확장 & 64
     SIF CFLAG:ARG:1603 > 0 && CFLAG:ARG:1603 < 50
         PRINTL 　에이린에게 조합지식을 배우는 중
     SIF CFLAG:ARG:1603 >= 50
@@ -2005,7 +2005,7 @@ CALL NEW_DRAWLINE
 ;노예의 각종 플래그 관련 표시
 ;--------------------------------------------------
 @PRINT_SLAVE_FLAG, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □ 그 외 %CALLNAME:ARG%에 관한 정보 # 그 외 %CALLNAME:ARG%에 관한 정보:\@
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 그 외 %CALLNAME:ARG%에 관한 정보 # 그 외 %CALLNAME:ARG%에 관한 정보:\@
 VARSET LOCALS,""
 SPLIT "하쿠레이 신사, 홍마관, 명계, 죽림, 피안, 요괴의 산, 구지옥터 시외, 요정의 숲, 유정천, 태양의 밭, 달의 도시, 마계, 지옥계, 명련사, 315,316,317,318, 인간마을",",", LOCALS
 ;디버그 모드 전용
@@ -2162,7 +2162,7 @@ SIF CFLAG:ARG:154 & 64
 SIF CFLAG:ARG:97 > 100000000
     PRINTL 　지금까지 잔뜩 돈을 벌어 오고 있다.
 ;여기서부터 일상생활 관련
-IF FLAG:12 & 64
+IF FLAG:SHOP이벤트확장 & 64
     ;플래그 변경
     SIF CFLAG:ARG:1602
         PRINTL 　에이린에게 한 번 된통 당해본 적이 있다.
@@ -2250,7 +2250,7 @@ CALL NEW_DRAWLINE
 ;조수 조교 경험 표시
 ;--------------------------------------------------
 @PRINT_ASSI_TRAIN, ARG
-PRINTFORML \@(FLAG:12 & 2) ?  □  # \@조수로서 %CALLNAME:ARG%의 다른 노예에 대한 조교 경험
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □  # \@조수로서 %CALLNAME:ARG%의 다른 노예에 대한 조교 경험
 LOCAL = 0
 LOCAL:1 = 0
 
@@ -2414,10 +2414,10 @@ RETURNF @"\@(ARG >= 3200 && ARG < 3400) ?  %STR:(ARG - 3100)% # 혼혈\@"
 ;-------------------------------------------------
 @ARRANGE_CHARALIST, ARG
 IF STRLENS(CALLNAME:ARG) <= 18
-    PRINTFORM [\@(FLAG:90 >= 3 && FLAG:4 < 50) ?  {ARG, 3} # {ARG, 2}\@]%CALLNAME:ARG, 18, LEFT%
+    PRINTFORM [\@(FLAG:90 >= 3 && FLAG:게임모드 < 50) ?  {ARG, 3} # {ARG, 2}\@]%CALLNAME:ARG, 18, LEFT%
 ELSE
     LOCALS = \@(STRLENS(SUBSTRING(CALLNAME:ARG, 0,16)) == 16) ?  %SUBSTRING(CALLNAME:ARG, 0,16)%.. # %SUBSTRING(CALLNAME:ARG, 0,15)%...\@
-    PRINTFORM [\@(FLAG:90 >= 3 && FLAG:4 < 50) ?  {ARG, 3} # {ARG, 2}\@]%LOCALS%
+    PRINTFORM [\@(FLAG:90 >= 3 && FLAG:게임모드 < 50) ?  {ARG, 3} # {ARG, 2}\@]%LOCALS%
 ENDIF
 
 ;-------------------------------------------------
@@ -2632,47 +2632,47 @@ SIF CFLAG:ARG:41 > 0
     PRINT 종.
 SIF CFLAG:ARG:0 > 0
     PRINT EX.
-SIF TALENT:ARG:260 && FLAG:13 & 1024
+SIF TALENT:ARG:260 && FLAG:아이템확장 & 1024
     PRINT 창부.
-SIF CFLAG:ARG:1501 == 1 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 1 && FLAG:아이템확장 & 1024
     PRINT 소프트매춘.
-SIF CFLAG:ARG:1501 == 2 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 2 && FLAG:아이템확장 & 1024
     PRINT BC매춘.
-SIF CFLAG:ARG:1501 == 3 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 3 && FLAG:아이템확장 & 1024
     PRINT A매춘.
-SIF CFLAG:ARG:1501 == 4 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 4 && FLAG:아이템확장 & 1024
     PRINT V매춘.
-SIF CFLAG:ARG:1501 == 5 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 5 && FLAG:아이템확장 & 1024
     PRINT 집단시간.
-SIF CFLAG:ARG:1501 == 6 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 6 && FLAG:아이템확장 & 1024
     PRINT 난교.
-SIF CFLAG:ARG:1501 == 7 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 7 && FLAG:아이템확장 & 1024
     PRINT 세트매춘.
-SIF CFLAG:ARG:1501 == 8 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 8 && FLAG:아이템확장 & 1024
     PRINT 처녀경매.
-SIF CFLAG:ARG:1501 == 9 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 9 && FLAG:아이템확장 & 1024
     PRINT 입식파티.
-SIF CFLAG:ARG:1501 == 10 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 10 && FLAG:아이템확장 & 1024
     PRINT S서당.
-SIF CFLAG:ARG:1501 == 11 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 11 && FLAG:아이템확장 & 1024
     PRINT S병원.
-SIF CFLAG:ARG:1501 == 12 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 12 && FLAG:아이템확장 & 1024
     PRINT S풀장.
-SIF CFLAG:ARG:1501 == 13 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 13 && FLAG:아이템확장 & 1024
     PRINT 난교파티.
-SIF CFLAG:ARG:1501 == 14 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 14 && FLAG:아이템확장 & 1024
     PRINT VIP봉사.
-SIF CFLAG:ARG:1501 == 15 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 15 && FLAG:아이템확장 & 1024
     PRINT VIP초봉사.
-SIF CFLAG:ARG:1501 == 16 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 16 && FLAG:아이템확장 & 1024
     PRINT VIP정액목욕.
-SIF CFLAG:ARG:1501 == 17 && FLAG:13 & 1024
+SIF CFLAG:ARG:1501 == 17 && FLAG:아이템확장 & 1024
     PRINT SP매춘.
-IF FLAG:13 & 1024 && EXP:ARG:매춘경험 && FLAG:3000 & 2048
+IF FLAG:아이템확장 & 1024 && EXP:ARG:매춘경험 && FLAG:3000 & 2048
     T:99 = ARG
     CALL SPRING_DOWNCHECK
 ENDIF
-SIF FLAG:13 & 1024 && EXP:ARG:매춘경험 && FLAG:3000 & 4096 && TALENT:ARG:150 == 0
+SIF FLAG:아이템확장 & 1024 && EXP:ARG:매춘경험 && FLAG:3000 & 4096 && TALENT:ARG:150 == 0
     PRINTFORM 독:{CFLAG:ARG:1502}.
 ;-------------------------------------------------
 ;캐릭터명의 표시 보조 처리
@@ -2691,7 +2691,7 @@ REND
 ;단락선표시 보조 처리
 ;-------------------------------------------------
 @NEW_DRAWLINE
-IF FLAG:12 & 2
+IF FLAG:SHOP이벤트확장 & 2
     CUSTOMDRAWLINE ·
 ELSE
     DRAWLINE

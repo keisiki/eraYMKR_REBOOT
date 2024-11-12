@@ -19,7 +19,7 @@ VARSET LOCAL, 0
 CALL JUDGE_WORKSHOP
 
 ;嫉妬と狂気のチェック
-IF FLAG:14 & 4
+IF FLAG:조교모드 & 4
     REPEAT CHARANUM
         SIF CFLAG:COUNT:4 && CFLAG:COUNT:4 != 1
             CONTINUE
@@ -110,7 +110,7 @@ FOR TFLAG:900, 0, CHARANUM
         LOCAL:10 += 75
 
     ;休憩フラグ（「何もしない」を選択, もしくは調教対象でない）
-    IF FLAG:0 || TARGET != TFLAG:900
+    IF FLAG:휴식 || TARGET != TFLAG:900
         ;家によって体力の回復量が増加
         IF FLAG:90 == 4
             LOCAL:10 += 300
@@ -225,7 +225,7 @@ FOR TFLAG:900, 0, CHARANUM
     ELSE
     ENDIF
 
-    IF FLAG:14 & 4
+    IF FLAG:조교모드 & 4
         ;嫉妬
         IF TALENT:(TFLAG:900):157 && BASE:(TFLAG:900):취기 <= MAXBASE:(TFLAG:900):취기
             ;酔いつぶれていなければ自慰経験が増える(主人には知らせない)
@@ -304,11 +304,11 @@ FOR TFLAG:900, 0, CHARANUM
     ENDIF
 
     ;難易度による回復量の違い
-    IF FLAG:3 == 1
+    IF FLAG:난이도 == 1
         ;EASYは回復量が増加
         LOCAL:10 += 200
         LOCAL:11 += 200
-    ELSEIF FLAG:3 == 5
+    ELSEIF FLAG:난이도 == 5
         ;PHANTASMは回復量が低下
         TIMES LOCAL:10 , 0.75
         TIMES LOCAL:11 , 0.80
@@ -320,10 +320,10 @@ FOR TFLAG:900, 0, CHARANUM
     SIF ASSI >= 0 && ABL:ASSI:요리기능 > ABL:MASTER:요리기능 && MARK:ASSI:반발각인 == 0 && EQUIP:ASSI:14 == 0 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기 && CFLAG:ASSI:4 == 0
         LOCAL:13 = ABL:ASSI:요리기능
     ;NORMALの場合当該奴隷(ただしその場におり, 睡眠薬の影響がなく, 酔いつぶれていないこと)の料理技能が高ければそっちが基準になる
-    SIF FLAG:3 == 2 && TFLAG:900 != MASTER && TFLAG:900 != ASSI && ABL:(TFLAG:900):요리기능 > LOCAL:13 && CFLAG:(TFLAG:900):4 == 0 && EQUIP:(TFLAG:900):14 == 0 && BASE:(TFLAG:900):취기 <= MAXBASE:(TFLAG:900):취기
+    SIF FLAG:난이도 == 2 && TFLAG:900 != MASTER && TFLAG:900 != ASSI && ABL:(TFLAG:900):요리기능 > LOCAL:13 && CFLAG:(TFLAG:900):4 == 0 && EQUIP:(TFLAG:900):14 == 0 && BASE:(TFLAG:900):취기 <= MAXBASE:(TFLAG:900):취기
             LOCAL:13 = ABL:(TFLAG:900):요리기능
     ;料理技能別の修整(EASYおよび技能Lv4以上およびコンフィグで弁当ライブOFFなら修整なし)
-    IF FLAG:3 > 1 && FLAG:12 & 16
+    IF FLAG:난이도 > 1 && FLAG:SHOP이벤트확장 & 16
         IF LOCAL:13 == 3
             TIMES LOCAL:10 , 0.90
             TIMES LOCAL:11 , 0.90
@@ -386,7 +386,7 @@ FOR TFLAG:900, 0, CHARANUM
         CALL STRESS_DOWN, TFLAG:900
 
     ;HARD以上では休憩フラグが立ってなくて, ストレスがあると気力回復に悪影響がある
-    IF FLAG:3 > 2 && FLAG:0 == 0 && CFLAG:(TFLAG:900):65
+    IF FLAG:난이도 > 2 && FLAG:휴식 == 0 && CFLAG:(TFLAG:900):65
         CALL STRESS_VITAL, TFLAG:900, LOCAL:11
         LOCAL:11 = RESULT
     ENDIF
@@ -395,7 +395,7 @@ FOR TFLAG:900, 0, CHARANUM
     LOCAL:11 = MAX(LOCAL:11, 0)
 
     ;EASYは回復する条件に当てはまる場合は気力が全回復する
-    SIF FLAG:3 == 1 && LOCAL:11
+    SIF FLAG:난이도 == 1 && LOCAL:11
         LOCAL:11 = MAXBASE:(TFLAG:900):기력
 
     ;体力の回復と数値是正
@@ -407,7 +407,7 @@ FOR TFLAG:900, 0, CHARANUM
     SIF TALENT:MASTER:998
         PRINTFORML %CALLNAME:(TFLAG:900), 14, LEFT%　체력＋{LOCAL:10, 4, LEFT} 기력＋{LOCAL:11, 4, LEFT}
 
-    IF (FLAG:12 & 131072) == 0
+    IF (FLAG:SHOP이벤트확장 & 131072) == 0
         ;育児中以外でその場にいない(失踪中や触手幽閉中など)なら好感度は時間が経過するごとに1下がる
         IF CFLAG:(TFLAG:900):4 && CFLAG:(TFLAG:900):4 != 2 && CFLAG:(TFLAG:900):2 > 0
             CFLAG:(TFLAG:900):2 -= 1
@@ -438,11 +438,11 @@ IF ASSI >= 0 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기 && CFLAG:ASSI:4 == 0 && 
     CALL COMMON_UP_JUEL, ASSI, 100, ((MARK:ASSI:공포각인 + (MARK:ASSI:반발각인*2))*10), 0
 ENDIF
 
-SIF TARGET >= 0 && FLAG:0 == 0
+SIF TARGET >= 0 && FLAG:휴식 == 0
     CALL EVENTCHECK_M
-SIF FLAG:14 & 4
+SIF FLAG:조교모드 & 4
     CALL EVENTCHECK_Y
-FLAG:0 = 0
+FLAG:휴식 = 0
 ;売春関係呼び出し★
 CALL SPRING_TIME
 ;午後なら次の日, 午前なら午後にする
@@ -451,7 +451,7 @@ IF TIME == 1
     CALL EVENT_NEXTDAY_TOHO
     CALL EVENT_NEXTDAY
     ;夜イベント
-    SIF FLAG:12 & 256
+    SIF FLAG:SHOP이벤트확장 & 256
         CALL NIGHT_ATTACK
     DRAWLINE
     PRINTW 하루가 지났다…….
@@ -464,7 +464,7 @@ ELSE
     TIME = 1
 ENDIF
 
-IF FLAG:14 & 4
+IF FLAG:조교모드 & 4
     ;デッドエンド
     IF LOCAL:101
         CALL BADEND_10
@@ -490,7 +490,7 @@ FOR LOCAL, 0, CHARANUM
 NEXT
 
 ;自動回復の実行
-SIF (FLAG:13 & 32 || FLAG:13 & 64) && MONEY >= 100
+SIF (FLAG:아이템확장 & 32 || FLAG:아이템확장 & 64) && MONEY >= 100
     CALL USE_AUTOHEAL
 
 BEGIN SHOP
@@ -539,7 +539,7 @@ RETURN ARG:1
 LOCAL = BASE:ARG:기력 / 100
 
 ;休憩フラグ（「何もしない」を選択, もしくは調教対象でも助手でもない）
-SIF FLAG:0 || TARGET != ARG || ASSI != ARG
+SIF FLAG:휴식 || TARGET != ARG || ASSI != ARG
     TIMES LOCAL , 1.50
 
 ;反発刻印
@@ -600,7 +600,7 @@ SIF CFLAG:ARG:65 < 0 || TALENT:ARG:168 || TALENT:ARG:169
     CFLAG:ARG:65 = 0
 
 ;LUNATIC以上ではストレスによる過負荷状態(3000以上)にあるターンを記録しておく
-IF FLAG:3 > 3 && CFLAG:ARG:65 >= PALAMLV:3
+IF FLAG:난이도 > 3 && CFLAG:ARG:65 >= PALAMLV:3
     CFLAG:ARG:38 += 1
     ;超過負荷状態(30000以上)ならさらに記録しておく
     SIF CFLAG:ARG:65 >= PALAMLV:5
@@ -740,7 +740,7 @@ ENDIF
 @EVENT_NEXTDAY
 IF TARGET >= 0
     ;ふたなりイベント抑制がオフの状態で, [オトコ]でも[ふたなり]でなく, クリトリスリングを付けていないキャラが前提
-    IF TALENT:120 == 0 && TALENT:121 == 0 && (CFLAG:42 & 1) == 0 && (FLAG:14 & 128) == 0
+    IF TALENT:120 == 0 && TALENT:121 == 0 && (CFLAG:42 & 1) == 0 && (FLAG:조교모드 & 128) == 0
         ;不思議の根持ちで精液経験が300以上で生える
         SIF TALENT:122 == 1 && EXP:정액경험 >= 300
             CALL EVENT_FUTA_NEXTDAY
@@ -800,7 +800,7 @@ ELSE
 ENDIF
 
 ;口上表示の場合のみ朝を迎える奴隷たちのイベント口上(TFLAG:200 = 49)を呼び出すが, その場にいないものや夜イベ対象奴隷（主犯のみ)や助手は呼び出さない.
-IF FLAG:11
+IF FLAG:캐릭터대사표시
     FOR TFLAG:900, 0 , CHARANUM
         ;その場にいないとスルー
         SIF CFLAG:(TFLAG:900):4
@@ -818,11 +818,11 @@ SIF TFLAG:212 > 0
 IF TARGET >= 0 && TALENT:143 == 0
     CALL MORNING_EVENT_JUDGMENT
     ;朝の搾りたてミルク.Ｂ系拡張コマンドを有効にした場合, ランダムで発生
-    SIF FLAG:15 & 8 && TALENT:134 && ABL:욕망 >= 4 && ABL:봉사정신 >= 4 && ABL:분유중독 > 0 && RAND:3 == 0
+    SIF FLAG:커맨드확장 & 8 && TALENT:134 && ABL:욕망 >= 4 && ABL:봉사정신 >= 4 && ABL:분유중독 > 0 && RAND:3 == 0
         CALL MORNING_EVENT_MILK
 ENDIF
 ;夜イベントとの同期処理
-IF FLAG:12 & 256
+IF FLAG:SHOP이벤트확장 & 256
     TARGET = (TFLAG:210 >= CHARANUM) ? -1 # TFLAG:210
     ASSI = (TFLAG:211 >= CHARANUM) ? -1 # TFLAG:211
     TFLAG:212 = 0
@@ -895,7 +895,7 @@ FOR TFLAG:900, 0, CHARANUM
 NEXT
 
 ;必要経費
-SIF FLAG:3 == 6 || FLAG:3 == 7
+SIF FLAG:난이도 == 6 || FLAG:난이도 == 7
     CALL EVENT_EVERYDAY_COST
 
 ;--------------------------------------------------
@@ -1098,7 +1098,7 @@ PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:168%]를 얻었다
 TALENT:168 = 1
 CFLAG:17 |= 8
 FLAG:405 += 1
-IF FLAG:405 >= 50 && FLAG:4 <= 1 && (FLAG:70 & 32) == 0
+IF FLAG:405 >= 50 && FLAG:게임모드 <= 1 && (FLAG:70 & 32) == 0
     PRINTFORML %CALLNAME:MASTER%의 마음은 악마 그 자체라고 할 수 있을 것이다….
     PRINTFORMW ※강하게 뉴게임 개시시에 %CALLNAME:MASTER%의 종족을 [악마]로 선택할 수 있습니다.
     FLAG:70 |= 32
@@ -1150,7 +1150,7 @@ IF ARG == MASTER
         TIMES LOCAL , 0.25
         IF NOITEM == 0
             ITEM:61 -= 1
-            SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+            SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                 CALL FILL_PLURAL_ITEM, 61
         ENDIF
     ELSEIF MONEY:0 >= ITEMPRICE:61
@@ -1236,9 +1236,9 @@ CFLAG:ARG:65 = LIMIT(CFLAG:ARG:65, 0, 999999)
 ;--------------------------------------------------
 @EVENTSHOP
 #PRI
-IF FLAG:1 == 1
+IF FLAG:SHOP밖로드 == 1
     CALL LOADGAME_EX
-    IF FLAG:1 == 1
+    IF FLAG:SHOP밖로드 == 1
         PRINTW 데이터를 로드하지 않았으므로 종료하겠습니다.
         QUIT
     ENDIF
@@ -1289,7 +1289,7 @@ REPEAT CHARANUM
 REND
 
 ;金が尽きたかどうか(既にエンディングを迎えていた場合はゲームオーバーにならない)
-IF LOCAL > MONEY && FLAG:5
+IF LOCAL > MONEY && FLAG:엔드리스
     CALL NO_MORE_MONEY
     MONEY = 0
     LOCAL = 0
@@ -1365,12 +1365,12 @@ FOR TARGET, 0, CHARANUM
     SIF TALENT:206
         CONTINUE
     ;使用フラグがＯＮでストレスがあり, お金も足りている場合は鎮静茶使用チェック
-    IF FLAG:13 & 32 && MONEY >= 100 && CFLAG:65
+    IF FLAG:아이템확장 & 32 && MONEY >= 100 && CFLAG:65
         CALL USE_AUTOHEAL_MENTAL, TARGET
         LOCAL:2 += RESULT * 100
     ENDIF
     ;使用フラグがＯＮで体力気力が全開していない, お金も足りている場合は回復薬使用チェック
-    IF FLAG:13 & 64 && MONEY >= 1000 && (BASE:0 < MAXBASE:0 || BASE:기력 < MAXBASE:기력)
+    IF FLAG:아이템확장 & 64 && MONEY >= 1000 && (BASE:0 < MAXBASE:0 || BASE:기력 < MAXBASE:기력)
         CALL USE_AUTOHEAL_LIFE, TARGET
         LOCAL:2 += RESULT * 1000
     ENDIF

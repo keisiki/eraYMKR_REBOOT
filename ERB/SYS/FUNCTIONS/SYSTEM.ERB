@@ -7,7 +7,7 @@
 ;｢CALL EVENT_NEXTDAY_T｣｢CALL EVENTCHECK_M｣을 추가
 @EVENTFIRST
 ;주차 · 날짜
-FLAG:6 = 1
+FLAG:주회수 = 1
 DAY = 1
 CALL CALENDAR_INIT
 
@@ -45,7 +45,7 @@ CALL SELECT_GAMEMODE
 CALL SELECT_DIFFICULTY
 
 ;EASY 모드
-IF FLAG:3 == 1
+IF FLAG:난이도 == 1
     ABL:MASTER:기교 = MAX(ABL:MASTER:기교, 3)
     ITEM:50 = (NOITEM == 0) ? 1 # 0
     ITEM:75 = (NOITEM == 0) ? 1 # 0
@@ -53,15 +53,15 @@ IF FLAG:3 == 1
     TALENT:MASTER:91 = 1
 ENDIF
 ;대사의 표시 빈도, 여기서 초기값을 넣어두지 않으면, 거동이 이상해짐
-FLAG:11 = 2
+FLAG:캐릭터대사표시 = 2
 ;사정부위 선택
-FLAG:18 = 0
-FLAG:19 = 9
+FLAG:사정장소선택및임신기능 = 0
+FLAG:사정선택기본장소 = 9
 ;처음에 추가 기능 전부 해방시키는 게 가능
 CALL START_CONFIGURATION
 ;강력 아이템 봉인 설정
-SIF FLAG:3 >= 3
-    FLAG:13 |= 2
+SIF FLAG:난이도 >= 3
+    FLAG:아이템확장 |= 2
 ;주인의 캐릭터 카드 취득
 LOCAL = NO:MASTER + 100
 ;주인이 범용 캐릭터가 아니며 카드를 가지고 있지 않은가, 범용 캐릭터인가
@@ -83,9 +83,9 @@ SIF RESULT == 0 && TALENT:MASTER:998 == 0
 CALL SELECT_MODE_NOMOREGLAZE_TORIKOMODE
 
 ;eratohoYM 모드 및 EXTRA 모드면 프롤로그를 표시할지 묻는다
-IF FLAG:4 == 0
+IF FLAG:게임모드 == 0
     CALL PROLOGUE_SELECT_YM
-ELSEIF FLAG:4 == 2
+ELSEIF FLAG:게임모드 == 2
     CALL PROLOGUE_SELECT_EXTRA
 ENDIF
 
@@ -101,7 +101,7 @@ BEGIN SHOP
 ;게임 모드 선택
 ;--------------------------------------------------
 @SELECT_GAMEMODE
-FLAG:4 = 0
+FLAG:게임모드 = 0
 DRAWLINE
 PRINTL ★★ 모드를 선택해 주세요 ★★
 PRINTL 
@@ -118,7 +118,7 @@ IF RESULT == 0
     PRINTW “eratohoYM” 모드를 선택했습니다.
 ELSEIF RESULT == 1
     PRINTW “ABNORMAL” 모드를 선택했습니다.
-    FLAG:4 = 1
+    FLAG:게임모드 = 1
     PRINTL 누구로 시작하시겠습니까?
     PRINTL [0] 「당신」으로 시작한다
     PRINTL [1] 동방 프로젝트 캐릭터 중에 선택한다
@@ -136,13 +136,13 @@ ELSEIF RESULT == 1
 ELSEIF RESULT == 6
     PRINTW “PROSTITUTE” 모드를 선택했습니다.
     ITEM:90 = 1
-    FLAG:13 = 1024
-    FLAG:4 = 4
+    FLAG:아이템확장 = 1024
+    FLAG:게임모드 = 4
     MONEY += 200
 ELSEIF RESULT == 9
     PRINTW “EXTRA” 모드를 선택했습니다.
-    FLAG:4 = 2
-    FLAG:5 |= 1
+    FLAG:게임모드 = 2
+    FLAG:엔드리스 |= 1
     CALL START_CHARA_SELECT
     MONEY += 19000
 ELSEIF RESULT == 100
@@ -169,13 +169,13 @@ DRAWLINE
 PRINTL ★★ 난이도를 선택하세요 ★★
 PRINTL 
 DRAWLINE
-IF FLAG:4 == 0 || FLAG:4 == 1
+IF FLAG:게임모드 == 0 || FLAG:게임모드 == 1
     PRINTL [1] EASY    (120일 기한, 목표 금액 100만원)
     PRINTL [2] NORMAL   (90일 기한, 목표 금액 100만원)
     PRINTL [3] HARD     (99일 기한, 목표 금액 100만원)
     PRINTL [4] LUNATIC  (90일 기한, 목표 금액 100만원)
     PRINTL [5] PHANTASM (60일 기한, 목표 금액 100만원)
-ELSEIF FLAG:4 == 4
+ELSEIF FLAG:게임모드 == 4
     MONEY:100 = 2000000
     PRINTFORML [1] EASY    (140일 기한, 목표 금액 %SHOW_YEN(MONEY:100)%)
     PRINTFORML [2] NORMAL  (100일 기한, 목표 금액 %SHOW_YEN(MONEY:100)%)
@@ -220,7 +220,7 @@ ELSEIF RESULT == 4
     ;초기 스테이터스：마조
     TALENT:MASTER:82 = 1
 ELSEIF RESULT == 5
-    SIF FLAG:4 == 4
+    SIF FLAG:게임모드 == 4
         MONEY:100 = 1000000
     PRINTW 난이도 : “PHANTASM”을 선택했습니다.
     MONEY += 1000
@@ -231,7 +231,7 @@ ELSEIF RESULT == 5
 ELSE
     GOTO INPUT_LOOP_DIFFICULTY
 ENDIF
-FLAG:3 = RESULT
+FLAG:난이도 = RESULT
 
 ;=============================================================================
 ;EXTRA 모드 관련의 처리
@@ -306,7 +306,7 @@ ELSE
 ENDIF
 
 PRINTFORMW 플레이어를 「%NAME:MASTER%」%조사만처리(NAME:MASTER,"로")% 정했다.
-IF NO:MASTER == 0 && FLAG:4 == 1
+IF NO:MASTER == 0 && FLAG:게임모드 == 1
     CALL SET_MASTER_SEX
 ENDIF
 ;아이템 · 노예 진열 플래그의 삭제

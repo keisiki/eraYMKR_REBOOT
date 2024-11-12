@@ -353,19 +353,19 @@ PRINTLC [ 5] - ITEM 조작
 PRINTLC [ 6] - 캐릭터 카드 조작
 PRINTLC [ 7] - DITEMTYPE 조작
 PRINTLC [ 8] - 난이도 변경
-PRINTFORMLC [ 9] - \@(FLAG:5 & 1) ? 기한 있음 # 무기한\@으로 변경
+PRINTFORMLC [ 9] - \@(FLAG:엔드리스 & 1) ? 기한 있음 # 무기한\@으로 변경
 SIF MONEY:998
     PRINTLC [10] - 수입 RANK 리셋
-SIF FLAG:14 & 4
+SIF FLAG:조교모드 & 4
     PRINTLC [11] - 얀데레 리셋
 SIF TARGET >= 0
     PRINTLC [12] - 도시락 테스트
-SIF FLAG:15 & 4096
+SIF FLAG:커맨드확장 & 4096
     PRINTLC [13] - 촉수 관련 수치변경
-SIF FLAG:12 & 8
+SIF FLAG:SHOP이벤트확장 & 8
     PRINTLC [14] - 수집품 편집
 PRINTLC [15] - SAVESTR 조작
-SIF FLAG:5 == 0 && (FLAG:4 == 0 || FLAG:4 == 1 || FLAG:4 == 4)
+SIF FLAG:엔드리스 == 0 && (FLAG:게임모드 == 0 || FLAG:게임모드 == 1 || FLAG:게임모드 == 4)
     PRINTLC [16] - 목표 금액 변경
 PRINTLC [17] - 전원 연모·조수 가능
 PRINTLC [96] - 캐릭터 전부 회복
@@ -404,17 +404,17 @@ ELSEIF RESULT == 9
     CALL EDIT_ENDLESS_MODE
 ELSEIF RESULT == 10 && MONEY:998
     CALL EDIT_INCOME_RANKING
-ELSEIF RESULT == 11 && FLAG:14 & 4
+ELSEIF RESULT == 11 && FLAG:조교모드 & 4
     CALL EDIT_SANITY
 ELSEIF RESULT == 12 && TARGET >= 0
     CALL EDIT_LUNCH
-ELSEIF RESULT == 13 && FLAG:15 & 4096
+ELSEIF RESULT == 13 && FLAG:커맨드확장 & 4096
     CALL EDIT_TENTACLE
-ELSEIF RESULT == 14 && FLAG:12 & 8
+ELSEIF RESULT == 14 && FLAG:SHOP이벤트확장 & 8
     CALL EDIT_COLLECTION_MENU
 ELSEIF RESULT == 15
     CALL EDIT_SAVESTR
-ELSEIF RESULT == 16 && FLAG:5 == 0 && (FLAG:4 == 0 || FLAG:4 == 1 || FLAG:4 == 4)
+ELSEIF RESULT == 16 && FLAG:엔드리스 == 0 && (FLAG:게임모드 == 0 || FLAG:게임모드 == 1 || FLAG:게임모드 == 4)
     CALL EDIT_MONEYLIMIT
 ELSEIF RESULT == 17
     CALL EDIT_ENDINGTESTMODE
@@ -493,10 +493,10 @@ PRINTFORMW 현재 목표금액을 {MONEY:100}원으로 변경했습니다.
 @EDIT_GAME_MODE
 VARSET LOCALS,""
 SPLIT "미정의,EASY,NORMAL,HARD,LUNATIC,PHANTASM,PRO,ULTRA,UNDEFINED",",",LOCALS
-SIF FLAG:3 < 1 || FLAG:3 > 7
-    FLAG:3 = 0
+SIF FLAG:난이도 < 1 || FLAG:난이도 > 7
+    FLAG:난이도 = 0
 DRAWLINE
-PRINTFORML 현재 난이도는 "%LOCALS:(FLAG:3)%" 입니다.
+PRINTFORML 현재 난이도는 "%LOCALS:(FLAG:난이도)%" 입니다.
 PRINTL 변경하고 싶은 난이도를 선택해 주세요.
 DRAWLINE
 PRINTL [0] 이대로 좋은 건가
@@ -517,7 +517,7 @@ ELSEIF RESULT >= 1 && RESULT <= 7
 ELSE
     GOTO INPUT_LOOP
 ENDIF
-FLAG:3 = RESULT
+FLAG:난이도 = RESULT
 
 ;--------------------------------------------------
 ;엔드리스 모드 변경 처리
@@ -527,8 +527,8 @@ FLAG:3 = RESULT
 @EDIT_ENDLESS_MODE
 DRAWLINE
 PRINT 
-FLAG:5 ^= 1
-PRINTFORMW 엔드리스 에잇을 \@(FLAG:5 & 1) ? 작동 # 해제\@합니다.
+FLAG:엔드리스 ^= 1
+PRINTFORMW 엔드리스 에잇을 \@(FLAG:엔드리스 & 1) ? 작동 # 해제\@합니다.
 
 ;--------------------------------------------------
 ;수입 랭킹 초기화 처리
@@ -823,7 +823,7 @@ SIF ( TALENT:120 || TALENT:121 )
     PRINTFORMLC [102] 사정 게이지 ({BASE:사정}) 
 SIF TALENT:134
     PRINTFORMLC [103] 분유 게이지 ({BASE:모유}) 
-SIF TALENT:오줌싸개버릇 && ((FLAG:15 & 4096 && FLAG:75 & 32768) == 0)
+SIF TALENT:오줌싸개버릇 && ((FLAG:커맨드확장 & 4096 && FLAG:75 & 32768) == 0)
     PRINTFORMLC [104] 요의 게이지 ({BASE:뇨의}) 
 SIF TALENT:65 || CFLAG:36
     PRINTFORMLC [105] 음모 ({BASE:음모}) 
@@ -947,7 +947,7 @@ SIF ( TALENT:120 || TALENT:121 )
     PRINTFORMLC [102] 최대 사정 게이지 ({MAXBASE:사정}) 
 SIF TALENT:134
     PRINTFORMLC [103] 최대 분유 게이지 ({MAXBASE:모유}) 
-SIF TALENT:오줌싸개버릇 && ((FLAG:15 & 4096 && FLAG:75 & 32768) == 0)
+SIF TALENT:오줌싸개버릇 && ((FLAG:커맨드확장 & 4096 && FLAG:75 & 32768) == 0)
     PRINTFORMLC [104] 최대 요의 게이지 ({MAXBASE:뇨의}) 
 ;PRINTFORML [105] 최대 음모 게이지 ({MAXBASE:음모}) 
 SIF TALENT:146
@@ -3127,5 +3127,5 @@ REND
 ;퀵 로드용 설정
 ;=============================================================================
 @QUICKLOAD
-FLAG:1 = 1
+FLAG:SHOP밖로드 = 1
 BEGIN SHOP
