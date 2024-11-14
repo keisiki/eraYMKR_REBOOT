@@ -84,7 +84,7 @@ ELSE
     ;취기 표시
     
     ;토리코모드
-    IF FLAG:5000 & 1
+    IF FLAG:토리코모드 & 1
     ;일반모드
     ELSE
         CALL CALC_GAUGE8, MASTER, 1
@@ -94,7 +94,7 @@ ELSE
     ;체력 표시
     
     ;토리코모드
-    IF FLAG:5000 & 1
+    IF FLAG:토리코모드 & 1
         CALL LIFE_BAR_TORIKOMODE, MASTER
     ;일반모드
     ELSE
@@ -111,7 +111,7 @@ ELSE
         ;취기 표시
 
         ;토리코모드
-        IF FLAG:5000 & 1
+        IF FLAG:토리코모드 & 1
         ;일반모드
         ELSE
             CALL CALC_GAUGE8, TARGET, 1
@@ -121,7 +121,7 @@ ELSE
         ;체력 표시
 
         ;토리코모드
-        IF FLAG:5000 & 1
+        IF FLAG:토리코모드 & 1
             CALL LIFE_BAR_TORIKOMODE, TARGET
         ;일반모드　
         ELSE
@@ -132,7 +132,7 @@ ELSE
         ;기력 표시
 
         ;토리코모드
-        IF FLAG:5000 & 1
+        IF FLAG:토리코모드 & 1
             CALL VITALITY_BAR_TORIKOMODE, TARGET
         ;일반모드
         ELSE
@@ -140,7 +140,7 @@ ELSE
         ENDIF
 
         ;촉수 게이지 표시, 토리코모드 아님
-        IF FLAG:커맨드확장 & 4096 && TALENT:146 && (FLAG:5000 & 1) == 0
+        IF FLAG:커맨드확장 & 4096 && TALENT:146 && (FLAG:토리코모드 & 1) == 0
                 CALL CALC_TENTACLE_GAUGE
                 PRINT 　
                 PRINT 기생
@@ -149,17 +149,17 @@ ELSE
         ENDIF
 
         ;만복도모드
-        IF FLAG:5000 & 32
-            SIF (FLAG:5000 & 1) == 0
+        IF FLAG:토리코모드 & 32
+            SIF (FLAG:토리코모드 & 1) == 0
                 PRINT 　
             CALL HUNGER_BAR_TORIKOMODE, TARGET
-            SIF (FLAG:5000 & 1) == 0
+            SIF (FLAG:토리코모드 & 1) == 0
                 PRINT 　　　 
             CALL NUTRITION_BAR_TORIKOMODE, TARGET
         ENDIF
 
         ;촉수 표시, 토리코모드
-        IF FLAG:커맨드확장 & 4096 && TALENT:146 && FLAG:5000 & 1
+        IF FLAG:커맨드확장 & 4096 && TALENT:146 && FLAG:토리코모드 & 1
                 PRINT 기생:
                 PRINTFORM ({BASE:촉수, 5}/{MAXBASE:촉수, 5})
         ENDIF
@@ -179,7 +179,7 @@ ELSE
         ;취기 표시
         
         ;토리코모드
-        IF FLAG:5000 & 1
+        IF FLAG:토리코모드 & 1
         ;일반모드
         ELSE
             CALL CALC_GAUGE8, ASSI, 1
@@ -189,7 +189,7 @@ ELSE
         ;체력 표시
         
         ;토리코모드
-        IF FLAG:5000 & 1
+        IF FLAG:토리코모드 & 1
             CALL LIFE_BAR_TORIKOMODE, ASSI
         ;일반모드　
         ELSE
@@ -370,8 +370,8 @@ ELSE
     SIF TALENT:MASTER:9
         PRINTLC [140] - 주인 성별 변경
     ;수집품을 500종 이상 갖추면 전시실의 이름이 변경. 그뿐
-    SIF FLAG:500 > 0 && FLAG:SHOP이벤트확장 & 8
-        PRINTFORMLC [150] - \@(FLAG:500 >= 500) ? 환상향 비보관 # 전시실로 간다\@
+    SIF FLAG:전시품총계 > 0 && FLAG:SHOP이벤트확장 & 8
+        PRINTFORMLC [150] - \@(FLAG:전시품총계 >= 500) ? 환상향 비보관 # 전시실로 간다\@
     ;CONFIG의 「신사적인 촉수계 커맨드」가 유효하고, 진화의 비법이 있거나 아이템 없음 모드일 경우
     SIF FLAG:커맨드확장 & 4096 && (ITEM:59 || NOITEM)
         PRINTLC [160] - 촉수개발·배양시설
@@ -393,7 +393,7 @@ ELSE
 
     ;토리코모드 추가분
         ;만복도 시스템 사용중일때만 켜짐.
-        IF FLAG:5000 & 32
+        IF FLAG:토리코모드 & 32
         PRINTLC [167] - 식단을 설정한다
         ENDIF
         ;의뢰 시스템 사용중일때만 켜짐.
@@ -401,7 +401,7 @@ ELSE
         PRINTLC [168] - 의뢰소
         ENDIF
         ;매각가 시스템 사용중이며 조교중인 노예가 있을 때만 켜짐.
-        IF FLAG:5000 & 2 && TARGET > 0
+        IF FLAG:토리코모드 & 2 && TARGET > 0
         PRINTLC [169] - 매각조사
         ENDIF
 
@@ -421,7 +421,7 @@ ELSE
         PRINTLC [180] - 윤간시킨다
 
     ;스케쥴 시스템 사용중이고, 노예가 1명 이상 있을 때.
-    IF FLAG:5000 & 1024  && CHARANUM > 1
+    IF FLAG:토리코모드 & 1024  && CHARANUM > 1
         ;낮밤에 따른 색 변화
         IF TIME == 1
         ELSE
@@ -464,7 +464,7 @@ ELSE
         PRINTLC [666] - 캐릭터 정렬
     PRINTLC [777] - 컨피그 설정
     ;토리코모드의 헬프
-    ;SIF FLAG:5000 > 0
+    ;SIF FLAG:토리코모드 > 0
     ;    PRINTLC [997] - 토리코모드 설명
     PRINTLC [998] - 동방조교전
     ;주인에게 [Debug]가 있다=debug 모드일 경우
@@ -563,8 +563,8 @@ ELSE
     ELSEIF RESULT == 140 && TALENT:MASTER:9
         CALL CHANGE_SEX, MASTER
         RETURN 1
-    ELSEIF RESULT == 150 && FLAG:500 > 0 && FLAG:SHOP이벤트확장 & 8
-        PRINTFORMW \@(FLAG:500 >= 500) ? 환상향비보관으 # 전시실\@로 갔다.
+    ELSEIF RESULT == 150 && FLAG:전시품총계 > 0 && FLAG:SHOP이벤트확장 & 8
+        PRINTFORMW \@(FLAG:전시품총계 >= 500) ? 환상향비보관으 # 전시실\@로 갔다.
         DRAWLINE
         DRAWLINE
         CALL COLLECTION_ROOM_MENU
@@ -602,7 +602,7 @@ ELSE
     ;토리코모드 추가분
     ELSEIF RESULT == 167
         ;만복도 시스템 사용중일때만 켜짐.
-        IF FLAG:5000 & 32
+        IF FLAG:토리코모드 & 32
         PRINTW 노예들의 식단은 어떻게 할까?
         CALL LIST_FEED_MENU_TORIKOMODE
         ELSE
@@ -612,7 +612,7 @@ ELSE
         PRINTW 의뢰소로 향했다.
         CALL MISSION_SHOP_TORIKOMODE
 
-    ELSEIF RESULT == 169 && FLAG:5000 & 2 && TARGET > 0
+    ELSEIF RESULT == 169 && FLAG:토리코모드 & 2 && TARGET > 0
         PRINTW 조교중인 노예의 매각가를 체크해보자.
         CALL RESEARCH_CHARASALE_CALC_TORIKOMODE
 
@@ -635,7 +635,7 @@ ELSE
             CALL BUILD_WORKSHOP
         ENDIF
     ;스케쥴 시스템 사용중이고, 노예가 1명 이상 있을 때. (토리코모드 사양)
-    ELSEIF RESULT == 181 && FLAG:5000 & 1024  && CHARANUM > 1
+    ELSEIF RESULT == 181 && FLAG:토리코모드 & 1024  && CHARANUM > 1
         PRINTW 노예들의 스케쥴을 설정한다.
         CALL LIST_SCHEDULE_TORIKOMODE
 
@@ -674,7 +674,7 @@ ELSE
         TFLAG:201 = 0
         CALL SWEET_POTATO_CONFIGURATION
     ;토리코모드의 헬프
-    ;ELSEIF RESULT == 997 && FLAG:5000 > 0
+    ;ELSEIF RESULT == 997 && FLAG:토리코모드 > 0
     ;    CALL HELP_TORIKOMODE
     ELSEIF RESULT == 998
         CALL DICTIONARY_MENU
@@ -937,7 +937,7 @@ PRINTFORML 　[0] %CALLNAME:MASTER%(주인)
 DRAWLINE
 
 ;토리코모드
-IF FLAG:5000 & 1
+IF FLAG:토리코모드 & 1
     CALL CHARADATA_LIST_TORIKOMODE, LOCAL, LOCAL:99, 25
 ELSE
 ;일반모드
@@ -982,7 +982,7 @@ SIF TALENT:MASTER:998
 
 
 ;토리코모드
-IF FLAG:5000 & 1
+IF FLAG:토리코모드 & 1
     CALL LIFE_BAR_TORIKOMODE, ARG
     PRINT  
     CALL VITALITY_BAR_TORIKOMODE, ARG
@@ -1405,7 +1405,7 @@ ELSEIF TFLAG:0 != 10 && TFLAG:0 != 11
                 CONTINUE
             SIF COUNT >= 2 && COUNT <= 9
                 CONTINUE
-            SIF (FLAG:1500 & 1) == 0 && COUNT >= 10
+            SIF (FLAG:신체측정패치 & 1) == 0 && COUNT >= 10
                 CONTINUE
             SIF STRLENS(BASENAME:COUNT) <= 0
                 CONTINUE
@@ -1629,7 +1629,7 @@ REPEAT 20
     CALL ARRANGE_CHARALIST, LOCAL
     CALL ARRANGE_CHARALIFE, LOCAL
     CALL ARRANGE_SEARCH_LIST, LOCAL, ARG:1
-    IF FLAG:3998 & 1 && (TFLAG:0 == 3 && ((ARG:1 == 0 && CFLAG:LOCAL:11 & 1) || (ARG:1 == 1 && CFLAG:LOCAL:11 & 2) || (ARG:1 == 50 && CFLAG:LOCAL:11 & 4) || (ARG:1 == 12 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:120 && CFLAG:LOCAL:18 == 0) || (ARG:1 == 13 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:120 == 0 && CFLAG:LOCAL:18 == 0)))
+    IF FLAG:변동경험강조패치 & 1 && (TFLAG:0 == 3 && ((ARG:1 == 0 && CFLAG:LOCAL:11 & 1) || (ARG:1 == 1 && CFLAG:LOCAL:11 & 2) || (ARG:1 == 50 && CFLAG:LOCAL:11 & 4) || (ARG:1 == 12 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:120 && CFLAG:LOCAL:18 == 0) || (ARG:1 == 13 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:120 == 0 && CFLAG:LOCAL:18 == 0)))
         FONTBOLD
         PRINTFORML  %STR:3%
         FONTREGULAR

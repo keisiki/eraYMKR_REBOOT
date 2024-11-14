@@ -286,7 +286,7 @@ SIF FLAG:엔딩도달 & 16 && (FLAG:계승가능조수수 & 2) == 0
 SIF ABL:MASTER:조교사Lv > 4 && (FLAG:계승가능조수수 & 4) == 0
     FLAG:계승가능조수수 |= 4
 ;조교중에 연모 처녀를 빼앗은 인원수의 누계가 100명 이상
-SIF FLAG:400 >= 100 && (FLAG:계승가능조수수 & 8) == 0
+SIF FLAG:파과총계 >= 100 && (FLAG:계승가능조수수 & 8) == 0
     FLAG:계승가능조수수 |= 8
 ;노예 매각으로 번 금액의 누계가 25000000원이상
 SIF MONEY:990 >= 25000000 && (FLAG:계승가능조수수 & 16) == 0
@@ -304,7 +304,7 @@ SIF FLAG:주인종족변경 & 1 && FLAG:주인종족변경 & 2 && FLAG:주인종
 SIF (FLAG:계승가능조수수 & 256) == 0
     CALL CHECK_BATH_AND_TENTACLE
 ;환상향 비보관이 될 때까지 전시실을 발전시켰다
-SIF FLAG:500 >= 500 && (FLAG:계승가능조수수 & 512) == 0
+SIF FLAG:전시품총계 >= 500 && (FLAG:계승가능조수수 & 512) == 0
     FLAG:계승가능조수수 |= 512
 ;노멀·하렘 엔드를 20 종류 이상 보았다
 SIF FLAG:4000 >= 20 && (FLAG:계승가능조수수 & 1024) == 0
@@ -409,19 +409,19 @@ FOR LOCAL, 1, 21
         CASE 13
             TFLAG:LOCAL = FLAG:1100
         CASE 14
-            TFLAG:LOCAL = FLAG:1200
+            TFLAG:LOCAL = FLAG:정액도시락및정음절정패치
         CASE 15
-            TFLAG:LOCAL = FLAG:1300
+            TFLAG:LOCAL = FLAG:자식조교패치
         CASE 16
-            TFLAG:LOCAL = FLAG:1500
+            TFLAG:LOCAL = FLAG:신체측정패치
         CASE 17
-            TFLAG:LOCAL = FLAG:3998
+            TFLAG:LOCAL = FLAG:변동경험강조패치
         CASE 18
-            TFLAG:LOCAL = FLAG:3999
+            TFLAG:LOCAL = FLAG:실신패치
         CASE 19
-            TFLAG:LOCAL = FLAG:1600
+            TFLAG:LOCAL = FLAG:범해짐패치
         CASE 20
-            TFLAG:LOCAL = FLAG:1700
+            TFLAG:LOCAL = FLAG:자위은폐발각패치
     ENDSELECT
 NEXT
 
@@ -464,7 +464,7 @@ MONEY += LOCAL:1
 ;蒐集品引き継ぎ処理
 ;ビット演算でLOCAL:2が1のときはフラグリセット処理において蒐集品フラグが消去されないようになる
 LOCAL:2 = 0
-IF FLAG:500 > 0
+IF FLAG:전시품총계 > 0
     DRAWLINE
     PRINTL 수집품을 인계하겠습니까?
     PRINTLC [0] 예
@@ -599,19 +599,19 @@ IF RESULT == 0
             CASE 13
                 FLAG:1100 = TFLAG:LOCAL
             CASE 14
-                FLAG:1200 = TFLAG:LOCAL
+                FLAG:정액도시락및정음절정패치 = TFLAG:LOCAL
             CASE 15
-                FLAG:1300 = TFLAG:LOCAL
+                FLAG:자식조교패치 = TFLAG:LOCAL
             CASE 16
-                FLAG:1500 = TFLAG:LOCAL
+                FLAG:신체측정패치 = TFLAG:LOCAL
             CASE 17
-                FLAG:3998 = TFLAG:LOCAL
+                FLAG:변동경험강조패치 = TFLAG:LOCAL
             CASE 18
-                FLAG:3999 = TFLAG:LOCAL
+                FLAG:실신패치 = TFLAG:LOCAL
             CASE 19
-                FLAG:1600 = TFLAG:LOCAL
+                FLAG:범해짐패치 = TFLAG:LOCAL
             CASE 20
-                FLAG:1700 = TFLAG:LOCAL
+                FLAG:자위은폐발각패치 = TFLAG:LOCAL
         ENDSELECT
     NEXT
 ELSEIF RESULT == 1 || RESULT == 2
@@ -665,7 +665,7 @@ FLAG:996 = -1
 TFLAG:994 = 1
 
 ;만복도시스템 체크. 초기값 세팅.
-SIF FLAG:5000 & 32 
+SIF FLAG:토리코모드 & 32 
     CALL INIT_HUNGERSYSTEM_TORIKOMODE
 ;--------------------------------------------------
 ;난이도 설정(주차 플레이)
@@ -774,7 +774,7 @@ ENDIF
 @RACE_MASTER_LIST
 PRINTL 주인의 종족을 선택해 주십시오.
 DRAWLINE
-IF FLAG:400 > 99 && CFLAG:MASTER:5
+IF FLAG:파과총계 > 99 && CFLAG:MASTER:5
     PRINTLC [00] 원래로 돌아간다.
 ELSE
     PRINTL ※최악의 경우 원래대로 돌아갈 수 없을 가능성도 있습니다.
@@ -807,7 +807,7 @@ INPUT
 IF RESULT == 100
     PRINTW 주인의 종족을 변경하지 않습니다.
     RETURN 0
-ELSEIF RESULT == 0 && FLAG:400 > 99 && CFLAG:MASTER:5
+ELSEIF RESULT == 0 && FLAG:파과총계 > 99 && CFLAG:MASTER:5
     PRINTW 주인의 종족을 원래대로 되돌렸습니다.
     LOCAL = 0
 ELSEIF RESULT == 1 && FLAG:주인종족변경 & 1

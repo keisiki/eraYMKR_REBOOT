@@ -15,10 +15,10 @@ FLAG:아이템확장 = 1027
 FLAG:조교모드 = 115
 FLAG:커맨드확장 = 131071
 FLAG:SHOP아이템표시 = 3
-FLAG:1200 = 2
-FLAG:1700 = 1
-FLAG:3998 = 1
-FLAG:5000 = 1032
+FLAG:정액도시락및정음절정패치 = 2
+FLAG:자위은폐발각패치 = 1
+FLAG:변동경험강조패치 = 1
+FLAG:토리코모드 = 1032
 FLAG:5001 = 3
 FLAG:5010 = 2
 
@@ -32,19 +32,19 @@ FLAG:커맨드확장 = 15
 ;사정장소 선택
 FLAG:사정선택기본장소 = 9
 ;토리코모드
-FLAG:5000 = 2047
+FLAG:토리코모드 = 2047
 ;토리코모드- 칼라
 FLAG:5001 = 4
 ;토리코모드 - 임신&딸조교 쉽게
 FLAG:5005 = 1
 ;실신모드
-FLAG:1200 = 2
+FLAG:정액도시락및정음절정패치 = 2
 ;임신 - 임신회란가능.
 FLAG:사정장소선택및임신기능 = 6
 ;딸조교
-FLAG:1300 = 1
+FLAG:자식조교패치 = 1
 ;실신패치
-FLAG:3999 = 1
+FLAG:실신패치 = 1
 ;의뢰소
 FLAG:5010 = 2
 ;커맨드전부사용
@@ -61,7 +61,7 @@ FLAG:커맨드확장 = 15
 ;사정장소 선택
 FLAG:사정선택기본장소 = 9
 ;토리코모드
-FLAG:5000 = 2047
+FLAG:토리코모드 = 2047
 ;토리코모드- 칼라
 FLAG:5001 = 4
 ;토리코모드 - 경비시스템
@@ -69,20 +69,20 @@ FLAG:5003 = 3
 ;토리코모드 - 임신&딸조교 쉽게
 FLAG:5005 = 1
 ;실신모드
-FLAG:1200 = 2
+FLAG:정액도시락및정음절정패치 = 2
 ;임신 - 임신회란가능.
 FLAG:사정장소선택및임신기능 = 6
 ;딸조교
-FLAG:1300 = 1
+FLAG:자식조교패치 = 1
 ;실신패치
-FLAG:3999 = 1
+FLAG:실신패치 = 1
 ;의뢰소
 FLAG:5010 = 2
 ;커맨드전부사용
 FLAG:커맨드확장 = 131071
 
 ;만약 이로인해 만복도 모드가 켜지면, 지금 만복도 시스템 정보가 없는 캐릭터들을 일괄 세팅 해 준다.
-SIF FLAG:5000 & 32 
+SIF FLAG:토리코모드 & 32 
     CALL INIT_HUNGERSYSTEM_TORIKOMODE
 ;경비시스템을 처음으로 켠 경우에 한해 한해, 무료 경비원을 지급한다.
 SIF FLAG:5004 == 0
@@ -246,7 +246,7 @@ SIF TALENT:134
 SIF TEQUIP:12 || TEQUIP:32 || TALENT:오줌싸개버릇 || EXP:방뇨경험
     CALL CALC_GAUGE4_SLAVE_TORIKOMODE, TARGET, 0
 ;奴隷の精飲절정ゲージを表示
-SIF TALENT:66 && FLAG:1200 & 2
+SIF TALENT:66 && FLAG:정액도시락및정음절정패치 & 2
     CALL CALC_GAUGEX_SLAVE_TORIKOMODE
 ;助手の射精ゲージを表示
 SIF ASSI >= 0 && EXIST_PENIS(ASSI)
@@ -652,12 +652,12 @@ PRINTL
 ;DRAWLINE
 
 ;더러움 표시. 컨피그 따라감.
-SIF FLAG:5000 & 4
+SIF FLAG:토리코모드 & 4
     CALL STAIN_INFO_TORIKOMODE
 
 ;소질 표시. 뭔가 위치가 영 좃치않타....
 ; 컨피그 따라감.
-IF FLAG:5000 & 8
+IF FLAG:토리코모드 & 8
     SETCOLOR 140, 140, 140
     CALL SHOW_INFO_TALENT, TARGET
     RESETCOLOR
@@ -752,7 +752,7 @@ LOCAL:3 = (LOCAL:1 *100 / LOCAL:2)
 ;PRINTFORML {LOCAL:3}LOCAL:3
 
 ;표시방식이 토리코식이면,
-IF FLAG:5000 & 1
+IF FLAG:토리코모드 & 1
     PRINT 만복(
     IF LOCAL:3 >= 95
         CALL SETCOLOR_TORIKOMODE, "GREEN", 4
@@ -828,7 +828,7 @@ LOCAL:2 = CFLAG:ARG:4004
 LOCAL:3 = (LOCAL:1 *100 / LOCAL:2)
 
 ;표시방식이 토리코식이면,
-IF FLAG:5000 & 1
+IF FLAG:토리코모드 & 1
 ;계산, 출력
     PRINT 영양(
     IF LOCAL:3 >= 95
@@ -988,15 +988,15 @@ REPEAT 20
     ENDIF
     CALL ARRANGE_CHARALIST, LOCAL
     ;스케쥴 모드 사용중일때
-    SIF FLAG:5000 & 1024 && ARG:3 & 8
+    SIF FLAG:토리코모드 & 1024 && ARG:3 & 8
         CALL ARRANGE_SCHEDULE_TORIKOMODE, LOCAL
     ;스트레스 모드 사용 중일때
-    IF FLAG:5000 & 64 && ARG:3 & 8
+    IF FLAG:토리코모드 & 64 && ARG:3 & 8
         PRINT  ♨스트레스:
         CALL PRINT_STRESS_LEVEL_TORIKOMODE, CFLAG:LOCAL:65
     ENDIF
     ;줄바꿈
-    SIF (FLAG:5000 & 1024 || FLAG:5000 & 64) && ARG:3 & 8
+    SIF (FLAG:토리코모드 & 1024 || FLAG:토리코모드 & 64) && ARG:3 & 8
         PRINTL 
     
     PRINT 　
@@ -1009,7 +1009,7 @@ REPEAT 20
         PRINTL
     ENDIF
     ;한마디 호출
-    IF FLAG:1200 & 4 && ARG:3 & 16
+    IF FLAG:정액도시락및정음절정패치 & 4 && ARG:3 & 16
         CALL IMPRESSION_MAIN, LOCAL
     ENDIF
     ;토리코모드로 1줄추가
@@ -1747,11 +1747,11 @@ SIF FLAG:5003 & 1
     CALL EVENT_KANKIN_MAIN_TORIKOMODE
 
 ;스케쥴의 실행. 기본적으로 낮에 결과 출력. (식사 버프를 받기 위해 이쪽으로 뺌)
-SIF TIME == 1 && FLAG:5000 & 1024
+SIF TIME == 1 && FLAG:토리코모드 & 1024
     CALL MAIN_SCHEDULE_TORIKOMODE
 
 ;밤. 스트레스 이벤트 처리. 스트레스 시스템 사용중일때만 켜짐
-SIF FLAG:5000 & 64 && TIME == 0
+SIF FLAG:토리코모드 & 64 && TIME == 0
     CALL EVENT_STRESS_TORIKOMODE
 
 ;의뢰소 개설을 알리는 텐구의 등장. 의뢰소 시스템 사용중일때만 켜짐
@@ -1851,7 +1851,7 @@ IF FLAG:5010 == 4 && TIME == 0
 ENDIF
 
 ;만복도 시스템 사용중일때만 켜짐. 낮에만 밥을 먹는다.
-IF (FLAG:5000 & 32) && TIME == 1
+IF (FLAG:토리코모드 & 32) && TIME == 1
     ;혹시 캐릭터가 추가되던지 할 경우를 대비해, 여기서 한번 더 체크해보고, 정보 없는 캐릭은 세팅 해 준다.
     CALL INIT_HUNGERSYSTEM_TORIKOMODE
 
@@ -1911,7 +1911,7 @@ RETURN 0
 ;보유 노예중 1명이라도, 만복0과 영양0 상태라면 아사엔드로.
 ;만복도 모드가 켜져있을 때만 체크함. (아마 이 함수가 불려지는 상황에서는 켜져있을테지만)
 ;단. 이 캐릭이 '봉래인' 일 경우에는. 부활하며 만복 영양이 최대로 뛰어오름.
-IF FLAG:5000 & 32
+IF FLAG:토리코모드 & 32
     REPEAT CHARANUM
 
         ;주인은 제외
@@ -1971,7 +1971,7 @@ LOCAL:0 =0
 LOCAL:99 =0
 
 CALL CALC_PRICE_MENU_TORIKOMODE
-IF FLAG:5000 & 32
+IF FLAG:토리코모드 & 32
     DO
         ;주인은 공짜.
         IF (LOCAL:99) == 0

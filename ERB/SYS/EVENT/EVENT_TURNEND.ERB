@@ -200,7 +200,7 @@ FOR TFLAG:900, 0, CHARANUM
     ;체력만 상승하며, 기력에는 영향을 미치지 않는다.
     ;영양도는 노예구매시 1500초기치로 시작하며, 모든 캐릭터 공히 최소0, 최대3000이다.
     ;영양도가 높을수록 체력회복속도가 빨라짐. 0.5~1.5 배 까지 변동. 계산식을 써도 좋겠으나, 이 함수에 변수를 추가하기 싫기 때문에 지정된 수치로 보정했다.
-    IF FLAG:5000 & 32
+    IF FLAG:토리코모드 & 32
     ;디버그
     ;PRINTFORML 만복도 보정 받기 전의 체력회복은 대략 이 단계에서 {LOCAL:10} 정도입니다.
 
@@ -832,7 +832,7 @@ ENDIF
 FOR TFLAG:900, 0, CHARANUM
     ;出産・抱卵関連
     IF TALENT:(TFLAG:900):140 || TALENT:(TFLAG:900):141 || TALENT:(TFLAG:900):143
-        SIF FLAG:1500 & 1
+        SIF FLAG:신체측정패치 & 1
             CALL MAKE_BABY_SIZE, TFLAG:900
         ;出産3日前からは臨月突入で調教不可に
         IF (CFLAG:(TFLAG:900):77 - 3) <= DAY && CFLAG:(TFLAG:900):4 == 0
@@ -853,7 +853,7 @@ FOR TFLAG:900, 0, CHARANUM
                 TALENT:(TFLAG:900):143 = 0
             ENDIF
         ;出産後FLAG:601日後（標準は20日後）で親離れで調教可能に
-        ELSEIF (CFLAG:(TFLAG:900):77 + FLAG:601 - EQUIP:(TFLAG:900):1) <= DAY && TALENT:(TFLAG:900):141
+        ELSEIF (CFLAG:(TFLAG:900):77 + FLAG:성장기간설정 - EQUIP:(TFLAG:900):1) <= DAY && TALENT:(TFLAG:900):141
             EQUIP:(TFLAG:900):1 = 0
             IF CFLAG:(TFLAG:900):4 == 2
                 DRAWLINE
@@ -883,7 +883,7 @@ FOR TFLAG:900, 0, CHARANUM
     ENDIF
 
     ;子供成長イベント
-    SIF FLAG:1300 & 2 && (NO:(TFLAG:900) == 148 || NO:(TFLAG:900) == 149) && MARK:(TFLAG:900):81 == 0 && DAY >= (CFLAG:(TFLAG:900):3110 + 50)
+    SIF FLAG:자식조교패치 & 2 && (NO:(TFLAG:900) == 148 || NO:(TFLAG:900) == 149) && MARK:(TFLAG:900):81 == 0 && DAY >= (CFLAG:(TFLAG:900):3110 + 50)
         CALL CHILD_GROWTH, TFLAG:900
 
     ;[鵺]の素質変動イベント
@@ -1097,8 +1097,8 @@ ENDIF
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:168%]를 얻었다.
 TALENT:168 = 1
 CFLAG:17 |= 8
-FLAG:405 += 1
-IF FLAG:405 >= 50 && FLAG:게임모드 <= 1 && (FLAG:주인종족변경 & 32) == 0
+FLAG:괴뢰총계 += 1
+IF FLAG:괴뢰총계 >= 50 && FLAG:게임모드 <= 1 && (FLAG:주인종족변경 & 32) == 0
     PRINTFORML %CALLNAME:MASTER%의 마음은 악마 그 자체라고 할 수 있을 것이다….
     PRINTFORMW ※강하게 뉴게임 개시시에 %CALLNAME:MASTER%의 종족을 [악마]로 선택할 수 있습니다.
     FLAG:주인종족변경 |= 32

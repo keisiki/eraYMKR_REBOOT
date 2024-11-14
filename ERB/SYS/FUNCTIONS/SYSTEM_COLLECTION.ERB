@@ -58,8 +58,8 @@ ENDIF
 
 ;시리코다마 먹은 횟수 카운트
 IF LOCAL == 1
-    FLAG:406 += 1
-    IF FLAG:406 >= 50 && FLAG:게임모드 <= 1 && (FLAG:주인종족변경 & 64) == 0
+    FLAG:엉덩이구슬총계 += 1
+    IF FLAG:엉덩이구슬총계 >= 50 && FLAG:게임모드 <= 1 && (FLAG:주인종족변경 & 64) == 0
         PRINTFORML %조사처리(NAME:MASTER,"는")% 캇파의 생태계에 관한 이해가 깊어졌다….
         PRINTFORMW ※강하게 뉴 게임 개시시에 %NAME:MASTER%의 종족을 [캇파]로 선택할 수 있습니다.
         FLAG:주인종족변경 |= 64
@@ -311,7 +311,7 @@ ENDIF
 ;CFLAGのほうは蒐集品を入手したかを記憶, 
 ;FLAGのほうは誰の○○をいくつ持っているかを判断するために使用している.
 ;また, TFLAG:202のON/OFFで主人が展示室にいるかを判定(地の文用), 
-;FLAG:500で展示室に移動可能かの判定に使用.また蒐集品の累計にも使用され, 500이상になると展示室の名称が変化.
+;FLAG:전시품총계で展示室に移動可能かの判定に使用.また蒐集品の累計にも使用され, 500이상になると展示室の名称が変化.
 ;--------------------------------------------------
 ;시리코다마의 전시 이벤트
 ;--------------------------------------------------
@@ -326,16 +326,16 @@ ELSE
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 전시실로 향했다.
     PRINTFORM 그리고 품 속에서 꺼낸 %CALLNAME:TARGET%의 구슬을 
 ENDIF
-SIF FLAG:501 == 0
+SIF FLAG:엉덩이구슬가짓수 == 0
     PRINT 특별히 조달해온 전용 
 PRINTW 장식장에 전시했다…….
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:101 == 0
-    FLAG:500 += 1
-    FLAG:501 += 1
+    FLAG:전시품총계 += 1
+    FLAG:엉덩이구슬가짓수 += 1
 ENDIF
 DITEMTYPE:LOCAL:101 += 1
 CFLAG:10 |= 1
@@ -345,7 +345,7 @@ TFLAG:202 = 1
 ;황금수의 전시 이벤트
 ;--------------------------------------------------
 ;관리 플래그는 통상 캐릭터는 DITEMTYPE:(100+캐릭터 번호):102가 되어있음.
-;소지하고 있는 황금수의 숫자는 FLAG:502에서 관리.
+;소지하고 있는 황금수의 숫자는 FLAG:황금수가짓수에서 관리.
 @GET_GOLD_WATER
 LOCAL = NO:TARGET + 100
 CALL NAME_GOLDWATER, NO:TARGET
@@ -358,16 +358,16 @@ ELSE
     PRINTFORM 그리고 품 속에서 꺼낸 %CALLNAME:TARGET%의 황금수가 든 병을 라벨이 잘 보이도록 
 ENDIF
 PRINTFORM %TSTR:2%라고 적힌 라벨이 잘 보이도록 
-SIF FLAG:502 == 0
+SIF FLAG:황금수가짓수 == 0
     PRINT 특별히 조달해온 전용 
 PRINTW 장식장에 전시했다…….
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:102 == 0
-    FLAG:500 += 1
-    FLAG:502 += 1
+    FLAG:전시품총계 += 1
+    FLAG:황금수가짓수 += 1
 ENDIF
 DITEMTYPE:LOCAL:102 += 1
 CFLAG:10 |= 2
@@ -377,7 +377,7 @@ TFLAG:202 = 1
 ;애액의 전시 이벤트
 ;--------------------------------------------------
 ;관리 플래그는 통상 캐릭터는 DITEMTYPE:(100+캐릭터 번호):103이 되어있음.
-;소지하고 있는 애액의 숫자는 FLAG:503에서 관리.
+;소지하고 있는 애액의 숫자는 FLAG:애액가짓수에서 관리.
 @GET_LOVE_WATER
 LOCAL = NO:TARGET + 100
 CALL NAME_LOVEWATER, NO:TARGET
@@ -396,17 +396,17 @@ ELSE
         PRINTFORML 그리고 품 속에서 꺼낸 %CALLNAME:TARGET%의 애액으로 가득찬 병을 
     ENDIF
     PRINTFORML %TSTR:2%라고 적힌 라벨이 잘 보이도록 
-    SIF FLAG:503 == 0
+    SIF FLAG:애액가짓수 == 0
         PRINT 특별히 조달해온 전용 
     PRINTW 장식장에 전시했다…….
 ENDIF
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:103 == 0
-    FLAG:500 += 1
-    FLAG:503 += 1
+    FLAG:전시품총계 += 1
+    FLAG:애액가짓수 += 1
 ENDIF
 DITEMTYPE:LOCAL:103 += 1
 CFLAG:10 |= 4
@@ -416,7 +416,7 @@ TFLAG:202 = 1
 ;피의 전시 이벤트
 ;--------------------------------------------------
 ;관리 플래그는 통상 캐릭터는 DITEMTYPE:(100+캐릭터 번호):104가 되어있음.
-;소지하고 있는 혈액의 숫자는 FLAG:504에서 관리.
+;소지하고 있는 혈액의 숫자는 FLAG:혈액가짓수에서 관리.
 @GET_RED_BLOOD
 LOCAL = NO:TARGET + 100
 IF TFLAG:202 == 1
@@ -427,7 +427,7 @@ ELSE
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 전시실로 향했다.
     PRINTFORM 그리고 품 속에서 꺼낸 %CALLNAME:TARGET%의 피가 들어 있는 병을 라벨이 잘 보이도록 
 ENDIF
-SIF FLAG:504 == 0
+SIF FLAG:혈액가짓수 == 0
     PRINT 특별히 조달해온 전용 
 PRINTW 장식장에 전시했다…….
 ;전시실 해금
@@ -435,8 +435,8 @@ SIF FLAG:조교시텍스트표시 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:104 == 0
-    FLAG:500 += 1
-    FLAG:504 += 1
+    FLAG:전시품총계 += 1
+    FLAG:혈액가짓수 += 1
 ENDIF
 DITEMTYPE:LOCAL:104 += 1
 CFLAG:10 |= 8
@@ -446,7 +446,7 @@ TFLAG:202 = 1
 ;파과혈의 전시 이벤트
 ;--------------------------------------------------
 ;관리 플래그는 통상 캐릭터는 DITEMTYPE:(100+캐릭터 번호):105가 되어있음.
-;소지하고 있는 파과혈의 숫자는 FLAG:505에서 관리.
+;소지하고 있는 파과혈의 숫자는 FLAG:파과혈가짓수에서 관리.
 @GET_VIRGIN_BLOOD
 LOCAL = NO:TARGET + 100
 IF TFLAG:202 == 1
@@ -457,16 +457,16 @@ ELSE
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 전시실로 향했다.
     PRINTFORM 그리고 품 속에서 꺼낸 %CALLNAME:TARGET%의 파과의 피가 들어 있는 병을 라벨이 잘 보이도록 
 ENDIF
-SIF FLAG:505 == 0
+SIF FLAG:파과혈가짓수 == 0
     PRINT 특별히 조달해 온 전용 
 PRINTW 장식장 안에 전시했다…….
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:105 == 0
-    FLAG:500 += 1
-    FLAG:505 += 1
+    FLAG:전시품총계 += 1
+    FLAG:파과혈가짓수 += 1
 ENDIF
 DITEMTYPE:LOCAL:105 += 1
 CFLAG:10 |= 16
@@ -476,7 +476,7 @@ TFLAG:202 = 1
 ;여자 팬티의 전시 이벤트
 ;--------------------------------------------------
 ;관리 플래그는 통상 캐릭터는 DITEMTYPE:(100+캐릭터 번호):106이 되어있음.
-;소지하고 있는 여자 팬티의 숫자는 FLAG:506에서 관리.
+;소지하고 있는 여자 팬티의 숫자는 FLAG:팬티가짓수에서 관리.
 @GET_PANTY
 LOCAL = NO:TARGET + 100
 TSTR:1 = %CALLNAME:TARGET%
@@ -490,16 +490,16 @@ ELSE
     PRINTFORML 그리고 품 속에서 꺼낸 %CALLNAME:TARGET%의 팬티를 「%TSTR:2%」라고 적힌 
     PRINTFORM 이름표가 붙은 
 ENDIF
-SIF FLAG:506 == 0
+SIF FLAG:팬티가짓수 == 0
     PRINT 전용 
 PRINTW 쇼 케이스에 넣어 전시했다…….
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:106 == 0
-    FLAG:500 += 1
-    FLAG:506 += 1
+    FLAG:전시품총계 += 1
+    FLAG:팬티가짓수 += 1
 ENDIF
 DITEMTYPE:LOCAL:106 += 1
 CFLAG:10 |= 32
@@ -509,7 +509,7 @@ TFLAG:202 = 1
 ;사진의 전시 이벤트
 ;--------------------------------------------------
 ;관리 플래그는 통상 캐릭터는 DITEMTYPE:(100+캐릭터 번호):107이 되어있음.
-;소지하고 있는 사진의 장수는 FLAG:507에서 관리.
+;소지하고 있는 사진의 장수는 FLAG:사진가짓수에서 관리.
 @KEEP_PICTURE
 LOCAL = NO:TARGET + 100
 PRINTL 
@@ -524,12 +524,12 @@ ELSE
 ENDIF
 PRINTFORMW 품 속에서 꺼낸 %CALLNAME:TARGET%의 사진을 끼우고, 책장에 꽃았다…….
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:107 == 0
-    FLAG:500 += 1
-    FLAG:507 += 1
+    FLAG:전시품총계 += 1
+    FLAG:사진가짓수 += 1
 ENDIF
 DITEMTYPE:LOCAL:107 += 1
 TFLAG:124 = 0
@@ -558,18 +558,18 @@ ELSE
         PRINTFORML 그리고 %CALLNAME:TARGET%의 치태가 찍혀 있는 비디오테이프를 품 속에서 꺼내들어 
         PRINTFORM %CALLNAME:TARGET%의 이름이 각인된 플레이트가 붙어 있는 
     ENDIF
-    SIF FLAG:508 == 0
+    SIF FLAG:비디오가짓수 == 0
         PRINT 전용 
     PRINTL 책장에 넣어 보관했다…….
     CFLAG:10 |= 128
 ENDIF
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:108 == 0
-    FLAG:500 += 1
-    FLAG:508 += 1
+    FLAG:전시품총계 += 1
+    FLAG:비디오가짓수 += 1
 ENDIF
 DITEMTYPE:LOCAL:108 += 1
 TFLAG:202 = 1
@@ -578,7 +578,7 @@ TFLAG:202 = 1
 ;모유의 전시 이벤트
 ;--------------------------------------------------
 ;관리 플래그는 통상 캐릭터는 DITEMTYPE:(100+캐릭터 번호):109이 되어있음.
-;소지하고 있는 모유의 숫자는 FLAG:509에서 관리.
+;소지하고 있는 모유의 숫자는 FLAG:모유가짓수에서 관리.
 @GET_MILK
 LOCAL = NO:TARGET + 100
 CALL NAME_MILK, NO:TARGET
@@ -590,16 +590,16 @@ ELSE
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 전시실로 향했다.
     PRINTFORM 그리고 품 속에서 꺼낸 %CALLNAME:TARGET%의 모유가 들어 있는 병을 「%TSTR:2%」란 라벨이 잘 보이도록 
 ENDIF
-SIF FLAG:509 == 0
+SIF FLAG:모유가짓수 == 0
     PRINT 특별히 조달해온 전용 
 PRINTW 장식장에 전시했다…….
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:109 == 0
-    FLAG:500 += 1
-    FLAG:509 += 1
+    FLAG:전시품총계 += 1
+    FLAG:모유가짓수 += 1
 ENDIF
 ;일반모드
 ;DITEMTYPE:LOCAL:109 += TFLAG:125
@@ -639,11 +639,11 @@ ELSE
     CFLAG:ARG:10 |= 512
 ENDIF
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:110 == 0
-    FLAG:500 += 1
+    FLAG:전시품총계 += 1
     FLAG:510 += 1
 ENDIF
 
@@ -655,23 +655,23 @@ TFLAG:128 = 0
 ;촉수의 전시 이벤트
 ;--------------------------------------------------
 ;관리 플래그는 통상 캐릭터는 DITEMTYPE:(100+캐릭터 번호):111이 되어있음.
-;소지하고 있는 촉수의 종류는 FLAG:511에서 관리. 입수 플래그는 촉수 출산 플래그의 CFLAG:34와 공용.
+;소지하고 있는 촉수의 종류는 FLAG:촉수가짓수에서 관리. 입수 플래그는 촉수 출산 플래그의 CFLAG:34와 공용.
 @GET_LARVA
 LOCAL = NO:TARGET + 100
 PRINTL 
 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 전시실로 향했다.
 PRINTFORM 그리고 %조사처리(CALLNAME:TARGET,"가")% 낳았던 촉수의 유생을 
-SIF FLAG:511 == 0
+SIF FLAG:촉수가짓수 == 0
     PRINT 특별히 조달해온 
 PRINTW 전용 보육기에 넣었다…….
 
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:111 == 0
-    FLAG:500 += 1
-    FLAG:511 += 1
+    FLAG:전시품총계 += 1
+    FLAG:촉수가짓수 += 1
 ENDIF
 DITEMTYPE:LOCAL:111 += 1
 
@@ -679,7 +679,7 @@ DITEMTYPE:LOCAL:111 += 1
 ;陰毛의 전시 이벤트
 ;--------------------------------------------------
 ;관리 플래그는 통상 캐릭터는 DITEMTYPE:(100+캐릭터 번호):112이 되어있음.
-;소지하고 있는 陰毛の瓶数はFLAG:512에서 관리.
+;소지하고 있는 陰毛の瓶数はFLAG:음모가짓수에서 관리.
 @KEEP_PUBLIC_HAIR
 LOCAL = NO:TARGET + 100
 IF TFLAG:202 == 1
@@ -690,16 +690,16 @@ ELSE
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 전시실로 향했다.
     PRINTFORM 그리고 품 속에서 꺼낸 %CALLNAME:TARGET%의 음모가 들어 있는 병을 「%CALLNAME:TARGET%의 음모」란 라벨이 잘 보이도록 
 ENDIF
-SIF FLAG:512 == 0
+SIF FLAG:음모가짓수 == 0
     PRINT 특별히 조달해온 전용 
 PRINTW 장식장에 전시했다…….
 ;전시실 해금
-SIF FLAG:500 == 0
+SIF FLAG:전시품총계 == 0
     PRINTW 전시실로 이동할 수 있게 되었습니다.
 
 IF DITEMTYPE:LOCAL:112 == 0
-    FLAG:500 += 1
-    FLAG:512 += 1
+    FLAG:전시품총계 += 1
+    FLAG:음모가짓수 += 1
 ENDIF
 DITEMTYPE:LOCAL:112 += 1
 CFLAG:10 |= 1024

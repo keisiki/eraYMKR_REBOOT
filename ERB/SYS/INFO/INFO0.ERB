@@ -80,7 +80,7 @@ IF ARG == MASTER
         CALL PRINT_MASTER_JUEL, ARG
 ELSE
   ;매각치 표시
-  IF FLAG:5000 & 2
+  IF FLAG:토리코모드 & 2
   ELSE
       CALL PRINT_CALCCHARA, ARG
   ENDIF
@@ -130,7 +130,7 @@ ELSE
     SIF CFLAG:ARG:14 || CFLAG:ARG:15 || CFLAG:ARG:16 || CFLAG:ARG:17
         CALL PRINT_SLAVE_TALENT_FALL, ARG
     ;蒐集品
-    SIF FLAG:500 > 0 && FLAG:SHOP이벤트확장 & 8
+    SIF FLAG:전시품총계 > 0 && FLAG:SHOP이벤트확장 & 8
         CALL PRINT_COLLECTION_YN, ARG
     ;陰核成長具合
     SIF BASE:ARG:음핵 && TALENT:ARG:120 == 0 && TALENT:ARG:121 == 0
@@ -156,11 +156,11 @@ ENDIF
 ;주인인가 그 외인가로 표시 타입 변경
 @SHOW_INFO_PAGE_4, ARG
 ;サイズ
-SIF FLAG:1500 & 1
+SIF FLAG:신체측정패치 & 1
     CALL SHOW_SIZE, ARG
 IF ARG == MASTER
     ;蒐集品の総計
-    SIF FLAG:500 > 0 && FLAG:SHOP이벤트확장 & 8
+    SIF FLAG:전시품총계 > 0 && FLAG:SHOP이벤트확장 & 8
         CALL MASTER_COLLECTION_STATUS
 ELSE
     ;노예ごとの収入金額の最高額
@@ -322,10 +322,10 @@ ELSEIF COUNT == 264
 ELSEIF COUNT == 265 && TALENT:ARG:COUNT
     PRINTFORM [단골손님 {TALENT:ARG:COUNT}명]
 ELSE
-    SIF FLAG:3998 && CFLAG:ARG:11 == 0 && (COUNT == 11 || COUNT == 15 || COUNT == 21 || COUNT == 27 || COUNT == 32 || COUNT == 34 || COUNT == 37 || COUNT == 38 || COUNT == 71)
+    SIF FLAG:변동경험강조패치 && CFLAG:ARG:11 == 0 && (COUNT == 11 || COUNT == 15 || COUNT == 21 || COUNT == 27 || COUNT == 32 || COUNT == 34 || COUNT == 37 || COUNT == 38 || COUNT == 71)
         FONTBOLD
     PRINTFORM [%TALENTNAME:COUNT%] 
-    SIF FLAG:3998 && CFLAG:ARG:11 == 0 && (COUNT == 11 || COUNT == 15 || COUNT == 21 || COUNT == 27 || COUNT == 32 || COUNT == 34 || COUNT == 37 || COUNT == 38 || COUNT == 71)
+    SIF FLAG:변동경험강조패치 && CFLAG:ARG:11 == 0 && (COUNT == 11 || COUNT == 15 || COUNT == 21 || COUNT == 27 || COUNT == 32 || COUNT == 34 || COUNT == 37 || COUNT == 38 || COUNT == 71)
         FONTREGULAR
 ENDIF
 
@@ -387,7 +387,7 @@ REPEAT 54 ;CSV에 존재하는 경험치 종류 = 56, 그중 이상경험과 레
     IF LOCAL < 0
         CONTINUE
     ELSEIF EXP:ARG:LOCAL > 0
-        IF FLAG:3998 & 1 && ((LOCAL == 0 && CFLAG:ARG:11 & 1) || (LOCAL == 1 && CFLAG:ARG:11 & 2) || (LOCAL == 50 && CFLAG:ARG:11 & 4)|| (LOCAL == 12 && EXP:ARG:LOCAL > 999 && TALENT:MASTER:120 && CFLAG:ARG:18 == 0) || (LOCAL == 13 && EXP:ARG:LOCAL > 999 && TALENT:MASTER:120 == 0 && CFLAG:ARG:18 == 0))
+        IF FLAG:변동경험강조패치 & 1 && ((LOCAL == 0 && CFLAG:ARG:11 & 1) || (LOCAL == 1 && CFLAG:ARG:11 & 2) || (LOCAL == 50 && CFLAG:ARG:11 & 4)|| (LOCAL == 12 && EXP:ARG:LOCAL > 999 && TALENT:MASTER:120 && CFLAG:ARG:18 == 0) || (LOCAL == 13 && EXP:ARG:LOCAL > 999 && TALENT:MASTER:120 == 0 && CFLAG:ARG:18 == 0))
             FONTBOLD
             PRINTFORM %EXPNAME:LOCAL,12%:\@(EXP:ARG:LOCAL > 99999999) ? 99999999 # {EXP:ARG:LOCAL, 8}\@
             FONTREGULAR
@@ -415,12 +415,12 @@ SIF LOCAL:1%3 != 0
 @SHOW_STATUS
 
 ;토리코모드 인터럽트 시스템 사용중일 때, 자율실행회수를 결정한다. (매 턴 달라진다)
-SIF FLAG:5000 & 512
+SIF FLAG:토리코모드 & 512
     CALL SET_INTERRUPT_COUNT
 
 ;토리코모드용 추가부분. 난이도에 따라 남은 시간이 달라진다.
 LOCAL:99 = 100
-IF FLAG:5000 & 16
+IF FLAG:토리코모드 & 16
     IF FLAG:난이도 == 1
         LOCAL:99 = 50
     ELSEIF FLAG:난이도 == 2
@@ -463,7 +463,7 @@ PRINTFORML 조교 대상 :%CALLNAME:TARGET% \@(NO:TARGET >= 150 && NO:TARGET < 2
 IF FLAG:SHOP이벤트확장 & 4
     IF ASSIPLAY
         ;토리코모드 스트레스 시스템 사양
-        IF FLAG:5000 & 64
+        IF FLAG:토리코모드 & 64
             PRINTFORM (스트레스:
             CALL PRINT_STRESS_LEVEL_TORIKOMODE, CFLAG:65
         ELSE
@@ -477,7 +477,7 @@ IF FLAG:SHOP이벤트확장 & 4
         PRINTFORML 이상경험:{EXP:이상경험})
     ELSE
         ;토리코모드 스트레스 시스템 사양
-        IF FLAG:5000 & 64
+        IF FLAG:토리코모드 & 64
             PRINTFORM (주인조교경험:{EXP:주인조교경험}　호감도:{CFLAG:2}　스트레스:
             CALL PRINT_STRESS_LEVEL_TORIKOMODE, CFLAG:65
             PRINTFORML  이상경험:{EXP:이상경험})
@@ -488,7 +488,7 @@ IF FLAG:SHOP이벤트확장 & 4
 ENDIF
 
 ;토리코모드 플래그 체크.
-IF FLAG:5000 & 1
+IF FLAG:토리코모드 & 1
 ;토리코 모드용
     ;주인 사정게이지 연산&표시
     SIF EXIST_PENIS(MASTER)
@@ -545,7 +545,7 @@ ENDIF
     SIF TEQUIP:12 || TEQUIP:32 || TALENT:오줌싸개버릇 || EXP:방뇨경험
         CALL CALC_GAUGE4_SLAVE, TARGET, 0
     ;노예의 정음절정 게이지를 표시
-    SIF (TALENT:MASTER:198 || TALENT:MASTER:998 || (ASSI >= 0 && TALENT:ASSI:198)) && TALENT:66 && FLAG:1200 & 2
+    SIF (TALENT:MASTER:198 || TALENT:MASTER:998 || (ASSI >= 0 && TALENT:ASSI:198)) && TALENT:66 && FLAG:정액도시락및정음절정패치 & 2
         CALL CALC_GAUGEX_SLAVE
 
     ;옵션에 따라 표시 타입 변경
