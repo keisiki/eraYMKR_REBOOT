@@ -86,7 +86,7 @@ REPEAT CHARANUM
         SIF COUNT == ASSI
             CONTINUE
         ;対象が[素直][解放][妄信][親愛][相愛][幼児退行][服従][烙印][隷属][使い魔][精神崩壊][傀儡][壊造人格]ならダメ
-        SIF TALENT:COUNT:솔직함 || TALENT:COUNT:33 || TALENT:COUNT:151 || TALENT:COUNT:152 || TALENT:COUNT:153 || TALENT:COUNT:159 || TALENT:COUNT:160 || TALENT:COUNT:161 || TALENT:COUNT:162 || TALENT:COUNT:164 || TALENT:COUNT:167 || TALENT:COUNT:168 || TALENT:COUNT:169
+        SIF TALENT:COUNT:솔직함 || TALENT:COUNT:해방 || TALENT:COUNT:151 || TALENT:COUNT:152 || TALENT:COUNT:153 || TALENT:COUNT:159 || TALENT:COUNT:160 || TALENT:COUNT:161 || TALENT:COUNT:162 || TALENT:COUNT:164 || TALENT:COUNT:167 || TALENT:COUNT:168 || TALENT:COUNT:169
             CONTINUE
         ;対象が[妊娠][抱卵中][懐卵][寄生]持ちもダメ
         SIF TALENT:COUNT:140 || TALENT:COUNT:143 || TALENT:COUNT:145 || TALENT:COUNT:146
@@ -390,7 +390,7 @@ IF TALENT:ARG:158 == 0 && CFLAG:ARG:65 && BASE:ARG:기력
     ENDIF
 ENDIF
 ;病死チェック(体力と気力が500以下であるとき, ただし蓬莱人と呪精ならば回避)
-IF BASE:ARG:체력 < 500 & BASE:ARG:기력 < 500 && TALENT:ARG:49 == 0 && TALENT:ARG:48 == 0
+IF BASE:ARG:체력 < 500 & BASE:ARG:기력 < 500 && TALENT:ARG:봉래인 == 0 && TALENT:ARG:주정 == 0
     IF RAND:100 < 3
         PRINTFORMW 지하감옥에 수감 중인 %CALLNAME:ARG%의 모습이 이상하다….
         PRINTW 아무래도 병에 걸린 모양이다.
@@ -611,7 +611,7 @@ SIF CFLAG:(ARG:1):4 || TALENT:(ARG:1):143 || (ARG:1 != MASTER && CFLAG:(ARG:1):1
     RETURNF 0
 
 ;呪精転生の実行資格    ：    お燐, [覚], または[鼓舞]を持つ[呪精]
-LOCAL:0 = MAX(NO:(ARG:1) == 62, TALENT:(ARG:1):213, (TALENT:(ARG:1):95 && TALENT:(ARG:1):48))
+LOCAL:0 = MAX(NO:(ARG:1) == 62, TALENT:(ARG:1):213, (TALENT:(ARG:1):95 && TALENT:(ARG:1):주정))
 
 ;眷属化の実行資格    ：    [吸血鬼]
 LOCAL:1 = TALENT:(ARG:1):205
@@ -659,7 +659,7 @@ SIF MIN(ARG:1 >= 2, TALENT:(ARG:1):140, TALENT:(ARG:1):145, TALENT:(ARG:1):146)
     RETURNF 0
 
 ;呪精転生の被験資格    ：    [呪精]でない[妖精]
-LOCAL:0 = (TALENT:(ARG:1):48 == 0) && TALENT:(ARG:1):200
+LOCAL:0 = (TALENT:(ARG:1):주정 == 0) && TALENT:(ARG:1):200
 
 ;眷属化の被験資格    ：    [吸血鬼][機械][霊体][人形]以外
 LOCAL:1 = MAX(TALENT:(ARG:1):205, TALENT:(ARG:1):206, TALENT:(ARG:1):207, TALENT:(ARG:1):208) == 0
@@ -668,7 +668,7 @@ LOCAL:1 = MAX(TALENT:(ARG:1):205, TALENT:(ARG:1):206, TALENT:(ARG:1):207, TALENT
 LOCAL:2 = MAX(TALENT:(ARG:1):206, TALENT:(ARG:1):207, TALENT:(ARG:1):208) == 0
 
 ;魂魄昇華の被験資格    ：    [呪精][霊体]以外で, 不死刻印がない
-LOCAL:3 = MAX(TALENT:(ARG:1):48, TALENT:(ARG:1):207, MARK:(ARG:1):불사각인) == 0
+LOCAL:3 = MAX(TALENT:(ARG:1):주정, TALENT:(ARG:1):207, MARK:(ARG:1):불사각인) == 0
 
 ;生命封入の被験資格    ：    [人形][機械]以外
 LOCAL:4 = MAX(TALENT:(ARG:1):208, TALENT:(ARG:1):206) == 0
@@ -1434,7 +1434,7 @@ REPEAT CHARANUM
     ELSEIF LOCAL == 3 && ((TALENT:COUNT:110 == 0 && TALENT:COUNT:111 == 0) || TALENT:COUNT:97 || ABL:COUNT:기교 < 4)
         CONTINUE
 ;오줌싸개버릇 - 이미 오줌싸개버릇이 있으면 안됨, 노출벽 4이상
-    ELSEIF LOCAL == 4 && (TALENT:COUNT:45 || ABL:COUNT:노출증 < 4)
+    ELSEIF LOCAL == 4 && (TALENT:COUNT:오줌싸개버릇 || ABL:COUNT:노출증 < 4)
         CONTINUE
 ;수상한 뿌리 - 남자가 아니고 수상한 뿌리나 구현, 훝타나리가 없을 것
     ELSEIF LOCAL == 5 && ( EXIST_PENIS(COUNT) || TALENT:COUNT:122 || TALENT:COUNT:123 )
@@ -1446,7 +1446,7 @@ REPEAT CHARANUM
     ELSEIF LOCAL == 7 && ( TALENT:COUNT:137 || TALENT:COUNT:114 || TALENT:COUNT:115 )
         CONTINUE
 ;미약중독 치료 - 미약중독을 가지고 있는 캐릭터에게만 가능
-    ELSEIF LOCAL == 8 && TALENT:COUNT:46 == 0
+    ELSEIF LOCAL == 8 && TALENT:COUNT:미약중독 == 0
         CONTINUE
 ;매춘중독 치료 - 사실상 매춘중독에 걸린 아나타 구제용
     ELSEIF LOCAL == 9 && TALENT:COUNT:262 == 0
@@ -1528,7 +1528,7 @@ ELSEIF LOCAL == 3
 ELSEIF LOCAL == 4
   IF MONEY >= 80000
     PRINTFORMW ＜%CALLNAME:(LOCAL:4)%의 체질을 오줌싸개 체질로 만들어버렸습니다＞
-    TALENT:(LOCAL:4):45 = 1
+    TALENT:(LOCAL:4):오줌싸개버릇 = 1
     MONEY -= 80000
   ELSE
     PRINTFORMW 돈이 부족합니다.
@@ -1560,7 +1560,7 @@ ELSEIF LOCAL == 7
 ELSEIF LOCAL == 8
   IF MONEY >= 50000
     PRINTFORMW ＜%CALLNAME:(LOCAL:4)%의 미약중독을 치료했습니다＞
-    TALENT:(LOCAL:4):46 = 0
+    TALENT:(LOCAL:4):미약중독 = 0
     MONEY -= 50000
   ELSE
     PRINTFORMW 돈이 부족합니다.

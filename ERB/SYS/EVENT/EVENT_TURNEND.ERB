@@ -68,9 +68,9 @@ FOR TFLAG:900, 0, CHARANUM
     ENDIF
 
     ;吸血鬼, 蓬莱人, 呪精
-    IF TALENT:(TFLAG:900):49
+    IF TALENT:(TFLAG:900):봉래인
         LOCAL:10 *= 3
-    ELSEIF TALENT:(TFLAG:900):48 || (TIME == 1 && TALENT:(TFLAG:900):205)
+    ELSEIF TALENT:(TFLAG:900):주정 || (TIME == 1 && TALENT:(TFLAG:900):205)
         LOCAL:10 *= 2
     ENDIF
     ;神霊, 半神
@@ -251,13 +251,13 @@ FOR TFLAG:900, 0, CHARANUM
 
     ;薬毒耐性以外のキャラが媚薬中毒になっていると体力・気力の回復量が低下する
     ;また, 日が経つと禁断症状も出てくる
-    IF TEQUIP:(TFLAG:900):11 == 0 && TALENT:(TFLAG:900):44 == 0 && TALENT:(TFLAG:900):46
+    IF TEQUIP:(TFLAG:900):11 == 0 && TALENT:(TFLAG:900):약물내성 == 0 && TALENT:(TFLAG:900):미약중독
         LOCAL:10 *= (10 - CFLAG:(TFLAG:900):32)
         LOCAL:10 /= 10
         TIMES LOCAL:11 , 0.80
         SIF TIME != 0 && CFLAG:(TFLAG:900):32 < 7
             CFLAG:(TFLAG:900):32 += 1
-    ELSEIF TIME != 0 && TALENT:(TFLAG:900):46 == 0 && CFLAG:(TFLAG:900):32 > 0
+    ELSEIF TIME != 0 && TALENT:(TFLAG:900):미약중독 == 0 && CFLAG:(TFLAG:900):32 > 0
         CFLAG:(TFLAG:900):32 -= RAND:2
     ENDIF
 
@@ -362,7 +362,7 @@ FOR TFLAG:900, 0, CHARANUM
         CALL MAKE_HARB_TURNEND, TFLAG:900
     ;調教で媚薬を使用した後は回復しない([媚薬中毒]持ちは回復量が低下)
     ELSEIF TEQUIP:(TFLAG:900):11
-        IF TALENT:(TFLAG:900):46
+        IF TALENT:(TFLAG:900):미약중독
             TIMES LOCAL:10 , 0.75
             TIMES LOCAL:11 , 0.75
         ELSE
@@ -561,9 +561,9 @@ ELSEIF MARK:ARG:공포각인 == 1
 ENDIF
 
 ;[自制心][悲観的]はストレスが下がりにくい
-SIF TALENT:ARG:20
+SIF TALENT:ARG:자제심
     TIMES LOCAL , 0.75
-SIF TALENT:ARG:26
+SIF TALENT:ARG:비관적
     TIMES LOCAL , 0.50
 ;恋慕系素質取得時はストレスが大きく下がる
 IF TALENT:ARG:153
@@ -607,7 +607,7 @@ IF FLAG:난이도 > 3 && CFLAG:ARG:65 >= PALAMLV:3
         CFLAG:ARG:38 += 1
 
     ;[解放]があり, 過負荷状態が1000を越えたら[解放]消失イベント発生.
-    SIF TALENT:ARG:33 && CFLAG:ARG:38 > 1000
+    SIF TALENT:ARG:해방 && CFLAG:ARG:38 > 1000
         CALL DOWN_LIBERATION, ARG
 ENDIF
 
@@ -619,7 +619,7 @@ CALL SELF_KOJO, ARG, 183
 PRINTFORMW %CALLNAME:ARG%의 마음은 지속적인 스트레스에서 오는 부하를 견디지 못하고 무너지고 만 듯하다…….
 ;解放消失
 PRINTFORML %조사처리(CALLNAME:ARG,"는")% [%TALENTNAME:33%]을 잃었다.
-TALENT:ARG:33 = 0
+TALENT:ARG:해방 = 0
 ;フラグ
 CFLAG:ARG:13 |= 2048
 
@@ -649,9 +649,9 @@ IF FLAG:정원개조 & 4
         CFLAG:(TFLAG:900):65 = MAX(CFLAG:(TFLAG:900):65 - RAND:10, 0)
     ENDIF
     ;気丈と感情乏しいと嫉妬と狂気と精神崩壊をもたなくて…
-    IF TALENT:(TFLAG:900):꿋꿋함 == 0 && TALENT:(TFLAG:900):22 == 0 && TALENT:(TFLAG:900):157 == 0 && TALENT:(TFLAG:900):158 == 0 && TALENT:(TFLAG:900):167 == 0
+    IF TALENT:(TFLAG:900):꿋꿋함 == 0 && TALENT:(TFLAG:900):감정결여 == 0 && TALENT:(TFLAG:900):157 == 0 && TALENT:(TFLAG:900):158 == 0 && TALENT:(TFLAG:900):167 == 0
         ;臆病か悲観的か動物耳（本来動物を追い払うためのもの）か恐怖刻印持ちならば恐怖の珠UP
-        SIF TALENT:(TFLAG:900):겁쟁이 || TALENT:(TFLAG:900):26 || TALENT:(TFLAG:900):116 || MARK:(TFLAG:900):공포각인
+        SIF TALENT:(TFLAG:900):겁쟁이 || TALENT:(TFLAG:900):비관적 || TALENT:(TFLAG:900):116 || MARK:(TFLAG:900):공포각인
             CALL COMMON_UP_JUEL, TFLAG:900, 17, 10 + (10 * RAND:5) , 2 
     ENDIF
 ENDIF
@@ -660,10 +660,10 @@ IF FLAG:정원개조 & 8
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:정원개조 & 2
         ;好奇心もしくは習得早いもしくは教育者もしくは博麗の巫女もしくは風祝の場合は習得の珠UP
-        SIF TALENT:(TFLAG:900):23 || TALENT:(TFLAG:900):50 || TALENT:(TFLAG:900):126 || TALENT:(TFLAG:900):218 || TALENT:(TFLAG:900):219
+        SIF TALENT:(TFLAG:900):호기심 || TALENT:(TFLAG:900):50 || TALENT:(TFLAG:900):126 || TALENT:(TFLAG:900):218 || TALENT:(TFLAG:900):219
             CALL COMMON_UP_JUEL, TFLAG:900, 11, 10 + (10 * RAND:5) , 2
         ;素直もしくは大人しいもしくは保守的もしくは恥じらいもしくは献身的もしくは陥落している場合恭順の珠UP
-        SIF TALENT:(TFLAG:900):솔직함 || TALENT:(TFLAG:900):얌전함 || TALENT:(TFLAG:900):24 || TALENT:(TFLAG:900):35 || TALENT:(TFLAG:900):63 || TALENT:(TFLAG:900):150 || TALENT:(TFLAG:900):160 || TALENT:(TFLAG:900):170
+        SIF TALENT:(TFLAG:900):솔직함 || TALENT:(TFLAG:900):얌전함 || TALENT:(TFLAG:900):보수적 || TALENT:(TFLAG:900):부끄럼쟁이 || TALENT:(TFLAG:900):63 || TALENT:(TFLAG:900):150 || TALENT:(TFLAG:900):160 || TALENT:(TFLAG:900):170
             CALL COMMON_UP_JUEL, TFLAG:900, 12, 10 + (10 * RAND:5) , 2
     ENDIF
 ENDIF
@@ -696,10 +696,10 @@ IF FLAG:정원개조 & 64
                 JUEL:(TFLAG:900):100 -= 10 + (10 * RAND:5)
         ELSE
             ;冬でなければ, 自制心と快感の否定を持たず, 精液中毒Lv持ちならば欲情の珠UP(射精と噴水を混同している)
-            SIF TALENT:(TFLAG:900):20 == 0 && TALENT:(TFLAG:900):71 == 0 && ABL:(TFLAG:900):정액중독
+            SIF TALENT:(TFLAG:900):자제심 == 0 && TALENT:(TFLAG:900):71 == 0 && ABL:(TFLAG:900):정액중독
                 CALL COMMON_UP_JUEL, TFLAG:900, 13, 10 + (10 * RAND:5) , 2
             ;冬でなければ, 自制心と恥薄いを持たず, おもらし癖か排泄中毒Lv持ちならば恥情の珠UP(放尿と噴水を混同している)
-            SIF TALENT:(TFLAG:900):20 == 0 && TALENT:(TFLAG:900):36 == 0 && (TALENT:(TFLAG:900):45 || ABL:(TFLAG:900):배설중독)
+            SIF TALENT:(TFLAG:900):자제심 == 0 && TALENT:(TFLAG:900):부끄럼없음 == 0 && (TALENT:(TFLAG:900):오줌싸개버릇 || ABL:(TFLAG:900):배설중독)
                 CALL COMMON_UP_JUEL, TFLAG:900, 15, 10 + (10 * RAND:5) , 2
         ENDIF
     ENDIF
@@ -890,7 +890,7 @@ FOR TFLAG:900, 0, CHARANUM
     SIF TALENT:(TFLAG:900):217
         CALL EVENT_NUETALENT_RANDOM, TFLAG:900
     ;[媚薬中毒]の禁断症状イベント
-    SIF TALENT:(TFLAG:900):46 && CFLAG:(TFLAG:900):32 == 7
+    SIF TALENT:(TFLAG:900):미약중독 && CFLAG:(TFLAG:900):32 == 7
         CALL EVENT_PHILTER_AFTEREFFECT, TFLAG:900
 NEXT
 
