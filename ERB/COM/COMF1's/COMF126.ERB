@@ -12,7 +12,7 @@ SIF DITEMTYPE:999:126 > 0
 SIF (FLAG:커맨드확장 & 1) == 0
     RETURN 0
 ;주인이 [금단의 지식]持ちじゃないとき, 体格差が2段階以内か조교자가 [금단의 지식]持ちじゃないとダメ
-SIF TALENT:MASTER:56 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
+SIF TALENT:MASTER:금단의지식 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
     RETURN 0
 ;性器が汚れているとMASTERの場合顔面騎乗はできない(조교자가 汚れ無視か愛液, 母乳のよごれならＯＫ)
 SIF STAIN:보지 >= 2 && (STAIN:보지 != 16 && STAIN:보지 != 17) && ASSIPLAY == 0 && TALENT:MASTER:64 == 0
@@ -26,10 +26,10 @@ ENDIF
 SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
     RETURN 0
 ;조교자가 고양이혀일 경우 고양이 펠라 패치 유효가 아니면 불가
-SIF TALENT:PLAYER:54 && (FLAG:조교모드 & 16) == 0
+SIF TALENT:PLAYER:고양이혀 && (FLAG:조교모드 & 16) == 0
     RETURN 0
 ;조교자가 고양이혀일 경우 조교자에게 기교4 필요
-SIF TALENT:PLAYER:54 && ABL:PLAYER:기교 < 4
+SIF TALENT:PLAYER:고양이혀 && ABL:PLAYER:기교 < 4
     RETURN 0
 ;대상에게 페니스가 있다면 불가
 SIF EXIST_BAR(TARGET)
@@ -109,13 +109,13 @@ IF TEQUIP:21
 ENDIF
 
 ;조교자의 TALENT:혀사용을 본다
-IF TALENT:PLAYER:52
+IF TALENT:PLAYER:혀놀림
     TIMES SOURCE:0 , 2.00
     SOURCE:17 += SOURCE:0 / 20
 ENDIF
 
 ;조교자의 고양이혀을 본다
-SIF TALENT:PLAYER:54
+SIF TALENT:PLAYER:고양이혀
     TIMES SOURCE:0 , 0.70
 
 ;대상이 새드이나 왕S나 새드끼 Lv3 이상 때
@@ -191,7 +191,7 @@ SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
 
 PRINTL
 ;고양이혀
-IF TALENT:PLAYER:54
+IF TALENT:PLAYER:고양이혀
     PRINTFORM %조사선택(CALLNAME:PLAYER, "가")% %CALLNAME:TARGET%의 비순을 입술로 물어 
     IF TALENT:121 && PALAM:13 >= PALAMLV:3
         PRINT 발기한 페니스에 혀를 감아 핥아 올려 

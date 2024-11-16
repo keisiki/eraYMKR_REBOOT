@@ -12,7 +12,7 @@
 VARSET LOCAL, 0
 ;初回周回でEASYからの引き継ぎ時のみ調合知識と魅惑は消滅
 IF FLAG:난이도 == 1 && FLAG:주회수 == 1
-    TALENT:MASTER:55 = 0
+    TALENT:MASTER:조합지식 = 0
     TALENT:MASTER:91 = 0
 ENDIF
 ;初回周回でLUNATIC/PHANTASMクリアならば偉業を称えて称号贈呈
@@ -42,7 +42,7 @@ FLAG:자택증축 = 0
 ;ここでのローカル変数LOCAL:1は追加される素質番号を示す
 LOCAL:1 = 0
 ;1回以上クリアかつ単体エンドを見た場合、舌使いを取得可能
-IF FLAG:주회수 >= 1 && (ITEM:98 || ITEM:99) && TALENT:MASTER:52 == 0
+IF FLAG:주회수 >= 1 && (ITEM:98 || ITEM:99) && TALENT:MASTER:혀놀림 == 0
     LOCAL:1 = 52
 ;1回以上クリアかつノーマルハーレムエンドを見た場合、小悪魔を取得可能
 ELSEIF FLAG:주회수 >= 1 && FLAG:4002 && TALENT:MASTER:93 == 0
@@ -51,10 +51,10 @@ ELSEIF FLAG:주회수 >= 1 && FLAG:4002 && TALENT:MASTER:93 == 0
 ELSEIF FLAG:주회수 >= 3 && CFLAG:MASTER:98 >= 20 && TALENT:MASTER:91 == 0
     LOCAL:1 = 91
 ;5回以上クリアかつその周回で烙印を押した人数が9人以上のとき、針さばきを取得可能
-ELSEIF FLAG:주회수 >= 5 && FLAG:현낙인총계 >= 9 && TALENT:MASTER:53 == 0
+ELSEIF FLAG:주회수 >= 5 && FLAG:현낙인총계 >= 9 && TALENT:MASTER:바느질 == 0
     LOCAL:1 = 53
 ;7回以上クリアかつ蒐集品を12種全て30種類以上集めたとき、調合知識を取得可能
-ELSEIF FLAG:주회수 >= 7 && TALENT:MASTER:55 == 0
+ELSEIF FLAG:주회수 >= 7 && TALENT:MASTER:조합지식 == 0
     LOCAL:2 = 0
     FOR LOCAL, 0, 12
         SIF FLAG:(501 + LOCAL) >= 30
@@ -63,7 +63,7 @@ ELSEIF FLAG:주회수 >= 7 && TALENT:MASTER:55 == 0
     SIF LOCAL:2 >= 12
         LOCAL:1 = 55
 ;9回以上クリアかつ恋慕か服従の付いた奴隷の中で調合知識または治療持ちが4人以上いたとき、治療を取得可能
-ELSEIF FLAG:주회수 >= 9 && TALENT:MASTER:59 == 0
+ELSEIF FLAG:주회수 >= 9 && TALENT:MASTER:치료 == 0
     LOCAL:2 = 0
     FOR LOCAL, 0, CHARANUM
         ;主人あるいは失踪中のキャラは対象外
@@ -72,7 +72,7 @@ ELSEIF FLAG:주회수 >= 9 && TALENT:MASTER:59 == 0
         SIF 대상_제외됨(LOCAL)
             CONTINUE
         ;恋慕か服従を持ち、調合知識か治療を持っている奴隷をカウントする
-        SIF (TALENT:LOCAL:150 || TALENT:LOCAL:160) && (TALENT:LOCAL:55 || TALENT:LOCAL:59)
+        SIF (TALENT:LOCAL:150 || TALENT:LOCAL:160) && (TALENT:LOCAL:조합지식 || TALENT:LOCAL:치료)
             LOCAL:2 += 1
     NEXT
     SIF LOCAL:2 >= 4
@@ -151,19 +151,19 @@ NICKNAME:TARGET = %NICKNAME:MASTER%
 ;봉래인
     TALENT:봉래인 = TALENT:MASTER:봉래인
 ;혀놀림
-    TALENT:혀놀림 = TALENT:MASTER:52
+    TALENT:혀놀림 = TALENT:MASTER:혀놀림
 ;바느질
-    TALENT:바느질 = TALENT:MASTER:53
+    TALENT:바느질 = TALENT:MASTER:바느질
 ;조합지식
-    TALENT:조합지식 = TALENT:MASTER:55
+    TALENT:조합지식 = TALENT:MASTER:조합지식
 ;금단의 지식
-    TALENT:금단의지식 = TALENT:MASTER:56
+    TALENT:금단의지식 = TALENT:MASTER:금단의지식
 ;요정지식
-    TALENT:요정지식 = TALENT:MASTER:57
+    TALENT:요정지식 = TALENT:MASTER:요정지식
 ;음구지식
-    TALENT:음구지식 = TALENT:MASTER:58
+    TALENT:음구지식 = TALENT:MASTER:음구지식
 ;치료
-    TALENT:치료 = TALENT:MASTER:59
+    TALENT:치료 = TALENT:MASTER:치료
 ;불결무시
     TALENT:64 = TALENT:MASTER:64
 ;매혹
@@ -714,7 +714,7 @@ ELSEIF RESULT == 5
     ;主人の技巧を強制的に1にする
     ABL:MASTER:기교 = 1
     ;禁断の知識没収
-    TALENT:MASTER:56 = 0
+    TALENT:MASTER:금단의지식 = 0
 ;ELSEIF RESULT == 4 && FLAG:난이도 >= 4
 ;    PRINTW “Welcome to Special Round”
 ;ELSEIF RESULT == 5 && FLAG:난이도 >= 5 && FLAG:주회수 <= 2
