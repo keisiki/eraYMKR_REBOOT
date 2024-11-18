@@ -33,17 +33,17 @@ SIF TEQUIP:25 == 1
 SIF ITEM:9 == 0 && NOITEM == 0
     RETURN 0
 ;그 조교중에 관장 플레이＋배설이 있었을 경우, 조교자가 더러운 무시 혹은 악취 둔감을 가지지 않으면 실행할 수 없다
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;조교 대상이 [소인]의 경우는 주인이 [금단의 지식] 소유가 아니면 안 됨
 SIF TALENT:127 && TALENT:MASTER:금단의지식 == 0
     RETURN 0
 ;윤활 부족해, 순종 4 미만·레즈끼(BL끼) 4 미만의 ASSI의 경우, 조교 대상이 동성이라면 실행할 수 없다(새드나 새드끼 Lv3 이상, 또는 망신이나 복종이 있다면 OK)
 IF PALAM:10 < PALAMLV:3 && ASSIPLAY
-    SIF (ABL:ASSI:순종 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:120 && TALENT:ASSI:120 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:81 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:120 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
         RETURN 0
 ;윤활이 너무 낮으면(자) 사용할 수 없다(조교자가 새디즘 또는 드 S 또는 새드끼 Lv3 이상이라면 OK)
-ELSEIF PALAM:10 < PALAMLV:2 && TALENT:PLAYER:81 == 0 && TALENT:PLAYER:177 == 0 && ABL:PLAYER:새드끼 < 3
+ELSEIF PALAM:10 < PALAMLV:2 && TALENT:PLAYER:새드 == 0 && TALENT:PLAYER:177 == 0 && ABL:PLAYER:새드끼 < 3
     RETURN 0
 ENDIF
 ;다른 A계 장착도구 사용중은 불가
@@ -228,9 +228,9 @@ ENDIF
 
 TCVAR:1 += 2
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:120 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 

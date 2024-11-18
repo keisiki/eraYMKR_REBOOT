@@ -10,11 +10,11 @@
 DRAWLINE
 PRINTL 어느 방으로 가겠습니까?
 DRAWLINE
-SIF FLAG:커맨드확장 & 16 && (TALENT:MASTER:158 || TALENT:MASTER:금단의지식 || TALENT:MASTER:81 || TALENT:MASTER:178 || TALENT:MASTER:180 || (TALENT:MASTER:80 && TALENT:MASTER:93))
+SIF FLAG:커맨드확장 & 16 && (TALENT:MASTER:158 || TALENT:MASTER:금단의지식 || TALENT:MASTER:새드 || TALENT:MASTER:178 || TALENT:MASTER:180 || (TALENT:MASTER:도착적 && TALENT:MASTER:소악마))
     PRINTLC [0] 고문 교정 시설
 SIF FLAG:커맨드확장 & 16384
     PRINTLC [1] 종족 개조 시설
-SIF TALENT:MASTER:197 && TALENT:MASTER:141 == 0 && ABL:MASTER:기교 >= 3
+SIF TALENT:MASTER:197 && TALENT:MASTER:육아중 == 0 && ABL:MASTER:기교 >= 3
     PRINTLC [2] 마술의식용 지하실
 PRINTL 
 PRINTL [100] 돌아가기
@@ -22,13 +22,13 @@ $INPUT_LOOP
 INPUT
 IF RESULT == 100
     RETURN 0
-ELSEIF RESULT == 0 && FLAG:커맨드확장 & 16 && (TALENT:MASTER:158 || TALENT:MASTER:금단의지식 || TALENT:MASTER:81 || TALENT:MASTER:178 || TALENT:MASTER:180 || (TALENT:MASTER:80 && TALENT:MASTER:93))
+ELSEIF RESULT == 0 && FLAG:커맨드확장 & 16 && (TALENT:MASTER:158 || TALENT:MASTER:금단의지식 || TALENT:MASTER:새드 || TALENT:MASTER:178 || TALENT:MASTER:180 || (TALENT:MASTER:도착적 && TALENT:MASTER:소악마))
     PRINTW 고문 교정 시설로 발걸음을 옮겼습니다.
     CALL TORTURE_FACILITIES_MENU
 ELSEIF RESULT == 1 && FLAG:커맨드확장 & 16384
     PRINTW 종족 개조 시설로 발걸음을 옮겼습니다.
     CALL CONVERT_RACE_MENU
-ELSEIF RESULT == 2 && TALENT:MASTER:197 && TALENT:MASTER:141 == 0 && ABL:MASTER:기교 >= 3
+ELSEIF RESULT == 2 && TALENT:MASTER:197 && TALENT:MASTER:육아중 == 0 && ABL:MASTER:기교 >= 3
     PRINTW 마술의식용 지하실로 발걸음을 옮겼습니다.
     CALL CREATE_SLAVE_MENU
 ELSE
@@ -89,7 +89,7 @@ REPEAT CHARANUM
         SIF TALENT:COUNT:솔직함 || TALENT:COUNT:해방 || TALENT:COUNT:151 || TALENT:COUNT:152 || TALENT:COUNT:153 || TALENT:COUNT:159 || TALENT:COUNT:160 || TALENT:COUNT:161 || TALENT:COUNT:162 || TALENT:COUNT:164 || TALENT:COUNT:167 || TALENT:COUNT:168 || TALENT:COUNT:169
             CONTINUE
         ;対象が[妊娠][抱卵中][懐卵][寄生]持ちもダメ
-        SIF TALENT:COUNT:140 || TALENT:COUNT:143 || TALENT:COUNT:145 || TALENT:COUNT:146
+        SIF TALENT:COUNT:임신 || TALENT:COUNT:포란중 || TALENT:COUNT:회란 || TALENT:COUNT:기생
             CONTINUE
         ;対象が反発刻印がないとダメ
         SIF MARK:COUNT:반발각인 == 0
@@ -575,7 +575,7 @@ SIF TALENT:MASTER:금단의지식 == 0
 LOCAL:0 = MAX(TALENT:MASTER:요정지식, TALENT:MASTER:197, TALENT:MASTER:198)
 
 ;眷属化の条件    ：    主人が[治療][サド][魔術技能]のいずれかで, 鉈を所持している
-LOCAL:1 = MAX(TALENT:MASTER:치료, TALENT:MASTER:81, TALENT:MASTER:197) && (FLAG:지하실개조 & 16)
+LOCAL:1 = MAX(TALENT:MASTER:치료, TALENT:MASTER:새드, TALENT:MASTER:197) && (FLAG:지하실개조 & 16)
 
 ;改造手術の条件    ：    主人が[家電使役知識]か[超常目算]を持ち, 技巧Lv5
 LOCAL:2 = MAX(TALENT:MASTER:189, TALENT:MASTER:198) && (ABL:MASTER:기교 >= 5)
@@ -607,11 +607,11 @@ RETURNF ((LOCAL:0 * 2) + (LOCAL:1 * 4) + (LOCAL:2 * 8) + (LOCAL:3 * 16) + (LOCAL
 VARSET LOCAL, 0
 
 ;その場にいない, 抱卵中, 助手可能でない奴隷は除外
-SIF CFLAG:(ARG:1):4 || TALENT:(ARG:1):143 || (ARG:1 != MASTER && CFLAG:(ARG:1):1 < 2)
+SIF CFLAG:(ARG:1):4 || TALENT:(ARG:1):포란중 || (ARG:1 != MASTER && CFLAG:(ARG:1):1 < 2)
     RETURNF 0
 
 ;呪精転生の実行資格    ：    お燐, [覚], または[鼓舞]を持つ[呪精]
-LOCAL:0 = MAX(NO:(ARG:1) == 62, TALENT:(ARG:1):213, (TALENT:(ARG:1):95 && TALENT:(ARG:1):주정))
+LOCAL:0 = MAX(NO:(ARG:1) == 62, TALENT:(ARG:1):213, (TALENT:(ARG:1):고무 && TALENT:(ARG:1):주정))
 
 ;眷属化の実行資格    ：    [吸血鬼]
 LOCAL:1 = TALENT:(ARG:1):205
@@ -645,7 +645,7 @@ RETURNF LOCAL:ARG
 VARSET LOCAL, 0
 
 ;主人, その場にいない者, 抱卵中の者は除外
-SIF MAX(ARG:1 == MASTER, CFLAG:(ARG:1):4, TALENT:(ARG:1):143)
+SIF MAX(ARG:1 == MASTER, CFLAG:(ARG:1):4, TALENT:(ARG:1):포란중)
     RETURNF 0
 ;[親愛][烙印][傀儡][壊造人格]のいずれかでなければ除外
 SIF MAX(TALENT:(ARG:1):152, TALENT:(ARG:1):161, TALENT:(ARG:1):168, TALENT:(ARG:1):169) == 0
@@ -655,7 +655,7 @@ SIF BASE:(ARG:1):체력 < MAXBASE:(ARG:1):체력 || BASE:(ARG:1):기력 < MAXBAS
     RETURNF 0
 
 ;[妊娠][懐卵][寄生]に対して改造手術・魂魄昇華・生命封入は不可
-SIF MIN(ARG:1 >= 2, TALENT:(ARG:1):140, TALENT:(ARG:1):145, TALENT:(ARG:1):146)
+SIF MIN(ARG:1 >= 2, TALENT:(ARG:1):임신, TALENT:(ARG:1):회란, TALENT:(ARG:1):기생)
     RETURNF 0
 
 ;呪精転生の被験資格    ：    [呪精]でない[妖精]
@@ -763,9 +763,9 @@ IF CFLAG:99 == 0
         PRINTFORML %조사처리(CALLNAME:(ARG:1),"가")%  손을 뻗자, 우는 얼굴로 벽까지 뒤로 물러난다.
         PRINTFORML 더이상 도망치지 못하자 목을 좌우로 흔들면서 마구 울더니, 머리를 움켜쥐며 주저앉는다.
         PRINTFORM %조사처리(CALLNAME:(ARG:1),"는")% 그런 %CALLNAME:TARGET%
-        SIF TALENT:(ARG:1):81
+        SIF TALENT:(ARG:1):새드
             PRINT 의 배를 걷어찬 뒤 
-        SIF TALENT:(ARG:1):81 == 0
+        SIF TALENT:(ARG:1):새드 == 0
             PRINT 의 애원을 무시하고 
         PRINTFORML 담담히 준비를 진행하기 시작했다.
     ;반발 각인
@@ -775,9 +775,9 @@ IF CFLAG:99 == 0
         PRINTFORML 상황을 이해한 %조사처리(CALLNAME:TARGET,"는")% 째지는 비명소리와 함게 도망치려 한다.
         PRINTFORM %조사처리(CALLNAME:TARGET,"는")% 지하감옥에서 도망쳐 봤지만 결국 %CALLNAME:MASTER%에게 잡혔다.
         PRINTFORM 계속 그렇게 아우성치는 %조사처리(CALLNAME:TARGET,"를")% 
-        SIF TALENT:MASTER:81
+        SIF TALENT:MASTER:새드
             PRINTFORML 보고 %조사처리(CALLNAME:MASTER,"는")% 즐거워했다.
-        SIF TALENT:MASTER:81 != 1
+        SIF TALENT:MASTER:새드 != 1
             PRINTFORML 를 %조사처리(CALLNAME:(ARG:1),"가")% 기가 막힌 얼굴로 보고 있었다.
     ;낙인
     ELSEIF TALENT:161
@@ -798,7 +798,7 @@ IF CFLAG:99 == 0
     ;주정전생을 실행
     IF ARG == 0
         PRINTFORMW %조사처리(CALLNAME:(ARG:1),"는")% %CALLNAME:TARGET%에게 강렬한 암시를 걸친다.
-        IF TALENT:(ARG:1):95 == 1
+        IF TALENT:(ARG:1):고무 == 1
             PRINTFORML 그 교묘한 암시로 말미암아 %CALLNAME:TARGET%의 정신은 고양 상태가 되었다.
         ENDIF
         PRINTFORML 영혼을 흔들리면서, %조사처리(CALLNAME:TARGET,"는")% 자기 형질을 잃어 갔다….
@@ -1310,9 +1310,9 @@ FLAG:420 |= 2
 DRAWLINE
 PRINTL 자기 자신의 신체를 강화합니다. (필요 경비：100원)
 PRINTL 어떻게 하겠습니까?
-PRINTFORML [ 0] - 일광욕\@(TALENT:MASTER:114) ? 삭제 # 부여\@
-PRINTFORML [ 1] - 월광욕\@(TALENT:MASTER:115) ? 삭제 # 부여\@
-PRINTFORML [ 2] - \@(TALENT:MASTER:116) ? 동물귀 삭제 # 귀여운(중요!) 동물귀 부여\@
+PRINTFORML [ 0] - 일광욕\@(TALENT:MASTER:일광욕) ? 삭제 # 부여\@
+PRINTFORML [ 1] - 월광욕\@(TALENT:MASTER:월광욕) ? 삭제 # 부여\@
+PRINTFORML [ 2] - \@(TALENT:MASTER:동물귀) ? 동물귀 삭제 # 귀여운(중요!) 동물귀 부여\@
 PRINTFORML [ 3] - \@(TALENT:MASTER:고양이혀) ? 고양이혀 삭제 # 귀여운(중요!) 고양이혀 부여\@
 PRINTL [100] - 왠지 그냥 그만둔다
 $INPUT_LOOP
@@ -1325,39 +1325,39 @@ ENDIF
 
 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 자신 있는 신체 강화 주문을 사용했습니다.
 IF RESULT == 0
-    IF TALENT:MASTER:114 == 0
+    IF TALENT:MASTER:일광욕 == 0
         PRINTW ＜해님이 어울리는 멋진 신체가 되었습니다＞
         PRINTW [일광욕]을 취득했다.
-        TALENT:MASTER:114 = 1
+        TALENT:MASTER:일광욕 = 1
         FLAG:신체강화 |= 1
     ELSE
         PRINTW ＜해님에 의지하지 않는 강인한 신체가 되었습니다＞
         PRINTW [일광욕]을 잃었다.
-        TALENT:MASTER:114 = 0
+        TALENT:MASTER:일광욕 = 0
         FLAG:신체강화 -= 1
     ENDIF
 ELSEIF RESULT == 1
-    IF TALENT:MASTER:115 == 0
+    IF TALENT:MASTER:월광욕 == 0
         PRINTW ＜달빛이 어울리는 멋진 신체가 되었습니다＞
         PRINTW [월광욕]을 취득했다.
-        TALENT:MASTER:115 = 1
+        TALENT:MASTER:월광욕 = 1
         FLAG:신체강화 |= 2
     ELSE
         PRINTW ＜달빛을 받지 않아도 되는 신체가 되었습니다＞
         PRINTW [월광욕]을 잃었다.
-        TALENT:MASTER:115 = 0
+        TALENT:MASTER:월광욕 = 0
         FLAG:신체강화 -= 2
     ENDIF
 ELSEIF RESULT == 2
-    IF TALENT:MASTER:116 == 0
+    IF TALENT:MASTER:동물귀 == 0
         PRINTW ＜매우 귀엽게 보이는 동물귀가 생겼습니다＞
         PRINTW [동물귀]를 취득했다.
-        TALENT:MASTER:116 = 1
+        TALENT:MASTER:동물귀 = 1
         FLAG:신체강화 |= 4
     ELSE
         PRINTW ＜괴악한 동물귀를 떼어냈습니다＞
         PRINTW [동물귀]를 잃었다.
-        TALENT:MASTER:116 = 0
+        TALENT:MASTER:동물귀 = 0
         FLAG:신체강화 -= 4
     ENDIF
 ELSEIF RESULT == 3
@@ -1425,25 +1425,25 @@ REPEAT CHARANUM
     IF LOCAL == 0 && (( NO:COUNT == 13 || NO:COUNT == 21 || NO:COUNT == 25 || NO:COUNT == 27 || NO:COUNT == 41 || NO:COUNT == 55 || NO:COUNT == 62 || NO:COUNT == 71 || NO:COUNT == 87 || NO:COUNT == 203 || NO:COUNT == 217 || NO:COUNT == 220 || NO:COUNT == 222) || ( NO:COUNT == 170 || NO:COUNT == 175 || NO:COUNT == 177 || NO:COUNT == 184 || NO:COUNT == 186 || NO:COUNT == 187 || NO:COUNT == 188 ))
         CONTINUE
 ;불결무시 부여 - 불결무시가 없고 기교 3이상
-    ELSEIF LOCAL == 1 && (TALENT:COUNT:64 || ABL:COUNT:기교 < 3)
+    ELSEIF LOCAL == 1 && (TALENT:COUNT:불결무시 || ABL:COUNT:기교 < 3)
         CONTINUE
 ;대유도 부여 - 캐릭터의 가슴 사이즈가 [거유] 나 [폭유]이고 기교가 4레벨 이상, 대유도가 없음
-    ELSEIF LOCAL == 2 && ((TALENT:COUNT:112 == 0 && TALENT:COUNT:113 == 0) || TALENT:COUNT:96 || ABL:COUNT:기교 < 4)
+    ELSEIF LOCAL == 2 && ((TALENT:COUNT:거유 == 0 && TALENT:COUNT:폭유 == 0) || TALENT:COUNT:대유도 || ABL:COUNT:기교 < 4)
         CONTINUE
 ;절벽가슴격추왕 부여 - 캐릭터의 가슴 사이즈가 [절벽]이나 [빈유]이고 기교가 4레벨 이상, 절벽가슴격추왕이 없음
-    ELSEIF LOCAL == 3 && ((TALENT:COUNT:110 == 0 && TALENT:COUNT:111 == 0) || TALENT:COUNT:97 || ABL:COUNT:기교 < 4)
+    ELSEIF LOCAL == 3 && ((TALENT:COUNT:절벽 == 0 && TALENT:COUNT:빈유 == 0) || TALENT:COUNT:절벽가슴격추왕 || ABL:COUNT:기교 < 4)
         CONTINUE
 ;오줌싸개버릇 - 이미 오줌싸개버릇이 있으면 안됨, 노출벽 4이상
     ELSEIF LOCAL == 4 && (TALENT:COUNT:오줌싸개버릇 || ABL:COUNT:노출증 < 4)
         CONTINUE
 ;수상한 뿌리 - 남자가 아니고 수상한 뿌리나 구현, 훝타나리가 없을 것
-    ELSEIF LOCAL == 5 && ( EXIST_PENIS(COUNT) || TALENT:COUNT:122 || TALENT:COUNT:123 )
+    ELSEIF LOCAL == 5 && ( EXIST_PENIS(COUNT) || TALENT:COUNT:수상한뿌리 || TALENT:COUNT:구현 )
         CONTINUE
 ;일광욕 - 이미 [회복빠름] 이나 [일광욕] [월광욕]이 없을 것. [흡혈귀] [강시]에게는 사용불가
-    ELSEIF LOCAL == 6 && ( TALENT:COUNT:137 || TALENT:COUNT:114 || TALENT:COUNT:115 || TALENT:COUNT:205 || TALENT:COUNT:226 )
+    ELSEIF LOCAL == 6 && ( TALENT:COUNT:회복빠름 || TALENT:COUNT:일광욕 || TALENT:COUNT:월광욕 || TALENT:COUNT:205 || TALENT:COUNT:226 )
         CONTINUE
 ;월광욕 - 이미 [회복빠름]이나 [일광욕] [월광욕]이 없을 것
-    ELSEIF LOCAL == 7 && ( TALENT:COUNT:137 || TALENT:COUNT:114 || TALENT:COUNT:115 )
+    ELSEIF LOCAL == 7 && ( TALENT:COUNT:회복빠름 || TALENT:COUNT:일광욕 || TALENT:COUNT:월광욕 )
         CONTINUE
 ;미약중독 치료 - 미약중독을 가지고 있는 캐릭터에게만 가능
     ELSEIF LOCAL == 8 && TALENT:COUNT:미약중독 == 0
@@ -1490,13 +1490,13 @@ LOCAL:3 = (LOCAL:2 - 1) / 20
 ENDIF
 
 IF LOCAL == 0
-  IF MONEY >= 20000 && TALENT:(LOCAL:4):116 == 0
+  IF MONEY >= 20000 && TALENT:(LOCAL:4):동물귀 == 0
     PRINTFORMW ＜%CALLNAME:(LOCAL:4)%에게 동물귀를 부여했습니다＞
-    TALENT:(LOCAL:4):116 = 1
+    TALENT:(LOCAL:4):동물귀 = 1
     MONEY -= 20000
-  ELSEIF MONEY >= 20000 && TALENT:(LOCAL:4):116 == 1
+  ELSEIF MONEY >= 20000 && TALENT:(LOCAL:4):동물귀 == 1
     PRINTFORMW ＜%CALLNAME:(LOCAL:4)%에게서 동물귀를 제거했습니다＞
-    TALENT:(LOCAL:4):116 = 0
+    TALENT:(LOCAL:4):동물귀 = 0
     MONEY -= 20000
   ELSE
     PRINTFORMW 돈이 부족합니다.
@@ -1504,7 +1504,7 @@ IF LOCAL == 0
 ELSEIF LOCAL == 1
   IF MONEY >= 50000
     PRINTFORMW ＜%CALLNAME:(LOCAL:4)%에게 부정함을 정화하는 결계를 부여했습니다＞
-    TALENT:(LOCAL:4):64 = 1
+    TALENT:(LOCAL:4):불결무시 = 1
     MONEY -= 50000
   ELSE
     PRINTFORMW 돈이 부족합니다.
@@ -1512,7 +1512,7 @@ ELSEIF LOCAL == 1
 ELSEIF LOCAL == 2
   IF MONEY >= 200000
     PRINTFORMW ＜%CALLNAME:(LOCAL:4)%에게 큰 가슴과 관련된 마법적인 지식을 주입했습니다＞
-    TALENT:(LOCAL:4):96 = 1
+    TALENT:(LOCAL:4):대유도 = 1
     MONEY -= 200000
   ELSE
     PRINTFORMW 돈이 부족합니다.
@@ -1520,7 +1520,7 @@ ELSEIF LOCAL == 2
 ELSEIF LOCAL == 3
   IF MONEY >= 200000
     PRINTFORMW ＜%CALLNAME:(LOCAL:4)%에게 작은 가슴과 관련된 마법적인 지식을 주입했습니다＞
-    TALENT:(LOCAL:4):97 = 1
+    TALENT:(LOCAL:4):절벽가슴격추왕 = 1
     MONEY -= 200000
   ELSE
     PRINTFORMW 돈이 부족합니다.
@@ -1536,7 +1536,7 @@ ELSEIF LOCAL == 4
 ELSEIF LOCAL == 5
   IF MONEY >= 100000
     PRINTFORMW ＜%CALLNAME:(LOCAL:4)%에게 장차 크고 아름다운 것으로 장성할 수상한 뿌리를 만들어주었습니다＞
-    TALENT:(LOCAL:4):122 = 1
+    TALENT:(LOCAL:4):수상한뿌리 = 1
     MONEY -= 100000
   ELSE
     PRINTFORMW 돈이 부족합니다.
@@ -1544,7 +1544,7 @@ ELSEIF LOCAL == 5
 ELSEIF LOCAL == 6
   IF MONEY >= 100000
     PRINTFORMW ＜%CALLNAME:(LOCAL:4)%에게 햇빛이 어울리는 멋진 신체를 부여했습니다＞
-    TALENT:(LOCAL:4):114 = 1
+    TALENT:(LOCAL:4):일광욕 = 1
     MONEY -= 100000
   ELSE
     PRINTFORMW 돈이 부족합니다.
@@ -1552,7 +1552,7 @@ ELSEIF LOCAL == 6
 ELSEIF LOCAL == 7
   IF MONEY >= 100000
     PRINTFORMW ＜%CALLNAME:(LOCAL:4)%에게 달빛이 어울리는 멋진 신체를 부여했습니다＞
-    TALENT:(LOCAL:4):115 = 1
+    TALENT:(LOCAL:4):월광욕 = 1
     MONEY -= 100000
   ELSE
     PRINTFORMW 돈이 부족합니다.

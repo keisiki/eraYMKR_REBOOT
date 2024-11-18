@@ -28,7 +28,7 @@ IF NO:TARGET == 19
     SIF LOCAL == MASTER || LOCAL == ASSI
         RETURN 0
     ;妊娠していたら除外
-    SIF TALENT:LOCAL:140 == 1
+    SIF TALENT:LOCAL:임신 == 1
         RETURN 0
     ;失踪中などこの場にいないなら除外
     SIF CFLAG:LOCAL:4
@@ -40,7 +40,7 @@ IF NO:TARGET == 19
     SIF BASE:LOCAL:체력 < 500 || BASE:LOCAL:기력 < 200
         RETURN 0
     ;요우무がオトコではなくて, 반령もオトコではない場合
-    IF TALENT:120 == 0 && TALENT:LOCAL:120 == 0
+    IF TALENT:120 == 0 && TALENT:LOCAL:남자 == 0
         ;Ｖ조교 필터가 오프되어 있지 않으면 불가
         SIF FLAG:VA이상조교필터 & 1
             RETURN 0
@@ -70,7 +70,7 @@ ELSEIF NO:TARGET == 70
     SIF LOCAL == MASTER || LOCAL == ASSI
         RETURN 0
     ;妊娠していたら除外
-    SIF TALENT:LOCAL:140 == 1
+    SIF TALENT:LOCAL:임신 == 1
         RETURN 0
     ;失踪中などこの場にいないなら除外
     SIF CFLAG:LOCAL:4
@@ -82,7 +82,7 @@ ELSEIF NO:TARGET == 70
     SIF BASE:LOCAL:체력 < 500 || BASE:LOCAL:기력 < 200
         RETURN 0
     ;요우키がオトコではなくて, 반령(요우키)もオトコではない場合
-    IF TALENT:120 == 0 && TALENT:LOCAL:120 == 0
+    IF TALENT:120 == 0 && TALENT:LOCAL:남자 == 0
         ;Ｖ조교 필터가 오프되어 있지 않으면 불가
         SIF FLAG:VA이상조교필터 & 1
             RETURN 0
@@ -159,7 +159,7 @@ SIF EXIST_PENIS(PLAYER)
 ;-------------------------------------------------
 ;능력이나 경험의 일부에 대해서는 반령의 것을 보지만, 소스 그 자체는 본체에 들어간다.
 ;본체와 반령이 모두 남자가 아닌 경우
-IF TALENT:120 == 0 && TALENT:(TARGET:1):120 == 0
+IF TALENT:120 == 0 && TALENT:(TARGET:1):남자 == 0
     DOWNBASE:0 += 0
     DOWNBASE:기력 += 200
     ;반령의 체력 기력 소모를 여기서 해 버린다
@@ -208,7 +208,7 @@ IF TALENT:120 == 0 && TALENT:(TARGET:1):120 == 0
 
     ;조교자가 후타나리
     IF ASSIPLAY
-        SIF TALENT:ASSI:121
+        SIF TALENT:ASSI:후타나리
             TIMES SOURCE:1 , 2.50
     ENDIF
 
@@ -331,7 +331,7 @@ ELSE
 
     ;조교자가 후타나리
     IF ASSIPLAY
-        SIF TALENT:ASSI:121
+        SIF TALENT:ASSI:후타나리
             TIMES SOURCE:1 , 2.50
     ENDIF
 
@@ -412,9 +412,9 @@ BASE:PLAYER:사정 = LIMIT(BASE:PLAYER:사정 - EJAC*(TFLAG:91), 0, EJAC-1)
 ;LUNATIC 이상은 사정할 때마다 체력이 감소
 CALL EXHAUST_EJAC, PLAYER, TFLAG:91
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 4
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:120 && TALENT:PLAYER:남자
     TCVAR:13 += 4
 ENDIF
 ;주인 경험 플래그
@@ -433,7 +433,7 @@ SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
 
 PRINTL
 ;본체와 반령이 모두 남자가 아닌 경우
-IF TALENT:120 == 0 && TALENT:(TARGET:1):120 == 0
+IF TALENT:120 == 0 && TALENT:(TARGET:1):남자 == 0
     IF PREVCOM != 440 && PREVCOM != 441 && PREVCOM != 442 && PREVCOM != 443
         IF NO:TARGET == 70 
             PRINTFORML %조사선택(CALLNAME:MASTER, "는")% 반령(기)을 불러냈다.

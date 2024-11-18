@@ -28,7 +28,7 @@ IF FLAG:조교모드 & 4
         SIF CFLAG:COUNT:30 >= 130 && TALENT:COUNT:160 == 0 && TALENT:COUNT:164 == 0 && EQUIP:COUNT:14 == 0
             LOCAL:101 = 1
     REND
-    SIF TALENT:MASTER:98 && LOCAL:100 > 0
+    SIF TALENT:MASTER:대범함 && LOCAL:100 > 0
         LOCAL:100 /= 2
 ENDIF
 
@@ -61,9 +61,9 @@ FOR TFLAG:900, 0, CHARANUM
     ENDIF
 
     ;回復早い, 回復遅い
-    IF TALENT:(TFLAG:900):137
+    IF TALENT:(TFLAG:900):회복빠름
         TIMES LOCAL:10 , 1.50
-    ELSEIF TALENT:(TFLAG:900):138
+    ELSEIF TALENT:(TFLAG:900):회복느림
         TIMES LOCAL:10 , 0.75
     ENDIF
 
@@ -90,7 +90,7 @@ FOR TFLAG:900, 0, CHARANUM
     ENDIF
 
     ;日光浴, 月光浴
-    IF (TIME == 0 && TALENT:(TFLAG:900):114) || (TIME == 1 && TALENT:(TFLAG:900):115)
+    IF (TIME == 0 && TALENT:(TFLAG:900):일광욕) || (TIME == 1 && TALENT:(TFLAG:900):월광욕)
         LOCAL:10 += 200
         LOCAL:11 = MAXBASE:(TFLAG:900):기력
     ENDIF
@@ -101,7 +101,7 @@ FOR TFLAG:900, 0, CHARANUM
     SIF ASSI >= 0 && TALENT:ASSI:치료 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기
         LOCAL:10 += 160
     ;鼓舞(酔いつぶれていなければ)
-    SIF ASSI >= 0 && TALENT:ASSI:95 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기
+    SIF ASSI >= 0 && TALENT:ASSI:고무 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기
         LOCAL:11 += 100
     ;魔術技能(酔いつぶれていなければ)
     SIF TALENT:MASTER:197 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
@@ -140,13 +140,13 @@ FOR TFLAG:900, 0, CHARANUM
     ENDIF
 
     ;妊娠・懐卵
-    IF TALENT:(TFLAG:900):140 || TALENT:(TFLAG:900):145
+    IF TALENT:(TFLAG:900):임신 || TALENT:(TFLAG:900):회란
         TIMES LOCAL:10 , 0.70
         TIMES LOCAL:11 , 0.75
     ENDIF
 
     ;寄生(栄養が一部取られているので体力回復量は低下）
-    IF TALENT:(TFLAG:900):146
+    IF TALENT:(TFLAG:900):기생
         TIMES LOCAL:10 , 0.70
         TIMES LOCAL:11 , 0.75
         IF BASE:(TFLAG:900):촉수 < MAXBASE:(TFLAG:900):촉수
@@ -412,7 +412,7 @@ FOR TFLAG:900, 0, CHARANUM
         IF CFLAG:(TFLAG:900):4 && CFLAG:(TFLAG:900):4 != 2 && CFLAG:(TFLAG:900):2 > 0
             CFLAG:(TFLAG:900):2 -= 1
         ;夜→朝のみ[大甲斐性]がないと調教中のキャラ以外の好感度が1下がる
-        ELSEIF TFLAG:900 != MASTER && TFLAG:900 != TARGET && CFLAG:(TFLAG:900):2 > 0 && TALENT:MASTER:98 == 0 && TIME != 0
+        ELSEIF TFLAG:900 != MASTER && TFLAG:900 != TARGET && CFLAG:(TFLAG:900):2 > 0 && TALENT:MASTER:대범함 == 0 && TIME != 0
             CFLAG:(TFLAG:900):2 -= 1
         ENDIF
     ENDIF
@@ -420,7 +420,7 @@ FOR TFLAG:900, 0, CHARANUM
     IF CFLAG:(TFLAG:900):64
         CFLAG:(TFLAG:900):64 -= (TIME == 0) ? 50 # 100
         ;0未満になるか[精愛味覚]なら精飲절정ゲージ初期化
-        SIF CFLAG:(TFLAG:900):64 < 0 || TALENT:(TFLAG:900):66
+        SIF CFLAG:(TFLAG:900):64 < 0 || TALENT:(TFLAG:900):정애미각
             CFLAG:(TFLAG:900):64 = 0
     ENDIF
 NEXT
@@ -645,13 +645,13 @@ SIF TFLAG:900 == MASTER || CFLAG:(TFLAG:900):4 == 1 || CFLAG:(TFLAG:900):4 == 4 
 ;添水の効果（ストレス解消と恐怖の珠UP）
 IF FLAG:정원개조 & 4
     ;動物耳がない場合にはストレス解消効果あり
-    IF TALENT:(TFLAG:900):116 == 0
+    IF TALENT:(TFLAG:900):동물귀 == 0
         CFLAG:(TFLAG:900):65 = MAX(CFLAG:(TFLAG:900):65 - RAND:10, 0)
     ENDIF
     ;気丈と感情乏しいと嫉妬と狂気と精神崩壊をもたなくて…
     IF TALENT:(TFLAG:900):꿋꿋함 == 0 && TALENT:(TFLAG:900):감정결여 == 0 && TALENT:(TFLAG:900):157 == 0 && TALENT:(TFLAG:900):158 == 0 && TALENT:(TFLAG:900):167 == 0
         ;臆病か悲観的か動物耳（本来動物を追い払うためのもの）か恐怖刻印持ちならば恐怖の珠UP
-        SIF TALENT:(TFLAG:900):겁쟁이 || TALENT:(TFLAG:900):비관적 || TALENT:(TFLAG:900):116 || MARK:(TFLAG:900):공포각인
+        SIF TALENT:(TFLAG:900):겁쟁이 || TALENT:(TFLAG:900):비관적 || TALENT:(TFLAG:900):동물귀 || MARK:(TFLAG:900):공포각인
             CALL COMMON_UP_JUEL, TFLAG:900, 17, 10 + (10 * RAND:5) , 2 
     ENDIF
 ENDIF
@@ -660,10 +660,10 @@ IF FLAG:정원개조 & 8
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:정원개조 & 2
         ;好奇心もしくは習得早いもしくは教育者もしくは博麗の巫女もしくは風祝の場合は習得の珠UP
-        SIF TALENT:(TFLAG:900):호기심 || TALENT:(TFLAG:900):습득빠름 || TALENT:(TFLAG:900):126 || TALENT:(TFLAG:900):218 || TALENT:(TFLAG:900):219
+        SIF TALENT:(TFLAG:900):호기심 || TALENT:(TFLAG:900):습득빠름 || TALENT:(TFLAG:900):교육자 || TALENT:(TFLAG:900):218 || TALENT:(TFLAG:900):219
             CALL COMMON_UP_JUEL, TFLAG:900, 11, 10 + (10 * RAND:5) , 2
         ;素直もしくは大人しいもしくは保守的もしくは恥じらいもしくは献身的もしくは陥落している場合恭順の珠UP
-        SIF TALENT:(TFLAG:900):솔직함 || TALENT:(TFLAG:900):얌전함 || TALENT:(TFLAG:900):보수적 || TALENT:(TFLAG:900):부끄럼쟁이 || TALENT:(TFLAG:900):63 || TALENT:(TFLAG:900):150 || TALENT:(TFLAG:900):160 || TALENT:(TFLAG:900):170
+        SIF TALENT:(TFLAG:900):솔직함 || TALENT:(TFLAG:900):얌전함 || TALENT:(TFLAG:900):보수적 || TALENT:(TFLAG:900):부끄럼쟁이 || TALENT:(TFLAG:900):헌신적 || TALENT:(TFLAG:900):150 || TALENT:(TFLAG:900):160 || TALENT:(TFLAG:900):170
             CALL COMMON_UP_JUEL, TFLAG:900, 12, 10 + (10 * RAND:5) , 2
     ENDIF
 ENDIF
@@ -672,7 +672,7 @@ IF FLAG:정원개조 & 16
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:정원개조 & 2
         ;寄生でも嫉妬でも狂気でも精神崩壊でもない場合否定の珠DOWN
-        SIF TALENT:(TFLAG:900):146 == 0 || TALENT:(TFLAG:900):157 == 0 || TALENT:(TFLAG:900):158 == 0 || TALENT:(TFLAG:900):167 == 0
+        SIF TALENT:(TFLAG:900):기생 == 0 || TALENT:(TFLAG:900):157 == 0 || TALENT:(TFLAG:900):158 == 0 || TALENT:(TFLAG:900):167 == 0
             JUEL:(TFLAG:900):100 -= 10 + (10 * RAND:5)
     ENDIF
 ENDIF
@@ -696,7 +696,7 @@ IF FLAG:정원개조 & 64
                 JUEL:(TFLAG:900):100 -= 10 + (10 * RAND:5)
         ELSE
             ;冬でなければ, 自制心と快感の否定を持たず, 精液中毒Lv持ちならば欲情の珠UP(射精と噴水を混同している)
-            SIF TALENT:(TFLAG:900):자제심 == 0 && TALENT:(TFLAG:900):71 == 0 && ABL:(TFLAG:900):정액중독
+            SIF TALENT:(TFLAG:900):자제심 == 0 && TALENT:(TFLAG:900):쾌감을부정 == 0 && ABL:(TFLAG:900):정액중독
                 CALL COMMON_UP_JUEL, TFLAG:900, 13, 10 + (10 * RAND:5) , 2
             ;冬でなければ, 自制心と恥薄いを持たず, おもらし癖か排泄中毒Lv持ちならば恥情の珠UP(放尿と噴水を混同している)
             SIF TALENT:(TFLAG:900):자제심 == 0 && TALENT:(TFLAG:900):부끄럼없음 == 0 && (TALENT:(TFLAG:900):오줌싸개버릇 || ABL:(TFLAG:900):배설중독)
@@ -709,7 +709,7 @@ IF FLAG:정원개조 & 128
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:정원개조 & 2
         ;恐怖刻印がなく, 幼児か幼稚か動物耳である場合先導の珠UP(昼間の場合は吸血鬼は日傘ないとNG)
-        SIF MARK:(TFLAG:900):공포각인 <= 0 && (TALENT:(TFLAG:900):130 || TALENT:(TFLAG:900):131 || TALENT:(TFLAG:900):116) && (TALENT:(TFLAG:900):205 == 0 || TIME == 1 || NOITEM == 1 || ITEM:48)
+        SIF MARK:(TFLAG:900):공포각인 <= 0 && (TALENT:(TFLAG:900):유아 || TALENT:(TFLAG:900):유치 || TALENT:(TFLAG:900):동물귀) && (TALENT:(TFLAG:900):205 == 0 || TIME == 1 || NOITEM == 1 || ITEM:48)
             CALL COMMON_UP_JUEL, TFLAG:900, 32, 10 + (10 * RAND:5) , 2
     ENDIF
 ENDIF
@@ -831,39 +831,39 @@ ENDIF
 ;口上によるCOUNT:0破壊対策としてメインカウンターをTFLAG化
 FOR TFLAG:900, 0, CHARANUM
     ;出産・抱卵関連
-    IF TALENT:(TFLAG:900):140 || TALENT:(TFLAG:900):141 || TALENT:(TFLAG:900):143
+    IF TALENT:(TFLAG:900):임신 || TALENT:(TFLAG:900):육아중 || TALENT:(TFLAG:900):포란중
         SIF FLAG:신체측정패치 & 1
             CALL MAKE_BABY_SIZE, TFLAG:900
         ;出産3日前からは臨月突入で調教不可に
         IF (CFLAG:(TFLAG:900):77 - 3) <= DAY && CFLAG:(TFLAG:900):4 == 0
             DRAWLINE
             CALL REACH_FULL_TERM, TFLAG:900
-        ELSEIF CFLAG:(TFLAG:900):77 <= DAY && (TALENT:(TFLAG:900):140 || TALENT:(TFLAG:900):143)
+        ELSEIF CFLAG:(TFLAG:900):77 <= DAY && (TALENT:(TFLAG:900):임신 || TALENT:(TFLAG:900):포란중)
             ;出産予定日なら出産or孵化＆子育て部屋に移動
             IF CFLAG:(TFLAG:900):4 == 2
                 DRAWLINE
-                IF TALENT:(TFLAG:900):140
+                IF TALENT:(TFLAG:900):임신
                     CALL CHILD_BIRTH, TFLAG:900
                 ELSE
                     CALL EGG_BIRTH, TFLAG:900
                 ENDIF
             ELSE
-                TALENT:(TFLAG:900):140 = 0
-                TALENT:(TFLAG:900):141 = 1
-                TALENT:(TFLAG:900):143 = 0
+                TALENT:(TFLAG:900):임신 = 0
+                TALENT:(TFLAG:900):육아중 = 1
+                TALENT:(TFLAG:900):포란중 = 0
             ENDIF
         ;出産後FLAG:601日後（標準は20日後）で親離れで調教可能に
-        ELSEIF (CFLAG:(TFLAG:900):77 + FLAG:성장기간설정 - EQUIP:(TFLAG:900):1) <= DAY && TALENT:(TFLAG:900):141
+        ELSEIF (CFLAG:(TFLAG:900):77 + FLAG:성장기간설정 - EQUIP:(TFLAG:900):1) <= DAY && TALENT:(TFLAG:900):육아중
             EQUIP:(TFLAG:900):1 = 0
             IF CFLAG:(TFLAG:900):4 == 2
                 DRAWLINE
                 CALL DEPEARENT, TFLAG:900
             ELSE
-                TALENT:(TFLAG:900):141 = 0
+                TALENT:(TFLAG:900):육아중 = 0
             ENDIF
         ENDIF
     ;懐卵処理
-    ELSEIF TALENT:(TFLAG:900):145 && CFLAG:(TFLAG:900):4 == 0
+    ELSEIF TALENT:(TFLAG:900):회란 && CFLAG:(TFLAG:900):4 == 0
         ;懐卵(出産時期は妊娠よりは少し早く来る)
         CFLAG:(TFLAG:900):35 += 1
         IF CFLAG:(TFLAG:900):35 == 14
@@ -903,7 +903,7 @@ SIF FLAG:난이도 == 6 || FLAG:난이도 == 7
 ;--------------------------------------------------
 @EVENT_FUTA_PLUS_COMMON, ARG
 ;[ふたなり]＆射精ゲージ追加
-TALENT:ARG:121 = 1
+TALENT:ARG:후타나리 = 1
 MAXBASE:ARG:사정 = CALC_GAUGE2_COMMON(ARG)
 
 ;陰核肥大消去処理
@@ -914,13 +914,13 @@ SIF CFLAG:ARG:37 & 16
     CFLAG:ARG:37 -= 16
 
 ;具現消滅
-IF TALENT:ARG:123
-    TALENT:ARG:123 = 0
-    TALENT:ARG:124 |= 2
+IF TALENT:ARG:구현
+    TALENT:ARG:구현 = 0
+    TALENT:ARG:현계화 |= 2
 ;不思議な根消滅
-ELSEIF TALENT:ARG:122
-    TALENT:ARG:122 = 0
-    TALENT:ARG:124 |= 1
+ELSEIF TALENT:ARG:수상한뿌리
+    TALENT:ARG:수상한뿌리 = 0
+    TALENT:ARG:현계화 |= 1
 ENDIF
 
 ;--------------------------------------------------
@@ -1442,7 +1442,7 @@ SIF (MAXBASE:0 - BASE:0) % LOCAL
     LOCAL:1++
 
 ;기력을 완전 회복하는 데에 필요한 영양제 수 계산
-IF (TALENT:ARG:114 && TIME == 0) || (TALENT:ARG:115 && TIME == 1)
+IF (TALENT:ARG:일광욕 && TIME == 0) || (TALENT:ARG:월광욕 && TIME == 1)
     LOCAL:2 = (BASE:기력 == MAXBASE:기력) ? 0 # 1
 ELSE
     LOCAL:2 = (MAXBASE:기력 - BASE:기력) / (LOCAL * 2)
@@ -1465,7 +1465,7 @@ ENDIF
 
 ;일광욕 및 월광욕 보유 중에 특정 시간에 사용 시 1회 사용만으로도 기력 완전 회복으로 보정
 BASE:ARG:체력 = MIN(BASE:ARG:체력 + (LOCAL * LOCAL:3), MAXBASE:ARG:체력)
-BASE:ARG:기력 = ((TALENT:ARG:114 && TIME == 0) || (TALENT:ARG:115 && TIME == 1)) ? MAXBASE:ARG:기력 # MIN(BASE:ARG:기력 + (LOCAL * 2 * LOCAL:3), MAXBASE:ARG:기력)
+BASE:ARG:기력 = ((TALENT:ARG:일광욕 && TIME == 0) || (TALENT:ARG:월광욕 && TIME == 1)) ? MAXBASE:ARG:기력 # MIN(BASE:ARG:기력 + (LOCAL * 2 * LOCAL:3), MAXBASE:ARG:기력)
 MONEY -= LOCAL:3 * 1000
 
 SIF TARGET == ASSI || TARGET == ARG

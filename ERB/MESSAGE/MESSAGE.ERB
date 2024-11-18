@@ -584,7 +584,7 @@ RETURN RESULT
 SIF EQUIP:ARG:14 || (TFLAG:999 && TFLAG:899 >= 1 && ARG == TARGET) || KX_MOUSE_CHECK(ARG)
     RETURNF 0
 ;(원래) [남자] 또는 말을 못하는 [인형]
-SIF (TALENT:ARG:120 && CFLAG:ARG:4995 != 2) || TALENT:ARG:208 == 1
+SIF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || TALENT:ARG:208 == 1
     RETURNF 0
 
 RETURNF 1
@@ -603,7 +603,7 @@ SIF ASSIPLAY
 SIF EQUIP:ARG:14 || TFLAG:899 >= 1 || KX_MOUSE_CHECK(ARG)
     RETURNF 0
 ;(원래) [남자] 또는 말을 못하는 [인형]
-SIF (TALENT:ARG:120 && CFLAG:ARG:4995 != 2) || TALENT:ARG:208 == 1
+SIF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || TALENT:ARG:208 == 1
     RETURNF 0
 
 RETURNF 1
@@ -642,7 +642,7 @@ CALL DEFINE_JINKAKU_NORMAL, ARG
 ;1인칭(CSTR:11)을 결정
 ;………………………………………………
 ;성전환으로 남자가 된 존재의 경우 원래 성별의 인격을 본다. 그리고 원래 남자일 경우에는 성전환해도 남자 취급
-IF (TALENT:ARG:120 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
+IF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
     ;わし(캐릭터 유래)
     IF NO:ARG == 70 || NO:ARG == 74
         CSTR:ARG:11 = 나
@@ -659,7 +659,7 @@ IF (TALENT:ARG:120 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
     ELSEIF TALENT:ARG:보수적 || TALENT:ARG:정조관념 || TALENT:ARG:214 || TALENT:ARG:215
         CSTR:ARG:11 = 나
     ;僕([겁쟁이], [얌전함], [유아], [유아퇴행], [캇파])
-    ELSEIF TALENT:ARG:겁쟁이 || TALENT:ARG:얌전함 || TALENT:ARG:130 || TALENT:ARG:159 || TALENT:ARG:210
+    ELSEIF TALENT:ARG:겁쟁이 || TALENT:ARG:얌전함 || TALENT:ARG:유아 || TALENT:ARG:159 || TALENT:ARG:210
         CSTR:ARG:11 = 나
     ;私
     ELSE
@@ -689,7 +689,7 @@ ENDIF
 ;………………………………………………
 CFLAG:ARG:43 = 0
 ;원래 성별이 남자
-IF (TALENT:ARG:120 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
+IF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
     ;貴様(캐릭터 유래)
     IF NO:ARG == 70
         CSTR:ARG:12 = 네놈
@@ -719,7 +719,7 @@ IF (TALENT:ARG:120 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
         CSTR:ARG:12 = 너
         CFLAG:ARG:43 = 12
     ;君([気丈], [教育者])
-    ELSEIF TALENT:ARG:꿋꿋함 || TALENT:ARG:126
+    ELSEIF TALENT:ARG:꿋꿋함 || TALENT:ARG:교육자
         CSTR:ARG:12 = 너
         CFLAG:ARG:43 = 13
     ;あなた
@@ -776,13 +776,13 @@ IF (TALENT:ARG:120 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
                 CSTR:ARG:35 = 아빠
                 CSTR:ARG:36 = 엄마
         ENDSELECT
-        SIF TALENT:MASTER:120 == 0 ;주인이 여자일 경우 호칭을 바꿈
+        SIF TALENT:MASTER:남자 == 0 ;주인이 여자일 경우 호칭을 바꿈
             SWAP CSTR:ARG:12, CSTR:ARG:15
     ENDIF
 ;원래 성별이 여자
 ELSE
     ;あんた
-    IF TALENT:ARG:프라이드가높음 && TALENT:ARG:84
+    IF TALENT:ARG:프라이드가높음 && TALENT:ARG:중독되기쉬움
         CSTR:ARG:12 = 너
         CFLAG:ARG:43 = 1
     ;お前
@@ -796,19 +796,19 @@ ELSE
     ;형(오빠)·언니(누나)
     ELSEIF TALENT:ARG:유치 && TALENT:ARG:건방짐 == 0 && TALENT:ARG:반항적 == 0 && NO:ARG != 45
         ;남자라면 형·누나. 성전환 여부도 조사함
-        IF (TALENT:ARG:120 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
-            CSTR:ARG:12 = \@(TALENT:MASTER:120) ? 형 # 누나\@
+        IF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
+            CSTR:ARG:12 = \@(TALENT:MASTER:남자) ? 형 # 누나\@
         ;그 외라면 오빠·언니
         ELSE
-            CSTR:ARG:12 = \@(TALENT:MASTER:120) ? 오빠 # 언니\@
+            CSTR:ARG:12 = \@(TALENT:MASTER:남자) ? 오빠 # 언니\@
         ENDIF
         CFLAG:ARG:43 = 4
     ;あなた
-    ELSEIF TALENT:ARG:유치 == 0 && TALENT:ARG:유아퇴행 == 0 && TALENT:ARG:저항 == 0 && TALENT:ARG:건방짐 == 0 && TALENT:ARG:반항적 == 0 && TALENT:ARG:무관심 == 0 && TALENT:ARG:억압 == 0 && (TALENT:ARG:해방 || TALENT:ARG:70 || TALENT:ARG:고무)
+    ELSEIF TALENT:ARG:유치 == 0 && TALENT:ARG:유아퇴행 == 0 && TALENT:ARG:저항 == 0 && TALENT:ARG:건방짐 == 0 && TALENT:ARG:반항적 == 0 && TALENT:ARG:무관심 == 0 && TALENT:ARG:억압 == 0 && (TALENT:ARG:해방 || TALENT:ARG:쾌감에솔직 || TALENT:ARG:고무)
         CSTR:ARG:12 = 당신
         CFLAG:ARG:43 = 6
     ;あなた([겁쟁이], [얌전함], [부끄럼쟁이], [헌신적], [소악마)
-    ELSEIF TALENT:ARG:겁쟁이 || TALENT:ARG:얌전함 || TALENT:ARG:부끄럼쟁이 || TALENT:ARG:63 || TALENT:ARG:93
+    ELSEIF TALENT:ARG:겁쟁이 || TALENT:ARG:얌전함 || TALENT:ARG:부끄럼쟁이 || TALENT:ARG:헌신적 || TALENT:ARG:소악마
         CSTR:ARG:12 = 당신
         CFLAG:ARG:43 = 5
     ;あんた
@@ -831,7 +831,7 @@ ELSE
 
     ;테위 · 오린 한정
     IF NO:ARG == 27 || NO:ARG == 62
-        CSTR:ARG:12 = \@(TALENT:MASTER:120) ? 오빠 # 언니\@
+        CSTR:ARG:12 = \@(TALENT:MASTER:남자) ? 오빠 # 언니\@
     ;와타츠키 자매 한정
     ELSEIF NO:ARG == 53 || (NO:ARG == 54 && TALENT:ARG:150)
         CSTR:ARG:12 = 여보
@@ -910,7 +910,7 @@ ELSE
             CSTR:ARG:35 = 아빠
             CSTR:ARG:36 = 엄마
         ENDIF
-        SIF TALENT:MASTER:120 == 0 ;주인이 여자일 경우 호칭을 바꿈
+        SIF TALENT:MASTER:남자 == 0 ;주인이 여자일 경우 호칭을 바꿈
             SWAP CSTR:ARG:12, CSTR:ARG:15
     ENDIF
 ENDIF
@@ -962,7 +962,7 @@ ENDIF
 ;1인칭(CSTR:ARG:16)을 결정
 ;………………………………………………
 ;성전환으로 남자가 된 존재의 경우 원래 성별의 인격을 본다. 그리고 원래 남자일 경우에는 성전환해도 남자 취급
-IF (TALENT:MASTER:120 && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
+IF (TALENT:MASTER:남자 && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
     ;俺([반항적], [건방짐])
     IF TALENT:MASTER:반항적 || TALENT:MASTER:건방짐
         CSTR:ARG:16 = 나
@@ -973,7 +973,7 @@ IF (TALENT:MASTER:120 && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
     ELSEIF NO:MASTER == 70 || NO:MASTER == 74 || TALENT:MASTER:보수적 || TALENT:MASTER:정조관념 || TALENT:MASTER:214 || TALENT:MASTER:215
         CSTR:ARG:16 = 나
     ;僕([겁쟁이], [얌전함], [유아], [유아퇴행], [캇파])
-    ELSEIF NO:MASTER == 69 || TALENT:MASTER:겁쟁이 || TALENT:MASTER:얌전함 || TALENT:MASTER:130 || TALENT:MASTER:159 || TALENT:MASTER:210
+    ELSEIF NO:MASTER == 69 || TALENT:MASTER:겁쟁이 || TALENT:MASTER:얌전함 || TALENT:MASTER:유아 || TALENT:MASTER:159 || TALENT:MASTER:210
         CSTR:ARG:16 = 나
     ;私
     ELSE
@@ -1001,7 +1001,7 @@ ENDIF
 ;2인칭(CSTR:ARG:17)과 인격(CFLAG:ARG:44)을 결정
 ;………………………………………………
 CFLAG:ARG:44 = 0
-IF (TALENT:MASTER:120 && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
+IF (TALENT:MASTER:남자 && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
     ;貴様([鬼], [天狗])
     IF NO:MASTER == 70 || TALENT:MASTER:214 || TALENT:MASTER:215
         CSTR:ARG:17 = 네놈
@@ -1019,7 +1019,7 @@ IF (TALENT:MASTER:120 && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
         CSTR:ARG:17 = 너
         CFLAG:ARG:44 = 12
     ;君([気丈], [教育者])
-    ELSEIF NO:MASTER == 69 || TALENT:MASTER:꿋꿋함 || TALENT:MASTER:126
+    ELSEIF NO:MASTER == 69 || TALENT:MASTER:꿋꿋함 || TALENT:MASTER:교육자
         CSTR:ARG:17 = 너
         CFLAG:ARG:44 = 13
     ;あなた
@@ -1029,7 +1029,7 @@ IF (TALENT:MASTER:120 && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
     ENDIF
 ELSE
     ;あんた
-    IF TALENT:MASTER:프라이드가높음 && TALENT:MASTER:84
+    IF TALENT:MASTER:프라이드가높음 && TALENT:MASTER:중독되기쉬움
         CSTR:ARG:17 = 너
         CFLAG:ARG:44 = 1
     ;お前
@@ -1042,14 +1042,14 @@ ELSE
         CFLAG:ARG:44 = 3
     ;お兄さん・お姉さん
     ELSEIF TALENT:MASTER:유치 && TALENT:MASTER:건방짐 == 0 && TALENT:MASTER:반항적 == 0 && NO:MASTER != 45
-        CSTR:ARG:17 = \@(TALENT:ARG:120) ? 오빠 # 언니\@
+        CSTR:ARG:17 = \@(TALENT:ARG:남자) ? 오빠 # 언니\@
         CFLAG:ARG:44 = 4
     ;あなた
-    ELSEIF TALENT:MASTER:유치 == 0 && TALENT:MASTER:유아퇴행 == 0 && TALENT:MASTER:저항 == 0 && TALENT:MASTER:건방짐 == 0 && TALENT:MASTER:반항적 == 0 && TALENT:MASTER:무관심 == 0 && TALENT:MASTER:억압 == 0 && (TALENT:MASTER:해방 || TALENT:MASTER:70 || TALENT:MASTER:고무)
+    ELSEIF TALENT:MASTER:유치 == 0 && TALENT:MASTER:유아퇴행 == 0 && TALENT:MASTER:저항 == 0 && TALENT:MASTER:건방짐 == 0 && TALENT:MASTER:반항적 == 0 && TALENT:MASTER:무관심 == 0 && TALENT:MASTER:억압 == 0 && (TALENT:MASTER:해방 || TALENT:MASTER:쾌감에솔직 || TALENT:MASTER:고무)
         CSTR:ARG:17 = 당신
         CFLAG:ARG:44 = 6
     ;あなた([겁쟁이], [얌전함], [부끄럼쟁이], [헌신적], [소악마])
-    ELSEIF TALENT:MASTER:겁쟁이 || TALENT:MASTER:얌전함 || TALENT:MASTER:부끄럼쟁이 || TALENT:MASTER:63 || TALENT:MASTER:93
+    ELSEIF TALENT:MASTER:겁쟁이 || TALENT:MASTER:얌전함 || TALENT:MASTER:부끄럼쟁이 || TALENT:MASTER:헌신적 || TALENT:MASTER:소악마
         CSTR:ARG:17 = 당신
         CFLAG:ARG:44 = 5
     ;あんた
@@ -1060,7 +1060,7 @@ ELSE
 
     ;오린 · 테위 한정
     SIF NO:MASTER == 27 || NO:MASTER == 62
-        CSTR:ARG:17 = \@(TALENT:ARG:120) ? 오빠 # 언니\@
+        CSTR:ARG:17 = \@(TALENT:ARG:남자) ? 오빠 # 언니\@
 
     ;貴方    와타츠키 자매 한정(즉 요리히메의 연모니까 뭐… 그렇지)
     SIF NO:MASTER == 53 || (NO:MASTER == 54 && TALENT:MASTER:150)

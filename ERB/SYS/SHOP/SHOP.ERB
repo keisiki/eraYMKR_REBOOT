@@ -269,7 +269,7 @@ ELSE
             ;요정 목욕의 조건. 한 글자 변수는 요정(FAIRY)의 떡밥
             IF FLAG:커맨드확장 & 1024 && FLAG:욕탕개조 & 8192
                 ;남자, 임신, 포란, 회란이 없는 요정 캐릭터를 본다
-                SIF TALENT:COUNT:120 == 0 && TALENT:COUNT:140 == 0 && TALENT:COUNT:143 == 0 && TALENT:COUNT:145 == 0 && TALENT:COUNT:200
+                SIF TALENT:COUNT:남자 == 0 && TALENT:COUNT:임신 == 0 && TALENT:COUNT:포란중 == 0 && TALENT:COUNT:회란 == 0 && TALENT:COUNT:200
                     LOCAL:9 += 1
             ENDIF
             ;사역마로 만들 수 있는 캐릭터가 있는지 판정
@@ -417,7 +417,7 @@ ELSE
         PRINTLC [170] - 육아실로 간다
     SIF (FLAG:1100 & 1) && (FLAG:1100 & 8) && FLAG:1102 > 0
         PRINTFORMLC [171] - \@(FLAG:1102 < 2) ? 공방을 연다 # 공방에 간다\@
-    SIF CHARANUM > 4 && TARGET >= 0 && TIME == 0 && TALENT:TARGET:120 == 0 && MARK:반발각인 <= 0 && MAXBASE:TARGET:체력 * 8 / 10 <= BASE:TARGET:체력  && MAXBASE:TARGET:기력 * 8/10 <= BASE:TARGET:기력
+    SIF CHARANUM > 4 && TARGET >= 0 && TIME == 0 && TALENT:TARGET:남자 == 0 && MARK:반발각인 <= 0 && MAXBASE:TARGET:체력 * 8 / 10 <= BASE:TARGET:체력  && MAXBASE:TARGET:기력 * 8/10 <= BASE:TARGET:기력
         PRINTLC [180] - 윤간시킨다
 
     ;스케쥴 시스템 사용중이고, 노예가 1명 이상 있을 때.
@@ -492,9 +492,9 @@ ELSE
             PRINTFORML 취한 탓인지 속이 좋지 않다.
             PRINTW 잠시 쉬는 편이 좋을 것 같다…….
         ELSEIF CFLAG:MASTER:4 == 2 ;주인이 육아실
-            IF TALENT:MASTER:140
+            IF TALENT:MASTER:임신
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 만삭이라 조교를 할 수 없다.
-            ELSEIF TALENT:MASTER:141
+            ELSEIF TALENT:MASTER:육아중
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 육아 중이라 조교를 할 수 없다.
             ENDIF
         ELSEIF CFLAG:MASTER:1501 != 0
@@ -682,7 +682,7 @@ ELSE
         PRINTW 디버그 메뉴를 불러온다.
         CALL DEBUG_MENU_SHOP
     ELSEIF RESULT == 180
-    SIF CHARANUM > 4 && TARGET >= 0 && TIME == 0 && TALENT:TARGET:120 == 0 && MARK:반발각인 <= 0 && MAXBASE:TARGET:체력 * 8 / 10 <= BASE:TARGET:체력 && MAXBASE:TARGET:기력 * 8/10 <= BASE:TARGET:기력
+    SIF CHARANUM > 4 && TARGET >= 0 && TIME == 0 && TALENT:TARGET:남자 == 0 && MARK:반발각인 <= 0 && MAXBASE:TARGET:체력 * 8 / 10 <= BASE:TARGET:체력 && MAXBASE:TARGET:기력 * 8/10 <= BASE:TARGET:기력
         CALL RINKAN
     ELSE
         REUSELASTLINE  
@@ -899,8 +899,8 @@ REPEAT 20
     ELSE
         PRINT [미경험] 
     ENDIF
-    PRINTFORM %LOCALS:(TALENT:LOCAL:120)% %ABLNAME:12%Lv{ABL:LOCAL:기교} 
-    PRINTFORML %ABLNAME:(22+TALENT:LOCAL:120)%Lv{ABL:LOCAL:(22+TALENT:LOCAL:120)} %ABLNAME:(32+TALENT:LOCAL:120)%Lv{ABL:LOCAL:(32+TALENT:LOCAL:120)} \@(TALENT:LOCAL:83) ? 바이 #\@
+    PRINTFORM %LOCALS:(TALENT:LOCAL:남자)% %ABLNAME:12%Lv{ABL:LOCAL:기교} 
+    PRINTFORML %ABLNAME:(22+TALENT:LOCAL:남자)%Lv{ABL:LOCAL:(22+TALENT:LOCAL:남자)} %ABLNAME:(32+TALENT:LOCAL:남자)%Lv{ABL:LOCAL:(32+TALENT:LOCAL:남자)} \@(TALENT:LOCAL:바이) ? 바이 #\@
 REND
 
 ;-------------------------------------------------
@@ -1533,7 +1533,7 @@ REPEAT CHARANUM
         SIF CFLAG:COUNT:(ARG+3110) == 0
             CONTINUE
     ELSEIF TFLAG:0 == 7
-        SIF ARG > 11 && TALENT:COUNT:120
+        SIF ARG > 11 && TALENT:COUNT:남자
             CONTINUE
     ELSEIF TFLAG:0 == 8 || TFLAG:0 == 10
         SIF CFLAG:COUNT:ARG == 0
@@ -1629,7 +1629,7 @@ REPEAT 20
     CALL ARRANGE_CHARALIST, LOCAL
     CALL ARRANGE_CHARALIFE, LOCAL
     CALL ARRANGE_SEARCH_LIST, LOCAL, ARG:1
-    IF FLAG:변동경험강조패치 & 1 && (TFLAG:0 == 3 && ((ARG:1 == 0 && CFLAG:LOCAL:11 & 1) || (ARG:1 == 1 && CFLAG:LOCAL:11 & 2) || (ARG:1 == 50 && CFLAG:LOCAL:11 & 4) || (ARG:1 == 12 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:120 && CFLAG:LOCAL:18 == 0) || (ARG:1 == 13 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:120 == 0 && CFLAG:LOCAL:18 == 0)))
+    IF FLAG:변동경험강조패치 & 1 && (TFLAG:0 == 3 && ((ARG:1 == 0 && CFLAG:LOCAL:11 & 1) || (ARG:1 == 1 && CFLAG:LOCAL:11 & 2) || (ARG:1 == 50 && CFLAG:LOCAL:11 & 4) || (ARG:1 == 12 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:남자 && CFLAG:LOCAL:18 == 0) || (ARG:1 == 13 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:남자 == 0 && CFLAG:LOCAL:18 == 0)))
         FONTBOLD
         PRINTFORML  %STR:3%
         FONTREGULAR
@@ -1848,8 +1848,8 @@ PRINTLC [0] 호칭을 노예에게 맡긴다
 PRINTLC [1] 호칭을 직접 정한다
 PRINTLC [2] 주인님이라 한다
 PRINTLC [3] 마스터라 한다
-PRINTFORMLC [4] \@(TALENT:MASTER:120) ? 오빠 # 언니\@라고 한다
-PRINTFORMLC [5] \@(TALENT:MASTER:120) ? 오라버니 # 큰언니\@라고 한다
+PRINTFORMLC [4] \@(TALENT:MASTER:남자) ? 오빠 # 언니\@라고 한다
+PRINTFORMLC [5] \@(TALENT:MASTER:남자) ? 오라버니 # 큰언니\@라고 한다
 PRINTLC [6] 이름＋님을 붙인다
 PRINTLC [7] 이름만 부르게 한다
 PRINTL 
@@ -1875,12 +1875,12 @@ ELSEIF RESULT == 3
     MASTERNAME:TARGET = 마스터
     RETURN 1
 ELSEIF RESULT == 4
-    PRINTFORMW 노예더러 주인을 \@(TALENT:MASTER:120) ? 「오빠」 # 「언니」\@라고 부르게 명령했습니다.
-    MASTERNAME:TARGET = \@(TALENT:MASTER:120) ? 오빠 # 언니\@
+    PRINTFORMW 노예더러 주인을 \@(TALENT:MASTER:남자) ? 「오빠」 # 「언니」\@라고 부르게 명령했습니다.
+    MASTERNAME:TARGET = \@(TALENT:MASTER:남자) ? 오빠 # 언니\@
     RETURN 1
 ELSEIF RESULT == 5
-    PRINTFORMW 노예더러 주인을 \@(TALENT:MASTER:120) ? 「오라버니」 # 「큰언니」\@라고 부르게 명령했습니다.
-    MASTERNAME:TARGET = \@(TALENT:MASTER:120) ? 오라버니 # 큰언니\@
+    PRINTFORMW 노예더러 주인을 \@(TALENT:MASTER:남자) ? 「오라버니」 # 「큰언니」\@라고 부르게 명령했습니다.
+    MASTERNAME:TARGET = \@(TALENT:MASTER:남자) ? 오라버니 # 큰언니\@
     RETURN 1
 ELSEIF RESULT == 6
     PRINTFORMW 노예더러 주인을 「%CALLNAME:MASTER% 님」이라고 부르게 명령했습니다.

@@ -41,10 +41,10 @@ ELSEIF TALENT:ARG:해방
     TIMES LOCAL , 1.50
 ENDIF
 ;[임신], [회란]
-SIF TALENT:ARG:140 || TALENT:ARG:145
+SIF TALENT:ARG:임신 || TALENT:ARG:회란
     TIMES LOCAL , 0.75
 ;[기생]
-SIF TALENT:ARG:146
+SIF TALENT:ARG:기생
     TIMES LOCAL , 0.75
 
 RETURNF LOCAL
@@ -60,7 +60,7 @@ SIF ARG == -1
 LOCAL = DRUG_HEAL_LIFE_CALC(ARG)
 
 BASE:ARG:체력 = MIN(BASE:ARG:체력 + LOCAL, MAXBASE:ARG:체력)
-BASE:ARG:기력 = ((TALENT:ARG:114 && TIME == 0) || (TALENT:ARG:115 && TIME == 1)) ? MAXBASE:ARG:기력 # MIN(BASE:ARG:기력 + LOCAL*2, MAXBASE:ARG:기력)
+BASE:ARG:기력 = ((TALENT:ARG:일광욕 && TIME == 0) || (TALENT:ARG:월광욕 && TIME == 1)) ? MAXBASE:ARG:기력 # MIN(BASE:ARG:기력 + LOCAL*2, MAXBASE:ARG:기력)
 
 ;=============================================================================
 ;아이템：영양제의 체력 · 기력 회복치 계산
@@ -78,10 +78,10 @@ LOCAL = 300
 SIF TALENT:ARG:약물내성
     TIMES LOCAL , 0.50
 ;[回復早い]
-IF TALENT:ARG:137
+IF TALENT:ARG:회복빠름
     TIMES LOCAL , 1.25
 ;[回復遅い]
-ELSEIF TALENT:ARG:138
+ELSEIF TALENT:ARG:회복느림
     TIMES LOCAL , 0.75
 ENDIF
 ;[흡혈귀]
@@ -93,7 +93,7 @@ IF TALENT:ARG:205
     ENDIF
 ENDIF
 ;[日光浴], [月光浴]
-IF (TALENT:ARG:114 && TIME == 0) || (TALENT:ARG:115 && TIME == 1)
+IF (TALENT:ARG:일광욕 && TIME == 0) || (TALENT:ARG:월광욕 && TIME == 1)
     TIMES LOCAL , 1.25
 ENDIF
 
@@ -413,12 +413,12 @@ IF TALENT:ARG:151 || TALENT:ARG:160
         ABL:순종 = MIN(ABL:순종 + 1, 5)
 ENDIF
 ;[サド]を持っていた場合, 欲望とサドっ気が1上昇
-IF TALENT:ARG:81
+IF TALENT:ARG:새드
     ABL:욕망 = MIN(ABL:욕망 + 1, 5)
     ABL:새드끼 = MIN(ABL:새드끼 + 1, 5)
 ENDIF
 ;[マゾ]を持っていた場合, 露出癖とマゾっ気が1上昇
-IF TALENT:ARG:82
+IF TALENT:ARG:마조
     ABL:노출증 = MIN(ABL:노출증 + 1, 5)
     ABL:마조끼 = MIN(ABL:마조끼 + 1, 5)
 ENDIF
@@ -455,7 +455,7 @@ IF NO:TARGET == 402 && FLAG:570 & 4 && NO:MASTER == 400
 ENDIF
 IF NO:TARGET == 401
     IF FLAG:570 & 16
-        TALENT:MASTER:149 = 0
+        TALENT:MASTER:촉수사역술 = 0
         ABL:MASTER:촉수사역 = 0
     ELSEIF FLAG:570 & 32
         ABL:MASTER:촉수사역 = FLAG:572
@@ -512,7 +512,7 @@ IF TALENT:ARG:150 == 0 && TALENT:ARG:160 == 0
 ENDIF
 
 ;素質[卵生][人魚]消滅
-TALENT:ARG:135 = 0
+TALENT:ARG:난생 = 0
 TALENT:ARG:229 = 0
 ;素質[音痴]追加。[音感]があれば消滅
 IF TALENT:ARG:191
@@ -575,7 +575,7 @@ ELSE
     PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 요정화 사탕을 %CALLNAME:ARG%에게 \@(ABL:ARG:순종 < 3) ? 억지로  # \@먹였다…….
     PRINTW  
     PRINTFORMW 잠시 있자 사탕의 효과인지 %조사처리(CALLNAME:ARG,"는")% 괴로운 듯이 그 자리에 웅크렸다…….
-    IF TALENT:ARG:127 == 0 && TALENT:ARG:128 == 0
+    IF TALENT:ARG:소인 == 0 && TALENT:ARG:작은체형 == 0
         PRINTFORML %조사처리(CALLNAME:ARG,"는")% 괴로움 때문에 신음하는 듯한 소리를 냈지만, 그 몸은 점점 더 작아져서는 결국에는 \@(LOCAL:1 < 2) ? 손바닥 위에 올릴 수 있을 만큼까지 작아지고 말았다……. # 작은 어린아이 정도의 크기가 되었다…….\@
         PRINT 나아가, 
     ELSE
@@ -615,8 +615,8 @@ SIF ARG != MASTER
 MARK:ARG:87 = 1
 
 ;男の場合, 消去.ホモでなければレズっ気上昇
-IF TALENT:ARG:120
-    TALENT:ARG:120 = 0
+IF TALENT:ARG:남자
+    TALENT:ARG:남자 = 0
     TALENT:ARG:처녀 = 1
     LOCAL:2 = ABL:ARG:레즈끼 + 3
     IF ABL:ARG:BL끼 <= LOCAL:2
@@ -630,21 +630,21 @@ IF TALENT:ARG:120
 ENDIF
 
 ;回復早く.もともと遅いと打ち消して普通.
-IF TALENT:ARG:138
-    TALENT:ARG:138 = 0
+IF TALENT:ARG:회복느림
+    TALENT:ARG:회복느림 = 0
 ELSE
-    TALENT:ARG:137 = 1
+    TALENT:ARG:회복빠름 = 1
 ENDIF
 
 ;[작은체형]に.低確率で[소인]に.もともと小柄, [소인]でなければ胸も１ランク減少
-IF TALENT:ARG:127 == 0 && TALENT:ARG:128 == 0
+IF TALENT:ARG:소인 == 0 && TALENT:ARG:작은체형 == 0
     CALL BUSTSIZE_DOWN(ARG, 1, 0)
-    SIF TALENT:ARG:129
-        TALENT:ARG:129 = 0
+    SIF TALENT:ARG:거구
+        TALENT:ARG:거구 = 0
     IF LOCAL:1 < 2
-        TALENT:ARG:127 = 1
+        TALENT:ARG:소인 = 1
     ELSE
-        TALENT:ARG:128 = 1
+        TALENT:ARG:작은체형 = 1
     ENDIF
 ENDIF
 
@@ -689,11 +689,11 @@ IF TALENT:ARG:오줌싸개버릇 == 0 && RAND:100 == 0
     PRINTL 아무래도, 몸의 급격한 변동 영향으로 [오줌싸개 버릇]이 붙어버린 것 같다…….
     TALENT:ARG:오줌싸개버릇 = 1
     CALL CALC_GAUGE4_SLAVE, ARG, 1
-ELSEIF TALENT:ARG:116 == 0 && RAND:100 == 0
+ELSEIF TALENT:ARG:동물귀 == 0 && RAND:100 == 0
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 머리 근처를 신경쓰고 있는 것 같다…….
     PRINTL 그러고 있다 보니 갑자기 머리카락 사이로 귀여운 귀가 솟구쳐 나왔다.
     PRINTL 약의 부작용으로 [동물귀]가 생긴 것 같다…….
-    TALENT:ARG:116 = 1
+    TALENT:ARG:동물귀 = 1
 ENDIF
 
 ;약물경험
@@ -949,11 +949,11 @@ SWAP TALENT:ARG:아픔에약함, TALENT:ARG:아픔에강함
 ;習得早いと遅い
 SWAP TALENT:ARG:습득빠름, TALENT:ARG:습득느림
 ;快感に素直と否定
-SWAP TALENT:ARG:70, TALENT:ARG:71
+SWAP TALENT:ARG:쾌감에솔직, TALENT:ARG:쾌감을부정
 ;サドとマゾ
-SWAP TALENT:ARG:81, TALENT:ARG:82
+SWAP TALENT:ARG:새드, TALENT:ARG:마조
 ;幼稚と母性
-SWAP TALENT:ARG:131, TALENT:ARG:142
+SWAP TALENT:ARG:유치, TALENT:ARG:모성
 ;범용 대사용 플래그
 CFLAG:ARG:43 = 0
 

@@ -47,7 +47,7 @@ IF TALENT:146
     BAR BASE:촉수,MAXBASE:촉수,10
     PRINTFORML ({BASE:촉수, 4}/{MAXBASE:촉수, 4})
 ENDIF
-IF ASSI >= 0 && TALENT:ASSI:146
+IF ASSI >= 0 && TALENT:ASSI:기생
     PRINTFORM 기생촉수성장LV(%CALLNAME:ASSI%)
     BAR BASE:ASSI:촉수,MAXBASE:ASSI:촉수,10
     PRINTFORML ({BASE:ASSI:촉수, 4}/{MAXBASE:ASSI:촉수, 4})
@@ -682,7 +682,7 @@ IF TALENT:ARG:처녀
     ENDIF
 ENDIF
 CFLAG:ARG:11 = 6
-IF TALENT:ARG:120
+IF TALENT:ARG:남자
     ;A경험
     CALL COMMON_UP_EXP,ARG, 1, ((LOCAL:1)/2+LOCAL:2), 0
     ;A확장경험
@@ -714,12 +714,12 @@ CALL COMMON_UP_EXP,ARG, 46, ((LOCAL:4)/2), 0
 CALL COMMON_UP_EXP,ARG, 50, 20, 0
 ;촉수경험
 CALL COMMON_UP_EXP,ARG, 53, TFLAG:230, 0
-SIF TALENT:ARG:120 == 0
+SIF TALENT:ARG:남자 == 0
     TIMES LOCAL:4 , 0.80
 ;쾌Ｃ의 구슬
 CALL COMMON_UP_JUEL, ARG, 0, ((LOCAL:4)*100), 0
 ;쾌Ｖ의 구슬
-SIF TALENT:ARG:120 == 0
+SIF TALENT:ARG:남자 == 0
     CALL COMMON_UP_JUEL, ARG, 1, ((LOCAL:1)*100), 0
 ;쾌Ａ의 구슬
 CALL COMMON_UP_JUEL, ARG, 2, ((LOCAL:2)*80), 0
@@ -743,13 +743,13 @@ IF MARK:ARG:고통각인 < 2 && TALENT:ARG:아픔에강함 == 0
         TFLAG:232 += 1
     CALL COMMON_MARK_UP, ARG, 0, MARK:ARG:고통각인+1, 0
 ENDIF
-IF MARK:ARG:쾌락각인 < 2 && TALENT:ARG:71 == 0
+IF MARK:ARG:쾌락각인 < 2 && TALENT:ARG:쾌감을부정 == 0
     TFLAG:232 += 1
     SIF MARK:ARG:쾌락각인 == 0
         TFLAG:232 += 1
     CALL COMMON_MARK_UP, ARG, 1, MARK:ARG:쾌락각인+1, 0
 ENDIF
-IF MARK:ARG:굴복각인 < 3 && TALENT:ARG:일선을넘지않음 == 0 && TALENT:ARG:71 == 0
+IF MARK:ARG:굴복각인 < 3 && TALENT:ARG:일선을넘지않음 == 0 && TALENT:ARG:쾌감을부정 == 0
     TFLAG:232 += 1
     IF MARK:ARG:고통각인 == 0
         TFLAG:232 += 2
@@ -789,7 +789,7 @@ FOR LOCAL, 0, 3
         LOCAL:1 += 6 + RAND:5
     ELSEIF LOCAL:15 == 1
         ;対象がオトコの場合はＶ계でなくＡ계かＣ계が入るように
-        IF TALENT:ARG:120 == 0
+        IF TALENT:ARG:남자 == 0
             ;Ｖ계 추가
             LOCAL:14 |= 2
             LOCAL:13 += 6 + RAND:8
@@ -1095,7 +1095,7 @@ ELSE
     TIMES LOCAL:4 , 0.60
 ENDIF
 ;기생
-SIF TALENT:ARG:146
+SIF TALENT:ARG:기생
     LOCAL:4 -= 500
 ;복종계 · 붕괴계
 SIF TALENT:ARG:160 || TALENT:ARG:161 || TALENT:ARG:162 || TALENT:ARG:168 || TALENT:ARG:169
@@ -1165,19 +1165,19 @@ ENDIF
 ;촉수により適応する効果を持つ『種』を植え付けられる.植え付けられた箇所に応じて調教時のPALAM:の伸びが良くなるが, 
 ;前述の通り同化フラグが発生する確率も上昇してしまう.
 ;v59.1より촉수기생と同様メディスン, 雛, 蓬莱人は[体内適応力強化]がないと임플란트が発生しないように.
-IF TALENT:ARG:146
+IF TALENT:ARG:기생
     LOCAL:6 = 8
 ELSE
     LOCAL:6 = 15
 ENDIF
 LOCAL:17 = 0
 IF CFLAG:ARG:41 < 1023 && TALENT:ARG:164 == 0 && CFLAG:ARG:39 > LOCAL:6 && ((TALENT:ARG:봉래인 == 0 && NO:ARG != 33 && NO:ARG != 39) || FLAG:촉수능력 & 8192)
-    IF (CFLAG:ARG:41 & 1) == 0 && LOCAL:14 & 8 && TALENT:ARG:120 == 0 && TALENT:ARG:121 == 0
+    IF (CFLAG:ARG:41 & 1) == 0 && LOCAL:14 & 8 && TALENT:ARG:남자 == 0 && TALENT:ARG:후타나리 == 0
         ;촉수 임플란트(クリトリス)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 클리토리스에 무언가 심어진 것 같다…….
         CFLAG:ARG:41 |= 1
         LOCAL:17 = 1
-    ELSEIF (CFLAG:ARG:41 & 2) == 0 && LOCAL:14 & 2 && TALENT:ARG:120 == 0
+    ELSEIF (CFLAG:ARG:41 & 2) == 0 && LOCAL:14 & 2 && TALENT:ARG:남자 == 0
         ;촉수 임플란트(子宮)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 자궁 깊숙한 곳에 무언가가 심어진 것 같다…….
         CFLAG:ARG:41 |= 2
@@ -1187,7 +1187,7 @@ IF CFLAG:ARG:41 < 1023 && TALENT:ARG:164 == 0 && CFLAG:ARG:39 > LOCAL:6 && ((TAL
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 항문 속에 무언가가 심어진 것 같다…….
         CFLAG:ARG:41 |= 4
         LOCAL:17 = 3
-    ELSEIF (CFLAG:ARG:41 & 8) == 0 && LOCAL:14 & 4 && TALENT:ARG:120 == 0
+    ELSEIF (CFLAG:ARG:41 & 8) == 0 && LOCAL:14 & 4 && TALENT:ARG:남자 == 0
         ;촉수 임플란트(乳房)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 유선을 통해, 유방 깊숙히 무언가가 심어진 것 같다……….
         CFLAG:ARG:41 |= 8

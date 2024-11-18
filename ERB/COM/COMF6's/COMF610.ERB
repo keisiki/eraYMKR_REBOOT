@@ -16,7 +16,7 @@ SIF FLAG:VA이상조교필터 & 1
 SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;V경험レベルが0かつ조교자가 オトコではない場合, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:VA이상조교필터 & 4 && EXP:V경험 < EXPLV:1 && TALENT:PLAYER:120 == 0
+SIF FLAG:VA이상조교필터 & 4 && EXP:V경험 < EXPLV:1 && TALENT:PLAYER:남자 == 0
     RETURN 0
 ;조수가 없으면 불가
 SIF ASSI < 0
@@ -44,19 +44,19 @@ SIF LOCAL + (ITEM:2 || NOITEM) < 2
     RETURN 0
 ;처녀で, 순종5미만 · 레즈끼4미만의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(새드거나 새드끼Lv3이상, 또는 망신이나 복종이 있다면 ＯＫ)
 IF TALENT:처녀 == 1 && ASSIPLAY
-    SIF (ABL:ASSI:순종 < 5 || (TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:레즈끼 < 4)) && TALENT:ASSI:81 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 5 || (TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4)) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
         RETURN 0
 ENDIF
 ;윤활 부족이고, 순종4미만 · 레즈끼3미만의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(새드거나 새드끼Lv3이상, 또는 망신이나 복종이 있다면 ＯＫ)
 IF PALAM:10 < PALAMLV:2 && ASSIPLAY
-    SIF (ABL:ASSI:순종 < 4 || (TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:레즈끼 < 3)) && TALENT:ASSI:81 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || (TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 3)) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
         RETURN 0
 ENDIF
 ;일정의 A경험이 필요
 SIF EXP:A경험 < EXPLV:3
     RETURN 0
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 主人も助手も汚れ無視か汚臭鈍感を持っていないと実行できない
-SIF TFLAG:140 & 256 && ((TALENT:MASTER:61 == 0 && TALENT:MASTER:64 == 0 ) || (TALENT:ASSI:61 == 0 && TALENT:ASSI:64 == 0))
+SIF TFLAG:140 & 256 && ((TALENT:MASTER:냄새둔감 == 0 && TALENT:MASTER:불결무시 == 0 ) || (TALENT:ASSI:냄새둔감 == 0 && TALENT:ASSI:불결무시 == 0))
     RETURN 0
 ;Ｖ계 장착구 사용 중에는 불가
 SIF TEQUIP:20 || TEQUIP:21
@@ -350,7 +350,7 @@ ELSE
             TIMES SOURCE:1 , 0.20
             SOURCE:20 += 20000
             SOURCE:18 += 2000
-            SIF TALENT:PLAYER:120 == 0
+            SIF TALENT:PLAYER:남자 == 0
                 TCVAR:50 += 1
         ELSEIF EXP:V경험 < EXPLV:2
             TIMES SOURCE:1 , 0.60
@@ -570,12 +570,12 @@ ELSE
 ENDIF
 
 ;조교자에게[남자]가 있다
-IF TALENT:MASTER:120 || TALENT:ASSI:120
+IF TALENT:MASTER:남자 || TALENT:ASSI:남자
     TIMES SOURCE:1 , 2.50
     TIMES SOURCE:2 , 2.50
 ENDIF
 ;조교자에게[후타나리]가 있다
-IF TALENT:MASTER:121 || TALENT:ASSI:121
+IF TALENT:MASTER:후타나리 || TALENT:ASSI:후타나리
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.60
 ENDIF
@@ -733,9 +733,9 @@ ELSEIF TFLAG:130 == 3
     ENDIF
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 10
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:120 && TALENT:PLAYER:남자
     TCVAR:13 += 10
 ENDIF
 ;봉사 쾌락 경험 입수 판정

@@ -133,7 +133,7 @@ ELSE
     SIF FLAG:전시품총계 > 0 && FLAG:SHOP이벤트확장 & 8
         CALL PRINT_COLLECTION_YN, ARG
     ;陰核成長具合
-    SIF BASE:ARG:음핵 && TALENT:ARG:120 == 0 && TALENT:ARG:121 == 0
+    SIF BASE:ARG:음핵 && TALENT:ARG:남자 == 0 && TALENT:ARG:후타나리 == 0
         CALL PRINT_GROWTH_SLAVE_CLITORIS, ARG
     ;陰毛の状態
     CALL PRINT_PUBIC_HAIR, ARG
@@ -220,15 +220,15 @@ SELECTCASE COUNT
         LOCAL = COUNT + 11
     CASE 11
         ;男ならレズっ気、女ならＢＬっ気はないよね？
-        LOCAL = 22 + TALENT:ARG:120
+        LOCAL = 22 + TALENT:ARG:남자
     CASE 12, 13
         LOCAL = COUNT + 18
     CASE 14
         ;男ならレズ中毒、女ならＢＬ中毒はないよね？
-        LOCAL = 32 + TALENT:ARG:120
+        LOCAL = 32 + TALENT:ARG:남자
     CASE 15
     ;男なら噴乳中毒は無いよね？
-        SIF TALENT:ARG:120 == 0
+        SIF TALENT:ARG:남자 == 0
             LOCAL = 34
     CASE 16, 17
         LOCAL = COUNT + 19
@@ -265,7 +265,7 @@ IF COUNT == 0
     ;디폴트 컬러로 복귀
     RESETCOLOR
 ELSEIF COUNT == 121
-    PRINTFORM [후타나리\@(TALENT:ARG:121 == 2) ? (불알 있음) # \@] 
+    PRINTFORM [후타나리\@(TALENT:ARG:후타나리 == 2) ? (불알 있음) # \@] 
 ;연모계 소질 색 설정
 ELSEIF COUNT >= 150 && COUNT <= 153
     CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
@@ -314,11 +314,11 @@ ELSEIF TALENT:ARG:230 == 3
     PRINTFORM [목만 있음] 
 ENDIF 
 ELSEIF COUNT == 260
-    PRINTFORM [\@(TALENT:ARG:120) ? 남창 # 창녀\@] 
+    PRINTFORM [\@(TALENT:ARG:남자) ? 남창 # 창녀\@] 
 ELSEIF COUNT == 263
-    PRINTFORM [\@(TALENT:ARG:120) ? 봄의 남자 # 봄의 여인\@] 
+    PRINTFORM [\@(TALENT:ARG:남자) ? 봄의 남자 # 봄의 여인\@] 
 ELSEIF COUNT == 264
-    PRINTFORM [\@(TALENT:ARG:120) ? 간판남 # 간판소녀\@] 
+    PRINTFORM [\@(TALENT:ARG:남자) ? 간판남 # 간판소녀\@] 
 ELSEIF COUNT == 265 && TALENT:ARG:COUNT
     PRINTFORM [단골손님 {TALENT:ARG:COUNT}명]
 ELSE
@@ -363,7 +363,7 @@ REPEAT 54 ;CSV에 존재하는 경험치 종류 = 56, 그중 이상경험과 레
         CASE 9, 10 ;EXP10~11
             LOCAL = COUNT + 1
         CASE 11 ;EXP12~13
-            LOCAL = 12 + TALENT:ARG:120 ;(레즈orBL)경험 표시
+            LOCAL = 12 + TALENT:ARG:남자 ;(레즈orBL)경험 표시
         CASE 12 ;EXP20~23
             LOCAL = 14
         CASE 13 TO 16 ;EXP20~23
@@ -387,7 +387,7 @@ REPEAT 54 ;CSV에 존재하는 경험치 종류 = 56, 그중 이상경험과 레
     IF LOCAL < 0
         CONTINUE
     ELSEIF EXP:ARG:LOCAL > 0
-        IF FLAG:변동경험강조패치 & 1 && ((LOCAL == 0 && CFLAG:ARG:11 & 1) || (LOCAL == 1 && CFLAG:ARG:11 & 2) || (LOCAL == 50 && CFLAG:ARG:11 & 4)|| (LOCAL == 12 && EXP:ARG:LOCAL > 999 && TALENT:MASTER:120 && CFLAG:ARG:18 == 0) || (LOCAL == 13 && EXP:ARG:LOCAL > 999 && TALENT:MASTER:120 == 0 && CFLAG:ARG:18 == 0))
+        IF FLAG:변동경험강조패치 & 1 && ((LOCAL == 0 && CFLAG:ARG:11 & 1) || (LOCAL == 1 && CFLAG:ARG:11 & 2) || (LOCAL == 50 && CFLAG:ARG:11 & 4)|| (LOCAL == 12 && EXP:ARG:LOCAL > 999 && TALENT:MASTER:남자 && CFLAG:ARG:18 == 0) || (LOCAL == 13 && EXP:ARG:LOCAL > 999 && TALENT:MASTER:남자 == 0 && CFLAG:ARG:18 == 0))
             FONTBOLD
             PRINTFORM %EXPNAME:LOCAL,12%:\@(EXP:ARG:LOCAL > 99999999) ? 99999999 # {EXP:ARG:LOCAL, 8}\@
             FONTREGULAR
@@ -469,9 +469,9 @@ IF FLAG:SHOP이벤트확장 & 4
         ELSE
             PRINTFORM (스트레스:{CFLAG:65}　
         ENDIF
-        IF TALENT:120 && TALENT:ASSI:120
+        IF TALENT:120 && TALENT:ASSI:남자
             PRINTFORM BL경험:{EXP:BL경험}　
-        ELSEIF TALENT:120 == 0 && TALENT:ASSI:120 == 0
+        ELSEIF TALENT:120 == 0 && TALENT:ASSI:남자 == 0
             PRINTFORM 레즈경험:{EXP:레즈경험}　
         ENDIF
         PRINTFORML 이상경험:{EXP:이상경험})
@@ -652,11 +652,11 @@ FOR LOCAL:1, 0, 3
         CONTINUE
     ENDIF
     REPEAT 8
-        SIF COUNT == 2 && TALENT:LOCAL:120 == 0 && TALENT:LOCAL:121 == 0
+        SIF COUNT == 2 && TALENT:LOCAL:남자 == 0 && TALENT:LOCAL:후타나리 == 0
             CONTINUE
-        SIF COUNT == 3 && TALENT:LOCAL:120
+        SIF COUNT == 3 && TALENT:LOCAL:남자
             CONTINUE
-        SIF COUNT == 5 && TALENT:LOCAL:120
+        SIF COUNT == 5 && TALENT:LOCAL:남자
             CONTINUE
         SIF COUNT >= 6 && STAIN:LOCAL:COUNT == 0
             CONTINUE
@@ -1255,12 +1255,12 @@ RESETCOLOR
 ;-------------------------------------------------
 @CALC_GAUGE2_COMMON(ARG)
 #FUNCTION
-LOCAL = (TALENT:ARG:120) ? 10000 # 20000
-IF TALENT:ARG:120 && TALENT:ARG:132
+LOCAL = (TALENT:ARG:남자) ? 10000 # 20000
+IF TALENT:ARG:남자 && TALENT:ARG:조루
     LOCAL /= 2
-ELSEIF TALENT:ARG:132
+ELSEIF TALENT:ARG:조루
     TIMES LOCAL , 0.75
-ELSEIF TALENT:ARG:133
+ELSEIF TALENT:ARG:지루
     LOCAL *= 2
 ENDIF
 SIF TALENT:ARG:171
@@ -1300,7 +1300,7 @@ MAXBASE:ASSI:사정 = CALC_GAUGE2_COMMON(ASSI)
 PRINT 사정(조수)
 BAR BASE:ASSI:사정,MAXBASE:ASSI:사정,32
 PRINTFORM ({BASE:ASSI:사정, 5}/{MAXBASE:ASSI:사정, 5})
-IF FLAG:사정장소선택및임신기능 & 1 && TALENT:MASTER:120 == 0 && TALENT:MASTER:121 == 0
+IF FLAG:사정장소선택및임신기능 & 1 && TALENT:MASTER:남자 == 0 && TALENT:MASTER:후타나리 == 0
     PRINT 사정선택:
     CALL CHECK_SAMEN_PLACE
 ENDIF
@@ -1347,9 +1347,9 @@ ENDIF
 ;ARG:1 …　立っているとゲージそのものは表示しない.
 @CALC_GAUGE4_SLAVE, ARG, ARG:1
 LOCAL = 20000
-IF TALENT:ARG:132
+IF TALENT:ARG:조루
     LOCAL /= 2
-ELSEIF TALENT:ARG:133
+ELSEIF TALENT:ARG:지루
     LOCAL *= 2
 ENDIF
 SIF TALENT:ARG:오줌싸개버릇

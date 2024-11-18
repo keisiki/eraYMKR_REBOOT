@@ -103,7 +103,7 @@ ELSEIF RAND:6 == 0 && ABL:COUNT:요리기능 >= 3 && ABL:COUNT:순종 >= 3
 ELSEIF RAND:5 == 0 && ABL:COUNT:순종 >= 3 && ABL:COUNT:노출증 >= 3
     ;약간의 선전
     PRINTFORML 『자아 자아, %CALLNAME:MASTER% 창관, 영업중입니다!』
-    IF TALENT:COUNT:120
+    IF TALENT:COUNT:남자
         PRINTL 「지금이라면 이렇게 멋진 남자가 잔뜩 봉사해 준답니다!」
     ELSE
         PRINTL 『지금이라면 이렇게나 귀여운 애가 잔뜩 봉사해 준답니다!』
@@ -125,7 +125,7 @@ ELSE
     ;창관에서의 자주 있는 교환.
     PRINTL 『어서옵쇼―. 싸게 해 드립죠!』
     PRINTW 『엥? 이 애를 지명? 이야 이거 참 안목이 높으신데!』
-    IF TALENT:COUNT:120
+    IF TALENT:COUNT:남자
         PRINTFORML 「%CALLNAME:COUNT% 군, 지명 들어왔어요―!」
     ELSE
         PRINTFORML 『%CALLNAME:COUNT%쨩, 지명 들어왔어요―!』
@@ -466,7 +466,7 @@ COUNT = LOCAL@SPRING_DUMMY:3
 
 SIF TALENT:COUNT:170
     LOCAL@SPRING_DUMMY:3 += 2
-SIF TALENT:COUNT:92
+SIF TALENT:COUNT:수수께끼의매력
     LOCAL@SPRING_DUMMY:3 += 2
 SIF TALENT:COUNT:260
     LOCAL@SPRING_DUMMY:3 += 3
@@ -517,7 +517,7 @@ IF TALENT:COUNT:처녀 && LOCAL@SPRING_DUMMY:4 & 4
     TALENT:COUNT:처녀 = 0
     LOCAL@SPRING_DUMMY:5 += 10
 ENDIF
-IF TALENT:COUNT:140
+IF TALENT:COUNT:임신
     PRINTL 【임신】 중에 매춘이기 때문에 많은 수입을 추가로 얻었습니다.
     PRINTL 모체에 굉장한 부담이 걸렸습니다.
     LOCAL@SPRING_EXP:77 += 10
@@ -543,10 +543,10 @@ IF EXP:COUNT:매춘경험 == 0
     SIF LOCAL@SPRING_DUMMY:0 == 100
         LOCAL@SPRING_DUMMY:1 = 30
     ;인기 보정
-    SIF TALENT:COUNT:94 && LOCAL@SPRING_DUMMY:1 < 40
+    SIF TALENT:COUNT:인기 && LOCAL@SPRING_DUMMY:1 < 40
         LOCAL@SPRING_DUMMY:1 = 40
     ;수수께끼의 매력, 매력 보정
-    SIF TALENT:COUNT:92 || TALENT:COUNT:90
+    SIF TALENT:COUNT:수수께끼의매력 || TALENT:COUNT:매력
         LOCAL@SPRING_DUMMY:1 += 10
     IF LOCAL@SPRING_DUMMY:1 == 0
         SIF ((FLAG:3000 & 512) == 0 && ((FLAG:3000 & 16384) == 0) || (FLAG:3000 & 512 && (FLAG:3000 & 1048576) == 0))
@@ -734,7 +734,7 @@ LOCAL@SPRING_DUMMY:1 = COUNT
 
 REPEAT 100
     IF COUNT == 0
-        IF TALENT:COUNT:120 == 0
+        IF TALENT:COUNT:남자 == 0
             IF LOCAL@SPRING_EXP:COUNT && ((FLAG:3000 & 512) == 0 && ((FLAG:3000 & 16384) == 0) || (FLAG:3000 & 512 && (FLAG:3000 & 1048576) == 0))
                 PRINTFORM %EXPNAME:COUNT%　{EXP:(LOCAL@SPRING_DUMMY:1):COUNT} + 
                 PRINTVL LOCAL@SPRING_EXP:COUNT
@@ -1567,10 +1567,10 @@ REND
 SIF (FLAG:3000 & 134217728) == 0
     RETURN 0
 ;임신중도 튕긴다
-SIF TALENT:COUNT:140
+SIF TALENT:COUNT:임신
     RETURN 0
 ;남자도 튕긴다
-SIF TALENT:COUNT:120
+SIF TALENT:COUNT:남자
     RETURN 0
 ;주인도 튕긴다
 SIF COUNT == MASTER
@@ -1592,7 +1592,7 @@ IF LOCAL == 2
     PRINTFORML %CALLNAME:TARGET%의 모습이 이상하다….
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 아이를 임신한 모양이다.
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:140%]했다.
-    TALENT:TARGET:140 = 1
+    TALENT:TARGET:임신 = 1
     CFLAG:70 = 1
     CALL CHANGE_N_STATUS, TARGET
 
@@ -1616,7 +1616,7 @@ ELSEIF LOCAL == 1
     PRINTFORML %CALLNAME:TARGET%의 모습이 이상하다….
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:ASSI%의 아이를 임신한 모양이다.
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:140%]했다.
-    TALENT:TARGET:140 = 1
+    TALENT:TARGET:임신 = 1
     CFLAG:70 = 2
     ;[구애의존]
     IF TALENT:TARGET:261 == 1
@@ -1658,7 +1658,7 @@ RETURN 0
 IF CFLAG:ARG:4 == 1024
     IF NO:ARG == 401
         IF FLAG:570 & 16
-            TALENT:MASTER:149 = 0
+            TALENT:MASTER:촉수사역술 = 0
             ABL:MASTER:촉수사역 = 0
         ELSEIF FLAG:570 & 32
             ABL:MASTER:촉수사역 = FLAG:572
@@ -1726,10 +1726,10 @@ ENDIF
     CALL BUSTSIZE_UP(ARG,4)
 
     ;모유 나오게 된다
-    IF TALENT:ARG:134 == 0
+    IF TALENT:ARG:모유체질 == 0
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 모유가 나오게 되었다.
         PRINTL 
-        TALENT:ARG:134 = 1
+        TALENT:ARG:모유체질 = 1
     ELSE
         ;벌써 모유 체질의 경우는 그 플래그를 가져 둔다
         MARK:ARG:89 = 1
@@ -1743,7 +1743,7 @@ ENDIF
     CALL LOST_TALENTS, ARG, 27, RESULT
     CALL LOST_TALENTS, ARG, 32, RESULT
     CALL LOST_TALENTS, ARG, 34, RESULT
-    CALL LOST_TALENTS, ARG, 38 - TALENT:LOCAL:120, RESULT
+    CALL LOST_TALENTS, ARG, 38 - TALENT:LOCAL:남자, RESULT
     CALL LOST_TALENTS, ARG, 39, RESULT
 
     SIF RESULT != 0

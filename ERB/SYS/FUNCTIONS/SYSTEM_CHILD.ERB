@@ -332,7 +332,7 @@ PRINTFORMW 당신의 \@(LOCAL > 1) ? 아들들 # 아들\@에게서 송금액이 
 ;-------------------------------------------------
 @CHILD_TALENT_SET
 ;親が[巨躯]の場合、[작은체형][소인]は打ち消される.また1/2の確率で[巨躯]が遺伝
-IF TALENT:(TFLAG:652):129
+IF TALENT:(TFLAG:652):거구
     TALENT:127 = 0
     TALENT:128 = 0
     TALENT:129 = RAND:2
@@ -587,7 +587,7 @@ ELSE
     ABL:순종 = MAX(ABL:순종 + (1 - MARK:(LOCAL:1):반발각인 / 2), 0)
     ;레즈끼の処理、후타나리のにんっしんっ率の低さを考えるとボーナスあってもいいと思うんだ
     ;両方を限界まであげて3。
-    IF TALENT:LOCAL:120 == 0 && TALENT:(LOCAL:1):120 == 0
+    IF TALENT:LOCAL:남자 == 0 && TALENT:(LOCAL:1):남자 == 0
         ABL:레즈끼 = CFLAG:LOCAL:22 + ( CFLAG:LOCAL:32 * 3 ) + CFLAG:(LOCAL:1):22 + ( CFLAG:LOCAL:32 * 3 )
         IF ABL:레즈끼 < 10
         ELSEIF ABL:레즈끼 >= 10
@@ -613,7 +613,7 @@ ELSE
         TALENT:127 = 0
         TALENT:128 = 0
         ;似ている親が[巨躯]の場合、[巨躯]が遺伝.似ていない方が持っていた場合、1/2の確率で遺伝
-        TALENT:129 = (TALENT:LOCAL:129) ? 1 # RAND:2
+        TALENT:129 = (TALENT:LOCAL:거구) ? 1 # RAND:2
     ;[소인]の場合、[작은체형]を消す
     ELSEIF TALENT:127
         TALENT:128 = 0
@@ -753,10 +753,10 @@ ELSE
         LOCAL:3 = ABL:(LOCAL:2):새드끼 - ABL:(LOCAL:2):마조끼
 
         ;サド
-        SIF TALENT:(LOCAL:2):81
+        SIF TALENT:(LOCAL:2):새드
             LOCAL:3 += 2
         ;マゾ
-        SIF TALENT:(LOCAL:2):82
+        SIF TALENT:(LOCAL:2):마조
             LOCAL:3 -= 2
         ;ドＳ
         SIF TALENT:(LOCAL:2):177
@@ -836,20 +836,20 @@ ELSE
             LOCAL:2 = (COUNT == 0) ? LOCAL # LOCAL:1
 
             ;親が男なら処理スキップ
-            SIF TALENT:(LOCAL:2):120
+            SIF TALENT:(LOCAL:2):남자
                 CONTINUE
 
             ;絶壁
-            SIF TALENT:(LOCAL:2):110
+            SIF TALENT:(LOCAL:2):절벽
                 LOCAL:3 -= 3
             ;貧乳
-            SIF TALENT:(LOCAL:2):111
+            SIF TALENT:(LOCAL:2):빈유
                 LOCAL:3 -= 2
             ;巨乳
-            SIF TALENT:(LOCAL:2):112
+            SIF TALENT:(LOCAL:2):거유
                 LOCAL:3 += 2
             ;爆乳
-            SIF TALENT:(LOCAL:2):113
+            SIF TALENT:(LOCAL:2):폭유
                 LOCAL:3 += 3
 
             ;似ている方の親の影響を大きくする
@@ -1465,23 +1465,23 @@ RETURN 1
 DRAWLINE
 PRINTFORML %조사처리(CALLNAME:ARG,"가")% 태어난 뒤로 오랜 시간이 흘렀다……….
 PRINTFORM %조사처리(CALLNAME:ARG,"는")% 성장하여 [유아]
-TALENT:ARG:130 = 0
+TALENT:ARG:유아 = 0
 LOCAL = 0
 IF RAND:4 == 0
     LOCAL = 1
-ELSEIF TALENT:ARG:128
-    TALENT:ARG:128 = 0
+ELSEIF TALENT:ARG:작은체형
+    TALENT:ARG:작은체형 = 0
     PRINT  및 [소인]
 ENDIF
 IF RAND:5 == 0
     LOCAL = 1
-ELSEIF TALENT:ARG:131
-    TALENT:ARG:131 = 0
+ELSEIF TALENT:ARG:유치
+    TALENT:ARG:유치 = 0
     PRINT  및 [유치]
 ENDIF
 PRINTW 을(를) 잃었다.
 ;胸の成長は1段階アップに変更.[爆乳]のときのみ変化なし
-IF LOCAL == 0 && RAND:10 == 0 && TALENT:ARG:113 == 0 && TALENT:ARG:120 == 0
+IF LOCAL == 0 && RAND:10 == 0 && TALENT:ARG:폭유 == 0 && TALENT:ARG:남자 == 0
     PRINT 가슴도 성장하여 
     CALL BUSTSIZE_UP(ARG, 5, 6)
 ENDIF

@@ -22,7 +22,7 @@ SIF ABL:순종 < 2
 SIF TALENT:처녀 && ABL:순종 < 3 && ABL:노출증 < 3 && TALENT:170 == 0
     RETURN 0
 ;조교자가 남자면 안 됨
-SIF TALENT:PLAYER:120
+SIF TALENT:PLAYER:남자
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -237,9 +237,9 @@ STAIN:손 |= STAIN:보지
 STAIN:PLAYER:보지 |= STAIN:PLAYER:손
 STAIN:PLAYER:손 |= STAIN:PLAYER:보지
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:120 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -270,7 +270,7 @@ IF ASSIPLAY
     IF ABL:ASSI:노출증 == 0
         PRINTFORML 울 것 같은 얼굴을 하면서 %조사선택(CALLNAME:MASTER, "를")% 노려보았지만,
         PRINT 다시 한 번 명령하자 주저하며 자신의 
-        IF TALENT:ASSI:128
+        IF TALENT:ASSI:작은체형
             PRINT 어린 균열에 
         ELSE
             PRINT 보지에 
@@ -293,7 +293,7 @@ IF ASSIPLAY
     ENDIF
 ELSE
     PRINTFORM %조사선택(CALLNAME:MASTER, "는")% 스스로 자신의 
-    IF TALENT:MASTER:128
+    IF TALENT:MASTER:작은체형
         PRINT 어린 균열에 
     ELSE
         PRINT 보지에 
@@ -353,7 +353,7 @@ ELSEIF ABL:노출증 >= 5 && TALENT:170
 ELSEIF ABL:노출증 >= 5
     PRINTL 넓어진 아래의 입에서는 애액이 멈추지 않고 흘러나오고 있다….
 ENDIF
-IF (TALENT:MASTER:부끄럼쟁이 || TALENT:MASTER:120) && CFLAG:2 < 20
+IF (TALENT:MASTER:부끄럼쟁이 || TALENT:MASTER:남자) && CFLAG:2 < 20
     PRINTL
     PRINTFORML 자기가 명령해 놓고도 막상 %CALLNAME:TARGET%의 부끄러운 모습을 눈앞에 둔 %조사선택(CALLNAME:MASTER, "는")%
     PRINTL 미약한 죄악감과 수치심이 생겨나, 빨갛게 물든 얼굴을 살짝 돌려버렸다.
@@ -442,13 +442,13 @@ IF TALENT:35
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ENDIF
 ;남자 싫다
-IF TALENT:남성혐오 && TALENT:PLAYER:120
+IF TALENT:남성혐오 && TALENT:PLAYER:남자
     RESULTS = %RESULTS% - 
     LOCAL:99 = 12
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:37%({LOCAL:99})
 ;여자 증오
-ELSEIF TALENT:여성혐오 && TALENT:PLAYER:120 == 0
+ELSEIF TALENT:여성혐오 && TALENT:PLAYER:남자 == 0
     RESULTS = %RESULTS% - 
     LOCAL:99 = 12
     TFLAG:240 -= LOCAL:99
@@ -490,7 +490,7 @@ IF TALENT:121
 ENDIF
 
 ;조교자가 후타나리
-IF TALENT:PLAYER:121
+IF TALENT:PLAYER:후타나리
     RESULTS = %RESULTS% - 
     LOCAL:99 = 4
     TFLAG:240 -= LOCAL:99

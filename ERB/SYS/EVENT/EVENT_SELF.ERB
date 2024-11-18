@@ -45,13 +45,13 @@ TFLAG:220 = 0
 ;助手がいて時間に余裕がある場合
 IF ASSI >= 0 && TFLAG:107 <= 100
     ;調教対象も助手もオトコでなくてレズ中毒が共にある場合
-    IF TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:레즈중독 && ABL:ASSI:레즈중독
+    IF TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:레즈중독 && ABL:ASSI:레즈중독
         CALL SELF_CHECK5
         ;調教対象も助手もフタナリの場合
-        SIF TALENT:121 && TALENT:ASSI:121
+        SIF TALENT:121 && TALENT:ASSI:후타나리
             CALL SELF_CHECK6
     ;調教対象も助手もオトコでありＢＬ中毒が共にある場合
-    ELSEIF TALENT:120 && TALENT:ASSI:120 && ABL:BL중독 && ABL:ASSI:BL중독
+    ELSEIF TALENT:120 && TALENT:ASSI:남자 && ABL:BL중독 && ABL:ASSI:BL중독
         CALL SELF_CHECK7
     ENDIF
 ENDIF
@@ -460,7 +460,7 @@ SIF TALENT:170 && LOCAL:1
     LOCAL:1 += 1
 
 ;助手が鼓舞
-SIF ASSI >= 0 && TALENT:ASSI:95 && LOCAL:1
+SIF ASSI >= 0 && TALENT:ASSI:고무 && LOCAL:1
     LOCAL:1 += 1
 
 ;残り体力が100未満
@@ -807,7 +807,7 @@ CALL COMMON_UP_EXP,ASSI, 12, TFLAG:226, 2
 CALL COMMON_UP_EXP,TARGET, 2, ((TFLAG:220 * ABL:순종) / 5), 0
 LOCAL = TFLAG:220*50*(ABL:기교+ABL:봉사정신)
 ;助手がふたなりならば対象奴隷に精液経験加算
-IF TALENT:ASSI:121
+IF TALENT:ASSI:후타나리
     ;精液経験
     CALL COMMON_UP_EXP,TARGET, 4, TFLAG:220, 0
     LOCAL *= 2
@@ -822,7 +822,7 @@ IF TALENT:121
     CALL COMMON_UP_JUEL, TARGET, 15, (TFLAG:220*100), 0
 ENDIF
 ;助手が[ドＳ]または[サド]かつサドっ気Lv5
-IF (ABL:ASSI:새드끼 > 4 && TALENT:ASSI:81) || TALENT:ASSI:177
+IF (ABL:ASSI:새드끼 > 4 && TALENT:ASSI:새드) || TALENT:ASSI:177
     ;苦痛快楽経験
     CALL COMMON_UP_EXP,TARGET, 30, TFLAG:220, 0
     ;苦痛의 구슬
@@ -948,7 +948,7 @@ CALL COMMON_UP_JUEL, TARGET, 14, (TFLAG:220*100*(ABL:기교+ABL:봉사정신)), 
 CALL COMMON_UP_JUEL, TARGET, 15, (TFLAG:220*100), 1
 
 ;助手がサドっ気Lv5＋サドかドＳ
-IF (ABL:ASSI:새드끼 > 4 && TALENT:ASSI:81) || TALENT:ASSI:177
+IF (ABL:ASSI:새드끼 > 4 && TALENT:ASSI:새드) || TALENT:ASSI:177
     ;苦痛快楽経験
     CALL COMMON_UP_EXP,TARGET, 30, TFLAG:220, 0
     ;苦痛의 구슬
@@ -1005,10 +1005,10 @@ WAIT
 SIF CFLAG:42 & 2 || CFLAG:MASTER:42 & 2
     RETURN 0
 ;主人が女性で調教対象が男性のときは別処理へ
-SIF TALENT:MASTER:120 == 0 && TALENT:120
+SIF TALENT:MASTER:남자 == 0 && TALENT:120
     JUMP SELF_CHECK8_2
 ;調教対象が男性もしくは調教者が女性だとダメ
-SIF TALENT:120 || TALENT:MASTER:120 == 0
+SIF TALENT:120 || TALENT:MASTER:남자 == 0
     RETURN 0
 ;恋慕または淫乱でないとダメ
 SIF TALENT:150 == 0 && TALENT:170 == 0
@@ -1445,7 +1445,7 @@ BASE:0 = MAX(BASE:0, 1)
 LOCAL = ARG
 
 ;助手が鼓舞だと我慢が効かなくなり発見されやすい
-IF ASSI >= 0 && TALENT:ASSI:95
+IF ASSI >= 0 && TALENT:ASSI:고무
     LOCAL += 5
 
     ;その状態で媚薬を盛られているとさらに発見されやすくなる
@@ -1505,7 +1505,7 @@ SIF ASSI < 0 && (TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:71
 
 IF ASSI >= 0
     ;助手が鼓舞を持っていない
-    IF TALENT:ASSI:95 == 0 
+    IF TALENT:ASSI:고무 == 0 
         SIF TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:71
             LOCAL /= 2
     ELSE
@@ -1519,7 +1519,7 @@ ENDIF
 ;ただし助手が鼓舞持ちだと(あくまでも)若干気がゆるむ.
 IF TALENT:35
     LOCAL /= 2
-    SIF ASSI >= 0 && TALENT:ASSI:95
+    SIF ASSI >= 0 && TALENT:ASSI:고무
         LOCAL += 3
 ENDIF
 

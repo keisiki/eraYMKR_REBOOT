@@ -12,7 +12,7 @@ SIF DITEMTYPE:999:24 > 0
 SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;조교자가 조수로 그 조수가 남자가 아닌 경우, 이상계 조교 필터가 오프가 되지 않으면 안 됨
-SIF FLAG:VA이상조교필터 & 4 && ASSIPLAY && TALENT:PLAYER:120 == 0
+SIF FLAG:VA이상조교필터 & 4 && ASSIPLAY && TALENT:PLAYER:남자 == 0
     RETURN 0
 ;V경험이 낮은 경우, 이상계 조교 필터가 오프가 되지 않으면 안 됨
 SIF FLAG:VA이상조교필터 & 4 && EXP:V경험 < EXPLV:1
@@ -231,7 +231,7 @@ LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
 ;V경험이 많아지면(자) 조금 내린다
 IF EXP:V경험 < EXPLV:1
     TIMES LOCAL , 1.50
-    IF ASSIPLAY && TALENT:PLAYER:120 == 0
+    IF ASSIPLAY && TALENT:PLAYER:남자 == 0
         TCVAR:50 += 3
     ELSE
         TCVAR:50 += 2
@@ -370,7 +370,7 @@ ELSE
 ENDIF
 
 ;조교자가[남자]
-SIF TALENT:PLAYER:120
+SIF TALENT:PLAYER:남자
     TIMES SOURCE:1 , 2.50
 
 ;[작은체형]
@@ -522,7 +522,7 @@ ENDIF
 STAIN:보지 |= STAIN:PLAYER:자지
 STAIN:PLAYER:자지 |= STAIN:보지
 
-SIF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+SIF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 7
 
 ;주인 경험 플래그
@@ -533,7 +533,7 @@ SIF ASSIPLAY == 0
 TFLAG:100 |= 1
 
 ;조교자가 후타나리
-SIF TALENT:PLAYER:121
+SIF TALENT:PLAYER:후타나리
     SOURCE:22 /= 2
 
 ;처녀 상실의 후에 페니스를 뽑고 있을까
@@ -753,13 +753,13 @@ IF TALENT:35
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ENDIF
 ;남자 싫다
-IF TALENT:남성혐오 && TALENT:PLAYER:120
+IF TALENT:남성혐오 && TALENT:PLAYER:남자
     RESULTS = %RESULTS% - 
     LOCAL:99 = 12
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:37%({LOCAL:99})
 ;여자 증오
-ELSEIF TALENT:여성혐오 && TALENT:PLAYER:120 == 0
+ELSEIF TALENT:여성혐오 && TALENT:PLAYER:남자 == 0
     RESULTS = %RESULTS% - 
     LOCAL:99 = 12
     TFLAG:240 -= LOCAL:99
@@ -794,7 +794,7 @@ ELSEIF EXP:V경험 < EXPLV:2
 ENDIF
 
 ;조교자가 후타나리
-IF TALENT:PLAYER:121
+IF TALENT:PLAYER:후타나리
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 4

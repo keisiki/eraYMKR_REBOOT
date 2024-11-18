@@ -15,7 +15,7 @@ SIF ASSI < 0
 SIF ASSIPLAY
     RETURN 0
 ;助手の口が汚れているとダメ(조교자가 汚れ無視か愛液, 母乳のよごれならＯＫ)
-SIF STAIN:ASSI:입 >= 2 && (STAIN:ASSI:입 != 16 && STAIN:ASSI:입 != 17) && TALENT:PLAYER:64 == 0
+SIF STAIN:ASSI:입 >= 2 && (STAIN:ASSI:입 != 16 && STAIN:ASSI:입 != 17) && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;주인이 猫舌だと猫フェラパッチ有効でないとダメ
 SIF TALENT:MASTER:고양이혀 && (FLAG:조교모드 & 16) == 0
@@ -217,9 +217,9 @@ TCVAR:ASSI:23 += 1
 TCVAR:MASTER:23 += 1
 CFLAG:ASSI:172 += 1
 
-IF TALENT:ASSI:120 == 0 && TALENT:MASTER:120 == 0
+IF TALENT:ASSI:남자 == 0 && TALENT:MASTER:남자 == 0
     TCVAR:12 += 3
-ELSEIF TALENT:ASSI:120 && TALENT:MASTER:120
+ELSEIF TALENT:ASSI:남자 && TALENT:MASTER:남자
     TCVAR:13 += 3
 ENDIF
 TCVAR:ASSI:98 += 1
@@ -251,7 +251,7 @@ PRINTFORM %CALLNAME:TARGET%의 눈앞에서, %조사선택(CALLNAME:MASTER, "는
 ;고양이혀(자신)
 IF TALENT:PLAYER:고양이혀
     PRINTFORM 아픔을 주지 않도록 주의하며, %CALLNAME:ASSI%의 입에 혀를 넣
-    IF ABL:ASSI:순종 >= 2 && ((EXP:ASSI:레즈경험 >= 1000 && TALENT:PLAYER:120 == 0 && TALENT:ASSI:120 == 0) || (EXP:ASSI:BL경험 >= 1000 && TALENT:PLAYER:120 && TALENT:ASSI:120))
+    IF ABL:ASSI:순종 >= 2 && ((EXP:ASSI:레즈경험 >= 1000 && TALENT:PLAYER:남자 == 0 && TALENT:ASSI:남자 == 0) || (EXP:ASSI:BL경험 >= 1000 && TALENT:PLAYER:남자 && TALENT:ASSI:남자))
         PRINTW 고, 혀끝을 서로 쿡쿡 찌르면서 타액을 교환했다….
     ELSEIF ABL:ASSI:순종 >= 2
         PRINTFORMW 자 %조사선택(CALLNAME:ASSI, "는")% %CALLNAME:TARGET%의 혀 밑을 혀끝으로 찔러댔다….
@@ -261,7 +261,7 @@ IF TALENT:PLAYER:고양이혀
 ;고양이혀(조수)
 ELSEIF TALENT:ASSI:고양이혀
     PRINTFORM %CALLNAME:ASSI%의 입에 혀를 넣어 미끄러운 혀를 혀로 살그머니 압박 
-    IF ABL:ASSI:순종 >= 2 && ((EXP:ASSI:레즈경험 >= 1000 && TALENT:PLAYER:120 == 0 && TALENT:ASSI:120 == 0) || (EXP:ASSI:BL경험 >= 1000 && TALENT:PLAYER:120 && TALENT:ASSI:120))
+    IF ABL:ASSI:순종 >= 2 && ((EXP:ASSI:레즈경험 >= 1000 && TALENT:PLAYER:남자 == 0 && TALENT:ASSI:남자 == 0) || (EXP:ASSI:BL경험 >= 1000 && TALENT:PLAYER:남자 && TALENT:ASSI:남자))
         PRINTW 하고, 상냥하게 빨면서 타액을 교환했다….
     ELSEIF ABL:ASSI:순종 >= 2
         PRINTFORMW 하자 %조사선택(CALLNAME:ASSI, "는")% 상처를 주지 않기 위해 혀의 힘을 뺐다….
@@ -271,7 +271,7 @@ ELSEIF TALENT:ASSI:고양이혀
 ;노멀
 ELSE
     PRINTFORM %CALLNAME:ASSI%의 구강을 구석구석까지 빨고 돌렸다. 
-    IF ABL:ASSI:순종 >= 2 && ((EXP:ASSI:레즈경험 >= 1000 && TALENT:PLAYER:120 == 0 && TALENT:ASSI:120 == 0) || (EXP:ASSI:BL경험 >= 1000 && TALENT:PLAYER:120 && TALENT:ASSI:120))
+    IF ABL:ASSI:순종 >= 2 && ((EXP:ASSI:레즈경험 >= 1000 && TALENT:PLAYER:남자 == 0 && TALENT:ASSI:남자 == 0) || (EXP:ASSI:BL경험 >= 1000 && TALENT:PLAYER:남자 && TALENT:ASSI:남자))
         PRINTW 그리고 끈적끈적하게 혀를 엮어가며 타액을 교환했다….
     ELSEIF ABL:ASSI:순종 >= 2
         PRINTFORMW 그러니 %CALLNAME:ASSI%도 적극적으로 혀를 얽어왔다….
@@ -331,21 +331,21 @@ IF TALENT:ASSI:부끄럼쟁이
     RESULTS = %RESULTS% 조수가 %TALENTNAME:35%({LOCAL:99})
 ENDIF
 ;조수가 악취 둔감
-IF TALENT:ASSI:61
+IF TALENT:ASSI:냄새둔감
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 1
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% 조수가 %TALENTNAME:61%({LOCAL:99})
 ;조수가 악취 민감
-ELSEIF TALENT:ASSI:62
+ELSEIF TALENT:ASSI:냄새민감
     RESULTS = %RESULTS% - 
     LOCAL:99 = 1
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% 조수가 %TALENTNAME:62%({LOCAL:99})
 ENDIF
 ;조수가 헌신적
-IF TALENT:ASSI:63
+IF TALENT:ASSI:헌신적
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 6
@@ -353,7 +353,7 @@ IF TALENT:ASSI:63
     RESULTS = %RESULTS% 조수가 %TALENTNAME:63%({LOCAL:99})
 ENDIF
 ;조수가 쾌감의 부정
-IF TALENT:ASSI:71
+IF TALENT:ASSI:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 1
     TFLAG:240 -= LOCAL:99
@@ -390,9 +390,9 @@ IF TFLAG:242
     TFLAG:240 -= TFLAG:242
     RESULTS = %RESULTS% 서로 불결
     ;악취 둔감
-    IF TALENT:ASSI:61
+    IF TALENT:ASSI:냄새둔감
         RESULTS = %RESULTS%,%조사처리(CALLNAME:ASSI,"가")% %TALENTNAME:61%
-    ELSEIF TALENT:ASSI:62
+    ELSEIF TALENT:ASSI:냄새민감
         RESULTS = %RESULTS%,%조사처리(CALLNAME:ASSI,"가")% %TALENTNAME:62%
     ENDIF
     RESULTS = %RESULTS%({TFLAG:242})

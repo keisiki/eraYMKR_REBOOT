@@ -41,7 +41,7 @@ ELSE
     LOCAL:10 = MAXBASE:(LOCAL:99):신장
 ENDIF
 ;난수값＋성별에 따른 기초가 신장이다(mm)
-LOCAL:10 += (TALENT:(LOCAL:99):120) ? 1450 # 1300
+LOCAL:10 += (TALENT:(LOCAL:99):남자) ? 1450 # 1300
 
 ;소질에 따른 키 보정
 IF BODYSIZE(LOCAL:99)
@@ -64,12 +64,12 @@ BASE:(LOCAL:99):신장 = LOCAL:10
 ;===웨스트의 산출===
 ;웨스트의 기초값 산출
 LOCAL:13 = (LOCAL:10 * 38) / 100 ;상위 25%
-SIF TALENT:(LOCAL:99):120
+SIF TALENT:(LOCAL:99):남자
     LOCAL:13 = (LOCAL:10 * 42) / 100
 
 ;성숙도 소질에 따른 보정
 ;[작은체형]
-SIF TALENT:(LOCAL:99):128
+SIF TALENT:(LOCAL:99):작은체형
     TIMES LOCAL:13, 1.05
 
 ;웨스트 결정 (mm)
@@ -78,21 +78,21 @@ BASE:(LOCAL:99):웨스트 = LOCAL:13
 ;===바스트의 산출===
 ;언더 바스트 산출
 LOCAL:15 = (1600 * 43) / 100 ;체중 계산시 사용하기 위해 160 cm로 계산
-SIF TALENT:(LOCAL:99):120
+SIF TALENT:(LOCAL:99):남자
     LOCAL:15 = (1600 * 55) / 100
 
 ;[작은체형]
-SIF TALENT:(LOCAL:99):128
+SIF TALENT:(LOCAL:99):작은체형
     TIMES LOCAL:15, 1.05
 
 ;가슴계 소질로 기초값 변화    110:절벽 111:빈유 112:거유 113:폭유
-IF TALENT:(LOCAL:99):110
+IF TALENT:(LOCAL:99):절벽
     LOCAL:16 = 50
-ELSEIF TALENT:(LOCAL:99):111
+ELSEIF TALENT:(LOCAL:99):빈유
     LOCAL:16 = 100
-ELSEIF TALENT:(LOCAL:99):112
+ELSEIF TALENT:(LOCAL:99):거유
     LOCAL:16 = 200
-ELSEIF TALENT:(LOCAL:99):113
+ELSEIF TALENT:(LOCAL:99):폭유
     LOCAL:16 = 250
 ELSE
     LOCAL:16 = 150
@@ -106,12 +106,12 @@ MAXBASE:(LOCAL:99):바스트 = LOCAL:15 * LOCAL:10 / 1600
 ;===힙의 산출===
 ;힙의 기초값 산출
 LOCAL:14 = (LOCAL:10 * 54) / 100 ;웨스트 / 힙 = 0.7 정도가 모델
-SIF TALENT:(LOCAL:99):120
+SIF TALENT:(LOCAL:99):남자
     LOCAL:14 = (LOCAL:10 * 52) / 100
 
 ;성숙도 소질에 따른 보정
 ;[작은체형]은 약간 작게 보정해봄
-SIF TALENT:(LOCAL:99):128
+SIF TALENT:(LOCAL:99):작은체형
     TIMES LOCAL:14, 0.95
 
 ;힙 결정
@@ -119,11 +119,11 @@ BASE:(LOCAL:99):히프 = LOCAL:14
 
 ;===체중의 산출===
 ;체중의 기초값 산출(남자 160 cm 에 48.0 kg(180 cm에 68 kg), 여자 47.0 kg 라고 치자.)
-LOCAL:17 = (TALENT:(LOCAL:99):120) ? 480000 # 470000 ;단위 0.1g
+LOCAL:17 = (TALENT:(LOCAL:99):남자) ? 480000 # 470000 ;단위 0.1g
 
 ;성숙도 소질에 따른 보정
 ;[작은체형]
-SIF TALENT:(LOCAL:99):128
+SIF TALENT:(LOCAL:99):작은체형
     TIMES LOCAL:17, 1.05
 
 
@@ -216,16 +216,16 @@ LOCAL = 0
 
 ;체격 소질에 따른 수정
 ;[소인]
-IF TALENT:(ARG):127
+IF TALENT:(ARG):소인
     LOCAL = -16
 ;[거구]
-ELSEIF TALENT:(ARG):129
+ELSEIF TALENT:(ARG):거구
     LOCAL = 3
 ENDIF
 
 ;신체 성숙도에 따른 수정
 ;[작은체형]
-SIF TALENT:(ARG):128
+SIF TALENT:(ARG):작은체형
     LOCAL -= 3
 
 RETURNF LOCAL
@@ -239,16 +239,16 @@ RETURNF LOCAL
 SIF ARG < 0
     RETURNF 0
 ;절벽
-IF TALENT:ARG:110 
+IF TALENT:ARG:절벽 
     LOCAL = 1
 ;빈유
-ELSEIF TALENT:ARG:111
+ELSEIF TALENT:ARG:빈유
     LOCAL = 2
 ;큰 가슴
-ELSEIF TALENT:ARG:112
+ELSEIF TALENT:ARG:거유
     LOCAL = 4
 ;폭유
-ELSEIF TALENT:ARG:113
+ELSEIF TALENT:ARG:폭유
     LOCAL = 5
 ;보통
 ELSE
@@ -265,40 +265,40 @@ RETURNF LOCAL
 @NUM_TO_BUST(ARG, ARG:1, ARG:2 = 0)
 IF ARG:2 & 2
     ;절벽
-    IF TALENT:ARG:110 
+    IF TALENT:ARG:절벽 
         PRINTFORM [%TALENTNAME:110%]에서 
     ;빈유
-    ELSEIF TALENT:ARG:111
+    ELSEIF TALENT:ARG:빈유
         PRINTFORM [%TALENTNAME:111%]에서 
     ;큰 가슴
-    ELSEIF TALENT:ARG:112
+    ELSEIF TALENT:ARG:거유
         PRINTFORM [%TALENTNAME:112%]에서 
     ;폭유
-    ELSEIF TALENT:ARG:113
+    ELSEIF TALENT:ARG:폭유
         PRINTFORM [%TALENTNAME:113%]에서 
     ;보통
     ELSE
         PRINTFORM [평유]에서 
     ENDIF
 ENDIF
-TALENT:ARG:110 = 0
-TALENT:ARG:111 = 0
-TALENT:ARG:112 = 0
-TALENT:ARG:113 = 0
+TALENT:ARG:절벽 = 0
+TALENT:ARG:빈유 = 0
+TALENT:ARG:거유 = 0
+TALENT:ARG:폭유 = 0
 SELECTCASE ARG:1
     CASE 1
-        TALENT:ARG:110 = 1
+        TALENT:ARG:절벽 = 1
         SIF ARG:2 & 4
             PRINTFORMW [%TALENTNAME:110%]로 바뀌었다.
         ;절벽은 모유가 나오지 않는다. 그러나 [확장유두]는 모유가 멈추지 않는다.
-        IF TALENT:ARG:134 && !TALENT:ARG:확장유두
-            TALENT:ARG:134 = 0 ;[모유체질]
+        IF TALENT:ARG:모유체질 && !TALENT:ARG:확장유두
+            TALENT:ARG:모유체질 = 0 ;[모유체질]
             MAXBASE:ARG:모유 = 0 ;모유 게이지
             SIF ARG:2 & 4
                 PRINTFORMW 가슴이 너무 작아 모유가 나오지 않게 되었다.
         ENDIF
     CASE 2
-        TALENT:ARG:111 = 1
+        TALENT:ARG:빈유 = 1
         SIF ARG:2 & 4
             PRINTFORMW [%TALENTNAME:111%]로 바뀌었다.
     CASE 3
@@ -306,11 +306,11 @@ SELECTCASE ARG:1
         SIF ARG:2 & 4
             PRINTFORMW [평유]로 바뀌었다.
     CASE 4
-        TALENT:ARG:112 = 1
+        TALENT:ARG:거유 = 1
         SIF ARG:2 & 4
             PRINTFORMW [%TALENTNAME:112%]로 바뀌었다.
     CASE 5
-        TALENT:ARG:113 = 1
+        TALENT:ARG:폭유 = 1
         SIF ARG:2 & 4
             PRINTFORMW [%TALENTNAME:113%]로 바뀌었다.
     CASEELSE

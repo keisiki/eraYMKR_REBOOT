@@ -130,7 +130,7 @@ REPEAT CHARANUM
         CONTINUE
     SIF CFLAG:COUNT:4
         CONTINUE
-    SIF TALENT:COUNT:146 == 0
+    SIF TALENT:COUNT:기생 == 0
         CONTINUE
     SIF (LOCAL == 1 || LOCAL == 2 || LOCAL == 3) && BASE:COUNT:촉수 == 0
         CONTINUE
@@ -302,7 +302,7 @@ REPEAT 20
     CALL ARRANGE_CHARALIST, LOCAL
     CALL ARRANGE_CHARALIFE, LOCAL
     PRINTFORM  기생촉수성장 LV({BASE:LOCAL:촉수, 4}/{MAXBASE:LOCAL:촉수, 4})
-    SIF TALENT:LOCAL:145
+    SIF TALENT:LOCAL:회란
         PRINT [회란]
     PRINTL 
 REND
@@ -1012,7 +1012,7 @@ REPEAT CHARANUM
     SIF TALENT:COUNT:약점 || TALENT:COUNT:150 || TALENT:COUNT:151 || TALENT:COUNT:152 || TALENT:COUNT:153 || TALENT:COUNT:160 || TALENT:COUNT:161 || TALENT:COUNT:162 || TALENT:COUNT:164
         CONTINUE
     ;妊娠, 育児中, 抱卵中も除外
-    SIF TALENT:COUNT:140 || TALENT:COUNT:141 || TALENT:COUNT:143
+    SIF TALENT:COUNT:임신 || TALENT:COUNT:육아중 || TALENT:COUNT:포란중
         CONTINUE
     ;反発刻印Lv0は除外
     SIF MARK:COUNT:반발각인 == 0
@@ -1036,7 +1036,7 @@ REPEAT CHARANUM
     SIF MAXBASE:COUNT:체력 < 500 || MAXBASE:COUNT:기력 < 500
         CONTINUE
     ;楽して快感の否定持ちを堕とそうなんて考えないように
-    SIF TALENT:COUNT:71 && MARK:COUNT:반발각인
+    SIF TALENT:COUNT:쾌감을부정 && MARK:COUNT:반발각인
         CONTINUE
     SIF NO:COUNT == 401 && (FLAG:570 & 48) == 0
         CONTINUE
@@ -1219,7 +1219,7 @@ ELSE
     PRINTFORMW %CALLNAME:MASTER%의 모습을 확인하고는, %조사처리(CALLNAME:TARGET,"는")% 약해빠진 목소리로 이제 저항하지 않겠다고 말했다.
     ;촉수漬けイベント屈服時(懇願しているとき？)の口上用.文字変数の内J,K,Lは使わないように.
     CALL SELF_KOJO, TARGET, 252, LOCAL:1
-    IF TALENT:MASTER:81 || TALENT:MASTER:177
+    IF TALENT:MASTER:새드 || TALENT:MASTER:177
         PRINT 그 선언을 듣고, 충분히 지배욕을 채운 
     ELSE
         PRINT 복종 선언을 들은 
@@ -1315,7 +1315,7 @@ REPEAT CHARANUM
         SIF ABL:COUNT:순종 < 3
             CONTINUE
         ;妊娠, 育児中, 抱卵中も除外
-        SIF TALENT:COUNT:140 || TALENT:COUNT:141 || TALENT:COUNT:143
+        SIF TALENT:COUNT:임신 || TALENT:COUNT:육아중 || TALENT:COUNT:포란중
             CONTINUE
         ;反発刻印を持っていると除外
         SIF MARK:COUNT:반발각인
@@ -1694,7 +1694,7 @@ REPEAT CHARANUM
         SIF ABL:COUNT:순종 < 3
             CONTINUE
         ;妊娠, 育児中, 抱卵中も除外
-        SIF TALENT:COUNT:140 || TALENT:COUNT:141 || TALENT:COUNT:143
+        SIF TALENT:COUNT:임신 || TALENT:COUNT:육아중 || TALENT:COUNT:포란중
             CONTINUE
         ;反発刻印3を持っていると除外
         SIF MARK:COUNT:반발각인 > 2
@@ -1771,7 +1771,7 @@ ELSE
     SIF TALENT:150
         PRINT 싫어하고 있는 
     PRINTFORM %조사처리(CALLNAME:TARGET,"를")% 
-    SIF TALENT:MASTER:81 || TALENT:MASTER:177
+    SIF TALENT:MASTER:새드 || TALENT:MASTER:177
         PRINT 억지로 
     PRINTW 촉수 배양실에 가둬버렸다.
     ;촉수 산제물 이벤트 대사용
@@ -1881,19 +1881,19 @@ REPEAT CHARANUM
     SIF TALENT:COUNT:처녀
         CONTINUE
     ;オトコ不可
-    SIF TALENT:COUNT:120
+    SIF TALENT:COUNT:남자
         CONTINUE
     ;使い魔不可
     SIF TALENT:COUNT:164
         CONTINUE
     ;すでに妊娠or懐卵している, あるいは育児中も不可
-    SIF TALENT:COUNT:140 || TALENT:COUNT:141 || TALENT:COUNT:145
+    SIF TALENT:COUNT:임신 || TALENT:COUNT:육아중 || TALENT:COUNT:회란
         CONTINUE
     SIF NO:COUNT == 401 && (FLAG:570 & 48) == 0
         CONTINUE
     IF TALENT:MASTER:998 == 0
         ;必要体力, 気力を算出(寄生されているかどうかで分岐)
-        LOCAL:3 = (TALENT:COUNT:146) ? 1500 # 1000
+        LOCAL:3 = (TALENT:COUNT:기생) ? 1500 # 1000
         ;体力, 気力の最大値のどちらかが1000(촉수寄生中の場合は1500)未満の場合は奴隷を連れ込めない
         SIF MAXBASE:COUNT:체력 < LOCAL:3 || MAXBASE:COUNT:기력 < LOCAL:3
             CONTINUE
@@ -1901,16 +1901,16 @@ REPEAT CHARANUM
         SIF BASE:COUNT:체력 < LOCAL:3
             CONTINUE
         ;[작은체형]は精液放出量強化必須(妊娠パッチの[작은체형]は妊娠しにくいの特性より)
-        SIF TALENT:COUNT:128 && (FLAG:촉수능력 & 16384) == 0
+        SIF TALENT:COUNT:작은체형 && (FLAG:촉수능력 & 16384) == 0
             CONTINUE
         ;[소인]は精液放出量強化と極細촉수両方を取得している必要がある
-        SIF TALENT:COUNT:127 && (FLAG:촉수능력 & 16384) == 0 && (FLAG:촉수능력 & 16) == 0
+        SIF TALENT:COUNT:소인 && (FLAG:촉수능력 & 16384) == 0 && (FLAG:촉수능력 & 16) == 0
             CONTINUE
         ;薬毒耐性持ちは体内適応力強化必須
         SIF TALENT:COUNT:약물내성 && (FLAG:촉수능력 & 8192) == 0
             CONTINUE
         ;回復遅いは養分注入촉수必須
-        SIF TALENT:COUNT:138 && (FLAG:촉수능력 & 32) == 0
+        SIF TALENT:COUNT:회복느림 && (FLAG:촉수능력 & 32) == 0
             CONTINUE
         ;催眠촉수を持っている場合
         IF FLAG:촉수능력 & 8
@@ -1981,7 +1981,7 @@ SIF TALENT:LOCAL:정조관둔감
 SIF TALENT:LOCAL:해방
     LOCAL:1 -= 1000
 ;倒錯的
-SIF TALENT:LOCAL:80
+SIF TALENT:LOCAL:도착적
     LOCAL:1 -= 900
 ;必要エネルギー増加系
 ;従順
@@ -2012,16 +2012,16 @@ SIF TALENT:LOCAL:억압
 SIF TALENT:LOCAL:저항
     LOCAL:1 += 4000
 ;[소인]
-SIF TALENT:LOCAL:127
+SIF TALENT:LOCAL:소인
     LOCAL:1 += 500
 ;[작은체형]
-SIF TALENT:LOCAL:128
+SIF TALENT:LOCAL:작은체형
     LOCAL:1 += 200
 ;薬毒耐性
 SIF TALENT:LOCAL:약물내성
     LOCAL:1 += 2000
 ;回復遅い
-SIF TALENT:LOCAL:138
+SIF TALENT:LOCAL:회복느림
     LOCAL:1 += 700
 ;屈服刻印
 LOCAL:2 = MARK:LOCAL:굴복각인
@@ -2395,9 +2395,9 @@ REPEAT 20
     ENDIF
     CALL ARRANGE_CHARALIST, LOCAL
     CALL ARRANGE_CHARALIFE, LOCAL
-    SIF TALENT:LOCAL:146
+    SIF TALENT:LOCAL:기생
         PRINT [기생]
-    SIF TALENT:LOCAL:145
+    SIF TALENT:LOCAL:회란
         PRINT [회란]
     SIF CFLAG:LOCAL:4 == 4
         PRINTFORM ＜유폐 {CFLAG:LOCAL:39}일째＞

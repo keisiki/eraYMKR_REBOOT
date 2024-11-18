@@ -179,7 +179,7 @@ REPEAT CHARANUM
         LOCAL |= 4096
     ;妖精が主人もしくは助手可能, かつ堕とした妖精がその時点で50人以上で[つるぺた堕し]か[大乳導]を取得している, または主人が[妖精知識]を取得している場合, 妖精風呂を追加可能
     ;CHALLENGEモードのときは妖精が主人もしくは助手可能かつ堕とした妖精が累計20人以上のとき妖精風呂を追加可能
-    IF (FLAG:게임모드 >= 50 && FLAG:요정함락총계 >= 20) || FLAG:요정함락총계 >= 50 && (TALENT:MASTER:96 || TALENT:MASTER:97) || TALENT:MASTER:요정지식
+    IF (FLAG:게임모드 >= 50 && FLAG:요정함락총계 >= 20) || FLAG:요정함락총계 >= 50 && (TALENT:MASTER:대유도 || TALENT:MASTER:절벽가슴격추왕) || TALENT:MASTER:요정지식
         SIF TALENT:COUNT:200
             LOCAL |= 8192
     ENDIF
@@ -218,13 +218,13 @@ LOCAL:1 = 0
 LOCAL:2 = 0
 REPEAT CHARANUM
     ;주인, [남자]는 조건 상 튕김
-    SIF COUNT == MASTER || TALENT:COUNT:120
+    SIF COUNT == MASTER || TALENT:COUNT:남자
         CONTINUE
     ;그 자리에 없는 캐릭터는 제외
     SIF CFLAG:COUNT:4
         CONTINUE
     ;임신, 포란, 회란도 제외
-    SIF TALENT:COUNT:140 || TALENT:COUNT:143 || TALENT:COUNT:145
+    SIF TALENT:COUNT:임신 || TALENT:COUNT:포란중 || TALENT:COUNT:회란
         CONTINUE
     ;요정이 아니라면 튕김
     SIF TALENT:COUNT:200 == 0
@@ -300,28 +300,28 @@ PRINTW (다만 0인경우도 있다.)
 
 REPEAT CHARANUM
     ;主人, [オトコ]は条件からはじく
-    SIF COUNT == 0 || TALENT:COUNT:120
+    SIF COUNT == 0 || TALENT:COUNT:남자
         CONTINUE
     ;失踪中は除外
     SIF CFLAG:COUNT:4
         CONTINUE
     ;[妊娠], [抱卵中], [懐卵]も除外
-    SIF TALENT:COUNT:140 || TALENT:COUNT:143 || TALENT:COUNT:145
+    SIF TALENT:COUNT:임신 || TALENT:COUNT:포란중 || TALENT:COUNT:회란
         CONTINUE
     ;[妖精]以外は除外
     SIF TALENT:COUNT:200 == 0
         CONTINUE
     ;快Ｃの珠, 절정経験, (射精経験, 異常経験)
     LOCAL:4 = (ABL:COUNT:B감각 + 1) * (LOCAL:3/2)
-    SIF TALENT:COUNT:101
+    SIF TALENT:COUNT:C둔감
         TIMES LOCAL:4 , 0.67
-    SIF TALENT:COUNT:100
+    SIF TALENT:COUNT:C민감
         TIMES LOCAL:4 , 1.50
     JUEL:COUNT:0 += LOCAL:4
     LOCAL:5 = LOCAL:4 / 20
     IF LOCAL:4 >= 1000
         EXP:COUNT:절정경험 += LOCAL:4 / 1000
-        IF TALENT:COUNT:121
+        IF TALENT:COUNT:후타나리
             IF EXP:COUNT:사정경험 == 0
                 EXP:COUNT:이상경험 += 1
                 CFLAG:COUNT:11 |= 4
@@ -331,24 +331,24 @@ REPEAT CHARANUM
     ENDIF
     ;快Ｂの珠, 절정経験, (噴乳経験, 異常経験)
     LOCAL:4 = (ABL:COUNT:B감각 + 1) * (LOCAL:3/4)
-    SIF TALENT:COUNT:107
+    SIF TALENT:COUNT:B둔감
         TIMES LOCAL:4 , 0.67
-    SIF TALENT:COUNT:106
+    SIF TALENT:COUNT:B민감
         TIMES LOCAL:4 , 1.50
-    IF TALENT:COUNT:110
+    IF TALENT:COUNT:절벽
         TIMES LOCAL:4 , 2.00
-    ELSEIF TALENT:COUNT:111
+    ELSEIF TALENT:COUNT:빈유
         TIMES LOCAL:4 , 1.50
-    ELSEIF TALENT:COUNT:112
+    ELSEIF TALENT:COUNT:거유
         TIMES LOCAL:4 , 0.67
-    ELSEIF TALENT:COUNT:113
+    ELSEIF TALENT:COUNT:폭유
         TIMES LOCAL:4 , 0.50
     ENDIF
     JUEL:COUNT:3 += LOCAL:4
     LOCAL:5 += LOCAL:4 / 20
     IF LOCAL:4 >= 1000
         EXP:COUNT:절정경험 += LOCAL:4 / 1000
-        IF TALENT:COUNT:134
+        IF TALENT:COUNT:모유체질
             IF EXP:COUNT:분유경험 == 0
                 EXP:COUNT:이상경험 += 1
                 CFLAG:COUNT:11 |= 4
@@ -449,7 +449,7 @@ REPEAT CHARANUM
     SIF TALENT:COUNT:150 == 0 && TALENT:COUNT:160 == 0 && TALENT:COUNT:170 == 0
         CONTINUE
     ;유아퇴행 또는 정신붕괴 또는 괴뢰 또는 괴조인격 또는 미약중독 또는 포란 중인 캐릭터는 제외
-    SIF TALENT:COUNT:159 || TALENT:COUNT:167 || TALENT:COUNT:168 || TALENT:COUNT:169 || TALENT:COUNT:미약중독 || TALENT:COUNT:143
+    SIF TALENT:COUNT:159 || TALENT:COUNT:167 || TALENT:COUNT:168 || TALENT:COUNT:169 || TALENT:COUNT:미약중독 || TALENT:COUNT:포란중
         CONTINUE
     ;특수 장비를 장착하고 있는 경우에는 제외
     SIF CFLAG:COUNT:42
@@ -499,7 +499,7 @@ REPEAT CHARANUM
     SIF (LOCAL == 2 && CFLAG:COUNT:0 == 0 ) || LOCAL == 8 || LOCAL == 11 || LOCAL == 14 || LOCAL == 40 || LOCAL == 64
         LOCAL:23 += 1
     ;두근! 남자뿐인 집단 서비스 신(린노스케, 요우키, 반령(요우키), 운잔, 신교쿠, 유겐마간, 타츠미, 텐지에 전원 [남자] 보유)
-    SIF (LOCAL == 69 && TALENT:COUNT:120) || (LOCAL == 70 && TALENT:COUNT:120)  || (LOCAL == 74 && TALENT:COUNT:120) || (LOCAL == 99 && TALENT:COUNT:120) || (LOCAL == 120 && TALENT:COUNT:120)  || (LOCAL == 121 && TALENT:COUNT:120) || (LOCAL == 140 && TALENT:COUNT:120) || (LOCAL == 142 && TALENT:COUNT:120)
+    SIF (LOCAL == 69 && TALENT:COUNT:남자) || (LOCAL == 70 && TALENT:COUNT:남자)  || (LOCAL == 74 && TALENT:COUNT:남자) || (LOCAL == 99 && TALENT:COUNT:남자) || (LOCAL == 120 && TALENT:COUNT:남자)  || (LOCAL == 121 && TALENT:COUNT:남자) || (LOCAL == 140 && TALENT:COUNT:남자) || (LOCAL == 142 && TALENT:COUNT:남자)
         LOCAL:24 += 1
     ;몽전대사묘 여러분(요시카, 청아, 토지코, 후토, 미코)
     SIF LOCAL == 82 || LOCAL == 83 || LOCAL == 84 || LOCAL == 85 || LOCAL == 86

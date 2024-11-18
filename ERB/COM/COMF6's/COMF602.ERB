@@ -10,16 +10,16 @@ RETURN 0
 
 @EXCOM_ABLE602
 ;性器が汚れているとMASTERの場合シックスナインはできない(조교자가 汚れ無視か愛液, 母乳のよごれならＯＫ)
-SIF STAIN:보지 >= 2 && (STAIN:보지 != 16 && STAIN:보지 != 17) && ASSIPLAY == 0 && TALENT:MASTER:64 == 0
+SIF STAIN:보지 >= 2 && (STAIN:보지 != 16 && STAIN:보지 != 17) && ASSIPLAY == 0 && TALENT:MASTER:불결무시 == 0
     RETURN 0
 ;性器が汚れており, 汚臭敏感で순종4미만의 ASSI일 경우シックスナインはできない(조교자가 汚れ無視か愛液, 母乳のよごれならＯＫ)
 IF STAIN:보지 >= 2 && (STAIN:보지 != 16 && STAIN:보지 != 17) && ASSIPLAY
-    SIF ABL:ASSI:순종 <= 3 && TALENT:ASSI:62 && TALENT:ASSI:64 == 0
+    SIF ABL:ASSI:순종 <= 3 && TALENT:ASSI:냄새민감 && TALENT:ASSI:불결무시 == 0
         RETURN 0
 ENDIF
 ;욕망3이하 · 레즈끼3이하의 ASSI일 경우シックスナインはできない(소악마, 相性良好ならＯＫ)
 IF ASSIPLAY
-    SIF (ABL:ASSI:욕망 < 4 || ((TALENT:ASSI:120 && ABL:ASSI:BL끼 < 4) || (TALENT:ASSI:120 == 0 && ABL:ASSI:레즈끼 < 4))) && TALENT:ASSI:93 == 0 && RELATION:(NO:PLAYER) < 150
+    SIF (ABL:ASSI:욕망 < 4 || ((TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4) || (TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4))) && TALENT:ASSI:소악마 == 0 && RELATION:(NO:PLAYER) < 150
         RETURN 0
 ELSE
 ;조교자가 助手でないなら순종3이상, 奉仕精神3이상 필요
@@ -336,9 +336,9 @@ STAIN:PLAYER:보지 |= STAIN:입
 STAIN:보지 |= STAIN:PLAYER:입
 STAIN:PLAYER:입 |= STAIN:보지
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 8
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:120 && TALENT:PLAYER:남자
     TCVAR:13 += 8
 ENDIF
 
@@ -387,7 +387,7 @@ IF ABL:욕망
     RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 ;ABL:BL기분＆TALENT:남자
-IF TALENT:PLAYER:120 && TALENT:120
+IF TALENT:PLAYER:남자 && TALENT:120
     SIF LOCAL:99
         RESULTS = %RESULTS% - 
     ;↓의 LOCAL:99의 기준(자위 5, 펠라/A애무 강제 10)
