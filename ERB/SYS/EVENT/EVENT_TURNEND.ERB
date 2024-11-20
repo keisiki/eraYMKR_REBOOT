@@ -23,9 +23,9 @@ IF FLAG:조교모드 & 4
     REPEAT CHARANUM
         SIF CFLAG:COUNT:4 && CFLAG:COUNT:4 != 1
             CONTINUE
-        SIF COUNT != TARGET && TALENT:COUNT:157 && TALENT:COUNT:158 && TALENT:COUNT:160 == 0 && TALENT:COUNT:164 == 0
+        SIF COUNT != TARGET && TALENT:COUNT:질투 && TALENT:COUNT:광기 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:사역마 == 0
             LOCAL:100 += 1
-        SIF CFLAG:COUNT:30 >= 130 && TALENT:COUNT:160 == 0 && TALENT:COUNT:164 == 0 && EQUIP:COUNT:14 == 0
+        SIF CFLAG:COUNT:30 >= 130 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:사역마 == 0 && EQUIP:COUNT:14 == 0
             LOCAL:101 = 1
     REND
     SIF TALENT:MASTER:대범함 && LOCAL:100 > 0
@@ -70,19 +70,19 @@ FOR TFLAG:900, 0, CHARANUM
     ;吸血鬼, 蓬莱人, 呪精
     IF TALENT:(TFLAG:900):봉래인
         LOCAL:10 *= 3
-    ELSEIF TALENT:(TFLAG:900):주정 || (TIME == 1 && TALENT:(TFLAG:900):205)
+    ELSEIF TALENT:(TFLAG:900):주정 || (TIME == 1 && TALENT:(TFLAG:900):흡혈귀)
         LOCAL:10 *= 2
     ENDIF
     ;神霊, 半神
-    IF TALENT:(TFLAG:900):222 || TALENT:(TFLAG:900):223
+    IF TALENT:(TFLAG:900):신령 || TALENT:(TFLAG:900):반신
         TIMES LOCAL:10 , 1.20
         TIMES LOCAL:11 , 1.20
     ENDIF
     ;精神崩壊
-    IF TALENT:(TFLAG:900):167
+    IF TALENT:(TFLAG:900):정신붕괴
         TIMES LOCAL:11 , 0.50
     ;傀儡
-    ELSEIF TALENT:(TFLAG:900):168
+    ELSEIF TALENT:(TFLAG:900):괴뢰
         TIMES LOCAL:11 , 0.75
     ;気丈
     ELSEIF TALENT:(TFLAG:900):꿋꿋함
@@ -104,9 +104,9 @@ FOR TFLAG:900, 0, CHARANUM
     SIF ASSI >= 0 && TALENT:ASSI:고무 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기
         LOCAL:11 += 100
     ;魔術技能(酔いつぶれていなければ)
-    SIF TALENT:MASTER:197 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
+    SIF TALENT:MASTER:마술기능 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
         LOCAL:10 += 100
-    SIF ASSI >= 0 && TALENT:ASSI:197 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기
+    SIF ASSI >= 0 && TALENT:ASSI:마술기능 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기
         LOCAL:10 += 75
 
     ;休憩フラグ（「何もしない」を選択, もしくは調教対象でない）
@@ -174,7 +174,7 @@ FOR TFLAG:900, 0, CHARANUM
 
     ;使い魔
     ;強い絆で結ばれているため, 主人の体調が悪いと回復力が一気に低下
-    IF TALENT:(TFLAG:900):164
+    IF TALENT:(TFLAG:900):사역마
         IF BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 4
             TIMES LOCAL:10 , 0.50
         ELSEIF BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 3
@@ -227,14 +227,14 @@ FOR TFLAG:900, 0, CHARANUM
 
     IF FLAG:조교모드 & 4
         ;嫉妬
-        IF TALENT:(TFLAG:900):157 && BASE:(TFLAG:900):취기 <= MAXBASE:(TFLAG:900):취기
+        IF TALENT:(TFLAG:900):질투 && BASE:(TFLAG:900):취기 <= MAXBASE:(TFLAG:900):취기
             ;酔いつぶれていなければ自慰経験が増える(主人には知らせない)
             TIMES LOCAL:10 , 0.80
             TIMES LOCAL:11 , 0.80
             EXP:(TFLAG:900):자위경험 += ABL:(TFLAG:900):욕망 * 2
         ENDIF
         ;嫉妬＆狂気だと体力・気力の回復が遅れる
-        IF TALENT:(TFLAG:900):157 && TALENT:(TFLAG:900):158 && LOCAL:100 > 0
+        IF TALENT:(TFLAG:900):질투 && TALENT:(TFLAG:900):광기 && LOCAL:100 > 0
             LOCAL:10 -= (LOCAL:100 - 1) * 100
             LOCAL:11 -= (LOCAL:100 - 1) * 50
         ELSEIF LOCAL:100 > 0
@@ -292,13 +292,13 @@ FOR TFLAG:900, 0, CHARANUM
         ;時間経過により酔いが醒める
         LOCAL:18 = (TIME == 0) ? (MAXBASE:(TFLAG:900):취기) / 20 # (MAXBASE:(TFLAG:900):취기 / 5)
         ;鬼
-        SIF TALENT:(TFLAG:900):214
+        SIF TALENT:(TFLAG:900):오니
             LOCAL:18 *= 2
         ;河童・天狗・神霊
-        SIF TALENT:(TFLAG:900):210 || TALENT:(TFLAG:900):215 || TALENT:(TFLAG:900):222
+        SIF TALENT:(TFLAG:900):캇파 || TALENT:(TFLAG:900):텐구 || TALENT:(TFLAG:900):신령
             TIMES LOCAL:18 , 1.50
         ;黄昏の怪物
-        SIF TALENT:(TFLAG:900):221
+        SIF TALENT:(TFLAG:900):황혼의괴물
             LOCAL:18 *= 2
         BASE:(TFLAG:900):취기 = MAX(BASE:(TFLAG:900):취기 - LOCAL:18, 0)
     ENDIF
@@ -566,37 +566,37 @@ SIF TALENT:ARG:자제심
 SIF TALENT:ARG:비관적
     TIMES LOCAL , 0.50
 ;恋慕系素質取得時はストレスが大きく下がる
-IF TALENT:ARG:153
+IF TALENT:ARG:상애
     TIMES LOCAL , 2.50
-ELSEIF TALENT:ARG:152
+ELSEIF TALENT:ARG:친애
     TIMES LOCAL , 2.00
-ELSEIF TALENT:ARG:151
+ELSEIF TALENT:ARG:망신
     TIMES LOCAL , 1.75
-ELSEIF TALENT:ARG:150
+ELSEIF TALENT:ARG:연모
     TIMES LOCAL , 1.50
 ENDIF
 ;服従系素質や[使い魔]取得時はストレスがやや大きく下がる
-IF TALENT:ARG:162 || TALENT:ARG:161
+IF TALENT:ARG:예속 || TALENT:ARG:낙인
     TIMES LOCAL , 1.50
-ELSEIF TALENT:ARG:160
+ELSEIF TALENT:ARG:복종
     TIMES LOCAL , 1.25
 ENDIF
-SIF TALENT:ARG:164
+SIF TALENT:ARG:사역마
     TIMES LOCAL , 1.20
 ;[嫉妬][狂気][幼児退行][精神崩壊]取得時はストレスが下がりにくくなる
-SIF TALENT:ARG:157
+SIF TALENT:ARG:질투
     TIMES LOCAL , 0.50
-SIF TALENT:ARG:158
+SIF TALENT:ARG:광기
     TIMES LOCAL , 0.75
-IF TALENT:ARG:167
+IF TALENT:ARG:정신붕괴
     TIMES LOCAL , 0.25
-ELSEIF TALENT:ARG:159
+ELSEIF TALENT:ARG:유아퇴행
     TIMES LOCAL , 0.50
 ENDIF
 
 CFLAG:ARG:65 -= LOCAL
 ;[傀儡][壊造人格]はストレスがたまらない(毎回リセット)
-SIF CFLAG:ARG:65 < 0 || TALENT:ARG:168 || TALENT:ARG:169
+SIF CFLAG:ARG:65 < 0 || TALENT:ARG:괴뢰 || TALENT:ARG:괴조인격
     CFLAG:ARG:65 = 0
 
 ;LUNATIC以上ではストレスによる過負荷状態(3000以上)にあるターンを記録しておく
@@ -649,7 +649,7 @@ IF FLAG:정원개조 & 4
         CFLAG:(TFLAG:900):65 = MAX(CFLAG:(TFLAG:900):65 - RAND:10, 0)
     ENDIF
     ;気丈と感情乏しいと嫉妬と狂気と精神崩壊をもたなくて…
-    IF TALENT:(TFLAG:900):꿋꿋함 == 0 && TALENT:(TFLAG:900):감정결여 == 0 && TALENT:(TFLAG:900):157 == 0 && TALENT:(TFLAG:900):158 == 0 && TALENT:(TFLAG:900):167 == 0
+    IF TALENT:(TFLAG:900):꿋꿋함 == 0 && TALENT:(TFLAG:900):감정결여 == 0 && TALENT:(TFLAG:900):질투 == 0 && TALENT:(TFLAG:900):광기 == 0 && TALENT:(TFLAG:900):정신붕괴 == 0
         ;臆病か悲観的か動物耳（本来動物を追い払うためのもの）か恐怖刻印持ちならば恐怖の珠UP
         SIF TALENT:(TFLAG:900):겁쟁이 || TALENT:(TFLAG:900):비관적 || TALENT:(TFLAG:900):동물귀 || MARK:(TFLAG:900):공포각인
             CALL COMMON_UP_JUEL, TFLAG:900, 17, 10 + (10 * RAND:5) , 2 
@@ -660,10 +660,10 @@ IF FLAG:정원개조 & 8
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:정원개조 & 2
         ;好奇心もしくは習得早いもしくは教育者もしくは博麗の巫女もしくは風祝の場合は習得の珠UP
-        SIF TALENT:(TFLAG:900):호기심 || TALENT:(TFLAG:900):습득빠름 || TALENT:(TFLAG:900):교육자 || TALENT:(TFLAG:900):218 || TALENT:(TFLAG:900):219
+        SIF TALENT:(TFLAG:900):호기심 || TALENT:(TFLAG:900):습득빠름 || TALENT:(TFLAG:900):교육자 || TALENT:(TFLAG:900):하쿠레이의무녀 || TALENT:(TFLAG:900):카제하후리
             CALL COMMON_UP_JUEL, TFLAG:900, 11, 10 + (10 * RAND:5) , 2
         ;素直もしくは大人しいもしくは保守的もしくは恥じらいもしくは献身的もしくは陥落している場合恭順の珠UP
-        SIF TALENT:(TFLAG:900):솔직함 || TALENT:(TFLAG:900):얌전함 || TALENT:(TFLAG:900):보수적 || TALENT:(TFLAG:900):부끄럼쟁이 || TALENT:(TFLAG:900):헌신적 || TALENT:(TFLAG:900):150 || TALENT:(TFLAG:900):160 || TALENT:(TFLAG:900):170
+        SIF TALENT:(TFLAG:900):솔직함 || TALENT:(TFLAG:900):얌전함 || TALENT:(TFLAG:900):보수적 || TALENT:(TFLAG:900):부끄럼쟁이 || TALENT:(TFLAG:900):헌신적 || TALENT:(TFLAG:900):연모 || TALENT:(TFLAG:900):복종 || TALENT:(TFLAG:900):음란
             CALL COMMON_UP_JUEL, TFLAG:900, 12, 10 + (10 * RAND:5) , 2
     ENDIF
 ENDIF
@@ -672,7 +672,7 @@ IF FLAG:정원개조 & 16
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:정원개조 & 2
         ;寄生でも嫉妬でも狂気でも精神崩壊でもない場合否定の珠DOWN
-        SIF TALENT:(TFLAG:900):기생 == 0 || TALENT:(TFLAG:900):157 == 0 || TALENT:(TFLAG:900):158 == 0 || TALENT:(TFLAG:900):167 == 0
+        SIF TALENT:(TFLAG:900):기생 == 0 || TALENT:(TFLAG:900):질투 == 0 || TALENT:(TFLAG:900):광기 == 0 || TALENT:(TFLAG:900):정신붕괴 == 0
             JUEL:(TFLAG:900):100 -= 10 + (10 * RAND:5)
     ENDIF
 ENDIF
@@ -681,7 +681,7 @@ IF FLAG:정원개조 & 32
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:정원개조 & 2
         ;恐怖刻印と反発刻印がなく精神崩壊でない場合好感度UP
-        SIF MARK:(TFLAG:900):공포각인 == 0 && MARK:(TFLAG:900):반발각인 == 0 && TALENT:(TFLAG:900):167 == 0
+        SIF MARK:(TFLAG:900):공포각인 == 0 && MARK:(TFLAG:900):반발각인 == 0 && TALENT:(TFLAG:900):정신붕괴 == 0
             CFLAG:(TFLAG:900):2 += RAND:5
     ENDIF
 ENDIF
@@ -692,7 +692,7 @@ IF FLAG:정원개조 & 64
         ;冬ならば水が凍る
         IF DAY:5 == 12 || DAY:5 == 1 || DAY:5 == 2
             ;チルノ, レティのみ（子孫はNG）は精神崩壊してなければ凍った噴水に癒されて否定の珠DOWN(ってか氷精とか雪女の種族フラグないんやね？)
-            SIF (NO:(TFLAG:900) == 5 || NO:(TFLAG:900) == 12) && TALENT:(TFLAG:900):167 == 0
+            SIF (NO:(TFLAG:900) == 5 || NO:(TFLAG:900) == 12) && TALENT:(TFLAG:900):정신붕괴 == 0
                 JUEL:(TFLAG:900):100 -= 10 + (10 * RAND:5)
         ELSE
             ;冬でなければ, 自制心と快感の否定を持たず, 精液中毒Lv持ちならば欲情の珠UP(射精と噴水を混同している)
@@ -709,7 +709,7 @@ IF FLAG:정원개조 & 128
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:정원개조 & 2
         ;恐怖刻印がなく, 幼児か幼稚か動物耳である場合先導の珠UP(昼間の場合は吸血鬼は日傘ないとNG)
-        SIF MARK:(TFLAG:900):공포각인 <= 0 && (TALENT:(TFLAG:900):유아 || TALENT:(TFLAG:900):유치 || TALENT:(TFLAG:900):동물귀) && (TALENT:(TFLAG:900):205 == 0 || TIME == 1 || NOITEM == 1 || ITEM:48)
+        SIF MARK:(TFLAG:900):공포각인 <= 0 && (TALENT:(TFLAG:900):유아 || TALENT:(TFLAG:900):유치 || TALENT:(TFLAG:900):동물귀) && (TALENT:(TFLAG:900):흡혈귀 == 0 || TIME == 1 || NOITEM == 1 || ITEM:48)
             CALL COMMON_UP_JUEL, TFLAG:900, 32, 10 + (10 * RAND:5) , 2
     ENDIF
 ENDIF
@@ -718,7 +718,7 @@ IF FLAG:정원개조 & 256
     ;昼であるか, 石燈籠がある
     IF TIME == 0 || FLAG:정원개조 & 2
         ;恐怖刻印がなく, 精神崩壊していない妖精の場合は様々な珠が変動し, 好感度も増加する
-        IF MARK:(TFLAG:900):공포각인 <= 0 && TALENT:(TFLAG:900):167 == 0 && TALENT:(TFLAG:900):200
+        IF MARK:(TFLAG:900):공포각인 <= 0 && TALENT:(TFLAG:900):정신붕괴 == 0 && TALENT:(TFLAG:900):요정
             ;習得の珠UP
             CALL COMMON_UP_JUEL, TFLAG:900, 11, 10 + (10 * RAND:5) , 2
             ;恭順の珠UP
@@ -751,13 +751,13 @@ IF TARGET >= 0
 
     ;貞操帯なしの状態で放尿レベル50(幼稚または幼児, 幼児退行持ちの場合は25)以上でおもらし癖がつく
     IF TALENT:오줌싸개버릇 == 0 && (CFLAG:42 & 2) == 0
-        SIF ((TALENT:130 || TALENT:131 || TALENT:159) && CFLAG:31 >= 25) || CFLAG:31 >= 50
+        SIF ((TALENT:130 || TALENT:131 || TALENT:유아퇴행) && CFLAG:31 >= 25) || CFLAG:31 >= 50
             CALL EVENT_MORASI_NEXTDAY
     ENDIF
 
     ;[壊造人格]を取得していない状態で反発刻印Lv2かつストレスが500以上または反発刻印Lv3かつストレスが1000以上またはストレスが10000以上, 
     ;この周回中に異常経験を変動させており, 異常経験が5以上のとき崩壊系素質取得イベント判定へ
-    SIF ((MARK:반발각인 == 2 && CFLAG:65 >= 500) || (MARK:반발각인 >= 3 && CFLAG:65 >= 1000) ||  CFLAG:65 >= 10000) && TALENT:169 == 0 && EXP:이상경험 >= 5 && CFLAG:11 & 4
+    SIF ((MARK:반발각인 == 2 && CFLAG:65 >= 500) || (MARK:반발각인 >= 3 && CFLAG:65 >= 1000) ||  CFLAG:65 >= 10000) && TALENT:괴조인격 == 0 && EXP:이상경험 >= 5 && CFLAG:11 & 4
         CALL EVENT_BROKEN_CHECK
 ENDIF
 
@@ -887,7 +887,7 @@ FOR TFLAG:900, 0, CHARANUM
         CALL CHILD_GROWTH, TFLAG:900
 
     ;[鵺]の素質変動イベント
-    SIF TALENT:(TFLAG:900):217
+    SIF TALENT:(TFLAG:900):누에
         CALL EVENT_NUETALENT_RANDOM, TFLAG:900
     ;[媚薬中毒]の禁断症状イベント
     SIF TALENT:(TFLAG:900):미약중독 && CFLAG:(TFLAG:900):32 == 7
@@ -953,20 +953,20 @@ CALL CALC_GAUGE4_SLAVE, TARGET,1
 LOCAL = 0
 ;[幼児]を持っていない従順・欲望・マゾっ気が全て4以上で[幼稚]を持っているか異常経験が7以上だと[幼児退行]
 ;ただし[幼稚]を持っていないかつ, [蓬莱人]を持っている場合は異常経験が15以上必要
-IF ABL:순종 >= 4 && ABL:욕망 >= 4 && ABL:마조끼 >= 4 && TALENT:130 == 0 && (TALENT:131 || (TALENT:봉래인 == 0 && EXP:이상경험 >= 7) || EXP:이상경험 >= 15) && TALENT:159 == 0 && TALENT:167 == 0 && TALENT:168 == 0
+IF ABL:순종 >= 4 && ABL:욕망 >= 4 && ABL:마조끼 >= 4 && TALENT:130 == 0 && (TALENT:131 || (TALENT:봉래인 == 0 && EXP:이상경험 >= 7) || EXP:이상경험 >= 15) && TALENT:유아퇴행 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
     LOCAL |= 1
     ;貞操帯なしの状態で露出が5のときはさらにおもらし癖がつく
     SIF ABL:노출증 == 5 && TALENT:오줌싸개버릇 == 0 && (CFLAG:42 & 2) == 0
         LOCAL |= 2
 ENDIF
 ;従順・マゾっ気が共に3以上, 異常経験が20以上, 薬物刻印と恥辱刻印が共に2以上, 恐怖刻印が3, かつストレスが5000以上で[精神崩壊]
-SIF ABL:순종 >= 3 && ABL:마조끼 >= 3 && EXP:이상경험 >= 20 && MARK:약물각인 >= 2 && MARK:치욕각인 >= 2 && MARK:공포각인 == 3 && CFLAG:65 >= 5000 && TALENT:167 == 0 && TALENT:168 == 0
+SIF ABL:순종 >= 3 && ABL:마조끼 >= 3 && EXP:이상경험 >= 20 && MARK:약물각인 >= 2 && MARK:치욕각인 >= 2 && MARK:공포각인 == 3 && CFLAG:65 >= 5000 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
     LOCAL |= 4
 ;異常経験が25以上, 苦痛刻印・快楽刻印・屈服刻印・薬物刻印・恥辱刻印・恐怖刻印が全て3の時
-IF EXP:이상경험 >= 25 && (MARK:고통각인+MARK:쾌락각인+MARK:굴복각인+MARK:약물각인+MARK:치욕각인+MARK:공포각인 == 18) && TALENT:168 == 0
+IF EXP:이상경험 >= 25 && (MARK:고통각인+MARK:쾌락각인+MARK:굴복각인+MARK:약물각인+MARK:치욕각인+MARK:공포각인 == 18) && TALENT:괴뢰 == 0
     ;[精神崩壊]を持っているかつ従順がLv5, または(以前の周回も含め)[精神崩壊]か[傀儡]を取得したことがあり, [服従]と[淫乱]を取得している状態で従順と奉仕精神が共にLv5
     ;または[狂気]か[幼児退行]を取得しており, かつ従順がLv3以上でストレスが10000以上の時[傀儡]
-    SIF (TALENT:167 && ABL:순종 >= 5) || ((CFLAG:17 & 4 || CFLAG:17 & 8) && ABL:순종 >= 5 && ABL:봉사정신 >= 5 && TALENT:160 && TALENT:170) || (ABL:순종 >= 3 && (TALENT:158 || TALENT:159) && CFLAG:65 >= 10000)
+    SIF (TALENT:정신붕괴 && ABL:순종 >= 5) || ((CFLAG:17 & 4 || CFLAG:17 & 8) && ABL:순종 >= 5 && ABL:봉사정신 >= 5 && TALENT:복종 && TALENT:음란) || (ABL:순종 >= 3 && (TALENT:광기 || TALENT:유아퇴행) && CFLAG:65 >= 10000)
         LOCAL |= 8
 ENDIF
 IF LOCAL
@@ -1026,7 +1026,7 @@ IF TALENT:131
     CFLAG:13 |= 128
 ENDIF
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:159%]을 얻었다.
-TALENT:159 = 1
+TALENT:유아퇴행 = 1
 CFLAG:12 |= 2
 CFLAG:17 |= 1
 
@@ -1047,14 +1047,14 @@ IF JUEL:100
     JUEL:100 /= 2
 ENDIF
 ;幼児退行消滅
-IF TALENT:159
+IF TALENT:유아퇴행
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:159%]을 잃었다.
-    TALENT:159 = 0
+    TALENT:유아퇴행 = 0
     SIF CFLAG:12 & 2
         CFLAG:12 -= 2
 ENDIF
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:167%]를 얻었다.
-TALENT:167 = 1
+TALENT:정신붕괴 = 1
 CFLAG:17 |= 4
 
 ;--------------------------------------------------
@@ -1080,22 +1080,22 @@ IF CFLAG:65
     CFLAG:65 = 0
 ENDIF
 ;狂気消滅
-IF TALENT:158
+IF TALENT:광기
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:158%]를 잃었다.
-    TALENT:158 = 0
+    TALENT:광기 = 0
 ENDIF
 ;幼児退行消滅
-IF TALENT:159
+IF TALENT:유아퇴행
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:159%]을 잃었다.
-    TALENT:159 = 0
+    TALENT:유아퇴행 = 0
 ENDIF
 ;精神崩壊消滅
-IF TALENT:167
+IF TALENT:정신붕괴
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:167%]를 잃었다.
-    TALENT:167 = 0
+    TALENT:정신붕괴 = 0
 ENDIF
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:168%]를 얻었다.
-TALENT:168 = 1
+TALENT:괴뢰 = 1
 CFLAG:17 |= 8
 FLAG:괴뢰총계 += 1
 IF FLAG:괴뢰총계 >= 50 && FLAG:게임모드 <= 1 && (FLAG:주인종족변경 & 32) == 0
@@ -1163,11 +1163,11 @@ IF ARG == MASTER
         BASE:ARG:기력 = 0
         TIMES LOCAL , 1.50
     ENDIF
-ELSEIF TALENT:ARG:158 == 0
+ELSEIF TALENT:ARG:광기 == 0
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 발광했다.
     CFLAG:ARG:12 |= 1
     CFLAG:ARG:17 |= 2
-    TALENT:ARG:158 = 1
+    TALENT:ARG:광기 = 1
     TIMES LOCAL , 1.75
 ELSE
     IF MAXBASE:ARG:체력 > 600
@@ -1275,7 +1275,7 @@ REPEAT CHARANUM
     ELSE
         LOCAL:1 = 300
         ;[恋慕][服従][壊造人格]持ちは自分から進んで手伝いを行っているという設定
-        IF TALENT:COUNT:150 || TALENT:COUNT:160 || TALENT:COUNT:169
+        IF TALENT:COUNT:연모 || TALENT:COUNT:복종 || TALENT:COUNT:괴조인격
             TIMES LOCAL:1 , 0.50
         ;助手可能もしかり.ただし上ほど積極的ではない
         ELSEIF CFLAG:COUNT:1 == 2
@@ -1325,15 +1325,15 @@ REPEAT CHARANUM
         TIMES BASE:COUNT:기력 , 0.75
     ENDIF
     ;ストレス増加(傀儡・壊造人格なら免除)
-    IF TALENT:COUNT:168 == 0 && TALENT:COUNT:169 == 0 && MONEY <= 0
+    IF TALENT:COUNT:괴뢰 == 0 && TALENT:COUNT:괴조인격 == 0 && MONEY <= 0
         CFLAG:COUNT:65 += RAND:80 + RAND:80
-    ELSEIF TALENT:COUNT:168 == 0 && TALENT:COUNT:169 == 0
+    ELSEIF TALENT:COUNT:괴뢰 == 0 && TALENT:COUNT:괴조인격 == 0
         CFLAG:COUNT:65 += RAND:50 + RAND:50
     ENDIF
     ;好感度減少(壊造人格なら免除)
-    IF COUNT != MASTER && TALENT:COUNT:169 == 0 && MONEY <= 0
+    IF COUNT != MASTER && TALENT:COUNT:괴조인격 == 0 && MONEY <= 0
         CFLAG:COUNT:2 -= RAND:30
-    ELSEIF COUNT != MASTER && TALENT:COUNT:169 == 0
+    ELSEIF COUNT != MASTER && TALENT:COUNT:괴조인격 == 0
         CFLAG:COUNT:2 -= RAND:10
     ENDIF
     ;キャップ処理
@@ -1362,7 +1362,7 @@ FOR TARGET, 0, CHARANUM
     SIF CFLAG:4
         CONTINUE
     ;機械には通じない
-    SIF TALENT:206
+    SIF TALENT:기계
         CONTINUE
     ;使用フラグがＯＮでストレスがあり, お金も足りている場合は鎮静茶使用チェック
     IF FLAG:아이템확장 & 32 && MONEY >= 100 && CFLAG:65
@@ -1492,7 +1492,7 @@ SIF FLAG:현재비디오유행 == FLAG:현재비디오불유행 && (FLAG:현재�
 ;主人か助手可能キャラに[超常目算]がいると流行ジャンルが分かるようになる
 LOCAL = -1
 REPEAT CHARANUM
-    SIF CFLAG:COUNT:4 || CFLAG:COUNT:1 < 2 || TALENT:COUNT:198 == 0
+    SIF CFLAG:COUNT:4 || CFLAG:COUNT:1 < 2 || TALENT:COUNT:초상계산 == 0
         CONTINUE
     LOCAL = COUNT
     BREAK

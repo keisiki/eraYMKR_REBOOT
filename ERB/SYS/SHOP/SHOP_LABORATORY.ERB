@@ -138,7 +138,7 @@ REPEAT CHARANUM
         CONTINUE
     SIF LOCAL == 2 && MAXBASE:COUNT:기력 >= 5000
         CONTINUE
-    SIF LOCAL == 3 && TALENT:COUNT:162
+    SIF LOCAL == 3 && TALENT:COUNT:예속
         CONTINUE
     SIF NO:COUNT == 401 && (FLAG:570 & 48) == 0
         CONTINUE
@@ -1009,7 +1009,7 @@ REPEAT CHARANUM
     SIF CFLAG:COUNT:4
         CONTINUE
     ;弱味, 妄信, 恋慕系, 服従系は除外
-    SIF TALENT:COUNT:약점 || TALENT:COUNT:150 || TALENT:COUNT:151 || TALENT:COUNT:152 || TALENT:COUNT:153 || TALENT:COUNT:160 || TALENT:COUNT:161 || TALENT:COUNT:162 || TALENT:COUNT:164
+    SIF TALENT:COUNT:약점 || TALENT:COUNT:연모 || TALENT:COUNT:망신 || TALENT:COUNT:친애 || TALENT:COUNT:상애 || TALENT:COUNT:복종 || TALENT:COUNT:낙인 || TALENT:COUNT:예속 || TALENT:COUNT:사역마
         CONTINUE
     ;妊娠, 育児中, 抱卵中も除外
     SIF TALENT:COUNT:임신 || TALENT:COUNT:육아중 || TALENT:COUNT:포란중
@@ -1127,7 +1127,7 @@ LOCAL:2 = MARK:굴복각인
 LOCAL:1 += (1 + LOCAL:2) * 750
 ;倍率変動
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     LOCAL:1 /= 2
 ;촉수中毒
 SIF ABL:촉수중독
@@ -1219,7 +1219,7 @@ ELSE
     PRINTFORMW %CALLNAME:MASTER%의 모습을 확인하고는, %조사처리(CALLNAME:TARGET,"는")% 약해빠진 목소리로 이제 저항하지 않겠다고 말했다.
     ;촉수漬けイベント屈服時(懇願しているとき？)の口上用.文字変数の内J,K,Lは使わないように.
     CALL SELF_KOJO, TARGET, 252, LOCAL:1
-    IF TALENT:MASTER:새드 || TALENT:MASTER:177
+    IF TALENT:MASTER:새드 || TALENT:MASTER:초S
         PRINT 그 선언을 듣고, 충분히 지배욕을 채운 
     ELSE
         PRINT 복종 선언을 들은 
@@ -1233,7 +1233,7 @@ PRINTW 　　　　　・
 PRINTW 　　　　　・
 PRINTW 　　　　　・
 LOCAL:2 = 0
-IF TALENT:167 || TALENT:168 ||MARK:반발각인 == 0
+IF TALENT:정신붕괴 || TALENT:괴뢰 ||MARK:반발각인 == 0
     LOCAL:2 = 0
 ELSEIF MARK:반발각인 > 2 && JUEL:17 > 50000
     MARK:반발각인 -= 1
@@ -1252,7 +1252,7 @@ IF LOCAL:2 == 1
     TFLAG:232 += 1
     PRINTFORML %CALLNAME:TARGET%의 눈동자에서 반항의 의지가 사라졌다….
     PRINTFORMW %CALLNAME:TARGET%의 반발각인이 LV{MARK:반발각인}로 떨어졌다.
-    IF TALENT:약점 == 0 && TALENT:160 == 0 && TALENT:161 == 0 && TALENT:162 == 0 && TALENT:169 == 0
+    IF TALENT:약점 == 0 && TALENT:복종 == 0 && TALENT:낙인 == 0 && TALENT:예속 == 0 && TALENT:괴조인격 == 0
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 이번 체험이 트라우마가 된 모양이다….
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [약점]을 얻었다.
         TALENT:약점 = 1
@@ -1441,7 +1441,7 @@ SIF TALENT:34
     LOCAL:1 += 500
 ;倍率変動
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     LOCAL:1 /= 2
 ;촉수中毒
 SIF ABL:촉수중독
@@ -1566,7 +1566,7 @@ TARGET = ARG
 CALL TENTACLE_ABSORB_EVENT
 LOCAL:2 = TFLAG:233 * MAX(CFLAG:39 / 10, 1)
 LOCAL:3 = TFLAG:234 * 100
-IF TALENT:150 || TALENT:160
+IF TALENT:연모 || TALENT:복종
     ;지문 커트
     IF CFLAG:99 == 1
         ;촉수동화 이벤트 대사용
@@ -1580,7 +1580,7 @@ IF TALENT:150 || TALENT:160
             PRINT 질구, 
         PRINTFORMW 항문, 요도, 유선만이 아니라 배꼽, 콧구멍, 아예 귓구멍 안에까지 촉수에게 농락당하고 있는 %CALLNAME:TARGET%의 모습이었다…….
         PRINTL 
-        IF TALENT:TARGET:150 == 0
+        IF TALENT:TARGET:연모 == 0
             PRINT 주인
         ELSE
             PRINT 사랑하는 사람
@@ -1638,7 +1638,7 @@ PRINTFORMW ＜촉수의 구슬＋{LOCAL:3}개(주인)＞
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 두 번 다시 조교대상으로 선택할 수 없게 되었습니다＞
 PRINTL 
 ;촉수中毒Lv3以上で助手可能または[恋慕]・[服従]・[傀儡]・[壊造人格]のいずれかを持った名有りキャラが生贄になった場合, 判定処理へ
-SIF ((ABL:촉수중독 >= 3 && CFLAG:1 == 2) || TALENT:150 || TALENT:160 || TALENT:168 || TALENT:169) && (NO:TARGET > 0 && NO:TARGET < 149)
+SIF ((ABL:촉수중독 >= 3 && CFLAG:1 == 2) || TALENT:연모 || TALENT:복종 || TALENT:괴뢰 || TALENT:괴조인격) && (NO:TARGET > 0 && NO:TARGET < 149)
     CALL CHARACHECK_TENTACLE_SACRIFICE
 DRAWLINE
 ;촉수に取り込まれた奴隷の周回ごとの履歴フラグはセット
@@ -1685,7 +1685,7 @@ REPEAT CHARANUM
     SIF CFLAG:COUNT:4
         CONTINUE
     ;使い魔不可
-    SIF TALENT:COUNT:164
+    SIF TALENT:COUNT:사역마
         CONTINUE
     SIF NO:COUNT == 401 && (FLAG:570 & 48) == 0
         CONTINUE
@@ -1764,14 +1764,14 @@ IF CFLAG:99 == 1
 ;地の文章表示
 ELSE
     PRINTFORM %조사처리(CALLNAME:MASTER,"는")% 
-    SIF TALENT:152
+    SIF TALENT:친애
         PRINT 굵은 눈물을 떨구고 있는 
-    SIF TALENT:153
+    SIF TALENT:상애
         PRINT 사랑하는 사람에게 매달리는 
-    SIF TALENT:150
+    SIF TALENT:연모
         PRINT 싫어하고 있는 
     PRINTFORM %조사처리(CALLNAME:TARGET,"를")% 
-    SIF TALENT:MASTER:새드 || TALENT:MASTER:177
+    SIF TALENT:MASTER:새드 || TALENT:MASTER:초S
         PRINT 억지로 
     PRINTW 촉수 배양실에 가둬버렸다.
     ;촉수 산제물 이벤트 대사용
@@ -1803,7 +1803,7 @@ PRINTFORMW ＜촉수의 구슬＋{TFLAG:234}개(주인)＞
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 두 번 다시 조교대상으로 선택할 수 없게 되었습니다＞
 PRINTL 
 ;촉수中毒Lv3以上で助手可能または[恋慕]・[服従]・[傀儡]・[壊造人格]のいずれかを持った名有りキャラが生贄になった場合, 判定処理へ
-SIF ((ABL:촉수중독 >= 3 && CFLAG:1 == 2) || TALENT:150 || TALENT:160 || TALENT:168 || TALENT:169) && (NO:TARGET > 0 && NO:TARGET < 149)
+SIF ((ABL:촉수중독 >= 3 && CFLAG:1 == 2) || TALENT:연모 || TALENT:복종 || TALENT:괴뢰 || TALENT:괴조인격) && (NO:TARGET > 0 && NO:TARGET < 149)
     CALL CHARACHECK_TENTACLE_SACRIFICE
 DRAWLINE
 ;촉수に捧げられた奴隷の周回ごとの履歴フラグはセット
@@ -1884,7 +1884,7 @@ REPEAT CHARANUM
     SIF TALENT:COUNT:남자
         CONTINUE
     ;使い魔不可
-    SIF TALENT:COUNT:164
+    SIF TALENT:COUNT:사역마
         CONTINUE
     ;すでに妊娠or懐卵している, あるいは育児中も不可
     SIF TALENT:COUNT:임신 || TALENT:COUNT:육아중 || TALENT:COUNT:회란
@@ -2028,7 +2028,7 @@ LOCAL:2 = MARK:LOCAL:굴복각인
 LOCAL:1 += (1 + LOCAL:2) * 750
 ;倍率変動
 ;淫乱
-SIF TALENT:LOCAL:170
+SIF TALENT:LOCAL:음란
     LOCAL:1 /= 2
 ;촉수中毒
 SIF ABL:LOCAL:촉수중독
@@ -2094,7 +2094,7 @@ LOCALS:0 =
 LOCALS:1 = 
 ;ストレス加算用
 LOCAL:96 = 0
-IF TALENT:167 || TALENT:168
+IF TALENT:정신붕괴 || TALENT:괴뢰
     ;地の文章表示
     SIF CFLAG:99 == 0
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 태내에 촉수의 아이를 뱄음에도 불구하고, 눈 하나 깜짝하지 않았다…….
@@ -2149,7 +2149,7 @@ ELSEIF ABL:촉수중독 > 2
     ENDIF
     ;汎用口上用フラグ
     CFLAG:43 = 0
-ELSEIF EXP:이상경험 < 10 && ABL:촉수중독 == 0 && TALENT:161 == 0 && TALENT:162 == 0 && TALENT:168 == 0 && TALENT:169 == 0
+ELSEIF EXP:이상경험 < 10 && ABL:촉수중독 == 0 && TALENT:낙인 == 0 && TALENT:예속 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0
     ;地の文章表示
     IF CFLAG:99 == 0
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 유귀 같은 표정을 짓고 있다.
@@ -2254,38 +2254,38 @@ ELSEIF EXP:이상경험 < 10 && ABL:촉수중독 == 0 && TALENT:161 == 0 && TALE
         TFLAG:141 |= 1
     ENDIF
     ;恋慕
-    IF TALENT:150
+    IF TALENT:연모
         LOCALS:0 = %LOCALS:0%[%TALENTNAME:150%]
-        TALENT:150 = 0
+        TALENT:연모 = 0
         SIF CFLAG:14 & 1
             CFLAG:14 -= 1
         CFLAG:3115 = 0
         CFLAG:MASTER:98 -= 1
-        SIF TALENT:200 && TALENT:160 == 0 && TALENT:170 == 0
+        SIF TALENT:요정 && TALENT:복종 == 0 && TALENT:음란 == 0
             FLAG:요정함락총계 -= 1
         TFLAG:141 |= 1
     ENDIF
     ;親愛
-    IF TALENT:152
+    IF TALENT:친애
         LOCALS:0 = %LOCALS:0%[%TALENTNAME:152%]
-        TALENT:152 = 0
+        TALENT:친애 = 0
         SIF CFLAG:14 & 4
             CFLAG:14 -= 4
         TFLAG:141 |= 1
     ENDIF
     ;相愛
-    IF TALENT:153
+    IF TALENT:상애
         LOCALS:0 = %LOCALS:0%[%TALENTNAME:153%]
-        TALENT:153 = 0
+        TALENT:상애 = 0
         SIF CFLAG:14 & 8
             CFLAG:14 -= 8
         CFLAG:3113 = 0
         TFLAG:141 |= 1
     ENDIF
     ;幼児退行
-    IF TALENT:159
+    IF TALENT:유아퇴행
         LOCALS:0 = %LOCALS:0%[%TALENTNAME:159%]
-        TALENT:159 = 0
+        TALENT:유아퇴행 = 0
         TFLAG:141 |= 1
     ENDIF
     ;無関心
@@ -2302,17 +2302,17 @@ ELSEIF EXP:이상경험 < 10 && ABL:촉수중독 == 0 && TALENT:161 == 0 && TALE
         TFLAG:141 |= 2
     ENDIF
     ;狂気
-    IF TALENT:158 == 0
+    IF TALENT:광기 == 0
         LOCALS:1 = %LOCALS:1%[%TALENTNAME:158%]
-        TALENT:158 = 1
+        TALENT:광기 = 1
         TFLAG:141 |= 2
         CFLAG:12 |= 1
         CFLAG:17 |= 2
     ENDIF
     ;精神崩壊
-    IF TALENT:167 == 0
+    IF TALENT:정신붕괴 == 0
         LOCALS:1 = %LOCALS:1%[%TALENTNAME:167%]
-        TALENT:167 = 1
+        TALENT:정신붕괴 = 1
         TFLAG:141 |= 2
         CFLAG:17 |= 4
     ENDIF

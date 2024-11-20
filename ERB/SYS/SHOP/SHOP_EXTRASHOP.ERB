@@ -9,7 +9,7 @@ DRAWLINE
 CALL ARRANGE_PRINT_ITEM
 DRAWLINE
 ;-----------------------------------------------
-SIF (FLAG:지하실개조 & 1) == 0 && FLAG:커맨드확장 & 16 && (TALENT:MASTER:새드 || TALENT:MASTER:158 || TALENT:MASTER:177)
+SIF (FLAG:지하실개조 & 1) == 0 && FLAG:커맨드확장 & 16 && (TALENT:MASTER:새드 || TALENT:MASTER:광기 || TALENT:MASTER:초S)
     PRINTLC [00] 비밀 지하실(50만원)
 IF FLAG:커맨드확장 & 16 && FLAG:지하실개조 & 1
     SIF (FLAG:지하실개조 & 2) == 0
@@ -24,7 +24,7 @@ IF FLAG:커맨드확장 & 16 && FLAG:지하실개조 & 1
         PRINTLC [05] 아이언메이든(8만원)
 ENDIF
 ;(名称が決まらない……)
-;SIF (FLAG:XX & X) == 0 && FLAG:커맨드확장 & 16 && (TALENT:MASTER:새드 || TALENT:MASTER:158 || TALENT:MASTER:177)
+;SIF (FLAG:XX & X) == 0 && FLAG:커맨드확장 & 16 && (TALENT:MASTER:새드 || TALENT:MASTER:광기 || TALENT:MASTER:초S)
 ;    PRINTLC [19] 우리(25만원)
 ;-----------------------------------------------
 IF FLAG:커맨드확장 & 16 && FLAG:지하실개조 & 1
@@ -116,7 +116,7 @@ $INPUT_LOOP
 INPUT
 IF RESULT == 100
     RETURN 0
-ELSEIF RESULT == 0 && (FLAG:지하실개조 & 1) == 0 && FLAG:커맨드확장 & 16 && (TALENT:MASTER:새드 || TALENT:MASTER:158 || TALENT:MASTER:177)
+ELSEIF RESULT == 0 && (FLAG:지하실개조 & 1) == 0 && FLAG:커맨드확장 & 16 && (TALENT:MASTER:새드 || TALENT:MASTER:광기 || TALENT:MASTER:초S)
     LOCAL:1 = 500000
 ELSEIF RESULT == 1 && (FLAG:지하실개조 & 2) == 0 && FLAG:커맨드확장 & 16 && FLAG:지하실개조 & 1
     LOCAL:1 = 10000
@@ -384,11 +384,11 @@ IF ABL:MASTER:요리기능 < 5 && FLAG:SHOP이벤트확장 & 16
     LOCAL:11 = BUY_SKILL_MASTER_COOKING_PRICE()
     SIF LOCAL:11 > 0
         PRINTFORMLC [11] 【요리기능 Lv{ABL:MASTER:요리기능 + 1}】(%COM_NAME%원)
-ELSEIF ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:193 == 0 && TALENT:MASTER:194 == 0 && FLAG:SHOP이벤트확장 & 16
+ELSEIF ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:요리잘함 == 0 && TALENT:MASTER:조리명인 == 0 && FLAG:SHOP이벤트확장 & 16
     LOCAL:11 = BUY_SKILL_MASTER_COOK_PRICE()
     SIF LOCAL:11 > 0
         PRINTFORMLC [11] 【요리잘함】({LOCAL:11/10000}만원)
-ELSEIF ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:193 && TALENT:MASTER:194 == 0 && FLAG:SHOP이벤트확장 & 16
+ELSEIF ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:요리잘함 && TALENT:MASTER:조리명인 == 0 && FLAG:SHOP이벤트확장 & 16
     LOCAL:11 = BUY_SKILL_MASTER_CHEF_PRICE()
     SIF LOCAL:11 > 0
         PRINTFORMLC [11] 【조리명인】({LOCAL:11/10000}만원)
@@ -398,7 +398,7 @@ IF ABL:MASTER:촬영기능 < 5 && (ITEM:50 || ITEM:51 || NOITEM) && FLAG:커맨�
     LOCAL:12 = BUY_SKILL_MASTER_CAMERA_PRICE()
     SIF LOCAL:12 > 0
         PRINTFORMLC [12] 【촬영기능 Lv{ABL:MASTER:촬영기능 + 1}】(%COM_NAME%원)
-ELSEIF ABL:MASTER:촬영기능 >= 5 && TALENT:MASTER:196 == 0 && (ITEM:50 || ITEM:51 || NOITEM) && FLAG:커맨드확장 & 128
+ELSEIF ABL:MASTER:촬영기능 >= 5 && TALENT:MASTER:보도자 == 0 && (ITEM:50 || ITEM:51 || NOITEM) && FLAG:커맨드확장 & 128
     LOCAL:12 = BUY_SKILL_MASTER_REPORTER_PRICE()
     SIF LOCAL:12 > 0
         PRINTFORMLC [12] 【보도자】({LOCAL:12/10000}만원)
@@ -408,7 +408,7 @@ IF ABL:MASTER:가창기능 < 5 && (ITEM:52 || NOITEM) && FLAG:SHOP이벤트확�
     LOCAL:13 = BUY_SKILL_MASTER_SINGING_PRICE()
     SIF LOCAL:13 > 0
         PRINTFORMLC [13] 【가창기능 Lv{ABL:MASTER:가창기능 + 1}】(%COM_NAME%원)
-ELSEIF ABL:MASTER:가창기능 >= 5 && TALENT:MASTER:191 == 0 && (ITEM:52 || NOITEM) && FLAG:SHOP이벤트확장 & 16
+ELSEIF ABL:MASTER:가창기능 >= 5 && TALENT:MASTER:음감 == 0 && (ITEM:52 || NOITEM) && FLAG:SHOP이벤트확장 & 16
     LOCAL:13 = BUY_SKILL_MASTER_SINGER_PRICE()
     SIF LOCAL:13 > 0
         PRINTFORMLC [13] 【음감】({LOCAL:13/10000}만원)
@@ -489,22 +489,22 @@ IF ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:교육자 == 0
     PRINTFORMLC [37] 【교육자】({LOCAL:37/10000}만원)
 ENDIF
 ;주인의 조교사 레벨이 5 이상에다 [家電使役知識]でないなら[家電使役知識]を習得できる
-IF ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:189 == 0
+IF ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:가전제품지식 == 0
     LOCAL:38 = BUY_SKILL_MASTER_EXTALENT189_PRICE()
     PRINTFORMLC [38] 【가전제품지식】({LOCAL:38/10000}만원)
 ENDIF
 ;주인의 조교사 레벨이 5 이상에다 [공작명인]でないなら[공작명인]を習得できる
-IF ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:195 == 0
+IF ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:공작명인 == 0
     LOCAL:39 = BUY_SKILL_MASTER_EXTALENT197_PRICE()
     PRINTFORMLC [39] 【공작명인】({LOCAL:39/10000}만원)
 ENDIF
 ;주인의 조교사 레벨이 5 이상에다 [마술기능]でないなら[마술기능]を習得できる
-IF ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:197 == 0
+IF ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:마술기능 == 0
     LOCAL:40 = BUY_SKILL_MASTER_EXTALENT197_PRICE()
     PRINTFORMLC [40] 【마술기능】({LOCAL:40/10000}만원)
 ENDIF
 ;주인의 조교사 레벨이 5 이상에다 [超常目算]でないなら[超常目算]を習得できる
-IF ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:198 == 0
+IF ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:초상계산 == 0
     LOCAL:41 = BUY_SKILL_MASTER_EXTALENT198_PRICE()
     PRINTFORMLC [41] 【초상계산】({LOCAL:41/10000}만원)
 ENDIF
@@ -534,22 +534,22 @@ ELSEIF RESULT == 10 && ABL:MASTER:기교 < 5
 ELSEIF RESULT == 11 && ABL:MASTER:요리기능 < 5 && LOCAL:11 > 0 && FLAG:SHOP이벤트확장 & 16
     PRINTFORML 【요리기능 Lv{ABL:MASTER:요리기능 + 1}】：%CALLNAME:MASTER%의 요리기능 Lv이 하나 상승합니다.
     LOCAL:1 = LOCAL:11
-ELSEIF RESULT == 11 && ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:193 == 0 && TALENT:MASTER:194 == 0 && LOCAL:11 > 0 && FLAG:SHOP이벤트확장 & 16
+ELSEIF RESULT == 11 && ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:요리잘함 == 0 && TALENT:MASTER:조리명인 == 0 && LOCAL:11 > 0 && FLAG:SHOP이벤트확장 & 16
     PRINTFORML 【요리잘함】：%CALLNAME:MASTER%의 요리 실력이 능숙해집니다.
     LOCAL:1 = LOCAL:11
-ELSEIF RESULT == 11 && ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:193 && TALENT:MASTER:194 == 0 && LOCAL:11 > 0 && FLAG:SHOP이벤트확장 & 16
+ELSEIF RESULT == 11 && ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:요리잘함 && TALENT:MASTER:조리명인 == 0 && LOCAL:11 > 0 && FLAG:SHOP이벤트확장 & 16
     PRINTFORML 【조리명인】：%CALLNAME:MASTER%의 요리 실력이 한층 더 능숙해집니다.
     LOCAL:1 = LOCAL:11
 ELSEIF RESULT == 12 && ABL:MASTER:촬영기능 < 5 && LOCAL:12 > 0 && (ITEM:50 || ITEM:51 || NOITEM) && FLAG:커맨드확장 & 128
     PRINTFORML 【촬영기능 Lv{ABL:MASTER:촬영기능 + 1}】：%CALLNAME:MASTER%의 촬영기능 Lv이 하나 상승합니다.
     LOCAL:1 = LOCAL:12
-ELSEIF RESULT == 12 && ABL:MASTER:촬영기능 >= 5 && TALENT:MASTER:196 == 0 && LOCAL:12 > 0 && (ITEM:50 || ITEM:51 || NOITEM) && FLAG:커맨드확장 & 128
+ELSEIF RESULT == 12 && ABL:MASTER:촬영기능 >= 5 && TALENT:MASTER:보도자 == 0 && LOCAL:12 > 0 && (ITEM:50 || ITEM:51 || NOITEM) && FLAG:커맨드확장 & 128
     PRINTFORML 【보도자】：%CALLNAME:MASTER%의 촬영 실력이 능숙해집니다.
     LOCAL:1 = LOCAL:12
 ELSEIF RESULT == 13 && ABL:MASTER:가창기능 < 5 && LOCAL:13 > 0 && (ITEM:52 || NOITEM) && FLAG:SHOP이벤트확장 & 16
     PRINTFORML 【가창기능 Lv{ABL:MASTER:가창기능 + 1}】：%CALLNAME:MASTER%의 가창기능 Lv이 하나 상승합니다.
     LOCAL:1 = LOCAL:13
-ELSEIF RESULT == 13 && ABL:MASTER:가창기능 >= 5 && TALENT:MASTER:191 == 0 && LOCAL:13 > 0 && (ITEM:52 || NOITEM) && FLAG:SHOP이벤트확장 & 16
+ELSEIF RESULT == 13 && ABL:MASTER:가창기능 >= 5 && TALENT:MASTER:음감 == 0 && LOCAL:13 > 0 && (ITEM:52 || NOITEM) && FLAG:SHOP이벤트확장 & 16
     PRINTFORML 【음감】：%CALLNAME:MASTER%의 노래 실력이 능숙해집니다.
     LOCAL:1 = LOCAL:13
 ELSEIF RESULT == 14 && ABL:MASTER:조교사Lv < 5 && LOCAL:14 > 0
@@ -602,16 +602,16 @@ ELSEIF RESULT == 36 && ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:음구지식
 ELSEIF RESULT == 37 && ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:교육자 == 0
     PRINTFORML 【교육자】：%조사처리(CALLNAME:MASTER,"가")% 공방작업을 할 수 있습니다.
     LOCAL:1 = LOCAL:37
-ELSEIF RESULT == 38 && ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:189 == 0
+ELSEIF RESULT == 38 && ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:가전제품지식 == 0
     PRINTFORML 【가전제품지식】：%조사처리(CALLNAME:MASTER,"가")% 가전제품을 잘 이용하게 됩니다.
     LOCAL:1 = LOCAL:38
-ELSEIF RESULT == 39 && ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:195 == 0
+ELSEIF RESULT == 39 && ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:공작명인 == 0
     PRINTFORML 【공작명인】：%조사처리(CALLNAME:MASTER,"가")% 특수한 공방작업을 할 수 있습니다.
     LOCAL:1 = LOCAL:39
-ELSEIF RESULT == 40 && ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:197 == 0
+ELSEIF RESULT == 40 && ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:마술기능 == 0
     PRINTFORML 【마술기능】：%조사처리(CALLNAME:MASTER,"가")% 마법을 사용한 의식을 할 수 있게 됩니다.
     LOCAL:1 = LOCAL:40
-ELSEIF RESULT == 41 && ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:198 == 0
+ELSEIF RESULT == 41 && ABL:MASTER:조교사Lv >= 5 && TALENT:MASTER:초상계산 == 0
     PRINTFORML 【초상계산】：%조사처리(CALLNAME:MASTER,"가")% 어림짐작으로 값 추측이 됩니다.
     LOCAL:1 = LOCAL:41
 ELSEIF RESULT == 42 && TALENT:MASTER:998 == 0
@@ -653,32 +653,32 @@ ELSEIF LOCAL == 11 && ABL:MASTER:요리기능 < 5
     ABL:MASTER:요리기능 += 1
     PRINTFORMW ＜%CALLNAME:MASTER%의 요리기능 레벨이 1 올라갔습니다.　현재 요리기능 레벨:{ABL:MASTER:요리기능}＞
 ;소질 아이템 【요리잘함】
-ELSEIF LOCAL == 11 && ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:193 == 0 && TALENT:MASTER:194 == 0
+ELSEIF LOCAL == 11 && ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:요리잘함 == 0 && TALENT:MASTER:조리명인 == 0
     PRINTFORMW ＜%조사처리(CALLNAME:MASTER,"가")% [요리잘함]을 배웠다＞
-    TALENT:MASTER:192 = 0
-    TALENT:MASTER:193 = 1
+    TALENT:MASTER:요리못함 = 0
+    TALENT:MASTER:요리잘함 = 1
 ;소질 아이템 【요리잘함】
-ELSEIF LOCAL == 11 && ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:193 && TALENT:MASTER:194 == 0
+ELSEIF LOCAL == 11 && ABL:MASTER:요리기능 >= 5 && TALENT:MASTER:요리잘함 && TALENT:MASTER:조리명인 == 0
     PRINTFORMW ＜%조사처리(CALLNAME:MASTER,"가")% [조리명인]이 되었다＞
-    TALENT:MASTER:193 = 0
-    TALENT:MASTER:194 = 1
+    TALENT:MASTER:요리잘함 = 0
+    TALENT:MASTER:조리명인 = 1
 ;能力アップアイテム【촬영능력Lv】(주인전용)
 ELSEIF LOCAL == 12 && ABL:MASTER:촬영기능 < 5 
     ABL:MASTER:촬영기능 += 1
     PRINTFORMW ＜%CALLNAME:MASTER%의 촬영기능 레벨이 1 올라갔습니다.　현재 촬영기능 레벨:{ABL:MASTER:촬영기능}＞
 ;소질 아이템 【보도자】
-ELSEIF LOCAL == 12 && ABL:MASTER:촬영기능 >= 5 && TALENT:MASTER:196 == 0
+ELSEIF LOCAL == 12 && ABL:MASTER:촬영기능 >= 5 && TALENT:MASTER:보도자 == 0
     PRINTFORMW ＜%조사처리(CALLNAME:MASTER,"가")% [보도자]가 되었다＞
-    TALENT:MASTER:196 = 1
+    TALENT:MASTER:보도자 = 1
 ;能力アップアイテム【가창능력Lv】(주인전용)
 ELSEIF LOCAL == 13 && ABL:MASTER:가창기능 < 5 
     ABL:MASTER:가창기능 += 1
     PRINTFORMW ＜%CALLNAME:MASTER%의 가창기능 레벨이 1 올라갔습니다.　현재 가창기능 레벨:{ABL:MASTER:가창기능}＞
 ;소질 아이템 【음감】
-ELSEIF LOCAL == 13 && ABL:MASTER:가창기능 >= 5 && TALENT:MASTER:191 == 0
+ELSEIF LOCAL == 13 && ABL:MASTER:가창기능 >= 5 && TALENT:MASTER:음감 == 0
     PRINTFORMW ＜%조사처리(CALLNAME:MASTER,"가")% [음감]을 배웠다＞
-    TALENT:MASTER:190 = 0
-    TALENT:MASTER:191 = 1
+    TALENT:MASTER:음치 = 0
+    TALENT:MASTER:음감 = 1
 ;能力アップアイテム【조교사Lv】(주인전용)
 ELSEIF LOCAL == 14
     ABL:MASTER:조교사Lv += 1
@@ -761,19 +761,19 @@ ELSEIF LOCAL == 37
 ;소질 아이템 【가전제품지식】
 ELSEIF LOCAL == 38
     PRINTFORMW ＜%조사처리(CALLNAME:MASTER,"가")% [가전제품지식]을 배웠다＞
-    TALENT:MASTER:189 = 1
+    TALENT:MASTER:가전제품지식 = 1
 ;소질 아이템 【공작명인】
 ELSEIF LOCAL == 39
     PRINTFORMW ＜%조사처리(CALLNAME:MASTER,"가")% [공작명인]이 되었다＞
-    TALENT:MASTER:195 = 1
+    TALENT:MASTER:공작명인 = 1
 ;소질 아이템 【마술기능】
 ELSEIF LOCAL == 40
     PRINTFORMW ＜%조사처리(CALLNAME:MASTER,"가")% [마술기능]을 배웠다＞
-    TALENT:MASTER:197 = 1
+    TALENT:MASTER:마술기능 = 1
 ;소질 아이템 【초상계산】
 ELSEIF LOCAL == 41
     PRINTFORMW ＜%조사처리(CALLNAME:MASTER,"가")% [초상계산]을 배웠다＞
-    TALENT:MASTER:198 = 1
+    TALENT:MASTER:초상계산 = 1
 ;Debug 습득
 ELSEIF LOCAL == 42 && TALENT:MASTER:998 == 0
     PRINTFORMW ＜%조사처리(CALLNAME:MASTER,"가")% [Debug]를 배웠다＞
@@ -822,7 +822,7 @@ ELSE
     LOCAL = 500
 ENDIF
 ;주인이 料理苦手のときはより経験必要
-SIF TALENT:MASTER:192
+SIF TALENT:MASTER:요리못함
     TIMES LOCAL , 1.20
 ;주인의 調理経験不足なら上昇不可
 SIF EXP:MASTER:조리경험 < LOCAL
@@ -885,7 +885,7 @@ ELSE
     LOCAL = 500
 ENDIF
 ;주인이 音痴ならより経験が必要
-SIF TALENT:MASTER:190
+SIF TALENT:MASTER:음치
     TIMES LOCAL , 1.10
 ;주인의 歌唱経験不足なら上昇不可
 SIF EXP:MASTER:가창경험 < LOCAL
@@ -943,7 +943,7 @@ RETURNF LOCAL:3
 #FUNCTION
 LOCALS:1 = 
 ;주인이 마조かドＭ
-IF TALENT:MASTER:마조 || TALENT:MASTER:178
+IF TALENT:MASTER:마조 || TALENT:MASTER:초M
     LOCAL = 75000
 ;주인의 마조っ気がLv3以上
 ELSEIF ABL:MASTER:마조끼 >= 3
@@ -965,7 +965,7 @@ RETURNF LOCAL
 #FUNCTION
 LOCALS:1 = 
 ;주인이 サドかドＳ
-IF TALENT:MASTER:새드 || TALENT:MASTER:177
+IF TALENT:MASTER:새드 || TALENT:MASTER:초S
     LOCAL = 75000
 ;주인의 サドっ気がLv3以上
 ELSEIF ABL:MASTER:새드끼 >= 3
@@ -1170,7 +1170,7 @@ FOR LOCAL, 0, CHARANUM
     SIF CFLAG:LOCAL:4
         CONTINUE
     ;[烙印]必須
-    SIF TALENT:LOCAL:161 == 0
+    SIF TALENT:LOCAL:낙인 == 0
         CONTINUE
     ;クリトリスリング
     SIF (CFLAG:LOCAL:42 & 1) == 0 && TALENT:LOCAL:남자 == 0 && TALENT:LOCAL:후타나리 == 0 && EXP:LOCAL:C조율경험 >= 20
@@ -1211,7 +1211,7 @@ REPEAT CHARANUM
     SIF CFLAG:COUNT:4
         CONTINUE
     ;[烙印]必須
-    SIF TALENT:COUNT:161 == 0
+    SIF TALENT:COUNT:낙인 == 0
         CONTINUE
 
     ;クリトリスリング

@@ -85,7 +85,7 @@ ELSEIF TALENT:ARG:회복느림
     TIMES LOCAL , 0.75
 ENDIF
 ;[흡혈귀]
-IF TALENT:ARG:205
+IF TALENT:ARG:흡혈귀
     IF TIME == 0
         TIMES LOCAL , 0.75
     ELSE
@@ -104,7 +104,7 @@ SIF TALENT:MASTER:치료
 SIF TALENT:MASTER:조합지식 && TALENT:MASTER:금단의지식
     TIMES LOCAL , 2.00
 ;[마술기능](주인)
-SIF TALENT:MASTER:197
+SIF TALENT:MASTER:마술기능
     TIMES LOCAL , 1.20
 
 RETURNF LOCAL
@@ -407,9 +407,9 @@ SIF ABL:ARG:자위중독 >= 5 && ABL:ARG:정액중독 >= 5 && (ABL:ARG:레즈중
     TALENT:84 = 1
 ;[복종]を持っていた場合, 従順が1上昇
 ;[妄信]を持っていた場合, 従順が2上昇
-IF TALENT:ARG:151 || TALENT:ARG:160
+IF TALENT:ARG:망신 || TALENT:ARG:복종
     ABL:순종 = MIN(ABL:순종 + 1, 5)
-    SIF TALENT:ARG:151
+    SIF TALENT:ARG:망신
         ABL:순종 = MIN(ABL:순종 + 1, 5)
 ENDIF
 ;[サド]を持っていた場合, 欲望とサドっ気が1上昇
@@ -423,19 +423,19 @@ IF TALENT:ARG:마조
     ABL:마조끼 = MIN(ABL:마조끼 + 1, 5)
 ENDIF
 ;[烙印]→[傷物]変換
-SIF TALENT:ARG:161
-    TALENT:163 = 1
+SIF TALENT:ARG:낙인
+    TALENT:흠집 = 1
 ;[精神붕괴]→[感情乏しい]変換
-SIF TALENT:ARG:167
+SIF TALENT:ARG:정신붕괴
     TALENT:감정결여 = 1
 ;[傀儡]→[精神붕괴]変換
-IF TALENT:ARG:168
-    TALENT:167 = 1
+IF TALENT:ARG:괴뢰
+    TALENT:정신붕괴 = 1
     CFLAG:17 |= 4
 ENDIF
 ;[壊造人格]→[狂気]変換
-IF TALENT:ARG:169
-    TALENT:158 = 1
+IF TALENT:ARG:괴조인격
+    TALENT:광기 = 1
     CFLAG:12 |= 1
     CFLAG:17 |= 2
 ENDIF
@@ -469,11 +469,11 @@ PRINTW
 PRINTFORML %조사처리(CALLNAME:ARG,"는")% 실이 끊어진 듯이 그 자리에서 쓰러져 자기 시작했다……
 PRINTW  
 PRINTFORML 다음에 %조사처리(CALLNAME:ARG,"가")% 눈을 떴을 때는 이제까지의 일을 전부 다 잊은 상태일 것이다…….
-PRINTFORML %조사처리(CALLNAME:MASTER,"는")% \@(TALENT:ARG:153) ? 그 사실에 쓸쓸함을 느끼면서도 그대로 # 그런 생각들을 하며 \@ 방을 뒤로했다…….
+PRINTFORML %조사처리(CALLNAME:MASTER,"는")% \@(TALENT:ARG:상애) ? 그 사실에 쓸쓸함을 느끼면서도 그대로 # 그런 생각들을 하며 \@ 방을 뒤로했다…….
 PRINTW  
 PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% 조교 기억을 잃었다＞
 ;[使い魔]になっていた場合はメッセージが出る
-IF TALENT:ARG:164
+IF TALENT:ARG:사역마
     PRINTFORMW ＜%조사처리(CALLNAME:ARG,"과")% 맺었던 맹약이 파기되어버렸다＞
     SIF CFLAG:ARG:15 & 8
         CFLAG:15 -= 8
@@ -502,7 +502,7 @@ PRINTFORML ＜%조사처리(CALLNAME:ARG,"는")% 인간이 되었다＞
 PRINTFORML %조사처리(CALLNAME:ARG,"는")%[음치]가 되었다
 
 ;恋慕か服従がなければ反発刻印3を得て、従順が0になる
-IF TALENT:ARG:150 == 0 && TALENT:ARG:160 == 0
+IF TALENT:ARG:연모 == 0 && TALENT:ARG:복종 == 0
     PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% 충격을 받았다＞
     SIF MARK:ARG:반발각인 < 3
         CALL COMMON_MARK_UP, ARG, 9, 3, 0
@@ -513,12 +513,12 @@ ENDIF
 
 ;素質[卵生][人魚]消滅
 TALENT:ARG:난생 = 0
-TALENT:ARG:229 = 0
+TALENT:ARG:츠쿠모가미 = 0
 ;素質[音痴]追加。[音感]があれば消滅
-IF TALENT:ARG:191
- TALENT:ARG:191 = 0
+IF TALENT:ARG:음감
+ TALENT:ARG:음감 = 0
 ENDIF
-TALENT:ARG:190 = 1
+TALENT:ARG:음치 = 1
 
 ;CFLAG:5 = 何らかの方法で種族を変えられたフラグ。12を仮に人間とする
 CFLAG:ARG:5 = 12
@@ -597,7 +597,7 @@ ENDIF
 PRINTW  
 
 ;素質[妖精]追加
-TALENT:ARG:200 = 1
+TALENT:ARG:요정 = 1
 CFLAG:ARG:5 = 1
 ;種族遺伝子変化(一旦既存の遺伝子を半減させ, 後で減少させた分の数値を妖精の遺伝子に上積み)
 LOCAL:3 = 0
@@ -750,7 +750,7 @@ ELSEIF NO:TARGET == 4
 ELSEIF NO:TARGET == 5
     ;치르노
     ;음란, 淫核, 淫壷, 淫尻, 淫乳, 尿道狂, キス魔, ドＳ, ドＭのいずれかを取得している場合は倍チルノに
-    IF TALENT:170 || TALENT:171 || TALENT:172 || TALENT:173 || TALENT:174 || TALENT:175 || TALENT:176 || TALENT:177 || TALENT:178
+    IF TALENT:음란 || TALENT:음핵／음경 || TALENT:음호 || TALENT:음고 || TALENT:음유 || TALENT:요도광 || TALENT:키스마 || TALENT:초S || TALENT:초M
         CALL EX_CHARA05_2
     ELSE
         CALL EX_CHARA05_1
@@ -758,7 +758,7 @@ ELSEIF NO:TARGET == 5
 ELSEIF NO:TARGET == 7
     ;소악마
     ;即落ちを取得している場合はラヴォスこぁに
-    IF TALENT:179
+    IF TALENT:즉각함락
         CALL EX_CHARA07_1
     ;Ｃ感覚と触手中毒が共にLv3以上だとクリスタルこぁに
     ELSEIF ABL:C감각 >= 3 && ABL:촉수중독 >= 3
@@ -793,7 +793,7 @@ ELSEIF NO:TARGET == 73
 ELSEIF NO:TARGET == 82
     ;인간 요시카
     ;음란이나 음란계 부위소질 혹은 광기가 있으면 카시와데노미노이라츠메로
-    IF TALENT:158 || TALENT:170 || TALENT:171 || TALENT:172 || TALENT:173 || TALENT:174 || TALENT:175 || TALENT:176 || TALENT:177 || TALENT:178
+    IF TALENT:광기 || TALENT:음란 || TALENT:음핵／음경 || TALENT:음호 || TALENT:음고 || TALENT:음유 || TALENT:요도광 || TALENT:키스마 || TALENT:초S || TALENT:초M
         CALL EX_CHARA82_2
     ELSE
   ;그외에는 그냥 인간 요시카

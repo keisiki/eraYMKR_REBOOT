@@ -39,14 +39,14 @@ RETURNF 1
 ;-------------------------------------------------
 @GET_DAILY_LIFE_FAIRY(ARG)
 #FUNCTION
-RETURNF NO:ARG == 4 || NO:ARG == 5 || NO:ARG == 15 || NO:ARG == 45 || NO:ARG == 46 || NO:ARG == 47 || NO:ARG == 56 || TALENT:ARG:200
+RETURNF NO:ARG == 4 || NO:ARG == 5 || NO:ARG == 15 || NO:ARG == 45 || NO:ARG == 46 || NO:ARG == 47 || NO:ARG == 56 || TALENT:ARG:요정
 
 ;-------------------------------------------------
 ;마법사인가 아닌가
 ;-------------------------------------------------
 @GET_DAILY_LIFE_MAGICIAN(ARG)
 #FUNCTION
-RETURNF NO:ARG == 2 || NO:ARG == 8 || NO:ARG == 14 || NO:ARG == 51 || NO:ARG == 59 || NO:ARG == 60 || NO:ARG == 66 || NO:ARG == 77 || NO:ARG == 103 || NO:ARG == 116 || NO:ARG == 117 || NO:ARG == 213 || TALENT:ARG:197
+RETURNF NO:ARG == 2 || NO:ARG == 8 || NO:ARG == 14 || NO:ARG == 51 || NO:ARG == 59 || NO:ARG == 60 || NO:ARG == 66 || NO:ARG == 77 || NO:ARG == 103 || NO:ARG == 116 || NO:ARG == 117 || NO:ARG == 213 || TALENT:ARG:마술기능
 
 ;-------------------------------------------------
 ;책을 읽을 것 같은 사람
@@ -60,7 +60,7 @@ RETURNF TALENT:ARG:얌전함 || TALENT:ARG:조합지식 || NO:ARG == 7 || NO:ARG
 ;-------------------------------------------------
 @GET_DAILY_LIFE_CAMERA(ARG)
 #FUNCTION
-RETURNF NO:ARG == 32 || NO:ARG == 40 || NO:ARG == 42 || NO:ARG == 49 || NO:ARG == 50 || NO:ARG == 79 || TALENT:ARG:195 || TALENT:ARG:196 || TALENT:ARG:189
+RETURNF NO:ARG == 32 || NO:ARG == 40 || NO:ARG == 42 || NO:ARG == 49 || NO:ARG == 50 || NO:ARG == 79 || TALENT:ARG:공작명인 || TALENT:ARG:보도자 || TALENT:ARG:가전제품지식
 
 ;-------------------------------------------------
 ;본직 메이드인가 아닌가
@@ -114,7 +114,7 @@ RETURNF NO:ARG == 27 || NO:ARG == 28 || NO:ARG == 55 || NO:ARG == 170 || NO:ARG 
 ;레이무, 사나에
 IF NO:ARG == 1 || NO:ARG == 42
     RETURNF 1
-ELSEIF NO:ARG == 149 && (CFLAG:ARG:3100 == 1 || CFLAG:ARG:3103 == 1 || CFLAG:ARG:3100 == 42 || CFLAG:ARG:3103 == 42 || TALENT:ARG:218 || TALENT:ARG:219)
+ELSEIF NO:ARG == 149 && (CFLAG:ARG:3100 == 1 || CFLAG:ARG:3103 == 1 || CFLAG:ARG:3100 == 42 || CFLAG:ARG:3103 == 42 || TALENT:ARG:하쿠레이의무녀 || TALENT:ARG:카제하후리)
     RETURNF 2
 ELSE
     RETURNF 0
@@ -168,10 +168,10 @@ RETURNF 0
 @GET_DAILY_LIFE_DRINK_RATE(ARG, ARG:1)
 #FUNCTION
 ;오니거나 황혼의 괴물
-IF TALENT:ARG:214 || TALENT:ARG:221
+IF TALENT:ARG:오니 || TALENT:ARG:황혼의괴물
     RETURNF ARG:1 / 4
 ;인형이거나 캇파
-ELSEIF TALENT:ARG:208 || TALENT:ARG:210
+ELSEIF TALENT:ARG:인형 || TALENT:ARG:캇파
     RETURNF ARG:1 * 3 / 4
 ELSE
     RETURNF ARG:1
@@ -328,16 +328,16 @@ SIF !ABLE_DAILY_LIFE(ARG)
 SIF GET_DAILY_LIFE_VIT(ARG)
     RETURNF 0
 ;昼間の場合は吸血鬼持ちは特注日傘がないとダメ
-SIF TIME == 0 && TALENT:ARG:205 && ITEM:48 == 0 && NOITEM == 0
+SIF TIME == 0 && TALENT:ARG:흡혈귀 && ITEM:48 == 0 && NOITEM == 0
     RETURNF 0
 ;反発刻印か恐怖刻印持ちもダメ
 SIF MARK:ARG:공포각인 || MARK:ARG:반발각인
     RETURNF 0
 ;相愛、親愛はOK
-SIF TALENT:ARG:153 || TALENT:ARG:152
+SIF TALENT:ARG:상애 || TALENT:ARG:친애
     RETURNF 1
 ;恋慕は条件付きでOK(従順が５以上で好感度が7500以上か、主人が謎の魅力持ちで好感度が3000以上である)
-SIF TALENT:ARG:150 && ABL:ARG:순종 >= 5 && ((TALENT:MASTER:수수께끼의매력 && CFLAG:ARG:2 >= 3000) || CFLAG:ARG:2 >= 7500)
+SIF TALENT:ARG:연모 && ABL:ARG:순종 >= 5 && ((TALENT:MASTER:수수께끼의매력 && CFLAG:ARG:2 >= 3000) || CFLAG:ARG:2 >= 7500)
     RETURNF 1
 ;여기까지 와버렸으면 불가
 RETURNF 0
@@ -364,15 +364,15 @@ RETURNF NO:ARG == 71 || NO:ARG == 73 || NO:ARG == 75 || NO:ARG == 76 || NO:ARG =
 ;尚、種族に関しては今回試作と言う事もあり、明らかに駄目だろうと感じたものだけ弾きました(既に不死状態、死者、生物じゃない等……一応、機械も様子見です)
 
 ;条件1:MASTERが禁断の知識と調合知識を所持、技巧Lv5以上、機械・霊体・人形・蓬莱人・呪精・神霊・死神・不死刻印の全てが無い、10回以上クリア
-SIF !(TALENT:MASTER:금단의지식 && TALENT:MASTER:조합지식 && ABL:MASTER:기교 >= 5 && !(MARK:MASTER:불사각인 > 0 || TALENT:MASTER:주정 || TALENT:MASTER:봉래인 || TALENT:MASTER:206 || TALENT:MASTER:207 || TALENT:MASTER:208 || TALENT:MASTER:222 || TALENT:MASTER:224) && FLAG:주회수 >= 10)
+SIF !(TALENT:MASTER:금단의지식 && TALENT:MASTER:조합지식 && ABL:MASTER:기교 >= 5 && !(MARK:MASTER:불사각인 > 0 || TALENT:MASTER:주정 || TALENT:MASTER:봉래인 || TALENT:MASTER:기계 || TALENT:MASTER:영체 || TALENT:MASTER:인형 || TALENT:MASTER:신령 || TALENT:MASTER:사신) && FLAG:주회수 >= 10)
     RETURN 0
 
 ;条件2:永琳が相愛である、好感度10万以上、愛情経験15000以上、恐怖・反発刻印無し(前段階で弾き済み)、MASTERとの相性が500以上、種族改造されていない、引き継ぎキャラである事、前述の要件全てを満たしている
-SIF !(TALENT:ARG:153 && CFLAG:ARG:2 >= 100000 && EXP:ARG:애정경험 >= 15000 && RELATION:ARG:(NO:MASTER) >= 500 && !CFLAG:ARG:29 && CFLAG:ARG:18)
+SIF !(TALENT:ARG:상애 && CFLAG:ARG:2 >= 100000 && EXP:ARG:애정경험 >= 15000 && RELATION:ARG:(NO:MASTER) >= 500 && !CFLAG:ARG:29 && CFLAG:ARG:18)
     RETURN 0
 
 ;条件3:輝夜が親愛又は相愛である、好感度5万以上、愛情経験10000以上、恐怖・反発刻印無し、MASTERとの相性が200以上、種族改造されていない、前述の要件全てを満たしている
-SIF !((TALENT:(ARG:1):152 || TALENT:(ARG:1):153) && CFLAG:(ARG:1):2 >= 50000 && EXP:(ARG:1):애정경험 >= 10000 && MARK:(ARG:1):공포각인 < 1 && MARK:(ARG:1):반발각인 < 1 && RELATION:(ARG:1):(NO:MASTER) >= 200 && !CFLAG:(ARG:1):29)
+SIF !((TALENT:(ARG:1):친애 || TALENT:(ARG:1):상애) && CFLAG:(ARG:1):2 >= 50000 && EXP:(ARG:1):애정경험 >= 10000 && MARK:(ARG:1):공포각인 < 1 && MARK:(ARG:1):반발각인 < 1 && RELATION:(ARG:1):(NO:MASTER) >= 200 && !CFLAG:(ARG:1):29)
     RETURN 0
 
 ;蓬莱人になる為のイベントを発生可能とする
@@ -390,15 +390,15 @@ SIF !(TALENT:MASTER:금단의지식 && TALENT:MASTER:조합지식 && ABL:MASTER:
     RETURN 0
 
 ;条件2:永琳が親愛又は相愛である、好感度10万以上、愛情経験15000以上、恐怖・反発刻印無し、MASTERとの相性が500以上、対象との相性が110以上、種族改造されていない、前述の要件全てを満たしている
-SIF !((TALENT:(ARG:1):152 || TALENT:(ARG:1):153) && CFLAG:(ARG:1):2 >= 100000 && EXP:(ARG:1):애정경험 >= 15000 && MARK:(ARG:1):공포각인 < 1 && MARK:(ARG:1):반발각인 < 1 && RELATION:(ARG:1):(NO:MASTER) >= 500 && RELATION:(ARG:1):(NO:ARG) >= 110 && !CFLAG:(ARG:1):29)
+SIF !((TALENT:(ARG:1):친애 || TALENT:(ARG:1):상애) && CFLAG:(ARG:1):2 >= 100000 && EXP:(ARG:1):애정경험 >= 15000 && MARK:(ARG:1):공포각인 < 1 && MARK:(ARG:1):반발각인 < 1 && RELATION:(ARG:1):(NO:MASTER) >= 500 && RELATION:(ARG:1):(NO:ARG) >= 110 && !CFLAG:(ARG:1):29)
     RETURN 0
 
 ;条件3:輝夜が親愛又は相愛である、好感度10万以上、愛情経験15000以上、恐怖・反発刻印無し、MASTERとの相性が500以上、対象との相性が110以上、種族改造されていない、前述の要件全てを満たしている
-SIF !((TALENT:(ARG:2):152 || TALENT:(ARG:2):153) && CFLAG:(ARG:2):2 >= 100000 && EXP:(ARG:2):애정경험 >= 15000 && MARK:(ARG:2):공포각인 < 1 && MARK:(ARG:2):반발각인 < 1 && RELATION:(ARG:2):(NO:MASTER) >= 500 && RELATION:(ARG:2):(NO:ARG) >= 110 && !CFLAG:(ARG:2):29)
+SIF !((TALENT:(ARG:2):친애 || TALENT:(ARG:2):상애) && CFLAG:(ARG:2):2 >= 100000 && EXP:(ARG:2):애정경험 >= 15000 && MARK:(ARG:2):공포각인 < 1 && MARK:(ARG:2):반발각인 < 1 && RELATION:(ARG:2):(NO:MASTER) >= 500 && RELATION:(ARG:2):(NO:ARG) >= 110 && !CFLAG:(ARG:2):29)
     RETURN 0
 
 ;条件4:対象が相愛である、好感度10万以上、愛情経験20000以上、恐怖・反発刻印無し、MASTERとの相性が500以上、引き継ぎキャラである事、種族改造されていない、前述の要件全てを満たしている
-SIF !(TALENT:ARG:153 && CFLAG:ARG:2 >= 100000 && EXP:ARG:애정경험 >= 20000 && MARK:ARG:공포각인 < 1 && MARK:ARG:반발각인 < 1 && RELATION:ARG:(NO:MASTER) >= 500 && !CFLAG:ARG:29 && CFLAG:ARG:18)
+SIF !(TALENT:ARG:상애 && CFLAG:ARG:2 >= 100000 && EXP:ARG:애정경험 >= 20000 && MARK:ARG:공포각인 < 1 && MARK:ARG:반발각인 < 1 && RELATION:ARG:(NO:MASTER) >= 500 && !CFLAG:ARG:29 && CFLAG:ARG:18)
     RETURN 0
 
 ;購入可能な奴隷の人数の算出 ※前述の売却不能フラグに関連して、
@@ -406,7 +406,7 @@ SIF !(TALENT:ARG:153 && CFLAG:ARG:2 >= 100000 && EXP:ARG:애정경험 >= 20000 &
 LOCAL:5 = CALC_SLAVE_CAPACITY()
 
 ;条件5:ARGが蓬莱人・呪精・不死刻印・機械・霊体・人形・神霊・死神を持っていない事、永琳・輝夜との相性が110以上、キャラ購入が可能である事
-SIF TALENT:ARG:봉래인 || TALENT:ARG:주정 || MARK:ARG:불사각인 > 0 || TALENT:ARG:206 || TALENT:ARG:207 || TALENT:ARG:208 || TALENT:ARG:222 || TALENT:ARG:224 || RELATION:ARG:(NO:(ARG:1)) < 110 || RELATION:ARG:(NO:(ARG:2)) < 110 || CHARANUM >= LOCAL:5
+SIF TALENT:ARG:봉래인 || TALENT:ARG:주정 || MARK:ARG:불사각인 > 0 || TALENT:ARG:기계 || TALENT:ARG:영체 || TALENT:ARG:인형 || TALENT:ARG:신령 || TALENT:ARG:사신 || RELATION:ARG:(NO:(ARG:1)) < 110 || RELATION:ARG:(NO:(ARG:2)) < 110 || CHARANUM >= LOCAL:5
     RETURN 0
 
 ;색시를 봉래인으로 만드는 이벤트를 발생 가능하게 한다

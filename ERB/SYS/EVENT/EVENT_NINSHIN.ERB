@@ -126,11 +126,11 @@ SIF RAND:(RATE_PREGNANCY(LOCAL, ARG, ARG:1)) == 0 || FLAG:무조건임신
 LOCAL = 6 - ARG + MAX(2 - ARG, 0) + (ARG:2 > 1) * MIN(ARG, 2)
 ;소질보정
 LOCAL += TALENT:(ARG:1):유아 * 5 ;소질[유아]
-LOCAL += (TALENT:(ARG:1):소인 + TALENT:(ARG:1):작은체형 + TALENT:(ARG:1):216) * 2 ;소질 [소인] [작은체형] [구문지]
+LOCAL += (TALENT:(ARG:1):소인 + TALENT:(ARG:1):작은체형 + TALENT:(ARG:1):구문지) * 2 ;소질 [소인] [작은체형] [구문지]
 ;소질 [기계] [영체] [인형] [폭발물] [신령] [반신]
-LOCAL += TALENT:(ARG:1):206 + TALENT:(ARG:1):207 + TALENT:(ARG:1):208 + TALENT:(ARG:1):220 + TALENT:(ARG:1):222 + TALENT:(ARG:1):223
+LOCAL += TALENT:(ARG:1):기계 + TALENT:(ARG:1):영체 + TALENT:(ARG:1):인형 + TALENT:(ARG:1):폭발물 + TALENT:(ARG:1):신령 + TALENT:(ARG:1):반신
 ;[요정]만 특수처리 (정자 주인이 요정지식이 없으면 +1)
-SIF TALENT:(ARG:1):200 && ((ARG:2 == 1 && !TALENT:MASTER:요정지식) || (ARG:2 == 2 && !TALENT:ASSI:요정지식) || (ARG:2 == 3 && !TALENT:57))
+SIF TALENT:(ARG:1):요정 && ((ARG:2 == 1 && !TALENT:MASTER:요정지식) || (ARG:2 == 2 && !TALENT:ASSI:요정지식) || (ARG:2 == 3 && !TALENT:57))
     LOCAL++
     
 ;딸조교패치(토리코모드)가 켜져있다면, 결과치는 3배로 뻥튀기 된다. (임신률이 3배 증가함)
@@ -289,7 +289,7 @@ IF ARG == MASTER
 ;친부가 주인이라면 연모, 낙인, 예속, 괴조인격
 ;친부가 조수라면 조수와 노예 사이의 충분한 조교경험
 ;친부가 노예라면 노예와 조수 사이의 충분한 조교경험
-ELSEIF ((TALENT:ARG:150 || TALENT:ARG:161 || TALENT:ARG:162 || TALENT:ARG:169) && CFLAG:ARG:70 == 1) || (CFLAG:ARG:70 == 2 && CFLAG:ARG:(LOCAL:1) >= 1000) || (CFLAG:ARG:70 == 3 && CFLAG:ARG:(LOCAL:1) >= 1000)
+ELSEIF ((TALENT:ARG:연모 || TALENT:ARG:낙인 || TALENT:ARG:예속 || TALENT:ARG:괴조인격) && CFLAG:ARG:70 == 1) || (CFLAG:ARG:70 == 2 && CFLAG:ARG:(LOCAL:1) >= 1000) || (CFLAG:ARG:70 == 3 && CFLAG:ARG:(LOCAL:1) >= 1000)
     PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 곤혹스러워하면서도 %CALLNAME:LOCAL%의 아이를 밴 기쁨에 표정이 환했다.
     PRINTL 
 
@@ -551,7 +551,7 @@ ELSEIF CFLAG:ARG:76 == 1
     ENDIF
     
 ;レアバッドかバッドで임신後にグッドの条件を満たせず、[無関心]、[感情乏しい]がついている場合
-ELSEIF CFLAG:ARG:76 == 3 || (((CFLAG:ARG:78 == NO:MASTER && TALENT:ARG:150 == 0) || (CFLAG:ARG:78 != NO:MASTER && CFLAG:ARG:(LOCAL:1) < 1000)) && TALENT:ARG:무관심 && TALENT:ARG:감정결여)
+ELSEIF CFLAG:ARG:76 == 3 || (((CFLAG:ARG:78 == NO:MASTER && TALENT:ARG:연모 == 0) || (CFLAG:ARG:78 != NO:MASTER && CFLAG:ARG:(LOCAL:1) < 1000)) && TALENT:ARG:무관심 && TALENT:ARG:감정결여)
     IF CFLAG:ARG:76 == 3
         PRINTFORM 그러나 %조사처리(CALLNAME:ARG,"는")% 태어난 아기의 양육을 거부했다…….
     ELSE
@@ -691,7 +691,7 @@ PRINTW
 ;아직 출산 전인 경우
 IF TALENT:RESULT:임신
     ;굿 임신으로 부친이 MASTER며 친애거나 상애 보유
-    IF CFLAG:RESULT:76 == 1 && CFLAG:RESULT:78 == NO:MASTER && (TALENT:RESULT:152 || TALENT:RESULT:153)
+    IF CFLAG:RESULT:76 == 1 && CFLAG:RESULT:78 == NO:MASTER && (TALENT:RESULT:친애 || TALENT:RESULT:상애)
         PRINTFORMW %조사처리(CALLNAME:RESULT,"는")% %CALLNAME:MASTER%의 얼굴을 보자, 한 점 흐린 데도 없이 함빡 웃어보였다.
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 이제 곧 출산을 맞이할 %조사처리(CALLNAME:RESULT,"를")% 진심으로 다독였다.
     ;굿 임신으로 부친이 MASTER
@@ -703,7 +703,7 @@ IF TALENT:RESULT:임신
         PRINTFORMW %조사처리(CALLNAME:RESULT,"는")% %CALLNAME:MASTER%의 얼굴을 보자, 조금 당혹한 표정이 되었다.
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 이제 곧 출산을 맞이할 %CALLNAME:RESULT%의 배를 자상하게 어루만져주었다.
     ;레어 배드 임신 or 거절 소유
-    ELSEIF CFLAG:RESULT:76 == 3 || TALENT:RESULT:830
+    ELSEIF CFLAG:RESULT:76 == 3 || TALENT:RESULT:거절
         PRINTFORMW %조사처리(CALLNAME:RESULT,"는")% %CALLNAME:MASTER%의 얼굴을 보자, 격심한 분노의 표정을 지었다.
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 서슬 퍼런 그 분위기에 달아날 도리밖에 없었다…….
     ;그 외
@@ -714,7 +714,7 @@ IF TALENT:RESULT:임신
 ;아직 부화 전인 경우
 ELSEIF TALENT:RESULT:포란중
     ;상애나 친애 소유
-    IF TALENT:RESULT:152 || TALENT:RESULT:153
+    IF TALENT:RESULT:친애 || TALENT:RESULT:상애
         PRINTFORMW %조사처리(CALLNAME:RESULT,"는")% %조사처리(CALLNAME:MASTER,"과")%의 사랑의 결정인 알을 열심히 품고 있었다.
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 이제 곧 부화를 맞이할 알을 %조사처리(CALLNAME:RESULT,"과")% 함께 지켜보았다.
     ;그 외
@@ -754,7 +754,7 @@ ELSEIF LOCAL == 3 && CFLAG:RESULT:78 == NO:MASTER
         PRINTFORMW 잠자는 아기의 귀여운 얼굴을 엿보며 행복한 한때를 보내기로 했다.
     ENDIF
 ;[연모]로 부친 MASTER 이외
-ELSEIF TALENT:RESULT:150
+ELSEIF TALENT:RESULT:연모
     PRINTFORM %조사처리(CALLNAME:MASTER,"가")% 방에 들어오자, 
     PRINTFORMW %조사처리(CALLNAME:RESULT,"는")% 조금 어쩔 줄 몰라하면서도 이를 맞이했다.
     PRINTW 그 뒤로 아이의 모습을 바라보며 오랜만에 둘의 대화를 즐겼다.
@@ -1006,10 +1006,10 @@ IF CFLAG:70 == 1
 ENDIF
 
 ;異常경험5以下かつ妄信、親愛、相愛、服従、烙印、隷属、傀儡、精神崩壊なしだと狂気が付く
-IF EXP:이상경험 < 6 && TALENT:151 == 0 && TALENT:152 == 0 && TALENT:153 == 0 && TALENT:158 == 0 && TALENT:160 == 0 && TALENT:161 == 0 && TALENT:162 == 0 && TALENT:168 == 0 && TALENT:169 == 0
+IF EXP:이상경험 < 6 && TALENT:망신 == 0 && TALENT:친애 == 0 && TALENT:상애 == 0 && TALENT:광기 == 0 && TALENT:복종 == 0 && TALENT:낙인 == 0 && TALENT:예속 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0
     ;ただし、卵生で恋慕ありなら回避する
-    IF TALENT:135 == 0 && TALENT:150 == 0
-        TALENT:158 = 1
+    IF TALENT:135 == 0 && TALENT:연모 == 0
+        TALENT:광기 = 1
         CFLAG:12 |= 1
         CFLAG:17 |= 2
         ;산란으로 발광하는 이벤트 대사
@@ -1026,7 +1026,7 @@ IF FLAG:SHOP이벤트확장 & 8
     PRINTLC [0] 전시실에 전시한다.
     PRINTLC [1] 내다 판다.
     ;[恋慕]이상もしくは[壊造人格]かつ、[狂気]を持っていない、[抱卵中]でない、임신判定がONの場合（不具合修正）
-    SIF (TALENT:150 || TALENT:169) && TALENT:158 == 0 && TALENT:143 == 0 && CFLAG:70 == 1
+    SIF (TALENT:연모 || TALENT:괴조인격) && TALENT:광기 == 0 && TALENT:143 == 0 && CFLAG:70 == 1
         PRINTFORMLC [2] %CALLNAME:TARGET%더러 키우게 한다.
     PRINTL 
     $INPUT_LOOP
@@ -1037,7 +1037,7 @@ IF FLAG:SHOP이벤트확장 & 8
         ;産卵促進剤なしでの産卵のフラグを立てる
         SIF TFLAG:128 == 0
             TFLAG:128 = -1
-    ELSEIF RESULT == 2 && (TALENT:150 || TALENT:169) && TALENT:143 == 0 && TALENT:158 == 0 && CFLAG:70 == 1
+    ELSEIF RESULT == 2 && (TALENT:연모 || TALENT:괴조인격) && TALENT:143 == 0 && TALENT:광기 == 0 && CFLAG:70 == 1
         PRINTL 
         PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 유정란 중 하나를 %CALLNAME:TARGET%더러 키우라고 시켰다.
         PRINTW  
@@ -1184,11 +1184,11 @@ PRINTFORM %조사처리(CALLNAME:LOCAL,"는")%
 ;아직 출산 전인 경우
 IF TALENT:MASTER:임신
     ;부친이 친애거나 상애 보유
-    IF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && (TALENT:LOCAL:152 || TALENT:LOCAL:153)
+    IF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && (TALENT:LOCAL:친애 || TALENT:LOCAL:상애)
         PRINTFORMW %조사처리(CALLNAME:MASTER,"의")% 배를 보며 행복한 표정을 짓고 있다.
         PRINTFORMW 둘 사이에 생긴 사랑의 결실이 빨리 태어나길 기대하는 것 같다.
     ;부친이 함락됨 (연모, 복종, 음란)
-    ELSEIF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && (TALENT:LOCAL:150 || TALENT:LOCAL:160 || TALENT:LOCAL:170)
+    ELSEIF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && (TALENT:LOCAL:연모 || TALENT:LOCAL:복종 || TALENT:LOCAL:음란)
         PRINTFORMW %조사처리(CALLNAME:MASTER,"의")% 배를 보며 긴장한 표정을 짓고 있다.
         PRINTFORMW 아빠가 된다는 사실에 부담을 느끼는 것 같다.
         PRINTFORMW %조사처리(CALLNAME:MASTER,"을")% 돕기 위해 요즘 육아 서적을 많이 읽고 있다고 한다.
@@ -1197,7 +1197,7 @@ IF TALENT:MASTER:임신
         PRINTFORMW %조사처리(CALLNAME:MASTER,"의")% 배를 보며 복잡한 표정을 짓고 있다.
         PRINTFORMW 원하지도 않은 아이의 아빠가 된다는 사실에 복잡한 감정을 느끼는 것 같다.
     ;부친이 아님. 연모
-    ELSEIF TALENT:LOCAL:150
+    ELSEIF TALENT:LOCAL:연모
         PRINTFORMW %조사처리(CALLNAME:MASTER,"의")% 배를 보며 미묘한 표정을 짓고 있다.
         IF EXIST_PENIS(LOCAL)
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 자신의 아이를 가져주길 원했던 것 같다.
@@ -1244,7 +1244,7 @@ ELSEIF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && LOCAL:1 == 3
         PRINTFORMW 잠자는 아이의 귀여운 얼굴을 엿보며 행복한 한때를 보내기로 했다.
     ENDIF
 ;[연모]인 부친 아님
-ELSEIF TALENT:LOCAL:150
+ELSEIF TALENT:LOCAL:연모
     IF TIME == 0 ;낮
         PRINTFORMW 아이와 놀아주기로 했다.
         PRINTFORMW %조사처리(CALLNAME:LOCAL,"는")% 아이와 놀아주면서도 약간의 아쉬움을 느끼는 듯하다.

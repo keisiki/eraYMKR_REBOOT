@@ -26,7 +26,7 @@ SIF TALENT:고양이혀 && (ABL:기교 < 4 || ABL:봉사정신 < 4 || ABL:순종
     RETURN 0
 ;순종 4 미만·레즈끼(BL끼) 4 미만의 ASSI의 경우, 조교 대상이 동성이라면 실행할 수 없다(망신이나 복종이라면 OK)
 IF ASSIPLAY
-    SIF (ABL:ASSI:순종 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:120 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:120 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
     RETURN 0
 ENDIF
 ;수면중은 불가
@@ -39,7 +39,7 @@ SIF TFLAG:899 > 0
 SIF TEQUIP:42
     RETURN 0
 ;승마 중에는 불가
-SIF TEQUIP:43 && TALENT:230 == 0
+SIF TEQUIP:43 && TALENT:목분리 == 0
     RETURN 0
 ;조수가 훈도시 착용중의 경우는 안 됨
 SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:59 == 17
@@ -202,7 +202,7 @@ IF TALENT:80
 ENDIF
 
 ;TALENT:연모/망신/친애를 본다
-IF (TALENT:150 || TALENT:151 || TALENT:152) && ASSIPLAY == 0
+IF (TALENT:연모 || TALENT:망신 || TALENT:친애) && ASSIPLAY == 0
     TIMES SOURCE:11 , 2.50
     TIMES SOURCE:22 , 1.20
 ENDIF
@@ -320,7 +320,7 @@ SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
 
 PRINTL
 ;연모か망신か친애で主人調教のとき
-IF (TALENT:150 || TALENT:151 || TALENT:152) && ASSIPLAY == 0
+IF (TALENT:연모 || TALENT:망신 || TALENT:친애) && ASSIPLAY == 0
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 불알을 핥게 하기 위해 페니스를 가까이 가져가자
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 조심스럽게 %CALLNAME:PLAYER%의 불알을 핥기 시작했다.
 ;헌신적인 경우
@@ -332,7 +332,7 @@ ELSEIF TALENT:80
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 불알을 핥게 하기 위해 페니스를 가까이 가져가자
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 더러운 곳을 빠는 자신에게 도취된 것 같다.
 ;반발각인持ちで연모がない場合
-ELSEIF MARK:반발각인 && TALENT:150 == 0
+ELSEIF MARK:반발각인 && TALENT:연모 == 0
     PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% 싫어서 버둥대는 %CALLNAME:TARGET%에게 불알을 핥게 했다.
 ;그 외의 경우
 ELSE
@@ -444,7 +444,7 @@ IF TALENT:PLAYER:새드
     RESULTS = %RESULTS% %조사처리(CALLNAME:PLAYER,"가")% %TALENTNAME:81%({LOCAL:99})
 ENDIF
 ;연모
-IF TALENT:150 && ASSIPLAY == 0
+IF TALENT:연모 && ASSIPLAY == 0
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5

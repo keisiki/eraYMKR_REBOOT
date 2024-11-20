@@ -19,14 +19,14 @@ SIF FLAG:VA이상조교필터 & 4 && (CFLAG:23 & 1) == 0
     RETURN 0
 ;순종5미만의 ASSI일 경우, 実行できない(새드거나 새드끼Lv3이상か狂気, 또는 망신이나 복종이 있다면 ＯＫ)
 IF ASSIPLAY
-    SIF ABL:ASSI:순종 < 5 && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:158 == 0 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF ABL:ASSI:순종 < 5 && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:광기 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;해제는 언제든 가능
 SIF TEQUIP:55 == 1
     RETURN 1
 ;기계면 불가
-SIF TALENT:206
+SIF TALENT:기계
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -205,14 +205,14 @@ TIMES SOURCE:22 , 1.80
 
 ;무엇이 나올까? (랜덤으로 이벤트가 발생하는 것도 있는 곳인? (이)라고 생각해 만들어 보았다)
 ;기본 리굴, 야마메 이외로[감정 부족한],[광기],[정신 붕괴],[괴뢰],[괴조인격]을 가지고 있지 않은 캐릭터의 공포가 일정 이상 모였을 경우저확률로 발동
-IF TALENT:감정결여 == 0 && TALENT:158 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0 && NO:TARGET != 24 && NO:TARGET != 58 && PALAM:17 > PALAMLV:4
+IF TALENT:감정결여 == 0 && TALENT:광기 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0 && NO:TARGET != 24 && NO:TARGET != 58 && PALAM:17 > PALAMLV:4
     IF RAND:25 == 0
         LOCAL:4 = RAND:10
         IF LOCAL:4 == 0
             PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 지나친 공포에 이성의 끈이 끊어져 버렸다….
             CALL SELF_KOJO, TARGET, 6, 0
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 발광했다.
-            TALENT:158 = 1
+            TALENT:광기 = 1
             CFLAG:12 |= 1
             CFLAG:17 |= 2
         ELSEIF (LOCAL:4 == 1 || LOCAL:4 == 2) && MARK:반발각인 > 2
@@ -227,10 +227,10 @@ IF TALENT:감정결여 == 0 && TALENT:158 == 0 && TALENT:167 == 0 && TALENT:168 
             BASE:기력 = 0
         ELSEIF LOCAL:4 >= 6 && TALENT:겁쟁이 == 0 && BASE:0 >= 500
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 지나친 공포로 벌레목욕탕에 트라우마를 가지게 된 것 같다….
-            IF TALENT:159 == 0 && LOCAL:4 == 9
+            IF TALENT:유아퇴행 == 0 && LOCAL:4 == 9
                 CALL SELF_KOJO, TARGET, 6, 3
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [유아 퇴행]해 버렸다.
-                TALENT:159 = 1
+                TALENT:유아퇴행 = 1
                 CFLAG:12 |= 2
                 CFLAG:17 |= 1
             ELSE
@@ -239,11 +239,11 @@ IF TALENT:감정결여 == 0 && TALENT:158 == 0 && TALENT:167 == 0 && TALENT:168 
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [겁쟁이]가 되었다. 
             TALENT:겁쟁이 = 1
             CFLAG:12 |= 4
-        ELSEIF LOCAL:4 >= 8 && TALENT:겁쟁이 && TALENT:159 == 0 && BASE:0 >= 500
+        ELSEIF LOCAL:4 >= 8 && TALENT:겁쟁이 && TALENT:유아퇴행 == 0 && BASE:0 >= 500
             PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 지나친 공포로 벌레목욕탕에 트라우마를 가지게 된 것 같다…. 
             CALL SELF_KOJO, TARGET, 6, 3
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [유아 퇴행]해 버렸다. 
-            TALENT:159 = 1
+            TALENT:유아퇴행 = 1
             CFLAG:12 |= 2
             CFLAG:17 |= 1
         ENDIF

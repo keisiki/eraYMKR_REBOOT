@@ -106,7 +106,7 @@ ELSE
     PRINTL
 
     IF TARGET >= 0
-        PRINTFORM %CALLNAME:TARGET%(\@(ASSI < 0 && (TALENT:153 || TALENT:152)) ? 열애 # 조교\@중)　
+        PRINTFORM %CALLNAME:TARGET%(\@(ASSI < 0 && (TALENT:상애 || TALENT:친애)) ? 열애 # 조교\@중)　
 
         ;취기 표시
 
@@ -199,7 +199,7 @@ ELSE
         PRINTL
     ENDIF
     ;SIF ASSI >= 0
-    ;    PRINTFORM (조수\@(TALENT:ASSI:157) ? 열애중 #\@:%CALLNAME:ASSI%)　
+    ;    PRINTFORM (조수\@(TALENT:ASSI:질투) ? 열애중 #\@:%CALLNAME:ASSI%)　
     DRAWLINE
     PRINTFORM 소지금:
         SIF FLAG:5001
@@ -261,7 +261,7 @@ ELSE
                     LOCAL:3 |= 2
             ENDIF
             ;매각 또는 해방 가능한 캐릭터 수 확인
-            SIF ((FLAG:SHOP이벤트확장 & 32 && (CFLAG:COUNT:20 & 16) == 0) || (CFLAG:COUNT:1 >= 1 && CFLAG:COUNT:3 == 0 && TALENT:COUNT:161 == 0 && TALENT:COUNT:169 == 0)) && TALENT:COUNT:164 == 0
+            SIF ((FLAG:SHOP이벤트확장 & 32 && (CFLAG:COUNT:20 & 16) == 0) || (CFLAG:COUNT:1 >= 1 && CFLAG:COUNT:3 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:괴조인격 == 0)) && TALENT:COUNT:사역마 == 0
                 LOCAL:1 += 1
             ;TIME에 맞는 조교 캐릭터가 있는가(주인공과 노예는 배제)
             SIF COUNT != TARGET
@@ -269,14 +269,14 @@ ELSE
             ;요정 목욕의 조건. 한 글자 변수는 요정(FAIRY)의 떡밥
             IF FLAG:커맨드확장 & 1024 && FLAG:욕탕개조 & 8192
                 ;남자, 임신, 포란, 회란이 없는 요정 캐릭터를 본다
-                SIF TALENT:COUNT:남자 == 0 && TALENT:COUNT:임신 == 0 && TALENT:COUNT:포란중 == 0 && TALENT:COUNT:회란 == 0 && TALENT:COUNT:200
+                SIF TALENT:COUNT:남자 == 0 && TALENT:COUNT:임신 == 0 && TALENT:COUNT:포란중 == 0 && TALENT:COUNT:회란 == 0 && TALENT:COUNT:요정
                     LOCAL:9 += 1
             ENDIF
             ;사역마로 만들 수 있는 캐릭터가 있는지 판정
             ;주인이 [금단의 지식] 보유 전제
             IF TALENT:MASTER:금단의지식
                 ;이미 사역마라면 확정, 그렇지 않다면 될 수 있는지 체크
-                IF TALENT:COUNT:164
+                IF TALENT:COUNT:사역마
                     LOCAL:4 |= 1
                 ELSE
                     ;[사역마] 조건을 충족하고 있는가?
@@ -309,7 +309,7 @@ ELSE
     ;조교 돌입 커맨드지만, 네이밍은 식중 함수에서 오려냈다.
     
 
-    SIF TARGET >= 0 && BASE:취기 <= MAXBASE:취기 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기 && CFLAG:MASTER:1501 == 0 && TALENT:MASTER:262 == 0
+    SIF TARGET >= 0 && BASE:취기 <= MAXBASE:취기 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기 && CFLAG:MASTER:1501 == 0 && TALENT:MASTER:매춘중독 == 0
         PRINTFORMLC [100] - %NAME_SHOPCOMMAND_100()%
     SIF CHARANUM > 0
         PRINTLC [101] - 능력 보기
@@ -357,13 +357,13 @@ ELSE
     IF TARGET >= 0 && FLAG:SHOP이벤트확장 & 16
         ;조교 대상의 순종 Lv이 2 이상일 경우
         SIF ABL:순종 >= 2
-            PRINTFORMLC [130] - \@(TALENT:150) ? 애정요리 # 요리를 시킨다\@
+            PRINTFORMLC [130] - \@(TALENT:연모) ? 애정요리 # 요리를 시킨다\@
         ;주인의 기교 Lv이 3 이상이고, 조교 대상이 조수 가능해졌을 경우
         SIF ABL:MASTER:기교 > 3 && CFLAG:1 == 2
             PRINTLC [131] - 자기가 요리한다
         ;마이크가 있거나 아이템 없음 모드이고, 연속 야외 라이브 플래그가 켜져 있지 않으며, 조교 대상의 노출벽 Lv이 3이상이고, 
         ;[연모]를 가지고 있거나 순종 Lv이 5 이상일 경우. 단, 밤이 아닐 경우에 조교 대상이 [흡혈귀] 보유자일 경우에는 특주 양산도 필요하게 된다
-        SIF (ITEM:52 || NOITEM) && TFLAG:154 == 0 && ABL:노출증 >= 3 && (TALENT:150 || ABL:순종 >= 5) && (TIME == 1 || TALENT:205 == 0 || (TALENT:205 && ITEM:48 ))
+        SIF (ITEM:52 || NOITEM) && TFLAG:154 == 0 && ABL:노출증 >= 3 && (TALENT:연모 || ABL:순종 >= 5) && (TIME == 1 || TALENT:흡혈귀 == 0 || (TALENT:흡혈귀 && ITEM:48 ))
             PRINTLC [132] - 야외 라이브 공연
     ENDIF
     ;주인이 [자웅가변]을 가지고 있을 경우
@@ -499,7 +499,7 @@ ELSE
             ENDIF
         ELSEIF CFLAG:MASTER:1501 != 0
             PRINTW 매춘과 조교를 동시에 할 수 없다.
-        ELSEIF TALENT:MASTER:262 != 0
+        ELSEIF TALENT:MASTER:매춘중독 != 0
             PRINTW 이런 일을 할 틈이 없을 것이다.
         ;주인이나 조교 대상이나 술에 떡이 되어 있을 경우(조수가 떡이 되어 있다면 Train 첫머리에서 조수만 이탈한다)
         ELSE
@@ -557,7 +557,7 @@ ELSE
     ELSEIF RESULT == 131 && TARGET >= 0 && ABL:MASTER:기교 > 3 && CFLAG:1 == 2 && FLAG:SHOP이벤트확장 & 16
         CALL LUNCH_SELF
         RETURN 1
-    ELSEIF RESULT == 132 && TARGET >= 0 && (ITEM:52 || NOITEM) && TFLAG:154 == 0 && ABL:노출증 >= 3 && (TALENT:150 || ABL:순종 >= 5)  && (TIME == 1 || TALENT:205 == 0 || (TALENT:205 && (ITEM:48 || NOITEM))) && FLAG:SHOP이벤트확장 & 16
+    ELSEIF RESULT == 132 && TARGET >= 0 && (ITEM:52 || NOITEM) && TFLAG:154 == 0 && ABL:노출증 >= 3 && (TALENT:연모 || ABL:순종 >= 5)  && (TIME == 1 || TALENT:흡혈귀 == 0 || (TALENT:흡혈귀 && (ITEM:48 || NOITEM))) && FLAG:SHOP이벤트확장 & 16
         CALL CONCERT_JUDGE
         RETURN 1
     ELSEIF RESULT == 140 && TALENT:MASTER:성별교체
@@ -711,7 +711,7 @@ REPEAT CHARANUM
     ;실종 중이라거나 이 자리에 없으면 제외
     SIF CFLAG:COUNT:4 && (CFLAG:COUNT:4 != 1024 || TIME == 1)
         CONTINUE
-    SIF CFLAG:COUNT:4 == 1024 && TALENT:COUNT:262
+    SIF CFLAG:COUNT:4 == 1024 && TALENT:COUNT:매춘중독
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
@@ -1103,22 +1103,22 @@ PRINTFORM \@(MONEY:100 - MONEY > 0) ? (목표금액까지 {MONEY:100 - MONEY}원
 #FUNCTIONS
 
 ;상애 보유
-IF TALENT:153
+IF TALENT:상애
     RETURNF "서로 사랑한다"
 ;괴조인격 보유
-ELSEIF TALENT:169
+ELSEIF TALENT:괴조인격
     RETURNF "조작한다"
 ;정신붕괴 or 괴뢰 보유
-ELSEIF TALENT:167 || TALENT:168
+ELSEIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURNF "귀여워한다"
 ;반발각인 3 이상에다 확률
 ELSEIF MARK:반발각인 >= 3 && RAND:3
     RETURNF "벌을 준다"
 ;복종 or 낙인 or 예속 or 반발각인 3 이상에다 확률
-ELSEIF (TALENT:160 || TALENT:161 || TALENT:162 || MARK:반발각인 >= 3) && RAND:3
+ELSEIF (TALENT:복종 || TALENT:낙인 || TALENT:예속 || MARK:반발각인 >= 3) && RAND:3
     RETURNF "훈육한다"
 ;음란 보유에다 확률
-ELSEIF TALENT:170 && RAND:3
+ELSEIF TALENT:음란 && RAND:3
     RETURNF "육욕을 채운다"
 ;그 외
 ELSE
@@ -1145,7 +1145,7 @@ REPEAT CHARANUM
     ;이 자리에 없을 때에는 쓸 수 없다
     SIF CFLAG:COUNT:4
         CONTINUE
-    IF TALENT:COUNT:164 == 0
+    IF TALENT:COUNT:사역마 == 0
         ;[사역마] 조건을 충족할 필요가 있음
         SIF !FAMILIAR_ABLE(COUNT)
             CONTINUE
@@ -1200,7 +1200,7 @@ RESTART
 @FAMILIAR_PLEDGE, ARG
 LOCAL = TARGET
 TARGET = ARG
-IF TALENT:164
+IF TALENT:사역마
     IF NO:MASTER == 21 || NO:MASTER == 22
         PRINTFORML %CALLNAME:TARGET%의 식을 파기합니다
         PRINTL 괜찮겠습니까?
@@ -1231,7 +1231,7 @@ IF RESULT == 1
 ELSEIF RESULT != 0
     GOTO INPUT_LOOP_2
 ENDIF
-IF TALENT:164
+IF TALENT:사역마
     IF NO:MASTER == 21 || NO:MASTER == 22
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:TARGET%에 삽입되어 있던 수식을 해제했다.
     ELSE
@@ -1244,7 +1244,7 @@ IF TALENT:164
     ELSE
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:164%]를 잃었다.
     ENDIF
-    TALENT:164 = 0
+    TALENT:사역마 = 0
     SIF CFLAG:15 & 8
         CFLAG:15 -= 8
 ELSE
@@ -1259,7 +1259,7 @@ ELSE
         PRINTW 더없는 기쁨으로 여기고 있는 것 같다…….
         PRINTL 
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [식]을 얻었다.
-        TALENT:164 = 1
+        TALENT:사역마 = 1
         CFLAG:15 |= 8
         PRINTFORMW ―――%조사처리(CALLNAME:TARGET,"는")% 식으로서 %CALLNAME:MASTER%의 지배하에 놓였습니다―――
         PRINTW ………………
@@ -1272,7 +1272,7 @@ ELSE
         PRINTW 실로 더없을 정도의 기쁨을 느끼고 있는 것 같다…….
         PRINTL 
         PRINTFORMW %조사처리(NAME:TARGET,"는")% [%TALENTNAME:164%]를 얻었다.
-        TALENT:164 = 1
+        TALENT:사역마 = 1
         CFLAG:15 |= 8
         PRINTFORMW ―――%조사처리(NAME:TARGET,"는")% 사역마로서 %NAME:MASTER%의 지배하에 놓였습니다―――
         PRINTW ………………
@@ -1414,7 +1414,7 @@ ELSEIF TFLAG:0 != 10 && TFLAG:0 != 11
             STRLENS CFLAGNAME:COUNT
             SIF RESULT < 1
                 CONTINUE
-            SIF (COUNT == 31 || (COUNT >= 60 && COUNT <= 64)) && TALENT:MASTER:198 == 0 && TALENT:MASTER:998 == 0
+            SIF (COUNT == 31 || (COUNT >= 60 && COUNT <= 64)) && TALENT:MASTER:초상계산 == 0 && TALENT:MASTER:998 == 0
                 CONTINUE
             SIF (COUNT == 80 || COUNT == 81) && FLAG:아이템확장 & 1024 == 0
                 CONTINUE
@@ -1915,8 +1915,8 @@ LOCAL = 0
 DRAWLINE
 PRINTFORML 현재 조교중인 %CALLNAME:TARGET%의 칭호를 현 상태로 둘지, 
 ;현 상황에서 양쪽을 다 가질 일은 없지만 노파심에
-SIF TALENT:218 || TALENT:219
-    PRINTFORML \@(TALENT:218) ?  「하쿠레이의 무녀」 혹은 #\@\@(TALENT:219) ?  「카제하후리」 혹은, # ,\@ 
+SIF TALENT:하쿠레이의무녀 || TALENT:카제하후리
+    PRINTFORML \@(TALENT:하쿠레이의무녀) ?  「하쿠레이의 무녀」 혹은 #\@\@(TALENT:카제하후리) ?  「카제하후리」 혹은, # ,\@ 
 PRINTL 본래 칭호(이명)로 할지, 칭호를 대지 말도록 시킬지 선택할 수 있습니다.
 PRINTL 노예와 특별한 연을 맺고 있다면 칭호를 직접 지어줄 수도 있습니다.
 PRINTL 다만, 일단 본래 칭호에 되돌리거나 다른 칭호를 부여하거나 칭호를 대지 말도록 시키면, 
@@ -1947,12 +1947,12 @@ ELSEIF NO:TARGET == 14 && CFLAG:0 == 1
     LOCAL = 8
 ENDIF
 PRINTL [2] 칭호를 대지 말도록 시킨다
-SIF TALENT:218
+SIF TALENT:하쿠레이의무녀
     PRINTL [3] 하쿠레이의 무녀로 한다
-SIF TALENT:219
+SIF TALENT:카제하후리
     PRINTL [4] 카제하후리로 한다
 ;[망신][친애][상애][복종][낙인][예속][괴뢰][괴조인격] 중 하나가 있으면 칭호를 직접 정할 수 있음
-SIF TALENT:151 || TALENT:152 || TALENT:153 || TALENT:160 || TALENT:161 || TALENT:162 || TALENT:168 || TALENT:169
+SIF TALENT:망신 || TALENT:친애 || TALENT:상애 || TALENT:복종 || TALENT:낙인 || TALENT:예속 || TALENT:괴뢰 || TALENT:괴조인격
   PRINTL [5] 칭호를 직접 정해준다
 DRAWLINE
 
@@ -1963,11 +1963,11 @@ IF RESULT == 0
     RETURN 1
 ELSEIF RESULT < 0 || RESULT > 5
     GOTO INPUT_LOOP
-ELSEIF RESULT == 3 && TALENT:218
+ELSEIF RESULT == 3 && TALENT:하쿠레이의무녀
     PRINTFORMW %CALLNAME:TARGET%의 칭호를 「하쿠레이의 무녀」로 했습니다.
     NICKNAME:TARGET = 하쿠레이의 무녀
     RETURN 1
-ELSEIF RESULT == 4 && TALENT:219
+ELSEIF RESULT == 4 && TALENT:카제하후리
     PRINTFORMW %CALLNAME:TARGET%의 칭호를 「카제하후리」로 했습니다.
     NICKNAME:TARGET = 카제하후리
     RETURN 1

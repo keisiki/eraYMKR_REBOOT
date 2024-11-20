@@ -15,7 +15,7 @@ SIF (FLAG:커맨드확장 & 128) == 0
 SIF (FLAG:SHOP이벤트확장 & 8) == 0
     RETURN 0
 ;조교자가 「あなた」か, [家電사역知識][工作名人][報道者]のどれかを所有している場合, 問題なし
-IF NO:PLAYER != 0 && TALENT:PLAYER:189 == 0 && TALENT:PLAYER:195 == 0 && TALENT:PLAYER:196 == 0
+IF NO:PLAYER != 0 && TALENT:PLAYER:가전제품지식 == 0 && TALENT:PLAYER:공작명인 == 0 && TALENT:PLAYER:보도자 == 0
     ;그 외의 경우, 撮影경험＋工作경험＋教育경험의 합계가 200이상 없으면 안 됨
     SIF (EXP:PLAYER:촬영경험 + EXP:PLAYER:공작경험 + EXP:PLAYER:교육경험) < 200
         RETURN 0
@@ -203,7 +203,7 @@ IF EQUIP:14 || TEQUIP:11 || TEQUIP:12 || TEQUIP:15 || TEQUIP:16 || TEQUIP:17
 ENDIF
 ;장소계
 ;야외 플레이, 수치 플레이중, 목욕탕 플레이
-IF TEQUIP:52 || TEQUIP:53 || (TEQUIP:56 == 2 || (TEQUIP:56 == 1 && TALENT:205 == 0))
+IF TEQUIP:52 || TEQUIP:53 || (TEQUIP:56 == 2 || (TEQUIP:56 == 1 && TALENT:흡혈귀 == 0))
     LOCAL:1 += 22
     LOCAL:3 += 1
 ENDIF
@@ -313,15 +313,15 @@ ELSEIF TALENT:36
 ENDIF
 
 ;조교자 또는 조수가 보도자나 공작 명인이라면 효과증
-IF TALENT:PLAYER:196
+IF TALENT:PLAYER:보도자
     TIMES LOCAL:1 , 1.70
-ELSEIF TALENT:PLAYER:195
+ELSEIF TALENT:PLAYER:공작명인
     TIMES LOCAL:1 , 1.30
 ENDIF
 IF ASSI >= 0 && ASSIPLAY == 0
-    IF TALENT:ASSI:196
+    IF TALENT:ASSI:보도자
         TIMES LOCAL:1 , 1.50
-    ELSEIF TALENT:ASSI:195
+    ELSEIF TALENT:ASSI:공작명인
         TIMES LOCAL:1 , 1.20
     ENDIF
 ENDIF
@@ -345,10 +345,10 @@ SIF TALENT:92
 SIF TALENT:94
     TIMES LOCAL:6 , 1.75
 ;낙인
-SIF TALENT:161
+SIF TALENT:낙인
     TIMES LOCAL:6 , 0.50
 ;음란
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL:6 , 1.50
 
 ;사진을 매각하는 경우의 가격
@@ -359,7 +359,7 @@ ELSE
     TFLAG:124 = LOCAL:6 * (30 + RAND:11) / 8
 ENDIF
 ;촬영자가 보도자
-SIF TALENT:PLAYER:196
+SIF TALENT:PLAYER:보도자
     TIMES TFLAG:124 , 1.25
 
 SIF TFLAG:124 < 1
@@ -383,13 +383,13 @@ SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
 
 PRINTL
 PRINTFORM %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 부끄럽기 짝이 없는 모습을 
-SIF TALENT:PLAYER:196
+SIF TALENT:PLAYER:보도자
     PRINT 압축해서 
 PRINTL 메모리카드에 담았다.
 PRINTFORML 다음에 %CALLNAME:TARGET%의 사진을 현상하도록 하자….
-IF TALENT:감정결여 == 0 && TALENT:170 == 0 && ABL:노출증 < 3
+IF TALENT:감정결여 == 0 && TALENT:음란 == 0 && ABL:노출증 < 3
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 부끄러운 모습이 찍힌 걸 눈치챘는지 얼굴이 굳어지고 있다.
-ELSEIF TALENT:감정결여 || TALENT:170
+ELSEIF TALENT:감정결여 || TALENT:음란
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 부끄러운 모습이 찍힌 걸 신경 쓰지 않고 있다.
 ELSE
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 부끄러운 모습이 찍혀서 얼굴이 빨개졌다.

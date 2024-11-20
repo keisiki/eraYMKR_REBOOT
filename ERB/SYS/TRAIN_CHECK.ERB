@@ -98,22 +98,22 @@ ELSEIF TALENT:여성혐오 && TALENT:MASTER:남자 == 0
     TFLAG:97 -= 1
 ENDIF
 ;연모
-SIF TALENT:150
+SIF TALENT:연모
     TFLAG:97 += 2
 ;망신・상애
-SIF TALENT:151 || TALENT:153
+SIF TALENT:망신 || TALENT:상애
     TFLAG:97 += 2
 ;친애・괴조인격
-SIF TALENT:152 || TALENT:169
+SIF TALENT:친애 || TALENT:괴조인격
     TFLAG:97 += 3
 ;服従
-SIF TALENT:160
+SIF TALENT:복종
     TFLAG:97 += 2
 ;烙印
-SIF TALENT:161
+SIF TALENT:낙인
     TFLAG:97 += 1
 ;隷属
-SIF TALENT:162
+SIF TALENT:예속
     TFLAG:97 += 3
 
 ;주인의 매력
@@ -145,7 +145,7 @@ ENDIF
 TFLAG:97 -= (FLAG:난이도 < 3) ? 2 * MARK:반발각인 # 5 * MARK:반발각인
 
 ;非陥落なら, 恐怖각인 보정(難易度HARD 이상のみ)
-SIF FLAG:난이도 > 2 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0
+SIF FLAG:난이도 > 2 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0
     TFLAG:97 -= 2 * MARK:공포각인
 
 ;ふぉーゆーっ！がしつこすぎると嫌われる
@@ -156,16 +156,16 @@ ELSEIF TFLAG:143 >= 5
 ENDIF
 
 ;神霊の場合, 主人が[수수께끼의 매력]を持っていないとなびきにくい
-SIF TALENT:222 && TALENT:MASTER:수수께끼의매력 == 0 && TFLAG:97 > 0
+SIF TALENT:신령 && TALENT:MASTER:수수께끼의매력 == 0 && TFLAG:97 > 0
     TIMES TFLAG:97 , 0.50
 ;半神の場合も主人が[수수께끼의 매력]または[매혹]を持っていないとなびきにくい
-SIF TALENT:223 && TALENT:MASTER:매혹 == 0 && TALENT:MASTER:수수께끼의매력 == 0 && TFLAG:97 > 0
+SIF TALENT:반신 && TALENT:MASTER:매혹 == 0 && TALENT:MASTER:수수께끼의매력 == 0 && TFLAG:97 > 0
     TIMES TFLAG:97 , 0.75
 ;死神の場合, 主人が[仙人]ならばなびきにくい
-SIF TALENT:224 && TALENT:MASTER:225
+SIF TALENT:사신 && TALENT:MASTER:선인
     TIMES TFLAG:97 , 0.75
 ;仙人の場合, 主人が[死神]ならばなびきにくい
-SIF TALENT:225 && TALENT:MASTER:224
+SIF TALENT:선인 && TALENT:MASTER:사신
     TIMES TFLAG:97 , 0.75
 
 ;結果が一定数 미만の場合
@@ -180,13 +180,13 @@ ELSEIF TFLAG:97 < 0
 ENDIF
 
 ;정신붕괴の場合, 호감도가 変化しない
-IF TALENT:167
+IF TALENT:정신붕괴
     TFLAG:97 = 0
 ;괴뢰の場合, 호감도가 上昇しにくい
-ELSEIF TALENT:168
+ELSEIF TALENT:괴뢰
     TFLAG:97 /= 4
 ;無関心の場合, 연모がないと호감도가 上がりにくい
-ELSEIF TALENT:무관심 && TALENT:150 == 0
+ELSEIF TALENT:무관심 && TALENT:연모 == 0
     IF TFLAG:97 > 1
         TFLAG:97 /= 2
     ELSEIF TFLAG:97 > 0
@@ -219,7 +219,7 @@ ELSEIF TEQUIP:90
 ELSEIF TFLAG:97 > 1 && TEQUIP:59 == 1
     TCVAR:21 += 1
 ;상애持ちの場合ウェディングドレスコスプレ中は호감도가 5 이상アップすると愛情経験が＋1（助手はだめ）
-ELSEIF TFLAG:97 > 4 && TALENT:153 && TEQUIP:59 == 19
+ELSEIF TFLAG:97 > 4 && TALENT:상애 && TEQUIP:59 == 19
     TCVAR:21 += 1
 ENDIF
 
@@ -241,7 +241,7 @@ SIF FLAG:SHOP이벤트확장 & 4 && TFLAG:97 != 0
 ;-------------------------------------------------
 @MASTER_SKILL_CHECK
 ;질투
-IF TALENT:157 && ASSI < 0
+IF TALENT:질투 && ASSI < 0
     TIMES SOURCE:11 , 1.30
     TIMES SOURCE:24 , 1.50
     TIMES SOURCE:31 , 0.50
@@ -277,7 +277,7 @@ ENDIF
 
 ;음란, 연모, 친애는 주인경험과의 중복 전제로 계산
 ;음란
-IF TALENT:170
+IF TALENT:음란
     TIMES SOURCE:0 , 1.80
     TIMES SOURCE:1 , 1.80
     TIMES SOURCE:2 , 1.80
@@ -285,7 +285,7 @@ IF TALENT:170
 ENDIF
 
 ;친애
-IF TALENT:152
+IF TALENT:친애
     TIMES SOURCE:0 , 1.50
     TIMES SOURCE:1 , 1.50
     TIMES SOURCE:2 , 1.50
@@ -295,7 +295,7 @@ IF TALENT:152
     TIMES SOURCE:16 , 1.50
     TIMES SOURCE:24 , 1.20
 ;연모
-ELSEIF TALENT:150
+ELSEIF TALENT:연모
     TIMES SOURCE:0 , 1.30
     TIMES SOURCE:1 , 1.30
     TIMES SOURCE:2 , 1.30
@@ -303,7 +303,7 @@ ELSEIF TALENT:150
     TIMES SOURCE:11 , 1.80
 ENDIF
 ;[연모]か[친애]持ちが処女(乙女ではなく)を今回の調教で散らせた場合
-IF (TALENT:150 || TALENT:152) && TALENT:처녀 == 1 && TFLAG:2
+IF (TALENT:연모 || TALENT:친애) && TALENT:처녀 == 1 && TFLAG:2
     LOCAL:1 = 0
     LOCAL = NO:PLAYER
     ;主人との相性が100% 이상で痛みのソースが2000 미만で反感追加のソースが3000以下
@@ -323,7 +323,7 @@ IF (TALENT:150 || TALENT:152) && TALENT:처녀 == 1 && TFLAG:2
     ;情愛のソース倍増
     TIMES SOURCE:11 , 2.00
     ;친애なら反感追加のソースが1/10に
-    IF TALENT:152
+    IF TALENT:친애
         TIMES SOURCE:32 , 0.10
     ;친애なくても反感追加のソースは30%に
     ELSE
@@ -527,7 +527,7 @@ ELSEIF TALENT:71
     TIMES LOCAL , 0.80
 ENDIF
 ;음란
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL , 1.10
 
 ;미약
@@ -721,7 +721,7 @@ SIF TALENT:110
 SIF TALENT:111
     TIMES LOCAL , 0.50
 ;음란
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL , 1.10
 
 ;미약
@@ -943,7 +943,7 @@ ELSEIF TALENT:71
     TIMES LOCAL , 0.60
 ENDIF
 ;幼児or幼稚or유아퇴행
-SIF TALENT:130 || TALENT:131 || TALENT:159
+SIF TALENT:130 || TALENT:131 || TALENT:유아퇴행
     TIMES LOCAL , 1.50
 
 ;おもらし癖を持たない
@@ -1309,7 +1309,7 @@ SIF TALENT:80
 SIF TALENT:84
     TIMES LOCAL , 2.00
 ;음란
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL , 1.80
 ;精愛味覚
 SIF TALENT:66
@@ -1808,7 +1808,7 @@ ELSEIF CFLAG:2 >= 2000
 ELSE
     LOCAL = 120
 ENDIF
-SIF TALENT:172
+SIF TALENT:음호
     TIMES LOCAL , 1.50
 
 IF LOCAL > 0
@@ -1862,7 +1862,7 @@ IF TALENT:PLAYER:수수께끼의매력 || TALENT:PLAYER:대범함
     TIMES SOURCE:31 , 0.50
 ENDIF
 ;조교자의 [유아퇴행]을 본다
-IF TALENT:PLAYER:159
+IF TALENT:PLAYER:유아퇴행
     TIMES SOURCE:0 , 1.10
     TIMES SOURCE:1 , 1.10
     TIMES SOURCE:2 , 1.10
@@ -1909,7 +1909,7 @@ ELSE
 ENDIF
 
 ;조교자가 助手かつ[연모]で[질투]であるとき
-IF ASSIPLAY && TALENT:PLAYER:150 && TALENT:PLAYER:157
+IF ASSIPLAY && TALENT:PLAYER:연모 && TALENT:PLAYER:질투
     ;助手のABL:サドっ気をみる
     IF ABL:ASSI:새드끼 == 0
         TIMES SOURCE:20 , 1.00
@@ -1945,7 +1945,7 @@ IF ASSIPLAY && TALENT:PLAYER:150 && TALENT:PLAYER:157
 ENDIF
 
 ;조교자가 助手かつ[使い魔]であるとき
-IF ASSIPLAY && TALENT:PLAYER:164
+IF ASSIPLAY && TALENT:PLAYER:사역마
     ;주인의 ABL:技巧をみる
     IF ABL:MASTER:기교 == 0
         TIMES SOURCE:0 , 0.80
@@ -2013,7 +2013,7 @@ IF ASSIPLAY && TALENT:PLAYER:164
 ENDIF
 
 ;조교자가 [死神]で[仙人]を調教している, もしくは조교자가 [仙人]で[死神]を調教しているとき
-IF (TALENT:PLAYER:224 && TALENT:225) || (TALENT:PLAYER:225 && TALENT:224)
+IF (TALENT:PLAYER:사신 && TALENT:선인) || (TALENT:PLAYER:선인 && TALENT:사신)
     TIMES SOURCE:0 , 0.70
     TIMES SOURCE:1 , 0.70
     TIMES SOURCE:2 , 0.70
@@ -2032,14 +2032,14 @@ IF (TALENT:PLAYER:224 && TALENT:225) || (TALENT:PLAYER:225 && TALENT:224)
 ENDIF
 
 ;조교자가 [妖精知識]を持ち, かつ[妖精]を調教しているとき
-IF TALENT:PLAYER:요정지식 && TALENT:200
+IF TALENT:PLAYER:요정지식 && TALENT:요정
     LOCAL:1 = 0
     FOR LOCAL, 0, CHARANUM
         ;失踪中, 調教者, 조교 대상なら除外
         SIF CFLAG:LOCAL:4 || LOCAL == PLAYER || LOCAL == TARGET
             CONTINUE
         ;熾烈なる妖精（とも）との戦いの中で精と子の狭間を見切った
-        SIF (TALENT:LOCAL:150 || TALENT:LOCAL:160 || TALENT:LOCAL:170) && TALENT:LOCAL:200
+        SIF (TALENT:LOCAL:연모 || TALENT:LOCAL:복종 || TALENT:LOCAL:음란) && TALENT:LOCAL:요정
             LOCAL:1 += 1
     NEXT
     ;堕とした, または堕としている妖精10人につき0.01倍＋
@@ -2700,7 +2700,7 @@ IF TALENT:20
 ENDIF
 ;映姫様補正
 IF NO:TARGET == 36 && TALENT:71
-    IF (TALENT:150 || TALENT:151 || TALENT:152 || TALENT:153) && ASSIPLAY == 0
+    IF (TALENT:연모 || TALENT:망신 || TALENT:친애 || TALENT:상애) && ASSIPLAY == 0
         TIMES UP:0 , 1.50
         TIMES UP:1 , 1.50
         TIMES UP:2 , 1.50
@@ -2716,27 +2716,27 @@ ENDIF
 SIF TALENT:120
     TIMES UP:2 , 1.30
 ;정신붕괴
-IF TALENT:167
+IF TALENT:정신붕괴
     TIMES UP:0 , 0.20
     TIMES UP:1 , 0.20
     TIMES UP:2 , 0.20
     TIMES UP:3 , 0.20
 ENDIF
 ;괴조인격
-IF TALENT:169
+IF TALENT:괴조인격
     TIMES UP:0 , 1.25
     TIMES UP:1 , 1.25
     TIMES UP:2 , 1.25
     TIMES UP:3 , 1.25
 ENDIF
 ;음마
-IF TALENT:180
+IF TALENT:음마
     TIMES UP:0 , 1.75
     TIMES UP:1 , 1.75
     TIMES UP:2 , 1.75
     TIMES UP:3 , 1.75
 ;즉각함락
-ELSEIF TALENT:179
+ELSEIF TALENT:즉각함락
     TIMES UP:0 , 1.50
     TIMES UP:1 , 1.50
     TIMES UP:2 , 1.50
@@ -2744,7 +2744,7 @@ ELSEIF TALENT:179
 ENDIF
 
 ;[강시]
-IF TALENT:226
+IF TALENT:강시
     TIMES UP:0 , 0.60
     TIMES UP:1 , 0.60
     TIMES UP:2 , 0.60
@@ -3039,7 +3039,7 @@ IF TALENT:70
 ELSEIF TALENT:71
     TIMES UP:13 , 0.50
     ;에이키 님 보정(조수가 하는 조교거나 연애계 소질이 없을 경우 굴복의 파라미터 상승이 억제됨)
-    SIF NO:TARGET == 36 && ((TALENT:150 + TALENT:151 + TALENT:152 + TALENT:153) == 0 || ASSIPLAY)
+    SIF NO:TARGET == 36 && ((TALENT:연모 + TALENT:망신 + TALENT:친애 + TALENT:상애) == 0 || ASSIPLAY)
         TIMES UP:14 , 0.75
 ENDIF
 ;중독되기 쉬움
@@ -3053,43 +3053,43 @@ ENDIF
 ;망신 외의 연모계 소질은 주인 조교에서만 효과를 발휘
 IF ASSIPLAY == 0
     ;상애
-    IF TALENT:153
+    IF TALENT:상애
         TIMES UP:12 , 2.50
         TIMES UP:14 , 3.00
         TIMES UP:20 , 0.10
         TIMES UP:21 , 0.10
         TIMES UP:22 , 0.10
     ;친애
-    ELSEIF TALENT:152
+    ELSEIF TALENT:친애
         TIMES UP:12 , 2.00
         TIMES UP:14 , 2.50
         TIMES UP:20 , 0.20
         TIMES UP:21 , 0.20
         TIMES UP:22 , 0.20
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         TIMES UP:12 , 1.50
         TIMES UP:20 , 0.50
         TIMES UP:21 , 0.50
     ENDIF
 ENDIF
 ;망신
-IF TALENT:151
+IF TALENT:망신
     TIMES UP:14 , 4.00
     TIMES UP:20 , 0.50
 ENDIF
 ;질투
-IF TALENT:158 && ASSI >= 0 && CFLAG:ASSI:2 >= 500 && ASSIPLAY == 0
+IF TALENT:광기 && ASSI >= 0 && CFLAG:ASSI:2 >= 500 && ASSIPLAY == 0
     ;상애
-    IF TALENT:ASSI:153
+    IF TALENT:ASSI:상애
         TIMES UP:14 , 2.50
         TIMES UP:16 , 2.00
     ;친애
-    ELSEIF TALENT:ASSI:152
+    ELSEIF TALENT:ASSI:친애
         TIMES UP:14 , 2.00
         TIMES UP:16 , 1.50
     ;연모
-    ELSEIF TALENT:ASSI:150
+    ELSEIF TALENT:ASSI:연모
         TIMES UP:14 , 1.50
         TIMES UP:16 , 1.20
     ELSE
@@ -3097,7 +3097,7 @@ IF TALENT:158 && ASSI >= 0 && CFLAG:ASSI:2 >= 500 && ASSIPLAY == 0
     ENDIF
 ENDIF
 ;유아퇴행
-IF TALENT:159
+IF TALENT:유아퇴행
     TIMES UP:12 , 1.50
     TIMES UP:16 , 1.50
     TIMES UP:17 , 2.00
@@ -3109,19 +3109,19 @@ IF TALENT:159
     TIMES UP:22 , 0.50
 ENDIF
 ;服従
-IF TALENT:160
+IF TALENT:복종
     TIMES UP:14 , 2.00
     TIMES UP:20 , 0.50
 ENDIF
 ;烙印
-IF TALENT:161
+IF TALENT:낙인
     TIMES UP:14 , 2.00
     TIMES UP:15 , 2.00
     TIMES UP:20 , 0.30
     TIMES UP:21 , 0.30
 ENDIF
 ;隷属
-IF TALENT:162
+IF TALENT:예속
     TIMES UP:12 , 1.80
     TIMES UP:14 , 2.50
     TIMES UP:20 , 0.25
@@ -3129,7 +3129,7 @@ IF TALENT:162
     TIMES UP:22 , 0.20
 ENDIF
 ;傷物
-IF TALENT:163
+IF TALENT:흠집
     TIMES UP:12 , 0.50
     TIMES UP:16 , 0.80
     TIMES UP:17 , 1.50
@@ -3137,7 +3137,7 @@ IF TALENT:163
     TIMES UP:22 , 2.50
 ENDIF
 ;使い魔
-IF TALENT:164
+IF TALENT:사역마
     TIMES UP:12 , 1.75
     TIMES UP:13 , 1.75
     TIMES UP:14 , 1.75
@@ -3145,7 +3145,7 @@ IF TALENT:164
     TIMES UP:21 , 0.60
 ENDIF
 ;정신붕괴
-IF TALENT:167
+IF TALENT:정신붕괴
     TIMES UP:11 , 0.40
     TIMES UP:12 , 0.20
     TIMES UP:13 , 0.40
@@ -3158,7 +3158,7 @@ IF TALENT:167
     TIMES UP:30 , 0.20
 ENDIF
 ;괴뢰
-IF TALENT:168
+IF TALENT:괴뢰
     TIMES UP:12 , 0.40
     TIMES UP:13 , 0.40
     TIMES UP:14 , 0.40
@@ -3169,7 +3169,7 @@ IF TALENT:168
     TIMES UP:22 , 0.40
 ENDIF
 ;괴조인격
-IF TALENT:169
+IF TALENT:괴조인격
     TIMES UP:10 , 1.25
     TIMES UP:11 , 1.50
     TIMES UP:12 , 1.50
@@ -3183,14 +3183,14 @@ IF TALENT:169
     TIMES UP:22 , 0.20
 ENDIF
 ;음마
-IF TALENT:180
+IF TALENT:음마
     TIMES UP:13 , 3.00
 ;즉각함락
-ELSEIF TALENT:179
+ELSEIF TALENT:즉각함락
     TIMES UP:13 , 2.00
 ENDIF
 ;흡혈귀
-IF TALENT:205
+IF TALENT:흡혈귀
     IF ABL:순종 < 3 && ABL:욕망 < 3
         TIMES UP:12 , 0.75
         TIMES UP:14 , 0.75
@@ -3198,37 +3198,37 @@ IF TALENT:205
     TIMES UP:17 , 0.50
 ENDIF
 ;인형
-IF TALENT:208
+IF TALENT:인형
     TIMES UP:10 , 0.75
     TIMES UP:13 , 0.75
 ENDIF
 ;악마
-SIF TALENT:209
+SIF TALENT:악마
     TIMES UP:13 , 1.25
-IF TALENT:PLAYER:209
+IF TALENT:PLAYER:악마
     TIMES UP:13 , 1.25
     TIMES UP:16 , 1.25
 ENDIF
 ;캇파
-SIF TALENT:210
+SIF TALENT:캇파
     TIMES UP:11 , 1.50
-SIF TALENT:PLAYER:210
+SIF TALENT:PLAYER:캇파
     TIMES UP:11 , 1.20
 ;요호
-SIF TALENT:PLAYER:211
+SIF TALENT:PLAYER:요호
     TIMES UP:15 , 2.50
 ;사토리(마음의 눈을 닫고 있거나 [정신붕괴] 제외하고)
-IF TALENT:213 == 1 && TALENT:167 == 0
+IF TALENT:사토리 == 1 && TALENT:정신붕괴 == 0
     TIMES UP:17 , 1.25
     TIMES UP:20 , 1.25
 ENDIF
-IF TALENT:PLAYER:213 && TALENT:PLAYER:167 == 0 && NO:PLAYER != 64
+IF TALENT:PLAYER:사토리 && TALENT:PLAYER:정신붕괴 == 0 && NO:PLAYER != 64
     TIMES UP:14 , 1.25
     TIMES UP:15 , 1.25
     TIMES UP:17 , 1.25
 ENDIF
 ;오니
-IF TALENT:214
+IF TALENT:오니
     IF ABL:순종 < 3 && ABL:욕망 < 3
         TIMES UP:12 , 0.80
         TIMES UP:14 , 0.50
@@ -3237,7 +3237,7 @@ IF TALENT:214
     TIMES UP:17 , 0.50
 ENDIF
 ;텐구
-IF TALENT:215
+IF TALENT:텐구
     IF ABL:순종 < 3 && ABL:욕망 < 3
         TIMES UP:12 , 0.60
         TIMES UP:14 , 0.60
@@ -3246,7 +3246,7 @@ IF TALENT:215
     TIMES UP:17 , 0.80
 ENDIF
 ;[선인]
-IF TALENT:225
+IF TALENT:선인
     IF ABL:순종 < 3 && ABL:욕망 < 3
         TIMES UP:13 , 0.50
         TIMES UP:14 , 0.80
@@ -3254,7 +3254,7 @@ IF TALENT:225
     TIMES UP:21 , 0.80
 ENDIF
 ;[강시]
-IF TALENT:226
+IF TALENT:강시
     TIMES UP:11 , 0.80
     TIMES UP:14 , 1.20
     TIMES UP:15 , 0.80
@@ -3265,44 +3265,44 @@ IF TALENT:226
     TIMES UP:30 , 0.60
 ENDIF
 ;[둔갑너구리]
-SIF TALENT:PLAYER:227
+SIF TALENT:PLAYER:둔갑너구리
     TIMES UP:14 , 2.50
 
 ;츠쿠모가미(함락소질 없을 때와 함락소질이 있을 때)
 ;연모, 복종 미취득 시에는 굴복이 오르기 어려우나, 연모 취득시 순종, 복종 취득시 굴복이 오르기 쉽다.
-IF TALENT:228 == 1 && ( TALENT:150 == 0 || TALENT:160 == 0 || TALENT:170 == 0 )
+IF TALENT:228 == 1 && ( TALENT:연모 == 0 || TALENT:복종 == 0 || TALENT:음란 == 0 )
     TIMES UP:14 , 0.80
 ENDIF
-IF TALENT:228 == 1 && TALENT:150
+IF TALENT:228 == 1 && TALENT:연모
     TIMES UP:12 , 1.30
 ENDIF
-IF TALENT:228 == 1 && TALENT:160
+IF TALENT:228 == 1 && TALENT:복종
     TIMES UP:14 , 1.30
 ENDIF
 
 ;인어 - 윤활에 보너스
-SIF TALENT:229
+SIF TALENT:츠쿠모가미
     TIMES UP:10 , 1.25
-SIF TALENT:PLAYER:229
+SIF TALENT:PLAYER:츠쿠모가미
     TIMES UP:10 , 1.25
 
 ;목분리 1단계와 2단계 - 습득에 보너스
-IF TALENT:230 == 1
+IF TALENT:목분리 == 1
     TIMES UP:11 , 1.30
-ELSEIF TALENT:230 == 2
+ELSEIF TALENT:목분리 == 2
     TIMES UP:11 , 1.50
 ENDIF
-IF TALENT:PLAYER:230 
+IF TALENT:PLAYER:목분리 
     TIMES UP:11 , 1.20
     TIMES UP:17 , 1.20
 ENDIF
 
 ;늑대인간 - 피조교자시에 선도와 욕정, 조교자시에 고통과 공포
-IF TALENT:231
+IF TALENT:늑대인간
     TIMES UP:13 , 1.25
     TIMES UP:32 , 1.25
 ENDIF
-IF TALENT:PLAYER:231
+IF TALENT:PLAYER:늑대인간
     TIMES UP:16 , 1.20
     TIMES UP:17 , 1.25
 ENDIF
@@ -3370,7 +3370,7 @@ ELSE
     TIMES UP:21 , 0.25
 ENDIF
 ;조교자의 폭발물
-IF TALENT:PLAYER:220
+IF TALENT:PLAYER:폭발물
     TIMES UP:12 , 0.80
     TIMES UP:13 , 0.75
     TIMES UP:15 , 0.80
@@ -3379,8 +3379,8 @@ IF TALENT:PLAYER:220
     TIMES UP:17 , 2.00
 ENDIF
 ;조교자의 사신(상대가 영체라면 굴복도 상승)
-IF TALENT:PLAYER:224 && TALENT:222 == 0
-    SIF TALENT:207
+IF TALENT:PLAYER:사신 && TALENT:신령 == 0
+    SIF TALENT:영체
         TIMES UP:14 , 1.25
     TIMES UP:17 , 1.25
 ENDIF
@@ -3483,7 +3483,7 @@ SIF LOCAL:1 > 0 && TFLAG:105 == 0
 IF TFLAG:44
     CALL COMMON_MARK_UP, TARGET, 9, LOCAL:1, 0
     ;感情乏しい, 괴뢰, 정신붕괴, 괴조인격の場合は반발각인による従順ダウンはなし
-    IF TALENT:감정결여 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0
+    IF TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0
         IF ABL:순종 > 0 && ABL:순종 <= 2 && TFLAG:44 == 3
             ABL:순종 = 0
         ELSEIF ABL:순종 == 3 && TFLAG:44 == 3
@@ -3523,7 +3523,7 @@ SIF LOCAL:1 > 0
 IF TFLAG:40
     CALL COMMON_MARK_UP, TARGET, 0, LOCAL:1, 0
     ;気丈・感情乏しい, 괴뢰, 정신붕괴の場合は고통각인による従順アップはなし
-    SIF ABL:순종 == 0 && TALENT:꿋꿋함 == 0 && TALENT:감정결여 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:40 >= 2
+    SIF ABL:순종 == 0 && TALENT:꿋꿋함 == 0 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:40 >= 2
         ABL:순종 = 1
     ;[サド]または[針さばき]の調教者
     IF (TALENT:PLAYER:새드 || (TALENT:PLAYER:바느질 && SELECTCOM == 222)) && TFLAG:40 == 3
@@ -3563,7 +3563,7 @@ SIF LOCAL:1 > 0
 IF TFLAG:41
     CALL COMMON_MARK_UP, TARGET, 1, LOCAL:1, 0
     ;자제심・感情乏しい, 괴뢰, 정신붕괴の場合は쾌락각인による従順アップはなし
-    SIF ABL:순종 == 0 && TALENT:자제심 == 0 && TALENT:감정결여 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:41 == 3
+    SIF ABL:순종 == 0 && TALENT:자제심 == 0 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:41 == 3
         ABL:순종 = 1
 ENDIF
 
@@ -3596,9 +3596,9 @@ SIF LOCAL:1 > 0
 IF TFLAG:42
     CALL COMMON_MARK_UP, TARGET, 2, LOCAL:1, 0
     ;感情乏しい, 괴뢰, 정신붕괴の場合は굴복각인による従順アップはなし
-    IF ABL:순종 < 1 && TALENT:감정결여 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:42 == 1
+    IF ABL:순종 < 1 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:42 == 1
         ABL:순종 = 1
-    ELSEIF ABL:순종 < 2 && TALENT:감정결여 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:42 >= 2
+    ELSEIF ABL:순종 < 2 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:42 >= 2
         ABL:순종 = 2
     ENDIF
 ENDIF
@@ -3634,7 +3634,7 @@ SIF LOCAL:1 > 0
 IF TFLAG:46
     CALL COMMON_MARK_UP, TARGET, 4, LOCAL:1, 0
     ;感情乏しい, 괴뢰, 정신붕괴, 露出癖Lv3 이상の場合は치욕각인による従順アップはなし
-    SIF ABL:순종 < 1 && ABL:노출증 >= 3 && TALENT:감정결여 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:46 == 3
+    SIF ABL:순종 < 1 && ABL:노출증 >= 3 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:46 == 3
         ABL:순종 += 1
 ENDIF
 
@@ -3672,12 +3672,12 @@ SIF LOCAL:1 > 0
 IF TFLAG:43
     CALL COMMON_MARK_UP, TARGET, 8, LOCAL:1, 0
     ;感情乏しい, 괴뢰, 정신붕괴の場合は공포각인による従順アップはなし
-    IF ABL:순종 < 3 && TALENT:감정결여 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:43 == 3
+    IF ABL:순종 < 3 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:43 == 3
         ABL:순종 += 1
         ;臆病の場合一気に2上がる
         SIF TALENT:10
             ABL:순종 += 1
-    ELSEIF ABL:순종 < 2 && TALENT:감정결여 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:43 == 2
+    ELSEIF ABL:순종 < 2 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:43 == 2
         ABL:순종 += 1
     ENDIF
 ENDIF
@@ -4177,10 +4177,10 @@ ELSE
 ENDIF
 
 ;機械・鬼・黄昏の怪物
-SIF TALENT:ARG:206 || TALENT:ARG:214 || TALENT:ARG:221
+SIF TALENT:ARG:기계 || TALENT:ARG:오니 || TALENT:ARG:황혼의괴물
     LOCAL:1 = 100
 ;河童・天狗
-SIF (TALENT:ARG:210 || TALENT:ARG:215) && LOCAL:1 > 120
+SIF (TALENT:ARG:캇파 || TALENT:ARG:텐구) && LOCAL:1 > 120
     LOCAL:1 = 120
 
 ;酔いにおける体力・気力の消耗増加
@@ -4199,7 +4199,7 @@ ENDIF
 @TRAIN_EXPLOSION_CHECK
 ;조교자가 製作者のときは無条件で爆発しない。ただしアリスはEX化していないときのみ
 ;また, 製作者番号が500のときは「あなた」が製作者
-SIF (NO:PLAYER == TALENT:220 && ((NO:PLAYER == 14 && CFLAG:PLAYER:0 == 0) || NO:PLAYER != 14)) || (NO:PLAYER == 0 && TALENT:220 == 500)
+SIF (NO:PLAYER == TALENT:폭발물 && ((NO:PLAYER == 14 && CFLAG:PLAYER:0 == 0) || NO:PLAYER != 14)) || (NO:PLAYER == 0 && TALENT:폭발물 == 500)
     RETURN 0
 
 LOCAL = 0
@@ -4492,7 +4492,7 @@ SIF TALENT:14
 SIF TALENT:20
     TIMES LOCAL , 1.50
 ;狂気
-SIF TALENT:158
+SIF TALENT:광기
     TIMES LOCAL , 0.75
 
 LOCAL = MAX(LOCAL, 0)
@@ -4840,7 +4840,7 @@ ELSEIF TFLAG:871 >= 1
         PRINT 항문
     ENDIF
     PRINTFORM 에서 \@(TFLAG:871 >= 2 || TFLAG:872 >= 2) ? 울컥울컥 나오는 대량의  # 흘러 떨어지는 \@정액을 
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTW 깨닫고는 곤혹스러워 하는 것 같다….
     ELSEIF TALENT:겁쟁이 == 1
         PRINTW 깨닫고는 지금 당장이라도 울어버릴 것 같다….
@@ -4856,7 +4856,7 @@ ELSEIF TFLAG:872 >= 1
         ENDIF
     ENDIF
     PRINTFORM 항문에서 \@(TFLAG:871 >= 2 || TFLAG:872 >= 2) ? 샘솟는 대량의  # 흘러 떨어지는 \@정액을 
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTW 깨닫고는 곤혹스러워 하는 것 같다….
     ELSEIF TALENT:겁쟁이 == 1
         PRINTW 깨닫고는 지금 당장이라도 울어버릴 것 같다….
@@ -4873,7 +4873,7 @@ ELSEIF TFLAG:868 + TFLAG:869 + TFLAG:870 + TFLAG:874 + TFLAG:875 >= 1
     SIF TFLAG:868 + TFLAG:869 + TFLAG:870 + TFLAG:874 + TFLAG:875 >= 3
         PRINT  전체
     PRINT 에 끼얹어진 정액에, 
-    PRINTFORMW \@(TALENT:150) ? 곤혹스러워 하는 것 같다…. # 완전히 겁먹은 것 같다…….\@
+    PRINTFORMW \@(TALENT:연모) ? 곤혹스러워 하는 것 같다…. # 완전히 겁먹은 것 같다…….\@
 ELSEIF TFLAG:867 < 0 || TFLAG:877 < 0
     PRINTFORM 어느 새 
     IF TEQUIP:20 == 1
@@ -5033,7 +5033,7 @@ LOCAL:7 = 100
 LOCAL:7 -= MARK:굴복각인 * 10
 LOCAL:7 -= ABL:순종 * 5
 
-SIF TALENT:150
+SIF TALENT:연모
     LOCAL:7 /= 2
 
 UP:14 += LOCAL:1 * (100 - LOCAL:7) / 100

@@ -48,7 +48,7 @@ IF ASSIPLAY == 0
         RETURN 1
     ;조교 내 첫 회
     ;사토리가 연모 달려있지 않으면 표시하지 않습니다
-    IF (CFLAG:ASSI:5762 != DAY || CFLAG:ASSI:5763 != TIME) && NO:MASTER != 61 && TALENT:ASSI:150
+    IF (CFLAG:ASSI:5762 != DAY || CFLAG:ASSI:5763 != TIME) && NO:MASTER != 61 && TALENT:ASSI:연모
         DRAWLINE
         A = 5800+NO:TARGET
         ;첫 대면
@@ -99,7 +99,7 @@ IF ASSIPLAY == 0
         RETURN 1
     ENDIF
     ;조교 내 두 번째 이후
-    IF NO:MASTER != 61 && TALENT:ASSI:150
+    IF NO:MASTER != 61 && TALENT:ASSI:연모
         DRAWLINE
         A = 5800+NO:TARGET
         ;코이시
@@ -133,7 +133,7 @@ IF ASSIPLAY == 0
     ENDIF
 ;사토리→주인
 ELSE
-    IF NO:MASTER != 61 && TALENT:ASSI:150
+    IF NO:MASTER != 61 && TALENT:ASSI:연모
         DRAWLINE
         A = 5800+NO:TARGET
         ;한 번도 조교에 참가하지 않았다
@@ -476,7 +476,7 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0
     IF NO:MASTER == 61
         ;선택 받은 게 사토리 자신
         ;Ｃ감각3이상이라면 1/6, 연모라면 1/3, 상애 · 친애라면 5/6로 이쪽으로 변화
-        IF RESULT:1 == 61 || (TALENT:150 && B < 3) || (ABL:C감각 > 2 && B == 0) || ((TALENT:152 || TALENT:153) && B < 6)
+        IF RESULT:1 == 61 || (TALENT:연모 && B < 3) || (ABL:C감각 > 2 && B == 0) || ((TALENT:친애 || TALENT:상애) && B < 6)
             PRINTFORML 『어머…… 뜻밖이어라. 당신, 나를 그런 식으로 생각하고 있었어?』
             PRINTFORML 자위를 명령받고서 무심코 사토리를 떠올린 %CALLNAME:TARGET%.
             PRINTFORMW 사토리는 곧바로 그것을 알아차리고 쿡쿡 웃으면서 들볶기 시작한다.
@@ -544,14 +544,14 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0
     ELSE
         ;이하, 연모 달렸으면 상성 200이상에서 1/3, 상성 100이상에서 1/2, 상성 캐릭터 없다면 확실, 상애 or 친애라면 5/6, 연모 없이 C감각3이상이라면 1/6로
         ;당신이 딸감으로 변화합니다
-        IF (TALENT:150 && RESULT == 2 && B > 4) || (TALENT:150 && RESULT == 1 && B > 2) || (RESULT == 0 && TALENT:150) || ((TALENT:152 || TALENT:153) && B < 6) || (B == 0 && ABL:C감각 > 2)
+        IF (TALENT:연모 && RESULT == 2 && B > 4) || (TALENT:연모 && RESULT == 1 && B > 2) || (RESULT == 0 && TALENT:연모) || ((TALENT:친애 || TALENT:상애) && B < 6) || (B == 0 && ABL:C감각 > 2)
             PRINTFORML 『어머나, 얘 봐. 주인님을 생각하며 자위를 하고 있어』
             PRINTFORMW 지적받고 %조사처리(CALLNAME:TARGET,"는")% 흠칫 어깨를 떨었다.
             PRINTFORML 『상기시켜주지, 얼마나 지독한 짓을 당해왔는지…… 후후』
             ;연모 분기
-            SIF TALENT:150
+            SIF TALENT:연모
                 PRINTFORMW 『어머 너무해라. 여자를 여자라고도 여기지 않는 소행이네. 그런데도 주인님을 사랑해?』
-            SIF TALENT:150 == 0
+            SIF TALENT:연모 == 0
                 PRINTFORMW 『어머, 주인님은 싫어하는데, 떠올리면 기분 좋아져버리는구나』
             PRINTFORML 『턱없는 음란녀인 걸…… 조교의 기억으로 질퍽질퍽하게 젖어있어』
             PRINTFORMW 즐거운 듯이 웃으면서 사토리는 %CALLNAME:TARGET%의 마음을 범해간다…….
@@ -715,7 +715,7 @@ IF SELECTCOM == 6
     ;주인이 하는 플레이
     IF NO:PLAYER != 61 && NO:MASTER != 61
         ;조교 대상이 연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 『「이 사람과의 키스가 좋아, 이 사람이 너무 좋아……」』
             PRINTFORMW 『마음의, 상당히 표층에서…… 주인님이, 좋다고 좋다고 말하는구나?』
             PRINTFORML 『마음의 안쪽 밑바닥, 스스로도 볼 수 없는 곳에선 어떻게 생각하고 있어?』
@@ -728,7 +728,7 @@ IF SELECTCOM == 6
     ;사토리가 하는 플레이
     ELSE
         ;조교 대상이 연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 『응쮸…… 응, 응, 쮸우…… 푸하』
             PRINTFORMW 『주인님이랑 하는 게 좋았구나. 그런데…… 「여자의 혀, 달콤해서 가슴이 설레여」?』
         ;그 외
@@ -769,7 +769,7 @@ IF SELECTCOM == 415
             ;느끼는 곳 체크
             IF ABL:C감각 < 2 && ABL:V감각 < 2 && ABL:A감각 < 2 && ABL:B감각 < 2
                 PRINTFORMW 『「아직 잘 모르겠어, 흥미는 있어……」 흐음흐음』
-            ELSEIF ABL:C감각 >= ABL:V감각 && ABL:C감각 >= ABL:A감각 && ABL:C감각 >= ABL:B감각 && TALENT:150
+            ELSEIF ABL:C감각 >= ABL:V감각 && ABL:C감각 >= ABL:A감각 && ABL:C감각 >= ABL:B감각 && TALENT:연모
                 PRINTFORMW 『「자지 좋아, 정액 싸는 거 최고로 기분 좋아」 흐음흐음』
             ELSEIF ABL:V감각 >= ABL:C감각 && ABL:V감각 >= ABL:A감각 && ABL:V감각 >= ABL:B감각
                 PRINTFORMW 『그래…… 「질내를 퍽퍽 범해지는 거 너무 좋아」 흐음흐음』

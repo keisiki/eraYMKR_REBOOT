@@ -72,7 +72,7 @@ ELSEIF FLAG:주회수 >= 9 && TALENT:MASTER:치료 == 0
         SIF 대상_제외됨(LOCAL)
             CONTINUE
         ;恋慕か服従を持ち、調合知識か治療を持っている奴隷をカウントする
-        SIF (TALENT:LOCAL:150 || TALENT:LOCAL:160) && (TALENT:LOCAL:조합지식 || TALENT:LOCAL:치료)
+        SIF (TALENT:LOCAL:연모 || TALENT:LOCAL:복종) && (TALENT:LOCAL:조합지식 || TALENT:LOCAL:치료)
             LOCAL:2 += 1
     NEXT
     SIF LOCAL:2 >= 4
@@ -91,7 +91,7 @@ IF FLAG:난이도 >= 3 && FLAG:4000 >= 20 && TALENT:MASTER:대유도 == 0 && TAL
         SIF LOCAL == MASTER || CFLAG:LOCAL:4 == 1
             CONTINUE
         ;恋慕も淫乱も持っていないなら対象外です
-        SIF TALENT:LOCAL:150 == 0 && TALENT:LOCAL:170 == 0
+        SIF TALENT:LOCAL:연모 == 0 && TALENT:LOCAL:음란 == 0
             CONTINUE
         SIF 대상_제외됨(LOCAL)
             CONTINUE
@@ -111,7 +111,7 @@ ENDIF
 SIF LOCAL:1 > 0 && TALENT:MASTER:(LOCAL:1) == 0
     CALL NEWTERM_TALENT_MASTER, LOCAL:1
 ;지옥의 훈장(別名：へる子購入する権利)
-SIF TALENT:MASTER:834 == 0 && CFLAG:MASTER:157 & 2 && FLAG:주회수 == 1
+SIF TALENT:MASTER:지옥의훈장 == 0 && CFLAG:MASTER:157 & 2 && FLAG:주회수 == 1
     CALL NEWTERM_TALENT_MASTER, 834
 
 ;--------------------------------------------------
@@ -181,46 +181,46 @@ NICKNAME:TARGET = %NICKNAME:MASTER%
 ;교육자
     TALENT:126 = TALENT:MASTER:교육자
 ;촉수사역술
-    TALENT:149 = TALENT:MASTER:촉수사역술
+    TALENT:촉수사역술 = TALENT:MASTER:촉수사역술
 ;광기
-    TALENT:158 = TALENT:MASTER:158
+    TALENT:광기 = TALENT:MASTER:광기
 ;가전제품지식
-    TALENT:189 = TALENT:MASTER:189
+    TALENT:가전제품지식 = TALENT:MASTER:가전제품지식
 ;음감
-    TALENT:191 = TALENT:MASTER:191
+    TALENT:음감 = TALENT:MASTER:음감
 ;요리잘함
-    TALENT:193 = TALENT:MASTER:193
+    TALENT:요리잘함 = TALENT:MASTER:요리잘함
 ;조리명인
-    TALENT:194 = TALENT:MASTER:194
+    TALENT:조리명인 = TALENT:MASTER:조리명인
 ;공작명인
-    TALENT:195 = TALENT:MASTER:195
+    TALENT:공작명인 = TALENT:MASTER:공작명인
 ;보도자
-    TALENT:196 = TALENT:MASTER:196
+    TALENT:보도자 = TALENT:MASTER:보도자
 ;마술기능
-    TALENT:197 = TALENT:MASTER:197
+    TALENT:마술기능 = TALENT:MASTER:마술기능
 ;초상계산
-    TALENT:198 = TALENT:MASTER:198
+    TALENT:초상계산 = TALENT:MASTER:초상계산
 
 ;요리잘함, 조리명인, 음감 보유시 요리못함, 음치의 소거 처리
-SIF TALENT:MASTER:193 || TALENT:MASTER:194
-    TALENT:MASTER:192 = 0
+SIF TALENT:MASTER:요리잘함 || TALENT:MASTER:조리명인
+    TALENT:MASTER:요리못함 = 0
 
-SIF TALENT:MASTER:194
-    TALENT:MASTER:193 = 0
+SIF TALENT:MASTER:조리명인
+    TALENT:MASTER:요리잘함 = 0
 
-SIF TALENT:MASTER:191
-    TALENT:MASTER:190 = 0
+SIF TALENT:MASTER:음감
+    TALENT:MASTER:음치 = 0
 
 ;종족소질
 FOR LOCAL, 200, 231
     TALENT:LOCAL = TALENT:MASTER:LOCAL
 NEXT
 ;Spell Card
-    TALENT:833 = TALENT:MASTER:833
+    TALENT:SpellCard = TALENT:MASTER:SpellCard
 ;지옥의 훈장
-    TALENT:834 = TALENT:MASTER:834
+    TALENT:지옥의훈장 = TALENT:MASTER:지옥의훈장
 ;변천
-    TALENT:835 = TALENT:MASTER:835
+    TALENT:변천 = TALENT:MASTER:변천
 ;디버그 모드
     TALENT:998 = TALENT:MASTER:998
 
@@ -266,10 +266,10 @@ ELSE
     TALENT:MASTER:봉래인 = 0
 ENDIF
 
-IF TALENT:MASTER:158 == 1
+IF TALENT:MASTER:광기 == 1
     CALL TAKEOVER_TALENT_MADNESS, 158
 ELSE
-    TALENT:MASTER:158 = 0
+    TALENT:MASTER:광기 = 0
 ENDIF
 
 ;--------------------------------------------------
@@ -320,7 +320,7 @@ SIF FLAG:4004 > 0 && (FLAG:계승가능조수수 & 4096) == 0
 SIF FLAG:요정함락총계 >= 1000 && (FLAG:계승가능조수수 & 16384) == 0
     FLAG:계승가능조수수 |= 16384
 ;[지옥의 훈장]을 소지
-SIF TALENT:MASTER:834 && (FLAG:계승가능조수수 & 32768) == 0
+SIF TALENT:MASTER:지옥의훈장 && (FLAG:계승가능조수수 & 32768) == 0
     FLAG:계승가능조수수 |= 32768
 
 ;--------------------------------------------------
@@ -359,7 +359,7 @@ IF CHARANUM > 1
         SIF 대상_제외됨(LOCAL)
             CONTINUE
         ;괴뢰, 괴조 인격, 음마 중 하나를 가지고 반발 각인 2 이하라면 계승 할 수있다
-        IF (TALENT:LOCAL:168 || TALENT:LOCAL:169 || TALENT:LOCAL:180) && MARK:LOCAL:반발각인 < 3
+        IF (TALENT:LOCAL:괴뢰 || TALENT:LOCAL:괴조인격 || TALENT:LOCAL:음마) && MARK:LOCAL:반발각인 < 3
             LOCAL:5 += 1
             CONTINUE
         ENDIF
@@ -370,7 +370,7 @@ IF CHARANUM > 1
         SIF CFLAG:LOCAL:2 < 2000 && EXP:LOCAL:주인조교경험 < 2000
             CONTINUE
         ;연모 또는 복종 또는 음란이 없으면 안돼
-        SIF TALENT:LOCAL:150 || TALENT:LOCAL:160 || TALENT:LOCAL:170
+        SIF TALENT:LOCAL:연모 || TALENT:LOCAL:복종 || TALENT:LOCAL:음란
             LOCAL:5 += 1
     NEXT
     IF LOCAL:5 > 0 && LOCAL:6 > 0
@@ -964,7 +964,7 @@ REPEAT CHARANUM
     SIF TALENT:COUNT:998
         CONTINUE
     ;[괴뢰]か[괴조인격]か[음마]持ちの場合は반발각인3以下ならOK
-    IF (TALENT:COUNT:168 == 0 && TALENT:COUNT:169 == 0 && TALENT:COUNT:180 == 0) || MARK:COUNT:반발각인 > 2
+    IF (TALENT:COUNT:괴뢰 == 0 && TALENT:COUNT:괴조인격 == 0 && TALENT:COUNT:음마 == 0) || MARK:COUNT:반발각인 > 2
         ;助手可能である
         SIF CFLAG:COUNT:1 < 2
             CONTINUE
@@ -972,7 +972,7 @@ REPEAT CHARANUM
         SIF CFLAG:COUNT:2 < 2000 && EXP:COUNT:주인조교경험 < 2000
             CONTINUE
         ;[연모]か[복종]か[음란]を持っている
-        SIF TALENT:COUNT:150 == 0 && TALENT:COUNT:160 == 0 && TALENT:COUNT:170 == 0
+        SIF TALENT:COUNT:연모 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:음란 == 0
             CONTINUE
     ENDIF
 
@@ -1088,19 +1088,19 @@ FOR ASSI, 0, CHARANUM
     IF (((TALENT:ASSI:남자 && CFLAG:ASSI:16 == 507) || CFLAG:ASSI:16 == 511) && FLAG:난이도 >= 3) || CFLAG:ASSI:16 & 512
         CALL FALLEN_ASSI, LOCAL:4
         LOCAL:4 = RESULT
-    ELSEIF CFLAG:ASSI:14 >= 15 && CFLAG:ASSI:15 >= 15 && (CFLAG:ASSI:16 & 1) > 0 && TALENT:ASSI:179 == 0
+    ELSEIF CFLAG:ASSI:14 >= 15 && CFLAG:ASSI:15 >= 15 && (CFLAG:ASSI:16 & 1) > 0 && TALENT:ASSI:즉각함락 == 0
         CALL FALLEN_ASSI, LOCAL:4
         LOCAL:4 = RESULT
     ENDIF
     ;助手が壊造人格を持っていない＋(過去の周回プレイを含め)今までに幼児退行、狂気、精神崩壊、傀儡を全て取得し、記憶消去薬を1回以上飲ませ、
     ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも壊造人格を覚えさせた場合最初から壊造人格が付加されるようになる.
-    IF ((CFLAG:ASSI:17 == 31 && FLAG:난이도 >= 3) || CFLAG:ASSI:17 & 32) && TALENT:ASSI:169 == 0
+    IF ((CFLAG:ASSI:17 == 31 && FLAG:난이도 >= 3) || CFLAG:ASSI:17 & 32) && TALENT:ASSI:괴조인격 == 0
         CALL CONVERTED_ASSI, LOCAL:4
         LOCAL:4 = RESULT
     ENDIF
     ;助手がオトコでも生娘ではなく、好感度が1万以上、現在[相愛]を持っている＋(過去の周回プレイを含め)今までに恋慕、妄信、親愛、相愛を全て取得し、
     ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも生娘化を実行した場合、生娘化にするか選択できるようになる.
-    SIF (((CFLAG:ASSI:14 & 15) > 0 && FLAG:난이도 >= 3) || CFLAG:ASSI:14 & 16) && CFLAG:ASSI:2 > 9999 && TALENT:ASSI:처녀 != 1 && TALENT:ASSI:남자 == 0 && TALENT:ASSI:153
+    SIF (((CFLAG:ASSI:14 & 15) > 0 && FLAG:난이도 >= 3) || CFLAG:ASSI:14 & 16) && CFLAG:ASSI:2 > 9999 && TALENT:ASSI:처녀 != 1 && TALENT:ASSI:남자 == 0 && TALENT:ASSI:상애
         CALL VIRGIN_ASSI
 
     ;캐릭터 전용 대사 내에 특수 인계 설정 처리가 있을 경우에는 그쪽 처리를 우선한다. 그 외에는 통상 인계 처리.
@@ -1293,7 +1293,7 @@ EQUIP:ASSI:0 = 0
 ;いいえを選択しても即落ちを『覚えさせたことがある』と判定される
 ;(つまりこの選択肢を出した時点で淫乱系素質全取得の条件が1つ満たされることに) (이미 즉각함락 존재 시 유지 여부 추가. T(220213))
 @FALLEN_ASSI, ARG
-IF TALENT:ASSI:179
+IF TALENT:ASSI:즉각함락
     PRINTFORML ＜%CALLNAME:ASSI%의 [즉각함락]을 유지하겠습니까?＞
     PRINTLC [0] 예
     PRINTLC [1] 아니오
@@ -1320,7 +1320,7 @@ ELSE
     INPUT
     IF RESULT == 0
         PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% [즉각함락]을 얻었다.
-        TALENT:ASSI:179 = 1
+        TALENT:ASSI:즉각함락 = 1
         ARG |= 1
     ELSEIF RESULT == 1
         PRINTFORMW %조사처리(CALLNAME:ASSI,"가")% [즉각함락]을 익히는 것을 보류했습니다.
@@ -1351,7 +1351,7 @@ INPUT
 IF RESULT == 0
     PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% %CALLNAME:MASTER%에 의해 새로운 인격이 덧씌워졌습니다.
     PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% [괴조인격]을 얻었다.
-    TALENT:ASSI:169 = 1
+    TALENT:ASSI:괴조인격 = 1
     CALL GET_NICK, MASTER, "『귀축』"
     FLAG:괴조총계 += 1
     CFLAG:MASTER:157 |= 8

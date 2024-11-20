@@ -584,7 +584,7 @@ RETURN RESULT
 SIF EQUIP:ARG:14 || (TFLAG:999 && TFLAG:899 >= 1 && ARG == TARGET) || KX_MOUSE_CHECK(ARG)
     RETURNF 0
 ;(원래) [남자] 또는 말을 못하는 [인형]
-SIF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || TALENT:ARG:208 == 1
+SIF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || TALENT:ARG:인형 == 1
     RETURNF 0
 
 RETURNF 1
@@ -603,7 +603,7 @@ SIF ASSIPLAY
 SIF EQUIP:ARG:14 || TFLAG:899 >= 1 || KX_MOUSE_CHECK(ARG)
     RETURNF 0
 ;(원래) [남자] 또는 말을 못하는 [인형]
-SIF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || TALENT:ARG:208 == 1
+SIF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || TALENT:ARG:인형 == 1
     RETURNF 0
 
 RETURNF 1
@@ -623,7 +623,7 @@ RETURNF TEQUIP:ARG:42
 ;ARG＝판정하는 캐릭터
 @KX_LOVELY_CHECK(ARG)
 #FUNCTION
-RETURNF ((TALENT:ARG:151 || TALENT:ARG:152 || TALENT:ARG:153 || TALENT:ARG:162) && MARK:ARG:반발각인 == 0) ? 1 # 0
+RETURNF ((TALENT:ARG:망신 || TALENT:ARG:친애 || TALENT:ARG:상애 || TALENT:ARG:예속) && MARK:ARG:반발각인 == 0) ? 1 # 0
 
 ;=============================================================================
 ;범용 대사, 범용 역대사 제너레이터 인격 결정의 처리
@@ -653,13 +653,13 @@ IF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
     ELSEIF TALENT:ARG:반항적 || TALENT:ARG:건방짐
         CSTR:ARG:11 = 나
     ;我輩([프라이드가 높음], [흡혈귀])
-    ELSEIF TALENT:ARG:프라이드가높음 || TALENT:ARG:205
+    ELSEIF TALENT:ARG:프라이드가높음 || TALENT:ARG:흡혈귀
         CSTR:ARG:11 = 본좌
     ;わし([보수적], [정조관념], [오니], [텐구])
-    ELSEIF TALENT:ARG:보수적 || TALENT:ARG:정조관념 || TALENT:ARG:214 || TALENT:ARG:215
+    ELSEIF TALENT:ARG:보수적 || TALENT:ARG:정조관념 || TALENT:ARG:오니 || TALENT:ARG:텐구
         CSTR:ARG:11 = 나
     ;僕([겁쟁이], [얌전함], [유아], [유아퇴행], [캇파])
-    ELSEIF TALENT:ARG:겁쟁이 || TALENT:ARG:얌전함 || TALENT:ARG:유아 || TALENT:ARG:159 || TALENT:ARG:210
+    ELSEIF TALENT:ARG:겁쟁이 || TALENT:ARG:얌전함 || TALENT:ARG:유아 || TALENT:ARG:유아퇴행 || TALENT:ARG:캇파
         CSTR:ARG:11 = 나
     ;私
     ELSE
@@ -703,7 +703,7 @@ IF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
         CSTR:ARG:12 = 너
         CFLAG:ARG:43 = 13
     ;貴様([오니], [텐구])
-    ELSEIF TALENT:ARG:214 || TALENT:ARG:215
+    ELSEIF TALENT:ARG:오니 || TALENT:ARG:텐구
         CSTR:ARG:12 = 네놈
         CFLAG:ARG:43 = 11
     ;お主([보수적], [정조관념])
@@ -711,7 +711,7 @@ IF (TALENT:ARG:남자 && CFLAG:ARG:4995 != 2) || CFLAG:ARG:4995 == 1
         CSTR:ARG:12 = 자네
         CFLAG:ARG:43 = 11
     ;そなた([프라이드가 높음], [흡혈귀])
-    ELSEIF TALENT:ARG:프라이드가높음 || TALENT:ARG:205
+    ELSEIF TALENT:ARG:프라이드가높음 || TALENT:ARG:흡혈귀
         CSTR:ARG:12 = 그대
         CFLAG:ARG:43 = 11
     ;お前([반항적], [건방짐], [저항])
@@ -822,7 +822,7 @@ ELSE
     IF CFLAG:ARG:5201 >= 5 && NO:ARG == 119 && CALLNAME:MASTER != "당신"
         CSTR:ARG:12 = %CALLNAME:MASTER%쨩
     ;마스터([요정])
-    ELSEIF CFLAG:ARG:5201 >= 5 && TALENT:ARG:200
+    ELSEIF CFLAG:ARG:5201 >= 5 && TALENT:ARG:요정
         CSTR:ARG:12 = 마스터
     ;주인님
     ELSEIF CFLAG:ARG:5201 >= 5
@@ -833,7 +833,7 @@ ELSE
     IF NO:ARG == 27 || NO:ARG == 62
         CSTR:ARG:12 = \@(TALENT:MASTER:남자) ? 오빠 # 언니\@
     ;와타츠키 자매 한정
-    ELSEIF NO:ARG == 53 || (NO:ARG == 54 && TALENT:ARG:150)
+    ELSEIF NO:ARG == 53 || (NO:ARG == 54 && TALENT:ARG:연모)
         CSTR:ARG:12 = 여보
     ;나즈린 한정
     ELSEIF NO:ARG == 70
@@ -950,7 +950,7 @@ ENDIF
 
 IF STRLENS(MASTERNAME:ARG) > 0
     ;[솔직함], [연모], [망신], [친애], [상애], [복종], [낙인], [예속], [사역마], [괴리], [괴조인격], [즉각함락], 반발각인 Lv0에다 굴복각인 Lv2 이상, [겁쟁이]에다 공포각인 및 굴복각인 취득 완료
-    SIF TALENT:ARG:솔직함 || TALENT:ARG:150 || TALENT:ARG:151 || TALENT:ARG:152 || TALENT:ARG:153 || TALENT:ARG:160 || TALENT:ARG:161 || TALENT:ARG:162 || TALENT:ARG:164 || TALENT:ARG:168 || TALENT:ARG:169 || TALENT:ARG:179 || (MARK:굴복각인 > 1 && MARK:반발각인 == 0) || (TALENT:ARG:겁쟁이 && MARK:굴복각인 && MARK:공포각인)
+    SIF TALENT:ARG:솔직함 || TALENT:ARG:연모 || TALENT:ARG:망신 || TALENT:ARG:친애 || TALENT:ARG:상애 || TALENT:ARG:복종 || TALENT:ARG:낙인 || TALENT:ARG:예속 || TALENT:ARG:사역마 || TALENT:ARG:괴뢰 || TALENT:ARG:괴조인격 || TALENT:ARG:즉각함락 || (MARK:굴복각인 > 1 && MARK:반발각인 == 0) || (TALENT:ARG:겁쟁이 && MARK:굴복각인 && MARK:공포각인)
         CSTR:ARG:12 = %MASTERNAME:ARG%
 ENDIF
 
@@ -967,13 +967,13 @@ IF (TALENT:MASTER:남자 && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
     IF TALENT:MASTER:반항적 || TALENT:MASTER:건방짐
         CSTR:ARG:16 = 나
     ;我輩([프라이드가 높음], [흡혈귀])
-    ELSEIF TALENT:MASTER:프라이드가높음 || TALENT:MASTER:205
+    ELSEIF TALENT:MASTER:프라이드가높음 || TALENT:MASTER:흡혈귀
         CSTR:ARG:16 = 본좌
     ;わし([보수적], [정조관념], [오니], [텐구])
-    ELSEIF NO:MASTER == 70 || NO:MASTER == 74 || TALENT:MASTER:보수적 || TALENT:MASTER:정조관념 || TALENT:MASTER:214 || TALENT:MASTER:215
+    ELSEIF NO:MASTER == 70 || NO:MASTER == 74 || TALENT:MASTER:보수적 || TALENT:MASTER:정조관념 || TALENT:MASTER:오니 || TALENT:MASTER:텐구
         CSTR:ARG:16 = 나
     ;僕([겁쟁이], [얌전함], [유아], [유아퇴행], [캇파])
-    ELSEIF NO:MASTER == 69 || TALENT:MASTER:겁쟁이 || TALENT:MASTER:얌전함 || TALENT:MASTER:유아 || TALENT:MASTER:159 || TALENT:MASTER:210
+    ELSEIF NO:MASTER == 69 || TALENT:MASTER:겁쟁이 || TALENT:MASTER:얌전함 || TALENT:MASTER:유아 || TALENT:MASTER:유아퇴행 || TALENT:MASTER:캇파
         CSTR:ARG:16 = 나
     ;私
     ELSE
@@ -1003,7 +1003,7 @@ ENDIF
 CFLAG:ARG:44 = 0
 IF (TALENT:MASTER:남자 && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
     ;貴様([鬼], [天狗])
-    IF NO:MASTER == 70 || TALENT:MASTER:214 || TALENT:MASTER:215
+    IF NO:MASTER == 70 || TALENT:MASTER:오니 || TALENT:MASTER:텐구
         CSTR:ARG:17 = 네놈
         CFLAG:ARG:44 = 11
     ;お主([보수적], [정조관념])
@@ -1011,7 +1011,7 @@ IF (TALENT:MASTER:남자 && CFLAG:MASTER:4995 != 2) || CFLAG:MASTER:4995 == 1
         CSTR:ARG:17 = 자네
         CFLAG:ARG:44 = 11
     ;そなた([프라이드가 높음], [흡혈귀])
-    ELSEIF TALENT:MASTER:프라이드가높음 || TALENT:MASTER:205
+    ELSEIF TALENT:MASTER:프라이드가높음 || TALENT:MASTER:흡혈귀
         CSTR:ARG:17 = 그대
         CFLAG:ARG:44 = 11
     ;お前([반항적], [건방짐], [저항])
@@ -1063,7 +1063,7 @@ ELSE
         CSTR:ARG:17 = \@(TALENT:ARG:남자) ? 오빠 # 언니\@
 
     ;貴方    와타츠키 자매 한정(즉 요리히메의 연모니까 뭐… 그렇지)
-    SIF NO:MASTER == 53 || (NO:MASTER == 54 && TALENT:MASTER:150)
+    SIF NO:MASTER == 53 || (NO:MASTER == 54 && TALENT:MASTER:연모)
         CSTR:ARG:17 = 당신
     ;君    나즈린 한정
     SIF NO:MASTER == 70
@@ -1616,7 +1616,7 @@ ELSE
     ENDIF
 
     IF STRLENS(MASTERNAME:TARGET) > 0
-        SIF TALENT:솔직함 || TALENT:150 || TALENT:151 || TALENT:152 || TALENT:153 || TALENT:160 || TALENT:161 || TALENT:162 || TALENT:164 || TALENT:168 || TALENT:169 || TALENT:179 || (MARK:반발각인 < 1 && MARK:굴복각인 > 1) || (TALENT:겁쟁이 && MARK:공포각인 && MARK:굴복각인)
+        SIF TALENT:솔직함 || TALENT:연모 || TALENT:망신 || TALENT:친애 || TALENT:상애 || TALENT:복종 || TALENT:낙인 || TALENT:예속 || TALENT:사역마 || TALENT:괴뢰 || TALENT:괴조인격 || TALENT:즉각함락 || (MARK:반발각인 < 1 && MARK:굴복각인 > 1) || (TALENT:겁쟁이 && MARK:공포각인 && MARK:굴복각인)
             STR:401 = %MASTERNAME:TARGET%
     ENDIF
 ENDIF
@@ -1655,60 +1655,60 @@ LOCAL:3 = (EXP:ARG:노출쾌락경험 + JUEL:ARG:15 / 1000)
 
 ;상애 & 예속 동시 보유 
 ;(음란 엔딩은 없다... 음마는 주차플레이가 전제조건이라 적용하기 애매함.)
-IF TALENT:ARG:153 && TALENT:ARG:162
+IF TALENT:ARG:상애 && TALENT:ARG:예속
     IF LOCAL:1 >=  LOCAL:2
         RETURNF 1
     ELSEIF LOCAL:1 <=  LOCAL:2
         RETURNF 2
     ENDIF
 ;상애
-ELSEIF TALENT:ARG:153
+ELSEIF TALENT:ARG:상애
     RETURNF 1
 ;예속
-ELSEIF TALENT:ARG:162
+ELSEIF TALENT:ARG:예속
     RETURNF 2
 
 ;친애 & 낙인 동시 보유
 ;일단 친애와 낙인을 동급으로 본다.
 ;(역시 음란계 소질은 없다. 부위계 소질은 호감도의 영향을 안 받아서 적용하기 애매함.)
-ELSEIF TALENT:ARG:153 && TALENT:ARG:162
+ELSEIF TALENT:ARG:상애 && TALENT:ARG:예속
     IF LOCAL:1 >=  LOCAL:2
         RETURNF 1
     ELSEIF LOCAL:1 <=  LOCAL:2
         RETURNF 2
     ENDIF
 ;친애
-ELSEIF TALENT:ARG:152
+ELSEIF TALENT:ARG:친애
     RETURNF 1
 ;낙인
-ELSEIF TALENT:ARG:161
+ELSEIF TALENT:ARG:낙인
     RETURNF 2
     
 ;연모, 복종, 음란 중 2개 이상 보유
-ELSEIF (TALENT:ARG:150 + TALENT:ARG:160 + TALENT:ARG:170) >= 2
+ELSEIF (TALENT:ARG:연모 + TALENT:ARG:복종 + TALENT:ARG:음란) >= 2
     ;값이 가장 크고 해당 소질 보유
-    IF LOCAL:1 >=  LOCAL:2 && LOCAL:1 >=  LOCAL:3 && TALENT:ARG:150
+    IF LOCAL:1 >=  LOCAL:2 && LOCAL:1 >=  LOCAL:3 && TALENT:ARG:연모
         RETURNF 1
-    ELSEIF LOCAL:2 >=  LOCAL:1 && LOCAL:2 >=  LOCAL:3 && TALENT:ARG:160
+    ELSEIF LOCAL:2 >=  LOCAL:1 && LOCAL:2 >=  LOCAL:3 && TALENT:ARG:복종
         RETURNF 2
-    ELSEIF LOCAL:3 >=  LOCAL:1 && LOCAL:3 >=  LOCAL:2 && TALENT:ARG:170
+    ELSEIF LOCAL:3 >=  LOCAL:1 && LOCAL:3 >=  LOCAL:2 && TALENT:ARG:음란
         RETURNF 3
     ;값이 2번째로 크고 해당 소질 보유
-    ELSEIF (LOCAL:1 >=  LOCAL:2 || LOCAL:1 >=  LOCAL:3) && TALENT:ARG:150
+    ELSEIF (LOCAL:1 >=  LOCAL:2 || LOCAL:1 >=  LOCAL:3) && TALENT:ARG:연모
         RETURNF 1
-    ELSEIF (LOCAL:2 >=  LOCAL:1 || LOCAL:2 >=  LOCAL:3) && TALENT:ARG:160
+    ELSEIF (LOCAL:2 >=  LOCAL:1 || LOCAL:2 >=  LOCAL:3) && TALENT:ARG:복종
         RETURNF 2
-    ELSEIF (LOCAL:3 >=  LOCAL:1 || LOCAL:3 >=  LOCAL:2) && TALENT:ARG:170
+    ELSEIF (LOCAL:3 >=  LOCAL:1 || LOCAL:3 >=  LOCAL:2) && TALENT:ARG:음란
         RETURNF 3
     ENDIF
 ;연모
-ELSEIF TALENT:ARG:150
+ELSEIF TALENT:ARG:연모
     RETURNF 1
 ;복종
-ELSEIF TALENT:ARG:160
+ELSEIF TALENT:ARG:복종
     RETURNF 2
 ;음란
-ELSEIF TALENT:ARG:170
+ELSEIF TALENT:ARG:음란
     RETURNF 3
 ;소질 없음
 ELSE

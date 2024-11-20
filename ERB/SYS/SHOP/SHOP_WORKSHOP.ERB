@@ -130,7 +130,7 @@ ELSEIF RESULT == 100
 ;        IF FLAG:1135 < FLAG:1134
 ;            LOCAL:0 = RAND:(FLAG:1134) + 1
 ;            REPEAT CHARANUM
-;                IF CFLAG:COUNT:4 == 3 && MARK:COUNT:반발각인 == 3 && TALENT:COUNT:150 == 0 && TALENT:COUNT:151 == 0 && TALENT:COUNT:152 == 0 && TALENT:COUNT:153 == 0 && TALENT:COUNT:160 == 0 && TALENT:COUNT:161 == 0 && TALENT:COUNT:162 == 0 && TALENT:COUNT:164 == 0
+;                IF CFLAG:COUNT:4 == 3 && MARK:COUNT:반발각인 == 3 && TALENT:COUNT:연모 == 0 && TALENT:COUNT:망신 == 0 && TALENT:COUNT:친애 == 0 && TALENT:COUNT:상애 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:예속 == 0 && TALENT:COUNT:사역마 == 0
 ;                    IF LOCAL:0 == 0
 ;                        TARGET = COUNT
 ;                    ENDIF
@@ -815,7 +815,7 @@ GOTO INPUT_LOOP
 SIF FLAG:1120 < 0
     RETURN 0
 ;魔術品は(現状)工房では作成不能
-;SIF (FLAG:1120 & 256) && TALENT:(FLAG:1111):197
+;SIF (FLAG:1120 & 256) && TALENT:(FLAG:1111):마술기능
 SIF (FLAG:1120 & 256)
     RETURN 0
 ;医療用品は(現状)工房では作成不能
@@ -829,7 +829,7 @@ LOCAL:0 = 1
 SIF (FLAG:1120 & 2) && ABL:(FLAG:1111):공작기능 < 5
     RETURN 0
 ;SM用品はSM系素養(ドＳ、ドＭ、サド、マゾ、サドっ気Lv1以上、マゾっ気Lv1以上のいずれか)が必要
-SIF (FLAG:1120 & 4) && (TALENT:(FLAG:1111):177 || TALENT:(FLAG:1111):178 || TALENT:(FLAG:1111):새드 || TALENT:(FLAG:1111):마조 || ABL:(FLAG:1111):새드끼 || ABL:(FLAG:1111):마조끼)
+SIF (FLAG:1120 & 4) && (TALENT:(FLAG:1111):초S || TALENT:(FLAG:1111):초M || TALENT:(FLAG:1111):새드 || TALENT:(FLAG:1111):마조 || ABL:(FLAG:1111):새드끼 || ABL:(FLAG:1111):마조끼)
     RETURN 0
 ;大道具は工作経験がある程度必要
 IF (FLAG:1120 & 8) 
@@ -852,7 +852,7 @@ IF (FLAG:1120 & 64)
     ENDIF
 ENDIF
 ;工作名人なら必要工作経験を半減
-SIF TALENT:(FLAG:1111):195
+SIF TALENT:(FLAG:1111):공작명인
     LOCAL:0 /= 2
 ;工作経験が必要工作経験に満たなければ作成不能
 SIF EXP:(FLAG:1111):공작경험 < LOCAL:0
@@ -909,12 +909,12 @@ REPEAT CHARANUM
         ;エロス要素確認
         LOCAL:0 = 0
         ;サディストチェック (サドっ気Lv3以上かサドかドＳ)
-        IF ABL:COUNT:새드끼 > 2 || TALENT:COUNT:새드 || TALENT:COUNT:177
+        IF ABL:COUNT:새드끼 > 2 || TALENT:COUNT:새드 || TALENT:COUNT:초S
             FLAG:1140 += 1
             LOCAL:0 += 1
         ENDIF
         ;マゾヒストチェック (マゾっ気Lv3以上かマゾかドＭ)
-        IF ABL:COUNT:마조끼 > 2 || TALENT:COUNT:마조 || TALENT:COUNT:178
+        IF ABL:COUNT:마조끼 > 2 || TALENT:COUNT:마조 || TALENT:COUNT:초M
             FLAG:1141 += 1
             LOCAL:0 += 1
         ENDIF
@@ -929,7 +929,7 @@ REPEAT CHARANUM
             LOCAL:0 += 1
         ENDIF
         ;淫乱チェック
-        IF TALENT:COUNT:170 || TALENT:COUNT:171 || TALENT:COUNT:172 || TALENT:COUNT:173 || TALENT:COUNT:174 || TALENT:COUNT:175 || TALENT:COUNT:176 || TALENT:COUNT:177 || TALENT:COUNT:178 || TALENT:COUNT:179 || TALENT:COUNT:180
+        IF TALENT:COUNT:음란 || TALENT:COUNT:음핵／음경 || TALENT:COUNT:음호 || TALENT:COUNT:음고 || TALENT:COUNT:음유 || TALENT:COUNT:요도광 || TALENT:COUNT:키스마 || TALENT:COUNT:초S || TALENT:COUNT:초M || TALENT:COUNT:즉각함락 || TALENT:COUNT:음마
             FLAG:1144 += 1
             LOCAL:0 += 1
         ENDIF
@@ -963,10 +963,10 @@ REPEAT CHARANUM
             FLAG:1131 += 1
         ENDIF
         ;ところで反発刻印3で陥落していない人なんて呼んでないよね？
-        IF MARK:COUNT:반발각인 == 3 && TALENT:COUNT:150 == 0 && TALENT:COUNT:151 == 0 && TALENT:COUNT:152 == 0 && TALENT:COUNT:153 == 0 && TALENT:COUNT:160 == 0 && TALENT:COUNT:161 == 0 && TALENT:COUNT:162 == 0 && TALENT:COUNT:164 == 0 && TALENT:COUNT:169 == 0
+        IF MARK:COUNT:반발각인 == 3 && TALENT:COUNT:연모 == 0 && TALENT:COUNT:망신 == 0 && TALENT:COUNT:친애 == 0 && TALENT:COUNT:상애 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:예속 == 0 && TALENT:COUNT:사역마 == 0 && TALENT:COUNT:괴조인격 == 0
             FLAG:1134 += 1
         ;陥落済みの信頼性のある人だよね？
-        ELSEIF MARK:COUNT:반발각인 == 0 && (TALENT:COUNT:150 || TALENT:COUNT:151 || TALENT:COUNT:152 || TALENT:COUNT:153 || TALENT:COUNT:160 || TALENT:COUNT:161 || TALENT:COUNT:162 || TALENT:COUNT:164 || TALENT:COUNT:169)
+        ELSEIF MARK:COUNT:반발각인 == 0 && (TALENT:COUNT:연모 || TALENT:COUNT:망신 || TALENT:COUNT:친애 || TALENT:COUNT:상애 || TALENT:COUNT:복종 || TALENT:COUNT:낙인 || TALENT:COUNT:예속 || TALENT:COUNT:사역마 || TALENT:COUNT:괴조인격)
             FLAG:1135 += 1
         ENDIF
     ENDIF

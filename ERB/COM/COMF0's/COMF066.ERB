@@ -162,17 +162,17 @@ LOCAL:1 = 0
 ;태생 때(=난생, 산란 체질이 아닐 때)
 IF TALENT:135 == 0 && TALENT:136 == 0
     ;연모인가 친애나 상애 때
-    IF TALENT:150 || TALENT:152 || TALENT:153
+    IF TALENT:연모 || TALENT:친애 || TALENT:상애
         SOURCE:11 = 1500
         LOCAL:1 = 1
     ENDIF
     ;복종이나 망신 때
-    IF TALENT:160 || TALENT:161
+    IF TALENT:복종 || TALENT:낙인
         SOURCE:17 = 2000
         LOCAL:1 = 1
     ENDIF
     ;음란 때
-    IF TALENT:170
+    IF TALENT:음란
         SOURCE:18 = 1800
         LOCAL:1 = 1
     ENDIF
@@ -291,12 +291,12 @@ TEQUIP:ASSI:16 = 1
 
 ;노예의 질투
 ;상애 or친애 or낙인 소유
-IF TALENT:153 || TALENT:152 || TALENT:161
+IF TALENT:상애 || TALENT:친애 || TALENT:낙인
     ;[광기]＋[질투]
-    IF TALENT:157 && TALENT:158
+    IF TALENT:질투 && TALENT:광기
         SOURCE:32 = 6666
     ;[질투]
-    ELSEIF TALENT:157
+    ELSEIF TALENT:질투
         SOURCE:32 = 3333
     ;[질투하기 쉽다]
     ELSEIF TALENT:19
@@ -304,10 +304,10 @@ IF TALENT:153 || TALENT:152 || TALENT:161
     ENDIF
 ELSE
     ;[광기]＋[질투]
-    IF TALENT:157 && TALENT:158
+    IF TALENT:질투 && TALENT:광기
         SOURCE:32 = 666
     ;[질투]
-    ELSEIF TALENT:157
+    ELSEIF TALENT:질투
         SOURCE:32 = 333
     ENDIF
 ENDIF
@@ -365,13 +365,13 @@ IF TFLAG:99 == 0 ;노예가 먹음
     IF TALENT:135 || TALENT:136
         ;【난생】,【산란 체질】의 어느 쪽인지
         PRINTW 이상한 약을 먹인 것에 대한 반감을 숨길 수 없었다….
-    ELSEIF TALENT:150 || TALENT:152 || TALENT:153
+    ELSEIF TALENT:연모 || TALENT:친애 || TALENT:상애
         ;【연모】,【친애】,【상애】의 최악이어도 1개를 가진다
         PRINTFORMW %CALLNAME:PLAYER%의 아기를 가지길 기대한 듯, 어리광을 피우듯이 다가오고 있다.
-    ELSEIF TALENT:160 || TALENT:161
+    ELSEIF TALENT:복종 || TALENT:낙인
         ;【복종】,【낙인】의 어느 쪽인지
         PRINTW 질내사정을 황홀한 표정으로 기다리고 있다.
-    ELSEIF TALENT:162 || TALENT:170
+    ELSEIF TALENT:예속 || TALENT:음란
         ;【예속】,【음란】의 어느 쪽인지
         PRINTW 금방이라도 질내사정해 주었으면 하는 것처럼 보지를 손가락으로 열고 있다.
     ELSEIF ABL:순종 >= 5 && MARK:굴복각인 == 3 && MARK:반발각인 == 0
@@ -386,7 +386,7 @@ ELSEIF TFLAG:99 == 1 ;조수가 먹음
     LOCAL = ORDER_FALLEN(ASSI)
     ;조수가 주인의 아이를 원하는지 판정
     ;연모, 낙인, 예속, 괴조인격 : 굿 임신 이벤트를 일으키는 소질들
-    LOCAL:1 = (TALENT:ASSI:150 || TALENT:ASSI:161 || TALENT:ASSI:162 || TALENT:ASSI:169) && EXIST_PENIS(MASTER)
+    LOCAL:1 = (TALENT:ASSI:연모 || TALENT:ASSI:낙인 || TALENT:ASSI:예속 || TALENT:ASSI:괴조인격) && EXIST_PENIS(MASTER)
     ;조수가 노예의 아이를 원하는지 판정
     LOCAL:2 = (CFLAG:ASSI:(NO:TARGET + 1000) >= 1000) && EXIST_PENIS(TARGET)
     
@@ -397,11 +397,11 @@ ELSEIF TFLAG:99 == 1 ;조수가 먹음
     IF (LOCAL:2 && RAND:3 == 0) || (LOCAL:2 && LOCAL:1 == 0)
         PRINTFORMW %조사처리(CALLNAME:TARGET,"의")% 페니스를 보며 눈을 빛내고 있다.
     ;[연모계] [음란]조수
-    ELSEIF LOCAL == 1 && TALENT:ASSI:170 && LOCAL:1
+    ELSEIF LOCAL == 1 && TALENT:ASSI:음란 && LOCAL:1
         PRINTFORMW %CALLNAME:PLAYER%의 아기를 가지길 기대하는 듯,
         PRINTFORMW %조사처리(CALLNAME:TARGET,"이")% 보고 있는데도 어리광을 피우고 있다.
     ;[복종계] [음란]조수
-    ELSEIF LOCAL == 2 && TALENT:ASSI:170 && LOCAL:1
+    ELSEIF LOCAL == 2 && TALENT:ASSI:음란 && LOCAL:1
         IF BASE:MASTER:사정 < 1000
             PRINTFORMW 작아진 %CALLNAME:PLAYER%의 페니스를 보고 다가와서 불알을 애무했다.
             PRINT 그 다음 
@@ -426,7 +426,7 @@ ELSEIF TFLAG:99 == 1 ;조수가 먹음
 
 ELSEIF TFLAG:99 == 2 ;주인이 먹음
     PRINTFORMW %조사선택(CALLNAME:MASTER, "는")% 배란유도제를 먹었다.
-    IF (TALENT:150 || TALENT:152 || TALENT:153) && EXIST_PENIS(TARGET)
+    IF (TALENT:연모 || TALENT:친애 || TALENT:상애) && EXIST_PENIS(TARGET)
         PRINTFORM 그것을 본 %조사선택(CALLNAME:TARGET, "는")% 
         PRINTW 기대에 찬 표정을 짓고 있다.
     ENDIF

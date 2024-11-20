@@ -17,7 +17,7 @@ SIF TFLAG:899 == 0
 ;-------------------------------------------------
 IF EQUIP:14 == 0
     CALL SOURCE_SEX_CHECK
-    IF ASSIPLAY == 0 && TALENT:PLAYER:남자 && TALENT:120 == 0 && TALENT:150
+    IF ASSIPLAY == 0 && TALENT:PLAYER:남자 && TALENT:120 == 0 && TALENT:연모
         IF FLAG:난이도 == 1
             CALL SOURCE_SEX_MALE_CHECK_EASY
         ELSE
@@ -140,7 +140,7 @@ CALL UP_TALENT_CVA_CHECK
 ;-------------------------------------------------
 LOCAL:1 = UP:0 + UP:1 + UP:2 + UP:3
 ;機械持ちの場合には陥落していなくて快感に素直もないとと分泌しずらい(盛り上がりにくい)
-SIF TALENT:206 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0 && TALENT:70 == 0
+SIF TALENT:기계 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0 && TALENT:70 == 0
     TIMES LOCAL:1 , 0.2
 ;쾌Ｃ＋쾌Ｖ＋쾌Ａ＋쾌Ｂが合わせて100以上上昇ならその20%の液体의 소스が加わる（オトコはダメ）
 IF LOCAL:1 > 100 && TALENT:120 == 0
@@ -460,7 +460,7 @@ CALL UP_VIGOR_CHECK
 ;-------------------------------------------------
 ;嫉妬しやすいによる上下の処理
 ;-------------------------------------------------
-SIF TALENT:질투하기쉬움 && TALENT:150
+SIF TALENT:질투하기쉬움 && TALENT:연모
     CALL UP_ENVY_CHECK
 
 ;-------------------------------------------------
@@ -473,7 +473,7 @@ CALL CHECK_TRAIN_PAIN
 ;-------------------------------------------------
 IF BASE:기력 <= 0
     ;음마가 없으면 체력 추가소모
-    IF TALENT:180 == 0
+    IF TALENT:음마 == 0
         TIMES DOWNBASE:0 , 1.50
         DOWNBASE:0 += (FLAG:난이도 == 4 || FLAG:난이도 == 5) ? 100 # 80
     ENDIF
@@ -534,7 +534,7 @@ TFLAG:699 = 0
 ;-------------------------------------------------
 ;[爆発物]の爆発判定に
 ;-------------------------------------------------
-SIF TALENT:220
+SIF TALENT:폭발물
     CALL TRAIN_EXPLOSION_CHECK
 
 ;-------------------------------------------------
@@ -864,18 +864,18 @@ SIF FLAG:난이도 != 1 && TEQUIP:71 == 0 && TALENT:998 == 0
 #FUNCTION
 LOCAL = 0
 ;[拒絶]
-IF TALENT:830
+IF TALENT:거절
     ;[相愛][隷属][壊造人格]
-    LOCAL = (TALENT:153 || TALENT:162 || TALENT:169) ? 53 # 50
+    LOCAL = (TALENT:상애 || TALENT:예속 || TALENT:괴조인격) ? 53 # 50
 ;[SpellCard]
-ELSEIF TALENT:833
-    IF TALENT:833 == NO:ARG
+ELSEIF TALENT:SpellCard
+    IF TALENT:SpellCard == NO:ARG
         LOCAL = 500
-    ELSEIF TALENT:833 == TALENT:ARG:833
+    ELSEIF TALENT:SpellCard == TALENT:ARG:SpellCard
         LOCAL = 250
     ELSE
         ;[相愛][隷属][壊造人格]
-        LOCAL = (TALENT:153 || TALENT:162 || TALENT:169) ? 10 # 1
+        LOCAL = (TALENT:상애 || TALENT:예속 || TALENT:괴조인격) ? 10 # 1
     ENDIF
 ELSE
     LOCAL = RELATION:(NO:ARG)
@@ -889,7 +889,7 @@ RETURNF LOCAL
 REPEAT 100
     SIF TCVAR:ARG:COUNT <= 0
         CONTINUE
-    IF COUNT == 39 && TFLAG:55 && ARG == ASSI && (TALENT:ARG:새드 || TALENT:ARG:177)
+    IF COUNT == 39 && TFLAG:55 && ARG == ASSI && (TALENT:ARG:새드 || TALENT:ARG:초S)
         PRINTFORML 가학 조교 경험(%CALLNAME:ARG%) ＋ {TCVAR:ARG:COUNT}
         EXP:ARG:COUNT += TCVAR:ARG:COUNT
     ELSE
@@ -951,20 +951,20 @@ ENDIF
 SIF TALENT:83
     TIMES LOCAL:1 , 0.75
 ;[マゾ]・[ドＭ]
-IF TALENT:82 && TALENT:178
+IF TALENT:82 && TALENT:초M
     TIMES LOCAL:0 , 0.50
     TIMES LOCAL:1 , 0.10
-ELSEIF TALENT:82 || TALENT:178
+ELSEIF TALENT:82 || TALENT:초M
     TIMES LOCAL:0 , 0.60
     TIMES LOCAL:1 , 0.20
 ENDIF
 ;[人形]
-IF TALENT:208
+IF TALENT:인형
     TIMES LOCAL:0 , 0.75
     TIMES LOCAL:1 , 0.75
 ENDIF
 ;[鬼]
-SIF TALENT:214
+SIF TALENT:오니
     TIMES LOCAL:0 , 0.75
 ;ベリージュエル装着時
 IF CFLAG:42 & 4
@@ -993,10 +993,10 @@ ENDIF
 ;-------------------------------------------------
 @CHECK_TRAIN_LIFE_SLAVE
 ;조교 대상이 [覚](心の目を閉ざしているか[精神崩壊]は除く)
-SIF TALENT:213 == 1 && TALENT:167 == 0
+SIF TALENT:사토리 == 1 && TALENT:정신붕괴 == 0
     TIMES DOWNBASE:기력 , 1.25
 ;主人による[使い魔]調教時
-IF PLAYER == MASTER && TALENT:164
+IF PLAYER == MASTER && TALENT:사역마
     TIMES DOWNBASE:0 , 0.95
     TIMES DOWNBASE:기력 , 0.95
 ENDIF
@@ -1006,7 +1006,7 @@ IF CFLAG:42 & 4
     TIMES DOWNBASE:기력 , 0.90
 ENDIF
 ;조교 대상이 [淫魔]
-IF TALENT:180
+IF TALENT:음마
     IF DOWNBASE:0 > DOWNBASE:기력
         TIMES DOWNBASE:0 , 0.75
     ELSE
@@ -1036,15 +1036,15 @@ SIF TALENT:ARG:천식
 SIF TALENT:ARG:거구
     TIMES DOWNBASE:ARG:체력 , 0.75
 ;[영체]
-IF TALENT:ARG:207
+IF TALENT:ARG:영체
     TIMES DOWNBASE:ARG:체력 , 0.50
     TIMES DOWNBASE:ARG:기력 , 1.50
 ENDIF
 ;[구문지]
-SIF TALENT:ARG:216
+SIF TALENT:ARG:구문지
     TIMES DOWNBASE:ARG:체력 , 1.20
 ;[신령]
-IF TALENT:ARG:222
+IF TALENT:ARG:신령
     TIMES DOWNBASE:ARG:체력 , 0.90
     TIMES DOWNBASE:ARG:기력 , 0.90
 ENDIF

@@ -141,7 +141,7 @@ CFLAG:7988 = 0
 ;조수가 조교할 때에 한 번 바뀌므로, 다른 부분에서 되돌림
 ;-------------------------------------------------
 ;복종
-IF TALENT:160
+IF TALENT:복종
     CSTR:90 = 마스터
 ;쾌락각인 Lv3+호감도 500 이상
 ELSEIF MARK:쾌락각인 == 3 && CFLAG:2 >= 500
@@ -182,7 +182,7 @@ ENDIF
 ;        CFLAG:5021 =1
 ;ENDIF
 ;정신 붕괴는 스킵
-SIF TALENT:167 == 1
+SIF TALENT:정신붕괴 == 1
     RETURN 0
 ;-------------------------------------------------
 ;첫조교시 CFLAG:5001
@@ -217,7 +217,7 @@ IF CFLAG:5001 == 0
 ;-------------------------------------------------
 ELSEIF TALENT:MASTER:임신 == 1 && CFLAG:MASTER:78 == NO:TARGET && CFLAG:5500 == 0
     ;연모
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「쪽..쪼옥...쯉..」
         PRINTFORMW 소악마는 %조사처리(CALLNAME:MASTER, "와")% 혀를 얽으며 부풀어오른 %CALLNAME:MASTER%의 배를 부드럽게 쓰다듬고 있었다.
         PRINTFORMW 「쭙.. 앗, 방금 움직였어요!」
@@ -272,7 +272,7 @@ ELSEIF TALENT:MASTER:임신 == 1 && CFLAG:MASTER:78 == NO:TARGET && CFLAG:5500 =
 ;조교 개시시(1회만) CFLAG:5001
 ;-------------------------------------------------
 ;예속
-ELSEIF CFLAG:5001 < 7 && TALENT:162
+ELSEIF CFLAG:5001 < 7 && TALENT:예속
     DRAWLINE
     PRINTFORMW 「크아―! %CSTR:90%의 내습을 감지했어요♪」
     PRINTFORMW 「이 목걸이의 느낌 끝내줘요! %CSTR:90%의 감정, 프라이스리스!」
@@ -282,7 +282,7 @@ ELSEIF CFLAG:5001 < 7 && TALENT:162
     RETURN 1
 
 ;연모
-ELSEIF CFLAG:5001 < 6 && TALENT:150 && TALENT:153 == 0
+ELSEIF CFLAG:5001 < 6 && TALENT:연모 && TALENT:상애 == 0
     DRAWLINE
     PRINTFORMW 「%CSTR:90%에게 하고 싶은 말이 있어요」
     PRINTFORMW 방에 들어가자, 지금까지 본 적이 없는 얼굴을 하고 소악마는 기다리고 있었다.
@@ -303,7 +303,7 @@ ELSEIF CFLAG:5001 < 6 && TALENT:150 && TALENT:153 == 0
     RETURN 1
 
 ;음란
-ELSEIF CFLAG:5001 < 5 && TALENT:170
+ELSEIF CFLAG:5001 < 5 && TALENT:음란
     DRAWLINE
     PRINTFORMW 「서큐버스란 건, 원래 성교로 생명을 유지하니까 이런 저런 일을 많이 해왔죠」
     PRINTFORMW 「그런데 당신은 지금까지와의 먹이들하고는 차원이 다르다고 해야 할까…」
@@ -414,7 +414,7 @@ ELSEIF ASSINO() == 176
     IF CFLAG:5003 == 0
         PRINTFORMW 「이런, %CALLNAME:ASSI% 씨를 데려 오셨나요」
         ;상애
-        IF TALENT:153
+        IF TALENT:상애
             PRINTFORMW 「그러면, 저희들의 백합을 보고 계세요―!」
         ;그 이외
         ELSE
@@ -425,7 +425,7 @@ ELSEIF ASSINO() == 176
     ;2회째 이후
     ELSEIF CFLAG:5003 == 1 || FLAG:11 ==2
         ;상애
-        IF TALENT:153
+        IF TALENT:상애
             PRINTFORMW 「후후, %조사처리(CALLNAME:ASSI,"라")%면 말로 지옥에 빠뜨리지는 않으니까 안심하세요♪」
         ;그 이외
         ELSE
@@ -440,7 +440,7 @@ ELSEIF ASSINO() == 176
     ;처음
 ;    IF CFLAG:5004 == 0
         ;연모＋연모시 처음상(함락 이벤트)이 발생이 끝난 상태
-;        IF TALENT:150 && CFLAG:201 >= 5
+;        IF TALENT:연모 && CFLAG:201 >= 5
 ;            PRINTFORMW 
         ;그 이외
 ;        ELSE
@@ -451,7 +451,7 @@ ELSEIF ASSINO() == 176
     ;2회째 이후
 ;    ELSEIF CFLAG:5004 == 1 || FLAG:11 ==2
         ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
         ;그 이외
 ;        ELSE
@@ -471,12 +471,12 @@ ENDIF
 ;-------------------------------------------------
 @K7_KOJO2
 ;정신붕괴
-IF TALENT:167 == 1
+IF TALENT:정신붕괴 == 1
     DRAWLINE
     RETURN 1
     
 ;반발각인 Lv3로 연모나 쾌락각인 LV3
-ELSEIF MARK:반발각인 == 3 && FLAG:11 == 2 && (TALENT:150 || MARK:쾌락각인 == 3 || TALENT:162)
+ELSEIF MARK:반발각인 == 3 && FLAG:11 == 2 && (TALENT:연모 || MARK:쾌락각인 == 3 || TALENT:예속)
     DRAWLINE
     PRINTFORMW 「보통으로 하면 기분 좋은데… 보통으로 해 주지 않으실래요?」
     RETURN 1
@@ -488,7 +488,7 @@ ELSEIF MARK:반발각인 == 3 && FLAG:11 == 2
     RETURN 1
     
 ;쾌락각인 Lv2 이상이나 예속으로 체력 800 미만
-ELSEIF (MARK:쾌락각인 >= 2 || TALENT:162) && BASE:0 < 800 && MAXBASE:0 > 1000 && FLAG:11 == 2
+ELSEIF (MARK:쾌락각인 >= 2 || TALENT:예속) && BASE:0 < 800 && MAXBASE:0 > 1000 && FLAG:11 == 2
     DRAWLINE
     PRINTFORMW 「별로 %조사처리(CSTR:90,"가")% 오는 건 별 상관없지만……」
     PRINTFORMW 「지금은 상태가 메롱이라 막 돌입하는순간 끝나 버릴걸요……」
@@ -503,7 +503,7 @@ ELSEIF (MARK:쾌락각인 >= 2 || TALENT:162) && BASE:0 < 800 && MAXBASE:0 > 100
     RETURN 1
 
 ;쾌락각인 Lv3에 연모
-ELSEIF MARK:쾌락각인 == 3 && TALENT:150 == 1
+ELSEIF MARK:쾌락각인 == 3 && TALENT:연모 == 1
     DRAWLINE
     ;랜덤으로 대사가 변화한다
     A = RAND:16
@@ -555,21 +555,21 @@ ELSEIF MARK:쾌락각인 == 3 && TALENT:150 == 1
     RETURN 1
     
 ;예속
-ELSEIF TALENT:162
+ELSEIF TALENT:예속
     DRAWLINE
     PRINTFORMW 「아, 왔군요 %CSTR:90%!」
     PRINTFORMW 「자, %CSTR:90% 전용인 저를 사용해서 마음껏 쾌락을 탐내 주세요♪」
     RETURN 1
 
 ;상애
-ELSEIF TALENT:153
+ELSEIF TALENT:상애
     DRAWLINE
     PRINTFORMW 「이른바, 부부..인 건가요?」
     PRINTFORMW 「무례할 수도 있겠지만 노력하겠습니다!」
     RETURN 1
 
 ;연모
-ELSEIF TALENT:150 && FLAG:11 == 2
+ELSEIF TALENT:연모 && FLAG:11 == 2
     DRAWLINE
     PRINTFORMW 「우훗♪ 기다리고 있었어요」
     PRINTFORMW 「오늘도 잔뜩 기분좋게 해드릴게요♡」
@@ -631,7 +631,7 @@ SIF NO:TARGET != 7
 ;조교 종료시의 대사
 ;--------------------------------------------------
 ;정신붕괴
-IF TALENT:167
+IF TALENT:정신붕괴
     DRAWLINE
     RETURN 0
 ENDIF
@@ -641,12 +641,12 @@ IF CFLAG:7900 == 1
     RETURN 0
 ENDIF
 ;연모＋체력 500 미만
-;ELSEIF TALENT:150 && BASE:0 < 500
+;ELSEIF TALENT:연모 && BASE:0 < 500
 ;    DRAWLINE
 ;    PRINTFORMW 
 ;    RETURN 1
 ;연모
-;ELSEIF TALENT:150 && FLAG:11 == 2
+;ELSEIF TALENT:연모 && FLAG:11 == 2
 ;    DRAWLINE
 ;    IF RAND:3 == 0
 ;        PRINTFORMW 
@@ -658,7 +658,7 @@ ENDIF
 ;    RETURN 1
 
 ;반발각인 Lv3로 연모나 쾌락각인 LV3나 예속
-IF MARK:반발각인 == 3 && FLAG:11 == 2 && (TALENT:150 || MARK:쾌락각인 == 3 || TALENT:162)
+IF MARK:반발각인 == 3 && FLAG:11 == 2 && (TALENT:연모 || MARK:쾌락각인 == 3 || TALENT:예속)
     DRAWLINE
     PRINTFORMW 「최근 이상한 일에 열중하네요. 이래서야 다른 신사들에게 뒤쳐진다고요?」
     RETURN 1
@@ -671,7 +671,7 @@ ELSEIF MARK:반발각인 == 3
     RETURN 1
     
 ;쾌락각인 Lv3로 호감도 500이상이나 예속＋체력 600 미만
-ELSEIF ((MARK:쾌락각인 == 3 && CFLAG:2 >= 500) || TALENT:162) && BASE:0 < 600
+ELSEIF ((MARK:쾌락각인 == 3 && CFLAG:2 >= 500) || TALENT:예속) && BASE:0 < 600
     DRAWLINE
     PRINTFORMW 「응……아, 아……끝이에요?」
     ;이번 조교중에 절정 한 회수가 70회부터 위
@@ -694,7 +694,7 @@ ELSEIF ((MARK:쾌락각인 == 3 && CFLAG:2 >= 500) || TALENT:162) && BASE:0 < 60
     RETURN 1
 
 ;쾌락각인 Lv3로 호감도 500이상이나 예속
-ELSEIF (MARK:쾌락각인 == 3 && CFLAG:2 >= 500) || TALENT:162
+ELSEIF (MARK:쾌락각인 == 3 && CFLAG:2 >= 500) || TALENT:예속
     DRAWLINE
     PRINTFORMW 「어? 벌써, 끝이에요∼?」
     ;이번 조교중에 절정이 40회부터 위
@@ -762,7 +762,7 @@ SIF TEQUIP:90 && TEQUIP:25 == 3 && (SELECTCOM != 524 && SELECTCOM != 560)
 SIF EQUIP:14 || TFLAG:899 > 0
     RETURN 0
 ;정신 붕괴시는 반응 없음
-SIF TALENT:167
+SIF TALENT:정신붕괴
     RETURN 0
 ;A감각이 일정 이상이라면 애널 첫체험이 나오지 않게 한다(여기까지 해 거절할 것 응 해)
 SIF ABL:A감각 >= 3 && CFLAG:5101 == 0
@@ -773,7 +773,7 @@ SIF ABL:A감각 >= 3 && CFLAG:5101 == 0
 ;조수가 조교할 때에 한 번 바뀌므로, 다른 부분에서 되돌림
 ;-------------------------------------------------
 ;주인 조교시 복종
-IF TALENT:160 && ASSIPLAY == 0
+IF TALENT:복종 && ASSIPLAY == 0
     CSTR:90 = 마스터
     CSTR:91 = 마스터어
 ;주인 조교시 쾌락각인 Lv3+호감도 500 이상 
@@ -836,7 +836,7 @@ IF SELECTCOM == 0 && ((STAIN:입 >= 2 && (STAIN:입 != 16 && STAIN:입 != 17) &&
     ;2회째 이후
     ELSE
 ;        ;연모
-;        IF TALENT:150 && (CFLAG:9000 <= 4 || FLAG:11 == 2)
+;        IF TALENT:연모 && (CFLAG:9000 <= 4 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9000 = 5
         ;조교자의 기교가 Lv4 이상
@@ -862,7 +862,7 @@ ELSEIF SELECTCOM == 0 || SELECTCOM == 6
     IF CFLAG:9006 == 0
         PRINTFORMW 「츗, 으응, 괜찮아요?, 스스로 키스 해도…?
         PRINTFORMW  그러면, 잘 먹겠습니다-.  츄릅……」
-        IF CFLAG:7000 == 2 && TALENT:209
+        IF CFLAG:7000 == 2 && TALENT:악마
             PRINTFORMW 소악마는 입안에 들어온 혀를 자신의 혀로 핥으며 빨거나 돌리기 시작했다.
             PRINTFORMW 마치 영혼이 흡수되는 감촉을 느꼈다.
             PRINTFORMW %CALLNAME:PLAYER% 체력-100　　소악마 체력+20
@@ -896,7 +896,7 @@ ELSEIF SELECTCOM == 0 || SELECTCOM == 6
             PRINTFORMW 「……그러면, 잘 먹겠습니다……♪」
             CFLAG:9006 = 2
         ENDIF
-        IF CFLAG:7000 == 2 && TALENT:209
+        IF CFLAG:7000 == 2 && TALENT:악마
             PRINTFORMW %CALLNAME:PLAYER% 체력-100　　소악마 체력+20
             CALL ADD_BASE,ARG,0,20
             SIF BASE:0 > MAXBASE:0
@@ -958,7 +958,7 @@ IF SELECTCOM == 611
         PRINTFORMW 「우우, 누군가에게 이 소리를 들려 주고 싶네요 ♪」
         CFLAG:9611 = 6
 ;    ;연모
-;    ELSEIF TALENT:150 && (CFLAG:9611 <= 4 || FLAG:11 == 2)
+;    ELSEIF TALENT:연모 && (CFLAG:9611 <= 4 || FLAG:11 == 2)
 ;        PRINTFORMW 
 ;        CFLAG:9611 = 5
     ;C감각 Lv3 이상
@@ -999,7 +999,7 @@ IF SELECTCOM == 2
             PRINTFORMW 「응후읏, 좋은 느낌이에요……실전으로 가는거에요?」
             CFLAG:9002 = 5
         ;연모+윤활 Lv2 미만
-        ;ELSEIF TALENT:150 && LOCAL < PALAMLV:2 && (CFLAG:9002 <= 3 || FLAG:11 == 2)
+        ;ELSEIF TALENT:연모 && LOCAL < PALAMLV:2 && (CFLAG:9002 <= 3 || FLAG:11 == 2)
             ;PRINTFORMW 
             ;CFLAG:9002 = 4
         ;A감각 3이상
@@ -1207,7 +1207,7 @@ IF SELECTCOM == 9
     ;처음
     IF CFLAG:9009 == 0
         ;연모 or음란 or복종
-        IF TALENT:160 || TALENT:150 || TALENT:170
+        IF TALENT:복종 || TALENT:연모 || TALENT:음란
             PRINTFORMW 「이제 와서 아무것도 안 한다니……무슨……!」
         ;그 이외
         ELSE
@@ -1222,7 +1222,7 @@ IF SELECTCOM == 9
             PRINTFORMW 「히익, 이렇게 방치하는건가요?」
             CFLAG:9009 = 4
         ;연모 or복종 or 음란해 주인의 플레이
-        ELSEIF (TALENT:160 || TALENT:150 || TALENT:170) && ASSIPLAY == 0 && (CFLAG:9009 <= 2 || FLAG:11 == 2)
+        ELSEIF (TALENT:복종 || TALENT:연모 || TALENT:음란) && ASSIPLAY == 0 && (CFLAG:9009 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「%CSTR:90%, 빨리 시작하죠!」
             CFLAG:9009 = 3
         ;그 이외
@@ -1278,7 +1278,7 @@ IF SELECTCOM == 11
     ;2회째 이후
     ELSE
         ;연모＋C감각 Lv4 이상
-        IF TALENT:150 && ABL:C감각 >= 4 && (CFLAG:9011 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:C감각 >= 4 && (CFLAG:9011 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「……%CSTR:90%, %CSTR:91%, %CSTR:91%♪」
             CFLAG:9011 = 4
         ;C감각 Lv3 이상
@@ -1311,7 +1311,7 @@ IF SELECTCOM == 12 && TEQUIP:20
     ;2회째 이후
     ELSE
         ;연모＋V경험 120(지문이 바뀐다)
-        IF EXP:V경험 > 120 && TALENT:150 && (CFLAG:9012 <= 2 || FLAG:11 == 2)
+        IF EXP:V경험 > 120 && TALENT:연모 && (CFLAG:9012 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「으,응 ,친숙해지게 하는 것은 좋긴 한데,좀 더 빨리!」
             CFLAG:9012 = 3
         ;그 이외
@@ -1401,7 +1401,7 @@ IF SELECTCOM == 14 && TEQUIP:30
     ;처음
     IF CFLAG:9014 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 이외
         ELSE
@@ -1414,7 +1414,7 @@ IF SELECTCOM == 14 && TEQUIP:30
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9014 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9014 <= 2 || FLAG:11 == 2)
             PRINTFORMW 
             CFLAG:9014 = 3
         ;그 이외
@@ -1427,7 +1427,7 @@ IF SELECTCOM == 14 && TEQUIP:30
 ;탈착시
 ELSEIF SELECTCOM == 14 && TEQUIP:30 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8813 < 2 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8813 < 2 || FLAG:11 == 2)
         PRINTFORMW 
         CFLAG:8813 = 2
     ;그 이외
@@ -1780,7 +1780,7 @@ IF SELECTCOM == 26
     ;처음
     IF CFLAG:9026 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 이외
         ELSE
@@ -1791,7 +1791,7 @@ IF SELECTCOM == 26
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9026 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9026 <= 2 || FLAG:11 == 2)
             PRINTFORMW 
             CFLAG:9026 = 3
         ;그 이외
@@ -1845,7 +1845,7 @@ ENDIF
 ;    ;처음
 ;    IF CFLAG:9030 == 0
 ;        ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
 ;        ;그 이외
 ;        ELSE
@@ -1857,11 +1857,11 @@ ENDIF
 ;    ELSE
 ;        LOCAL = PALAM:10 + UP:10
 ;        ;연모+윤활 Lv2 이상
-;        IF TALENT:150 && LOCAL >= PALAMLV:2 && (CFLAG:9030 <= 4 || FLAG:11 == 2)
+;        IF TALENT:연모 && LOCAL >= PALAMLV:2 && (CFLAG:9030 <= 4 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9030 = 5
 ;        ;연모+윤활 Lv2 미만
-;        ELSEIF TALENT:150 && LOCAL < PALAMLV:2 && (CFLAG:9030 <= 3 || FLAG:11 == 2)
+;        ELSEIF TALENT:연모 && LOCAL < PALAMLV:2 && (CFLAG:9030 <= 3 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9030 = 4
 ;        ;윤활 Lv2 이상＋A감각 Lv3 이상
@@ -1884,7 +1884,7 @@ ENDIF
 ;    ;처음
 ;    IF CFLAG:9031 == 0
 ;        ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
 ;        ;그 이외
 ;        ELSE
@@ -1896,11 +1896,11 @@ ENDIF
 ;    ELSE
 ;        LOCAL = PALAM:10 + UP:10
 ;        ;연모+윤활 Lv2 이상
-;        IF TALENT:150 && LOCAL >= PALAMLV:2 && (CFLAG:9031 <= 4 || FLAG:11 == 2)
+;        IF TALENT:연모 && LOCAL >= PALAMLV:2 && (CFLAG:9031 <= 4 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9031 = 5
 ;        ;연모+윤활 Lv2 미만
-;        ELSEIF TALENT:150 && LOCAL < PALAMLV:2 && (CFLAG:9031 <= 3 || FLAG:11 == 2)
+;        ELSEIF TALENT:연모 && LOCAL < PALAMLV:2 && (CFLAG:9031 <= 3 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9031 = 4
 ;        ;윤활 Lv2 이상＋A감각 Lv3 이상
@@ -1961,7 +1961,7 @@ ENDIF
 ;    ;처음
 ;    IF CFLAG:9033 == 0
 ;        ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
 ;        ;그 이외
 ;        ELSE
@@ -1973,11 +1973,11 @@ ENDIF
 ;    ELSE
 ;        LOCAL = PALAM:10 + UP:10
 ;        ;연모+윤활 Lv2 이상
-;        IF TALENT:150 && LOCAL >= PALAMLV:2 && (CFLAG:9033 <= 4 || FLAG:11 == 2)
+;        IF TALENT:연모 && LOCAL >= PALAMLV:2 && (CFLAG:9033 <= 4 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9033 = 5
 ;        ;연모+윤활 Lv2 미만
-;        ELSEIF TALENT:150 && LOCAL < PALAMLV:2 && (CFLAG:9033 <= 3 || FLAG:11 == 2)
+;        ELSEIF TALENT:연모 && LOCAL < PALAMLV:2 && (CFLAG:9033 <= 3 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9033 = 4
 ;        ;윤활 Lv2 이상＋A감각 Lv3 이상
@@ -2048,7 +2048,7 @@ IF SELECTCOM == 40
     ;2회째 이후
     ELSE
 ;        ;연모＋봉사 정신 Lv5
-;        IF TALENT:150 && ABL:봉사정신 >= 5 && (CFLAG:9040 <= 3 || FLAG:11 == 2)
+;        IF TALENT:연모 && ABL:봉사정신 >= 5 && (CFLAG:9040 <= 3 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9040 = 4
 ;        ;봉사 정신 Lv3 이상
@@ -2077,7 +2077,7 @@ IF SELECTCOM == 41
     ;2회째 이후
     ELSE
         ;음란으로 랜덤
-        IF RAND:2 == 0 && TALENT:170 && (CFLAG:9041 <= 2 || FLAG:11 == 2)
+        IF RAND:2 == 0 && TALENT:음란 && (CFLAG:9041 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아, 하……맛있어, 이거… 좋아해요♪」
             CFLAG:9041 = 3
         ;그 이외
@@ -2192,7 +2192,7 @@ IF SELECTCOM == 60
     ;2회째 이후
     ELSE
         ;연모나 복종
-        IF (TALENT:150 || TALENT:160) && (CFLAG:9060 <= 2 || FLAG:11 == 2)
+        IF (TALENT:연모 || TALENT:복종) && (CFLAG:9060 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「이번에는 급한가 보네요, %CSTR:90%?」
             CFLAG:9060 = 3
         ;그 이외
@@ -2216,7 +2216,7 @@ IF SELECTCOM == 61
     ;2회째 이후
     ELSE
         ;연모나 복종
-        IF (TALENT:150 || TALENT:160) && (CFLAG:9061 <= 2 || FLAG:11 == 2)
+        IF (TALENT:연모 || TALENT:복종) && (CFLAG:9061 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아무튼, 기분 좋게 될 수 있다면 약이라도 좋지만……」
             CFLAG:9061 = 3
         ;그 이외
@@ -2234,11 +2234,11 @@ ENDIF
 [SKIPSTART]
 IF SELECTCOM == 62
     ;연모+오줌싸개
-    IF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:9062 < 4 || FLAG:11 == 2)
+    IF TALENT:연모 && TALENT:오줌싸개버릇 && (CFLAG:9062 < 4 || FLAG:11 == 2)
         PRINTFORMW 
         CFLAG:9062 = 4
     ;연모
-    ELSEIF TALENT:150 && (CFLAG:9062 < 3 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && (CFLAG:9062 < 3 || FLAG:11 == 2)
         PRINTFORMW 
         CFLAG:9062 = 3
     ;굴복 각인 Lv3
@@ -2257,7 +2257,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 66 && TFLAG:99 == 0
     ;연모
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「노예가 배란유도제 섭취」
     ;그 외의 경우
     ELSE
@@ -2283,7 +2283,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 66 && TFLAG:99 == 2
     ;연모
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「주인이 배란유도제 섭취」
     ;그 외의 경우
     ELSE
@@ -2297,15 +2297,15 @@ ENDIF
 ;-------------------------------------------------
 IF (SELECTCOM == 67 && TFLAG:99 == 0) && EXIST_PENIS(MASTER)
     ;상애
-    IF TALENT:153 && (CFLAG:9067 < 4 || FLAG:11 == 2)
+    IF TALENT:상애 && (CFLAG:9067 < 4 || FLAG:11 == 2)
         PRINTFORMW 「이제 와서, 피임은 하지 않아도 괜찮지 않나요……?」
         CFLAG:9067 = 4
     ;연모
-    ELSEIF TALENT:150 && (CFLAG:9067 < 3 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && (CFLAG:9067 < 3 || FLAG:11 == 2)
         PRINTFORMW 「어, 엣, 피임인가요……네, 중요하죠……」
         CFLAG:9067 = 3
     ;음란이거나 복종
-    ELSEIF (TALENT:170 || TALENT:160) && (CFLAG:9067 < 2 || FLAG:11 == 2)
+    ELSEIF (TALENT:음란 || TALENT:복종) && (CFLAG:9067 < 2 || FLAG:11 == 2)
         PRINTFORMW 「후후, 피임의 준비도 다 된것 같고, 그럼 잔뜩 뿌려 주세요♪」
         CFLAG:9067 = 2
     ;그 이외
@@ -2332,7 +2332,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 67 && TFLAG:99 == 2
     ;연모
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「주인이 긴급피임약 섭취」
     ;그 외의 경우
     ELSE
@@ -2348,11 +2348,11 @@ IF SELECTCOM == 90 && TEQUIP:59
     ;처음
     IF CFLAG:9090 == 0
         ;상애
-        IF TALENT:153
+        IF TALENT:상애
             PRINTFORMW 「아, 알고 있어요. 가정적인 모습을 취하는 시추에이션이군요?」
             PRINTFORMW 「이 나이기 때문에, 할 수 있는 거네요♪」
         ;연모 또한 예속이 아니다
-        ELSEIF TALENT:150 && TALENT:162 == 0
+        ELSEIF TALENT:연모 && TALENT:예속 == 0
             PRINTFORMW 「아……알고 있어요. 가정적인 모습을 취하는 시추에이션이군요」
             PRINTFORMW 「쾌감과 애정을 혼동 하지 않았으면 좋겠네요……」
         ;그 이외
@@ -2365,11 +2365,11 @@ IF SELECTCOM == 90 && TEQUIP:59
     ;2회째 이후
     ELSE
         ;상애
-        IF TALENT:153 && (CFLAG:9090 <= 3 || FLAG:11 == 2)
+        IF TALENT:상애 && (CFLAG:9090 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「네, 마음껏, 사랑해 주세요♪」
             CFLAG:9090 = 4
         ;연모 또한 예속이 아니다
-        ELSEIF TALENT:150 && TALENT:162 == 0 && (CFLAG:9090 <= 2 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && TALENT:예속 == 0 && (CFLAG:9090 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아무리 이래도 저는 노예이지, %CSTR:90%의 애인이 아니니까……」
             CFLAG:9090 = 3
         ;그 이외
@@ -2382,11 +2382,11 @@ IF SELECTCOM == 90 && TEQUIP:59
 ;종료시    
 ELSEIF SELECTCOM == 90 && TEQUIP:59 == 0
     ;상애
-    IF TALENT:153 && (CFLAG:8823 <= 3 || FLAG:11 == 2)
+    IF TALENT:상애 && (CFLAG:8823 <= 3 || FLAG:11 == 2)
         PRINTFORMW 「만약 또 하고 싶으시면, 언제라도 또 오세요♪」
         CFLAG:8823 = 4
     ;연모 또한 예속이 아니다
-    ELSEIF TALENT:150 && TALENT:162 == 0 && (CFLAG:8823 <= 2 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && TALENT:예속 == 0 && (CFLAG:8823 <= 2 || FLAG:11 == 2)
         PRINTFORMW 「쾌감과 애정이 별도인 이상, 에이프런은 방해일 뿐이에요……」
         CFLAG:8823 = 3
     ;그 이외
@@ -2469,11 +2469,11 @@ ENDIF
 ;방뇨
 IF SELECTCOM == 111
     ;연모+오줌싸개+야외 플레이
-    IF TALENT:150 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:9111 < 5 || FLAG:11 == 2)
+    IF TALENT:연모 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:9111 < 5 || FLAG:11 == 2)
         PRINTFORMW 
         CFLAG:9111 = 5
     ;연모+오줌싸개
-    ELSEIF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:9111 < 4 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && TALENT:오줌싸개버릇 && (CFLAG:9111 < 4 || FLAG:11 == 2)
         PRINTFORMW 
         CFLAG:9111 = 4
     ;노출벽 Lv5
@@ -2494,11 +2494,11 @@ ENDIF
 ;강제 방뇨
 IF SELECTCOM == 620
     ;연모+오줌싸개+야외 플레이
-    IF TALENT:150 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:9620 < 5 || FLAG:11 == 2)
+    IF TALENT:연모 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:9620 < 5 || FLAG:11 == 2)
         PRINTFORMW 
         CFLAG:9620 = 5
     ;연모+오줌싸개
-    ELSEIF TALENT:150 && TALENT:오줌싸개버릇 && (CFLAG:9620 < 4 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && TALENT:오줌싸개버릇 && (CFLAG:9620 < 4 || FLAG:11 == 2)
         PRINTFORMW 
         CFLAG:9620 = 4
     ;노출벽 Lv5
@@ -2605,7 +2605,7 @@ IF SELECTCOM == 171 && TEQUIP:25
             PRINTFORMW 눈물이나 침이 흐르고 있지만 개의치 않고 소악마는 전류가 주는 쾌감에 빠져있다.
             CFLAG:9171 = 5
 ;        ;연모
-;        ELSEIF TALENT:150 && (CFLAG:9171 <= 3 || FLAG:11 == 2)
+;        ELSEIF TALENT:연모 && (CFLAG:9171 <= 3 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9171 = 4
         ;A감각 Lv3 이상
@@ -2622,7 +2622,7 @@ IF SELECTCOM == 171 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 171 && TEQUIP:25 == 0
 ;    ;연모
-;    IF TALENT:150 && (CFLAG:8851 < 3 || FLAG:11 == 2)
+;    IF TALENT:연모 && (CFLAG:8851 < 3 || FLAG:11 == 2)
 ;        PRINTFORMW 
 ;        CFLAG:8851 = 3
     ;A감각 Lv3 이상＋마조끼 Lv3 이상
@@ -2646,7 +2646,7 @@ IF SELECTCOM == 172 && TEQUIP:25
     ;처음
     IF CFLAG:9172 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 이외
         ELSE
@@ -2754,7 +2754,7 @@ IF SELECTCOM == 180 || SELECTCOM == 187
     ;처음
     IF CFLAG:9180 == 0
         ;안면기승위 애널로 음마나 음고나 음란 때
-        IF (TALENT:180 || TALENT:173 || TALENT:170) && SELECTCOM == 187
+        IF (TALENT:음마 || TALENT:음고 || TALENT:음란) && SELECTCOM == 187
             PRINTFORMW 「응후후, 그렇게 엉덩이 빨고 싶다고 말한다면 저기요, 좀 더 노력해 주세요?」
             PRINTFORMW 「기분 좋게……해 주세요―?」
         ELSEIF EXP:A경험 > 15
@@ -2771,7 +2771,7 @@ IF SELECTCOM == 180 || SELECTCOM == 187
             PRINTFORMW 「자, 마음껏 풀어드릴께요♪」
             CFLAG:9180 = 4
         ;안면기승위 애널로 음마나 음고나 음란 때
-        ELSEIF SELECTCOM == 187 && (TALENT:180 || TALENT:173 || TALENT:170) && (CFLAG:9180 <= 2 || FLAG:11 == 2)
+        ELSEIF SELECTCOM == 187 && (TALENT:음마 || TALENT:음고 || TALENT:음란) && (CFLAG:9180 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「응후후, 그렇게 엉덩이 빨고 싶다고 말한다면 저기요, 좀 더 노력해 주세요?」
             PRINTFORMW 「기분 좋게……해 주세요―?」
             CFLAG:9180 = 3
@@ -2883,14 +2883,14 @@ IF SELECTCOM == 220 || SELECTCOM == 221 || SELECTCOM == 222
     ;2회째 이후
     ELSE
 ;        ;연모＋마조끼 Lv5 이상
-;        IF TALENT:150 && ABL:마조끼 >= 5 && (CFLAG:9220 <= 5 || FLAG:11 == 2)
+;        IF TALENT:연모 && ABL:마조끼 >= 5 && (CFLAG:9220 <= 5 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9220 = 6
         ;연모＋마조끼 Lv3 이상으로 채찍
-        IF SELECTCOM == 221 && TALENT:150 && ABL:마조끼 >= 3 && (CFLAG:9220 <= 4 || FLAG:11 == 2)
+        IF SELECTCOM == 221 && TALENT:연모 && ABL:마조끼 >= 3 && (CFLAG:9220 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「아…! 좋아요, %조사처리(CSTR:90,"로")%부터의 사랑의 매♪」
             CFLAG:9220 = 5
-            SIF TALENT:153 == 0 || TALENT:152 == 0
+            SIF TALENT:상애 == 0 || TALENT:친애 == 0
                 PRINTFORMW ……우선 이 곧 죽어도 한 마디하는 주둥아리부터 후려치는 편이 나을지도 모르겠다.
         ;스팽킹으로 마조끼 Lv2 이상
         ELSEIF SELECTCOM == 220 && ABL:마조끼 >= 2 && (CFLAG:9220 <= 2 || FLAG:11 == 2)
@@ -3033,7 +3033,7 @@ IF SELECTCOM == 230
     ;2회째 이후
     ELSE
         ;봉사 정신 Lv3 이상 or연모
-        IF (ABL:봉사정신 >= 3 || TALENT:150) && (CFLAG:9230 <= 2 || FLAG:11 == 2)
+        IF (ABL:봉사정신 >= 3 || TALENT:연모) && (CFLAG:9230 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「응, 으구웃, 츄릇, 웃, 츄르……」
             PRINTFORMW 소악마는 익숙해진 혀로 목까지 밀어넣어진 자지의 뿌리에 혀로 핣으면서
             PRINTFORMW 자지를 빨면서 입으로 되돌린뒤 다시 목까지 자지를 밀어넣었다.
@@ -3095,7 +3095,7 @@ IF SELECTCOM == 290 && EXIST_PENIS(PLAYER) && TEQUIP:PLAYER:31
     ;2회째 이후
 ;    ELSE
         ;연모로 주인의 플레이
-        IF TALENT:150 && ASSIPLAY == 0 && (CFLAG:9290 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && ASSIPLAY == 0 && (CFLAG:9290 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「일단, 이걸로, %조사처리(CSTR:90,"가")% 제게 정기를 들이마셔질 걱정은……없어지네요」
             CFLAG:9290 = 3
         ;그 이외
@@ -3181,11 +3181,11 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 320 || SELECTCOM == 347
     ;상애
-    IF TALENT:153 && (CFLAG:9320 <= 3 || FLAG:11 == 2)
+    IF TALENT:상애 && (CFLAG:9320 <= 3 || FLAG:11 == 2)
         PRINTFORMW 「맺어지고 나서는……더욱 더 이런 것의 중요함을 알게 되었어요」
         CFLAG:9320 = 4
     ;연모
-    ELSEIF TALENT:150 && (CFLAG:9320 <= 2 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && (CFLAG:9320 <= 2 || FLAG:11 == 2)
         PRINTFORMW 「에헤헤……가끔 씩은 좋네요, 이런 거……」
         CFLAG:9320 = 3
     ;지문이 바뀐다
@@ -3212,7 +3212,7 @@ IF SELECTCOM == 327
     ;2번째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9327 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9327 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「뭐, 뭐어, %조사처리(CSTR:90,"가")% 이게 좋다고 말한다면……」
             CFLAG:9327 = 3
         ;그 이외
@@ -3242,7 +3242,7 @@ IF SELECTCOM == 349
     ;2번째 이후
     ELSE
 ;        ;연모
-;        IF TALENT:150 && (CFLAG:9349 <= 2 || FLAG:11 == 2)
+;        IF TALENT:연모 && (CFLAG:9349 <= 2 || FLAG:11 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:9349 = 3
 ;        ;그 이외
@@ -3260,7 +3260,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 350 && TEQUIP:53
     ;처음으로 연모가 아니다
-    IF CFLAG:9350 == 0 && TALENT:150 == 0
+    IF CFLAG:9350 == 0 && TALENT:연모 == 0
         PRINTFORMW 「인간의 창녀는 섹스에 이런 곳을 사용하는 것 같네요」
         PRINTFORMW 「저는 기본적으로 침대 온리입니다만, 생업의 참고가 될지도 모르겠네요♪」
         CFLAG:9350 = 1
@@ -3268,7 +3268,7 @@ IF SELECTCOM == 350 && TEQUIP:53
     ;2회째 이후
     ELSE
         ;연모로 예속이 아니다
-        IF TALENT:150 && TALENT:162 == 0 && (CFLAG:9350 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && TALENT:예속 == 0 && (CFLAG:9350 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「조금 쉬면서 아무것도 하지 않고 빈둥거려도, 전 별로 신경쓰지 않는다구요……?」
             CFLAG:9350 = 3
         ;그 이외
@@ -3288,7 +3288,7 @@ ELSEIF SELECTCOM == 350 && TEQUIP:53 == 0
     ;2회째 이후
     ELSE
         ;연모로 예속이 아니다
-        IF TALENT:150 && TALENT:162 == 0 && (CFLAG:8824 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && TALENT:예속 == 0 && (CFLAG:8824 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아무튼, 따뜻한 물에서 빈둥거려 버리다니……다시 마음을 단단히 먹어야 겠네요!」
             CFLAG:8824 = 3
         ;그 이외
@@ -3308,7 +3308,7 @@ IF SELECTCOM == 351 && TEQUIP:54
     ;처음
     IF CFLAG:9351 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 이외
         ELSE
@@ -3319,7 +3319,7 @@ IF SELECTCOM == 351 && TEQUIP:54
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9351 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9351 <= 2 || FLAG:11 == 2)
             PRINTFORMW 
             CFLAG:9351 = 3
         ;그 이외
@@ -3339,7 +3339,7 @@ IF SELECTCOM == 352
     ;처음
     IF CFLAG:9352 == 0
         ;연모로 예속이 아니다
-        IF TALENT:150 && TALENT:162 == 0
+        IF TALENT:연모 && TALENT:예속 == 0
             PRINTFORMW 「와, 씻는 건, 악마의 일이 아니라서, 불안하지만……」
         ;그 이외
         ELSE
@@ -3350,7 +3350,7 @@ IF SELECTCOM == 352
     ;2회째 이후
     ELSE
         ;연모로 예속이 아니다
-        IF TALENT:150 && TALENT:162 == 0 && (CFLAG:9352 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && TALENT:예속 == 0 && (CFLAG:9352 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아, 그, %조사처리(CSTR:90,"는")% 편한가요?」
             CFLAG:9352 = 3
         ;그 이외
@@ -3474,7 +3474,7 @@ IF SELECTCOM == 415 && TEQUIP:74
         RETURN 0
     ;2번째 이후
     ELSE
-        IF TALENT:150 && TALENT:153 == 0 && TALENT:162 == 0 && (CFLAG:9415 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && TALENT:상애 == 0 && TALENT:예속 == 0 && (CFLAG:9415 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아……지금 읽으면, 그……」
             PRINTFORMW 「……생각해 버린 시점에서, 말하는 건 쓸데없겠네요」
             CFLAG:9415 = 3
@@ -3586,7 +3586,7 @@ IF SELECTCOM == 610
     ;처음
     IF CFLAG:9610 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 이외
         ELSE
@@ -3597,7 +3597,7 @@ IF SELECTCOM == 610
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9610 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9610 <= 4 || FLAG:11 == 2)
             PRINTFORMW 
             CFLAG:9610 = 5
         ;V감각 Lv3 이상＋A감각 Lv3 이상
@@ -3679,7 +3679,7 @@ IF SELECTCOM == 623
     ;2회째 이후
     ELSE
         ;공포 각인 2이상으로 감정 부족한을 가지지 않고, 함락 하고 있지 않는 경우
-        IF MARK:공포각인 >= 2 && TALENT:감정결여 == 0 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0 && (CFLAG:9623 <= 3 || FLAG:11 == 2)
+        IF MARK:공포각인 >= 2 && TALENT:감정결여 == 0 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0 && (CFLAG:9623 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「그런데, 이번엔 무엇을 할건가요……」
             CFLAG:9623 = 4
         ;반발각인없이 해방이나 쾌감에 순수
@@ -3716,14 +3716,14 @@ SIF TEQUIP:42
 SIF EQUIP:14 || TFLAG:899 > 0
     RETURN 0
 ;정신 붕괴시는 스킵
-SIF TALENT:167
+SIF TALENT:정신붕괴
     RETURN 0
 
 ;-------------------------------------------------
 ;호칭 바꿔쓰기
 ;조수가 조교할 때에 한 번 바뀌므로, 다른 부분에서 되돌림
 ;-------------------------------------------------
-IF TALENT:160 && ASSIPLAY == 0
+IF TALENT:복종 && ASSIPLAY == 0
     CSTR:90 = 마스터
     CSTR:91 = 마스터어
 ELSEIF MARK:쾌락각인 == 3 && ASSIPLAY == 0 && CFLAG:2 >= 500
@@ -4227,14 +4227,14 @@ SIF TEQUIP:42
 SIF EQUIP:14 || TFLAG:899 > 0
     RETURN 0
 ;정신 붕괴시는 스킵
-SIF TALENT:167
+SIF TALENT:정신붕괴
     RETURN 0
 
 ;-------------------------------------------------
 ;호칭 바꿔쓰기
 ;조수가 조교할 때에 한 번 바뀌므로, 다른 부분에서 되돌림
 ;-------------------------------------------------
-IF TALENT:160
+IF TALENT:복종
     CSTR:90 = 마스터
 ELSEIF MARK:쾌락각인 == 3 && CFLAG:2 >= 500
     CSTR:90 = 주인님
@@ -4327,10 +4327,10 @@ IF CFLAG:7900 == 1
 ENDIF
 ;정신 붕괴시는 스킵
 IF TFLAG:200 < 1100 || TFLAG:200 >= 1810
-    SIF TALENT:167
+    SIF TALENT:정신붕괴
         RETURN 0
 ELSEIF TFLAG:200 >= 1100 && TFLAG:200 < 1810
-    SIF TALENT:COUNT:167
+    SIF TALENT:COUNT:정신붕괴
         RETURN 0
 ENDIF
 
@@ -4345,7 +4345,7 @@ ENDIF
 ;1812：누구와도 알려지지 않는 아이를 임신(구애 의존)
 ;-------------------------------------------------
 IF TFLAG:200 < 1100 || TFLAG:200 >= 1810
-    IF TALENT:160
+    IF TALENT:복종
         CSTR:90 = 마스터
     ELSEIF MARK:쾌락각인 == 3 && CFLAG:2 >= 500
         CSTR:90 = 주인님
@@ -4363,7 +4363,7 @@ IF TFLAG:200 < 1100 || TFLAG:200 >= 1810
     ENDIF
 ;매춘 관련 이벤트
 ELSEIF TFLAG:200 >= 1100 && TFLAG:200 < 1810
-    IF TALENT:COUNT:160
+    IF TALENT:COUNT:복종
         CSTR:COUNT:90 = 마스터
     ELSEIF MARK:COUNT:쾌락각인 == 3 && CFLAG:COUNT:2 >= 500
         CSTR:COUNT:90 = 주인님
@@ -4386,7 +4386,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 1
     ;반발각인에 연모 없음
-    IF MARK:반발각인 && TALENT:150 == 0 && (CFLAG:8101 < 2 || FLAG:11 == 2)
+    IF MARK:반발각인 && TALENT:연모 == 0 && (CFLAG:8101 < 2 || FLAG:11 == 2)
         PRINTFORMW 「그런 소리를 제가 들을 줄 아나 보죠?」
         CFLAG:8101 = 2
     ELSEIF CFLAG:8101 < 1 || FLAG:11 == 2
@@ -4451,7 +4451,7 @@ IF TFLAG:200 == 111
         IF CFLAG:7998 >= 30 && (CFLAG:8211 < 4 || FLAG:11 == 2)
             PRINTFORMW 「요리하는 거, 재미있을지도……♪」
             CFLAG:8211 = 4
-        ELSEIF (TALENT:150 || ABL:요리기능 >= 3) && (CFLAG:8211 < 3 || FLAG:11 == 2)
+        ELSEIF (TALENT:연모 || ABL:요리기능 >= 3) && (CFLAG:8211 < 3 || FLAG:11 == 2)
             PRINTFORMW 「뭐, 부탁받은 이상 확실히 해 볼게요!」
             CFLAG:8211 = 3
         ELSEIF CFLAG:8211 < 2 || FLAG:11 == 2
@@ -4475,7 +4475,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 130
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 「……그런가요. 아무튼 그렇네요. 저는 요시 정도의 존재였군요」
         PRINTFORMW 「저도 지금까지 많은 남녀와 자왔고, 그러한 취급은 잘 알아요」
         PRINTFORMW 「무엇보다 한사람에게 종속된다니 종족으로서 실격이고」
@@ -4508,7 +4508,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 140
     ;연모
-    IF TALENT:150 && TALENT:162 == 0 && (CFLAG:8240 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && TALENT:예속 == 0 && (CFLAG:8240 < 3 || FLAG:11 == 2)
         PRINTFORMW 「체력은 괜찮아요…? 그게…, 꼭 하고 싶어져서……」
         CFLAG:8240 = 3
 ;    ;봉사 정신 Lv5 이상
@@ -4520,7 +4520,7 @@ IF TFLAG:200 == 140
         PRINTFORMW 「자, 맛있는 아침밥을 주세요?」
         CFLAG:8240 = 1
     ENDIF
-    IF CFLAG:7000 == 2 && TALENT:209
+    IF CFLAG:7000 == 2 && TALENT:악마
         PRINTFORMW %CALLNAME:MASTER% 체력-160　　소악마 체력+50
         CALL ADD_BASE,ARG,0,50
         SIF BASE:0 > MAXBASE:0
@@ -4547,7 +4547,7 @@ IF TFLAG:200 == 141
         PRINTFORMW 「후후, 일어나셨나요? 아직도 딱딱하네요, 좀 더 가슴으로 문질러 드릴게요♪」
         CFLAG:8241 = 1
     ENDIF
-    IF CFLAG:7000 == 2 && TALENT:209
+    IF CFLAG:7000 == 2 && TALENT:악마
         PRINTFORMW %CALLNAME:PLAYER% 체력-120　　소악마 체력+30
         CALL ADD_BASE,TARGET,0,30
         SIF BASE:0 > MAXBASE:0
@@ -4570,7 +4570,7 @@ IF TFLAG:200 == 142 || TFLAG:200 == 146
         PRINTFORMW 「응, 후앗, 좋아, 아침의 자지는 딱딱해서 기분 좋아요!」
         CFLAG:8242 = 1
     ENDIF
-    IF CFLAG:7000 == 2 && TALENT:209
+    IF CFLAG:7000 == 2 && TALENT:악마
         PRINTFORMW %CALLNAME:PLAYER% 체력-200　　소악마 체력+80
         CALL ADD_BASE,ARG,0,80
         SIF BASE:0 > MAXBASE:0
@@ -4593,7 +4593,7 @@ IF TFLAG:200 == 143
         PRINTFORMW 「잠자는 얼굴이 너무 맛있을 것 같아서, 조금만이라면 정액 마셔도도 될까, 생각했어요……」
         CFLAG:8243 = 1
     ENDIF
-    IF CFLAG:7000 == 2 && TALENT:209
+    IF CFLAG:7000 == 2 && TALENT:악마
         PRINTFORMW %CALLNAME:PLAYER% 체력-100　　소악마 체력+20
         CALL ADD_BASE,ARG,0,20
         SIF BASE:0 > MAXBASE:0
@@ -4625,7 +4625,7 @@ IF TFLAG:200 == 150
         PRINTFORMW 「제 정액, %CSTR:90%의 질에서 흘러넘쳐서 떨어지고 있어요……♪」
         CFLAG:8250 = 1
     ENDIF
-    IF CFLAG:7000 == 2 && TALENT:209
+    IF CFLAG:7000 == 2 && TALENT:악마
         PRINTFORMW %CALLNAME:MASTER% 체력-200　　소악마 체력+80
         CALL ADD_BASE,ARG,0,80
         SIF BASE:0 > MAXBASE:0
@@ -4668,7 +4668,7 @@ IF TFLAG:200 == 154 || TFLAG:200 == 155
         PRINTFORMW 「응후후, 주인님의 부족한 면을 보충하는 것이 조수지요?」
         CFLAG:8254 = 1
     ENDIF
-    IF CFLAG:7000 == 2 && TALENT:209
+    IF CFLAG:7000 == 2 && TALENT:악마
         PRINTFORMW %CALLNAME:ASSI% 체력-200　　소악마 체력+80
         CALL ADD_BASE,ARG,0,80
         SIF BASE:0 > MAXBASE:0
@@ -4695,7 +4695,7 @@ IF TFLAG:200 == 158
         PRINTFORMW 「응흣, 아직, 밤은, 하아읏, 지금부터, 니까요♪」
         CFLAG:8258 = 1
     ENDIF
-    IF CFLAG:7000 == 2 && TALENT:209
+    IF CFLAG:7000 == 2 && TALENT:악마
         PRINTFORMW %CALLNAME:MASTER% 체력-200　　소악마 체력+80
         CALL ADD_BASE,ARG,0,80
         SIF BASE:0 > MAXBASE:0
@@ -4720,9 +4720,9 @@ ENDIF
 IF TFLAG:200 == 170
     ;굿 임신(주인의 아이)
     IF CFLAG:76 == 1 && CFLAG:78 == NO:MASTER
-        IF TALENT:153
+        IF TALENT:상애
             PRINTFORMW 「섹스하는 것도 좋지만, 꼭 아이도 신경쓰고 하죠. 그런데?」
-        ELSEIF TALENT:162
+        ELSEIF TALENT:예속
             PRINTFORMW 「저와 %CSTR:90%의 혈통을 이어받는다라 굉장한 음마로 자라겠지요♪」
         ELSE
             PRINTFORMW 「그……아이 정도는, 온전히 생활하며 기르시네요?」
@@ -4811,7 +4811,7 @@ IF TFLAG:200 == 461
         PRINTFORMW 침대에 누워 팔과 가랑이를 넓히는 소악마에게,
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 사양말고 달려들었다……
         CFLAG:8561 = 1
-        IF CFLAG:7000 == 2 && TALENT:209
+        IF CFLAG:7000 == 2 && TALENT:악마
             PRINTFORMW %CALLNAME:MASTER% 체력-200　　소악마 체력+80
             CALL ADD_BASE,ARG,0,80
             SIF BASE:0 > MAXBASE:0
@@ -4851,7 +4851,7 @@ IF TFLAG:200 == 465
         PRINTFORMW 정액 투성이가 된 질에서 정액을 흡수하면서, 소악마는 서서히 일어섰다.
         PRINTFORMW 주변에는 말 그대로 정력을 다 소진해서 움직일 수 없는 남자들이, 시체처럼 널부러져 있다.
         PRINTFORMW 「아, 이녀석들은 괜찮아요 %CSTR:90%. 수명이 몇 년 줄어든 정도♪」
-        IF CFLAG:7000 == 2 && TALENT:209
+        IF CFLAG:7000 == 2 && TALENT:악마
             PRINTFORMW 요염하게 미소지으면서 설명하는 소악마의 얼굴은 어딘가 요염하다.
             PRINTFORMW 마음껏, 그들의 정기를 흡수한것 같다……
             CALL ADD_BASE,ARG,0,300
@@ -4875,7 +4875,7 @@ IF TFLAG:200 == 465
         PRINTFORMW 그렇게 속삭이고 소악마는 더욱 허리의 움직임을 가속시킨다.
         PRINTFORMW 결국 참지 못하고 남자는 스스로 허리를 움직이기 시작하더니 그대로 소악마에게 사정했다……
         CFLAG:8565 = 2
-        IF CFLAG:7000 == 2 && TALENT:209
+        IF CFLAG:7000 == 2 && TALENT:악마
             PRINTFORMW ……
             PRINTFORMW ………
             PRINTFORMW …………
@@ -4901,7 +4901,7 @@ IF TFLAG:200 == 465
         PRINTFORMW 조롱하는 것 같은 말에 항의 할려고 했지만 그 순간 유두에서 오는 쾌감으로 숨이 막힌다.
         PRINTFORMW 그녀는 그대로, 뜨거운 한숨을 계속 내쉬었다……
         CFLAG:8565 = 1
-        IF CFLAG:7000 == 2 && TALENT:209
+        IF CFLAG:7000 == 2 && TALENT:악마
             PRINTFORMW ……
             PRINTFORMW ………
             PRINTFORMW …………
@@ -4934,7 +4934,7 @@ IF TFLAG:200 == 1100
     ELSEIF RAND:3 == 0 && (CFLAG:COUNT:1501 == 1 || CFLAG:COUNT:1501 == 2)
         PRINTFORMW 「이런 건 보통 저녁 전에 한다구요!」
     ;인기 여성 또한 창녀 때 랜덤
-    ELSEIF RAND:2 == 0 && TALENT:COUNT:264 && TALENT:COUNT:260
+    ELSEIF RAND:2 == 0 && TALENT:COUNT:간판소녀 && TALENT:COUNT:창부
         PRINTFORMW 「네, 알겠습니다♪ %CALLNAME:MASTER% 창관의 비밀 병기, 출격입니다!」
     ;아는 사람이 오는 이벤트를 발생시키고 싶을 때 전용의 분기입니다
     ;RAND:X로 오는 확률을 변화. ITEM:1 XX의 XX에 왔으면 좋은 캐릭터 번호를 넣어 주세요. 구작 캐릭터라면, 2 XX가 되는 일도 있습니다.
@@ -4942,24 +4942,24 @@ IF TFLAG:200 == 1100
     ;파츄리가 온다
 ;    ELSEIF RAND:5 == 1 && ITEM:108 == 0 && (CFLAG:COUNT:1501 == 5 || CFLAG:COUNT:1501 == 6)
     ;구애 의존 한편, 대많은 사람때
-    ELSEIF TALENT:COUNT:261 && (CFLAG:COUNT:1501 == 5 || CFLAG:COUNT:1501 == 6)
+    ELSEIF TALENT:COUNT:구애의존 && (CFLAG:COUNT:1501 == 5 || CFLAG:COUNT:1501 == 6)
         PRINTFORMW 「응후후후, 1 vs 다 인가요…. 기대하고 있어요♪」
     ;구애 의존 또한 단골손님
-    ELSEIF TALENT:COUNT:265 && TALENT:COUNT:261
+    ELSEIF TALENT:COUNT:단골 && TALENT:COUNT:구애의존
         PRINTFORMW 「엇, 이 분은 평소의……후후, 음몽의 서비스로 답해 드릴게요♪」
     ;구애 의존
-    ELSEIF TALENT:COUNT:261
+    ELSEIF TALENT:COUNT:구애의존
         PRINTFORMW 「손님은 신이에요♪ 꿈과 같이 추잡한 현실을 선물 하지 않는다구요!」
     ;창녀 한편, 대많은 사람때
-    ELSEIF TALENT:COUNT:260 && (CFLAG:COUNT:1501 == 5 || CFLAG:COUNT:1501 == 6) 
+    ELSEIF TALENT:COUNT:창부 && (CFLAG:COUNT:1501 == 5 || CFLAG:COUNT:1501 == 6) 
         PRINTFORMW 「꿈 속에서도 많은 사람을 상대로 했던 적은 없지만… 반대로 말하면 재밌는 경험이에요」
         PRINTFORMW 「꿈 속에서도 경험이 없는 행위를, 현실로 해 볼까요♪」
     ;창녀 또한 단골손님
-    ELSEIF TALENT:COUNT:265 && TALENT:COUNT:260
+    ELSEIF TALENT:COUNT:단골 && TALENT:COUNT:창부
         PRINTFORMW 「이른바 단골이 온 것 같네요……」
         PRINTFORMW 「또 와주셔서 감사합니다만, 복상사를 시키지 않는게 아쉽네요」
     ;창녀
-    ELSEIF TALENT:COUNT:260
+    ELSEIF TALENT:COUNT:창부
         PRINTFORMW 「일도 익숙해졌고 자 창녀의 진심을 보여 드릴게요!」
     ;대많은 사람때
     ELSEIF CFLAG:COUNT:1501 == 5 || CFLAG:COUNT:1501 == 6
@@ -4981,7 +4981,7 @@ IF TFLAG:200 == 1200
     IF CFLAG:COUNT:7980 == 0
         PRINTFORMW (……창녀로서의 경험이 없는 여자에게, 게다가 악마에게 이렇게 하는 건 어떤건가요)
     ;창녀
-    ELSEIF TALENT:COUNT:260
+    ELSEIF TALENT:COUNT:창부
         PRINTFORMW 「후~,―. 이런 건 알바를 고용해도 되잖아요」
         PRINTFORMW 「……이런, 누가 왔네. 영업 스마일 영업 스마일. 어서 오십시오―♪」
     ;그 이외
@@ -4999,10 +4999,10 @@ IF TFLAG:200 == 1300
     IF CFLAG:COUNT:7998 >= 30
         PRINTFORMW 「가끔 씩, 쉬어가는 겸 요리하는 것도 좋을지도!」
     ;구애 의존 테라히″치
-    ELSEIF TALENT:COUNT:261
+    ELSEIF TALENT:COUNT:구애의존
         PRINTFORMW 「모처럼이니, 스탭 분들 점심 갑니다!」
     ;창녀
-;    ELSEIF TALENT:COUNT:260
+;    ELSEIF TALENT:COUNT:창부
 ;        PRINTFORMW 
     ;그 이외
     ELSE
@@ -5035,7 +5035,7 @@ IF TFLAG:200 == 1102 || TFLAG:200 == 1202 || TFLAG:200 == 1604
         PRINTFORMW 「응, 응응……저, 요리 만드는 거, 엄청 좋아한다구요 ,
         PRINTFORMW  제 입술과 함께, 요리, 맛봐 주세요……」
     ;창녀
-    ELSEIF TALENT:COUNT:260
+    ELSEIF TALENT:COUNT:창부
         PRINTFORMW 「응, 요리보다 맛있을 거에요…, 제 몸……♪」
     ;그 이외
     ELSE
@@ -5048,7 +5048,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 1103 || TFLAG:200 == 1503
     ;창녀
-    IF TALENT:COUNT:260
+    IF TALENT:COUNT:창부
         PRINTFORMW 「저기요, 그대로 내가 자위하고 있는 거 봐 주세요……」
         PRINTFORMW 「후후후, 알아요, 손님이 발사할 수 있으면 ♪」
     ;그 이외
@@ -5063,7 +5063,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 1104
     ;창녀
-    IF TALENT:COUNT:260
+    IF TALENT:COUNT:창부
         PRINTFORMW 「츕, ……, ……후후, 입만으로 끝내 버리는 건가요?」
         PRINTFORMW 「저도, 이만큼은 만족할 수 없진 않아요……♪」
     ;그 이외
@@ -5100,7 +5100,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 1201 || TFLAG:200 == 1203
     ;창녀
-    IF TALENT:COUNT:260
+    IF TALENT:COUNT:창부
         PRINTFORMW 「, ……서투르시네요, 손님……」
         PRINTFORMW 「손님에게 범해지면 나, 좀 더 기분 좋게 될 수 있을 텐데……」
     ;그 이외
@@ -5130,7 +5130,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 1207 || TFLAG:200 == 1407
     ;창녀
-    IF TALENT:COUNT:260
+    IF TALENT:COUNT:창부
         PRINTFORMW 「아응, 좋은 느낌에 매끈매끈하게 왔어요…!」
         PRINTFORMW 「손님이 조사했으면 좋겠다고 말한데는……후후, 여기……?」
     ;그 이외
@@ -5181,12 +5181,12 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 1501
     ;창녀
-    IF TALENT:COUNT:260
+    IF TALENT:COUNT:창부
         PRINTFORMW 「후~……눈으로 범해지는 것 같아 음-응!」
         PRINTFORMW 「옷 때문에 잘 안보일 텐데, 더 자세히 보고 싶다면…… 더, 가까이 오세요♪」
         ;보통 평가 이상이 되는 음란은 2포인트 보너스인것 같기 때문에 이런 계산식 괄호 필요없는 것 같지만 일단
         ;……이것으로 D의 내용을 고쳐 쓸 수 있거나 하지 않지요?
-        SIF D + (ABL:COUNT:기교 * 2) + (ABL:COUNT:노출증 * 4) + (TALENT:COUNT:170 * 2) > 30
+        SIF D + (ABL:COUNT:기교 * 2) + (ABL:COUNT:노출증 * 4) + (TALENT:COUNT:음란 * 2) > 30
             PRINTFORMW 소악마의 말에 인내심이 터진 고객들은, 싸우면서 스테이지에 다가섰다.
     ;그 이외
     ELSE
@@ -5199,7 +5199,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 1502
     ;창녀로 랜덤
-    IF RAND:2 == 0 && TALENT:COUNT:260
+    IF RAND:2 == 0 && TALENT:COUNT:창부
         PRINTFORMW 「후후……여러분은, 이 앞을 보고 싶나요? 그렇지만……」
         PRINTFORMW 「좀 더, 기다려 주세요……후후♪」
     ;그 이외
@@ -5240,7 +5240,7 @@ ELSEIF TFLAG:200 == 1600 && TALENT:COUNT:처녀
 ;-------------------------------------------------
 ELSEIF TFLAG:200 == 1600
     ;창녀로 랜덤
-    IF TALENT:COUNT:260 && RAND:2 == 0
+    IF TALENT:COUNT:창부 && RAND:2 == 0
         PRINTFORMW 「네, 이걸 기다리고 있었다구요♪ 범해 주세요, 손님!」
     ;그 이외
     ELSE
@@ -5254,7 +5254,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 1800
     ;창녀
-    IF TALENT:COUNT:260
+    IF TALENT:COUNT:창부
         PRINTFORMW 「후~……과연 매너리즘이군요……」
     ;그 이외
     ELSE
@@ -5284,7 +5284,7 @@ ENDIF
 ;배드
 IF TFLAG:200 == 1810
     ;상애
-    IF TALENT:153
+    IF TALENT:상애
         PRINTFORMW 「……이제, 그 사람에 대한 이혼장을 준비하는 일만 남았네요」
     ELSE
         PRINTFORMW 「임신이라니, 최악이야……싫은 예감이 들었는데……」
@@ -5298,7 +5298,7 @@ ENDIF
 ;창녀 이 말이 나온 후에 스테이터스 변화한다
 IF TFLAG:200 == 1811
     ;연모가 사라져 구애 의존이 붙는 패턴
-    IF CFLAG:70 != 3 && TALENT:150 && TALENT:153 == 0
+    IF CFLAG:70 != 3 && TALENT:연모 && TALENT:상애 == 0
         PRINTFORMW (역시, 서큐버스는 많은 인간과 몸을 거듭하는 것)
         PRINTFORMW (이 아이가 할 수 있던 것은, 결국 서큐버스는 한사람만을 사랑하는 존재는 아니라고 하는 증거군요……)
     ELSE
@@ -5493,7 +5493,7 @@ RETURN 0
 ;-------------------------------------------------
 @SuccubusSYS
 ;소악마가 악마로 없어지고 있다면 기동하지 않는다
-SIF TALENT:209 == 0
+SIF TALENT:악마 == 0
     RETURN 0
     
 PRINTFORMW 성행위를 통해 소악마는 %조사처리(CALLNAME:PLAYER,"로")%부터 정기를 들이마시고 있다……
@@ -5584,9 +5584,9 @@ PRINTFORMW 갑자기 현기증이 돌던 %조사처리(CALLNAME:MASTER,"는")%, 
 PRINTFORMW 상황을 이해하지 못하고 %조사처리(CALLNAME:MASTER,"는")% 자신의 몸을 일으키려고 했지만,
 PRINTFORMW 점점 시야가 어두워 지고 몸은 움직이지 않는다.
 PRINTFORM 시야가 희미해져가는 중 마지막에 보인 건 
-IF TALENT:150
+IF TALENT:연모
     PRINTFORM 슬픈 표정으로 이쪽에 보니 
-ELSEIF (MARK:쾌락각인 == 3 && CFLAG:2 >= 500 && MARK:반발각인 == 0) || TALENT:160
+ELSEIF (MARK:쾌락각인 == 3 && CFLAG:2 >= 500 && MARK:반발각인 == 0) || TALENT:복종
     PRINTFORM 과분한 표정을 지으며 한숨쉬는 
 ELSEIF MARK:반발각인 == 3
     PRINTFORM 좋아 죽을거 같이 웃는 
@@ -5597,10 +5597,10 @@ PRINTFORMW 소악마의 모습이었다.
 PRINTFORMW 이 현상은 지나치게 그녀에게 정기를 들이마셔져 생명력이 사라진 결과인걸 눈치챘지만 이미 늦었다.
 PRINTW 
 
-IF TALENT:150 && TALENT:162 == 0
+IF TALENT:연모 && TALENT:예속 == 0
     PRINTFORMW 「그러니까 말했지요. 나와 관계 해선 안 된다고……, 」
     PRINTFORMW 「미안해요……미안해요, 미안해요, %CSTR:90%……」
-ELSEIF TALENT:160
+ELSEIF TALENT:복종
     PRINTFORMW 「여기까지인가요……유감이에요, %CSTR:90%」
 ELSEIF MARK:쾌락각인 == 3 && CFLAG:2 >= 500 && MARK:반발각인 == 0
     PRINTFORMW 「%조사처리(CSTR:90,"와")% 하는 건 기분 좋았는데 아까운 사람을 죽여 버렸네요……」

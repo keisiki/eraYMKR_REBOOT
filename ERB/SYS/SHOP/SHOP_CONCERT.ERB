@@ -14,7 +14,7 @@
 TFLAG:235 = 0
 VARSET LOCAL, 0
 TFLAG:236 = CHECK_TRIO()
-SIF TFLAG:236 != 0 && TALENT:(TFLAG:237):205 && TIME == 0 && ITEM:48 == 0 && NOITEM == 0
+SIF TFLAG:236 != 0 && TALENT:(TFLAG:237):흡혈귀 && TIME == 0 && ITEM:48 == 0 && NOITEM == 0
     TFLAG:236 = 0
 ;여기까지 해두고서 트리오 라이브의 확률은 20%
 SIF RAND:5 != 0
@@ -136,10 +136,10 @@ ELSEIF TFLAG:236 & 5
 ENDIF
 
 ;상애
-IF TALENT:153
+IF TALENT:상애
     LOCAL:2 += RAND:11
 ;연모, 친애
-ELSEIF TALENT:150 || TALENT:152
+ELSEIF TALENT:연모 || TALENT:친애
     LOCAL:2 += RAND:16
 ELSE
     LOCAL:2 += RAND:21
@@ -155,11 +155,11 @@ ENDIF
 
 ;캐릭터에 따라 난이도 변화
 ;[음감] 보유
-SIF TALENT:191
+SIF TALENT:음감
     LOCAL:2 -= 5
 IF ASSI >= 0
     ;조수에 [음감] 보유자가 있으면 난이도 저하
-    SIF TALENT:ASSI:191
+    SIF TALENT:ASSI:음감
         LOCAL:2 -= 3
     ;조수가 [고무] 보유자 또는 가창기능 Lv5 이상이면 난이도 저하
     SIF TALENT:ASSI:고무
@@ -168,10 +168,10 @@ IF ASSI >= 0
         LOCAL:2 -= 1
 ENDIF
 ;[음치] 보유
-SIF TALENT:190
+SIF TALENT:음치
     LOCAL:2 += 2
 ;[천식]이나 [구문지] 보유
-SIF TALENT:천식 || TALENT:216
+SIF TALENT:천식 || TALENT:구문지
     LOCAL:2 += 3
 
 IF LOCAL:1 < LOCAL:2
@@ -311,17 +311,17 @@ SIF TALENT:28
 SIF TALENT:63
     TIMES LOCAL , 1.20
 ;연모
-SIF TALENT:150
+SIF TALENT:연모
     TIMES LOCAL , 2.00
 
 ;[음감]
-IF TALENT:191
+IF TALENT:음감
     TIMES LOCAL:1 , 1.50
 ;[천식], [구문지]
-ELSEIF TALENT:천식 || TALENT:216
+ELSEIF TALENT:천식 || TALENT:구문지
     TIMES LOCAL:1 , 0.80
 ;[음치]
-ELSEIF TALENT:190
+ELSEIF TALENT:음치
     TIMES LOCAL:1 , 0.90
 ;노래를 잘 할 것 같은 분(개인적 주관이 들어갔습니다)
 ;사쿠야 씨, 리그룽, 사나에 씨, 뱌쿠렌 님, 카센, 청아냥냥, 코코로
@@ -399,7 +399,7 @@ ELSE
     BASE:기력 = MAX(BASE:기력 - LOCAL * 5, 1)
     CFLAG:65 += LOCAL * 5
     ;조수가 [흡혈귀]일 때에, 낮 턴일 경우 특주 양산이 없으면 라이브를 거들지 않는다
-    IF ASSI >= 0 && (TALENT:ASSI:205 == 0 || TIME == 1 || ITEM:48 || NOITEM)
+    IF ASSI >= 0 && (TALENT:ASSI:흡혈귀 == 0 || TIME == 1 || ITEM:48 || NOITEM)
         BASE:ASSI:체력 = MAX(BASE:ASSI:체력 - LOCAL * 7, 1)
         BASE:ASSI:기력 = MAX(BASE:ASSI:기력 - LOCAL * 4, 1)
         CFLAG:ASSI:65 += LOCAL * 4
@@ -426,7 +426,7 @@ LOCAL:4 = MAX(LOCAL:4, 1)
 ;가창경험
 CALL COMMON_UP_EXP, TARGET, 73, LOCAL:4, 1
 ;조수가 [흡혈귀]일 때에, 낮 턴일 경우 특주 양산이 없으면 라이브를 거들지 않는다
-IF ASSI >= 0 && (TALENT:ASSI:205 == 0 || TIME == 1 || ITEM:48 || NOITEM)
+IF ASSI >= 0 && (TALENT:ASSI:흡혈귀 == 0 || TIME == 1 || ITEM:48 || NOITEM)
     CALL COMMON_UP_EXP, ASSI, 73, (1+RAND:(LOCAL:4)), 0
     SIF TFLAG:236 != 0
         CALL COMMON_UP_EXP, TFLAG:237, 73, (1+RAND:(LOCAL:4)), 0
@@ -560,10 +560,10 @@ SIF TALENT:28
 SIF TALENT:63
     TIMES LOCAL , 1.20
 ;연모
-SIF TALENT:150
+SIF TALENT:연모
     TIMES LOCAL , 2.00
 ;친애
-SIF TALENT:152
+SIF TALENT:친애
     TIMES LOCAL , 2.20
 
 ;EASY가 아니라면 주도자의 체력 소모, 기력 소모, 취기, 스트레스에 따른 마이너스 보정이 있음
@@ -604,13 +604,13 @@ ELSE
 ENDIF
 
 ;[음감]
-IF TALENT:191
+IF TALENT:음감
     TIMES LOCAL:1 , 1.50
 ;[천식], [구문지]
-ELSEIF TALENT:천식 || TALENT:216
+ELSEIF TALENT:천식 || TALENT:구문지
     TIMES LOCAL:1 , 0.80
 ;[음치]
-ELSEIF TALENT:190
+ELSEIF TALENT:음치
     TIMES LOCAL:1 , 0.90
 ;노래 잘 부를 것 같은 분(개인적 주관이 들어갔습니다)
 ;사쿠야 씨, 리그룽, 사나에 씨, 뱌쿠렌 님, 카센, 청아냥냥, 코코로
@@ -654,44 +654,44 @@ SIF TALENT:116
     TIMES LOCAL:1 , 1.20
 ;기본적으로 날개가 있을 것이라 추정되는 종족들은 소소하게 보너스
 ;요정
-SIF TALENT:200
+SIF TALENT:요정
     TIMES LOCAL:1 , 1.20
 ;흡혈귀
-SIF TALENT:205
+SIF TALENT:흡혈귀
     TIMES LOCAL:1 , 1.10
 ;기계
 ;보컬로이드는 환상향에서도 먹힐...지도 (?)
-SIF TALENT:206
+SIF TALENT:기계
     TIMES LOCAL:1 , 1.10
 ;인형
-SIF TALENT:208
+SIF TALENT:인형
     TIMES LOCAL:1 , 1.20
 ;악마
-SIF TALENT:209
+SIF TALENT:악마
     TIMES LOCAL:1 , 1.10
 ;요호
-SIF TALENT:211
+SIF TALENT:요호
     TIMES LOCAL:1 , 1.20
 ;오니
-SIF TALENT:214
+SIF TALENT:오니
     TIMES LOCAL:1 , 1.20
 ;누에
-SIF TALENT:217
+SIF TALENT:누에
     TIMES LOCAL:1 , 1.30
 ;하쿠레이의 무녀
-SIF TALENT:218
+SIF TALENT:하쿠레이의무녀
     TIMES LOCAL:1 , 1.30
 ;카제하후리
-SIF TALENT:219
+SIF TALENT:카제하후리
     TIMES LOCAL:1 , 1.25
 ;신령
-SIF TALENT:222
+SIF TALENT:신령
     TIMES LOCAL:1 , 1.30
 ;반신
-SIF TALENT:223
+SIF TALENT:반신
     TIMES LOCAL:1 , 1.25
 ;강시
-SIF TALENT:226
+SIF TALENT:강시
     TIMES LOCAL:1 , 0.80
 ;인어
 SIF TALENT:228
@@ -779,7 +779,7 @@ ELSE
     BASE:0 = MAX(BASE:0 - LOCAL * 6, 1)
     BASE:기력 = MAX(BASE:0 - LOCAL * 4, 1)
     ;조수가 [흡혈귀]일 때에, 낮 턴일 경우 특주 양산이 없으면 라이브를 거들지 않는다
-    IF ASSI >= 0 && (TALENT:ASSI:205 == 0 || TIME == 1 || ITEM:48 || NOITEM)
+    IF ASSI >= 0 && (TALENT:ASSI:흡혈귀 == 0 || TIME == 1 || ITEM:48 || NOITEM)
         BASE:ASSI:체력 = MAX(BASE:ASSI:체력 - LOCAL * 5, 1)
         BASE:ASSI:기력 = MAX(BASE:ASSI:기력 - LOCAL * 3, 1)
         IF TFLAG:236 != 0
@@ -799,7 +799,7 @@ CALL COMMON_UP_JUEL, TARGET, 12, (LOCAL*10), 0
 CALL COMMON_UP_JUEL, TARGET, 15, (LOCAL:1*(3+LOCAL:3)), 0
 LOCAL:4 = LOCAL:3 + 1 + RAND:5
 ;조수가 [흡혈귀]일 때에, 낮 턴일 경우 특주 양산이 없으면 라이브를 거들지 않는다
-IF ASSI >= 0 && (TALENT:ASSI:205 == 0 || TIME == 1 || ITEM:48 || NOITEM)
+IF ASSI >= 0 && (TALENT:ASSI:흡혈귀 == 0 || TIME == 1 || ITEM:48 || NOITEM)
     CALL COMMON_UP_EXP, ASSI, 73, (1+RAND:(LOCAL:4)), 0
     SIF TFLAG:236 != 0 
         CALL COMMON_UP_EXP, TFLAG:237, 73, (1+RAND:(LOCAL:4)), 0
@@ -896,7 +896,7 @@ ELSE
     LOCAL:2 = 600
 ENDIF
 ;대상이 [오니]이며 《신편귀독주》를 받을 경우에는 스피리터스로 변경
-SIF TALENT:214 && LOCAL:2 == 605
+SIF TALENT:오니 && LOCAL:2 == 605
     LOCAL:2 = 604
 
 ;99개가 한계
@@ -931,7 +931,7 @@ SIF MARK:반발각인 || MARK:공포각인 >= 3
 SIF MARK:ASSI:반발각인 || MARK:ASSI:공포각인 >= 3
     RETURNF 0
 ;조수가 [흡혈귀]이고 밤이 아니며 특주 양산이 없을 때에도 트리오가 되지 않는다
-SIF TALENT:ASSI:205 && TIME == 0 && ITEM:48 == 0 && NOITEM == 0
+SIF TALENT:ASSI:흡혈귀 && TIME == 0 && ITEM:48 == 0 && NOITEM == 0
     RETURNF 0
 ;특정 캐릭터일 경우에는 트리오로 라이브할 수 있을지도 모른다. 단, 조수가 없으면 불가능
 ;추가로 세 명째는 그 자리에 있으며, 수면약의 영향이 없고, 반발각인 없으며 공포각인 Lv2 이하에 조수 가능해야 한다. 또, 주인이어도 안 된다.
@@ -2164,7 +2164,7 @@ SELECTCASE NO:TARGET
             PRINT “Alone With You (Dying To See Your Face)”
             ARG -= 18
             ARG += RAND:147
-        ELSEIF LOCAL:3 == 4 && TALENT:152 == 1
+        ELSEIF LOCAL:3 == 4 && TALENT:친애 == 1
             PRINT “Lumiere de courage”
             ARG += RAND:155
         ELSEIF LOCAL:3 == 5
@@ -2208,7 +2208,7 @@ SELECTCASE NO:TARGET
             PRINT “Innocent Eyes”
             ARG -= 21
             ARG += RAND:180
-        ELSEIF LOCAL:3 == 5 && TALENT:150 == 1
+        ELSEIF LOCAL:3 == 5 && TALENT:연모 == 1
             PRINT 『가속하는 사랑은 아무도 멈출 수 없어』
             ARG += RAND:168
         ELSEIF LOCAL:3 == 6
@@ -2319,7 +2319,7 @@ SELECTCASE NO:TARGET
             ARG -= 22
             ARG += RAND:111
         ELSEIF LOCAL:3 >= 41 && LOCAL:3 < 50
-            IF TALENT:213 == 2
+            IF TALENT:사토리 == 2
                 PRINT “All This Time”
                 ARG -= 23
                 ARG += RAND:154
@@ -2331,7 +2331,7 @@ SELECTCASE NO:TARGET
             PRINT “Last Remote”
             ARG -= 22
             ARG += RAND:123
-        ELSEIF LOCAL:3 == 64 && TALENT:158 == 1 
+        ELSEIF LOCAL:3 == 64 && TALENT:광기 == 1 
             PRINT 『코메이지 코이시의 두근두근 대모험 오프닝』
             ARG -= 25
             ARG += RAND:222
@@ -3138,17 +3138,17 @@ SELECTCASE NO:TARGET
                 PRINT 『주정 울적하게』
                 ARG -= 64
                 ARG += RAND:81
-            ELSEIF TALENT:200
+            ELSEIF TALENT:요정
                 ;해바라기 요정 외 종족 「요정」용
                 PRINT 『요정 쨍쨍하게』
                 ARG -= 32
                 ARG += RAND:81
-            ELSEIF TALENT:208
+            ELSEIF TALENT:인형
                 ;앨리스표 인형 외 종족 「인형」용
                 PRINT 『인형들의 윤무』
                 ARG -= 8
                 ARG += RAND:110
-            ELSEIF TALENT:질투하기쉬움 || TALENT:157
+            ELSEIF TALENT:질투하기쉬움 || TALENT:질투
                 ;질투하기 쉬움 or 질투 보유자 용
                 PRINT 『질러시 스톰』
                 ARG -= 16

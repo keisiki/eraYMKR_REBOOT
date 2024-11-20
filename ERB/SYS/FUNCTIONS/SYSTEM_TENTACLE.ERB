@@ -574,7 +574,7 @@ IF LOCAL == 3
 ELSEIF LOCAL == 2
     BASE:MASTER:촉수 -= MAXBASE:0 / 10
     TCVAR:50 += 1
-    IF ABL:순종 > 0 && TALENT:150 == 0
+    IF ABL:순종 > 0 && TALENT:연모 == 0
         ABL:순종 -= 1
         PRINTFORML %CALLNAME:TARGET%의 %ABLNAME:10%가 {ABL:순종}로 떨어졌다.
     ENDIF
@@ -587,7 +587,7 @@ ELSEIF LOCAL == 2
 ELSE
     BASE:MASTER:촉수 -= MAXBASE:0 / 5
     TCVAR:50 += 1
-    IF ABL:순종 > 0 && TALENT:150 == 0
+    IF ABL:순종 > 0 && TALENT:연모 == 0
         ABL:순종 -= 1
         PRINTFORML %CALLNAME:TARGET%의 %ABLNAME:10%가 {ABL:순종}로 떨어졌다.
     ENDIF
@@ -1098,10 +1098,10 @@ ENDIF
 SIF TALENT:ARG:기생
     LOCAL:4 -= 500
 ;복종계 · 붕괴계
-SIF TALENT:ARG:160 || TALENT:ARG:161 || TALENT:ARG:162 || TALENT:ARG:168 || TALENT:ARG:169
+SIF TALENT:ARG:복종 || TALENT:ARG:낙인 || TALENT:ARG:예속 || TALENT:ARG:괴뢰 || TALENT:ARG:괴조인격
     LOCAL:4 -= 100
 ;사역마
-SIF TALENT:ARG:164
+SIF TALENT:ARG:사역마
     LOCAL:4 -= 250
 IF LOCAL:11
     LOCAL:4 -= 100 * LOCAL:11
@@ -1145,7 +1145,7 @@ WAIT
 ;ただし유폐する前に予め使い魔の契約を結んでいると촉수同化のイベントの回避は可能.
 ;また, 使い魔の契約を結んでいない場合でも유폐してから14日経つ前に開放することで回避することが可能.
 ;同化イベントに関するメッセージを追加.同時に期間が危険水域に達した場合のメッセージも表示.
-IF TALENT:ARG:164 == 0 && ((CFLAG:ARG:41 == 1023 && CFLAG:ARG:39 > 14) || CFLAG:ARG:39 > 30)
+IF TALENT:ARG:사역마 == 0 && ((CFLAG:ARG:41 == 1023 && CFLAG:ARG:39 > 14) || CFLAG:ARG:39 > 30)
     LOCAL:6 = MAX(RAND:11 - FLAG:현산제물총계, 0)
     IF LOCAL:6 == 0
         CFLAG:ARG:41 |= 1024
@@ -1171,7 +1171,7 @@ ELSE
     LOCAL:6 = 15
 ENDIF
 LOCAL:17 = 0
-IF CFLAG:ARG:41 < 1023 && TALENT:ARG:164 == 0 && CFLAG:ARG:39 > LOCAL:6 && ((TALENT:ARG:봉래인 == 0 && NO:ARG != 33 && NO:ARG != 39) || FLAG:촉수능력 & 8192)
+IF CFLAG:ARG:41 < 1023 && TALENT:ARG:사역마 == 0 && CFLAG:ARG:39 > LOCAL:6 && ((TALENT:ARG:봉래인 == 0 && NO:ARG != 33 && NO:ARG != 39) || FLAG:촉수능력 & 8192)
     IF (CFLAG:ARG:41 & 1) == 0 && LOCAL:14 & 8 && TALENT:ARG:남자 == 0 && TALENT:ARG:후타나리 == 0
         ;촉수 임플란트(クリトリス)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 클리토리스에 무언가 심어진 것 같다…….
@@ -1371,47 +1371,47 @@ IF TALENT:146
     TFLAG:234 *= 2
 ENDIF
 ;狂気
-SIF TALENT:158
+SIF TALENT:광기
     TIMES TFLAG:233 , 1.10
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     TIMES TFLAG:233 , 1.20
 ;淫核／淫茎
-SIF TALENT:171
+SIF TALENT:음핵／음경
     TIMES TFLAG:233 , 1.10
 ;淫壷
-SIF TALENT:172
+SIF TALENT:음호
     TIMES TFLAG:233 , 1.10
 ;淫尻
-SIF TALENT:173
+SIF TALENT:음고
     TIMES TFLAG:233 , 1.10
 ;淫乳
-SIF TALENT:174
+SIF TALENT:음유
     TIMES TFLAG:233 , 1.10
 ;요도광
-SIF TALENT:175
+SIF TALENT:요도광
     TIMES TFLAG:233 , 1.10
 ;キス魔
-SIF TALENT:176
+SIF TALENT:키스마
     TIMES TFLAG:233 , 1.10
 ;ドＳ
-SIF TALENT:177
+SIF TALENT:초S
     TIMES TFLAG:233 , 1.10
 ;ドＭ
-SIF TALENT:178
+SIF TALENT:초M
     TIMES TFLAG:233 , 1.10
 ;神霊
-IF TALENT:222
+IF TALENT:신령
     TIMES TFLAG:233 , 1.50
     TIMES TFLAG:234 , 1.25
 ENDIF
 ;半神
-IF TALENT:223
+IF TALENT:반신
     TIMES TFLAG:233 , 1.25
     TIMES TFLAG:234 , 1.20
 ENDIF
 ;死神
-IF TALENT:224
+IF TALENT:사신
     TIMES TFLAG:233 , 1.50
     TIMES TFLAG:234 , 1.25
 ENDIF
@@ -1542,28 +1542,28 @@ ENDIF
 SIF TALENT:24
     TIMES LOCAL , 2.50
 ;恋慕
-SIF TALENT:150
+SIF TALENT:연모
     TIMES LOCAL , 0.90
 ;妄信
-SIF TALENT:151
+SIF TALENT:망신
     TIMES LOCAL , 0.20
 ;親愛
-SIF TALENT:152
+SIF TALENT:친애
     TIMES LOCAL , 0.80
 ;相愛
-SIF TALENT:153
+SIF TALENT:상애
     TIMES LOCAL , 0.80
 ;服従
-SIF TALENT:160
+SIF TALENT:복종
     TIMES LOCAL , 0.60
 ;烙印
-SIF TALENT:161
+SIF TALENT:낙인
     TIMES LOCAL , 0.30
 ;隷属
-SIF TALENT:162
+SIF TALENT:예속
     TIMES LOCAL , 0.50
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL , 0.80
 
 ;지문 표시
@@ -1732,28 +1732,28 @@ ENDIF
 SIF TALENT:24
     TIMES LOCAL , 2.50
 ;恋慕
-SIF TALENT:150
+SIF TALENT:연모
     TIMES LOCAL , 0.90
 ;妄信
-SIF TALENT:151
+SIF TALENT:망신
     TIMES LOCAL , 0.20
 ;親愛
-SIF TALENT:152
+SIF TALENT:친애
     TIMES LOCAL , 0.80
 ;相愛
-SIF TALENT:153
+SIF TALENT:상애
     TIMES LOCAL , 0.80
 ;服従
-SIF TALENT:160
+SIF TALENT:복종
     TIMES LOCAL , 0.50
 ;烙印
-SIF TALENT:161
+SIF TALENT:낙인
     TIMES LOCAL , 0.20
 ;隷属
-SIF TALENT:162
+SIF TALENT:예속
     TIMES LOCAL , 0.30
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL , 0.80
 
 ;地の文章カット
@@ -1818,9 +1818,9 @@ SIF FLAG:SHOP이벤트확장 & 8
     CALL GET_LARVA
 
 ;[烙印], [精神崩壊], [傀儡], [壊造人格]のいずれも取得していない状態で이상경험10未満かつ촉수중독3未満だと狂気が付く(判定は촉수출산する度に行う)
-IF (EXP:이상경험 < 10 && ABL:촉수중독 < 3) && TALENT:158 == 0 && TALENT:161 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0
+IF (EXP:이상경험 < 10 && ABL:촉수중독 < 3) && TALENT:광기 == 0 && TALENT:낙인 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 발광하고 말았다.
-    TALENT:158 = 1
+    TALENT:광기 = 1
     CFLAG:12 |= 1
     CFLAG:17 |= 2
 ENDIF

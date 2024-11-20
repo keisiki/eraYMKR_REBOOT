@@ -69,7 +69,7 @@ ENDIF
 ;조수가 있어야 한다. 타겟이 인터럽트가 발생하지 않았다면 발동가능.
 ;연모/음란/복종 중 하나를 가져야 하며, 조수체력이 800 이상, 노예체력이 800이상  있어야 한다. 
 ;노예의 윤활이 5000 이상이어야 한다. (안 그러면 험한 꼴이 나니까...) 노예의 욕정이 5000 이상이어야 한다. (노예가 욕정하는 걸 보고 조수가 욕정하는 거니까)
-IF ASSI > 0 && CFLAG:TARGET:4007 ==0 && BASE:ASSI:체력 >=800 && BASE:TARGET:체력 >=800 && PALAM:TARGET:10 >= 3000 && PALAM:TARGET:13 >= 5000 && (TALENT:ASSI:150 == 1 || TALENT:ASSI:160 == 1|| TALENT:ASSI:170 == 1) 
+IF ASSI > 0 && CFLAG:TARGET:4007 ==0 && BASE:ASSI:체력 >=800 && BASE:TARGET:체력 >=800 && PALAM:TARGET:10 >= 3000 && PALAM:TARGET:13 >= 5000 && (TALENT:ASSI:연모 == 1 || TALENT:ASSI:복종 == 1|| TALENT:ASSI:음란 == 1) 
     ;발동체크
     CALL CHECK_INTERRUPT, ASSI
     ;발동할 게 있을 때만 실행.
@@ -510,7 +510,7 @@ IF FLAG:토리코모드 & 512
             PRINTL
             CALL SETCOLOR_TORIKOMODE, "PINK", 2
             ;음란한 조수다
-            IF TALENT:ASSI:170
+            IF TALENT:ASSI:음란
                 PRINTFORMW 「하아...%CALLNAME:TARGET%... 더는 참을 수가...」
                 PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% %CALLNAME:TARGET%의 모습에 욕정하여, 더 이상 참을 수 없는 것 같다...
             ;그 외
@@ -576,7 +576,7 @@ IF FLAG:토리코모드 & 512
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")%...
                 IF RESULT:0 == 0
                     ;음란한 타겟이다
-                    SIF TALENT:TARGET:170
+                    SIF TALENT:TARGET:음란
                         PRINTFORM 기대로 가득 찬 표정으로 
                     PRINTFORMW %CALLNAME:ASSI%의 손에 몸을 맏겼다.
                     ;50%확률로 상성 업
@@ -595,7 +595,7 @@ IF FLAG:토리코모드 & 512
                     CALL CHECK_INTERRUPT_SLAVETOASSI_TORIKOMODE
                     PRINTFORMW 그런 %CALLNAME:TARGET%의 행동에, %조사처리(CALLNAME:ASSI,"는")%...
                     IF RESULT:0 == 1
-                        PRINTFORMW  \@ (TALENT:ASSI:170) ? 욕정에 이기지 못해, # 강하게 \@ %CALLNAME:TARGET%의 손목을 양 손으로 붙잡고 강제로 조교를 시작했다.
+                        PRINTFORMW  \@ (TALENT:ASSI:음란) ? 욕정에 이기지 못해, # 강하게 \@ %CALLNAME:TARGET%의 손목을 양 손으로 붙잡고 강제로 조교를 시작했다.
                         ;50%확률로 상성 다운
                         IF RAND:2 > 1
                             RELATION:ASSI:(NO:TARGET) -= 1
@@ -667,7 +667,7 @@ IF FLAG:토리코모드 & 512
             PRINTL
             PRINTFORMW 「후우...」
             ;음란한 조수다
-            SIF TALENT:ASSI:170
+            SIF TALENT:ASSI:음란
                 PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% 욕정을 채웠다는 듯이, 입술을 혀로 살짝 핥으면서 음란한 미소를 지었다.
             ;상성이 매우 좋다면
             SIF RELATION:ASSI:(NO:TARGET) >= 150
@@ -1729,19 +1729,19 @@ ENDIF
 IF ARG == TARGET
     ;A계 : A감각3필수;/ 감각1000 쾌1 음고5000 민감3000 둔감-3000
     IF LOCAL:1 == 0 && ABL:ARG:A감각 >=3
-        LOCAL:0 = ABL:ARG:A감각*1000 + PALAM:ARG:2  + TALENT:ARG:173 *5000 + TALENT:ARG:174 *3000 - TALENT:ARG:175 *3000
+        LOCAL:0 = ABL:ARG:A감각*1000 + PALAM:ARG:2  + TALENT:ARG:음고 *5000 + TALENT:ARG:음유 *3000 - TALENT:ARG:요도광 *3000
         LOCAL:4 = 0
     ;B계 : 남자가 아닐 것. 감각3필수/ ;감각1000 쾌1 음유5000 민감3000 둔감-3000
     ELSEIF LOCAL:1 == 1 && TALENT:ARG:남자 != 1 && ABL:ARG:B감각 >=3
-        LOCAL:0 = ABL:ARG:B감각*1000 + PALAM:ARG:3  + TALENT:ARG:174 *5000 + TALENT:ARG:B민감 *3000 - TALENT:ARG:B둔감 *3000
+        LOCAL:0 = ABL:ARG:B감각*1000 + PALAM:ARG:3  + TALENT:ARG:음유 *5000 + TALENT:ARG:B민감 *3000 - TALENT:ARG:B둔감 *3000
         LOCAL:4 = 1
     ;C계 : 남자가 아닐 것. 감각3필수 /C감각1000 쾌C1 음핵/음경5000 민감3000 둔감-3000
     ELSEIF LOCAL:1 == 2 && TALENT:ARG:남자 != 1 && ABL:ARG:C감각 >=3
-        LOCAL:0 = ABL:ARG:C감각*1000 + PALAM:ARG:0  + TALENT:ARG:171 *5000 + TALENT:ARG:C민감 *3000 - TALENT:ARG:C둔감 *3000
+        LOCAL:0 = ABL:ARG:C감각*1000 + PALAM:ARG:0  + TALENT:ARG:음핵／음경 *5000 + TALENT:ARG:C민감 *3000 - TALENT:ARG:C둔감 *3000
         LOCAL:4 = 2
     ;M계 : 마조끼 2이상 필수 /마조끼1000 욕망레벨1000 마조2000 초M5000 
     ELSEIF LOCAL:1 == 3 && ABL:ARG:마조끼 >=2
-        LOCAL:0 = ABL:ARG:마조끼*1000 + ABL:ARG:욕망 *1000  + TALENT:ARG:마조 *2000 + TALENT:ARG:178 *5000
+        LOCAL:0 = ABL:ARG:마조끼*1000 + ABL:ARG:욕망 *1000  + TALENT:ARG:마조 *2000 + TALENT:ARG:초M *5000
         LOCAL:4 = 3
     ;P계 : 남자 또는 후타나리 감각3. 조교자가 여자여야 하며 비처녀여야 함  / 감각500 쾌0.5 사정중독lv2000  
     ELSEIF LOCAL:1 == 4 && (TALENT:ARG:남자 == 1 ||  TALENT:ARG:후타나리 == 1)  && ABL:ARG:C감각 >=3 && TALENT:PLAYER:남자 == 0 && TALENT:PLAYER:처녀 == 0
@@ -1749,14 +1749,14 @@ IF ARG == TARGET
         LOCAL:4 = 4
     ;S계 : 새드끼 2이상 필수/새드끼1000 욕망레벨1000 새드2000 초S5000 
     ELSEIF LOCAL:1 == 5 && ABL:ARG:새드끼 >=2
-        LOCAL:0 = ABL:ARG:새드끼*1000 + ABL:ARG:욕망 *1000  + TALENT:ARG:새드 *2000 + TALENT:ARG:177 *5000
+        LOCAL:0 = ABL:ARG:새드끼*1000 + ABL:ARG:욕망 *1000  + TALENT:ARG:새드 *2000 + TALENT:ARG:초S *5000
         LOCAL:4 = 5
     ;V계 :남자가 아닐 것. 감각3. 연모 또는 음란. 비처녀여야 함. / 감각1000 쾌1 음호5000 민감3000 둔감-3000
-    ELSEIF LOCAL:1 == 6 && TALENT:ARG:남자 != 1 && ABL:ARG:V감각>=3 && TALENT:ARG:처녀 == 0 && (TALENT:ARG:150 ==1 || TALENT:ARG:170 ==1)
-        LOCAL:0 = ABL:ARG:V감각*1000 + PALAM:ARG:1  + TALENT:ARG:172 *5000 + TALENT:ARG:V민감 *3000 - TALENT:ARG:V둔감 *3000
+    ELSEIF LOCAL:1 == 6 && TALENT:ARG:남자 != 1 && ABL:ARG:V감각>=3 && TALENT:ARG:처녀 == 0 && (TALENT:ARG:연모 ==1 || TALENT:ARG:음란 ==1)
+        LOCAL:0 = ABL:ARG:V감각*1000 + PALAM:ARG:1  + TALENT:ARG:음호 *5000 + TALENT:ARG:V민감 *3000 - TALENT:ARG:V둔감 *3000
         LOCAL:4 = 6
     ;봉사계 :연모 또는 음란  / 봉사정신2000 욕망레벨1000   헌신적5000
-    ELSEIF LOCAL:1 == 7 && (TALENT:ARG:150 ==1 || TALENT:ARG:170 ==1)
+    ELSEIF LOCAL:1 == 7 && (TALENT:ARG:연모 ==1 || TALENT:ARG:음란 ==1)
         LOCAL:0 = ABL:ARG:봉사정신*2000 + ABL:ARG:욕망*1000  + TALENT:ARG:헌신적 *5000
         LOCAL:4 = 7    
     ;수치계 :노출증3  / 노출증2000 욕망레벨1000   부끄럼없음5000
@@ -1764,23 +1764,23 @@ IF ARG == TARGET
         LOCAL:0 = ABL:ARG:노출증*2000 + ABL:ARG:욕망 *1000  + TALENT:ARG:부끄럼없음 *5000
         LOCAL:4 = 8
     ;애정계 :연모 또는 음란 / 욕망레벨3000 키스마5000  
-    ELSEIF LOCAL:1 == 9 && (TALENT:ARG:150 ==1 || TALENT:ARG:170 ==1)
-        LOCAL:0 =  (ABL:ARG:욕망) *3000  + (TALENT:ARG:176) *5000
+    ELSEIF LOCAL:1 == 9 && (TALENT:ARG:연모 ==1 || TALENT:ARG:음란 ==1)
+        LOCAL:0 =  (ABL:ARG:욕망) *3000  + (TALENT:ARG:키스마) *5000
         LOCAL:4 = 9
     ;요도광계 :요도광 필수  / 감각500 쾌2 배설중독2000  
-    ELSEIF LOCAL:1 == 10 && TALENT:ARG:175 == 1
+    ELSEIF LOCAL:1 == 10 && TALENT:ARG:요도광 == 1
         LOCAL:0 =  ABL:ARG:C감각*500 + PALAM:ARG:0 *2  + ABL:ARG:배설중독*2000
         LOCAL:4 = 10
     ;음고계 : 음고 필수 감각500 쾌2 배설중독2000  
-    ELSEIF LOCAL:1 == 11 && TALENT:ARG:173 == 1
+    ELSEIF LOCAL:1 == 11 && TALENT:ARG:음고 == 1
         LOCAL:0 =  ABL:ARG:A감각*500 + PALAM:ARG:2 *2  + ABL:ARG:배설중독*2000
         LOCAL:4 = 11
     ;음유계 : 남자가 아닐 것. 음유필수, 감각500 쾌2 착유중독2000 
-    ELSEIF LOCAL:1 == 12 && TALENT:ARG:남자 != 1 && TALENT:ARG:174
+    ELSEIF LOCAL:1 == 12 && TALENT:ARG:남자 != 1 && TALENT:ARG:음유
         LOCAL:0 =  ABL:ARG:B감각*500 + PALAM:ARG:3 *2  + ABL:ARG:분유중독*2000
         LOCAL:4 = 12
     ;음호계 : 비처녀. 남자가 아닐 것. 음호필수 감각1000 쾌2 욕망2000  
-    ELSEIF LOCAL:1 == 13 &&  TALENT:ARG:남자 != 1 && TALENT:ARG:처녀 == 0 && TALENT:ARG:172
+    ELSEIF LOCAL:1 == 13 &&  TALENT:ARG:남자 != 1 && TALENT:ARG:처녀 == 0 && TALENT:ARG:음호
         LOCAL:0 =  ABL:ARG:C감각*1000 + PALAM:ARG:3*2  + ABL:ARG:욕망*2000 
         LOCAL:4 = 13
     ;자위계 : 자위중독1 / 자위중독1000 욕망레벨2000 자위하기쉬움5000  
@@ -1788,7 +1788,7 @@ IF ARG == TARGET
         LOCAL:0 =  ABL:ARG:자위중독*1000 + ABL:ARG:욕망*2000  + TALENT:ARG:자위하기쉬움*5000 
         LOCAL:4 = 14
     ;펠라계 : 연모 또는 음란  / 봉사정신1000 욕망레벨1000 정액중독2000 정애미각5000
-    ELSEIF LOCAL:1 == 15 &&  (TALENT:ARG:150 ==1 || TALENT:ARG:170 ==1)
+    ELSEIF LOCAL:1 == 15 &&  (TALENT:ARG:연모 ==1 || TALENT:ARG:음란 ==1)
         LOCAL:0 =  ABL:ARG:봉사정신*1000 + ABL:ARG:욕망 *2000  +ABL:ARG:정액중독*2000 + TALENT:ARG:정애미각*5000 
         LOCAL:4 = 15
     ;조수계 : 조교자가 조수가 아니다./ 레즈중독2000 욕망2000 bl중독2000
@@ -1812,7 +1812,7 @@ ELSEIF ARG == ASSI && ASSI > 0
         LOCAL:4 = 2
     ;M계 : 새드끼 2이상 필수 / 새드끼2000 욕망레벨1000 새드2000 초S5000 
     ELSEIF LOCAL:1 == 3 && ABL:ASSI:새드끼 >=2
-        LOCAL:0 = ABL:ASSI:새드끼*2000 + ABL:ASSI:욕망 *1000  + TALENT:ASSI:새드 *2000 + TALENT:ASSI:177 *5000
+        LOCAL:0 = ABL:ASSI:새드끼*2000 + ABL:ASSI:욕망 *1000  + TALENT:ASSI:새드 *2000 + TALENT:ASSI:초S *5000
         LOCAL:4 = 3
     ;P계 : 타겟이 남자 또는 후타나리 / 조교자가 여자여야 하며 비처녀여야 함 / V감각 1000 A감각 1000 욕망 2000 정액중독 2000
     ELSEIF LOCAL:1 == 4 && (TALENT:ASSI:남자 == 1 ||  TALENT:TARGET:후타나리 == 1)  && TALENT:ASSI:남자 == 0 && TALENT:ASSI:처녀 == 0
@@ -1820,7 +1820,7 @@ ELSEIF ARG == ASSI && ASSI > 0
         LOCAL:4 = 4
     ;S계 : 마조끼 2이상 필수/마조끼2000 욕망레벨1000 마조2000 초M5000 
     ELSEIF LOCAL:1 == 5 && ABL:ASSI:마조끼 >=2
-        LOCAL:0 = ABL:ASSI:마조끼*2000 + ABL:ASSI:욕망*1000  + TALENT:ASSI:마조 *2000 + TALENT:ASSI:178 *5000
+        LOCAL:0 = ABL:ASSI:마조끼*2000 + ABL:ASSI:욕망*1000  + TALENT:ASSI:마조 *2000 + TALENT:ASSI:초M *5000
         LOCAL:4 = 5
     ;V계 :타겟이 남자가 아니며 처녀가 아니다. 조수가 페니스가 있을 것 / 욕망레벨*2000 C감각*1000 사정중독LV2000
     ELSEIF LOCAL:1 == 6 && TALENT:TARGET:남자 != 1 && TALENT:TARGET:처녀 == 0 && (TALENT:ASSI:남자 == 1 ||  TALENT:ASSI:후타나리 == 1)
@@ -1832,11 +1832,11 @@ ELSEIF ARG == ASSI && ASSI > 0
         LOCAL:4 = 7    
     ;수치계 :새드끼 2이상 필수 / 새드끼1000 욕망레벨2000 새드2000 초S5000 
     ELSEIF LOCAL:1 == 8 && ABL:ASSI:새드끼 >=2
-        LOCAL:0 = ABL:ASSI:새드끼*1000 + ABL:ASSI:욕망 *2000  + TALENT:ASSI:새드 *2000 + TALENT:ASSI:177 *5000
+        LOCAL:0 = ABL:ASSI:새드끼*1000 + ABL:ASSI:욕망 *2000  + TALENT:ASSI:새드 *2000 + TALENT:ASSI:초S *5000
         LOCAL:4 = 8
     ;애정계 :조건 없다 / 욕망레벨3000 키스마5000  
     ELSEIF LOCAL:1 == 9
-        LOCAL:0 =  (ABL:ASSI:욕망) *3000  + (TALENT:ASSI:176) *5000
+        LOCAL:0 =  (ABL:ASSI:욕망) *3000  + (TALENT:ASSI:키스마) *5000
         LOCAL:4 = 9
     ;요도광계 : 타겟의 윤활이 10000 이상. 타겟의 U확장경험이 1회 이상 / 욕망레벨*3000
     ELSEIF LOCAL:1 == 10 && PALAM:TARGET:10 >=10000 && EXP:TARGET:U확장경험 >=1
@@ -1856,10 +1856,10 @@ ELSEIF ARG == ASSI && ASSI > 0
         LOCAL:4 = 13
     ;자위계 : 새드끼 2이상 필수 / 새드끼1000 욕망레벨2000 새드2000 초S5000 
     ELSEIF LOCAL:1 == 14 && ABL:ASSI:새드끼 >=2
-        LOCAL:0 =  ABL:ASSI:새드끼*1000 + ABL:ASSI:욕망 *2000  + TALENT:ASSI:새드 *2000 + TALENT:ASSI:177 *5000
+        LOCAL:0 =  ABL:ASSI:새드끼*1000 + ABL:ASSI:욕망 *2000  + TALENT:ASSI:새드 *2000 + TALENT:ASSI:초S *5000
         LOCAL:4 = 14
     ;펠라계 : 조수가 페니스가 있어야 함.  / 욕망레벨2000, 사정중독LV2000
-    ELSEIF LOCAL:1 == 15 &&  (TALENT:ASSI:150 ==1 || TALENT:ASSI:170 ==1)
+    ELSEIF LOCAL:1 == 15 &&  (TALENT:ASSI:연모 ==1 || TALENT:ASSI:음란 ==1)
         LOCAL:0 =  ABL:ASSI:욕망*3000 +ABL:ASSI:사정중독*2000
         LOCAL:4 = 15
     ;조수계 : 조교자가 조수가 아니다./ 레즈중독2000 욕망2000 bl중독2000
