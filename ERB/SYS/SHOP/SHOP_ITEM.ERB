@@ -108,7 +108,7 @@ REPEAT 60
 REND
 
 ;強力アイテム販売設定
-SIF FLAG:난이도 >= 3 && TALENT:MASTER:998 == 0 && FLAG:아이템확장 & 2
+SIF FLAG:난이도 >= 3 && TALENT:MASTER:Debug == 0 && FLAG:아이템확장 & 2
     CALL SALEITEM_CHECK_EX
 
 ;スタンガンは失神パッチ無効ならここで弾く
@@ -169,7 +169,7 @@ NEXT
 
 ;공정석 목걸이
 ITEMSALES:95 = 0
-IF TALENT:MASTER:998 && CHARANUM > 1 && ITEM:98 == 0 && FLAG:커맨드확장 & 16
+IF TALENT:MASTER:Debug && CHARANUM > 1 && ITEM:98 == 0 && FLAG:커맨드확장 & 16
     ;デバッグモードのときは動作チェック用に販売
     ITEMSALES:95 = 1
 ;大甲斐性必須・赤い首輪を所持していないも条件
@@ -183,7 +183,7 @@ ENDIF
 
 ;청산호의 반지
 ITEMSALES:96 = 0
-IF TALENT:MASTER:998 && CHARANUM > 1 && ITEM:99 == 0 && FLAG:커맨드확장 & 2048
+IF TALENT:MASTER:Debug && CHARANUM > 1 && ITEM:99 == 0 && FLAG:커맨드확장 & 2048
     ;デバッグモードのときは動作チェック用に販売
     ITEMSALES:96 = 1
 ;大甲斐性必須
@@ -197,7 +197,7 @@ ENDIF
 
 ;노예의 증표
 ITEMSALES:97 = 0
-IF TALENT:MASTER:998 && CHARANUM > 1
+IF TALENT:MASTER:Debug && CHARANUM > 1
     ;デバッグモードのときは動作チェック用に販売
     ITEMSALES:97 = 1
 ELSEIF CHARANUM > 1
@@ -212,7 +212,7 @@ ENDIF
 ITEMSALES:98 = 0
 ;渡したい相手が調教対象であり, ゲームモードがeratohoYMかABNORMALかREVERSALでまだエンディングを迎えておらず, エンゲージリングと赤い首輪を未所持であること
 IF TARGET >= 0 && (FLAG:게임모드 < 2 || FLAG:게임모드 == 9) && FLAG:엔드리스 == 0 && ITEM:98 == 0 && ITEM:99 == 0
-    IF TALENT:MASTER:998
+    IF TALENT:MASTER:Debug
         ;デバッグモードのときは動作チェック用に販売
         ITEMSALES:98 = 1
     ;연모か복종か괴조인격のいずれかを持ち, 음란であり, 낙인, 예속, 정신붕괴, 괴뢰がなく, 굴복각인이 3で반발각인이 0, 순종＋욕망＋봉사정신Lv의 합계가 15이상で, 기교＋マゾっ気＋精液中毒Lv의 합계가 13이상で, Ｖ経験＋Ａ経験의 합계가 200이상で調教自慰経験とフェラ経験がいずれも150이상で, 호감도가 2500이상.
@@ -231,7 +231,7 @@ IF ASSI < 0 && TARGET >= 0 && (FLAG:게임모드 < 2 || FLAG:게임모드 == 9) 
     RESULT = 0
     ;口上呼び出し.口上側で単体エンディングが設定されておればその帰り値によってはエンゲージリングが購入可能になる.
     TRYCALLFORM EX_ENDING_{NO:TARGET}
-    IF TALENT:MASTER:998
+    IF TALENT:MASTER:Debug
         ;デバッグモードのときは動作チェック用に販売
         ITEMSALES:99 = 1
     ;大甲斐性がない場合には主人と対象キャラの２人きりであること（失踪中や幽閉中であっても他のキャラがいてはだめ）
@@ -684,7 +684,7 @@ ELSE
     ;지문 컷
     IF !CFLAG:99 || RESULT == 2
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 뺨을 붉히며 %CALLNAME:MASTER%의 마음을 받아들이겠다고 말했다.
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         PRINTFORMW 그 얼굴은 지금까지는 없던 행복에 가득차, 모든 괴로움을 날려버린 듯이 보였다.
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:27%]를 잃었다.
     ENDIF
@@ -696,7 +696,7 @@ ELSE
     ENDIF
 ENDIF
 ;일선을 넘지 않음 소멸
-IF TALENT:27
+IF TALENT:일선을넘지않음
     TALENT:일선을넘지않음 = 0
     CFLAG:13 |= 64
 ENDIF
@@ -722,7 +722,7 @@ TFLAG:205 = 0
 CFLAG:3113 = DAY
 
 ;칭호 ＧＥＴ!
-IF TALENT:120
+IF TALENT:남자
     CALL GET_NICK, TARGET, "『가장 사랑하는 남편』"
 ELSE
     CALL GET_NICK, TARGET, "『가장 사랑하는 아내』"
@@ -774,9 +774,9 @@ ELSE
         ENDIF
     PRINTW 반짝 빛나고 있었다…….
     PRINTL 
-    SIF TALENT:27
+    SIF TALENT:일선을넘지않음
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:27%]을 잃었다.
-    SIF TALENT:30
+    SIF TALENT:정조관념
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:30%]을 잃었다.
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 달라붙어 있는 %CALLNAME:TARGET%의 머리를 오랫동안 쓰다듬으며 
     PRINTFORMW 하늘을 올려다보곤, 이후 조교에 대한 생각으로 가득했다…….
@@ -790,12 +790,12 @@ ELSE
     ENDIF
 ENDIF
 ;일선을 넘지 않음 소멸
-IF TALENT:27
+IF TALENT:일선을넘지않음
     TALENT:일선을넘지않음 = 0
     CFLAG:13 |= 64
 ENDIF
 ;정조관념 소멸
-IF TALENT:30
+IF TALENT:정조관념
     TALENT:정조관념 = 0
     CFLAG:13 |= 256
 ENDIF
@@ -897,7 +897,7 @@ ELSE
     IF !CFLAG:99 || RESULT == 2
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 소유물이 되었다는 것에 
     PRINTFORMW 이 이상 없는 기쁨을 느끼고 있는 것 같다…….
-    SIF TALENT:27
+    SIF TALENT:일선을넘지않음
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:27%]을 잃었다.
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:TARGET%의 몸에 새겨진 낙인을 손가락으로 쓰다듬으며, 
     PRINTFORMW %CALLNAME:TARGET%의 복속심을 부채질했다.
@@ -910,7 +910,7 @@ ENDIF
 ENDIF
 PRINTW  
 ;일선을 넘지 않음 소멸
-IF TALENT:27
+IF TALENT:일선을넘지않음
     TALENT:일선을넘지않음 = 0
     CFLAG:13 |= 64
 ENDIF
@@ -960,7 +960,7 @@ PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:TARGET,"
     ;지문 컷
     IF !CFLAG:99 || RESULT == 2
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 뺨을 붉히며 %CALLNAME:MASTER%의 마음을 받아들이겠다고 말했다.
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         PRINTFORMW 그 얼굴은 지금까지는 없던 행복에 가득차, 모든 괴로움을 날려버린 듯이 보였다.
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:27%]를 잃었다.
     ENDIF
@@ -973,7 +973,7 @@ PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:TARGET,"
 ENDIF
 PRINTW  
 ;일선을 넘지 않음 소멸
-IF TALENT:27
+IF TALENT:일선을넘지않음
     TALENT:일선을넘지않음 = 0
     CFLAG:13 |= 64
 ENDIF
@@ -1001,19 +1001,19 @@ PRINTL
 
 ;칭호 ＧＥＴ!
 IF RAND:3 == 0
-    IF TALENT:120
+    IF TALENT:남자
         CALL GET_NICK, TARGET, "『가장 사랑하는 남편』"
     ELSE
         CALL GET_NICK, TARGET, "『가장 사랑하는 아내』"
     ENDIF
 ELSEIF RAND:2 == 0
-    IF TALENT:120
+    IF TALENT:남자
         CALL GET_NICK, TARGET, "『만점 파파』"
     ELSE
         CALL GET_NICK, TARGET, "『무적의 마마』"
     ENDIF
 ELSE
-    IF TALENT:120
+    IF TALENT:남자
         CALL GET_NICK, TARGET, "『운명의 남자』"
     ELSE
         CALL GET_NICK, TARGET, "『운명의 여자』"
@@ -1044,9 +1044,9 @@ ELSE
     ENDIF
     PRINTW 반짝하고 빛나고 있었다……
     PRINTL 
-    SIF TALENT:27
+    SIF TALENT:일선을넘지않음
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:27%]을 잃었다.
-    SIF TALENT:30
+    SIF TALENT:정조관념
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:30%]을 잃었다.
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 달라붙어 있는 %CALLNAME:TARGET%의 머리를 오랫동안 쓰다듬으며 
     PRINTFORMW 하늘을 올려다보곤, 이후 조교에 대한 생각으로 가득했다…….
@@ -1060,12 +1060,12 @@ ELSE
     ENDIF
 ENDIF
 ;일선을 넘지 않음 소멸
-IF TALENT:27
+IF TALENT:일선을넘지않음
     TALENT:일선을넘지않음 = 0
     CFLAG:13 |= 64
 ENDIF
 ;정조관념 소멸
-IF TALENT:30
+IF TALENT:정조관념
     TALENT:정조관념 = 0
     CFLAG:13 |= 256
 ENDIF
@@ -1105,7 +1105,7 @@ IF RAND:3 == 0
 ELSEIF RAND:2 == 0
     CALL GET_NICK, TARGET, "『전용 성노예』"
 ELSE
-    IF TALENT:120
+    IF TALENT:남자
         CALL GET_NICK, TARGET, "『수퇘지』"
     ELSE
         CALL GET_NICK, TARGET, "『암퇘지』"

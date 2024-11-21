@@ -183,7 +183,7 @@ SIF GET_AGG(TARGET) == 0
     RETURN 0
 
 ;この数値でメインターゲットの積極値がわかる
-SIF TALENT:MASTER:998
+SIF TALENT:MASTER:Debug
     PRINTFORML %CALLNAME:TARGET%의 적극성：{GET_AGG(TARGET)}
 
 ;幼稚か幼児, 幼児退行＋恋慕なら, (100-欲望LV*15)%でただの添い寝
@@ -254,7 +254,7 @@ IF RESULT == 1
     IF LOCAL:2 == 7 && LOCAL:1 == 1
         REPEAT 4
             TARGET = LOCAL:(10 + COUNT)
-            SIF (TALENT:120 || TALENT:121) && !(CFLAG:42 & 2)
+            SIF (TALENT:남자 || TALENT:후타나리) && !(CFLAG:42 & 2)
                 LOCAL:2  += 1
         REND
     ENDIF
@@ -302,13 +302,13 @@ ELSE
     ELSEIF LOCAL:2 == 1 && (LOCAL:1 == 1 || (LOCAL:1 == 2 && (CFLAG:42 & 2) == 0 && (CFLAG:MASTER:42 & 2) == 0))
         CALL NIGHT_HANTEI_M, LOCAL:5, LOCAL:6, LOCAL:1, LOCAL:2
     ;３Ｐ女女（誰かを連れてきた場合３Ｐ. ターゲットの奴隷が恋慕もしくは淫乱, レズっ気1以上もしくは両刀必須）
-    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && (ABL:레즈끼 >= 1 || TALENT:83 == 1) && TALENT:120 == 0 && TALENT:(LOCAL:15):남자 == 0 && (CFLAG:MASTER:42 & 2) == 0 && (CFLAG:42 & 2) == 0 && (CFLAG:(LOCAL:15):42 & 2) == 0
+    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && (ABL:레즈끼 >= 1 || TALENT:83 == 1) && TALENT:남자 == 0 && TALENT:(LOCAL:15):남자 == 0 && (CFLAG:MASTER:42 & 2) == 0 && (CFLAG:42 & 2) == 0 && (CFLAG:(LOCAL:15):42 & 2) == 0
         CALL NIGHT_HANTEI_M, LOCAL:5, LOCAL:6, LOCAL:1, LOCAL:2
     ;３Ｐ男男
-    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && (ABL:BL끼 >= 1 || TALENT:83 == 1) && TALENT:120 && TALENT:(LOCAL:15):남자 && (CFLAG:MASTER:42 & 2) == 0 && (CFLAG:42 & 2) == 0 && (CFLAG:(LOCAL:15):42 & 2) == 0
+    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && (ABL:BL끼 >= 1 || TALENT:83 == 1) && TALENT:남자 && TALENT:(LOCAL:15):남자 && (CFLAG:MASTER:42 & 2) == 0 && (CFLAG:42 & 2) == 0 && (CFLAG:(LOCAL:15):42 & 2) == 0
         CALL NIGHT_HANTEI_M, LOCAL:5, LOCAL:6, LOCAL:1, LOCAL:2
     ;３Ｐ異性
-    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && ((TALENT:120 && TALENT:(LOCAL:15):남자 == 0) || (TALENT:120 == 0 && TALENT:(LOCAL:15):남자)) && (CFLAG:MASTER:42 & 2) == 0 && (CFLAG:42 & 2) == 0 && (CFLAG:(LOCAL:15):42 & 2) == 0
+    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && ((TALENT:남자 && TALENT:(LOCAL:15):남자 == 0) || (TALENT:남자 == 0 && TALENT:(LOCAL:15):남자)) && (CFLAG:MASTER:42 & 2) == 0 && (CFLAG:42 & 2) == 0 && (CFLAG:(LOCAL:15):42 & 2) == 0
         CALL NIGHT_HANTEI_M, LOCAL:5, LOCAL:6, LOCAL:1, LOCAL:2
     ;奉仕精神Lv4以上, 触手中毒Lv1以上の禁断or触手操作術持ちの奴隷が触手で一緒に楽しみに来る. 
     ;但し, 紳士的触手を解放しており, 主人が貞操帯をしていない場合のみ. 
@@ -437,10 +437,10 @@ REPEAT 2
         SIF RELATION:(ARG:1):(NO:ARG) >= 110 && RELATION:ARG:(NO:(ARG:1)) >= 110
             LOCAL += 1
         ;貞操観念持ちは性行為しにくい
-        SIF TALENT:30
+        SIF TALENT:정조관념
             LOCAL -= 1
         ;貞操無頓着なら性行為しやすい
-        SIF TALENT:31
+        SIF TALENT:정조관둔감
             LOCAL += 1
     ENDIF
     ;親愛持ちは性行為しにくい. 
@@ -668,7 +668,7 @@ IF FLAG:조교모드 & 8
         PRINTL [2] 채찍질을 시킨다.
     SIF ABL:마조끼 > 1 || TALENT:82 || TALENT:초M
         PRINTFORML [3] \@(ITEM:32 || NOITEM) ? 채찍질 한다. # 스팽킹\@
-    SIF TALENT:음란 && (TALENT:120 || (TALENT:처녀 == 0 && EXP:V경험 > 0)) && (TALENT:MASTER:남자 || (TALENT:MASTER:처녀 == 0 && EXP:MASTER:V경험 > 0))
+    SIF TALENT:음란 && (TALENT:남자 || (TALENT:처녀 == 0 && EXP:V경험 > 0)) && (TALENT:MASTER:남자 || (TALENT:MASTER:처녀 == 0 && EXP:MASTER:V경험 > 0))
         PRINTL [9] 마을에 즐기러 간다.
     $INPUT_LOOP
     INPUT
@@ -679,7 +679,7 @@ ELSE
         RESULT = 3
     ELSEIF (RAND:10 < (2+TALENT:오니+TALENT:황혼의괴물)) && (ITEM:600+ITEM:601+ITEM:602+ITEM:603+ITEM:604 > 1) 
         RESULT = 1
-    ELSEIF RAND:10 < 2 && TALENT:음란 && (TALENT:120 || (TALENT:처녀 == 0 && EXP:V경험 > 0)) && (TALENT:MASTER:남자 || (TALENT:MASTER:처녀 == 0 && EXP:MASTER:V경험 > 0))
+    ELSEIF RAND:10 < 2 && TALENT:음란 && (TALENT:남자 || (TALENT:처녀 == 0 && EXP:V경험 > 0)) && (TALENT:MASTER:남자 || (TALENT:MASTER:처녀 == 0 && EXP:MASTER:V경험 > 0))
         RESULT = 9
     ELSE
         RESULT = 0
@@ -693,7 +693,7 @@ ELSEIF RESULT == 2 && ((ABL:새드끼 > 1 || TALENT:81 || TALENT:초S) && ITEM:3
     CALL NIGHT_ASSI_SM_S
 ELSEIF RESULT == 3 && (ABL:마조끼 > 1 || TALENT:82 || TALENT:초M)
     CALL NIGHT_ASSI_SM_M
-ELSEIF RESULT == 9 && (TALENT:음란 && (TALENT:120 || (TALENT:처녀 == 0 && EXP:V경험 > 0)) && (TALENT:MASTER:남자 || (TALENT:MASTER:처녀 == 0 && EXP:MASTER:V경험 > 0)))
+ELSEIF RESULT == 9 && (TALENT:음란 && (TALENT:남자 || (TALENT:처녀 == 0 && EXP:V경험 > 0)) && (TALENT:MASTER:남자 || (TALENT:MASTER:처녀 == 0 && EXP:MASTER:V경험 > 0)))
     CALL NIGHT_ASSI_SEX_PH
 ELSE
     GOTO INPUT_LOOP
@@ -855,43 +855,43 @@ SIF ABL:욕망 >= 4
 SIF ABL:욕망 >= 5
     LOCAL += 15
 ;臆病
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL , 0.85
 ;反抗的
-SIF TALENT:11
+SIF TALENT:반항적
     TIMES LOCAL , 0.85
 ;素直
-SIF TALENT:13
+SIF TALENT:솔직함
     TIMES LOCAL , 1.20
 ;大人しい
-SIF TALENT:14
+SIF TALENT:얌전함
     TIMES LOCAL , 0.85
 ;感情乏しい
-SIF TALENT:22
+SIF TALENT:감정결여
     TIMES LOCAL , 0.70
 ;好奇心
-SIF TALENT:23
+SIF TALENT:호기심
     TIMES LOCAL , 1.30
 ;保守的
-SIF TALENT:24
+SIF TALENT:보수적
     TIMES LOCAL , 0.85
 ;楽観的
-SIF TALENT:25
+SIF TALENT:낙관적
     TIMES LOCAL , 1.35
 ;一線超えない
-SIF TALENT:27
+SIF TALENT:일선을넘지않음
     TIMES LOCAL , 0.85
 ;抑圧
-SIF TALENT:32
+SIF TALENT:억압
     TIMES LOCAL , 0.75
 ;解放
-SIF TALENT:33
+SIF TALENT:해방
     TIMES LOCAL , 1.35
 ;恥じらい
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     TIMES LOCAL , 0.90
 ;恥薄い
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     TIMES LOCAL , 1.25
 ENDIF
 ;快感に素直
@@ -1083,7 +1083,7 @@ REPEAT CHARANUM
     LOCAL = MIN(LOCAL, 90)
 
     ;この処理があると, どのキャラがどれくらいの確率なのか見ることができます
-    SIF TALENT:MASTER:998
+    SIF TALENT:MASTER:Debug
         PRINTFORML %조사처리(CALLNAME:COUNT,"가")% 행동을 일으킬 확률：{LOCAL}％
 
     ;反発刻印持ち排除システム発動

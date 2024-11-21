@@ -179,8 +179,8 @@ LOCALS:1 = 제거
 DRAWLINE
 PRINTFORML %CALLNAME:TARGET%에게 부가/삭제할 소질을 선택해주세요.
 PRINTFORML [0] [음란]을 %LOCALS:(TALENT:음란)%합니다.
-PRINTFORML [1] [\@(TALENT:120 || TALENT:121) ? 음경 # 음핵\@]을 %LOCALS:(TALENT:음핵／음경)%합니다
-SIF TALENT:120 == 0
+PRINTFORML [1] [\@(TALENT:남자 || TALENT:후타나리) ? 음경 # 음핵\@]을 %LOCALS:(TALENT:음핵／음경)%합니다
+SIF TALENT:남자 == 0
     PRINTFORML [2] [음호]를 %LOCALS:(TALENT:음호)%합니다.
 PRINTFORML [3] [음고]를 %LOCALS:(TALENT:음고)%합니다.
 PRINTFORML [4] [음유]를 %LOCALS:(TALENT:음유)%합니다.
@@ -203,9 +203,9 @@ IF RESULT == 0
     PRINTFORMW [음란]을 %LOCALS:(TALENT:음란)%합니다.
     TALENT:음란 = (TALENT:음란) ? 0 # 1
 ELSEIF RESULT == 1
-    PRINTFORMW [\@(TALENT:120 || TALENT:121) ? 음경 # 음핵\@]을 %LOCALS:(TALENT:음핵／음경)%합니다.
+    PRINTFORMW [\@(TALENT:남자 || TALENT:후타나리) ? 음경 # 음핵\@]을 %LOCALS:(TALENT:음핵／음경)%합니다.
     TALENT:음핵／음경 = (TALENT:음핵／음경) ? 0 # 1
-ELSEIF RESULT == 2 && TALENT:120 == 0
+ELSEIF RESULT == 2 && TALENT:남자 == 0
     PRINTFORMW [음호]를 %LOCALS:(TALENT:음호)%합니다.
     TALENT:음호 = (TALENT:음호) ? 0 # 1
 ELSEIF RESULT == 3
@@ -819,7 +819,7 @@ FOR LOCAL, 0, 100
 NEXT
 PRINTFORMLC [100] 현재 체력 ({BASE:0}) 
 PRINTFORMLC [101] 현재 기력 ({BASE:기력}) 
-SIF ( TALENT:120 || TALENT:121 )
+SIF ( TALENT:남자 || TALENT:후타나리 )
     PRINTFORMLC [102] 사정 게이지 ({BASE:사정}) 
 SIF TALENT:134
     PRINTFORMLC [103] 분유 게이지 ({BASE:모유}) 
@@ -829,7 +829,7 @@ SIF TALENT:65 || CFLAG:36
     PRINTFORMLC [105] 음모 ({BASE:음모}) 
 SIF TALENT:146
     PRINTFORMLC [106] 촉수기생 LV ({BASE:촉수})
-SIF TALENT:120 == 0 && TALENT:121 == 0
+SIF TALENT:남자 == 0 && TALENT:후타나리 == 0
     PRINTFORMLC [107] 음핵 성장 상태 ({BASE:음핵}) 
 PRINTFORMLC [108] 취기 게이지 ({BASE:취기}) 
 PRINTLC [199] 패러미터 리셋
@@ -894,7 +894,7 @@ ELSEIF RESULT == 106
     SIF RESULT >= 0 && RESULT <= MAXBASE:촉수
         BASE:촉수 = RESULT
 ELSEIF RESULT == 107
-    SIF TALENT:120 || TALENT:121
+    SIF TALENT:남자 || TALENT:후타나리
         GOTO INPUT_LOOP
     DRAWLINE
     PRINTFORML 음핵 성장 상태 변경(현재 {BASE:음핵})
@@ -943,7 +943,7 @@ FOR LOCAL, 0, 100
 NEXT
 PRINTFORMLC [100] 최대 체력 ({MAXBASE:0}) 
 PRINTFORMLC [101] 최대 기력 ({MAXBASE:기력}) 
-SIF ( TALENT:120 || TALENT:121 )
+SIF ( TALENT:남자 || TALENT:후타나리 )
     PRINTFORMLC [102] 최대 사정 게이지 ({MAXBASE:사정}) 
 SIF TALENT:134
     PRINTFORMLC [103] 최대 분유 게이지 ({MAXBASE:모유}) 
@@ -2558,7 +2558,7 @@ REPEAT 15
     ABL:COUNT = ARG
 REND
 ;아다나 남자의 경우 V 경험 없ㅋ엉ㅋ
-SIF TALENT:처녀 || TALENT:120
+SIF TALENT:처녀 || TALENT:남자
     ABL:V감각 = 0
 ;『매각가능』특수처리
 IF ARG == 3
@@ -2566,7 +2566,7 @@ IF ARG == 3
     IF CFLAG:13 & 1 && TALENT:억압 == 0
         TALENT:억압 = 1
         CFLAG:13 -= 1
-        IF CFLAG:12 & 65536 && TALENT:33
+        IF CFLAG:12 & 65536 && TALENT:해방
             TALENT:해방 = 0
             CFLAG:12 -= 65536
         ENDIF
@@ -2576,21 +2576,21 @@ IF ARG == 3
         CFLAG:13 -= 2
     ENDIF
     ;매각에 순종이나 욕망이 레벨4 이상 필요한 경우 인상.
-    SIF TALENT:반항적 || TALENT:12
+    SIF TALENT:반항적 || TALENT:꿋꿋함
         ABL:순종 = 4
-    SIF TALENT:자제심 || TALENT:억압 || TALENT:34
+    SIF TALENT:자제심 || TALENT:억압 || TALENT:저항
         ABL:욕망 = 4
     PRINTFORMW %조사처리(CALLNAME:TARGET,"를")% 『매각가능』 상태에 맞추었습니다.
 ;『육성완료』특수처리
 ELSE
     ;[억압]은 소멸하고[해방]에 변화, [저항]은 소멸했다고 가정.
-    IF TALENT:32
+    IF TALENT:억압
         TALENT:억압 = 0
         TALENT:해방 = 1
         CFLAG:13 |= 1
         CFLAG:12 |= 65536
     ENDIF
-    IF TALENT:34
+    IF TALENT:저항
         TALENT:저항 = 0
         CFLAG:13 |= 2
     ENDIF

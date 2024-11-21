@@ -45,13 +45,13 @@ TFLAG:220 = 0
 ;助手がいて時間に余裕がある場合
 IF ASSI >= 0 && TFLAG:107 <= 100
     ;調教対象も助手もオトコでなくてレズ中毒が共にある場合
-    IF TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:레즈중독 && ABL:ASSI:레즈중독
+    IF TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:레즈중독 && ABL:ASSI:레즈중독
         CALL SELF_CHECK5
         ;調教対象も助手もフタナリの場合
-        SIF TALENT:121 && TALENT:ASSI:후타나리
+        SIF TALENT:후타나리 && TALENT:ASSI:후타나리
             CALL SELF_CHECK6
     ;調教対象も助手もオトコでありＢＬ中毒が共にある場合
-    ELSEIF TALENT:120 && TALENT:ASSI:남자 && ABL:BL중독 && ABL:ASSI:BL중독
+    ELSEIF TALENT:남자 && TALENT:ASSI:남자 && ABL:BL중독 && ABL:ASSI:BL중독
         CALL SELF_CHECK7
     ENDIF
 ENDIF
@@ -86,7 +86,7 @@ SIF TFLAG:107 > 100
 ;ここでタイプ分け
 IF EXIST_PENIS(MASTER)
     ;タイプ1
-    IF TALENT:120 == 0
+    IF TALENT:남자 == 0
         ;非処女じゃないとダメ
         SIF TALENT:처녀 || EXP:V경험 <= 0
             RETURN 0
@@ -243,7 +243,7 @@ IF EXIST_PENIS(MASTER)
         ENDIF
     ENDIF
 ;タイプ3
-ELSEIF TALENT:120 || TALENT:121
+ELSEIF TALENT:남자 || TALENT:후타나리
     ;主人が非処女じゃないとダメ
     SIF TALENT:MASTER:처녀 || EXP:MASTER:V경험 <= 0
         RETURN 0
@@ -307,10 +307,10 @@ ELSEIF TALENT:120 || TALENT:121
 
     ;主人のＶ経験
     CALL COMMON_UP_EXP,MASTER, 0, TFLAG:226, 0
-    SIF TALENT:121 || TALENT:1
+    SIF TALENT:후타나리 || TALENT:비대음핵
         CFLAG:175 += TFLAG:226
     ;レズ経験
-    SIF TALENT:121 || TALENT:1
+    SIF TALENT:후타나리 || TALENT:비대음핵
         CALL COMMON_UP_EXP,TARGET, 12, TFLAG:226, 0
     ;快Ｃ의 구슬
     CALL COMMON_UP_JUEL, TARGET, 0, (LOCAL*150), 0
@@ -551,7 +551,7 @@ IF FLAG:자위은폐발각패치 & 1
         ;服従系素質を持っていれば言いやすい
         SIF CFLAG:15
             LOCAL:4 += 1
-        IF LOCAL:4 >= 10 && MARK:반발각인 < 2 || TALENT:39
+        IF LOCAL:4 >= 10 && MARK:반발각인 < 2 || TALENT:약점
             ;TFLAG:13 = 0
             PRINTL 　
             ;調教後自慰(151)もしくは調教後アナニー(152)のイベント口上呼び出し
@@ -641,7 +641,7 @@ ENDIF
 VARSET LOCAL, 0
 ;噴乳中毒による搾乳チェック
 ;オトコだとダメ
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;母乳体質必要
 SIF TALENT:134 == 0
@@ -813,7 +813,7 @@ IF TALENT:ASSI:후타나리
     LOCAL *= 2
 ENDIF
 ;対象奴隷がふたなりならば射精経験加算
-IF TALENT:121
+IF TALENT:후타나리
     ;射精経験
     CALL COMMON_UP_EXP,TARGET, 3, TFLAG:220, 0
     ;LUNATIC以上は射精するたびに体力が減少
@@ -1005,10 +1005,10 @@ WAIT
 SIF CFLAG:42 & 2 || CFLAG:MASTER:42 & 2
     RETURN 0
 ;主人が女性で調教対象が男性のときは別処理へ
-SIF TALENT:MASTER:남자 == 0 && TALENT:120
+SIF TALENT:MASTER:남자 == 0 && TALENT:남자
     JUMP SELF_CHECK8_2
 ;調教対象が男性もしくは調教者が女性だとダメ
-SIF TALENT:120 || TALENT:MASTER:남자 == 0
+SIF TALENT:남자 || TALENT:MASTER:남자 == 0
     RETURN 0
 ;恋慕または淫乱でないとダメ
 SIF TALENT:연모 == 0 && TALENT:음란 == 0
@@ -1202,7 +1202,7 @@ CALL SELF_KOJO, TARGET, 160
 
 PRINTL 
 ;対象奴隷がオトコでないならＶ経験追加
-SIF TALENT:120 ==0
+SIF TALENT:남자 ==0
     CALL COMMON_UP_EXP,TARGET, 0, LOCAL:3, 0
 ;Ａ経験
 CALL COMMON_UP_EXP,TARGET, 1, LOCAL:1, 0
@@ -1213,7 +1213,7 @@ CALL COMMON_UP_EXP,TARGET, 46, LOCAL:2, 0
 ;快Ｃ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 0, (LOCAL:2*250), 0
 ;対象奴隷がオトコでないなら快Ｖ의 구슬追加
-SIF TALENT:120 == 0
+SIF TALENT:남자 == 0
     CALL COMMON_UP_JUEL, TARGET, 1, (LOCAL:3*200), 0
 ;快Ａ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 2, (LOCAL:1*150), 0
@@ -1292,7 +1292,7 @@ TALENT:처녀 = 0
 ;触手経験
 CALL COMMON_UP_EXP,TARGET, 53, LOCAL, 0
 ;対象奴隷がオトコでないならＶ経験追加
-SIF TALENT:120 ==0
+SIF TALENT:남자 ==0
     CALL COMMON_UP_EXP,TARGET, 0, LOCAL:2, 0
 ;Ａ経験
 CALL COMMON_UP_EXP,TARGET, 1, LOCAL:3, 0
@@ -1301,7 +1301,7 @@ CALL COMMON_UP_EXP,TARGET, 22, LOCAL:2, 0
 ;快Ｃ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 0, (LOCAL:1*250), 0
 ;対象奴隷がオトコでないなら快Ｖ의 구슬追加
-SIF TALENT:120 == 0
+SIF TALENT:남자 == 0
     CALL COMMON_UP_JUEL, TARGET, 1, (LOCAL:2*120), 0
 ;快Ａ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 2, (LOCAL:2*100), 0
@@ -1396,7 +1396,7 @@ TALENT:처녀 = 0
 ;触手経験
 CALL COMMON_UP_EXP,TARGET, 53, LOCAL, 0
 ;対象奴隷がオトコでないならＶ経験追加
-SIF TALENT:120 ==0
+SIF TALENT:남자 ==0
     CALL COMMON_UP_EXP,TARGET, 0, LOCAL:2, 0
 ;Ａ経験
 CALL COMMON_UP_EXP,TARGET, 1, LOCAL:3, 0
@@ -1405,7 +1405,7 @@ CALL COMMON_UP_EXP,TARGET, 22, LOCAL:2, 0
 ;快Ｃ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 0, (LOCAL:1*125), 0
 ;対象奴隷がオトコでないなら快Ｖ의 구슬追加
-SIF TALENT:120 == 0
+SIF TALENT:남자 == 0
     CALL COMMON_UP_JUEL, TARGET, 1, (LOCAL:2*60), 0
 ;快Ａ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 2, (LOCAL:2*50), 0
@@ -1480,7 +1480,7 @@ IF TEQUIP:20 == 1 && (TALENT:102 || TALENT:음호)
 ENDIF
     
 ;臆病だとばれることを怖がって声も物音も小さくなる
-SIF TALENT:10
+SIF TALENT:겁쟁이
     LOCAL -= 10
 
 ;露出癖とマゾッ気が見られたがり補正.それに自慰中毒と技巧がさらに補正
@@ -1495,7 +1495,7 @@ SIF TEQUIP:11 == 1
     LOCAL += 15
 
 ;恥薄いと声が大きい為発見されやすい
-SIF TALENT:36
+SIF TALENT:부끄럼없음
     LOCAL += 5
 
 ;自制心, 抑圧, 抵抗, 快感の否定だと声を抑えようとするので発見されにくい
@@ -1517,7 +1517,7 @@ ENDIF
 
 ;恥じらいだと声が小さい為発見されにくい
 ;ただし助手が鼓舞持ちだと(あくまでも)若干気がゆるむ.
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     LOCAL /= 2
     SIF ASSI >= 0 && TALENT:ASSI:고무
         LOCAL += 3
@@ -1558,7 +1558,7 @@ ELSEIF TEQUIP:25 == 1
 ENDIF
 
 ;ふたなり
-SIF TALENT:121
+SIF TALENT:후타나리
     PRINT 잔뜩 성난 페니스를 미친듯 비비며 
 PRINTFORMW 혼자 쾌락에 젖어 있는 %CALLNAME:TARGET%의 모습이 있었다.
 PRINTFORMW ･･도취한 듯한 눈동자가 %CALLNAME:MASTER%의 모습을 포착했다.
@@ -1601,7 +1601,7 @@ ELSE
                 LOCAL:1 += 3
             SIF TALENT:음호
                 LOCAL:1 += 3
-            SIF TALENT:처녀 || TALENT:120
+            SIF TALENT:처녀 || TALENT:남자
                 LOCAL:1 = 0
 
             LOCAL:2 = RAND:10 + (ABL:정액중독 + ABL:봉사정신) / 2
@@ -1681,7 +1681,7 @@ ELSE
             ENDIF
 
             ;ふたなりだと射精経験も上昇
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 EXP:사정경험  += ARG / 4
             ;母乳体質だと噴乳経験も上昇
             SIF TALENT:134
@@ -1744,7 +1744,7 @@ ELSE
             JUEL:12 += ARG*300/2
             JUEL:13 += ARG*250/2
             ;ふたなりだと射精経験も上昇
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 EXP:사정경험  += ARG / 4
             ;母乳体質だと噴乳経験も上昇
             SIF TALENT:134
@@ -1781,7 +1781,7 @@ ELSE
                 JUEL:14 += ARG*600/2
                 JUEL:15 += ARG*400/2
                 ;ふたなりだと射精経験も上昇
-                SIF TALENT:121
+                SIF TALENT:후타나리
                     EXP:사정경험  += ARG/4
                 ;母乳体質だと噴乳経験も上昇
                 SIF TALENT:134
@@ -1846,7 +1846,7 @@ ELSE
                 JUEL:12 += ARG*300/2
                 JUEL:13 += ARG*250/2
                 ;ふたなりだと射精経験も上昇
-                SIF TALENT:121
+                SIF TALENT:후타나리
                     EXP:사정경험  += ARG / 4
                 ;母乳体質だと噴乳経験も上昇
                 SIF TALENT:134
@@ -1876,7 +1876,7 @@ ELSE
             JUEL:12 += ARG*300/3
             JUEL:13 += ARG*250/3
             ;ふたなりだと射精経験も上昇
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 EXP:사정경험  += ARG / 6
             ;母乳体質だと噴乳経験も上昇
             SIF TALENT:134

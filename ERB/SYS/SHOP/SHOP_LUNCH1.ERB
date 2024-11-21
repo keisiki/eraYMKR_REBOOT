@@ -22,7 +22,7 @@ IF TALENT:MASTER:약물내성 == 0 && TALENT:MASTER:기계 == 0 && TALENT:연모
         SIF MARK:반발각인 >= 3
             LOCAL = 0
     ;対象が[弱味]を持っていないかつ[反抗的]か[抵抗]持ちの場合、確率は1/3
-    ELSEIF (TALENT:반항적 || TALENT:34) && TALENT:약점 == 0
+    ELSEIF (TALENT:반항적 || TALENT:저항) && TALENT:약점 == 0
         LOCAL = RAND:3
         ;反発刻印Lv3だと2/3の確率で毒入り弁当に
         SIF MARK:반발각인 >= 3 && LOCAL == 2
@@ -481,13 +481,13 @@ ELSE
         ENDIF
         ;굴복의 구슬
         CALL COMMON_UP_JUEL, TARGET, 14, (LOCAL:2*8), 1
-        SIF TALENT:10
+        SIF TALENT:겁쟁이
             LOCAL:2 *= 2
-        SIF TALENT:22
+        SIF TALENT:감정결여
             LOCAL:2 /= 2
-        IF TALENT:25
+        IF TALENT:낙관적
             LOCAL:2 -= 5
-        ELSEIF TALENT:26
+        ELSEIF TALENT:비관적
             LOCAL:2 += 10
         ENDIF
         LOCAL:2 = MAX(LOCAL:2, 0)
@@ -508,7 +508,7 @@ ELSE
         PRINTFORMW 심문에 단념했는지 %조사처리(CALLNAME:TARGET,"는")% 독을 넣었음을 인정했다.
         PRINTL 
         PRINTFORMW 방에서 떠나는 %CALLNAME:MASTER%의 뒷모습을 바라보며 
-        IF TALENT:약점 == 0 && TALENT:25
+        IF TALENT:약점 == 0 && TALENT:낙관적
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다음엔 잘 되기를 바라고 있었다…….
         ELSE
             PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 이후 어떤 보복이 기다리고 있을지를 상상했는지, 
@@ -523,17 +523,17 @@ ELSE
             ENDIF
         ENDIF
         ;공포의 구슬
-        SIF TALENT:낙관적 == 0 || TALENT:39
+        SIF TALENT:낙관적 == 0 || TALENT:약점
             CALL COMMON_UP_JUEL, TARGET, 17, (LOCAL:2*2), 0
         ;굴복의 구슬
         CALL COMMON_UP_JUEL, TARGET, 14, (LOCAL:2*5), 1
-        SIF TALENT:10
+        SIF TALENT:겁쟁이
             LOCAL:2 *= 2
-        SIF TALENT:22
+        SIF TALENT:감정결여
             LOCAL:2 /= 2
-        IF TALENT:25
+        IF TALENT:낙관적
             LOCAL:2 -= 5
-        ELSEIF TALENT:26
+        ELSEIF TALENT:비관적
             LOCAL:2 += 10
         ENDIF
         LOCAL:2 = MAX(LOCAL:2, 0)
@@ -1177,19 +1177,19 @@ ELSEIF RESULT == 1
         TIMES LOCAL:5 , 0.90
     ENDIF
     ;プライド高い
-    SIF TALENT:16
+    SIF TALENT:프라이드가높음
         TIMES LOCAL:5 , 1.30
     ;自制心
-    SIF TALENT:20
+    SIF TALENT:자제심
         TIMES LOCAL:5 , 0.90
     ;感情乏しい
-    SIF TALENT:22
+    SIF TALENT:감정결여
         TIMES LOCAL:5 , 0.70
     ;悲観的
-    IF TALENT:26
+    IF TALENT:비관적
         TIMES LOCAL:5 , 1.20
     ;楽観的
-    ELSEIF TALENT:25
+    ELSEIF TALENT:낙관적
         TIMES LOCAL:5 , 0.80
     ENDIF
     ;복종

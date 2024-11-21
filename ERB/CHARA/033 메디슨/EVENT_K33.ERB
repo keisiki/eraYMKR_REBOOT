@@ -746,13 +746,13 @@ ELSEIF CFLAG:5001 < 6 && MARK:굴복각인 == 3 && TALENT:연모
     PRINTFORMW 그렇게 말해, 메디슨은 %CALLNAME:MASTER%의 가슴 팍에 얼굴을 묻었다……
     IF CFLAG:5020 == 2
         ;마스터가 남자＋메디에 남자 싫지만 있다
-        IF TALENT:MASTER:남자 && TALENT:37
+        IF TALENT:MASTER:남자 && TALENT:남성혐오
             TALENT:남성혐오 = 0
             CFLAG:13 |= 512
             PRINTW  
             PRINTW 메디슨은 [남성 혐오]를 잃었다
         ;마스터가 남자가 아닌＋메디에 여자 증오가 있다
-        ELSEIF TALENT:MASTER:남자 == 0 && TALENT:38
+        ELSEIF TALENT:MASTER:남자 == 0 && TALENT:여성혐오
             TALENT:여성혐오 = 0
             CFLAG:13 |= 1024
             PRINTW  
@@ -2242,7 +2242,7 @@ SIF EQUIP:14 || (TEQUIP:42 && GROUPMATCH(SELECTCOM, 226, 229, 506, 509, 583) == 
 
 ;처음의 페니스 이벤트시
 IF GROUPMATCH(SELECTCOM, 40, 41, 42, 43, 47, 48, 49, 53, 54, 601, 602, 604) && (CFLAG:6999 & 2) == 0
-    CFLAG:99 = (TALENT:120 == 0 && TALENT:121 == 0) ?  1 # 0
+    CFLAG:99 = (TALENT:남자 == 0 && TALENT:후타나리 == 0) ?  1 # 0
 ENDIF
 ;처음의 자위 이벤트시
 SIF SELECTCOM == 7 && CFLAG:9007 == 0
@@ -2457,7 +2457,7 @@ ELSEIF ASSINO() == 29
         PRINTFORMW 「안돼, 에이린……그만둬, ……그런 곳 손대지 마」
         PRINTFORMW 「메디슨, 힘을 빼.그냥 맛사지야」
         PRINTFORMW 「기분이 좋은 맛사지♪」
-        PRINTFORMW 「으, 그렇지만……\@(TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:레즈끼 < 3 && ABL:레즈중독 < 3) ?  여자 아이끼리인데…… # \@」
+        PRINTFORMW 「으, 그렇지만……\@(TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:레즈끼 < 3 && ABL:레즈중독 < 3) ?  여자 아이끼리인데…… # \@」
         PRINTFORMW 「\@(TALENT:연모 || TALENT:망신 || TALENT:음란 || MARK:굴복각인 >= 3) ?  주인님이 명령해라 # 그 인으로 해 받는 것과 어느 쪽이 좋아\@? 」
         PRINTFORMW 「―」
     ;2회째 이후
@@ -2725,7 +2725,7 @@ ELSE
     ;처음
     IF K33_ASSI_COM_CFLAG(SELECTCOM)
         PRINTFORMW 「읏 , 아니……, 또 무슨… 빨지 마……!」
-        PRINTFORMW 「그만해……!　\@(TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:레즈끼 < 3 && ABL:레즈중독 < 3) ?  여자 아이끼리 왜 이러는데 # \@……」
+        PRINTFORMW 「그만해……!　\@(TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:레즈끼 < 3 && ABL:레즈중독 < 3) ?  여자 아이끼리 왜 이러는데 # \@……」
     ;2회째 이후
     ELSEIF FLAG:11 == 2
         ;C감각 Lv3 이상
@@ -4041,7 +4041,7 @@ ELSE
         IF RAND:2 == 0
             PRINTFORMW 「싫어!　아!　아……흐앗 앙♪」
             PRINTFORML 메디슨은 한층 더 고조되어 들썩거리는 허리를 로터로 꽉 눌렀다
-            SIF TALENT:처녀 == 0 && EXP:V경험 >= 10 && TALENT:120 == 0
+            SIF TALENT:처녀 == 0 && EXP:V경험 >= 10 && TALENT:남자 == 0
                 PRINTW 그대로 냅두면, 계속 달아두고 다닐 기세다……
             PRINTFORMW 「%TSTR:306%♪　좀 더……♪」
         ELSE
@@ -4058,7 +4058,7 @@ ELSE
             PRINTFORMW 「부들부들거려서 , 기분 좋아……. 주인님, 너무, 기분 좋아 ……」
         ELSE
             PRINTFORMW 「으읏, 흣!　이거, 대단해……」
-            PRINTFORMW 「\@(TALENT:120) ?  자지 # 콩이\@, 가버려…읏…!, 후아앗∼~!」
+            PRINTFORMW 「\@(TALENT:남자) ?  자지 # 콩이\@, 가버려…읏…!, 후아앗∼~!」
         ENDIF
         CFLAG:9010 = 4
     ;C감각 Lv3 이상
@@ -5709,7 +5709,7 @@ IF CFLAG:9030 == 0
     IF TALENT:처녀 == 1
         ;처녀＋정조 관념 소유(메디와는 관계없지만 왜일까 생각났다)
         ;개변이든지 다른 말에의 이식이든지 좋아하게 사용해 주세요
-;        IF TALENT:처녀 == 1 && EXP:V경험 == 0 && TALENT:30
+;        IF TALENT:처녀 == 1 && EXP:V경험 == 0 && TALENT:정조관념
 ;            PRINTFORMW 「이나, 그만두어!　그런 곳삽없고!」
 ;            PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 애널에의 삽입을 거절하고 있다
 ;            PRINTFORMW 뒤가 안되면과%조사처리(CALLNAME:MASTER,"는")% 보지에와 페니스의 첨단을 헛디딜 수 있었다
@@ -5985,7 +5985,7 @@ JUMP MEDI_K33_COM_30
 ;-------------------------------------------------
 @MEDICINE_HAZIMETE_PENIS
 ;메디에 페니스가 없다
-IF TALENT:120 == 0 && TALENT:121 == 0
+IF TALENT:남자 == 0 && TALENT:후타나리 == 0
     PRINTL 
     ;눈 가림 or어두운 곳안이라면 추가
     SIF TEQUIP:41 || TEQUIP:70
@@ -6149,7 +6149,7 @@ ELSE
     ;연모
     ELSEIF TALENT:연모 && (CFLAG:9040 <= 3 || FLAG:11 == 2)
         IF RAND:5 == 0
-            PRINTFORMW 「역시, 스스로 하는 것보다도\@(TALENT:120 == 0 && TALENT:MASTER:남자) ?  여자 아이 # 다른 사람\@으로 해 받는 것이 좋은거야?」
+            PRINTFORMW 「역시, 스스로 하는 것보다도\@(TALENT:남자 == 0 && TALENT:MASTER:남자) ?  여자 아이 # 다른 사람\@으로 해 받는 것이 좋은거야?」
             PRINTFORMW 「 나도,%TSTR:300%로 해 받는 (분)편이 두근두근 하고……%TSTR:300%나 그래?」
             PRINTFORMW 「후후, 나의 손, 가득 느껴♪　──자지로♪」
         ELSEIF RAND:4 == 0
@@ -6323,7 +6323,7 @@ ELSE
             PRINTFORMW 사정구가 되는 첨단을 쿡쿡 찌르고 있다
             PRINTL 
             ;숫처녀＋남자가 아닌＋정액 지식 있어
-            IF TALENT:처녀 == 1 && TALENT:120 == 0 && CFLAG:5202 == 2
+            IF TALENT:처녀 == 1 && TALENT:남자 == 0 && CFLAG:5202 == 2
                 PRINTFORML 「응, 자지는 사실은 다음 구멍에 삽응이겠지?」
                 PRINTFORML 「그것은 언제 해 주는 거야?　가득한 째 없는 하면(자) 해 주어?」
                 PRINTFORMW 「이라면 노력해 가득 기분 좋게 해 준다♪」
@@ -6882,7 +6882,7 @@ ENDIF
 
 ;-------------------------------------------------
 ;구슬 비비어 강제 CFLAG9053
-;(CFLAG:9054 > 0 || TALENT:120 || TALENT:121 == 2)→구슬 경험의 유무＋자신에게 구슬이 있을지 어떨지?
+;(CFLAG:9054 > 0 || TALENT:남자 || TALENT:후타나리 == 2)→구슬 경험의 유무＋자신에게 구슬이 있을지 어떨지?
 ;-------------------------------------------------
 @MEDI_K33_COM_53
 ;처음
@@ -6892,13 +6892,13 @@ IF CFLAG:9053 == 0
         CALL MEDICINE_HAZIMETE_PENIS
     ;연모
     IF TALENT:연모
-        PRINTFORMW 「\@(CFLAG:9054 > 0 || TALENT:120 || TALENT:121 == 2) ?  구슬 # 어와 여기\@……비비는 거야?」
+        PRINTFORMW 「\@(CFLAG:9054 > 0 || TALENT:남자 || TALENT:후타나리 == 2) ?  구슬 # 어와 여기\@……비비는 거야?」
         PRINTFORMW 「개, 이렇게?　이런 식으로 좋은거야?」
         PRINTFORMW 메디슨은%CALLNAME:MASTER%에 말해지는 대로, 야와야와와 옥대를 비비고 있다
         PRINTFORML 서투르고 더듬거린 손놀림이지만……모색감이 있어, 그것이 오히려
         PRINTFORMW 신선미를 느끼게 하고 꽤에 나쁘지 않다
-        PRINTFORMW 「에 부드러워서\@(CFLAG:9054 > 0 || TALENT:120 || TALENT:121 == 2) ?  재미있다♪　안의 구슬도 하는 # ……중에 무엇인가 있군요. ……이것, 뭘까\@?」
-        PRINTFORMW \@(CFLAG:9054 > 0 || TALENT:120 || TALENT:121 == 2) ?  넋을 잃고미소지으면서 # 안에 있는 탄력이 가진 것을 알아차리면(자)\@, 메디슨은 거기를 중점적으로 만지작거리기 시작했다
+        PRINTFORMW 「에 부드러워서\@(CFLAG:9054 > 0 || TALENT:남자 || TALENT:후타나리 == 2) ?  재미있다♪　안의 구슬도 하는 # ……중에 무엇인가 있군요. ……이것, 뭘까\@?」
+        PRINTFORMW \@(CFLAG:9054 > 0 || TALENT:남자 || TALENT:후타나리 == 2) ?  넋을 잃고미소지으면서 # 안에 있는 탄력이 가진 것을 알아차리면(자)\@, 메디슨은 거기를 중점적으로 만지작거리기 시작했다
         PRINTFORMW 코리코리와 굴리도록(듯이) 해 보거나 엄지와 집게 손가락으로 깎아 보거나와
         PRINTFORMW 남자의 구조에 흥미 진진한 모습이다
         PRINTFORMW 「아, 지금……안으로 쿤이라고 움직였다. 후후, 재미있다♪」
@@ -6908,16 +6908,16 @@ IF CFLAG:9053 == 0
     ;봉사 정신 Lv3 이상
     ELSEIF ABL:봉사정신 >= 3
         ;구슬 경험의 유무＋자신에게 구슬이 있을지 어떨지?
-        IF CFLAG:9054 == 0 && TALENT:120 == 0 && TALENT:121 != 2
+        IF CFLAG:9054 == 0 && TALENT:남자 == 0 && TALENT:후타나리 != 2
             PRINTFORMW 「구슬은, 여기?」
             PRINTFORMW 메디슨은 조심조심 옥대에 접하면서,%CALLNAME:MASTER%의 얼굴을 올려보고 있다
         ENDIF
         PRINTFORMW 「이것, 비비면 좋구나?」
         PRINTFORML %조사처리(CALLNAME:MASTER,"가")% 「그렇다」라고 수긍해 보이면(자), 메디슨은 옥대를 양손으로 감싸
         PRINTFORMW 야와야와와 비비기 시작했다
-        PRINTFORMW 「안\@(CFLAG:9054 > 0 || TALENT:120 || TALENT:121 == 2) ?  의 타마미 붙였다. 이것도 비비는 것일까 # 에 무엇인가 있어요……이것무엇?　이것이 구슬\@?」
+        PRINTFORMW 「안\@(CFLAG:9054 > 0 || TALENT:남자 || TALENT:후타나리 == 2) ?  의 타마미 붙였다. 이것도 비비는 것일까 # 에 무엇인가 있어요……이것무엇?　이것이 구슬\@?」
         PRINTFORMW 메디슨은 안의 구슬을 찾아내면(자), 그 감촉을 확인하는 것처럼 거기를 중점적으로 비비고 있다
-        PRINTFORMW 「\@(CFLAG:9054 > 0 || TALENT:120 || TALENT:121 == 2) ?  응 # 무엇 이것\@, 왠지 이상한 촉감 마음이군요……」
+        PRINTFORMW 「\@(CFLAG:9054 > 0 || TALENT:남자 || TALENT:후타나리 == 2) ?  응 # 무엇 이것\@, 왠지 이상한 촉감 마음이군요……」
         PRINTFORMW 「이것 만지작거리는 것, 기분이 좋은거야?」
         PRINTFORML 봉투 중(안)에서 타마를 전매하도록(듯이) 비비면서, 메디슨은 얼굴을 올려
         PRINTFORMW %CALLNAME:MASTER%의 표정을 듣고 있다
@@ -6926,13 +6926,13 @@ IF CFLAG:9053 == 0
     ELSE
         PRINTFORMW 「이번은 이런 곳 비비는 거야?」
         ;구슬 경험의 유무＋자신에게 구슬이 있을지 어떨지?
-        SIF CFLAG:9054 == 0 && TALENT:120 == 0 && TALENT:121 != 2
+        SIF CFLAG:9054 == 0 && TALENT:남자 == 0 && TALENT:후타나리 != 2
             PRINTFORMW 「\@(TALENT:MASTER:남자) ?  남자 # 당신\@은, 이상한 것이 붙어」
         PRINTFORMW 메디슨은 조심조심 손을 뻗어, 옥대를 비비기 시작했다
         PRINTFORML 서투르고 더듬거린 손놀림이지만……모색감이 있어, 그것이 오히려
         PRINTFORMW 신선미를 느끼게 하고 꽤에 나쁘지 않다
         PRINTFORMW %CALLNAME:MASTER%은, 안에 있는 구슬도 상냥하게 애무하도록(듯이) 명했다
-        SIF CFLAG:9054 == 0 && TALENT:120 == 0 && TALENT:121 != 2
+        SIF CFLAG:9054 == 0 && TALENT:남자 == 0 && TALENT:후타나리 != 2
             PRINTFORMW 「이것?　이 안의, 웬지 모르게 딱딱한 보고 싶은거야?」
         PRINTFORMW 「이것이 기분이 좋은거야?　정말, 남자는 이상해……」
         PRINTFORMW 그렇게 말하면서도, 메디슨은%CALLNAME:MASTER%에 명할 수 있는 대로 옥대를 비비어 계속 풀고 있었다
@@ -9053,8 +9053,8 @@ ELSE
         IF RAND:3 == 0
             PRINTFORMW 「이나다, %TSTR:302%. 그런 식으로 엉덩이 손대어지고 있으면(자) 음란한 기분이 되어 버려요」
             ;V감각 Lv3 이상(숫처녀는 아니다) 또는 A감각 Lv3 이상
-            IF (ABL:V감각 >= 3 && TALENT:처녀 != 1 && TALENT:120 == 0) || ABL:A감각 >= 3
-                PRINTFORMW 「어루만질 뿐(만큼)이 아니고,\@(ABL:V감각 >= 3 && TALENT:처녀 != 1 && TALENT:120 == 0) ?  보지 # 엉덩이안\@에도……삽라고♪」
+            IF (ABL:V감각 >= 3 && TALENT:처녀 != 1 && TALENT:남자 == 0) || ABL:A감각 >= 3
+                PRINTFORMW 「어루만질 뿐(만큼)이 아니고,\@(ABL:V감각 >= 3 && TALENT:처녀 != 1 && TALENT:남자 == 0) ?  보지 # 엉덩이안\@에도……삽라고♪」
             ELSE
                 PRINTFORMW 「 좀 더, 좀 더 해♪　힘겨운으로 어루만지고 하며♪」
             ENDIF
@@ -11267,7 +11267,7 @@ IF TEQUIP:55 == 4
 ELSEIF TEQUIP:55 == 0
     ;슬라임이 침입하고 있었는지 어떠했는지? (비트1:질에 침입 비트2:애널에 침입)
     LOCAL = 0
-    SIF TALENT:120 == 0 && TEQUIP:20 == 0 && TEQUIP:21 == 0
+    SIF TALENT:남자 == 0 && TEQUIP:20 == 0 && TEQUIP:21 == 0
         LOCAL |= 1
     SIF TEQUIP:25 == 0 && TEQUIP:26 == 0
         LOCAL |= 2
@@ -12401,7 +12401,7 @@ ELSE
             PRINTFORMW 「은 , 응응!　(이)나, 좀 더 상냥하게 해……, 응, 응응」
         ELSE
             PRINTL 
-            PRINTFORML 「아앙, 응!　그런, 모두 싸움하지 않고, 구에서도 엉덩이에서도\@(TALENT:120) ?  자지 # 또\@에서도,
+            PRINTFORML 「아앙, 응!　그런, 모두 싸움하지 않고, 구에서도 엉덩이에서도\@(TALENT:남자) ?  자지 # 또\@에서도,
             PRINTFORMW 　어디에서라도 사용해도 좋으니까, 군요?　사이 좋고 차례로……응, 응은!」
         ENDIF
         CFLAG:9509 = 6
@@ -12440,19 +12440,19 @@ ENDIF
 SIF CFLAG:9500 == 0
     CFLAG:9500 = 1
 ;촉수 삽입
-SIF CFLAG:9501 == 0 && TALENT:120 == 0
+SIF CFLAG:9501 == 0 && TALENT:남자 == 0
     CFLAG:9501 = 1
 ;촉수 애널 삽입
 SIF CFLAG:9502 == 0
     CFLAG:9502 = 1
 ;촉수 구리 고문
-SIF CFLAG:9503 == 0 && TALENT:120 == 0 && TALENT:121 == 0
+SIF CFLAG:9503 == 0 && TALENT:남자 == 0 && TALENT:후타나리 == 0
     CFLAG:9503 = 1
 ;촉수 유두 고문
 SIF CFLAG:9504 == 0
     CFLAG:9504 = 1
 ;촉수 페니스 고문
-SIF CFLAG:9505 == 0 && (TALENT:120 || TALENT:121)
+SIF CFLAG:9505 == 0 && (TALENT:남자 || TALENT:후타나리)
     CFLAG:9505 = 1
 ;촉수구욕
 SIF CFLAG:9506 == 0
@@ -12464,7 +12464,7 @@ SIF CFLAG:9507 == 0
 SIF CFLAG:9508 == 0
     CFLAG:9508 = 1
 ;촉수 카테이텔
-SIF CFLAG:9527 == 0 && TALENT:120 == 0 && FLAG:촉수능력 & 64
+SIF CFLAG:9527 == 0 && TALENT:남자 == 0 && FLAG:촉수능력 & 64
     CFLAG:9527 = 1
 ;촉수이혈삽입
 SIF CFLAG:9529 == 0
@@ -15629,7 +15629,7 @@ ENDIF
 ;가랑이로 사정시킨 CFLAG8023
 ;비패의 화이트 소스 버무리고
 ;-------------------------------------------------
-IF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120 == 0)
+IF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:남자 == 0)
     PRINTL 
     IF CFLAG:74 == 7 && (FLAG:조교시텍스트표시 == 1 || FLAG:11 == 2)
 ;        PRINTL 
@@ -15642,7 +15642,7 @@ IF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120 == 0)
             PRINTFORMW 좁은 구멍으로부터 개방된 페니스는 몇번이나 맥동 해, 어린 균열에 백탁을 거절해 따돌려 간다
         ;그 이외
         ELSE
-            PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 메디슨의\@(TALENT:121) ?  보지 # 클리토리스\@에 몇차례 귀두를 문질러 발라 정액을 토해냈다
+            PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 메디슨의\@(TALENT:후타나리) ?  보지 # 클리토리스\@에 몇차례 귀두를 문질러 발라 정액을 토해냈다
             ;[작은체형], [소인]
             IF (TALENT:127 || TALENT:128) && BASE:음모 <= 50
                 PRINTW 아직 배냇 머리조차 나 있지 않은 절의 부엌으로 한 균열에 정액이 달라붙어 붙어 있다
@@ -15895,7 +15895,7 @@ IF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120 == 0)
             ELSEIF RAND:3 == 0
                 PRINTFORML 「아, 아앙!　가득 나오고 있다!　또에 가득 내기등비쳐!」
                 PRINTFORML 「아앙, 나다, 또……응은 해버린다의──♪」
-                PRINTFORML 메디슨의\@(TALENT:121) ?  보지 # 클리토리스\@는 정액 투성이가 되어 안타까운 듯이  히크 붙어 있다
+                PRINTFORML 메디슨의\@(TALENT:후타나리) ?  보지 # 클리토리스\@는 정액 투성이가 되어 안타까운 듯이  히크 붙어 있다
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 덤과(뿐)만에, 사정하면서 더욱 귀두의 앞을 소코에 꽉 눌렀다
                 PRINTL 
                 PRINTFORML 「응──!　안돼!」
@@ -16335,7 +16335,7 @@ ENDIF
 ;장대로 사정시킨 CFLAG8027
 ;뚜껑나름대로 해라 성전환으로 해라, 약에 들어 있는 독 내성이 있는 메디라면 큰 일이다
 ;-------------------------------------------------
-IF (TFLAG:22 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120)
+IF (TFLAG:22 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:남자)
     PRINTL 
     IF CFLAG:74 == 7 && (FLAG:조교시텍스트표시 == 1 || FLAG:11 == 2)
 ;        PRINTL 
@@ -16750,7 +16750,7 @@ ELSEIF TFLAG:11 > 0 && CFLAG:74 == 0
     ENDIF
 ;엉덩이, 와레메, 손, 키스, 족, 발, 흉, 액, 간의 어느쪽이든으로 사정시켰다(사정 개소 선택의 발, 안, 흉, 복, 액, 허벅지, 엉덩이를 포함한다)
 ;부실 유용 그 1
-ELSEIF ((TFLAG:8 > 0 || TFLAG:12 > 0 || TFLAG:14 > 0 || TFLAG:19 > 0 || TFLAG:16 > 0 || TFLAG:29 > 0 || TFLAG:20 > 0 || TFLAG:22 > 0) && CFLAG:74 == 0) || (CFLAG:74 >= 1 && CFLAG:74 <= 6) || CFLAG:74 == 8 || (CFLAG:74 == 7 && TALENT:120)
+ELSEIF ((TFLAG:8 > 0 || TFLAG:12 > 0 || TFLAG:14 > 0 || TFLAG:19 > 0 || TFLAG:16 > 0 || TFLAG:29 > 0 || TFLAG:20 > 0 || TFLAG:22 > 0) && CFLAG:74 == 0) || (CFLAG:74 >= 1 && CFLAG:74 <= 6) || CFLAG:74 == 8 || (CFLAG:74 == 7 && TALENT:남자)
     PRINTFORML 「히!　, 뭐?　이 희어서 네바네바 했어!」
     PRINTFORMW 메디슨은, 페니스의 끝으로부터 분수와 같이 분출하는 정액을 몹시 놀라 보고 있다
     PRINTFORMW 아무래도, 정액을 보는 것은 처음의 같다──
@@ -17026,7 +17026,7 @@ ELSEIF (TFLAG:9 > 0 || TFLAG:10 > 0) && CFLAG:74 == 0
     ENDIF
 ;가랑이로 사정시켰다(사정 개소 선택의 균열도)
 ;부실 유용 그 2
-ELSEIF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:120 == 0)
+ELSEIF (TFLAG:15 > 0 && CFLAG:74 == 0) || (CFLAG:74 == 7 && TALENT:남자 == 0)
     PRINTFORML 「히!　, 뭐?　이 희어서 네바네바 했어!」
     PRINTFORMW 메디슨은 스스로의 신체에 내리고 걸리는 정액을, 놀라움의 표정으로 내려다 보고 있다
     PRINTFORMW 아무래도, 정액을 보는 것은 처음의 같다──
@@ -20532,7 +20532,7 @@ ELSE
         ELSE
             PRINTFORML 「후후,%TSTR:300%의 여기, 이제(벌써) 눅진눅진……♪」
             PRINTFORML 「%TSTR:300%가 안 돼, 무방비에 자고 있으니……」
-            IF TALENT:120 || TALENT:121
+            IF TALENT:남자 || TALENT:후타나리
                 PRINTW  
                 PRINTFORML 「사실은 자지를 삽같은가 되고 생각했지만……」
                 PRINTFORML 「 그렇지만……%TSTR:300%는 다리로 만족했던 같구나」
@@ -20589,10 +20589,10 @@ IF TCVAR:301 & 1
         ELSE
             PRINTL 
             ;기교 Lv5 또는 통산에서 메디가 이기고 있다(1개하의 V조율 경험의 조건도 채우고 있으면(자) 2분의 1의 확률)
-            IF (ABL:기교 >= 5 || CFLAG:5211 > 0) && (TALENT:처녀 || TALENT:120 || EXP:V조율경험 < 100 || RAND:2 == 0)
+            IF (ABL:기교 >= 5 || CFLAG:5211 > 0) && (TALENT:처녀 || TALENT:남자 || EXP:V조율경험 < 100 || RAND:2 == 0)
                 PRINTFORML \@(CFLAG:5211 > 9) ?  %CALLNAME:MASTER%의 일을 다 안 것 같은 # 어느새 능숙해진 메디슨의\@허리의 움직임에
             ;V조율 경험 100이상
-            ELSEIF TALENT:처녀 == 0 && TALENT:120 == 0 && EXP:V조율경험 >= 100
+            ELSEIF TALENT:처녀 == 0 && TALENT:남자 == 0 && EXP:V조율경험 >= 100
                 PRINTFORML 완전히%CALLNAME:MASTER%의 물건에 친숙해 진 메디슨의 보지의 좋은 점에
             ;그 이외
             ELSE
@@ -20644,11 +20644,11 @@ IF TCVAR:301 & 1
         ENDIF
     ENDIF
 ;V감각 Lv4 이상(남자나 처녀의 경우는 A감각)
-ELSEIF (((TALENT:처녀 || TALENT:120) && ABL:A감각 >= 4) || (TALENT:처녀 == 0 && TALENT:120 == 0 && ABL:V감각 >= 4)) && (CFLAG:8250 < 2 || FLAG:11 == 2)
+ELSEIF (((TALENT:처녀 || TALENT:남자) && ABL:A감각 >= 4) || (TALENT:처녀 == 0 && TALENT:남자 == 0 && ABL:V감각 >= 4)) && (CFLAG:8250 < 2 || FLAG:11 == 2)
     IF RAND:4 == 0
         PRINTL 
         PRINTFORML 「아, 또 가득 내 받아 버렸다♪」
-        PRINTFORML 넋을 잃고녹도록(듯이) 미소지으면서 메디슨은\@(TALENT:처녀 || TALENT:120) ?  엉덩이 # 고간\@에 손을 했다
+        PRINTFORML 넋을 잃고녹도록(듯이) 미소지으면서 메디슨은\@(TALENT:처녀 || TALENT:남자) ?  엉덩이 # 고간\@에 손을 했다
         PRINTFORML 누르도록(듯이) 맞힌 손가락의 사이부터,%조사처리(CALLNAME:MASTER,"가")% 쏟은 백탁액이 흘러넘쳐 늘어져 온다
         IF RAND:2 == 0
             PRINTFORMW 그것을 본%CALLNAME:MASTER%은, 다시 고간에 피가 모여 오는 것을 느꼈다
@@ -20660,7 +20660,7 @@ ELSEIF (((TALENT:처녀 || TALENT:120) && ABL:A감각 >= 4) || (TALENT:처녀 ==
             PRINTFORML 「아는,%TSTR:300%의 자지──아직 할 수 있겠죠?　해♪」
             PRINTFORM 그렇게 말해
         ENDIF
-        PRINTFORML 눈을 빛낼 수 있는이면서 스스로\@(TALENT:처녀 || TALENT:120) ?  국문 # 질구\@를 열어 보이면(자)
+        PRINTFORML 눈을 빛낼 수 있는이면서 스스로\@(TALENT:처녀 || TALENT:남자) ?  국문 # 질구\@를 열어 보이면(자)
         PRINTFORML 다시%CALLNAME:MASTER%의 노장을 감추어 붐비어 갔다……
         PRINTFORMW 「응!　구는!　응……, 아 응♪」
     ELSEIF RAND:3 == 0
@@ -21414,7 +21414,7 @@ ENDIF
 ;-------------------------------------------------
 @MEDI_SELF_K33_402
 ;반항적 있어
-IF TALENT:11
+IF TALENT:반항적
     PRINTFORMW 「%TSTR:300%, 오늘 밤은 내가 함께 자 준다. 기쁘지요?」
     PRINTFORMW 그 만큼 말하면(자), 메디슨은%CALLNAME:MASTER%의 대답도 기다리지 않고 , 허겁지겁 침대에 기어들어 붐비어 왔다
 ;반항적인 해
@@ -26997,7 +26997,7 @@ IF MARK:반발각인 >= 3 || (TALENT:연모 == 0 && MARK:반발각인 >= 2)
     PRINTL 
     PRINTFORMW 그런데, 어째서 줄까……?
 ;메디슨이 남자는 아니다
-ELSEIF TALENT:120 == 0
+ELSEIF TALENT:남자 == 0
     PRINTFORML ──와 거울의 먹에 이쪽을 보고 있는 작은 사람의 그림자를 찾아냈다
     PRINTFORMW 메디슨이다
     PRINTL 
@@ -27203,7 +27203,7 @@ ELSE
     PRINTFORMW 그리고%조사처리(CALLNAME:MASTER,"는")% 조금의 사이 메디슨과 이야기를 했습니다──
     PRINTW  
     PRINTL 
-    PRINTFORMW 아무래도 메디슨은,\@((CFLAG:2 >= 750 && TALENT:120 != TALENT:MASTER:남자) || CFLAG:2 >= 1200 || ABL:순종 >= 3) ?  다소%CALLNAME:MASTER%에 마음을 열어 주고 있는 # 역시 아직%CALLNAME:MASTER%의 일을 기분 좋다고 생각하지 않는 것\@같다
+    PRINTFORMW 아무래도 메디슨은,\@((CFLAG:2 >= 750 && TALENT:남자 != TALENT:MASTER:남자) || CFLAG:2 >= 1200 || ABL:순종 >= 3) ?  다소%CALLNAME:MASTER%에 마음을 열어 주고 있는 # 역시 아직%CALLNAME:MASTER%의 일을 기분 좋다고 생각하지 않는 것\@같다
     ;감각계중 한쪽이 2이상
     IF ABL:C감각 >= 2 || ABL:V감각 >= 2 || ABL:A감각 >= 2 || ABL:B감각 >= 2
         PRINTFORMW 또, 여기에 오고 처음으로 경험한 성체험에도 당황하고 있는 것 같다
@@ -27406,7 +27406,7 @@ ELSEIF MARK:반발각인 == 3
 ;굴복 3(3분의 2)
 ELSEIF MARK:굴복각인 == 3 && RAND:3 <= 1
     ;호감도 높이고(이성 750이상 동성 1200이상)＋정신 붕괴, 괴뢰가 어느쪽이나 없다
-    IF ((CFLAG:2 >= 750 && TALENT:120 != TALENT:MASTER:남자 && ((TALENT:120 && EXP:BL경험 < 1000) || (TALENT:120 == 0 && EXP:레즈경험 < 1000))) || (CFLAG:2 >= 1200 && TALENT:120 == TALENT:MASTER:남자)) && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
+    IF ((CFLAG:2 >= 750 && TALENT:남자 != TALENT:MASTER:남자 && ((TALENT:남자 && EXP:BL경험 < 1000) || (TALENT:남자 == 0 && EXP:레즈경험 < 1000))) || (CFLAG:2 >= 1200 && TALENT:남자 == TALENT:MASTER:남자)) && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
         PRINTSINGLEFORM 　　　「뭔가 둥실둥실 뜬 것 같은 이상한 느낌…… 이 기분, 무엇이지…… 스 씨?」
     ELSE
         PRINTSINGLEFORM 　　　「다음엔 어떤 짓을 당해버리는거야……」

@@ -41,9 +41,9 @@ NEXT
 TFLAG:97 = ABL:순종
 
 ;주인과 대상이 동성
-IF !(TALENT:MASTER:남자 ^^ TALENT:120)
+IF !(TALENT:MASTER:남자 ^^ TALENT:남자)
     ;男ならＢＬっ気, 女ならレズっ気を見る
-    LOCAL = 22 + TALENT:120
+    LOCAL = 22 + TALENT:남자
     IF ABL:LOCAL == 0
         TFLAG:97 -= 1
     ELSEIF ABL:LOCAL < 3
@@ -54,7 +54,7 @@ IF !(TALENT:MASTER:남자 ^^ TALENT:120)
         TFLAG:97 += 2
     ENDIF
     ;男ならＢＬ中毒, 女ならレズ中毒を見る
-    LOCAL = 32 + TALENT:120
+    LOCAL = 32 + TALENT:남자
     IF ABL:LOCAL > 4
         TFLAG:97 += 2
     ELSEIF ABL:LOCAL > 2
@@ -66,19 +66,19 @@ IF !(TALENT:MASTER:남자 ^^ TALENT:120)
 ENDIF
 ;素質による増減
 ;反抗的
-SIF TALENT:11
+SIF TALENT:반항적
     TFLAG:97 -= 1
 ;素直
 SIF TALENT:솔직함 && TFLAG:97 > 0
     TFLAG:97 += 1
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     TFLAG:97 -= 1
 ;感情乏しい
-SIF TALENT:22
+SIF TALENT:감정결여
     TFLAG:97 -= 1
 ;抵抗
-SIF TALENT:34
+SIF TALENT:저항
     TFLAG:97 -= 1
 ;헌신적
 SIF TALENT:63 && TFLAG:97 > 0
@@ -367,22 +367,22 @@ IF ABL:ASSI:욕망 > 0
     LOCAL:1 /= 100
 ENDIF
 ;자제심で補正
-SIF TALENT:20
+SIF TALENT:자제심
     LOCAL /= 2
 SIF TALENT:ASSI:자제심
     LOCAL:1 /= 2
 ;無関心で補正
-SIF TALENT:21
+SIF TALENT:무관심
     TIMES LOCAL, 0.80
 SIF TALENT:ASSI:무관심
     TIMES LOCAL:1, 0.80
 ;感情乏しいで補正
-SIF TALENT:22
+SIF TALENT:감정결여
     LOCAL /= 4
 SIF TALENT:ASSI:감정결여
     LOCAL:1 /= 4
 ;一線越えないで補正
-SIF TALENT:27
+SIF TALENT:일선을넘지않음
     LOCAL /= 2
 SIF TALENT:ASSI:일선을넘지않음
     LOCAL:1 /= 2
@@ -392,12 +392,12 @@ SIF TALENT:71
 SIF TALENT:ASSI:쾌감을부정
     LOCAL:1 /= 3
 ;素直で補正
-SIF TALENT:13
+SIF TALENT:솔직함
     TIMES LOCAL, 1.2
 SIF TALENT:ASSI:솔직함
     TIMES LOCAL:1, 1.2
 ;好奇心で補正
-SIF TALENT:23
+SIF TALENT:호기심
     TIMES LOCAL, 1.2
 SIF TALENT:ASSI:호기심
     TIMES LOCAL:1 , 1.2
@@ -443,9 +443,9 @@ SIF TALENT:ASSI:인기
     TIMES LOCAL, 1.25
 
 ;소질 의존의 부분(남자 관련)
-IF TALENT:120 == 0 && TALENT:ASSI:남자 == 0
+IF TALENT:남자 == 0 && TALENT:ASSI:남자 == 0
     ;女嫌いならマイナス補正（両方）
-    SIF TALENT:38
+    SIF TALENT:여성혐오
         LOCAL /= 2
     SIF TALENT:ASSI:여성혐오
         LOCAL:1 /= 2
@@ -472,23 +472,23 @@ IF TALENT:120 == 0 && TALENT:ASSI:남자 == 0
         LOCAL:1 *= (100 + ABL:ASSI:레즈중독 * 25)
         LOCAL:1 /= 100
     ENDIF
-ELSEIF TALENT:120 && TALENT:ASSI:남자 == 0
+ELSEIF TALENT:남자 && TALENT:ASSI:남자 == 0
     ;女嫌いならマイナス補正（奴隷）
-    SIF TALENT:38
+    SIF TALENT:여성혐오
         LOCAL /= 2
     ;男嫌いならマイナス補正（助手）
-    SIF TALENT:37
+    SIF TALENT:남성혐오
         LOCAL:1 /= 2
-ELSEIF TALENT:120 == 0 && TALENT:ASSI:남자
+ELSEIF TALENT:남자 == 0 && TALENT:ASSI:남자
     ;男嫌いならマイナス補正（奴隷）
-    SIF TALENT:37
+    SIF TALENT:남성혐오
         LOCAL:1 /= 2
     ;女嫌いならマイナス補正（助手）
-    SIF TALENT:38
+    SIF TALENT:여성혐오
         LOCAL /= 2
 ELSE
     ;男嫌いならマイナス補正（両方）
-    SIF TALENT:37
+    SIF TALENT:남성혐오
         LOCAL /= 2
     SIF TALENT:ASSI:남성혐오
         LOCAL:1 /= 2
@@ -517,7 +517,7 @@ TCVAR:ASSI:99 += 1
 LOCAL = UP:0 + UP:1 / 5 + UP:2 / 50 + UP:3 / 50
 
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     LOCAL /= 2
 ;쾌감에 솔직
 IF TALENT:70
@@ -626,7 +626,7 @@ ELSEIF TFLAG:91 == 2
     SOURCE:18 += ABL:사정중독 * 2500
 
     PRINTFORML %CALLNAME:TARGET% 대량사정
-    SIF EXP:사정경험 == 0 && TALENT:120 == 0
+    SIF EXP:사정경험 == 0 && TALENT:남자 == 0
         TCVAR:50 += 1
     TCVAR:3 += 2
     TCVAR:4 += 1
@@ -674,7 +674,7 @@ ELSEIF TFLAG:91 == 1
     SOURCE:18 += ABL:사정중독 * 750
 
     PRINTFORML %CALLNAME:TARGET% 사정
-    SIF EXP:사정경험 == 0 && TALENT:120 == 0
+    SIF EXP:사정경험 == 0 && TALENT:남자 == 0
         TCVAR:50 += 1
     TCVAR:3 += 1
 
@@ -702,7 +702,7 @@ BASE:사정 = MIN(BASE:사정, EJAC - 1)
 LOCAL = UP:0 / 50 + UP:1 / 50 + UP:2 / 50 + UP:3 * 3
 
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     LOCAL /= 2
 ;쾌감에 솔직
 IF TALENT:70
@@ -904,35 +904,35 @@ ELSEIF TEQUIP:12 == 0 && TALENT:오줌싸개버릇 == 0
 ENDIF
 
 ;臆病
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL , 1.20
 ;反抗的
-SIF TALENT:11
+SIF TALENT:반항적
     TIMES LOCAL , 0.50
 ;プライド高い
-IF TALENT:16
+IF TALENT:프라이드가높음
     TIMES LOCAL , 0.50
 ;プライド低い
-ELSEIF TALENT:17
+ELSEIF TALENT:프라이드가낮음
     TIMES LOCAL , 1.20
 ENDIF
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     LOCAL /= 4
 ;目立ちたがり
-SIF TALENT:28
+SIF TALENT:튀고싶어함
     TIMES LOCAL , 1.20
 ;抑圧
-SIF TALENT:32
+SIF TALENT:억압
     TIMES LOCAL , 0.30
 ;抵抗
-SIF TALENT:34
+SIF TALENT:저항
     TIMES LOCAL , 0.30
 ;恥じらい
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     TIMES LOCAL , 0.20
 ;恥薄い
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     TIMES LOCAL , 1.50
 ENDIF
 ;쾌감에 솔직
@@ -1000,7 +1000,7 @@ ELSEIF LOCAL:2 == 1 && TEQUIP:68
     NOWEX:32 += 1
     EX:32 += 1
 ;강헛방뇨(オトコのみ)
-ELSEIF LOCAL:2 == 2 && TALENT:120 && (TEQUIP:69 || SELECTCOM == 128)
+ELSEIF LOCAL:2 == 2 && TALENT:남자 && (TEQUIP:69 || SELECTCOM == 128)
     SOURCE:18 += ((BASE:뇨의 * 60) / MAXBASE:뇨의)
     SOURCE:20 += ((BASE:뇨의 * 30) / MAXBASE:뇨의)
     TIMES SOURCE:18 , 1.20
@@ -1010,7 +1010,7 @@ ELSEIF LOCAL:2 == 2 && TALENT:120 && (TEQUIP:69 || SELECTCOM == 128)
     NOWEX:43 += 2
     EX:43 += 2
 ;헛방뇨(オトコのみ)
-ELSEIF LOCAL:2 == 1 && TALENT:120 && (TEQUIP:69 || SELECTCOM == 128)
+ELSEIF LOCAL:2 == 1 && TALENT:남자 && (TEQUIP:69 || SELECTCOM == 128)
     SOURCE:18 += ((BASE:뇨의 * 30) / MAXBASE:뇨의)
     SOURCE:20 += ((BASE:뇨의 * 15) / MAXBASE:뇨의)
     TIMES SOURCE:18 , 1.10
@@ -1266,26 +1266,26 @@ ELSE
 ENDIF
 
 ;気丈
-SIF TALENT:12
+SIF TALENT:꿋꿋함
     TIMES LOCAL , 0.60
 ;保守的
-SIF TALENT:24
+SIF TALENT:보수적
     TIMES LOCAL , 0.60
 ;楽観的
-IF TALENT:25
+IF TALENT:낙관적
     TIMES LOCAL , 1.20
 ;悲観的
-ELSEIF TALENT:26
+ELSEIF TALENT:비관적
     TIMES LOCAL , 0.80
 ENDIF
 ;一線越えない
-SIF TALENT:27
+SIF TALENT:일선을넘지않음
     TIMES LOCAL , 0.20
 ;抑圧
-IF TALENT:32
+IF TALENT:억압
     TIMES LOCAL , 0.60
 ;해방
-ELSEIF TALENT:33
+ELSEIF TALENT:해방
     TIMES LOCAL , 1.50
 ENDIF
 ;汚臭鈍感
@@ -1419,13 +1419,13 @@ CFLAG:64 = MIN(CFLAG:64, EJAC - 1)
 ;동성인 경우의 체크
 ;-------------------------------------------------
 @SOURCE_SEX_CHECK
-SIF TALENT:120 == 0 && TALENT:PLAYER:남자
+SIF TALENT:남자 == 0 && TALENT:PLAYER:남자
     RETURN 0
-SIF TALENT:120 && TALENT:PLAYER:남자 == 0
+SIF TALENT:남자 && TALENT:PLAYER:남자 == 0
     RETURN 0
 
 ;레즈
-IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     ;ABL:레즈끼를 본다
     IF ABL:레즈끼 == 0
         TIMES SOURCE:22 , 0.90
@@ -1635,7 +1635,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
         TIMES SOURCE:16 , 0.50
     ENDIF
 ;ＢＬ
-ELSEIF TALENT:120 && TALENT:PLAYER:남자
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     ;ABL:ＢＬ끼를 본다
     IF ABL:BL끼 == 0
         TIMES SOURCE:16 , 0.50
@@ -2689,10 +2689,10 @@ SIF BASE:음핵 > 200
     TIMES UP:0 , 0.75
 
 ;肥大陰核
-SIF TALENT:1
+SIF TALENT:비대음핵
     TIMES UP:0 , 0.40
 ;자제심
-IF TALENT:20
+IF TALENT:자제심
     TIMES UP:0 , 0.30
     TIMES UP:1 , 0.50
     TIMES UP:2 , 0.70
@@ -2713,7 +2713,7 @@ IF NO:TARGET == 36 && TALENT:71
     ENDIF
 ENDIF
 ;オトコ
-SIF TALENT:120
+SIF TALENT:남자
     TIMES UP:2 , 1.30
 ;정신붕괴
 IF TALENT:정신붕괴
@@ -2913,19 +2913,19 @@ IF TEQUIP:77 == 2
 ENDIF
 
 ;臆病
-IF TALENT:10
+IF TALENT:겁쟁이
     TIMES UP:17 , 2.00
     TIMES UP:20 , 0.50
     TIMES UP:22 , 0.25
 ENDIF
 ;反抗的
-IF TALENT:11
+IF TALENT:반항적
     TIMES UP:12 , 0.25
     TIMES UP:13 , 0.50
     TIMES UP:20 , 1.50
 ENDIF
 ;気丈
-IF TALENT:12
+IF TALENT:꿋꿋함
     TIMES UP:12 , 0.30
     TIMES UP:13 , 0.75
     TIMES UP:17 , 0.80
@@ -2933,26 +2933,26 @@ IF TALENT:12
     TIMES UP:22 , 2.00
 ENDIF
 ;素直
-IF TALENT:13
+IF TALENT:솔직함
     TIMES UP:12 , 2.00
     TIMES UP:20 , 0.60
 ENDIF
 ;大人しい
-SIF TALENT:14
+SIF TALENT:얌전함
     TIMES UP:20 , 0.30
 ;プライド高い
-IF TALENT:16
+IF TALENT:프라이드가높음
     TIMES UP:14 , 0.50
     TIMES UP:17 , 0.60
     TIMES UP:20 , 1.20
 ;プライド低い
-ELSEIF TALENT:17
+ELSEIF TALENT:프라이드가낮음
     TIMES UP:14 , 2.00
     TIMES UP:17 , 1.50
     TIMES UP:20 , 0.80
 ENDIF
 ;無関心
-IF TALENT:21
+IF TALENT:무관심
     TIMES UP:12 , 0.50
     TIMES UP:13 , 0.50
     TIMES UP:14 , 0.50
@@ -2960,7 +2960,7 @@ IF TALENT:21
     TIMES UP:20 , 0.80
 ENDIF
 ;感情乏しい
-IF TALENT:22
+IF TALENT:감정결여
     TIMES UP:12 , 0.60
     TIMES UP:13 , 0.60
     TIMES UP:14 , 0.60
@@ -2971,38 +2971,38 @@ IF TALENT:22
     TIMES UP:22 , 0.60
 ENDIF
 ;好奇心
-SIF TALENT:23
+SIF TALENT:호기심
     TIMES UP:11 , 1.20
 ;保守的
-SIF TALENT:24
+SIF TALENT:보수적
     TIMES UP:11 , 0.80
 ;楽観的
-IF TALENT:25
+IF TALENT:낙관적
     TIMES UP:22 , 0.30
 ;悲観的
-ELSEIF TALENT:26
+ELSEIF TALENT:비관적
     TIMES UP:22 , 2.50
 ENDIF
 ;貞操無頓着
-IF TALENT:31
+IF TALENT:정조관둔감
     TIMES UP:12 , 1.20
     TIMES UP:13 , 1.25
     TIMES UP:20 , 0.60
     TIMES UP:22 , 0.40
 ENDIF
 ;抑圧
-IF TALENT:32
+IF TALENT:억압
     TIMES UP:13 , 0.50
     TIMES UP:20 , 2.00
     TIMES UP:22 , 1.50
 ENDIF
 ;해방
-IF TALENT:33
+IF TALENT:해방
     TIMES UP:13 , 2.00
     TIMES UP:14 , 2.00
 ENDIF
 ;抵抗
-IF TALENT:34
+IF TALENT:저항
     TIMES UP:13 , 0.50
     TIMES UP:20 , 2.00
 ENDIF
@@ -3281,9 +3281,9 @@ IF TALENT:228 == 1 && TALENT:복종
 ENDIF
 
 ;인어 - 윤활에 보너스
-SIF TALENT:츠쿠모가미
+SIF TALENT:인어
     TIMES UP:10 , 1.25
-SIF TALENT:PLAYER:츠쿠모가미
+SIF TALENT:PLAYER:인어
     TIMES UP:10 , 1.25
 
 ;목분리 1단계와 2단계 - 습득에 보너스
@@ -3675,7 +3675,7 @@ IF TFLAG:43
     IF ABL:순종 < 3 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:43 == 3
         ABL:순종 += 1
         ;臆病の場合一気に2上がる
-        SIF TALENT:10
+        SIF TALENT:겁쟁이
             ABL:순종 += 1
     ELSEIF ABL:순종 < 2 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:43 == 2
         ABL:순종 += 1
@@ -4312,7 +4312,7 @@ SIF DEBUG_ABL_CHECK2(32, 20, 11)
 SIF DEBUG_ABL_CHECK2(16, 21, 11)
     LOCAL |= 1024
 
-IF TALENT:120 == 0
+IF TALENT:남자 == 0
     SIF DEBUG_ABL_CHECK3(12, 22, 11)
         LOCAL |= 2048
 ELSE
@@ -4480,16 +4480,16 @@ TFLAG:108 += (LOCAL >= 10) ? LOCAL # 0
 ;회복 기초치
 LOCAL = 10
 ;臆病
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL , 0.50
 ;気丈
-SIF TALENT:20
+SIF TALENT:자제심
     TIMES LOCAL , 1.50
 ;大人しい
-SIF TALENT:14
+SIF TALENT:얌전함
     TIMES LOCAL , 1.20
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     TIMES LOCAL , 1.50
 ;狂気
 SIF TALENT:광기

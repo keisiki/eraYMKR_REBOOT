@@ -23,14 +23,14 @@ SIF FLAG:VA이상조교필터 & 4 && EXP:V경험 < EXPLV:1 && (CFLAG:21 & 1) == 
 SIF EXIST_BAR(PLAYER) == 0
     RETURN 0
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;주인이 [금단의 지식]持ちじゃないとき, 体格差が2段階以内か조교자가 [금단의 지식]持ちじゃないとダメ
 SIF TALENT:MASTER:금단의지식 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
     RETURN 0
 ;처녀で, 순종4미만 · 레즈끼4미만의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(소악마, 또는 망신이나 복종이 있다면 ＯＫ)
 IF TALENT:처녀 == 1 && ASSIPLAY
-    SIF (ABL:ASSI:순종 < 4 || (TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4)) && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
+    SIF (ABL:ASSI:순종 < 4 || (TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4)) && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;수면 중에는 불가
@@ -298,7 +298,7 @@ SIF TALENT:PLAYER:남자
 SIF TALENT:128
     TIMES SOURCE:20 , 2.00
 ;정조관념
-IF TALENT:30
+IF TALENT:정조관념
     IF TALENT:처녀 == 1
         TIMES SOURCE:11 , 0.60
         TIMES SOURCE:31, 15.00
@@ -309,7 +309,7 @@ IF TALENT:30
         SOURCE:32 = 1000
     ENDIF
 ;정조무구애
-ELSEIF TALENT:31
+ELSEIF TALENT:정조관둔감
     IF TALENT:처녀 == 1
         TIMES SOURCE:31, 0.50
         SOURCE:32 = 300
@@ -675,9 +675,9 @@ SIF ASSIPLAY == 0
 SIF TEQUIP:35 == 2
     TFLAG:122 = 90
 
-IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 10
-ELSEIF TALENT:120 && TALENT:PLAYER:남자
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 10
 ENDIF
 
@@ -844,20 +844,20 @@ IF LOCAL:2
 ENDIF
 
 ;자제심
-IF TALENT:20
+IF TALENT:자제심
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
 ENDIF
 ;부끄럼쟁이
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ;부끄럼없음
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 2

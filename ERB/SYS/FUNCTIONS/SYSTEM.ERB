@@ -76,7 +76,7 @@ FLAG:998 = CHARANUM + 1
 CALL CALC_GAUGE8, MASTER, 0
 ;주인의 칭호가 없을 경우, 신사나 숙녀의 칭호를 부여
 STRLENS NICKNAME:MASTER
-SIF RESULT == 0 && TALENT:MASTER:998 == 0
+SIF RESULT == 0 && TALENT:MASTER:Debug == 0
     NICKNAME:MASTER = \@(TALENT:MASTER:남자) ? 신사 # 숙녀\@
 
 ;'노모어글레이즈' 모드를 쓸지 말지 설정
@@ -350,7 +350,7 @@ RETURN LOCAL:1
 PRINTL 너의 성별은?
 PRINTLC [0] ♂
 PRINTLC [1] ♀
-SIF TALENT:MASTER:998
+SIF TALENT:MASTER:Debug
     PRINTLC [763] 후타나리
 PRINTL 
 $INPUT_LOOP_5
@@ -499,15 +499,15 @@ IF RESULT == 0
     TALENT:111 = 0
     TALENT:112 = 0
     TALENT:113 = 0
-    TALENT:120 = 1
-    TALENT:121 = 0
+    TALENT:남자 = 1
+    TALENT:후타나리 = 0
     ABL:레즈끼 = 0
     EXP:V경험 = 0
     EXP:레즈경험 = 0
     MAXBASE:사정 = 10000
 ELSEIF RESULT == 1
-    TALENT:120 = 0
-    TALENT:121 = 0
+    TALENT:남자 = 0
+    TALENT:후타나리 = 0
     MAXBASE:사정 = 0
 ELSE
     GOTO INPUT_LOOP_0
@@ -551,7 +551,7 @@ ELSE
     GOTO INPUT_LOOP_1
 ENDIF
 
-SIF TALENT:120
+SIF TALENT:남자
     GOTO TALENT_SET_COMMON
 
 PRINTL 처녀입니까?
@@ -674,7 +674,7 @@ TALENT:반항적 = RESULT != 0
 TALENT:츤데레 = (RESULT & 2) == 2
 
 ;솔직함
-SIF TALENT:11
+SIF TALENT:반항적
     GOTO JUMP_1
 PRINTL 그럼, 솔직하다는 거지?
 PRINTL [0] 너무 단락적이지, 그 해석은.

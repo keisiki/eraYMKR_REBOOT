@@ -13,7 +13,7 @@ SIF (FLAG:커맨드확장 & 4) == 0
     RETURN 0
 ;순종4미만 · 레즈끼(BL끼) 4 미만의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(소악마か망신か복종ならＯＫ)
 IF ASSIPLAY
-    SIF (ABL:ASSI:순종 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:120 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:남자 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;公開自慰を行ったことがない場合のビデオ撮影中は, 이상계 조교 필터가 오프되어 있지 않으면 불가
@@ -261,7 +261,7 @@ IF TEQUIP:25
     ENDIF
 
     ;정조관념
-    SIF TALENT:30
+    SIF TALENT:정조관념
         TIMES LOCAL:3, 3.00
     ;[작은체형]
     SIF TALENT:128
@@ -377,9 +377,9 @@ STAIN:애널 |= STAIN:손
 SIF TEQUIP:25
     TFLAG:122 = 992
 
-IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 3
-ELSEIF TALENT:120 && TALENT:PLAYER:남자
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 3
 ENDIF
 
@@ -436,15 +436,15 @@ ELSE
         PRINTFORM 기다리고 있는 %CALLNAME:TARGET%에게 자위를 허락하자 음란하게 \@(TEQUIP:42) ? 표정을 지으며 # 입술을 깨물며\@, 
     ELSEIF TFLAG:240 < 50
         PRINTFORM 자위를 명령하자 %조사선택(CALLNAME:TARGET, "는")% 
-        SIF TALENT:16
+        SIF TALENT:프라이드가높음
             PRINT 프라이드 높음을 보이며 
-        SIF TALENT:11
+        SIF TALENT:반항적
             PRINT 반항적인 태도로 
         PRINT 거부했지만 다시 명령하자 어쩔 수 없이 
     ELSEIF TFLAG:240 < 80
         PRINTFORML 조교의 성과가 나왔는지, %조사선택(CALLNAME:TARGET, "는")% 명령에 따라,
     ELSE
-        PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 자위의 명령에도 싫어하는 기색을 보이지 않고, 완전히 길들여진 \@(TALENT:120) ? 짐승 # 돼지\@의 표정으로,
+        PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 자위의 명령에도 싫어하는 기색을 보이지 않고, 완전히 길들여진 \@(TALENT:남자) ? 짐승 # 돼지\@의 표정으로,
     ENDIF
     SIF TEQUIP:50
         PRINT 비디오 카메라의 앞에서 
@@ -534,20 +534,20 @@ IF LOCAL:2
 ENDIF
 
 ;자제심
-IF TALENT:20
+IF TALENT:자제심
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
 ENDIF
 ;부끄럼쟁이
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ;부끄럼없음
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 2

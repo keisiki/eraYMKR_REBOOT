@@ -22,7 +22,7 @@ SIF TEQUIP:59 == 17 && ABL:기교 < 4
     RETURN 0
 ;순종4미만 · 레즈끼(BL끼) 4 미만의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(소악마か망신か복종ならＯＫ)
 IF ASSIPLAY
-    SIF (ABL:ASSI:순종 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:120 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:남자 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;公開自慰を行ったことがない場合のビデオ撮影中は, 이상계 조교 필터가 오프되어 있지 않으면 불가
@@ -470,7 +470,7 @@ IF TEQUIP:20 || TEQUIP:25
     ENDIF
 
     ;정조관념
-    SIF TALENT:30
+    SIF TALENT:정조관념
         TIMES LOCAL:3, 3.00
     ;小柄体形
     SIF TALENT:128
@@ -780,7 +780,7 @@ IF LOCAL:2 > 0
     ;保守的、도착적、淫乱、연모、服従、烙印、隷属の有無で求めた値
     LOCAL:3 += ABL:순종 + ABL:노출증
     LOCAL:3 += ABL:마조끼 * 2
-    SIF TALENT:24
+    SIF TALENT:보수적
         LOCAL:3 -= 3
     SIF TALENT:80
         LOCAL:3 += 2
@@ -881,9 +881,9 @@ ELSEIF TEQUIP:74
     TFLAG:122 = 985
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 4
-ELSEIF TALENT:120 && TALENT:PLAYER:남자
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 4
 ENDIF
 SIF PLAYER == MASTER
@@ -983,15 +983,15 @@ IF EX:20 || EX:23
     PRINTFORM 참고 있던 %CALLNAME:TARGET%에게 자위를 허락하니 \@(TEQUIP:42) ? 헤벌쭉한 표정을 보이며 # 입술을 비틀며\@, 
 ELSEIF TFLAG:240 < 50
     PRINTFORM 자위를 명령하니 %조사선택(CALLNAME:TARGET, "는")% 
-    SIF TALENT:16
+    SIF TALENT:프라이드가높음
         PRINT 프라이드가 얼마나 높은지 보여주며 
-    SIF TALENT:11
+    SIF TALENT:반항적
         PRINT 반항적인 태도로 
     PRINT 노려봤지만, 다시 명령하자 마지못해 
 ELSEIF TFLAG:240 < 80
     PRINTFORML 조교의 성과가 나왔는지, %조사선택(CALLNAME:TARGET, "는")% 명령에 따라, 
 ELSE
-    PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 자위명령에도 싫어하는 기색을 보이지 않고, 완전히 조교된 \@(TALENT:120) ? 암컷 # 짐승\@같은 표정으로, 
+    PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 자위명령에도 싫어하는 기색을 보이지 않고, 완전히 조교된 \@(TALENT:남자) ? 암컷 # 짐승\@같은 표정으로, 
 ENDIF
 SIF TEQUIP:50
     PRINT 비디오 카메라 앞에서 
@@ -1023,20 +1023,20 @@ ELSEIF TEQUIP:25 == 2
     PRINT 애널에 꽂혀있는 요석을 스스로 넣고 빼면서 
 ELSEIF TEQUIP:21
     PRINTFORM %조사선택(LOCALS:4, "로")% 열린 보지를 스스로의 손가락으로 만지고 돌리면서 
-ELSEIF TALENT:120
+ELSEIF TALENT:남자
     PRINT 자신의 육봉을 훑어대며 
 ELSE
     PRINT 보지를 손가락으로 벌려대며 
 ENDIF
 PRINTFORM %CALLNAME:TARGET%의 
 IF EXIST_PENIS(TARGET) && PALAM:13 >= PALAMLV:3
-    PRINTFORML \@(TALENT:120) ? 딱딱하게 솟은 페니스 # 질퍽거리는 보지\@에 진동하는 %조사선택(LOCALS:0, "를")% 접촉시켜
+    PRINTFORML \@(TALENT:남자) ? 딱딱하게 솟은 페니스 # 질퍽거리는 보지\@에 진동하는 %조사선택(LOCALS:0, "를")% 접촉시켜
 ELSEIF TEQUIP:68
     SIF EX:20
         PRINT 팽창한 
     PRINTFORML 클리토리스에 %조사선택(LOCALS:0, "를")% 대고, 그 주위를 어루만지며
 ELSEIF EXIST_PENIS(TARGET)
-    PRINTFORML \@(TALENT:120) ? 페니스 # 보지\@에 진동하는 %조사선택(LOCALS:0, "를")% 접촉시켜
+    PRINTFORML \@(TALENT:남자) ? 페니스 # 보지\@에 진동하는 %조사선택(LOCALS:0, "를")% 접촉시켜
 ELSEIF PALAM:13 >= PALAMLV:3
     PRINTFORML 딱딱하게 발기한 클리토리스에 진동하는 %조사선택(LOCALS:0, "를")% 접촉시켜
 ELSE
@@ -1062,9 +1062,9 @@ ELSEIF TEQUIP:25 == 1 && ABL:C감각 >= 5 && ABL:A감각 >= 5 && ABL:B감각 >= 
     PRINTW 바이브가 닿을 때마다 몇 번이고 절정에 다다르고 있다….
 ELSEIF ABL:C감각 >= 5 && ABL:B감각 >= 5 && ABL:자위중독 >= 3 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7
     PRINTL
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 주위를 신경 쓰지 않고, 열심히 자신의 육봉을 애무했다.
-    ELSEIF TALENT:121
+    ELSEIF TALENT:후타나리
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% \@(TEQUIP:42) ? # 교성을 지르며 \@열심히 자신의 보지와 페니스를 애무했다.
     ELSE
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% \@(TEQUIP:42) ? # 교성을 지르며 \@열심히 자신의 보지를 애무했다.
@@ -1123,20 +1123,20 @@ IF LOCAL:2
 ENDIF
 
 ;자제심
-IF TALENT:20
+IF TALENT:자제심
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
 ENDIF
 ;부끄럼쟁이
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ;恥薄い
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 2

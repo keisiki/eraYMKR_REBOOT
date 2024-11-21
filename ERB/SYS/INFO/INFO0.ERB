@@ -6,14 +6,14 @@
 ;-------------------------------------------------
 @SAVEINFO
 PUTFORM {DAY}일째\@(TIME == 0) ? 낮 # 밤\@ 
-SIF FLAG:게임모드 == 2 || TALENT:MASTER:998 || NO:MASTER != 0
+SIF FLAG:게임모드 == 2 || TALENT:MASTER:Debug || NO:MASTER != 0
     PUTFORM 주인:%CALLNAME:MASTER% 
 IF TARGET >= 0 && (TALENT:친애 || TALENT:상애)
     PUTFORM %CALLNAME:TARGET% 열애중 
 ELSEIF TARGET >= 0
     PUTFORM %CALLNAME:TARGET% 조교중 
 ENDIF
-IF TALENT:MASTER:998
+IF TALENT:MASTER:Debug
     PUTFORM DEBUG     
 ELSEIF FLAG:게임모드 == 1
     PUTFORM ABNORMAL  
@@ -46,7 +46,7 @@ IF FLAG:SHOP이벤트확장 & 2
     ;能力
     CALL NEW_PRINT_ABL, ARG
     ;素質
-    SIF FLAG:난이도 < 4 || ARG == MASTER || TALENT:MASTER:초상계산 || TALENT:MASTER:998
+    SIF FLAG:난이도 < 4 || ARG == MASTER || TALENT:MASTER:초상계산 || TALENT:MASTER:Debug
         CALL NEW_PRINT_TALENT, ARG
     ;刻印
     SIF ARG != MASTER
@@ -58,7 +58,7 @@ ELSE
     ;能力
     CALL SHOW_INFO_ABL, ARG
     ;素質
-    SIF FLAG:난이도 < 4 || ARG == MASTER || TALENT:MASTER:초상계산 || TALENT:MASTER:998
+    SIF FLAG:난이도 < 4 || ARG == MASTER || TALENT:MASTER:초상계산 || TALENT:MASTER:Debug
         CALL SHOW_INFO_TALENT, ARG
     ;刻印
     SIF ARG != MASTER
@@ -144,7 +144,7 @@ ELSE
     SIF CFLAG:ARG:41
         CALL PRINT_TENTACLE_INPLANT_SLAVE, ARG
     ;各種開発度表示処理
-    SIF (TALENT:MASTER:초상계산 || TALENT:MASTER:998) && (CFLAG:ARG:31 || CFLAG:ARG:60 || CFLAG:ARG:61 || CFLAG:ARG:62 || CFLAG:ARG:63 || CFLAG:ARG:64)
+    SIF (TALENT:MASTER:초상계산 || TALENT:MASTER:Debug) && (CFLAG:ARG:31 || CFLAG:ARG:60 || CFLAG:ARG:61 || CFLAG:ARG:62 || CFLAG:ARG:63 || CFLAG:ARG:64)
         CALL PRINT_DEVELOPMENT_LEVEL_SLAVE, ARG
     ;노예調教の進行状況表示処理
     CALL PRINT_SLAVE_TRAIN_PROCESS, ARG
@@ -444,7 +444,7 @@ PRINTFORM {DAY}일째
 CALL CALENDAR_PRINT, 1
 PRINTFORM \@(TIME == 0) ? (낮) # (밤)\@
 PRINTFORM 　자금:{MONEY}원　모드:
-IF TALENT:MASTER:998
+IF TALENT:MASTER:Debug
     PRINT Debug
     SIF TALENT:998
         PRINT  ★
@@ -469,9 +469,9 @@ IF FLAG:SHOP이벤트확장 & 4
         ELSE
             PRINTFORM (스트레스:{CFLAG:65}　
         ENDIF
-        IF TALENT:120 && TALENT:ASSI:남자
+        IF TALENT:남자 && TALENT:ASSI:남자
             PRINTFORM BL경험:{EXP:BL경험}　
-        ELSEIF TALENT:120 == 0 && TALENT:ASSI:남자 == 0
+        ELSEIF TALENT:남자 == 0 && TALENT:ASSI:남자 == 0
             PRINTFORM 레즈경험:{EXP:레즈경험}　
         ENDIF
         PRINTFORML 이상경험:{EXP:이상경험})
@@ -536,7 +536,7 @@ ENDIF
         CALL CALC_GAUGE8, TARGET, 1
 
     ;노예의 사정 게이지를 표시
-    SIF TALENT:120 || TALENT:121
+    SIF TALENT:남자 || TALENT:후타나리
         CALL CALC_GAUGE2_SLAVE
     ;노예의 분유 게이지를 표시
     SIF TALENT:134
@@ -545,7 +545,7 @@ ENDIF
     SIF TEQUIP:12 || TEQUIP:32 || TALENT:오줌싸개버릇 || EXP:방뇨경험
         CALL CALC_GAUGE4_SLAVE, TARGET, 0
     ;노예의 정음절정 게이지를 표시
-    SIF (TALENT:MASTER:초상계산 || TALENT:MASTER:998 || (ASSI >= 0 && TALENT:ASSI:초상계산)) && TALENT:66 && FLAG:정액도시락및정음절정패치 & 2
+    SIF (TALENT:MASTER:초상계산 || TALENT:MASTER:Debug || (ASSI >= 0 && TALENT:ASSI:초상계산)) && TALENT:66 && FLAG:정액도시락및정음절정패치 & 2
         CALL CALC_GAUGEX_SLAVE
 
     ;옵션에 따라 표시 타입 변경
@@ -893,7 +893,7 @@ IF ASSI >= 0
     ENDIF
 ENDIF
 SIF TEQUIP:60
-    PRINTFORM [\@(TALENT:120) ?  남 # 여\@체정식 플레이중]
+    PRINTFORM [\@(TALENT:남자) ?  남 # 여\@체정식 플레이중]
 SIF TEQUIP:68
     PRINT [애태우기 플레이중]
 SIF TEQUIP:69
@@ -1081,7 +1081,7 @@ IF EQUIP:14 || TEQUIP:8 || TEQUIP:9 || TEQUIP:10 || TEQUIP:11 || TEQUIP:12 || TE
             ENDIF
         ELSE
             IF TEQUIP:30 == 9
-                PRINTFORM [우산 \@ TALENT:120 || TALENT:121 ? 펠라치오 # 커닐링구스 \@]
+                PRINTFORM [우산 \@ TALENT:남자 || TALENT:후타나리 ? 펠라치오 # 커닐링구스 \@]
             ELSEIF TEQUIP:30 == 6
                 PRINT [전극 오나홀]
             ELSEIF TEQUIP:30 == 5

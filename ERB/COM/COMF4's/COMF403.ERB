@@ -31,16 +31,16 @@ SIF TEQUIP:20 == 9
     RETURN 1
 ;처녀で, 순종4미만 · 레즈끼4이하의 ASSI일 경우焼芋責めはできない(새드または새드끼Lv3이상ならＯＫ)
 IF TALENT:처녀 == 1 && ASSIPLAY
-    SIF (ABL:ASSI:순종 < 5 || ((TALENT:120 == 0 && ABL:ASSI:레즈끼 < 5) || (TALENT:120 && ABL:ASSI:BL끼 < 5))) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3
+    SIF (ABL:ASSI:순종 < 5 || ((TALENT:남자 == 0 && ABL:ASSI:레즈끼 < 5) || (TALENT:남자 && ABL:ASSI:BL끼 < 5))) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3
         RETURN 0
 ENDIF
 ;윤활 부족이고, 순종4미만 · 레즈끼3이하의 ASSI일 경우焼芋責めはできない(새드または새드끼Lv3이상ならＯＫ)
 IF PALAM:10 < PALAMLV:2 && ASSIPLAY
-    SIF (ABL:ASSI:순종 < 4 || ((TALENT:120 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:120 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3
         RETURN 0
 ENDIF
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;조교 대상이 [소인]일 경우에는 주인이 금단의 지식 보유자가 아니면 불가
 SIF TALENT:127 && TALENT:MASTER:금단의지식 == 0
@@ -325,7 +325,7 @@ SIF TALENT:128
     TIMES LOCAL:1 , 2.00
 
 ;정조관념(처녀는 있을 수 없다)
-SIF TALENT:30
+SIF TALENT:정조관념
     TIMES LOCAL:2, 3.00
 
 IF NO:TARGET == 8 || NO:TARGET == 22
@@ -349,9 +349,9 @@ ENDIF
 
 TFLAG:163 += 1
 
-IF TALENT:120 == 0 && TALENT:PLAYER:남자 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:남자
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -404,7 +404,7 @@ ELSE
             PRINTFORM 눈을 동그랗게 뜨고 %CALLNAME:PLAYER%의 손에 있는 것을 응시한 채로
         ELSEIF TALENT:음란
             PRINT 처녀란 것도 상관없이, 스스로 음순을 크게 펼쳐 삽입되는 것을 기다리고
-        ELSEIF TALENT:27
+        ELSEIF TALENT:일선을넘지않음
             PRINT 눈가에 눈물을 맺으면서 질끈 눈을 감아 눈앞의 현실을 부정하려는 듯이 목을 좌우로 흔들고
         ELSEIF TALENT:40
             PRINT 반미치광이가 되어 어떻게든 도망치려고 결사적으로 저항하고
