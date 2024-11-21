@@ -12,10 +12,10 @@ SIF DITEMTYPE:999:114 > 0
 SIF (FLAG:커맨드확장 & 512) == 0
     RETURN 0
 ;[パイパン]だと不可, 生えそろっていないと無理
-SIF TALENT:65 || (CFLAG:36 && BASE:음모 < 250)
+SIF TALENT:음모없음 || (CFLAG:36 && BASE:음모 < 250)
     RETURN 0
 ;テキストより[작은체형]はデフォでツルツル。[소인]もそれに準じる
-SIF (TALENT:128 || TALENT:127) && CFLAG:36 == 0
+SIF (TALENT:작은체형 || TALENT:소인) && CFLAG:36 == 0
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -147,13 +147,13 @@ SOURCE:18 += LOCAL:1
 SOURCE:12 += LOCAL:1
 
 ;[작은체형], [소인]
-SIF TALENT:128 || TALENT:127
+SIF TALENT:작은체형 || TALENT:소인
     TIMES SOURCE:12 , 2.50
 
-IF TALENT:65 == 0
+IF TALENT:음모없음 == 0
     PRINTL
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [%TALENTNAME:65%]가 되었다. 
-    TALENT:65 = 1
+    TALENT:음모없음 = 1
 ENDIF
 ;털은 나중에 나 오지 않게 된다
 SIF CFLAG:36 != 1
@@ -193,9 +193,9 @@ SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
 PRINTL
 PRINTFORML %CALLNAME:PLAYER%에게 명령되어 %조사선택(CALLNAME:TARGET, "는")% 흠칫 흠칫 자신의 음모를 한 올 한 올 손으로 집어 뽑아 내기 시작했다.
 PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-IF TALENT:40
+IF TALENT:아픔에약함
     PRINTW 음모를 뽑아 낼 때 마다 굵은 눈물을 흘리면서 신음하고 있다….
-ELSEIF TALENT:41
+ELSEIF TALENT:아픔에강함
     PRINTW 투덜 투덜 불평하면서, 가능한 한 덜 아프도록 모근을 누르면서, 음모를 차례 차례 뽑아 내고 있다….
 ELSE
     PRINTW 눈을 단단히 감고 이마에 비지땀을 흘리면서 음모를 뽑아 내고 있다….
@@ -273,14 +273,14 @@ ELSEIF TALENT:부끄럼없음
     RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
 ENDIF
 ;쾌감의 부정
-IF TALENT:71
+IF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
 ENDIF
 ;[소인]
-IF TALENT:127
+IF TALENT:소인
     SIF LOCAL:99
         RESULTS = %RESULTS% - 
     LOCAL:99 = 5
@@ -288,7 +288,7 @@ IF TALENT:127
     RESULTS = %RESULTS% %TALENTNAME:127%({LOCAL:99})
 ENDIF
 ;[작은체형]
-IF TALENT:128
+IF TALENT:작은체형
     SIF LOCAL:99
         RESULTS = %RESULTS% - 
     LOCAL:99 = 5

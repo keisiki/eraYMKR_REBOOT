@@ -10,7 +10,7 @@ SIF MORNING_EVENT_COMMON_JUDGMENT(2) == 0
     RETURN 0
 
 ;고양이혀면 고양이 펠라가 유효하지 않으면 불가
-IF TALENT:54
+IF TALENT:고양이혀
     ;고양이혀면 순종 3 · 기교 5 · 봉사정신 4가 필요
     SIF (FLAG:조교모드 & 16 && (ABL:순종 < 3 || ABL:기교 < 5 || ABL:봉사정신 < 4)) || (FLAG:조교모드 & 16) == 0
         RETURN 0
@@ -34,14 +34,14 @@ ELSE
     LOCAL = 5
 ENDIF
 ;악취둔감
-IF TALENT:61
+IF TALENT:냄새둔감
     LOCAL += 1
 ;악취민감
-ELSEIF TALENT:62
+ELSEIF TALENT:냄새민감
     LOCAL -= 1
 ENDIF
 ;헌신적
-SIF TALENT:63
+SIF TALENT:헌신적
     LOCAL += 1
 ;연모
 SIF TALENT:연모
@@ -85,7 +85,7 @@ ELSEIF TALENT:남자 && TALENT:MASTER:남자
 ENDIF
 
 ;[精愛味覚]があれば条件分岐
-IF TALENT:66 > 0
+IF TALENT:정애미각 > 0
     ;精飲절정경험
     CALL COMMON_UP_EXP,TARGET, 8, 1, 0, 1
     ;욕정의 구슬
@@ -134,7 +134,7 @@ SIF EXIST_PENIS(MASTER) && (TALENT:처녀 || EXP:V경험 <= 0)
 SIF EXIST_PENIS(MASTER) && CFLAG:42 & 2
     RETURN 0
 ;育児室に居て出産前なら不可能
-SIF CFLAG:4 == 2 && (TALENT:140 == 1 || TALENT:143 == 1)
+SIF CFLAG:4 == 2 && (TALENT:임신 == 1 || TALENT:포란중 == 1)
     RETURN 0
 RETURN 1
 
@@ -149,23 +149,23 @@ ELSE
     LOCAL = (ABL:노출증 < 4) ? 1 # 2
 ENDIF
 ;헌신적
-SIF TALENT:63
+SIF TALENT:헌신적
     LOCAL += 1
 ;快感に素直
-SIF TALENT:70
+SIF TALENT:쾌감에솔직
     LOCAL += 1
 ;Ｖ敏感(相手が棒持ち)
-IF TALENT:102 && EXIST_PENIS(MASTER)
+IF TALENT:V민감 && EXIST_PENIS(MASTER)
     LOCAL += 1
 ;Ｖ鈍感(相手が棒持ち)
-ELSEIF TALENT:103 && EXIST_PENIS(MASTER)
+ELSEIF TALENT:V둔감 && EXIST_PENIS(MASTER)
     LOCAL -= 1
 ENDIF
 ;Ｂ敏感(相手が棒なし)
-IF TALENT:106 && TALENT:MASTER:남자 == 0 && TALENT:MASTER:후타나리 == 0
+IF TALENT:B민감 && TALENT:MASTER:남자 == 0 && TALENT:MASTER:후타나리 == 0
     LOCAL += 1
 ;Ｂ鈍感(相手が棒なし)
-ELSEIF TALENT:107 && TALENT:MASTER:남자 == 0 && TALENT:MASTER:후타나리 == 0
+ELSEIF TALENT:B둔감 && TALENT:MASTER:남자 == 0 && TALENT:MASTER:후타나리 == 0
     LOCAL -= 1
 ENDIF
 ;연모
@@ -239,10 +239,10 @@ DRAWLINE
 ;-----------------------------------------------
 @MORNING_EVENT_JUDGMENT_2
 ;オトコか絶壁だと不可
-SIF TALENT:남자 || TALENT:110
+SIF TALENT:남자 || TALENT:절벽
     RETURN 0
 ;[爆乳]なら技巧LV1以上, [巨乳]でなければ技巧3以上, [貧乳]だと技巧4以上必要
-SIF (TALENT:113 && ABL:기교 == 0) || (TALENT:112 && ABL:기교 < 2) || (TALENT:111 == 0 && TALENT:112 == 0 && TALENT:113 == 0 && ABL:기교 < 3) || (TALENT:111 && ABL:기교 < 4)
+SIF (TALENT:폭유 && ABL:기교 == 0) || (TALENT:거유 && ABL:기교 < 2) || (TALENT:빈유 == 0 && TALENT:거유 == 0 && TALENT:폭유 == 0 && ABL:기교 < 3) || (TALENT:빈유 && ABL:기교 < 4)
     RETURN 0
 
 ;朝イベント범용実行判定（주인の竿が有るか？）
@@ -271,20 +271,20 @@ ELSE
     LOCAL:0 = 5
 ENDIF
 ;악취둔감
-IF TALENT:61
+IF TALENT:냄새둔감
     LOCAL:0 += 1
 ;악취민감
-ELSEIF TALENT:62
+ELSEIF TALENT:냄새민감
     LOCAL:0 -= 1
 ENDIF
 ;헌신적
-SIF TALENT:63
+SIF TALENT:헌신적
     LOCAL:0 += 1
 ;Ｂ敏感
-IF TALENT:106
+IF TALENT:B민감
     LOCAL:0 += 1
 ;Ｂ鈍感
-ELSEIF TALENT:107
+ELSEIF TALENT:B둔감
     LOCAL:0 -= 1
 ENDIF
 ;음란
@@ -298,12 +298,12 @@ DRAWLINE
 ;지문 컷
 IF CFLAG:99 == 0
     ;貧乳の場合
-    IF TALENT:111
+    IF TALENT:빈유
         PRINTFORML 잠에서 깨는 것과 동시에 하복부에 위화감이 느껴졌다.
         PRINTFORML 눈치채이지 않게 눈을 가만히 뜨니 %조사처리(CALLNAME:TARGET,"가")% 가슴으로 페니스를 희롱하는 중이었다.
         PRINTFORML 아무래도 파이즈리의 연습을 하고 있는 모양이다…….
     ;巨乳・爆乳の場合
-    ELSEIF TALENT:112 || TALENT:113
+    ELSEIF TALENT:거유 || TALENT:폭유
         PRINTFORML 잠에서 깨는 것과 동시에 하복부에 위화감이 느껴졌다.
         PRINTFORML 눈을 뜨니 %조사처리(CALLNAME:TARGET,"가")% 커다란 가슴으로 페니스를 끼우고 세게 부비고 있다.
     ;それ以外
@@ -317,7 +317,7 @@ ENDIF
 CALL SELF_KOJO, TARGET, 141, LOCAL
 
 ;巨乳・爆乳の場合のボーナス,欲情が2倍
-LOCAL:1 = (TALENT:112 || TALENT:113) ? 60 # 30
+LOCAL:1 = (TALENT:거유 || TALENT:폭유) ? 60 # 30
 
 ;首謀者のパイズリ実行回数
 CFLAG:56 += 1
@@ -344,7 +344,7 @@ CALL COMMON_UP_JUEL, TARGET, 12, (LOCAL:0 * 100), 0, 1
 ;욕정의 구슬
 CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL:0 * LOCAL:1), 0, 1
 ;恥情の珠(貧乳の場合のボーナス)
-SIF TALENT:110
+SIF TALENT:절벽
     CALL COMMON_UP_JUEL, TARGET, 15, (LOCAL:0 * 30), 0, 1
 ;굴복의 구슬
 CALL COMMON_UP_JUEL, TARGET, 14, (LOCAL:0 * 40), 1, 1
@@ -386,7 +386,7 @@ RETURN 1
 ;尻穴狂いの場合, 1/5の確率でアナル騎乗位になる
 ;尻穴狂いの条件は以下の通り
 ;「Ａ感覚3以上」もしくは「Ａ敏感な음란持ち」もしくは「淫尻持ち」もしくは「淫魔持ち」の状態でA경험がLv3より上の時
-IF RAND:5 == 0 && (ABL:A감각 >= 3 || (TALENT:104 && TALENT:음란) || TALENT:음고 || TALENT:음마) && EXP:A경험 > EXPLV:3
+IF RAND:5 == 0 && (ABL:A감각 >= 3 || (TALENT:A민감 && TALENT:음란) || TALENT:음고 || TALENT:음마) && EXP:A경험 > EXPLV:3
     RESULT = 0
     ;アナル騎乗位実行判定
     CALL MORNING_EVENT_JUDGMENT_4
@@ -412,16 +412,16 @@ ELSE
     LOCAL = 5
 ENDIF
 ;헌신적
-SIF TALENT:63
+SIF TALENT:헌신적
     LOCAL += 1
 ;快感に素直
-SIF TALENT:70
+SIF TALENT:쾌감에솔직
     LOCAL += 1
 ;Ｖ敏感
-IF TALENT:102
+IF TALENT:V민감
     LOCAL += 1
 ;Ｖ鈍感
-ELSEIF TALENT:103
+ELSEIF TALENT:V둔감
     LOCAL -= 1
 ENDIF
 ;연모
@@ -442,7 +442,7 @@ CFLAG:MASTER:154 |= 8
 
 ;ここで주인が胸を揉む分岐判定(ただし, Ｂ感覚Lv3未満もしくは絶壁持ちは分岐しない)
 DRAWLINE
-IF ABL:B감각 >= 3 && TALENT:110 == 0 && RAND:100 < 20
+IF ABL:B감각 >= 3 && TALENT:절벽 == 0 && RAND:100 < 20
     ;騎乗位で胸揉み付きの場合
 
     ;지문 컷
@@ -581,16 +581,16 @@ ELSE
     LOCAL = 5
 ENDIF
 ;헌신적
-SIF TALENT:63
+SIF TALENT:헌신적
     LOCAL += 1
 ;快感に素直
-SIF TALENT:70
+SIF TALENT:쾌감에솔직
     LOCAL += 1
 ;Ａ敏感
-IF TALENT:104
+IF TALENT:A민감
     LOCAL += 1
 ;Ａ鈍感
-ELSEIF TALENT:105
+ELSEIF TALENT:A둔감
     LOCAL -= 1
 ENDIF
 ;연모
@@ -675,7 +675,7 @@ IF TALENT:고양이혀 || TALENT:MASTER:고양이혀
 ENDIF
 
 ;育児室に居て出産前なら不可能
-SIF CFLAG:4 == 2 && (TALENT:140 == 1 || TALENT:143 == 1)
+SIF CFLAG:4 == 2 && (TALENT:임신 == 1 || TALENT:포란중 == 1)
     RETURN 0
 RETURN 1
 
@@ -692,7 +692,7 @@ ELSE
     LOCAL = 4
 ENDIF
 ;헌신적
-SIF TALENT:63
+SIF TALENT:헌신적
     LOCAL += 1
 ;친애
 SIF TALENT:친애
@@ -743,7 +743,7 @@ DRAWLINE
 SIF ABL:새드끼 < 3 || MARK:반발각인 >= 3
     RETURN 0
 ;育児室に居て出産前なら不可能
-SIF CFLAG:4 == 2 && (TALENT:140 == 1 || TALENT:143 == 1)
+SIF CFLAG:4 == 2 && (TALENT:임신 == 1 || TALENT:포란중 == 1)
     RETURN 0
 ;人魚はダメ
 SIF TALENT:인어
@@ -758,13 +758,13 @@ RETURN 1
 ;そもそもココに来る時点で3あるので最低1
 LOCAL = (ABL:새드끼 - 2)
 ;倒錯的
-SIF TALENT:80
+SIF TALENT:도착적
     LOCAL += 1
 ;サド
-SIF TALENT:81
+SIF TALENT:새드
     LOCAL += 2
 ;小悪魔
-SIF TALENT:93
+SIF TALENT:소악마
     LOCAL += 1
 ;ドＳ
 SIF TALENT:초S
@@ -846,10 +846,10 @@ SIF MARK:반발각인 >= 3 || MARK:ASSI:반발각인 >= 3
 SIF (CFLAG:42 & 2) || (CFLAG:ASSI:42 & 2)
     RETURN 0
 ;対象もしくは조수が育児室に居て出産前なら不可能
-SIF (CFLAG:4 == 2 && (TALENT:140 == 1 || TALENT:143 == 1)) || (CFLAG:ASSI:4 == 2 && (TALENT:140 == 1 || TALENT:143 == 1))
+SIF (CFLAG:4 == 2 && (TALENT:임신 == 1 || TALENT:포란중 == 1)) || (CFLAG:ASSI:4 == 2 && (TALENT:임신 == 1 || TALENT:포란중 == 1))
     RETURN 0
 ;対象もしくは조수が「レズっ気1未満で両刀でない」場合は不可
-SIF (ABL:레즈끼 < 1 && TALENT:83 == 0) || (ABL:ASSI:레즈끼 < 1 && TALENT:ASSI:바이 == 0)
+SIF (ABL:레즈끼 < 1 && TALENT:바이 == 0) || (ABL:ASSI:레즈끼 < 1 && TALENT:ASSI:바이 == 0)
     RETURN 0
 ;1/4の確率で発生
 SIF RAND:4 != 0
@@ -870,7 +870,7 @@ SIF TALENT:음란
 SIF TALENT:ASSI:음란
     LOCAL:50 += 2
 ;헌신적
-SIF TALENT:63
+SIF TALENT:헌신적
     LOCAL:50 += 1
 SIF TALENT:ASSI:헌신적
     LOCAL:50 += 1

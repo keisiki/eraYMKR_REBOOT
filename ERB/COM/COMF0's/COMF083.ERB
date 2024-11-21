@@ -15,7 +15,7 @@ SIF (FLAG:아이템확장 & 2) == 0
 SIF (FLAG:커맨드확장 & 64) == 0
     RETURN 0
 ;약물내성이라면 안 됨
-SIF TALENT:44
+SIF TALENT:약물내성
     RETURN 0
 ;기계라면 안 됨
 SIF TALENT:기계
@@ -67,11 +67,11 @@ SIF ASSI >= 0 && TALENT:ASSI:조합지식
 
 ;조교 대상으로 미약중독이 있으면 소비를 억제한다
 IF LOCAL:3
-    LOCAL:1 = (TALENT:46) ?  375 # 750
-    LOCAL:2 = (TALENT:46) ?  300 # 600
+    LOCAL:1 = (TALENT:미약중독) ?  375 # 750
+    LOCAL:2 = (TALENT:미약중독) ?  300 # 600
 ELSE
-    LOCAL:1 = (TALENT:46) ?  500 # 1000
-    LOCAL:2 = (TALENT:46) ?  400 # 800
+    LOCAL:1 = (TALENT:미약중독) ?  500 # 1000
+    LOCAL:2 = (TALENT:미약중독) ?  400 # 800
 ENDIF
 
 DOWNBASE:0 += LOCAL:1
@@ -168,7 +168,7 @@ SIF TALENT:반항적
 SIF TALENT:저항
     TIMES SOURCE:20 , 1.10
 ;미약중독
-IF TALENT:46
+IF TALENT:미약중독
     SOURCE:24 += 500
     TIMES SOURCE:3 , 1.50
     TIMES SOURCE:31 , 1.50
@@ -177,7 +177,7 @@ ELSE
     SOURCE:42 = 2 + RAND:5
 ENDIF
 ;B민감
-IF TALENT:106
+IF TALENT:B민감
     IF ABL:B감각 <= 3
         TIMES SOURCE:3 , 1.80
     ELSEIF ABL:B감각 == 4
@@ -188,7 +188,7 @@ IF TALENT:106
         EX:3 += RAND:3
     ENDIF
 ;B둔감
-ELSEIF TALENT:107
+ELSEIF TALENT:B둔감
     IF ABL:B감각 <= 3
         TIMES SOURCE:3 , 0.70
         EX:3 -= (EX:3 > 1) ?  1 # 0
@@ -249,11 +249,11 @@ SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
 
 PRINTL
 PRINTFORM %CALLNAME:TARGET%의 
-SIF TALENT:106
+SIF TALENT:B민감
     PRINT 민감한 
-IF TALENT:110 || TALENT:111
+IF TALENT:절벽 || TALENT:빈유
     PRINT 풍만함을 느낄 수 없는 
-ELSEIF TALENT:112 || TALENT:113
+ELSEIF TALENT:거유 || TALENT:폭유
     PRINT 커다랗게 출렁거리는 
 ENDIF
 IF ABL:B감각 >= 4
@@ -273,7 +273,7 @@ ELSE
 ENDIF
 SIF TFLAG:899 > 0
     PRINT 무의식 중에 
-IF TALENT:134
+IF TALENT:모유체질
     PRINT 대량의 모유를 분출하면서 
 ELSE
     PRINT 턱을 덜덜 떨면서 

@@ -28,7 +28,7 @@ ENDIF
 SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;[작은체형]の場合, 巨乳か爆乳じゃないとダメ
-SIF TALENT:128 && TALENT:111 == 0 && TALENT:112 == 0
+SIF TALENT:작은체형 && TALENT:빈유 == 0 && TALENT:거유 == 0
     RETURN 0
 ;남자라면 안 됨
 SIF TALENT:남자
@@ -90,13 +90,13 @@ TFLAG:201 = 0
 ;-------------------------------------------------
 IF FLAG:조교모드 & 8
     PRINTL 어디를 사용할까?
-    SIF TALENT:112 || TALENT:113
+    SIF TALENT:거유 || TALENT:폭유
         PRINTL [0] - 가슴
     PRINTL [1] - 가랑이(정좌)
     PRINTL [2] - 가랑이
     $INPUT_LOOP
     INPUT
-    IF RESULT == 0 && (TALENT:112 || TALENT:113)
+    IF RESULT == 0 && (TALENT:거유 || TALENT:폭유)
         LOCAL:1 = 0
     ELSEIF RESULT == 1 || RESULT == 2
         LOCAL:1 = RESULT
@@ -124,7 +124,7 @@ IF LOCAL:1 == 1
     TIMES SOURCE:22 , 1.30
 ENDIF
 
-IF (TALENT:112 || TALENT:113) && LOCAL:1 == 0
+IF (TALENT:거유 || TALENT:폭유) && LOCAL:1 == 0
     ;ABL:B감각을 본다
     IF ABL:B감각 == 0
         SOURCE:3 = 75
@@ -141,9 +141,9 @@ IF (TALENT:112 || TALENT:113) && LOCAL:1 == 0
     ENDIF
     
     ;B민감, 둔감을 본다
-    IF TALENT:106
+    IF TALENT:B민감
         TIMES SOURCE:3 , 1.50
-    ELSEIF TALENT:107
+    ELSEIF TALENT:B둔감
         TIMES SOURCE:3 , 0.60
     ENDIF
 ELSE
@@ -163,9 +163,9 @@ ELSE
     ENDIF
     
     ;C민감, 둔감을 본다
-    IF TALENT:100
+    IF TALENT:C민감
         TIMES SOURCE:0 , 1.50
-    ELSEIF TALENT:101
+    ELSEIF TALENT:C둔감
         TIMES SOURCE:0 , 0.60
     ENDIF
 ENDIF
@@ -195,10 +195,10 @@ SIF TALENT:프라이드가높음
 SIF TALENT:보수적
     SOURCE:22 /= 3
 ;약에 들어 있는 독 내성
-SIF TALENT:44
+SIF TALENT:약물내성
     SOURCE:18 /= 4
 
-IF (TALENT:112 == 0 && TALENT:113 == 0) || LOCAL:1 > 0
+IF (TALENT:거유 == 0 && TALENT:폭유 == 0) || LOCAL:1 > 0
     SIF PLAYER == MASTER
         TCVAR:41 += 1
     ;노예의 V⇔조교자의 입의 불결이 이동
@@ -226,16 +226,16 @@ SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
-IF (TALENT:112 || TALENT:113) && TFLAG:201 == 0
+IF (TALENT:거유 || TALENT:폭유) && TFLAG:201 == 0
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 풍부한 가슴을
     PRINTFORML 껴안도록 명령하고, 가슴의 구덩이에 술을 부어 넣었다.
     PRINTFORMW 술의 자극인가 %CALLNAME:TARGET%의 얼굴은 은은한 다홍색을 띄고 있다….
     PRINTL
     PRINTL
     PRINTFORM 충분히 술이 차 올랐을 무렵, %조사선택(CALLNAME:PLAYER, "는")% 
-    IF TALENT:134 && EX:10 && PALAM:10 >= PALAMLV:5
+    IF TALENT:모유체질 && EX:10 && PALAM:10 >= PALAMLV:5
         PRINTFORML %CALLNAME:TARGET%의 타액과 모유가 섞인 술을
-    ELSEIF TALENT:134 && EX:10
+    ELSEIF TALENT:모유체질 && EX:10
         PRINTL 모유가 섞여, 부드러운 맛이 된 술을
     ELSEIF PALAM:10 >= PALAMLV:5
         PRINTFORML %CALLNAME:TARGET%의 타액이 충분히 섞인 술을

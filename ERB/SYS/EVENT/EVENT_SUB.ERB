@@ -11,7 +11,7 @@
 ;남자 주인인 경우에는 레즈경험이 1000 이하, 여주인의 경우에는 BL경험이 1000 이하에다 호감도 500 이상이면 소질 변화
 ;※대상이 인계한 캐릭터일 경우, 레즈경험과 BL경험의 제한은 걸리지 않는다
 ;※바이라면 성별제한 무시. 동성간에는 경험제한이 반전
-SIF ((TALENT:MASTER:남자 == 0 && ((TALENT:남자 && EXP:BL경험 <= 1000) || ((TALENT:남자 == 0 && EXP:레즈경험 >= 1000) || TALENT:83))) || (TALENT:MASTER:남자 && ((TALENT:남자 == 0 && EXP:레즈경험 <= 1000) || ((TALENT:남자 && EXP:BL경험 >= 1000) || TALENT:83))) || CFLAG:18) && CFLAG:11 == 0 && CFLAG:2 >= 500 && MARK:굴복각인 && MARK:약물각인 == 0 && MARK:공포각인 == 0 && MARK:반발각인 == 0 && TALENT:흠집 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0 && FLAG:SHOP이벤트확장 & 32
+SIF ((TALENT:MASTER:남자 == 0 && ((TALENT:남자 && EXP:BL경험 <= 1000) || ((TALENT:남자 == 0 && EXP:레즈경험 >= 1000) || TALENT:바이))) || (TALENT:MASTER:남자 && ((TALENT:남자 == 0 && EXP:레즈경험 <= 1000) || ((TALENT:남자 && EXP:BL경험 >= 1000) || TALENT:바이))) || CFLAG:18) && CFLAG:11 == 0 && CFLAG:2 >= 500 && MARK:굴복각인 && MARK:약물각인 == 0 && MARK:공포각인 == 0 && MARK:반발각인 == 0 && TALENT:흠집 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0 && FLAG:SHOP이벤트확장 & 32
     CALL EVENT_PURE_LOVE
 
 LOCAL = 0
@@ -33,7 +33,7 @@ IF (((EXP:레즈경험 < 1000 || CFLAG:18) && TALENT:남자 == 0 && TALENT:MASTE
 ;同性同士の場合, レズ経験1500以上かつ, レズっ気4以上かつ, レズ中毒3以上(オトコ同士ならＢＬ経験1500以上かつ, ＢＬっ気4以上かつ, ＢＬ中毒3以上)で反発刻印・精神崩壊・傀儡がない場合
 ;※対象が引き継いだキャラの場合, レズ経験とＢＬ経験の制限は付かない
 ;※両刀なら能力制限無視
-ELSEIF (((EXP:레즈경험 >= 1500 || CFLAG:18) && ((ABL:레즈끼 > 3 && ABL:레즈중독 > 2) || TALENT:83) && TALENT:남자 == 0 && TALENT:MASTER:남자 == 0) || ((EXP:BL경험 >= 1500 || CFLAG:18) && ((ABL:BL끼 > 3 && ABL:BL중독 > 2) || TALENT:83) && TALENT:남자 && TALENT:MASTER:남자)) && MARK:반발각인 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
+ELSEIF (((EXP:레즈경험 >= 1500 || CFLAG:18) && ((ABL:레즈끼 > 3 && ABL:레즈중독 > 2) || TALENT:바이) && TALENT:남자 == 0 && TALENT:MASTER:남자 == 0) || ((EXP:BL경험 >= 1500 || CFLAG:18) && ((ABL:BL끼 > 3 && ABL:BL중독 > 2) || TALENT:바이) && TALENT:남자 && TALENT:MASTER:남자)) && MARK:반발각인 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
     ;必要な好感度は異性の時の1.5倍
     ;薬物刻印・恐怖刻印0で烙印, 隷属, 壊造人格がない, 従順が5以上かつ恋慕, 好感度が7500以上で愛情経験200以上で親愛
     IF ABL:순종 >= 5 && EXP:애정경험 >= 200 && TALENT:연모 && TALENT:친애 == 0 && TALENT:낙인 == 0 && TALENT:예속 == 0 && TALENT:괴조인격 == 0 && CFLAG:2 >= 7500 && MARK:약물각인 == 0 && MARK:공포각인 == 0
@@ -75,11 +75,11 @@ TFLAG:96 = 0
 TFLAG:109 = 0
 
 ;被写経験が40以上で人気が付く
-IF EXP:피사경험 >= 40 && TALENT:94 == 0 && TFLAG:199 == 0
+IF EXP:피사경험 >= 40 && TALENT:인기 == 0 && TFLAG:199 == 0
     PRINTFORMW %CALLNAME:TARGET%의 비디오가 인기를 끌어모으는 모양이다….
     CALL SELF_KOJO, TARGET, 104
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [인기]를 얻었다.
-    TALENT:94 = 1
+    TALENT:인기 = 1
 ENDIF
 
 ;薬物刻印3以上かつ快楽刻印3以上だと[薬毒耐性]を失うイベント判定へ
@@ -105,12 +105,12 @@ ENDIF
 LOCAL = 0
 ;[両刀]未所持で主人調教経験が1000以上, 主人と対象が同性の場合
 ;男主人なら対象が[男嫌い]を持っていないか, ＢＬっ気LV3以上かつ好感度200以上必要
-IF TALENT:83 == 0 && TALENT:남자 && TALENT:MASTER:남자 && EXP:주인조교경험 >= 1000 && (TALENT:남성혐오 == 0 && (ABL:BL끼 >= 3 && CFLAG:2 >= 200))
+IF TALENT:바이 == 0 && TALENT:남자 && TALENT:MASTER:남자 && EXP:주인조교경험 >= 1000 && (TALENT:남성혐오 == 0 && (ABL:BL끼 >= 3 && CFLAG:2 >= 200))
     ;ＢＬっ気LV5かつＢＬ中毒LV5, またはＢＬ中毒LV3以上かつＢＬ経験10000以上, またはＢＬ経験30000以上で[両刀]が付く
     SIF (ABL:BL끼 >= 5 && ABL:BL중독 >= 5) || (ABL:BL중독 >= 3 && EXP:BL경험 >= 10000) || EXP:BL경험 >= 30000
         LOCAL = 1
 ;女主人なら対象が[女嫌い]を持っていないか, レズっ気LV3以上かつ好感度200以上必要
-ELSEIF TALENT:83 == 0 && TALENT:남자 == 0 && TALENT:MASTER:남자 == 0 && EXP:주인조교경험 >= 1000 && (TALENT:여성혐오 == 0 && (ABL:레즈끼 >= 3 && CFLAG:2 >= 200))
+ELSEIF TALENT:바이 == 0 && TALENT:남자 == 0 && TALENT:MASTER:남자 == 0 && EXP:주인조교경험 >= 1000 && (TALENT:여성혐오 == 0 && (ABL:레즈끼 >= 3 && CFLAG:2 >= 200))
     ;レズっ気LV5かつレズ中毒LV5, またはレズ中毒LV3以上かつレズ経験10000以上, またはレズ経験30000以上で[両刀]が付く
     SIF (ABL:레즈끼 >= 5 && ABL:레즈중독 >= 5) || (ABL:레즈중독 >= 3 && EXP:레즈경험 >= 10000) || EXP:레즈경험 >= 30000
         LOCAL = 1
@@ -120,7 +120,7 @@ IF LOCAL == 1 && (FLAG:게임모드 == 1 || FLAG:게임모드 == 2)
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% \@ TALENT:남자 ? 남자 # 여자 \@끼리의 관계에 눈을 뜬 것 같다…….
     CALL SELF_KOJO, TARGET, 109
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [바이]가 되었다.
-    TALENT:83 = 1
+    TALENT:바이 = 1
 ENDIF
 
 ;堕とした人数が5人以上で, 謎の魅力が付く
@@ -154,7 +154,7 @@ CALL GET_CHILD_ALL
 ;[ツンデレ]を持っている場合, [反抗的][素直]が変動しないように変更
 @EVENT_PURE_LOVE
 ;[抵抗][抑圧][無関心][反抗的][生意気][男嫌い][女嫌い][快感の否定][一線越えない][嫉妬][狂気]のどれかでない限り発生しない
-SIF TALENT:저항 == 0 && TALENT:억압 == 0 && TALENT:무관심 == 0 && TALENT:반항적 == 0 && TALENT:건방짐 == 0 && TALENT:남성혐오 == 0 && TALENT:여성혐오 == 0 && TALENT:71 == 0 && TALENT:일선을넘지않음 == 0 && TALENT:질투 == 0 && TALENT:광기 == 0
+SIF TALENT:저항 == 0 && TALENT:억압 == 0 && TALENT:무관심 == 0 && TALENT:반항적 == 0 && TALENT:건방짐 == 0 && TALENT:남성혐오 == 0 && TALENT:여성혐오 == 0 && TALENT:쾌감을부정 == 0 && TALENT:일선을넘지않음 == 0 && TALENT:질투 == 0 && TALENT:광기 == 0
     RETURN 0
 
 LOCAL = 0
@@ -185,7 +185,7 @@ IF CFLAG:2 >= 1000 && EXP:애정경험 >= 500 && MARK:쾌락각인 >= 3
 ENDIF
 ;好感度1500以上で愛情経験が700以上, 快楽刻印が3, 屈服刻印が2以上
 IF CFLAG:2 >= 1500 && EXP:애정경험 >= 700 && MARK:쾌락각인 >= 3 && MARK:굴복각인 >= 2
-    SIF TALENT:71
+    SIF TALENT:쾌감을부정
         LOCAL |= 128
     SIF TALENT:일선을넘지않음
         LOCAL |= 256
@@ -245,7 +245,7 @@ IF LOCAL & 128
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"가")% 주는 쾌락을 받아들이는 것 같다….
     CALL SELF_KOJO, TARGET, 59
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [쾌감의 부정]을 잃었다.
-    TALENT:71 = 0
+    TALENT:쾌감을부정 = 0
     CFLAG:13 |= 32
     LOCAL:1 = 1
 ENDIF
@@ -313,10 +313,10 @@ PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [친애]를 얻었다.
 TALENT:친애 = 1
 CFLAG:14 |= 4
 IF FLAG:SHOP이벤트확장 & 32
-    IF TALENT:71 && EXP:봉사쾌락경험 >= 500 && MARK:쾌락각인 >= 3
+    IF TALENT:쾌감을부정 && EXP:봉사쾌락경험 >= 500 && MARK:쾌락각인 >= 3
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"가")% 주는 쾌락을 받아들이는 것 같다….
         PRINTFORMW %조사처리(NAME:TARGET,"는")% [쾌감의 부정]을 잃었다.
-        TALENT:71 = 0
+        TALENT:쾌감을부정 = 0
         CFLAG:13 |= 32
     ENDIF
     IF TALENT:일선을넘지않음 && EXP:애정경험 >= 500
@@ -458,7 +458,7 @@ IF FLAG:커맨드확장 & 4 && TFLAG:104 & 4
 ENDIF
 ;Ｂ系拡張コマンド有効時にＢ感覚5以上, Ｂ快楽経験300以上, Ｂ敏感を持っているか噴乳経験と乳腺開発経験の合計が100を超えている, 今回調教中にＢ절정30回以上で淫乳
 IF FLAG:커맨드확장 & 8 && TFLAG:104 & 8
-    SIF ABL:B감각 >= 5 && EXP:B쾌락경험 >= 300 && (TALENT:106 || EXP:분유경험 + EXP:유선개발경험 >= 100) && TALENT:음유 == 0
+    SIF ABL:B감각 >= 5 && EXP:B쾌락경험 >= 300 && (TALENT:B민감 || EXP:분유경험 + EXP:유선개발경험 >= 100) && TALENT:음유 == 0
         LOCAL |= 8
 ENDIF
 ;Ｃ系拡張コマンド有効時にＣ感覚4以上, 放尿経験250以上, Ｕ拡張経験10以上, 尿道開発経験300以上, おもらし癖あり, 今回調教中に放尿10回以上かつ恥情が30000以上で尿道狂
@@ -475,9 +475,9 @@ ENDIF
 ;拷問系, 精神操作系コマンド有効時に欲情3以上, サドっ気5以上(サド持ちなら3以上), 苦痛刻印3, 緊縛経験とＳＭ教育経験が両方とも150以上, 異常経験が10以上, 媚薬を使うことなく今回調教中に苦痛と欲情が30000以上でドＳ
 ;拷問系, 精神操作系コマンド有効時に露出癖3以上, マゾっ気5以上(マゾ持ちなら3以上), 苦痛刻印3, 緊縛経験と苦痛快楽経験が両方とも150以上, 異常経験が10以上, 媚薬を使うことなく今回調教中に苦痛と屈服が30000以上でドＭ
 IF FLAG:커맨드확장 & 16
-    SIF ABL:욕망 >= 3 && (ABL:새드끼 >= 5 || (TALENT:81 && ABL:새드끼 >= 3)) && EXP:긴박경험 >= 150 && EXP:SM교육경험 >= 150 && EXP:이상경험 >= 10 && MARK:고통각인 >= 3 && TALENT:초S == 0 && TFLAG:104 & 64
+    SIF ABL:욕망 >= 3 && (ABL:새드끼 >= 5 || (TALENT:새드 && ABL:새드끼 >= 3)) && EXP:긴박경험 >= 150 && EXP:SM교육경험 >= 150 && EXP:이상경험 >= 10 && MARK:고통각인 >= 3 && TALENT:초S == 0 && TFLAG:104 & 64
         LOCAL |= 128
-    SIF ABL:노출증 >= 3 && (ABL:마조끼 >= 5 || (TALENT:82 && ABL:마조끼 >= 3)) && EXP:고통쾌락경험 >= 150 && EXP:긴박경험 >= 150 && EXP:이상경험 >= 10 && MARK:고통각인 >= 3 && TALENT:초M == 0 && TFLAG:104 & 128
+    SIF ABL:노출증 >= 3 && (ABL:마조끼 >= 5 || (TALENT:마조 && ABL:마조끼 >= 3)) && EXP:고통쾌락경험 >= 150 && EXP:긴박경험 >= 150 && EXP:이상경험 >= 10 && MARK:고통각인 >= 3 && TALENT:초M == 0 && TFLAG:104 & 128
         LOCAL |= 64
 ENDIF
 ;淫乱系素質同時全取得イベント(様々な形の愛(?)を受け続けた結果, 身体が完全に主人に適応しきってしまった……と解釈していただければ)
@@ -652,7 +652,7 @@ FLAG:음마총계 += 1
 ;-------------------------------------------------
 @EVENT_DRUG_FREE
 ;妊娠中, 懐卵, 寄生中はダメ
-SIF TALENT:140 || TALENT:145 || TALENT:146
+SIF TALENT:임신 || TALENT:회란 || TALENT:기생
     RETURN 0
 ;欲情の珠が2500000以上必要
 SIF JUEL:13 < 2500000
@@ -666,12 +666,12 @@ PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 신체는 약물 저항력이 �
 CALL SELF_KOJO, TARGET, 90
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [약물면역]을 잃었다.
 ;부작용으로서 회복 능력이 저하하는지 피로한다.
-IF TALENT:137
+IF TALENT:회복빠름
     PRINTFORMW %CALLNAME:TARGET%의 회복 능력이 저하했다.
-    TALENT:137 = 0
-ELSEIF TALENT:138 == 0
+    TALENT:회복빠름 = 0
+ELSEIF TALENT:회복느림 == 0
     PRINTFORMW %CALLNAME:TARGET%의 회복 능력이 꽤 저하했다.
-    TALENT:138 = 1
+    TALENT:회복느림 = 1
 ELSE
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 피곤하게 보인다.
     BASE:0 /= 10
@@ -690,12 +690,12 @@ PRINTFORMW %CALLNAME:TARGET%의 상태가 이상하다….
 IF TFLAG:106 & 1
     PRINTFORM %CALLNAME:TARGET%の\@(TALENT:남자 || TALENT:후타나리) ? 페니스 # 클리토리스\@는 
     PRINTFORML 촉수가 분비한 미약에 의해 민감해져버린 것 같다.
-    IF TALENT:101
+    IF TALENT:C둔감
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [Ｃ둔감]을 잃었다.
-        TALENT:101 = 0
+        TALENT:C둔감 = 0
     ELSE
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [Ｃ민감]을 얻었다.
-        TALENT:100 = 1
+        TALENT:C민감 = 1
     ENDIF
     ;Ｃ感覚鋭敏化イベント口上呼び出し(TFLAG:200= 13)
     CALL SELF_KOJO, TARGET, 13
@@ -703,12 +703,12 @@ IF TFLAG:106 & 1
 ENDIF
 IF TFLAG:106 & 2
     PRINTFORMW %CALLNAME:TARGET%의 꿀항아리는 촉수가 분비한 미약에 의해 민감해져버린 것 같다.
-    IF TALENT:103
+    IF TALENT:V둔감
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [V둔감]을 잃었다.
-        TALENT:103 = 0
+        TALENT:V둔감 = 0
     ELSE
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [V민감]을 얻었다.
-        TALENT:102 = 1
+        TALENT:V민감 = 1
     ENDIF
     ;Ｖ感覚鋭敏化イベント口上呼び出し(TFLAG:200= 14)
     CALL SELF_KOJO, TARGET, 14
@@ -716,12 +716,12 @@ IF TFLAG:106 & 2
 ENDIF
 IF TFLAG:106 & 4
     PRINTFORMW %CALLNAME:TARGET%의 항문은 촉수가 분비한 미약에 의해 민감해져버린 것 같다.
-    IF TALENT:105
+    IF TALENT:A둔감
         PRINTFORMW %조사처리(NAME:TARGET,"는")% [Ａ둔감]을 잃었다.
-        TALENT:105 = 0
+        TALENT:A둔감 = 0
     ELSE
         PRINTFORMW %조사처리(NAME:TARGET,"는")% [Ａ민감]을 얻었다.
-        TALENT:104 = 1
+        TALENT:A민감 = 1
     ENDIF
     ;Ａ感覚鋭敏化イベント口上呼び出し(TFLAG:200= 15)
     CALL SELF_KOJO, TARGET, 15
@@ -729,12 +729,12 @@ IF TFLAG:106 & 4
 ENDIF
 IF TFLAG:106 & 8
     PRINTFORMW %CALLNAME:TARGET%의 가슴은 촉수가 분비한 미약에 의해 민감해져버린 것 같다.
-    IF TALENT:107
+    IF TALENT:B둔감
         PRINTFORMW %조사처리(NAME:TARGET,"는")% [Ｂ둔감]을 잃었다.
-        TALENT:107 = 0
+        TALENT:B둔감 = 0
     ELSE
         PRINTFORMW %조사처리(NAME:TARGET,"는")% [Ｂ민감]을 얻었다.
-        TALENT:106 = 1
+        TALENT:B민감 = 1
     ENDIF
     ;Ｂ感覚鋭敏化イベント口上呼び出し(TFLAG:200= 16)
     CALL SELF_KOJO, TARGET, 16
@@ -745,7 +745,7 @@ IF TFLAG:106 & 16
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 정액의 맛에 대해 과민하게 반응하게 되었습니다
     ;精愛味覚取得イベント口上呼び出し(TFLAG:200= 17)
     CALL SELF_KOJO, TARGET, 17
-    TALENT:66 = 1
+    TALENT:정애미각 = 1
     PRINTFORMW %EXPNAME:50%＋1
     EXP:이상경험 += 1
     CFLAG:11 |= 4
@@ -757,9 +757,9 @@ IF TFLAG:106 & 16
     ENDIF
     ;素質の変化
     ;汚臭敏感がなくなり, 弱味を握る
-    IF TALENT:62
+    IF TALENT:냄새민감
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %TALENTNAME:62%이 아니게 되었다
-        TALENT:62 = 0
+        TALENT:냄새민감 = 0
     ENDIF
     IF TALENT:약점 == 0
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:TARGET%의 %TALENTNAME:39%을 잡았다.
@@ -937,9 +937,9 @@ FLAG:주인칭호 |= 16
 PRINTFORML %조사처리(CALLNAME:TARGET,"를")% 어떻게 하겠습니까?
 SIF TEQUIP:75 & 1 || TEQUIP:76 & 1
     PRINTL [0] 원래 크기로 돌려준다.
-SIF TALENT:127 == 0 && (TEQUIP:75 & 1) == 0
+SIF TALENT:소인 == 0 && (TEQUIP:75 & 1) == 0
     PRINTFORML [1] 일시적으로 %TALENTNAME:127% 시킨다.
-SIF TALENT:129 == 0 && (TEQUIP:76 & 1) == 0
+SIF TALENT:거구 == 0 && (TEQUIP:76 & 1) == 0
     PRINTFORML [2] 일시적으로 %TALENTNAME:129% 시킨다.
 PRINTL [100] 그만둔다.
 $INPUT_LOOP
@@ -949,27 +949,27 @@ IF RESULT == 100
 ELSEIF RESULT == 0 && (TEQUIP:75 & 1 || TEQUIP:76 & 1)
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 원래 크기로 돌아갔다.
     IF TEQUIP:75 & 1
-        TALENT:127 = 0
+        TALENT:소인 = 0
         TEQUIP:75 -= 1
     ENDIF
     IF TEQUIP:76 & 1
-        TALENT:129 = 0
+        TALENT:거구 = 0
         TEQUIP:76 -= 1
     ENDIF
-ELSEIF RESULT == 1 && TALENT:127 == 0 && (TEQUIP:75 & 1) == 0
+ELSEIF RESULT == 1 && TALENT:소인 == 0 && (TEQUIP:75 & 1) == 0
     PRINTFORMW %CALLNAME:TARGET%의 모습은 작아졌다.
-    TALENT:127 = 1
+    TALENT:소인 = 1
     TEQUIP:75 |= 1
     IF TEQUIP:76 & 1
-        TALENT:129 = 0
+        TALENT:거구 = 0
         TEQUIP:76 -= 1
     ENDIF
-ELSEIF RESULT == 2 && TALENT:129 == 0 && (TEQUIP:76 & 1) == 0
+ELSEIF RESULT == 2 && TALENT:거구 == 0 && (TEQUIP:76 & 1) == 0
     PRINTFORMW %CALLNAME:TARGET%의 모습은 커졌다.
-    TALENT:129 = 1
+    TALENT:거구 = 1
     TEQUIP:76 |= 1
     IF TEQUIP:75 & 1
-        TALENT:127 = 0
+        TALENT:소인 = 0
         TEQUIP:75 -= 1
     ENDIF
 ELSE
@@ -1012,7 +1012,7 @@ ELSEIF RESULT == 1 && TALENT:MASTER:소인 == 0 && (TEQUIP:75 & 2) == 0
         TALENT:MASTER:거구 = 0
         TEQUIP:76 -= 2
     ENDIF
-ELSEIF RESULT == 2 && TALENT:129 == 0 && (TEQUIP:76 & 2) == 0
+ELSEIF RESULT == 2 && TALENT:거구 == 0 && (TEQUIP:76 & 2) == 0
     PRINTFORMW %CALLNAME:MASTER%의 모습은 커졌다.
     TALENT:MASTER:거구 = 1
     TEQUIP:76 |= 2
@@ -1081,7 +1081,7 @@ RETURN 1
 @RESIZE
 LOCAL = 0
 IF TEQUIP:75 & 1
-    TALENT:127 = 0
+    TALENT:소인 = 0
     LOCAL |= 1
 ELSEIF TEQUIP:75 & 2
     TALENT:MASTER:소인 = 0
@@ -1093,7 +1093,7 @@ ENDIF
 TEQUIP:75 = 0
 
 IF TEQUIP:76 & 1
-    TALENT:129 = 0
+    TALENT:거구 = 0
     LOCAL |= 1
 ELSEIF TEQUIP:76 & 2
     TALENT:MASTER:거구 = 0

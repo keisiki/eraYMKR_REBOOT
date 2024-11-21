@@ -630,7 +630,7 @@ CFLAG:ARG:13 |= 2048
 IF CFLAG:36 == 1 && BASE:음모
     PRINTFORML %CALLNAME:TARGET%의 밑쪽 털을 아주 깔끔하게 밀어버렸습니다.
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:65%]가 되었다.
-    TALENT:65 = 1
+    TALENT:음모없음 = 1
     BASE:음모 = 0
 ENDIF
 
@@ -742,16 +742,16 @@ IF TARGET >= 0
     ;ふたなりイベント抑制がオフの状態で, [オトコ]でも[ふたなり]でなく, クリトリスリングを付けていないキャラが前提
     IF TALENT:남자 == 0 && TALENT:후타나리 == 0 && (CFLAG:42 & 1) == 0 && (FLAG:조교모드 & 128) == 0
         ;不思議の根持ちで精液経験が300以上で生える
-        SIF TALENT:122 == 1 && EXP:정액경험 >= 300
+        SIF TALENT:수상한뿌리 == 1 && EXP:정액경험 >= 300
             CALL EVENT_FUTA_NEXTDAY
         ;具現持ちでレズ経験2500以上で生える
-        SIF TALENT:123 && EXP:레즈경험 >= 2500 
+        SIF TALENT:구현 && EXP:레즈경험 >= 2500 
             CALL EVENT_FUTA_NEXTDAY
     ENDIF
 
     ;貞操帯なしの状態で放尿レベル50(幼稚または幼児, 幼児退行持ちの場合は25)以上でおもらし癖がつく
     IF TALENT:오줌싸개버릇 == 0 && (CFLAG:42 & 2) == 0
-        SIF ((TALENT:130 || TALENT:131 || TALENT:유아퇴행) && CFLAG:31 >= 25) || CFLAG:31 >= 50
+        SIF ((TALENT:유아 || TALENT:유치 || TALENT:유아퇴행) && CFLAG:31 >= 25) || CFLAG:31 >= 50
             CALL EVENT_MORASI_NEXTDAY
     ENDIF
 
@@ -815,10 +815,10 @@ ENDIF
 SIF TFLAG:212 > 0
     TARGET = (TFLAG:212 >= CHARANUM) ? -1 # TFLAG:212
 ;朝のイベント.抱卵中の場合はイベントなし.
-IF TARGET >= 0 && TALENT:143 == 0
+IF TARGET >= 0 && TALENT:포란중 == 0
     CALL MORNING_EVENT_JUDGMENT
     ;朝の搾りたてミルク.Ｂ系拡張コマンドを有効にした場合, ランダムで発生
-    SIF FLAG:커맨드확장 & 8 && TALENT:134 && ABL:욕망 >= 4 && ABL:봉사정신 >= 4 && ABL:분유중독 > 0 && RAND:3 == 0
+    SIF FLAG:커맨드확장 & 8 && TALENT:모유체질 && ABL:욕망 >= 4 && ABL:봉사정신 >= 4 && ABL:분유중독 > 0 && RAND:3 == 0
         CALL MORNING_EVENT_MILK
 ENDIF
 ;夜イベントとの同期処理
@@ -939,7 +939,7 @@ CALL EVENT_FUTA_PLUS_COMMON, TARGET
 ;--------------------------------------------------
 @EVENT_MORASI_NEXTDAY
 PRINTFORMW (으…뭐야 이거?)
-PRINTFORMW %조사처리(CALLNAME:TARGET,"가")% \@(TALENT:130 == 0 && TALENT:131 == 0) ? 실례를 # 쉬야를 \@ 해 버린 모양이다….
+PRINTFORMW %조사처리(CALLNAME:TARGET,"가")% \@(TALENT:유아 == 0 && TALENT:유치 == 0) ? 실례를 # 쉬야를 \@ 해 버린 모양이다….
 CALL SELF_KOJO, TARGET, 102
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [오줌싸개]가 붙었다.
 TALENT:오줌싸개버릇 = 1
@@ -953,7 +953,7 @@ CALL CALC_GAUGE4_SLAVE, TARGET,1
 LOCAL = 0
 ;[幼児]を持っていない従順・欲望・マゾっ気が全て4以上で[幼稚]を持っているか異常経験が7以上だと[幼児退行]
 ;ただし[幼稚]を持っていないかつ, [蓬莱人]を持っている場合は異常経験が15以上必要
-IF ABL:순종 >= 4 && ABL:욕망 >= 4 && ABL:마조끼 >= 4 && TALENT:130 == 0 && (TALENT:131 || (TALENT:봉래인 == 0 && EXP:이상경험 >= 7) || EXP:이상경험 >= 15) && TALENT:유아퇴행 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
+IF ABL:순종 >= 4 && ABL:욕망 >= 4 && ABL:마조끼 >= 4 && TALENT:유아 == 0 && (TALENT:유치 || (TALENT:봉래인 == 0 && EXP:이상경험 >= 7) || EXP:이상경험 >= 15) && TALENT:유아퇴행 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
     LOCAL |= 1
     ;貞操帯なしの状態で露出が5のときはさらにおもらし癖がつく
     SIF ABL:노출증 == 5 && TALENT:오줌싸개버릇 == 0 && (CFLAG:42 & 2) == 0
@@ -1020,9 +1020,9 @@ IF TALENT:저항
     CFLAG:13 |= 2
 ENDIF
 ;幼稚消滅
-IF TALENT:131
+IF TALENT:유치
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:131%]를 잃었다.
-    TALENT:131 = 0
+    TALENT:유치 = 0
     CFLAG:13 |= 128
 ENDIF
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:159%]을 얻었다.

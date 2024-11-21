@@ -21,7 +21,7 @@ SIF TEQUIP:55 == 5
 SIF ITEM:61 < 5 && NOITEM == 0
     RETURN 0
 ;薬毒耐性だとダメ
-SIF TALENT:44
+SIF TALENT:약물내성
     RETURN 0
 ;기계면 불가
 SIF TALENT:기계
@@ -106,7 +106,7 @@ IF TALENT:MASTER:조합지식 || (ASSI >= 0 && TALENT:ASSI:조합지식)
     TIMES LOCAL:3 , 0.75
 ENDIF
 ;조교 대상으로 미약중독이 있으면 소비를 억제한다
-IF TALENT:46
+IF TALENT:미약중독
     TIMES LOCAL:2 , 0.50
     TIMES LOCAL:3 , 0.50
 ENDIF
@@ -121,7 +121,7 @@ IF NOITEM == 0
 ENDIF
 IF TEQUIP:11 == 0
     LOCAL:1 = 4 + RAND:5
-    SIF TALENT:46
+    SIF TALENT:미약중독
         LOCAL:1 += RAND:3
     TEQUIP:11 = LOCAL:1
 ENDIF
@@ -132,7 +132,7 @@ SOURCE:26 = 2500
 SOURCE:31 = 250000
 
 ;미약중독
-IF TALENT:46
+IF TALENT:미약중독
     SOURCE:24 = 500
     TIMES SOURCE:18 , 1.50
     TIMES SOURCE:31 , 1.50
@@ -141,7 +141,7 @@ ELSE
     SOURCE:42 = 8 + RAND:8
 ENDIF
 
-IF TALENT:해방 && TALENT:70
+IF TALENT:해방 && TALENT:쾌감에솔직
     SOURCE:18 += 20000
 ELSE
     CALL POTION_MESSAGE_COM364
@@ -159,15 +159,15 @@ ELSE
     TALENT:해방 = 1
 ENDIF
 ;쾌감의 부정 기억, 일시 소멸
-IF TALENT:71
+IF TALENT:쾌감을부정
     TFLAG:156 |= 4
-    TALENT:71 = 0
+    TALENT:쾌감을부정 = 0
 ENDIF
 ;쾌감에 솔직 소지 보존, 일시 부가
-IF TALENT:70
+IF TALENT:쾌감에솔직
     TFLAG:156 |= 8
 ELSE
-    TALENT:70 = 1
+    TALENT:쾌감에솔직 = 1
 ENDIF
 
 ;약물 경험
@@ -195,7 +195,7 @@ ELSEIF ASSI >= 0
     ENDIF
 ENDIF
 ;조교 대상으로 미약중독이 있으면 소비를 억제한다
-IF TALENT:46
+IF TALENT:미약중독
     TIMES LOCAL:1 , 0.50
     TIMES LOCAL:2 , 0.50
 ENDIF
@@ -248,7 +248,7 @@ LOCAL -= LOCAL:1 * 300
 LOCAL:1 = 1 + MARK:반발각인
 LOCAL *= LOCAL:1
 ;미약중독
-SIF TALENT:46
+SIF TALENT:미약중독
     TIMES LOCAL , 0.30
 
 ;억압 복원
@@ -264,12 +264,12 @@ ENDIF
 
 ;쾌감의 부정 복원
 IF TFLAG:156 & 4
-    TALENT:71 = 1
+    TALENT:쾌감을부정 = 1
     PALAM:20 += LOCAL
 ENDIF
 ;쾌감에 솔직 소멸
 IF (TFLAG:156 & 8) == 0
-    TALENT:70 = 0
+    TALENT:쾌감에솔직 = 0
     PALAM:20 += LOCAL / 4
 ENDIF
 TFLAG:156 = 0
@@ -290,19 +290,19 @@ ELSE
     PRINTFORML 액체 안에서 발버둥 치는 동안에, %CALLNAME:TARGET%의 피부에 미약이 차례차례로 흡수되어 간다….
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 자신의 의지와는 관계없이, %CALLNAME:PLAYER%의 몸을 갖고 싶다고 생각하게 되었다.
     PRINTL
-    PRINTFORML %조사선택(CALLNAME:TARGET, "는")% \@(TALENT:해방 && TALENT:70) ? 욕망에 사로잡힌 나머지 격렬히 몸을 비비 꼬면서 # 노란 액체가 가져오는 강렬한 자극에 따라 격렬히 몸을 움직이면서 \@ 비명을 지르고 있다….
+    PRINTFORML %조사선택(CALLNAME:TARGET, "는")% \@(TALENT:해방 && TALENT:쾌감에솔직) ? 욕망에 사로잡힌 나머지 격렬히 몸을 비비 꼬면서 # 노란 액체가 가져오는 강렬한 자극에 따라 격렬히 몸을 움직이면서 \@ 비명을 지르고 있다….
 ENDIF
 
 @POTION_MESSAGE_COM364
-SIF TALENT:억압 || TALENT:71 || TALENT:해방 == 0 || TALENT:70 == 0
+SIF TALENT:억압 || TALENT:쾌감을부정 || TALENT:해방 == 0 || TALENT:쾌감에솔직 == 0
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 일시적으로
-IF TALENT:억압 || TALENT:71
-    PRINTFORML \@(TALENT:억압) ? [%TALENTNAME:32%] # [%TALENTNAME:71%]\@\@(TALENT:억압 && TALENT:71) ? 과 [%TALENTNAME:71%] # \@을 잃었다.
-    IF TALENT:해방 == 0 || TALENT:70 == 0
+IF TALENT:억압 || TALENT:쾌감을부정
+    PRINTFORML \@(TALENT:억압) ? [%TALENTNAME:32%] # [%TALENTNAME:71%]\@\@(TALENT:억압 && TALENT:쾌감을부정) ? 과 [%TALENTNAME:71%] # \@을 잃었다.
+    IF TALENT:해방 == 0 || TALENT:쾌감에솔직 == 0
         PRINT 그리고, 
     ELSE
         PRINTW
     ENDIF
 ENDIF
-SIF TALENT:해방 == 0 || TALENT:70 == 0
-    PRINTFORMW \@(TALENT:해방 == 0) ? [%TALENTNAME:33%] # [%TALENTNAME:70%]\@\@(TALENT:해방 == 0 && TALENT:70 == 0) ? 과 [%TALENTNAME:70%] # \@을 얻었다.
+SIF TALENT:해방 == 0 || TALENT:쾌감에솔직 == 0
+    PRINTFORMW \@(TALENT:해방 == 0) ? [%TALENTNAME:33%] # [%TALENTNAME:70%]\@\@(TALENT:해방 == 0 && TALENT:쾌감에솔직 == 0) ? 과 [%TALENTNAME:70%] # \@을 얻었다.

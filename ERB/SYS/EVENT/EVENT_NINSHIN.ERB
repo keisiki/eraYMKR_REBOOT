@@ -37,7 +37,7 @@
 
 ;노예의 임신 체크
 IF TARGET > 0
-    IF TALENT:남자 == 0 && TALENT:135 == 0 && TALENT:136 == 0 && TALENT:140 == 0 && TALENT:145 == 0 && TEQUIP:17 == 0
+    IF TALENT:남자 == 0 && TALENT:난생 == 0 && TALENT:산란체질 == 0 && TALENT:임신 == 0 && TALENT:회란 == 0 && TEQUIP:17 == 0
         ;普段から初期化してるが念のため
         CFLAG:70 = 0
         ;주인의 정액으로 임신 체크 판정
@@ -130,7 +130,7 @@ LOCAL += (TALENT:(ARG:1):소인 + TALENT:(ARG:1):작은체형 + TALENT:(ARG:1):�
 ;소질 [기계] [영체] [인형] [폭발물] [신령] [반신]
 LOCAL += TALENT:(ARG:1):기계 + TALENT:(ARG:1):영체 + TALENT:(ARG:1):인형 + TALENT:(ARG:1):폭발물 + TALENT:(ARG:1):신령 + TALENT:(ARG:1):반신
 ;[요정]만 특수처리 (정자 주인이 요정지식이 없으면 +1)
-SIF TALENT:(ARG:1):요정 && ((ARG:2 == 1 && !TALENT:MASTER:요정지식) || (ARG:2 == 2 && !TALENT:ASSI:요정지식) || (ARG:2 == 3 && !TALENT:57))
+SIF TALENT:(ARG:1):요정 && ((ARG:2 == 1 && !TALENT:MASTER:요정지식) || (ARG:2 == 2 && !TALENT:ASSI:요정지식) || (ARG:2 == 3 && !TALENT:요정지식))
     LOCAL++
     
 ;딸조교패치(토리코모드)가 켜져있다면, 결과치는 3배로 뻥튀기 된다. (임신률이 3배 증가함)
@@ -150,7 +150,7 @@ RETURNF (LOCAL * ((TEQUIP:(ARG:1):16 > 0) ? 1 # 3))
 @GET_CHILD_ALL
 ;노예가 임신했는 지 확인
 IF TARGET > 0
-    IF TALENT:140 == 0 && CFLAG:70 > 0
+    IF TALENT:임신 == 0 && CFLAG:70 > 0
         PRINTFORML %CALLNAME:TARGET%의 상태가 이상하다….
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% \@(CFLAG:70 == 2) ? %CALLNAME:ASSI% # %CALLNAME:MASTER%\@의 아이를 임신한 모양이다.
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:140%]했다.
@@ -1008,7 +1008,7 @@ ENDIF
 ;異常경험5以下かつ妄信、親愛、相愛、服従、烙印、隷属、傀儡、精神崩壊なしだと狂気が付く
 IF EXP:이상경험 < 6 && TALENT:망신 == 0 && TALENT:친애 == 0 && TALENT:상애 == 0 && TALENT:광기 == 0 && TALENT:복종 == 0 && TALENT:낙인 == 0 && TALENT:예속 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0
     ;ただし、卵生で恋慕ありなら回避する
-    IF TALENT:135 == 0 && TALENT:연모 == 0
+    IF TALENT:난생 == 0 && TALENT:연모 == 0
         TALENT:광기 = 1
         CFLAG:12 |= 1
         CFLAG:17 |= 2
@@ -1026,7 +1026,7 @@ IF FLAG:SHOP이벤트확장 & 8
     PRINTLC [0] 전시실에 전시한다.
     PRINTLC [1] 내다 판다.
     ;[恋慕]이상もしくは[壊造人格]かつ、[狂気]を持っていない、[抱卵中]でない、임신判定がONの場合（不具合修正）
-    SIF (TALENT:연모 || TALENT:괴조인격) && TALENT:광기 == 0 && TALENT:143 == 0 && CFLAG:70 == 1
+    SIF (TALENT:연모 || TALENT:괴조인격) && TALENT:광기 == 0 && TALENT:포란중 == 0 && CFLAG:70 == 1
         PRINTFORMLC [2] %CALLNAME:TARGET%더러 키우게 한다.
     PRINTL 
     $INPUT_LOOP
@@ -1037,7 +1037,7 @@ IF FLAG:SHOP이벤트확장 & 8
         ;産卵促進剤なしでの産卵のフラグを立てる
         SIF TFLAG:128 == 0
             TFLAG:128 = -1
-    ELSEIF RESULT == 2 && (TALENT:연모 || TALENT:괴조인격) && TALENT:143 == 0 && TALENT:광기 == 0 && CFLAG:70 == 1
+    ELSEIF RESULT == 2 && (TALENT:연모 || TALENT:괴조인격) && TALENT:포란중 == 0 && TALENT:광기 == 0 && CFLAG:70 == 1
         PRINTL 
         PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 유정란 중 하나를 %CALLNAME:TARGET%더러 키우라고 시켰다.
         PRINTW  
@@ -1056,7 +1056,7 @@ IF FLAG:SHOP이벤트확장 & 8
         CFLAG:8 = 0
 
         ;소질 [포란]을 취득
-        TALENT:143 = 1
+        TALENT:포란중 = 1
         ;포란 취득 이벤트 대사
         CALL SELF_KOJO, TARGET, 175
         ;지문 컷
@@ -1075,10 +1075,10 @@ IF FLAG:SHOP이벤트확장 & 8
             CALL BUSTSIZE_UP(ARG, 4, 6)
         ENDIF
         ;모유 나오게 된다
-        IF TALENT:134 == 0
+        IF TALENT:모유체질 == 0
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 모유가 나오게 되었다.
             PRINTL 
-            TALENT:134 = 1
+            TALENT:모유체질 = 1
             CALL CALC_GAUGE3_SLAVE, TARGET, 1
         ELSE
             ;이미 모유체질인 경우에는 그 플래그를 가져둔다

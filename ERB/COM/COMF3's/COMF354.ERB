@@ -21,10 +21,10 @@ IF ASSIPLAY
     RETURN 0
 ENDIF
 ;[パイパン]だと不可, 生えそろっていないと無理
-SIF TALENT:65 || (CFLAG:36 && BASE:음모 < 250)
+SIF TALENT:음모없음 || (CFLAG:36 && BASE:음모 < 250)
     RETURN 0
 ;テキストより[작은체형]はデフォでツルツル。[소인]もそれに準じる
-SIF (TALENT:128 || TALENT:127) && CFLAG:36 == 0
+SIF (TALENT:작은체형 || TALENT:소인) && CFLAG:36 == 0
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -213,7 +213,7 @@ SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
 PRINTL
 IF TFLAG:699 > 0
     PRINTFORM %조사선택(CALLNAME:MASTER, "가")% 아무것도 명령하지 않았는데도 
-    IF TALENT:81
+    IF TALENT:새드
         PRINTL 남자가 기뻐하는 행위를 이미 다 알고 있다는 듯이
     ELSE
         PRINTL 생각났다는 듯이
@@ -222,7 +222,7 @@ ENDIF
 PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 비누로 거품을 일으켜 음모에 흠뻑 묻히고는, 
 SIF TALENT:연모
     PRINT 넋이 나간 표정으로 
-IF TALENT:127 || TALENT:128
+IF TALENT:소인 || TALENT:작은체형
     PRINTFORMW %CALLNAME:PLAYER%의 다리를 자신의 가랑이 사이에 끼우고, 전신을 흔들어대며 음모로 힘껏 문질렀다.
 ELSE
     PRINTFORMW %CALLNAME:PLAYER%의 다리를 자신의 가랑이 사이에 끼우고, 음모로 문질렀다.
@@ -291,21 +291,21 @@ ELSEIF TALENT:여성혐오 && TALENT:PLAYER:남자 == 0
     RESULTS = %RESULTS% %TALENTNAME:38%({LOCAL:99})
 ENDIF
 ;악취 둔감
-IF TALENT:61
+IF TALENT:냄새둔감
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 1
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:61%({LOCAL:99})
 ;악취 민감
-ELSEIF TALENT:62
+ELSEIF TALENT:냄새민감
     RESULTS = %RESULTS% - 
     LOCAL:99 = 3
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:62%({LOCAL:99})
 ENDIF
 ;헌신적
-IF TALENT:63
+IF TALENT:헌신적
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 6
@@ -313,7 +313,7 @@ IF TALENT:63
     RESULTS = %RESULTS% %TALENTNAME:63%({LOCAL:99})
 ENDIF
 ;쾌감의 부정
-IF TALENT:71
+IF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 3
     TFLAG:240 -= LOCAL:99
@@ -346,9 +346,9 @@ IF TFLAG:242
     TFLAG:240 -= TFLAG:242
     RESULTS = %RESULTS% 서로 불결
     ;악취 둔감
-    IF TALENT:61
+    IF TALENT:냄새둔감
         RESULTS = %RESULTS%, %TALENTNAME:61%
-    ELSEIF TALENT:62
+    ELSEIF TALENT:냄새민감
         RESULTS = %RESULTS%, %TALENTNAME:62%
     ENDIF
     RESULTS = %RESULTS%({TFLAG:242})

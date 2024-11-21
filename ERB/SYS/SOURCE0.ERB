@@ -140,14 +140,14 @@ CALL UP_TALENT_CVA_CHECK
 ;-------------------------------------------------
 LOCAL:1 = UP:0 + UP:1 + UP:2 + UP:3
 ;機械持ちの場合には陥落していなくて快感に素直もないとと分泌しずらい(盛り上がりにくい)
-SIF TALENT:기계 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0 && TALENT:70 == 0
+SIF TALENT:기계 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0 && TALENT:쾌감에솔직 == 0
     TIMES LOCAL:1 , 0.2
 ;쾌Ｃ＋쾌Ｖ＋쾌Ａ＋쾌Ｂが合わせて100以上上昇ならその20%の液体의 소스が加わる（オトコはダメ）
 IF LOCAL:1 > 100 && TALENT:남자 == 0
     ;濡れやすいと濡れにくいはここで処理
-    IF TALENT:42
+    IF TALENT:젖기쉬움
         TIMES LOCAL:1 , 3.00
-    ELSEIF TALENT:43
+    ELSEIF TALENT:젖기어려움
         TIMES LOCAL:1 , 0.40
     ENDIF
     SOURCE:19 += LOCAL:1 / 5
@@ -193,7 +193,7 @@ TFLAG:705 = 0
 ;-------------------------------------------------
 ;조교 대상の噴乳チェック(母乳体質)
 ;-------------------------------------------------
-IF TALENT:134
+IF TALENT:모유체질
     
     ;토리코 모드시 색 강조 (연노랑)
     IF FLAG:토리코모드 & 16
@@ -234,7 +234,7 @@ ENDIF
 ;입 안에 사정했을 때에도 정액을 삼킨 걸로 취급
 SIF TFLAG:11
     TFLAG:3 += TFLAG:11
-SIF TFLAG:3 && (TALENT:66 || TFLAG:51) && FLAG:정액도시락및정음절정패치 & 2
+SIF TFLAG:3 && (TALENT:정애미각 || TFLAG:51) && FLAG:정액도시락및정음절정패치 & 2
     CALL TARGET_SEIIN_CHECK
 
 ;-------------------------------------------------
@@ -393,7 +393,7 @@ SIF ASSI >= 0 && SOURCE:ASSI:42
 ;触手を寄生させているときの処理
 ;-------------------------------------------------
 IF FLAG:커맨드확장 & 4096
-    SIF TALENT:146
+    SIF TALENT:기생
         CALL PARASITIC_TENTACLE_TARGET
     SIF ASSI >= 0 && TALENT:ASSI:기생
         CALL PARASITIC_TENTACLE_ASSI
@@ -761,7 +761,7 @@ SIF FLAG:1100 & 1
 ;-------------------------------------------------
 ;[Debug]의 체크
 ;-------------------------------------------------
-SIF TALENT:998
+SIF TALENT:Debug
     CALL DEBUG_CHECK
 
 ;-------------------------------------------------
@@ -829,15 +829,15 @@ SIF PALAM:12 >= 10000 && PALAM:13 >= 10000 && PALAM:14 >= 10000
 ;개발도 상승에 따른 소질 변동 조건을 기록
 ;-------------------------------------------------
 ;위에서부터 Ｃ개발도, Ｖ개발도, Ａ개발도, Ｂ개발도, 강제정음절정 개발도
-SIF CFLAG:60 >= 1000 && TALENT:100 == 0
+SIF CFLAG:60 >= 1000 && TALENT:C민감 == 0
     TFLAG:106 |= 1
-SIF CFLAG:61 >= 2000 && TALENT:102 == 0
+SIF CFLAG:61 >= 2000 && TALENT:V민감 == 0
     TFLAG:106 |= 2
-SIF CFLAG:62 >= 2500 && TALENT:104 == 0
+SIF CFLAG:62 >= 2500 && TALENT:A민감 == 0
     TFLAG:106 |= 4
-SIF CFLAG:63 >= 5000 && TALENT:106 == 0
+SIF CFLAG:63 >= 5000 && TALENT:B민감 == 0
     TFLAG:106 |= 8
-IF CFLAG:64 >= 10000 && TALENT:66 == 0
+IF CFLAG:64 >= 10000 && TALENT:정애미각 == 0
     SIF FLAG:조교시텍스트표시 && (TFLAG:106 & 16) == 0
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 완전히 정액의 맛을 익혀 버린 것 같다……
     TFLAG:106 |= 16
@@ -854,7 +854,7 @@ CALL ADD_TRAINING_TIME, 2
 ;EASYか時間停止発動中か自動レベルアップモードONの時は時間経過なし
 ;NORMALの時はまだゆっくりと時間は流れていく.
 @ADD_TRAINING_TIME, ARG
-SIF FLAG:난이도 != 1 && TEQUIP:71 == 0 && TALENT:998 == 0
+SIF FLAG:난이도 != 1 && TEQUIP:71 == 0 && TALENT:Debug == 0
     TFLAG:107 += (FLAG:난이도 == 2) ? 1 # ARG
 
 ;-------------------------------------------------
@@ -918,10 +918,10 @@ PRINTL
 @CHECK_TRAIN_PAIN
 LOCAL:0 = UP:16 / 25
 ;[痛みに弱い]
-IF TALENT:40
+IF TALENT:아픔에약함
     TIMES LOCAL:0 , 1.20
 ;[痛みに強い]
-ELSEIF TALENT:41
+ELSEIF TALENT:아픔에강함
     TIMES LOCAL:0 , 0.80
 ENDIF
 
@@ -948,13 +948,13 @@ ELSE
 ENDIF
 
 ;[倒錯的]
-SIF TALENT:83
+SIF TALENT:바이
     TIMES LOCAL:1 , 0.75
 ;[マゾ]・[ドＭ]
-IF TALENT:82 && TALENT:초M
+IF TALENT:마조 && TALENT:초M
     TIMES LOCAL:0 , 0.50
     TIMES LOCAL:1 , 0.10
-ELSEIF TALENT:82 || TALENT:초M
+ELSEIF TALENT:마조 || TALENT:초M
     TIMES LOCAL:0 , 0.60
     TIMES LOCAL:1 , 0.20
 ENDIF

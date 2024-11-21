@@ -18,19 +18,19 @@ SIF TALENT:남자
 SIF TALENT:MASTER:금단의지식 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
     RETURN 0
 ;[절벽]이라면 불가
-IF TALENT:110
+IF TALENT:절벽
     RETURN 0
 ;[빈유]라면 기교 4이상 필요
-ELSEIF TALENT:111 && ABL:기교 < 4
+ELSEIF TALENT:빈유 && ABL:기교 < 4
     RETURN 0
 ;[큰 가슴]이라면 기교 2이상 필요
-ELSEIF TALENT:112 && ABL:기교 < 2
+ELSEIF TALENT:거유 && ABL:기교 < 2
     RETURN 0
 ;[폭유]라면 기교 LV1 이상 필요
-ELSEIF TALENT:113 && ABL:기교 < 1
+ELSEIF TALENT:폭유 && ABL:기교 < 1
     RETURN 0
 ;그 이외의 경우는 기교 3이상 필요
-ELSEIF TALENT:111 == 0 && TALENT:112 == 0 && TALENT:113 == 0 && ABL:기교 < 3
+ELSEIF TALENT:빈유 == 0 && TALENT:거유 == 0 && TALENT:폭유 == 0 && ABL:기교 < 3
     RETURN 0
 ENDIF
 ;수면중은 불가
@@ -146,11 +146,11 @@ IF TEQUIP:42
     TIMES LOCAL , 0.25
 ELSE
     ;TALENT:혀사용을 본다
-    SIF TALENT:52
+    SIF TALENT:혀놀림
         TIMES LOCAL , 2.00
 
     ;TALENT:고양이혀을 본다
-    SIF TALENT:54
+    SIF TALENT:고양이혀
         TIMES LOCAL , 0.70
 ENDIF
 
@@ -214,13 +214,13 @@ ELSE
 ENDIF
 
 ;B민감, B둔감
-IF TALENT:106
+IF TALENT:B민감
     TIMES LOCAL:1 , 1.20
-ELSEIF TALENT:107
+ELSEIF TALENT:B둔감
     TIMES LOCAL:1 , 0.70
 ENDIF
 ;큰 가슴, 폭유
-IF TALENT:112 || TALENT:113
+IF TALENT:거유 || TALENT:폭유
     TIMES LOCAL:1 , 1.20
 ENDIF
 ;음유
@@ -380,11 +380,11 @@ IF PREVCOM == 42
     ELSE
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 계속 
         LOCALS = %MESSAGE_COM042_SUB()%
-        IF TALENT:111
+        IF TALENT:빈유
             PRINTFORM 납작한 %조사처리(LOCALS, "로")% 열심히 페니스를 
-        ELSEIF TALENT:112
+        ELSEIF TALENT:거유
             PRINTFORM 풍만한 %조사처리(LOCALS, "로")% 페니스를 감싸고 
-        ELSEIF TALENT:113
+        ELSEIF TALENT:폭유
             PRINTFORM 크고 아름다운 %조사처리(LOCALS, "로")% 페니스를 파묻듯이 
         ELSE
             PRINTFORM %LOCALS%에 페니스를 끼워 
@@ -397,7 +397,7 @@ ELSE
         PRINTFORML %조사선택(CALLNAME:MASTER, "가")% 아무런 명령도 하지 않았는데도 %조사선택(CALLNAME:TARGET, "는")% 스스로 
         SIF TALENT:음란 || TEQUIP:11 == 1
             PRINT 참을 수 없는 표정으로 
-        SIF TALENT:81
+        SIF TALENT:새드
             PRINTFORM 욕정을 부채질하는 듯한 시선을 %CALLNAME:MASTER%에게 보내곤 
         SIF TALENT:질투
             PRINT 질투의 원념을 보이듯이 
@@ -411,11 +411,11 @@ ELSE
             PRINT 황홀한 표정을 지으며 
     ENDIF
     LOCALS = %MESSAGE_COM042_SUB()%
-    IF TALENT:111
+    IF TALENT:빈유
             PRINTFORM 납작한 %조사처리(LOCALS, "로")% 열심히 페니스를 
-        ELSEIF TALENT:112
+        ELSEIF TALENT:거유
             PRINTFORM 풍만한 %조사처리(LOCALS, "로")% 페니스를 감싸고 
-        ELSEIF TALENT:113
+        ELSEIF TALENT:폭유
             PRINTFORM 크고 아름다운 %조사처리(LOCALS, "로")% 페니스를 감싸듯이 
         ELSE
             PRINTFORM %LOCALS%에 페니스를 끼워 
@@ -508,21 +508,21 @@ ELSEIF TALENT:여성혐오 && TALENT:PLAYER:남자 == 0
     RESULTS = %RESULTS% %TALENTNAME:38%({LOCAL:99})
 ENDIF
 ;악취 둔감
-IF TALENT:61
+IF TALENT:냄새둔감
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 1
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:61%({LOCAL:99})
 ;악취 민감
-ELSEIF TALENT:62
+ELSEIF TALENT:냄새민감
     RESULTS = %RESULTS% - 
     LOCAL:99 = 3
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:62%({LOCAL:99})
 ENDIF
 ;헌신적
-IF TALENT:63
+IF TALENT:헌신적
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 6
@@ -530,7 +530,7 @@ IF TALENT:63
     RESULTS = %RESULTS% %TALENTNAME:63%({LOCAL:99})
 ENDIF
 ;쾌감의 부정
-IF TALENT:71
+IF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 3
     TFLAG:240 -= LOCAL:99
@@ -571,9 +571,9 @@ IF TFLAG:242
     TFLAG:240 -= TFLAG:242
     RESULTS = %RESULTS% 서로 불결
     ;악취 둔감
-    IF TALENT:61
+    IF TALENT:냄새둔감
         RESULTS = %RESULTS%, %TALENTNAME:61%
-    ELSEIF TALENT:62
+    ELSEIF TALENT:냄새민감
         RESULTS = %RESULTS%, %TALENTNAME:62%
     ENDIF
     RESULTS = %RESULTS%({TFLAG:242})

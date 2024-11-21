@@ -34,10 +34,10 @@ ELSE
     RETURN 0
 ENDIF
 ;対象が[작은체형]か[소인]でないとダメ
-SIF TALENT:127 == 0 && TALENT:128 == 0
+SIF TALENT:소인 == 0 && TALENT:작은체형 == 0
     RETURN 0
 ;薬毒耐性だとダメ
-SIF TALENT:44
+SIF TALENT:약물내성
     RETURN 0
 ;기계면 불가
 SIF TALENT:기계
@@ -114,7 +114,7 @@ IF TALENT:MASTER:조합지식 || (ASSI >= 0 && TALENT:ASSI:조합지식)
     TIMES LOCAL:3 , 0.75
 ENDIF
 ;조교 대상으로 미약중독이 있으면 소비를 억제한다
-IF TALENT:46
+IF TALENT:미약중독
     TIMES LOCAL:2 , 0.50
     TIMES LOCAL:3 , 0.50
 ENDIF
@@ -128,7 +128,7 @@ IF NOITEM == 0
         CALL FILL_PLURAL_ITEM, 61, 5
 ENDIF
 IF TEQUIP:11 == 0
-    LOCAL:1 = (TALENT:46) ?  4 + RAND:7 # 4 + RAND:5
+    LOCAL:1 = (TALENT:미약중독) ?  4 + RAND:7 # 4 + RAND:5
     TEQUIP:11 = LOCAL:1
 ENDIF
 
@@ -138,7 +138,7 @@ SOURCE:26 = 2500
 SOURCE:31 = 250000
 
 ;미약중독
-IF TALENT:46
+IF TALENT:미약중독
     SOURCE:24 = 500
     TIMES SOURCE:18 , 1.50
     TIMES SOURCE:31 , 1.50
@@ -147,7 +147,7 @@ ELSE
     SOURCE:42 = 12 + RAND:12
 ENDIF
 
-IF TALENT:해방 && TALENT:70
+IF TALENT:해방 && TALENT:쾌감에솔직
     SOURCE:18 += 20000
 ELSE
     ;즉 이 근처의 처리도 완전하게 미약목욕탕과 같다
@@ -166,15 +166,15 @@ ELSE
     TALENT:해방 = 1
 ENDIF
 ;쾌감의 부정 기억, 일시 소멸
-IF TALENT:71
+IF TALENT:쾌감을부정
     TFLAG:156 |= 4
-    TALENT:71 = 0
+    TALENT:쾌감을부정 = 0
 ENDIF
 ;쾌감에 솔직 소지 보존, 일시 부가
-IF TALENT:70
+IF TALENT:쾌감에솔직
     TFLAG:156 |= 8
 ELSE
-    TALENT:70 = 1
+    TALENT:쾌감에솔직 = 1
 ENDIF
 
 ;약물 경험
@@ -197,7 +197,7 @@ IF TALENT:MASTER:조합지식 || (ASSI >= 0 && TALENT:ASSI:조합지식)
     TIMES LOCAL:2 , 0.50
 ENDIF
 ;조교 대상으로 미약중독이 있으면 소비를 억제한다
-IF TALENT:46
+IF TALENT:미약중독
     TIMES LOCAL:1 , 0.50
     TIMES LOCAL:2 , 0.50
 ENDIF
@@ -212,7 +212,7 @@ SOURCE:26 += 500
 SOURCE:30 += 21000
 SOURCE:31 += 100000
 ;미약중독
-SOURCE:42 += (TALENT:46) ?  30 # RAND:2
+SOURCE:42 += (TALENT:미약중독) ?  30 # RAND:2
 
 ;약물 경험
 TCVAR:40 += 1
@@ -240,5 +240,5 @@ ELSE
     PRINTFORML 액체 안에서 발버둥 치는 동안에, %CALLNAME:TARGET%의 피부 속으로 미약이 차례차례로 흡수되어 간다….
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 자신의 의지와는 관계없이, %CALLNAME:PLAYER%의 몸을 갖고 싶다고 생각하게 되었다.
     PRINTL
-    PRINTFORMW %조사선택(CALLNAME:TARGET, "는")%\@(TALENT:해방 && TALENT:70) ? 강한 욕망에 사로잡혀 몸을 비틀면서# 액체가 가져온 강렬한 자극에 미친 듯이 몸을 떨어대며\@ 신음을 흘리고 있다.
+    PRINTFORMW %조사선택(CALLNAME:TARGET, "는")%\@(TALENT:해방 && TALENT:쾌감에솔직) ? 강한 욕망에 사로잡혀 몸을 비틀면서# 액체가 가져온 강렬한 자극에 미친 듯이 몸을 떨어대며\@ 신음을 흘리고 있다.
 ENDIF

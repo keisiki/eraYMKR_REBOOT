@@ -15,7 +15,7 @@ SIF (FLAG:아이템확장 & 2) == 0
 SIF (FLAG:커맨드확장 & 64) == 0
     RETURN 0
 ;약물내성이라면 안 됨
-SIF TALENT:44
+SIF TALENT:약물내성
     RETURN 0
 ;남자라면 안 됨
 SIF TALENT:남자
@@ -72,11 +72,11 @@ SIF ASSI >= 0 && TALENT:ASSI:조합지식
 
 ;조교 대상으로 미약중독이 있으면 소비를 억제한다
 IF LOCAL:3
-    LOCAL:1 = (TALENT:46) ?  375 # 750
-    LOCAL:2 = (TALENT:46) ?  300 # 600
+    LOCAL:1 = (TALENT:미약중독) ?  375 # 750
+    LOCAL:2 = (TALENT:미약중독) ?  300 # 600
 ELSE
-    LOCAL:1 = (TALENT:46) ?  500 # 1000
-    LOCAL:2 = (TALENT:46) ?  400 # 800
+    LOCAL:1 = (TALENT:미약중독) ?  500 # 1000
+    LOCAL:2 = (TALENT:미약중독) ?  400 # 800
 ENDIF
 
 DOWNBASE:0 += LOCAL:1
@@ -173,7 +173,7 @@ SIF TALENT:반항적
 SIF TALENT:저항
     TIMES SOURCE:20 , 1.10
 ;미약중독
-IF TALENT:46
+IF TALENT:미약중독
     SOURCE:24 += 500
     TIMES SOURCE:0 , 1.50
     TIMES SOURCE:31 , 1.50
@@ -182,7 +182,7 @@ ELSE
     SOURCE:42 = 2 + RAND:5
 ENDIF
 ;C민감
-IF TALENT:100
+IF TALENT:C민감
     IF ABL:C감각 <= 3
         TIMES SOURCE:0 , 1.80
     ELSEIF ABL:C감각 == 4
@@ -193,7 +193,7 @@ IF TALENT:100
         EX:0 += RAND:3
     ENDIF
 ;C둔감
-ELSEIF TALENT:101
+ELSEIF TALENT:C둔감
     IF ABL:C감각 <= 3
         TIMES SOURCE:0 , 0.70
         EX:0 -= (EX:0 > 1) ?  1 # 0
@@ -259,7 +259,7 @@ PRINTL
 PRINTFORM %CALLNAME:TARGET%의 
 SIF ABL:C감각 >= 4
     PRINT 조교로 비대해진 
-SIF TALENT:100
+SIF TALENT:C민감
     PRINT 민감한 
 SIF EX:20 || EX:30
     PRINT 살짝 건드리면 가버릴 것 같은 
@@ -285,7 +285,7 @@ ELSEIF ABL:C감각 >= 3
 ELSE
     PRINT 차 올라오는 열기에 전율하며 
 ENDIF
-IF PALAM:10 >= PALAMLV:5 || TALENT:100
+IF PALAM:10 >= PALAMLV:5 || TALENT:C민감
     IF TALENT:후타나리
         PRINT 대량의 정액을 
     ELSE

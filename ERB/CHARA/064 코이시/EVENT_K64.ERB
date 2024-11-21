@@ -239,12 +239,12 @@ IF CFLAG:5220 == 0
     INPUT
     IF RESULT == 0
         ;[작은체형]의 추가
-        TALENT:128 = 1
+        TALENT:작은체형 = 1
         PRINTFORMW ―이 로리콘 놈들!―
     ELSEIF RESULT == 1
         PRINTFORMW ―[작은체형] 없이 진행합니다―
-    SIF TALENT:128
-          TALENT:128 = 0
+    SIF TALENT:작은체형
+          TALENT:작은체형 = 0
     ELSE
         GOTO INPUT_EX_LOOP2
     ENDIF
@@ -602,7 +602,7 @@ ENDIF
 ;-------------------------------------------------
 
 ;임신
-IF TALENT:140 && CFLAG:5202 == 0
+IF TALENT:임신 && CFLAG:5202 == 0
     ;연모
     IF TALENT:연모
         ;부친이 마스터
@@ -1019,7 +1019,7 @@ ELSEIF TALENT:일선을넘지않음 == 0 && CFLAG:5201 <= 6 && CFLAG:5161 >= 1 &
         PRINTL  
         PRINTFORMW 마음을 읽을 수 있게 된 코이시는 [습득빠름] [고무]를 얻었다.
         TALENT:습득빠름 = 1
-        TALENT:95 = 1
+        TALENT:고무 = 1
         PRINTFORMW 세번째 눈을 뜨면서 [사토리] 소질이 개화했습니다.
     ;마음을 닫은 사토리는 기본적으로 TALENT:사토리 = 2로 되어있으므로
         TALENT:사토리 = 1
@@ -1162,7 +1162,7 @@ ELSEIF CFLAG:2 >= 10000 && CFLAG:5201 >= 7 && EXP:애정경험 >= 5000 && CFLAG:
     PRINTFORMW 그녀는 당신에게 모든 것을 바치고 싶어합니다.
     PRINTFORMW 
     PRINTFORMW 코이시는 [헌신적]을 얻었습니다.
-      TALENT:63 = 1
+      TALENT:헌신적 = 1
     PRINTFORMW [즉각함락]을 취득하겠습니까?
       PRINTL [0] 예
       PRINTL [1] 아니오…
@@ -1712,9 +1712,9 @@ ELSEIF MARK:굴복각인 == 3 && TALENT:연모 == 1 &&TEQUIP:16
 ENDIF
 
 ;임신発覚時に自分で腹パンした
-IF TALENT:140 && CFLAG:5202 == 2
+IF TALENT:임신 && CFLAG:5202 == 2
     ;임신を消去
-    TALENT:140 = 0
+    TALENT:임신 = 0
     CALL RESET_FLAG_N_FORCE, TARGET
     ;最大체력を元に戻す
     ;ただし現在の체력は戻さない
@@ -2482,12 +2482,12 @@ IF SELECTCOM == 3
         ;연모
         IF TALENT:연모
             ;バストサイズ　助手＞口上主
-            IF (TALENT:110 == 1 && TALENT:ASSI:절벽 == 0) || (TALENT:111 == 1 && TALENT:ASSI:절벽 == 0 && TALENT:ASSI:빈유 == 0) || (TALENT:ASSI:폭유 == 1 && TALENT:113 == 0) || (TALENT:ASSI:거유 == 1 && TALENT:113 == 0 && TALENT:112 == 0)
+            IF (TALENT:절벽 == 1 && TALENT:ASSI:절벽 == 0) || (TALENT:빈유 == 1 && TALENT:ASSI:절벽 == 0 && TALENT:ASSI:빈유 == 0) || (TALENT:ASSI:폭유 == 1 && TALENT:폭유 == 0) || (TALENT:ASSI:거유 == 1 && TALENT:폭유 == 0 && TALENT:거유 == 0)
                 PRINTFORMW 「만지지 말란 말야. 날 만져도 괜찮은 건 %K64_CALLNAME()% 뿐이니까」
                 PRINTFORML 「%K64_CALL_ASSI()%, 자기 쪽이 크다고 건방지게 구는 거 아냐?」
                 PRINTFORMW 「내 가슴 빠는 것보다 자기 거나 빨지그래?」
             ;バストサイズ　口上主＞助手
-            ELSEIF (TALENT:ASSI:절벽 == 1 && TALENT:110 == 0) || (TALENT:ASSI:빈유 == 1 && TALENT:110 == 0 && TALENT:111 == 0) || (TALENT:113 == 1 && TALENT:ASSI:폭유 == 0) || (TALENT:112 == 1 && TALENT:ASSI:폭유 == 0 && TALENT:ASSI:거유 == 0)
+            ELSEIF (TALENT:ASSI:절벽 == 1 && TALENT:절벽 == 0) || (TALENT:ASSI:빈유 == 1 && TALENT:절벽 == 0 && TALENT:빈유 == 0) || (TALENT:폭유 == 1 && TALENT:ASSI:폭유 == 0) || (TALENT:거유 == 1 && TALENT:ASSI:폭유 == 0 && TALENT:ASSI:거유 == 0)
                 PRINTFORML 「내 가슴 주무르기 전에 자기 거부터 주무르는게?」
                 PRINTFORMW 「아니면 내 가슴을 크게 해주려는 거야?」
             ;バストサイズ同等
@@ -2508,7 +2508,7 @@ IF SELECTCOM == 3
         ;助手だと口で吸う判定だったはず
         ELSEIF MARK:반발각인 == 3
             ;母乳体質
-            IF TALENT:134
+            IF TALENT:모유체질
                 PRINTFORML 「요괴의 젖보다는 우유 쪽이 맛있잖아?」
                 PRINTFORMW 「체온 정도로 덥힌 우유 마시는게 어때?」
             ELSE
@@ -3485,7 +3485,7 @@ ELSEIF SELECTCOM == 191 && TEQUIP:35 == 0
     ;연모
     IF TALENT:연모
         ;임신
-        IF TALENT:140 &&CFLAG:5316 < 2 
+        IF TALENT:임신 &&CFLAG:5316 < 2 
             PRINTFORML 「이거 말야, 내가 뻗어서 젖을 못 줄 때 
             PRINTFORMW 　%조사처리(K64_CALLNAME(),"가")% 주려는…. 엑, 상품?」
             CFLAG:5316 = 2
@@ -6363,7 +6363,7 @@ IF SELECTCOM == 62
 ;            PRINTFORMW 
 ;        ENDIF
     ;연모+おもらし癖
-;    ELSEIF TALENT:연모 && TALENT:45
+;    ELSEIF TALENT:연모 && TALENT:오줌싸개버릇
 ;        PRINTFORMW 
     ;연모
 ;    IF TALENT:연모
@@ -9099,7 +9099,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 192
     ;成功
-    IF TALENT:134
+    IF TALENT:모유체질
         PRINTFORMW 
     ;失敗
     ELSE
@@ -9818,7 +9818,7 @@ IF TFLAG:31 > 0
     ;처음
     IF CFLAG:5236 == 0
         ;연모+임신
-        IF TALENT:연모 && TALENT:140
+        IF TALENT:연모 && TALENT:임신
             PRINTFORMW 「어라? 젖 나와버렸어…」
             PRINTFORMW 「후훗, 언제 아기가 태어나도 괜찮을 것 같아♪」
         ;B감각LV4+調教者が幼稚 or 幼児退行
@@ -10064,7 +10064,7 @@ IF BASE:0 <= 0
             PRINTL  
         ENDIF
 
-        IF TALENT:무관심 || (TALENT:140 && CFLAG:78 != NO:MASTER)
+        IF TALENT:무관심 || (TALENT:임신 && CFLAG:78 != NO:MASTER)
             PRINTFORML △월 ○일
             PRINTFORML 정신차렸더니 뱃속에 아기가 있었다. 
             PRINTFORML 누구 아인지는 모르겠지만 이런 거 싫어. 
@@ -10129,7 +10129,7 @@ IF BASE:0 <= 0
             PRINTL  
         ENDIF
 
-        IF (TALENT:140 || TALENT:142) && CFLAG:78 == NO:MASTER
+        IF (TALENT:임신 || TALENT:모성) && CFLAG:78 == NO:MASTER
             PRINTFORML □월 ×일
             PRINTFORML 나, 엄마가 되버렸다. 
             PRINTFORML 물론 아빠는 %K64_CALLNAME()%. 
@@ -10141,7 +10141,7 @@ IF BASE:0 <= 0
             PRINTL  
         ENDIF
 
-        IF TALENT:142 && CFLAG:78 == NO:MASTER
+        IF TALENT:모성 && CFLAG:78 == NO:MASTER
             PRINTFORML □월 △일
             PRINTFORML 드디어 우리 아기가 태어났다. 
             PRINTFORML 정말 작고 귀엽다. 나하고 닮은 걸까나, 그다지 밤에 울진 않는다. 
@@ -10300,7 +10300,7 @@ ELSEIF TFLAG:44 == 3
         PRINTFORML 「처음엔 살아있는 쪽이 좋다고 생각했는데…
         PRINTFORML 　역시 시체로 만드는 편이 좋아보이네」
         PRINTFORMW 위험을 느낀 %조사처리(CALLNAME:MASTER,"는")% 코이시의 힘을 봉인했다.
-        TALENT:85 = 0
+        TALENT:중독되기어려움 = 0
         PRINTFORMW 코이시는 [연모]를 잃었다.
     ELSE
         PRINTFORMW 「힘을 쓸 수 있게 되면 당신을 가장 먼저 죽일 거야」
@@ -10606,7 +10606,7 @@ ENDIF
 [SKIPSTART]
 IF TFLAG:200 == 179
     ;임신 중이다
-    IF TALENT:140
+    IF TALENT:임신
         ;V감각Lv5이상
         IF ABL:V감각 >= 5
             PRINTFORMW 
@@ -10636,7 +10636,7 @@ IF TFLAG:700
     ;연모+부친이 마스터
     IF TALENT:연모 && CFLAG:78 == NO:MASTER
         ;출산 전
-        IF TALENT:140
+        IF TALENT:임신
             ;첫 회
             IF CFLAG:5161 == 0
                 PRINTFORMW 
@@ -10646,7 +10646,7 @@ IF TFLAG:700
                 PRINTFORMW 
             ENDIF
         ;출산 후
-        ELSEIF TALENT:142
+        ELSEIF TALENT:모성
             ;첫 회
             IF CFLAG:5162 == 0
                 PRINTFORMW 
@@ -10664,7 +10664,7 @@ IF TFLAG:700
         ENDIF
     ELSE
         ;출산 전
-        IF TALENT:140
+        IF TALENT:임신
             ;첫 회
             IF CFLAG:5151 == 0
                 PRINTFORMW 
@@ -10674,7 +10674,7 @@ IF TFLAG:700
                 PRINTFORMW 
             ENDIF
         ;출산 후
-        ELSEIF TALENT:142
+        ELSEIF TALENT:모성
             ;첫 회
             IF CFLAG:5152 == 0
                 PRINTFORMW 
@@ -10716,7 +10716,7 @@ IF TFLAG:200 == 172
         PRINTFORML 「맞다, 사랑할 만한 사람하고 만나면 우리에게 소개해주지 않을래?」
         PRINTFORMW 「그리고, 만날 수 없어도 때론 돌아오면 좋겠어」
         ;습득 빠름
-        IF TALENT:50
+        IF TALENT:습득빠름
             PRINTFORMW 코이시는 아이를 껴안는다
             PRINTFORML 「쓸쓸하니? 울고 싶어?
             PRINTFORMW 　참을 필요는 없단다, 울고 싶을 때에는 마음껏 울면 되는 거야」
@@ -10806,7 +10806,7 @@ IF TFLAG:200 == 200
     ENDIF
     ;이후 공통 텍스트
     ;습득 빠름(제3의 눈이 열려 있다)
-    IF TALENT:50
+    IF TALENT:습득빠름
         PRINTFORMW 「내가 바란 거지만, %K64_CALLNAME()%의 허가가 없으면 마음은 읽을 수 없어…」
     ELSE
         PRINTFORMW 「언니하곤 다르게 난 더 이상 마음을 못 읽어…」
@@ -10814,7 +10814,7 @@ IF TFLAG:200 == 200
     PRINTFORMW 「그러니까 %K64_CALLNAME()%의 진짜 마음을 모르겠어…」
     WAIT
     WAIT
-    IF TALENT:50
+    IF TALENT:습득빠름
         PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 코이시를 안심시키기 위해 일시적으로 마음을 읽을 수 있게 했으나…
         PRINTFORM 코이시는 거부한 뒤, 
     ELSE
@@ -11278,7 +11278,7 @@ ELSE
         PRINTL  
         PRINTFORML 『코이시가 당신을 데려왔을 때에는 놀랐습니다. 
         PRINTFORMW 　그 애에게 희로애락의 감정이 돌아왔으니까요……』
-        SIF TALENT:50
+        SIF TALENT:습득빠름
             PRINTFORMW 『거기다가, 다시 제3의 눈이 열리다니 생각도 못했습니다』
         PRINTFORMW 『전에도 말했습니다만, 전 말을 입으로 낼 수 없는 펫에게 의존해 그 아이의 감정을 돌려놓으려고 했습니다』
         PRINTFORMW 『하지만 나 자신이 애정을 갖고 대해줬다면, 만일 그랬다면 지금의 코이시처럼 되어있을지도 모르죠』
@@ -11328,7 +11328,7 @@ ELSE
         PRINTFORMW 『저기……』
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 『역시 사토리는 코이시의 언니군』이라고 생각했다.
         PRINTFORMW 『……안심했어요. 정말로… 감사합니다』
-        SIF TALENT:50
+        SIF TALENT:습득빠름
             PRINTFORMW 『……후우, 당신의 능력이 없었더라면 정말 이야기하고 있는 게 들통났겠네요』
         PRINTL  
         PRINTFORMW 조금 지나자 코이시는 돌아왔다.

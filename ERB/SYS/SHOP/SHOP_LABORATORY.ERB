@@ -215,7 +215,7 @@ IF LOCAL == 0
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:146%]을 잃었다.
     BASE:MASTER:촉수 += LOCAL:2
     BASE:촉수 = 0
-    TALENT:146 = 0
+    TALENT:기생 = 0
 ELSEIF LOCAL == 1 || LOCAL == 2
     PRINTL 기생 중이던 촉수는 비축해놓은 영양분을 모두 방출했다.
     LOCAL:2 = BASE:촉수
@@ -266,7 +266,7 @@ ELSEIF LOCAL == 99
     PRINTL 기생 중인 촉수를 처분합니다.
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:146%]을 잃었다.
     BASE:촉수 = 0
-    TALENT:146 = 0
+    TALENT:기생 = 0
 ENDIF
 DRAWLINE
 TARGET = LOCAL:1
@@ -317,15 +317,15 @@ DRAWLINE
 PRINTFORML %CALLNAME:TARGET%의 체질을 어떻게 변화시키겠습니까? (기생촉수성장 LV:{BASE:촉수})
 DRAWLINE
 LOCAL = 0
-SIF TALENT:113 == 0
+SIF TALENT:폭유 == 0
     LOCAL |= 1
-SIF TALENT:110 == 0
+SIF TALENT:절벽 == 0
     LOCAL |= 2
 LOCAL:1 = (ABL:MASTER:촉수사역 >= 3) ? TENTACLE_SEAL_OF_IMMORTAL() # 0
 IF TALENT:남자 == 0 && TALENT:약물내성 == 0
-    SIF TALENT:134 == 0
+    SIF TALENT:모유체질 == 0
         PRINTFORML  [ 0] 모유체질로 바꾼다    (필요 기생촉수성장LV:1200)
-    SIF TALENT:134 && !TALENT:ARG:확장유두 ;[확장유두]는 모유가 멈추지 않는다.
+    SIF TALENT:모유체질 && !TALENT:ARG:확장유두 ;[확장유두]는 모유가 멈추지 않는다.
         PRINTFORML  [ 1] 모유체질을 개선        (필요 기생촉수성장LV:1500)
     SIF LOCAL & 1
         PRINTFORML  [ 2] 가슴 사이즈를 크게    (필요 기생촉수성장LV: 200)
@@ -341,14 +341,14 @@ IF TALENT:남자 == 0 && TALENT:약물내성 == 0
         PRINTFORML  [ 7] 페니스를 소거한다    (필요 기생촉수성장LV: 100)
 ENDIF
 IF (TALENT:남자 || TALENT:후타나리) && TALENT:약물내성 == 0
-    SIF TALENT:132 == 0
+    SIF TALENT:조루 == 0
         PRINTFORML  [ 8] 조루 체질로 만든다    (필요 기생촉수성장LV: 750)
-    SIF TALENT:133 == 0
+    SIF TALENT:지루 == 0
         PRINTFORML  [ 9] 지루 체질로 만든다    (필요 기생촉수성장LV: 750)
 ENDIF
-SIF TALENT:약물내성 == 0 && TALENT:116 == 0
+SIF TALENT:약물내성 == 0 && TALENT:동물귀 == 0
     PRINTFORML  [10] 동물귀를 단다            (필요 기생촉수성장LV:2000)
-SIF TALENT:44
+SIF TALENT:약물내성
     PRINTFORML  [11] 약물내성 제거            (필요 기생촉수성장LV:5000＋α)
 SIF TALENT:약물내성 == 0 && CFLAG:41
     PRINTFORML  [12] 촉수 씨앗 제거            (필요 기생촉수성장LV: 500)
@@ -364,10 +364,10 @@ $INPUT_LOOP_0
 INPUT
 IF RESULT == 100
     RETURN 0
-ELSEIF RESULT == 0 && TALENT:남자 == 0 && TALENT:약물내성 == 0 && TALENT:134 == 0
+ELSEIF RESULT == 0 && TALENT:남자 == 0 && TALENT:약물내성 == 0 && TALENT:모유체질 == 0
     PRINTFORML %조사처리(CALLNAME:TARGET,"를")% 모유체질로 만듭니다.
     LOCAL:2 = 1200
-ELSEIF RESULT == 1 && TALENT:남자 == 0 && TALENT:약물내성 == 0 && TALENT:134 && !TALENT:ARG:확장유두 ;[확장유두]는 모유가 멈추지 않는다.
+ELSEIF RESULT == 1 && TALENT:남자 == 0 && TALENT:약물내성 == 0 && TALENT:모유체질 && !TALENT:ARG:확장유두 ;[확장유두]는 모유가 멈추지 않는다.
     PRINTFORML %CALLNAME:TARGET%의 모유체질을 낫게 합니다.
     LOCAL:2 = 1500
 ELSEIF RESULT == 2 && TALENT:남자 == 0 && TALENT:약물내성 == 0 && LOCAL & 1
@@ -388,16 +388,16 @@ ELSEIF RESULT == 6 && TALENT:남자 == 0 && TALENT:약물내성 == 0 && TALENT:�
 ELSEIF RESULT == 7 && TALENT:남자 == 0 && TALENT:약물내성 == 0 && TALENT:후타나리
     PRINTFORML %CALLNAME:TARGET%의 후타나리를 소거합니다.
     LOCAL:2 = 100
-ELSEIF RESULT == 8 && TALENT:약물내성 == 0 && (TALENT:남자 || TALENT:후타나리) && TALENT:132 == 0
+ELSEIF RESULT == 8 && TALENT:약물내성 == 0 && (TALENT:남자 || TALENT:후타나리) && TALENT:조루 == 0
     PRINTFORML %조사처리(CALLNAME:TARGET,"를")% 조루 체질로 만듭니다.
     LOCAL:2 = 750
-ELSEIF RESULT == 9 && TALENT:약물내성 == 0 && (TALENT:남자 || TALENT:후타나리) && TALENT:133 == 0
+ELSEIF RESULT == 9 && TALENT:약물내성 == 0 && (TALENT:남자 || TALENT:후타나리) && TALENT:지루 == 0
     PRINTFORML %조사처리(CALLNAME:TARGET,"를")% 지루 체질로 만듭니다.
     LOCAL:2 = 750
-ELSEIF RESULT == 10 && TALENT:약물내성 == 0 && TALENT:116 == 0
+ELSEIF RESULT == 10 && TALENT:약물내성 == 0 && TALENT:동물귀 == 0
     PRINTFORML %CALLNAME:TARGET%에게 동물귀가 돋게 합니다.
     LOCAL:2 = 2000
-ELSEIF RESULT == 11 && TALENT:44
+ELSEIF RESULT == 11 && TALENT:약물내성
     PRINTFORML %CALLNAME:TARGET%의 약물에 대한 내성을 저하시킵니다.
     PRINTL 
     PRINTFORML ※부작용으로 %CALLNAME:TARGET%의 [기생]・촉수중독・촉수경험을 모두 잃고, 회복능력도 저하됩니다.
@@ -452,17 +452,17 @@ ENDIF
 SELECTCASE LOCAL:3
     CASE 0
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 모유가 나오게 되었다.
-        TALENT:134 = 1
+        TALENT:모유체질 = 1
     CASE 1
         PRINTFORMW %CALLNAME:TARGET%에게서 모유가 나오지 않게 되었다.
-        TALENT:134 = 0
+        TALENT:모유체질 = 0
         MAXBASE:ARG:모유 = 0 ;모유 게이지
     CASE 2
         CALL BUSTSIZE_UP(TARGET)
     CASE 3
         CALL BUSTSIZE_DOWN(TARGET)
     CASE 4
-        IF TALENT:43
+        IF TALENT:젖기어려움
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 성감대에 주어지는 자극의 감도가 보통으로 돌아왔다.
             TALENT:젖기어려움 = 0
         ELSE
@@ -470,7 +470,7 @@ SELECTCASE LOCAL:3
             TALENT:젖기쉬움 = 1
         ENDIF
     CASE 5
-        IF TALENT:42
+        IF TALENT:젖기쉬움
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 성감대에 주어지는 자극의 감도가 보통이 되었다.
             TALENT:젖기쉬움 = 0
         ELSE
@@ -486,36 +486,36 @@ SELECTCASE LOCAL:3
         TALENT:후타나리 = 0
         CALL CHANGE_FUTA_COMMON, TARGET
     CASE 8
-        IF TALENT:133
+        IF TALENT:지루
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:133%]를 잃었다.
-            TALENT:133 = 0
+            TALENT:지루 = 0
         ELSE
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:132%]가 되었다.
-            TALENT:132 = 1
+            TALENT:조루 = 1
         ENDIF
     CASE 9
-        IF TALENT:132
+        IF TALENT:조루
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:132%]를 잃었다.
-            TALENT:132 = 0
+            TALENT:조루 = 0
         ELSE
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:133%]가 되었다.
-            TALENT:133 = 1
+            TALENT:지루 = 1
         ENDIF
     CASE 10
         PRINTFORMW %CALLNAME:TARGET%에게 [%TALENTNAME:116%]가 돋았다.
-        TALENT:116 = 1
+        TALENT:동물귀 = 1
     CASE 11
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 독물・약물에 대한 저항력이 저하했다….
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:44%]을 잃었다.
         PRINTFORML %CALLNAME:TARGET%의 몸은 촉수에 대한 적응 능력이 저하했다….
         PRINTFORML %CALLNAME:TARGET%에게 기생 중이던 촉수는 힘이 다 해 소멸했다.
         PRINTFORMW %CALLNAME:TARGET%의 [%EXPNAME:53%]과 [%ABLNAME:35%]은 0으로 돌아왔다.
-        IF TALENT:137
+        IF TALENT:회복빠름
             PRINTFORMW %CALLNAME:TARGET%의 회복능력이 저하했다.
-            TALENT:137 = 0
-        ELSEIF TALENT:138 == 0
+            TALENT:회복빠름 = 0
+        ELSEIF TALENT:회복느림 == 0
             PRINTFORMW %CALLNAME:TARGET%의 회복능력이 상당히 저하했다.
-            TALENT:138 = 1
+            TALENT:회복느림 = 1
         ELSE
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 피로가 한 번에 몰려왔다.
             BASE:0 /= 10
@@ -1092,7 +1092,7 @@ SIF TALENT:정조관둔감
 SIF TALENT:해방
     LOCAL:1 -= 1000
 ;倒錯的
-SIF TALENT:80
+SIF TALENT:도착적
     LOCAL:1 -= 700
 ;必要エネルギー増加系
 ;従順
@@ -1407,7 +1407,7 @@ SIF TALENT:정조관둔감
 SIF TALENT:해방
     LOCAL:1 -= 300
 ;倒錯的
-SIF TALENT:80
+SIF TALENT:도착적
     LOCAL:1 -= 230
 ;必要エネルギー増加系
 ;従順
@@ -2104,7 +2104,7 @@ IF TALENT:정신붕괴 || TALENT:괴뢰
 ELSEIF ABL:촉수중독 > 2
     ;地の文章表示
     IF CFLAG:99 == 0
-        IF ABL:촉수중독 >= 5 && TALENT:146
+        IF ABL:촉수중독 >= 5 && TALENT:기생
             PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 완전히 촉수에 중독된 것인지, 
             PRINTW 자궁에 이형의 아이를 품게 된 것에 크나큰 열락을 느끼고 있는 모양이다…….
         ELSE
@@ -2218,39 +2218,39 @@ ELSEIF EXP:이상경험 < 10 && ABL:촉수중독 == 0 && TALENT:낙인 == 0 && T
         TFLAG:141 |= 1
     ENDIF
     ;献身的
-    IF TALENT:63
+    IF TALENT:헌신적
         LOCALS:0 = %LOCALS:0%[%TALENTNAME:63%]
-        TALENT:63 = 0
+        TALENT:헌신적 = 0
         TFLAG:141 |= 1
     ENDIF
     ;快感に素直
-    IF TALENT:70
+    IF TALENT:쾌감에솔직
         LOCALS:0 = %LOCALS:0%[%TALENTNAME:70%]
-        TALENT:70 = 0
+        TALENT:쾌감에솔직 = 0
         TFLAG:141 |= 1
     ENDIF
     ;魅力
-    IF TALENT:90
+    IF TALENT:매력
         LOCALS:0 = %LOCALS:0%[%TALENTNAME:90%]
-        TALENT:90 = 0
+        TALENT:매력 = 0
         TFLAG:141 |= 1
     ENDIF
     ;魅惑
-    IF TALENT:91
+    IF TALENT:매혹
         LOCALS:0 = %LOCALS:0%[%TALENTNAME:91%]
-        TALENT:91 = 0
+        TALENT:매혹 = 0
         TFLAG:141 |= 1
     ENDIF
     ;謎の魅力
-    IF TALENT:92
+    IF TALENT:수수께끼의매력
         LOCALS:0 = %LOCALS:0%[%TALENTNAME:92%]
-        TALENT:92 = 0
+        TALENT:수수께끼의매력 = 0
         TFLAG:141 |= 1
     ENDIF
     ;鼓舞
-    IF TALENT:95
+    IF TALENT:고무
         LOCALS:0 = %LOCALS:0%[%TALENTNAME:95%]
-        TALENT:95 = 0
+        TALENT:고무 = 0
         TFLAG:141 |= 1
     ENDIF
     ;恋慕

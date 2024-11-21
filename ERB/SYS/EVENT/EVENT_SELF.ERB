@@ -22,7 +22,7 @@ ELSEIF TEQUIP:90
     CALL SELF_CHECK10
     TFLAG:128 = 0
 ;[卵生]か[産卵体質]で[妊娠]及び[懐卵]ではない, かつ産卵判定もしくは中田氏があるときは卵を産む
-ELSEIF (TALENT:135 || TALENT:136) && TALENT:140 == 0 && TALENT:145 == 0 && (CFLAG:71 > 0 || TFLAG:128)
+ELSEIF (TALENT:난생 || TALENT:산란체질) && TALENT:임신 == 0 && TALENT:회란 == 0 && (CFLAG:71 > 0 || TFLAG:128)
     CALL EVENT_LAY_EGG
 ;それ以外のときはCONFIGで調教後行為を抑制するがＯＮでなければ押し倒しイベントを見る
 ELSEIF (FLAG:SHOP이벤트확장 & 4096) == 0
@@ -113,9 +113,9 @@ IF EXIST_PENIS(MASTER)
             ENDIF
         ENDIF
         ;快感に素直, 快感の否定
-        IF TALENT:70 && LOCAL
+        IF TALENT:쾌감에솔직 && LOCAL
             LOCAL += 1
-        ELSEIF TALENT:71 && LOCAL
+        ELSEIF TALENT:쾌감을부정 && LOCAL
             LOCAL -= 2
         ENDIF
         ;淫乱
@@ -192,9 +192,9 @@ IF EXIST_PENIS(MASTER)
             ENDIF
         ENDIF
         ;快感に素直, 快感の否定
-        IF TALENT:70 && LOCAL
+        IF TALENT:쾌감에솔직 && LOCAL
             LOCAL += 1
-        ELSEIF TALENT:71 && LOCAL
+        ELSEIF TALENT:쾌감을부정 && LOCAL
             LOCAL -= 2
         ENDIF
         ;淫乱
@@ -270,9 +270,9 @@ ELSEIF TALENT:남자 || TALENT:후타나리
         ENDIF
     ENDIF
     ;快感に素直, 快感の否定
-    IF TALENT:70 && LOCAL
+    IF TALENT:쾌감에솔직 && LOCAL
         LOCAL += 1
-    ELSEIF TALENT:71 && LOCAL
+    ELSEIF TALENT:쾌감을부정 && LOCAL
         LOCAL -= 2
     ENDIF
     ;淫乱
@@ -342,9 +342,9 @@ ELSE
     ENDIF
 
     ;快感に素直, 快感の否定
-    IF TALENT:70 && LOCAL
+    IF TALENT:쾌감에솔직 && LOCAL
         LOCAL += 1
-    ELSEIF TALENT:71 && LOCAL
+    ELSEIF TALENT:쾌감을부정 && LOCAL
         LOCAL -= 2
     ENDIF
     ;淫乱
@@ -443,16 +443,16 @@ IF ABL:C감각 >= 4 && PALAM:13 >= PALAMLV:4
 ENDIF
 
 ;自慰しやすい
-IF TALENT:60
+IF TALENT:자위하기쉬움
     LOCAL:1 *= 2
     ;欲望ＬＶ３でもAに+1する
     SIF ABL:C감각 >= 3 && ABL:욕망 == 3 && PALAM:13 >= PALAMLV:3
         LOCAL:1 += 1
 ENDIF
 ;快感に素直, 快感の否定
-IF TALENT:70 && LOCAL:1
+IF TALENT:쾌감에솔직 && LOCAL:1
     LOCAL:1 += 1
-ELSEIF TALENT:71 && LOCAL:1
+ELSEIF TALENT:쾌감을부정 && LOCAL:1
     LOCAL:1 -= 2
 ENDIF
 ;淫乱
@@ -546,7 +546,7 @@ IF FLAG:자위은폐발각패치 & 1
         SIF LOCAL:4 >= 10
             LOCAL:4 = RAND:11 + 5
         ;素直か幼稚だと言いやすい
-        SIF TALENT:솔직함 || TALENT:131
+        SIF TALENT:솔직함 || TALENT:유치
             LOCAL:4 += 2
         ;服従系素質を持っていれば言いやすい
         SIF CFLAG:15
@@ -644,7 +644,7 @@ VARSET LOCAL, 0
 SIF TALENT:남자
     RETURN 0
 ;母乳体質必要
-SIF TALENT:134 == 0
+SIF TALENT:모유체질 == 0
     RETURN 0
 ;Ｂ感覚及び欲望2以上, かつ技巧及び噴乳中毒1以上必要
 SIF ABL:B감각 < 2 || ABL:욕망 < 2 || ABL:기교 == 0 || ABL:분유중독 == 0
@@ -667,22 +667,22 @@ IF ABL:B감각 >= 4 && PALAM:13 >= PALAMLV:4
     ENDIF
 ENDIF
 ;自慰しやすい
-IF TALENT:60
+IF TALENT:자위하기쉬움
     LOCAL += 2
     ;欲望ＬＶ３でもLOCALに+1する
     SIF ABL:욕망 == 3 && ABL:B감각 >= 3 && PALAM:13 >= PALAMLV:3
         LOCAL += 1
 ENDIF
 ;快感に素直, 快感の否定
-IF TALENT:70 && LOCAL
+IF TALENT:쾌감에솔직 && LOCAL
     LOCAL += 1
-ELSEIF TALENT:71 && LOCAL
+ELSEIF TALENT:쾌감을부정 && LOCAL
     LOCAL -= 2
 ENDIF
 ;Ｂ敏感, Ｂ鈍感
-IF TALENT:106 && LOCAL
+IF TALENT:B민감 && LOCAL
     LOCAL += 1
-ELSEIF TALENT:107 && LOCAL
+ELSEIF TALENT:B둔감 && LOCAL
     LOCAL -= 1
 ENDIF
 ;淫乱
@@ -1329,7 +1329,7 @@ IF ABL:순종+ABL:노출증+ABL:마조끼 >= 10
 ENDIF
 
 ;触手寄生LV
-IF FLAG:커맨드확장 & 4096 && TALENT:146
+IF FLAG:커맨드확장 & 4096 && TALENT:기생
     BASE:촉수 += LOCAL:5*50
     BASE:촉수 = MIN(BASE:촉수, MAXBASE:촉수)
 ENDIF
@@ -1424,7 +1424,7 @@ LOCAL:6 = 5 - (ABL:순종 + ABL:촉수중독) + MARK:반발각인 * 3
 CALL COMMON_UP_JUEL, TARGET, 100, (((LOCAL:7)/2)+(LOCAL:5*LOCAL:6*800)), 1
 
 ;触手寄生LV
-IF FLAG:커맨드확장 & 4096 && TALENT:146
+IF FLAG:커맨드확장 & 4096 && TALENT:기생
     BASE:촉수 += LOCAL:5*50
     BASE:촉수 = MIN(BASE:촉수, MAXBASE:촉수)
 ENDIF
@@ -1454,28 +1454,28 @@ IF ASSI >= 0 && TALENT:ASSI:고무
 ENDIF
 
 ;Ａ敏感もしくは淫尻でアナルバイブが刺さったままだと発見されやすくなる
-IF TEQUIP:25 == 1 && (TALENT:104 || TALENT:음고)
+IF TEQUIP:25 == 1 && (TALENT:A민감 || TALENT:음고)
     LOCAL += 5
 
     ;両方だとさらに声が大きくなり, 周囲にも気付けなくなる
-    SIF TALENT:104 && TALENT:음고
+    SIF TALENT:A민감 && TALENT:음고
         LOCAL += 5
 
     ;両方ささってて, Ｖ敏感もしくは淫壺だとさらに気付けません
-    SIF TEQUIP:20 == 1 && (TALENT:102 || TALENT:음호)
+    SIF TEQUIP:20 == 1 && (TALENT:V민감 || TALENT:음호)
         LOCAL += 5
 ENDIF
 
 ;Ｖ敏感もしくは淫壺でバイブが刺さったままだと発見されやすくなる
-IF TEQUIP:20 == 1 && (TALENT:102 || TALENT:음호)
+IF TEQUIP:20 == 1 && (TALENT:V민감 || TALENT:음호)
     LOCAL += 5
     
     ;両方だとさらに声が大きくなり, 周囲にも気付けなくなる
-    SIF TALENT:102 && TALENT:음호
+    SIF TALENT:V민감 && TALENT:음호
         LOCAL += 5
 
     ;両方ささってて, Ａ敏感もしくは尻穴狂いだとさらに気付けません
-    SIF TEQUIP:25 == 1 && (TALENT:104 || TALENT:음고)
+    SIF TEQUIP:25 == 1 && (TALENT:A민감 || TALENT:음고)
         LOCAL += 5
 ENDIF
     
@@ -1487,7 +1487,7 @@ SIF TALENT:겁쟁이
 LOCAL += (ABL:노출증 + ABL:마조끼 + ABL:자위중독 + ABL:기교) / 2
 
 ;快感に素直, 解放だと素直に声を上げるので発見されやすい
-SIF TALENT:해방 || TALENT:70
+SIF TALENT:해방 || TALENT:쾌감에솔직
     LOCAL += 5
 
 ;媚薬を使うと出やすくなる
@@ -1500,17 +1500,17 @@ SIF TALENT:부끄럼없음
 
 ;自制心, 抑圧, 抵抗, 快感の否定だと声を抑えようとするので発見されにくい
 ;ただし助手が鼓舞持ちだとあまり抵抗できない
-SIF ASSI < 0 && (TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:71)
+SIF ASSI < 0 && (TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:쾌감을부정)
     LOCAL /= 2
 
 IF ASSI >= 0
     ;助手が鼓舞を持っていない
     IF TALENT:ASSI:고무 == 0 
-        SIF TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:71
+        SIF TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:쾌감을부정
             LOCAL /= 2
     ELSE
         ;鼓舞
-        SIF TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:71
+        SIF TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:쾌감을부정
             LOCAL -= 5
     ENDIF
 ENDIF
@@ -1589,7 +1589,7 @@ ELSE
             LOCAL = RAND:10 + ABL:A감각
             SIF TALENT:음고
                 LOCAL += 3
-            SIF TALENT:104
+            SIF TALENT:A민감
                 LOCAL += 3
             SIF EXP:A경험 < 50
                 LOCAL = 0
@@ -1597,7 +1597,7 @@ ELSE
                 LOCAL = 0
 
             LOCAL:1 = RAND:10 + ABL:V감각
-            SIF TALENT:102
+            SIF TALENT:V민감
                 LOCAL:1 += 3
             SIF TALENT:음호
                 LOCAL:1 += 3
@@ -1606,7 +1606,7 @@ ELSE
 
             LOCAL:2 = RAND:10 + (ABL:정액중독 + ABL:봉사정신) / 2
             LOCAL:3 = RAND:10 + (ABL:C감각 + ABL:자위중독) / 2
-            SIF TALENT:102
+            SIF TALENT:V민감
                 LOCAL:3 += 3
 
             IF TEQUIP:25 == 1 && TEQUIP:20 == 1
@@ -1684,7 +1684,7 @@ ELSE
             SIF TALENT:후타나리
                 EXP:사정경험  += ARG / 4
             ;母乳体質だと噴乳経験も上昇
-            SIF TALENT:134
+            SIF TALENT:모유체질
                 EXP:분유경험 += ARG / 4
 
             PRINTL 　
@@ -1692,7 +1692,7 @@ ELSE
         ELSE
             ;自慰の方が好き
             ;( 欲望 + 露出 + マゾが11以上か 解放か快感に素直を持ち) かつはじらいをもっていない
-            IF (ABL:욕망 + ABL:노출증 + ABL:마조끼 > 10 || TALENT:363 || TALENT:70) && TALENT:부끄럼쟁이 == 0
+            IF (ABL:욕망 + ABL:노출증 + ABL:마조끼 > 10 || TALENT:363 || TALENT:쾌감에솔직) && TALENT:부끄럼쟁이 == 0
                 ;CALL SELF_KOJO, TARGET, 7
 
                 CALL JINKAKU
@@ -1747,7 +1747,7 @@ ELSE
             SIF TALENT:후타나리
                 EXP:사정경험  += ARG / 4
             ;母乳体質だと噴乳経験も上昇
-            SIF TALENT:134
+            SIF TALENT:모유체질
                 EXP:분유경험 += ARG / 4
         ENDIF
     ELSE
@@ -1784,12 +1784,12 @@ ELSE
                 SIF TALENT:후타나리
                     EXP:사정경험  += ARG/4
                 ;母乳体質だと噴乳経験も上昇
-                SIF TALENT:134
+                SIF TALENT:모유체질
                     EXP:분유경험 += ARG/4
             ELSE
                 ;自慰の方が好き
                 ;( 欲望 + 露出 + マゾが11以上か 解放か快感に素直を持ち) かつはじらいをもっていない
-                IF (ABL:욕망 + ABL:노출증 + ABL:마조끼 > 10 || TALENT:해방 || TALENT:70) && TALENT:부끄럼쟁이 == 0
+                IF (ABL:욕망 + ABL:노출증 + ABL:마조끼 > 10 || TALENT:해방 || TALENT:쾌감에솔직) && TALENT:부끄럼쟁이 == 0
                     ;CALL SELF_KOJO, TARGET, 10
 
                     CALL JINKAKU
@@ -1849,7 +1849,7 @@ ELSE
                 SIF TALENT:후타나리
                     EXP:사정경험  += ARG / 4
                 ;母乳体質だと噴乳経験も上昇
-                SIF TALENT:134
+                SIF TALENT:모유체질
                     EXP:분유경험 += ARG / 4
             ENDIF
         ELSE
@@ -1879,7 +1879,7 @@ ELSE
             SIF TALENT:후타나리
                 EXP:사정경험  += ARG / 6
             ;母乳体質だと噴乳経験も上昇
-            SIF TALENT:134
+            SIF TALENT:모유체질
                 EXP:분유경험 += ARG / 6
         ENDIF
     ENDIF
