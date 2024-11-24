@@ -152,7 +152,7 @@ ELSEIF RESULT != 0
 ENDIF
 PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 허브 농장의 개발 시설에서 %ITEMNAME:(610+ARG)%의 개발에 착수합니다.
 PRINTW 개발 중일 때는 개발을 중지하거나 완료할 때까지 조교, 조수, 매춘, 수감이 불가능합니다.
-CFLAG:4 |= 2048
+CFLAG:조교관외 |= 2048
 FLAG:개발중허브 = ARG + 1
 FLAG:허브개발진척도 = 1
 TARGET = LOCAL:3
@@ -164,7 +164,7 @@ RETURN 1
 @STOP_DEVELOP_HARB
 VARSET LOCAL
 ;현재 개발 담당중의 노예를 찾는 처리
-LOCAL:1 = FINDCHARA(CFLAG:4, 2048, 0)
+LOCAL:1 = FINDCHARA(CFLAG:조교관외, 2048, 0)
 PRINTFORML 현재, %조사처리(CALLNAME:(LOCAL:1),"가")% %ITEMNAME:(609+FLAG:개발중허브)%를 개발하고 있습니다.
 PRINTL 개발을 중지하겠습니까?
 PRINTL 개발을 중지했을 경우, 지금까지의 개발의 성과는 8:45가 됩니다.
@@ -178,7 +178,7 @@ IF RESULT == 1
 ELSEIF RESULT != 0
     GOTO INPUT_LOOP
 ENDIF
-CFLAG:(LOCAL:1):4 = 0
+CFLAG:(LOCAL:1):조교관외 = 0
 FLAG:개발중허브 = 0
 FLAG:허브개발진척도 = 0
 PRINTFORML %ITEMNAME:(609+FLAG:개발중허브)%의 개발을 중지했습니다.
@@ -285,7 +285,7 @@ ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
 ENDIF
 LOCAL:3 = TARGET
 TARGET = RESULT
-IF CFLAG:4 == 4096
+IF CFLAG:조교관외 == 4096
     PRINTFORML ＜%조사처리(CALLNAME:TARGET,"를")% 생산 담당에서 해제하겠습니까? ＞
     PRINTLC [0] 예
     PRINTLC [1] 아니오
@@ -299,7 +299,7 @@ IF CFLAG:4 == 4096
         GOTO INPUT_LOOP_2
     ENDIF
     PRINTFORML %조사처리(CALLNAME:TARGET,"를")% 생산 담당으로부터 해제했습니다.
-    CFLAG:4 = 0
+    CFLAG:조교관외 = 0
     FLAG:생산중허브 = 0
     TARGET = LOCAL:3
     RETURN 1
@@ -321,14 +321,14 @@ ELSE
         GOTO INPUT_LOOP_1
     ENDIF
     ;현재 생산 담당중의 노예를 해임하는 처리
-    COUNT = FINDCHARA(CFLAG:4, 4096, 0)
+    COUNT = FINDCHARA(CFLAG:조교관외, 4096, 0)
     IF COUNT >= 0 && COUNT != TARGET
         PRINTFORML %조사처리(CALLNAME:COUNT,"를")%, 생산 담당으로부터 해제했습니다.
-        CFLAG:COUNT:4 = 0
+        CFLAG:COUNT:조교관외 = 0
     ENDIF
     PRINTFORML %조사처리(CALLNAME:TARGET,"를")% 허브 농장의 생산 시설에서 %ITEMNAME:(610+ARG)%의 생산에 착수합니다.
     PRINTFORMW 생산하는 동안에는 조교 대상 혹은 조수에 임명할 수 없고, 수감이나 매춘 역시 할 수 없습니다.
-    CFLAG:4 |= 4096
+    CFLAG:조교관외 |= 4096
     FLAG:생산중허브 = ARG + 1
     TARGET = LOCAL:3
     RETURN 1
@@ -350,17 +350,17 @@ SIF GROUPMATCH(ARG, MASTER, ASSI, TARGET) > 0
     RETURNF 0
 ;그 자리에 없는 캐릭터는 제외(현금산 혹은 개발 담당자를 제외하다)
 IF ARG:1 == 0
-    SIF CFLAG:ARG:4 && CFLAG:ARG:4 != 2048
+    SIF CFLAG:ARG:조교관외 && CFLAG:ARG:조교관외 != 2048
         RETURNF 0
 ELSEIF ARG:1 == 1
-    SIF CFLAG:ARG:4 && CFLAG:ARG:4 != 4096
+    SIF CFLAG:ARG:조교관외 && CFLAG:ARG:조교관외 != 4096
         RETURNF 0
 ENDIF
 ;취기와 스트레스가 있으면(자) 안 됨
 SIF BASE:ARG:취기 || CFLAG:ARG:65
     RETURNF 0
 ;조수 가능하지 않으면 안 됨
-SIF CFLAG:ARG:1 < 2
+SIF CFLAG:ARG:매각가능 < 2
     RETURNF 0
 ;함락 하고 있지 않으면 안 됨
 SIF TALENT:ARG:연모 == 0 && TALENT:ARG:복종 == 0 && TALENT:ARG:음란 == 0
@@ -429,7 +429,7 @@ IF FLAG:허브개발진척도 >= 100
     PRINTFORML 향후, 생산 담당자가 있으면 %ITEMNAME:(609+FLAG:개발중허브)%의 생산이 가능하게 됩니다.
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 개발을 끝내서 조교가 가능해졌다.
     SETBIT FLAG:개발된허브, FLAG:개발중허브 - 1
-    CFLAG:4 = 0
+    CFLAG:조교관외 = 0
     FLAG:허브개발진척도 = 0
     FLAG:개발중허브 = 0
 ENDIF
@@ -472,7 +472,7 @@ CALL COMMON_UP_JUEL, TARGET, 32, (25 * LOCAL:3), 0
 IF ITEM:(609+FLAG:생산중허브) >= 99
     PRINTFORML %ITEMNAME:(609+FLAG:생산중허브)%의 재고가 가득 찼기에 생산을 종료합니다.
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 조교가 가능합니다.
-    CFLAG:4 = 0
+    CFLAG:조교관외 = 0
     FLAG:생산중허브 = 0
 ENDIF
 DRAWLINE

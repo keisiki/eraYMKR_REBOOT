@@ -145,14 +145,14 @@ PALAM:22 = 0
 ;현재 조교 중인 캐릭터의 호감도를 맘대로 바꿉니다. 연모 이벤트 같은 건 조교 종료시에 발동합니다. 너무 욕심내면 에러납니다.
 @EDIT_FAVORABILITY
 DRAWLINE
-PRINTFORML %CALLNAME:TARGET%의 호감도:{CFLAG:2}
+PRINTFORML %CALLNAME:TARGET%의 호감도:{CFLAG:호감도}
 PRINTL 원하시는 호감도 수치를 입력하세요(0-999999/무효값을 넣으면 취소)
 
 INPUT
 SIF RESULT < 0 || RESULT > 999999
     RETURN 0
-CFLAG:2 = RESULT
-PRINTFORML %CALLNAME:TARGET%의 호감도를 {CFLAG:2}로 바꿨습니다.
+CFLAG:호감도 = RESULT
+PRINTFORML %CALLNAME:TARGET%의 호감도를 {CFLAG:호감도}로 바꿨습니다.
 
 ;--------------------------------------------------
 ;ストレス変化処理
@@ -254,37 +254,37 @@ RESTART
 @TRAIN_ASSIST_FLAG
 DRAWLINE
 PRINTFORM 현재 %조사처리(CALLNAME:TARGET,"는")% 
-IF CFLAG:1 == 0
+IF CFLAG:매각가능 == 0
     PRINT 매각 불가
-ELSEIF CFLAG:1 == 1
+ELSEIF CFLAG:매각가능 == 1
     PRINT 매각 가능
 ELSE
     PRINT 조수 가능
 ENDIF
 PRINTL  상태입니다.
 PRINTL 어떻게 하겠습니까?
-SIF CFLAG:1 != 0
+SIF CFLAG:매각가능 != 0
     PRINTL [0] 매각 불가로 한다
-SIF CFLAG:1 != 1
+SIF CFLAG:매각가능 != 1
     PRINTL [1] 매각 가능으로 한다
-SIF CFLAG:1 != 2
+SIF CFLAG:매각가능 != 2
     PRINTL [2] 조수 가능으로 한다
 PRINTL [100] 그만둔다
 
 $INPUT_LOOP
 INPUT
-IF RESULT == 0 && CFLAG:1 != 0
+IF RESULT == 0 && CFLAG:매각가능 != 0
     PRINTFORMW %CALLNAME:TARGET%의 매각이 불가능해졌습니다.
-ELSEIF RESULT == 1 && CFLAG:1 != 1
+ELSEIF RESULT == 1 && CFLAG:매각가능 != 1
     PRINTFORMW %CALLNAME:TARGET%의 매각이 가능해졌습니다.
-ELSEIF RESULT == 2 && CFLAG:1 != 2
+ELSEIF RESULT == 2 && CFLAG:매각가능 != 2
     PRINTFORMW %CALLNAME:TARGET%의 조수 사용이 가능해졌습니다.
 ELSEIF RESULT == 100
     RETURN 0
 ELSE
     GOTO INPUT_LOOP
 ENDIF
-CFLAG:1 = RESULT
+CFLAG:매각가능 = RESULT
 RESTART
 
 ;--------------------------------------------------
@@ -578,8 +578,8 @@ ENDIF
 DRAWLINE
 LOCAL:1 = 0
 FOR LOCAL, 0, CHARANUM
-    IF CFLAG:LOCAL:1 != 2 || TALENT:LOCAL:연모 == 0
-        CFLAG:LOCAL:1 = 2
+    IF CFLAG:LOCAL:매각가능 != 2 || TALENT:LOCAL:연모 == 0
+        CFLAG:LOCAL:매각가능 = 2
         IF TALENT:LOCAL:연모 == 0
             TALENT:LOCAL:연모 = 1
             CFLAG:LOCAL:14 |= 1
@@ -2516,7 +2516,7 @@ PRINTFORML %CALLNAME:TARGET% 팔고 로드하는 귀찮음을 덜어주는 모�
 PRINTL 어느 기준에 맞추겠습니까?
 PRINTL [0] 매각가능(순종, 욕망, 기교, 봉사정신, 노출벽, 전 감각 Lv3)
 PRINTL [1] 육성완료(순종, 욕망, 기교, 봉사정신, 노출벽, 전 감각 Lv5)
-SIF CFLAG:1 >= 1
+SIF CFLAG:매각가능 >= 1
     PRINTL [2] 현재 판매가 확인
 PRINTL [3] 비디오 판매가 보정 확인
 PRINTL [100] 그만둔다
@@ -2535,7 +2535,7 @@ ELSEIF RESULT == 1
     ELSE
         CALL EDIT_CHARASALE_ABILITY, 5
     ENDIF
-ELSEIF RESULT == 2 && CFLAG:1 >= 1
+ELSEIF RESULT == 2 && CFLAG:매각가능 >= 1
     CALL RESEARCH_CHARASALE_CALC
 ELSEIF RESULT == 3
     CALL RESEARCH_SELLVIDEO_CALC
@@ -2549,8 +2549,8 @@ RESTART
 ;………………………………………………
 @EDIT_CHARASALE_ABILITY, ARG
 ;매각 가능 플래그
-SIF CFLAG:1 < 1
-    CFLAG:1 = 1
+SIF CFLAG:매각가능 < 1
+    CFLAG:매각가능 = 1
 ;従順、欲望、技巧、奉仕精神、露出癖、全感覚 지정 레벨로
 REPEAT 15
     SIF COUNT >= 4 && COUNT < 10
@@ -2652,7 +2652,7 @@ STRLENS RESULTS
 LOCAL = RESULT
 PRINTL 칭호를 어떻게 합니까?
 PRINTL [0] 현재 칭호대로 한다.
-SIF LOCAL > 0 && CFLAG:0 == 0
+SIF LOCAL > 0 && CFLAG:SP캐릭터 == 0
     PRINTFORML [1] 본래 칭호(%RESULTS%)로 되돌린다.
 PRINTL [2] 칭호를 지운다.
 PRINTL [3] 칭호를 입력한다.

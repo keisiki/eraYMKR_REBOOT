@@ -75,7 +75,7 @@ SIF DAY:7 == 1 && FLAG:아이템확장 & 1024 && ITEM:90
 CALL SHOW_HOUSE
 FLAG:996 = -1
 
-IF CFLAG:MASTER:4 == 3
+IF CFLAG:MASTER:조교관외 == 3
     CALL SHOW_WORKSHOP
 ELSE
     ;주인, 조수, 조교 대상 노예의 체력 표시
@@ -242,7 +242,7 @@ ELSE
     ;비트 연산으로 LOCAL:3=1이 유효할 때에는 조합지식을,  LOCAL:3=2가 유효할 때에는 금단의 지식을 보유하고 있음을 뜻한다
     REPEAT CHARANUM
         ;실종 중이라면 제외
-        SIF CFLAG:COUNT:4 && CFLAG:COUNT:4 != 1024
+        SIF CFLAG:COUNT:조교관외 && CFLAG:COUNT:조교관외 != 1024
             CONTINUE
         IF COUNT == 0
             ;주인이 금단의 지식이나 조합지식을 가지고 있다
@@ -252,7 +252,7 @@ ELSE
                 LOCAL:3 |= 2
         ELSE
             ;현 조수＋전 조수의 캐릭터 수 확인
-            IF CFLAG:COUNT:1 > 1
+            IF CFLAG:COUNT:매각가능 > 1
                 LOCAL:0 += 1
                 ;조수 중 누군가가 금단의 지식이나 조합지식을 가지고 있다
                 SIF TALENT:COUNT:조합지식
@@ -261,7 +261,7 @@ ELSE
                     LOCAL:3 |= 2
             ENDIF
             ;매각 또는 해방 가능한 캐릭터 수 확인
-            SIF ((FLAG:SHOP이벤트확장 & 32 && (CFLAG:COUNT:20 & 16) == 0) || (CFLAG:COUNT:1 >= 1 && CFLAG:COUNT:3 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:괴조인격 == 0)) && TALENT:COUNT:사역마 == 0
+            SIF ((FLAG:SHOP이벤트확장 & 32 && (CFLAG:COUNT:20 & 16) == 0) || (CFLAG:COUNT:매각가능 >= 1 && CFLAG:COUNT:매각불능 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:괴조인격 == 0)) && TALENT:COUNT:사역마 == 0
                 LOCAL:1 += 1
             ;TIME에 맞는 조교 캐릭터가 있는가(주인공과 노예는 배제)
             SIF COUNT != TARGET
@@ -359,7 +359,7 @@ ELSE
         SIF ABL:순종 >= 2
             PRINTFORMLC [130] - \@(TALENT:연모) ? 애정요리 # 요리를 시킨다\@
         ;주인의 기교 Lv이 3 이상이고, 조교 대상이 조수 가능해졌을 경우
-        SIF ABL:MASTER:기교 > 3 && CFLAG:1 == 2
+        SIF ABL:MASTER:기교 > 3 && CFLAG:매각가능 == 2
             PRINTLC [131] - 자기가 요리한다
         ;마이크가 있거나 아이템 없음 모드이고, 연속 야외 라이브 플래그가 켜져 있지 않으며, 조교 대상의 노출벽 Lv이 3이상이고, 
         ;[연모]를 가지고 있거나 순종 Lv이 5 이상일 경우. 단, 밤이 아닐 경우에 조교 대상이 [흡혈귀] 보유자일 경우에는 특주 양산도 필요하게 된다
@@ -479,7 +479,7 @@ ENDIF
 ;--------------------------------------------------
 @USERSHOP
 
-IF CFLAG:MASTER:4 == 3
+IF CFLAG:MASTER:조교관외 == 3
     CALL USERSHOP_WORKSHOP
 ELSE
     IF RESULT == 100 && TARGET >= 0
@@ -491,7 +491,7 @@ ELSE
         ELSEIF BASE:MASTER:취기 > MAXBASE:MASTER:취기
             PRINTFORML 취한 탓인지 속이 좋지 않다.
             PRINTW 잠시 쉬는 편이 좋을 것 같다…….
-        ELSEIF CFLAG:MASTER:4 == 2 ;주인이 육아실
+        ELSEIF CFLAG:MASTER:조교관외 == 2 ;주인이 육아실
             IF TALENT:MASTER:임신
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 만삭이라 조교를 할 수 없다.
             ELSEIF TALENT:MASTER:육아중
@@ -554,7 +554,7 @@ ELSE
     ELSEIF RESULT == 130 && TARGET >= 0 && ABL:순종 >= 2 && FLAG:SHOP이벤트확장 & 16
         CALL LUNCH_JUDGE
         RETURN 1
-    ELSEIF RESULT == 131 && TARGET >= 0 && ABL:MASTER:기교 > 3 && CFLAG:1 == 2 && FLAG:SHOP이벤트확장 & 16
+    ELSEIF RESULT == 131 && TARGET >= 0 && ABL:MASTER:기교 > 3 && CFLAG:매각가능 == 2 && FLAG:SHOP이벤트확장 & 16
         CALL LUNCH_SELF
         RETURN 1
     ELSEIF RESULT == 132 && TARGET >= 0 && (ITEM:52 || NOITEM) && TFLAG:154 == 0 && ABL:노출증 >= 3 && (TALENT:연모 || ABL:순종 >= 5)  && (TIME == 1 || TALENT:흡혈귀 == 0 || (TALENT:흡혈귀 && (ITEM:48 || NOITEM))) && FLAG:SHOP이벤트확장 & 16
@@ -630,7 +630,7 @@ ELSE
     ELSEIF RESULT == 171 && (FLAG:1100 & 1) && (FLAG:1100 & 8) && FLAG:1102 > 0
         IF FLAG:1102 > 1
             ;主人、工房へ
-            CFLAG:MASTER:4 = 3
+            CFLAG:MASTER:조교관외 = 3
         ELSE
             CALL BUILD_WORKSHOP
         ENDIF
@@ -709,9 +709,9 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;실종 중이라거나 이 자리에 없으면 제외
-    SIF CFLAG:COUNT:4 && (CFLAG:COUNT:4 != 1024 || TIME == 1)
+    SIF CFLAG:COUNT:조교관외 && (CFLAG:COUNT:조교관외 != 1024 || TIME == 1)
         CONTINUE
-    SIF CFLAG:COUNT:4 == 1024 && TALENT:COUNT:매춘중독
+    SIF CFLAG:COUNT:조교관외 == 1024 && TALENT:COUNT:매춘중독
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
@@ -775,7 +775,7 @@ IF RESULT != -1 && TARGET != RESULT
     ;Ｓ패치 추가분
     IF CFLAG:TARGET:1501 && TARGET > 0
         PRINTL 매춘 상태가 해제됐습니다.
-        CFLAG:TARGET:4 = 0
+        CFLAG:TARGET:조교관외 = 0
         CFLAG:TARGET:1501 = 0
         FLAG:3001 -= 1
     ENDIF
@@ -803,10 +803,10 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;실종 중이라거나 이 자리에 없으면 제외
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     ;조수 가능하지 않은 이는 제외
-    SIF CFLAG:COUNT:1 < 2
+    SIF CFLAG:COUNT:매각가능 < 2
         CONTINUE
     ;술에 떡이 됐을 경우에도 제외
     SIF BASE:COUNT:취기 > MAXBASE:COUNT:취기
@@ -859,7 +859,7 @@ ASSI = RESULT
 IF ASSI >= 0
     IF CFLAG:ASSI:1501
         PRINTL 매춘 상태가 해제됐습니다.
-        CFLAG:ASSI:4 = 0
+        CFLAG:ASSI:조교관외 = 0
         CFLAG:ASSI:1501 = 0
         FLAG:3001 -= 1
     ENDIF
@@ -918,7 +918,7 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;실종 중이라거나 이 자리에 없으면 제외
-    SIF CFLAG:COUNT:4 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
@@ -1143,7 +1143,7 @@ REPEAT CHARANUM
     SIF COUNT == 0
         CONTINUE
     ;이 자리에 없을 때에는 쓸 수 없다
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     IF TALENT:COUNT:사역마 == 0
         ;[사역마] 조건을 충족할 필요가 있음
@@ -1510,7 +1510,7 @@ CALLF CLEAR_LIST
 REPEAT CHARANUM
     MARK:COUNT:98 = 0
     ;실종 중인 캐릭터는 배제
-    SIF CFLAG:COUNT:4 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
@@ -1610,18 +1610,18 @@ REPEAT 20
         PRINT ☆
     ELSEIF LOCAL == ASSI
         PRINT ★
-    ELSEIF CFLAG:LOCAL:4 == 4
+    ELSEIF CFLAG:LOCAL:조교관외 == 4
         PRINT ◆
-    ELSEIF CFLAG:LOCAL:4 == 2
+    ELSEIF CFLAG:LOCAL:조교관외 == 2
         PRINT ◇
-    ELSEIF CFLAG:LOCAL:4 == 16
+    ELSEIF CFLAG:LOCAL:조교관외 == 16
         PRINT ■
     ;Ｓ패치 추가분
-    ELSEIF CFLAG:LOCAL:4 == 1024
+    ELSEIF CFLAG:LOCAL:조교관외 == 1024
         PRINT ▼
-    ELSEIF CFLAG:LOCAL:4 == 2048 || CFLAG:LOCAL:4 == 4096
+    ELSEIF CFLAG:LOCAL:조교관외 == 2048 || CFLAG:LOCAL:조교관외 == 4096
         PRINT ▽
-    ELSEIF CFLAG:LOCAL:1 == 2
+    ELSEIF CFLAG:LOCAL:매각가능 == 2
         PRINT ○
     ELSE
         PRINT 　
@@ -1930,18 +1930,18 @@ LOCAL = RESULT
 PRINTL 
 PRINTL [0] 현재의 칭호대로 놔둔다
 ;SP 캐릭터는 본래의 칭호에 되돌릴 수 없게 한다
-IF LOCAL > 0 && CFLAG:0 == 0
+IF LOCAL > 0 && CFLAG:SP캐릭터 == 0
     PRINTFORML [1] 본래 칭호(%RESULTS%)로 되돌린다
 ;다만, 레이무 님 · 구작 마리사 · 꼬마 앨리스는 되돌릴 수 있게
-ELSEIF NO:TARGET == 1 && CFLAG:0 == 2
+ELSEIF NO:TARGET == 1 && CFLAG:SP캐릭터 == 2
     PRINTFORML [1] 본래 칭호(귀무녀)로 되돌린다
     RESULTS = 귀무녀
     LOCAL = 6
-ELSEIF NO:TARGET == 2 && CFLAG:0 == 1
+ELSEIF NO:TARGET == 2 && CFLAG:SP캐릭터 == 1
     PRINTFORML [1] 본래 칭호(마법과 붉은 꿈으로 이루어진 존재)로 되돌린다
     RESULTS = 마법과 붉은 꿈으로 이루어진 존재
     LOCAL = 22
-ELSEIF NO:TARGET == 14 && CFLAG:0 == 1
+ELSEIF NO:TARGET == 14 && CFLAG:SP캐릭터 == 1
     PRINTFORML [1] 본래 칭호(죽음의 소녀)로 되돌린다
     RESULTS = 죽음의 소녀
     LOCAL = 8

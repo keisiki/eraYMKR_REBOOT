@@ -231,7 +231,7 @@ IF BASE:ARG:체력 >= 501
     ENDIF
     IF CFLAG:ARG:1501
         PRINTW 매춘 상태가 해제되었습니다.
-        CFLAG:ARG:4 = 0
+        CFLAG:ARG:조교관외 = 0
         CFLAG:ARG:1501 = 0
         FLAG:3001 -= 1
     ENDIF
@@ -261,7 +261,7 @@ CSTR:ARG:40 = %CALLNAME:LOCAL%
 ;임산부의 이름
 CSTR:ARG:41 = %CALLNAME:ARG%
 ;신체측정 플래그를 재운다(다음 번 신체측정을 행하기 위해)
-CFLAG:ARG:8 = 0
+CFLAG:ARG:신체측정예약 = 0
 
 ;임산부가 주인
 IF ARG == MASTER
@@ -336,8 +336,8 @@ ELSEIF (TALENT:ARG:반항적 || TALENT:ARG:꿋꿋함 || TALENT:ARG:건방짐 || 
     PRINTFORMW %CALLNAME:ARG%의 마음속에 무슨 스위치가 켜져버린 모양이다.
 
     ;호감도 감소
-    SIF CFLAG:ARG:2 > 0
-        TIMES CFLAG:ARG:2 , 0.40
+    SIF CFLAG:ARG:호감도 > 0
+        TIMES CFLAG:ARG:호감도 , 0.40
 
     ;반발각인3 취득
     SIF MARK:ARG:반발각인 < 3
@@ -437,7 +437,7 @@ ELSE
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 임월을 맞이했습니다.
     PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 출산에 대비해 육아실로 이동합니다.
 ENDIF
-CFLAG:ARG:4 = 2
+CFLAG:ARG:조교관외 = 2
 IF TARGET == ARG
     TARGET = -1
     FLAG:996 = -1
@@ -513,7 +513,7 @@ IF ARG == MASTER
             EQUIP:ARG:1 = 0
         ENDIF
         TALENT:ARG:임신 = 0
-        CFLAG:ARG:4 = 0
+        CFLAG:ARG:조교관외 = 0
         ;임신 시에 준 체력의 최대치가 회복
         MAXBASE:ARG:체력 += 500
 
@@ -570,7 +570,7 @@ ELSEIF CFLAG:ARG:76 == 3 || (((CFLAG:ARG:78 == NO:MASTER && TALENT:ARG:연모 ==
         EQUIP:ARG:1 = 0
     ENDIF
     TALENT:ARG:임신 = 0
-    CFLAG:ARG:4 = 0
+    CFLAG:ARG:조교관외 = 0
     ;임신 시에 준 체력의 최대치가 회복
     MAXBASE:ARG:체력 += 500
 
@@ -639,7 +639,7 @@ ELSE
     EQUIP:ARG:1 = 0
     IF TALENT:LOCAL:육아중 == 0
         TALENT:LOCAL:육아중 = 1
-        CFLAG:LOCAL:4 = 2
+        CFLAG:LOCAL:조교관외 = 2
         IF LOCAL == TARGET
             TARGET = -1
             FLAG:996 = -1
@@ -665,7 +665,7 @@ PRINTL 어느 방으로 상황을 보러 가겠습니까?
 
 REPEAT CHARANUM
     ;현재 임월이거나 [육아중]인 캐릭터를 나열
-    SIF CFLAG:COUNT:4 == 2
+    SIF CFLAG:COUNT:조교관외 == 2
         CALL ARRANGE_CHARALIST, COUNT
 REND
 PRINTL 
@@ -675,14 +675,14 @@ $INPUT_LOOP
 INPUT
 IF RESULT == 1000
     RETURN 0
-ELSEIF RESULT < 0 || RESULT >= CHARANUM || CFLAG:RESULT:4 != 2
+ELSEIF RESULT < 0 || RESULT >= CHARANUM || CFLAG:RESULT:조교관외 != 2
     GOTO INPUT_LOOP
 ENDIF
 
 LOCAL = ORDER_FALLEN(RESULT) ;노예의 함락 루트 결정
 
 ;주인방에 방문 시 다른 반응 호출
-IF RESULT == 0 && CFLAG:MASTER:4 == 2
+IF RESULT == 0 && CFLAG:MASTER:조교관외 == 2
     CALL MASTER_CAREROOM
     RETURN 1
 ENDIF
@@ -784,7 +784,7 @@ PRINTW
 PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 다시 조교가 가능해졌습니다.
 
 TALENT:ARG:육아중 = 0
-CFLAG:ARG:4 = 0
+CFLAG:ARG:조교관외 = 0
 ;임신 시에 준 체력의 최대치가 회복
 IF CFLAG:ARG:79 == 0
     MAXBASE:ARG:체력 += 500
@@ -800,7 +800,7 @@ IF CFLAG:ARG:79 == 0
 ELSE
     ;유모였으면 플래그 해제
     CFLAG:ARG:79 = 0
-    CFLAG:ARG:4 = 0
+    CFLAG:ARG:조교관외 = 0
 ENDIF
 
 ;독립 시의 대사를 이벤트 대사로 해보는 건 좋다 치고 분기 어쩌지…
@@ -865,7 +865,7 @@ MARK:ARG:89 = 0
 CFLAG:ARG:3009 = 0
 FOR LOCAL, 0, CHARANUM
     ;他にも対象キャラがいれば、フラグを再設定
-    SIF CFLAG:LOCAL:4 == 2
+    SIF CFLAG:LOCAL:조교관외 == 2
         FLAG:육아실해금 = 1
 NEXT
 
@@ -882,7 +882,7 @@ IF CFLAG:ARG:3006 < BUSTSIZE(ARG) && CFLAG:ARG:3006 > 1
 ENDIF
 CFLAG:ARG:3006 = 0 ;사용이 끝난 플래그 초기화
 ;신체측정 플래그를 재운다(다음 번 신체측정을 행하기 위해)
-CFLAG:ARG:8 = 0
+CFLAG:ARG:신체측정예약 = 0
 
 ;육아 종료 or임신 강제 종료시의 모유 체질 완료 처리
 @LOST_MILK, ARG
@@ -1053,7 +1053,7 @@ IF FLAG:SHOP이벤트확장 & 8
         ;임산부 이름
         CSTR:ARG:41 = %CALLNAME:TARGET%
         ;신체측정 플래그를 재운다(다음 번 신체측정을 행하기 위해)
-        CFLAG:8 = 0
+        CFLAG:신체측정예약 = 0
 
         ;소질 [포란]을 취득
         TALENT:포란중 = 1
@@ -1118,7 +1118,7 @@ ENDIF
 CALL CHILD_CHECK_AND_NAME, ARG, 3
 ;포란에서 육아로 이행
 PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 아기를 돌보기 위해 육아실로 이동합니다.
-CFLAG:ARG:4 = 2
+CFLAG:ARG:조교관외 = 2
 CFLAG:ARG:3000 = NO:ARG
 CFLAG:ARG:3003 = CFLAG:ARG:3109
 TALENT:ARG:포란중 = 0
@@ -1132,7 +1132,7 @@ IF TALENT:ARG:모성 == 0
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% [%TALENTNAME:142%]에 눈을 떴다!
 ENDIF
 ;신체측정 플래그를 재운다(다음 번 신체측정을 행하기 위해)
-CFLAG:ARG:8 = 0
+CFLAG:ARG:신체측정예약 = 0
 
 ;체력 변동의 앞뒤 맞추기를 위해, 슬쩍 감소
 MAXBASE:ARG:체력 = MAX(MAXBASE:ARG:체력 - 500, 10)

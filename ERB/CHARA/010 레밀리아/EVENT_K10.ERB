@@ -176,7 +176,7 @@ SIF CFLAG:7800 == 1
     CALL REMILIA_K10
 ;유아퇴행의 확률 6분의 1
 CFLAG:7804 = RAND:6
-IF CFLAG:5201 >= 6 && CFLAG:7800 == 1 && TALENT:유아퇴행 == 0 && TIME == 1 && CFLAG:7804 == 1 && CFLAG:2 >= 1300
+IF CFLAG:5201 >= 6 && CFLAG:7800 == 1 && TALENT:유아퇴행 == 0 && TIME == 1 && CFLAG:7804 == 1 && CFLAG:호감도 >= 1300
     CALL REMIRYA_K10
 DRAWLINE
 PRINTFORML 레밀리아의 방으로 가던 도중 %조사처리(CALLNAME:MASTER,"는")% 오늘이 초승달임을 알아차렸다….
@@ -518,7 +518,7 @@ ELSEIF DAY - CFLAG:7831 >= 15 && CFLAG:7830 == 1 && ABL:V감각 >= 3 && CFLAG:78
     CFLAG:7828 = 1
 
 ;친애 흡혈 호감도 2100 이상
-ELSEIF CFLAG:2 >= 2100 && TALENT:유아퇴행 == 0 && CFLAG:7815 == 0
+ELSEIF CFLAG:호감도 >= 2100 && TALENT:유아퇴행 == 0 && CFLAG:7815 == 0
     DRAWLINE
     PRINTFORMW 방에 들어가자, 레밀리아의, 그 어딘가에 위화감이 있었다.
     PRINTFORMW 「어머, 주인님」
@@ -2768,7 +2768,7 @@ IF SELECTCOM == 6
             ENDIF
             CFLAG:8006 = 5
         ;호감도 600
-        ELSEIF CFLAG:2 >= 500 && (CFLAG:8006 <= 3 || FLAG:11 == 2)
+        ELSEIF CFLAG:호감도 >= 500 && (CFLAG:8006 <= 3 || FLAG:11 == 2)
             IF RAND:2 == 0
                 PRINTFORML 「음, 쮸우…… 하암, 쪽…… 쪼옥……」
                 PRINTFORMW 연인처럼 다정하게 키스를 해주자 레밀리아는 버엉―한 표정으로 %조사처리(CALLNAME:PLAYER,"를")% 쳐다보았다.
@@ -10228,11 +10228,11 @@ IF TFLAG:200 == 309
             ;있다
 ;            ELSE
                 ;사쿠야가 연모이며 조수 가능하고 이 자리에 있을 때
-;                IF TALENT:A:연모 && CFLAG:A:1 == 2 && CFLAG:A:4 == 0
+;                IF TALENT:A:연모 && CFLAG:A:매각가능 == 2 && CFLAG:A:조교관외 == 0
 ;                    PRINTFORML 『아가씨, 차를…』
 ;                    PRINTFORML 「고마워, 사쿠야」
                 ;육아실에 있다
-;                ELSEIF CFLAG:A:4 == 2
+;                ELSEIF CFLAG:A:조교관외 == 2
 ;                    PRINTFORML 「사쿠야, 지금 애를 보고 있어?」
                 ;그 외
 ;                ELSE
@@ -12151,7 +12151,7 @@ REPEAT 4
 REND
 
 ;어디 있는지 장소 플래그 리셋
-CFLAG:ASSI:4 = 0
+CFLAG:ASSI:조교관외 = 0
 ;공포 · 반발각인 취득 완료 판정 리셋
 MARK:ASSI:96 = 0
 MARK:ASSI:97 = 0
@@ -12175,7 +12175,7 @@ TALENT:ASSI:음모없음 = 0
 TALENT:ASSI:Debug = 0
 
 ;CFLAG를 리셋
-;CFLAG:0에서 99는 지정된 것만 리셋
+;CFLAG:SP캐릭터에서 99는 지정된 것만 리셋
 FOR LOCAL, 0, 100
     ;매각 불가 플래그, ＶＡ이상경험 변동 플래그 리셋
     IF LOCAL == 3 || LOCAL == 11
@@ -12279,7 +12279,7 @@ VARSET EQUIP:ASSI:0, 0, 0, 15
 ;호감도는 감소시킨 상태로 인계
 ;최저는 50(인계하는 시점에서 1000 이상은 있다고 어림잡고 있기 때문)
 ;소질이 변동하는 700, 1000, 2000, 5000을 경계로 인계율이 격감하게.
-LOCAL:1 = CFLAG:ASSI:2 / 20
+LOCAL:1 = CFLAG:ASSI:호감도 / 20
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 100, 90)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 250, 80)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 500, 75)
@@ -12287,7 +12287,7 @@ LOCAL:1 = TABLE_CALC2(LOCAL:1, 700, 66)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 1000, 50)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 2000, 33)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 5000, 25)
-CFLAG:ASSI:2 = LOCAL:1
+CFLAG:ASSI:호감도 = LOCAL:1
 
 ;-------------------------------------------------
 ;볼 개그 시

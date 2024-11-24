@@ -51,7 +51,7 @@ REPEAT CHARANUM
     SIF COUNT == MASTER && (FLAG:3000 & 67108864) == 0
         CONTINUE
     ;失踪中などこの場にいないなら除外
-    SIF CFLAG:COUNT:4 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
 
     CALLF SET_LIST, LOCAL:2, COUNT
@@ -76,7 +76,7 @@ REPEAT 20
     
     SIF LOCAL:10 == 0
         CONTINUE
-    SIF CFLAG:(LOCAL:10):4 == 1
+    SIF CFLAG:(LOCAL:10):조교관외 == 1
         CONTINUE
     IF (LOCAL:10) == TARGET
         PRINT ☆
@@ -84,17 +84,17 @@ REPEAT 20
     ELSEIF LOCAL:10 == ASSI
         PRINT ★
         LOCAL:3 |= 32
-    ELSEIF CFLAG:(LOCAL:10):4 == 4
+    ELSEIF CFLAG:(LOCAL:10):조교관외 == 4
         PRINT ◆
         LOCAL:3 |= 1
-    ELSEIF CFLAG:(LOCAL:10):4 == 8
+    ELSEIF CFLAG:(LOCAL:10):조교관외 == 8
         CONTINUE
-    ELSEIF CFLAG:(LOCAL:10):4 == 16
+    ELSEIF CFLAG:(LOCAL:10):조교관외 == 16
         CONTINUE
-    ELSEIF CFLAG:(LOCAL:10):4 & 1024
+    ELSEIF CFLAG:(LOCAL:10):조교관외 & 1024
         PRINT ▼
         LOCAL:3 |= 16
-    ELSEIF CFLAG:(LOCAL:10):4 == 2048 || CFLAG:(LOCAL:10):4 == 4096
+    ELSEIF CFLAG:(LOCAL:10):조교관외 == 2048 || CFLAG:(LOCAL:10):조교관외 == 4096
         PRINT ▽
         LOCAL:3 |= 8
     ELSE
@@ -239,7 +239,7 @@ ENDIF
 IF CFLAG:RESULT:1501 > 0
     LOCAL@SPRING_DUMMY:1 = CFLAG:RESULT:1501
     CFLAG:RESULT:1501 = 0
-    CFLAG:RESULT:4 -= 1024
+    CFLAG:RESULT:조교관외 -= 1024
     FLAG:3001 -= 1
 ELSE
     LOCAL@SPRING_DUMMY:1 = 0
@@ -278,7 +278,7 @@ IF TALENT:RESULT:회란
     PRINTW 알이 뱃속에 있는 동안에는 매춘을 할 수 없습니다.
     GOTO SPRING
 ENDIF
-IF CFLAG:RESULT:4 == 2
+IF CFLAG:RESULT:조교관외 == 2
     PRINTW 육아 중에는 매춘을 할 수 없습니다.
     GOTO SPRING
 ENDIF
@@ -369,7 +369,7 @@ IF RESULT == 0
 ELSEIF RESULT == 1
     PRINTW 만지기 엄금 매춘을 행합니다.
     CFLAG:COUNT:1501 = 1
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 2 && LOCAL@SPRING_DUMMY:0 >= 5
     IF TALENT:COUNT:남자 == 0
@@ -378,84 +378,84 @@ ELSEIF RESULT == 2 && LOCAL@SPRING_DUMMY:0 >= 5
         PRINTW OK의 매춘을 실시합니다.
     ENDIF
     CFLAG:COUNT:1501 = 2
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 3 && ABL:COUNT:A감각 >= 3 && TALENT:COUNT:소인 == 0
     PRINTW Ａ를 메인으로 한 매춘을 행합니다.
     CFLAG:COUNT:1501 = 3
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 4 && (EXP:COUNT:V경험 > 30 || TALENT:COUNT:창부 == 1) && ABL:COUNT:순종 > 1 && ABL:COUNT:욕망 > 1 && ABL:COUNT:봉사정신 > 1 && ABL:COUNT:노출증 > 1 && TALENT:COUNT:소인 == 0 && TALENT:COUNT:남자 == 0
     PRINTW 통상 매춘을 행합니다.
     CFLAG:COUNT:1501 = 4
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 5 && ABL:COUNT:순종 > 1 && ABL:COUNT:봉사정신 >= 3 && MARK:COUNT:굴복각인 >= 2 && EXP:COUNT:매춘경험 >= 30 && FLAG:3000 & 1
     PRINTL 삽입 엄금의 다수 상대 매춘을 행합니다.
     CFLAG:COUNT:1501 = 5
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 6 && ABL:COUNT:순종 > 1 && LOCAL@SPRING_DUMMY:2 >= 5 && MARK:COUNT:굴복각인 >= 3 && ABL:COUNT:봉사정신 >= 3 && EXP:COUNT:매춘경험 >= 30 && EXP:COUNT:창관인기 >= 40 && (EXP:COUNT:V경험 > 0 || TALENT:COUNT:창부 == 1) && FLAG:3000 & 1 && TALENT:COUNT:소인 == 0 && TALENT:COUNT:남자 == 0
     PRINTL 다수 상대 매춘을 행합니다.
     CFLAG:COUNT:1501 = 6
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 7 && TALENT:COUNT:창부 == 1
     PRINTL 2인 세트의 매춘을 행합니다.
     CFLAG:COUNT:1501 = 7
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 8 && FLAG:3004 == 1 && TALENT:COUNT:처녀
     PRINTL 처녀 옥션에 참가합니다.
     CFLAG:COUNT:1501 = 8
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 8 && FLAG:3004 == 2 && ABL:COUNT:봉사정신 >= 2
     PRINTL 입식 파티에 참가합니다.
     CFLAG:COUNT:1501 = 9
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 8 && FLAG:3004 == 10 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL 서당을 빌려서 되는대로 난교하는 이벤트에 참가합니다.
     CFLAG:COUNT:1501 = 10
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 8 && FLAG:3004 == 11 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL 보건소를 통째로 빌려서 되는대로 난교하는 이벤트에 참가합니다.
     CFLAG:COUNT:1501 = 11
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 8 && FLAG:3004 == 12 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL 호수를 통째로 대절해서 되는대로 난교하는 이벤트에 참가합니다.
     CFLAG:COUNT:1501 = 12
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 8 && FLAG:3004 == 20 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL 난교 파티에 참가합니다.
     CFLAG:COUNT:1501 = 13
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 8 && FLAG:3004 == 30 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL VIP에 대한 봉사활동에 참가합니다.
     CFLAG:COUNT:1501 = 14
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 8 && FLAG:3004 == 31 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:새드끼 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL VIP에 대한 과격하기 짝이 없는 봉사활동에 참가합니다.
     CFLAG:COUNT:1501 = 15
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 8 && FLAG:3004 == 32 && TALENT:COUNT:후타나리 && TALENT:COUNT:남자 == 0
     PRINTL VIP가 들어가는 정액 목욕탕을 만들기 위해 노력합니다.
     CFLAG:COUNT:1501 = 16
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ;ELSEIF RESULT == 9 && Z == 1
 ;    TFLAG:200 = 1700
 ;    E = 0
 ;    CALL SELF_KOJO_COUNT
 ;    CFLAG:COUNT:1501 = 17
-;    CFLAG:COUNT:4 |= 1024
+;    CFLAG:COUNT:조교관외 |= 1024
 ;    FLAG:3001 += 1
 ELSEIF RESULT == 100 && LOCAL@SPRING_DUMMY:1 == 100
     TARGET = COUNT
@@ -463,7 +463,7 @@ ELSEIF RESULT == 100 && LOCAL@SPRING_DUMMY:1 == 101
     ASSI = COUNT
 ELSEIF RESULT == 100 && LOCAL@SPRING_DUMMY:1 != 0
     CFLAG:COUNT:1501 = LOCAL@SPRING_DUMMY:1
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 100
     GOTO SPRING
@@ -632,7 +632,7 @@ ENDIF
 REPEAT CHARANUM
     IF CFLAG:COUNT:1501 == 8
         CFLAG:COUNT:1501 = 0
-        CFLAG:COUNT:4 -= 1024
+        CFLAG:COUNT:조교관외 -= 1024
         FLAG:3001 -= 1
     ENDIF
 REND
@@ -644,7 +644,7 @@ $INPUT_AFTER
 REPEAT CHARANUM
     IF CFLAG:COUNT:1501
         CFLAG:COUNT:1501 = 0
-        CFLAG:COUNT:4 -= 1024
+        CFLAG:COUNT:조교관외 -= 1024
     ENDIF
 REND
 FLAG:3001 = 0

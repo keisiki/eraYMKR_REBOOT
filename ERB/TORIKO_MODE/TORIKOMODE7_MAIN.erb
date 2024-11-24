@@ -46,7 +46,7 @@ DO
     ;디버그
     ;PRINTFORML 1.(LOCAL:99) = {(LOCAL:99)}
     ;주인은 제외. 실종중인 노예, 창관노예, 꽃밭노예도 제외
-    IF (LOCAL:99) == 0  || CFLAG:(LOCAL:99):4 == 1 || CFLAG:(LOCAL:99):4 == 1024 || CFLAG:(LOCAL:99):4 == 2048 || CFLAG:(LOCAL:99):4 == 4096 || 대상_제외됨(LOCAL:99)
+    IF (LOCAL:99) == 0  || CFLAG:(LOCAL:99):조교관외 == 1 || CFLAG:(LOCAL:99):조교관외 == 1024 || CFLAG:(LOCAL:99):조교관외 == 2048 || CFLAG:(LOCAL:99):조교관외 == 4096 || 대상_제외됨(LOCAL:99)
         ;
     ELSE
         ;탈출확률계산
@@ -129,7 +129,7 @@ DO
                     PRINTFORMW <!!%조사처리(CALLNAME:(LOCAL:99),"가")% 탈출했습니다!!>
                     RESETCOLOR
                     ;실종상태 부여
-                    CFLAG:(LOCAL:99):4 = 1
+                    CFLAG:(LOCAL:99):조교관외 = 1
                     ;실종포인트 부여
                     CALL CALC_MISSINGPOWER_TORIKOMODE, (LOCAL:99)
                 ;실패했다!
@@ -269,7 +269,7 @@ DO
     IF LOCAL:99 == 0
         ;
     ;실종중 캐릭터도 제외
-    ELSEIF CFLAG:(LOCAL:99):4 == 1 || 대상_제외됨(LOCAL:99)
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 1 || 대상_제외됨(LOCAL:99)
         ;
     ELSE
         ;구출포인트의 일일 상승량.  초기치5. 인구수에 따라 감소. 난이도에 따라 증가.
@@ -321,7 +321,7 @@ CALL CALC_SECURITY_POWER_TORIKOMODE
 LOCAL:99 = 0
 DO 
     LOCAL:0 = (LOCAL:99)
-    SIF CFLAG:(LOCAL:0):4 == 1
+    SIF CFLAG:(LOCAL:0):조교관외 == 1
     LOCAL:1 ++
     LOCAl:99 ++
 LOOP LOCAL:99 < CHARANUM
@@ -363,7 +363,7 @@ IF FLAG:5043 > 0
         LOCAL:99 = 0
         DO 
             LOCAL:0 = (LOCAL:99)
-            IF CFLAG:(LOCAL:0):4 == 1
+            IF CFLAG:(LOCAL:0):조교관외 == 1
                 ;디버그
                 ;PRINTFORML %CALLNAME:(LOCAL:0)%가 탈주중.
                 ;수색 성공률 계산
@@ -395,7 +395,7 @@ IF FLAG:5043 > 0
         IF RESULT > CHARANUM || RESULT == 100  || RESULT <= 0 
             GOTO SELECT_LIST
         ;탈주중인 노예라면, 수색 시작한다.
-        ELSEIF CFLAG:RESULT:4 == 1
+        ELSEIF CFLAG:RESULT:조교관외 == 1
             ;노예 번호 저장
             LOCAL:4 = RESULT
             CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
@@ -621,7 +621,7 @@ IF FLAG:5043 > 0
         LOCAL:99 =0
         DO
             ;주인, 탈주중 노예, 무명 캐릭터 제외
-            IF LOCAL:99 ==0 || CFLAG:(LOCAL:99):4 ==1 || NO:(LOCAL:99) > 148
+            IF LOCAL:99 ==0 || CFLAG:(LOCAL:99):조교관외 ==1 || NO:(LOCAL:99) > 148
                 ;
             ELSE
                 PRINTFORM [{LOCAL:99}] %CALLNAME:(LOCAL:99)% (구출자 침입 확률 : 
@@ -643,7 +643,7 @@ IF FLAG:5043 > 0
         ;범위밖이거나 무명캐릭터는 제외.
         IF RESULT == 999 || RESULT > CHARANUM || RESULT <=0 || NO:RESULT > 148
             GOTO SELECT_LIST
-        ELSEIF RESULT !=0 || CFLAG:RESULT:4 !=1
+        ELSEIF RESULT !=0 || CFLAG:RESULT:조교관외 !=1
             ;선택노예번호 저장
             LOCAL:4 = RESULT
             PRINTFORMW 수색대는 %CALLNAME:(LOCAL:4)%에 대한 소문을 내었다….
@@ -682,7 +682,7 @@ ENDIF
 @EVENT_COMEBACK_TORIKOMODE
 LOCAL:99 =0
 DO 
-    IF CFLAG:(LOCAL:99):4011 < 100 && CFLAG:(LOCAL:99):4 == 1
+    IF CFLAG:(LOCAL:99):4011 < 100 && CFLAG:(LOCAL:99):조교관외 == 1
         ;복귀한다.
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
@@ -696,7 +696,7 @@ DO
         RESETCOLOR
         PRINTL
         ;실종 플래그 삭제
-        CFLAG:(LOCAL:99):4 = 0
+        CFLAG:(LOCAL:99):조교관외 = 0
         ;질투치 증가
         CFLAG:(LOCAL:99):30 += 30
         ;노예의 수치 변동. 일정량을 입력한다.
@@ -750,14 +750,14 @@ DO
     IF LOCAL:99 == 0
         ;
     ;실종중 노예는 제외
-    ELSEIF CFLAG:(LOCAL:99):4 == 1 || 대상_제외됨(LOCAL:99)
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 1 || 대상_제외됨(LOCAL:99)
         ;
     ELSE
         ;번호
         PRINTFORM [{LOCAL:99}] 
         ;이름
         ;만약 스케쥴이 있다면 검은 색을 입힐 것.
-        SIF CFLAG:(LOCAL:99):4 > 1
+        SIF CFLAG:(LOCAL:99):조교관외 > 1
             CALL SETCOLOR_TORIKOMODE, "BLACK", 2
         PRINTFORML %CALLNAME:(LOCAL:99), 10, LEFT% 
         RESETCOLOR
@@ -794,13 +794,13 @@ INPUT
 ;노예번호 저장
 LOCAL:1 = RESULT
 ;스케쥴이 있는 노예는 변경불가
-IF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:4 > 1
+IF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 > 1
     CALL SETCOLOR_TORIKOMODE, "RED", 2
     PRINTFORMW %조사처리(CALLNAME:(LOCAL:1),"는")% 지금 바쁘다…. (스케쥴을 없음으로 바꿔 주세요)
     RESETCOLOR
     GOTO SELECT_SLAVE
 ;노예 구속상태 변경. 실종자가 아니어야 함
-ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:4 != 1
+ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
     $SELECT_LIST
     CUSTOMDRAWLINE ･
     PRINTFORML %조사처리(CALLNAME:(LOCAL:1),"를")% 어떻게 할까?
@@ -1011,7 +1011,7 @@ DO
     IF LOCAL:99 == 0
         ;
     ;실종중 노예는 제외
-    ELSEIF CFLAG:(LOCAL:99):4 == 1 || 대상_제외됨(LOCAL:99)
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 1 || 대상_제외됨(LOCAL:99)
         ;
     ELSE
         ;구속구 효과를 출력한다.

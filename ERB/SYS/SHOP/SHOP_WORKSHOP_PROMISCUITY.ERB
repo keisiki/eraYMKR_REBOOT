@@ -41,7 +41,7 @@ SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
 CALL VALUE_WORKSHOP_RESULT_PROMISCUITY
 FOR LOCAL:0, 0, CHARANUM
     ;工房に居ないか乱交中でないキャラはスキップ
-    SIF CFLAG:(LOCAL:0):4 != 3
+    SIF CFLAG:(LOCAL:0):조교관외 != 3
         CONTINUE
     SIF (CFLAG:(LOCAL:0):691 & 1p7) == 0
         CONTINUE
@@ -151,7 +151,7 @@ IF (CFLAG:(ARG:1):42 & 2) == 0 && EXIST_BAR(ARG:1)
     SIF (TALENT:(ARG:0):빈유 && ABL:(ARG:0):기교 > 4) || (TALENT:(ARG:0):거유 && ABL:(ARG:0):기교 > 1) || (TALENT:(ARG:0):폭유 && ABL:(ARG:0):기교 > 0) || (TALENT:(ARG:0):절벽 == 0 && TALENT:(ARG:0):빈유 == 0 && TALENT:(ARG:0):거유 == 0 && TALENT:(ARG:0):폭유 == 0 && ABL:(ARG:0):기교 > 2)
         LOCAL:103 = 1
     ;以下、襲われ側に貞操帯がなく、体格が同程度であるか襲い側に禁断の知識があるか、禁断の知識持ちのマスターが工房で乱交に襲う側で参加している必要がある
-    IF (TALENT:(ARG:0):소인 && TALENT:(ARG:1):소인) || (TALENT:(ARG:0):소인 == 0 && TALENT:(ARG:1):소인 == 0) || TALENT:(ARG:1):금단의지식 || (TALENT:MASTER:금단의지식 && CFLAG:MASTER:4 == 3 && (CFLAG:MASTER:691 & 1p7) && (CFLAG:MASTER:691 & 1p3))
+    IF (TALENT:(ARG:0):소인 && TALENT:(ARG:1):소인) || (TALENT:(ARG:0):소인 == 0 && TALENT:(ARG:1):소인 == 0) || TALENT:(ARG:1):금단의지식 || (TALENT:MASTER:금단의지식 && CFLAG:MASTER:조교관외 == 3 && (CFLAG:MASTER:691 & 1p7) && (CFLAG:MASTER:691 & 1p3))
         ;Ｖ挿入：襲われ側にＶが必要(つまりオトコ以外なら可能)
         SIF TALENT:(ARG:0):남자 == 0 || TALENT:(ARG:0):후타나리
             LOCAL:104 = 1
@@ -170,7 +170,7 @@ IF (CFLAG:(ARG:0):42 & 2) == 0 && EXIST_BAR(ARG:0)
     SIF (TALENT:(ARG:1):빈유 && ABL:(ARG:1):기교 > 4) || (TALENT:(ARG:1):거유 && ABL:(ARG:1):기교 > 1) || (TALENT:(ARG:1):폭유 && ABL:(ARG:1):기교 > 0) || (TALENT:(ARG:1):절벽 == 0 && TALENT:(ARG:1):빈유 == 0 && TALENT:(ARG:1):거유 == 0 && TALENT:(ARG:1):폭유 == 0 && ABL:(ARG:1):기교 > 2)
         LOCAL:107 = 1
     ;以下、襲い側に貞操帯がなく、体格が同程度であるか襲い側に禁断の知識があるか、禁断の知識持ちのマスターが工房で乱交に襲う側で参加している必要がある(あくまで禁断の知識は襲い側への要求とする)
-    IF (TALENT:(ARG:1):소인 && TALENT:(ARG:0):소인) || (TALENT:(ARG:1):소인 == 0 && TALENT:(ARG:0):소인 == 0) || TALENT:(ARG:1):금단의지식 || (TALENT:MASTER:금단의지식 && CFLAG:MASTER:4 == 3 && (CFLAG:MASTER:691 & 1p7) && (CFLAG:MASTER:691 & 1p3))
+    IF (TALENT:(ARG:1):소인 && TALENT:(ARG:0):소인) || (TALENT:(ARG:1):소인 == 0 && TALENT:(ARG:0):소인 == 0) || TALENT:(ARG:1):금단의지식 || (TALENT:MASTER:금단의지식 && CFLAG:MASTER:조교관외 == 3 && (CFLAG:MASTER:691 & 1p7) && (CFLAG:MASTER:691 & 1p3))
         ;Ｖ挿入させる：襲い側にＶが必要(つまりオトコ以外なら可能)
         SIF TALENT:(ARG:1):남자 == 0 || TALENT:(ARG:1):후타나리
             LOCAL:108 = 1
@@ -1368,13 +1368,13 @@ FOR LOCAL:0, 1, CHARANUM
 NEXT
 ;最後にLOCAL:0を初期化
 SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 4)
-    PRINTFORML ;;; 공방 난교 대사 표시 변수 초기화 처리  %CALLNAME:0%のCFLAG:%CALLNAME:0%:691 = {CFLAG:0:691} 난교플래그 \@ CFLAG:0:691 & 1p7 ? on # off \@ 표시제플래그 \@ CFLAG:0:691 & 1p9 ? on # off \@
-IF CFLAG:0:691 & 1p7 && (CFLAG:0:691 & 1p9) == 0
+    PRINTFORML ;;; 공방 난교 대사 표시 변수 초기화 처리  %CALLNAME:0%のCFLAG:%CALLNAME:0%:691 = {CFLAG:SP캐릭터:691} 난교플래그 \@ CFLAG:SP캐릭터:691 & 1p7 ? on # off \@ 표시제플래그 \@ CFLAG:SP캐릭터:691 & 1p9 ? on # off \@
+IF CFLAG:MASTER:691 & 1p7 && (CFLAG:MASTER:691 & 1p9) == 0
     IF LOCAL@VALUE_WORKSHOP_RESULT_PROMISCUITY:0 > -1
         LOCAL:0 = 4
     ELSEIF LOCAL@VALUE_WORKSHOP_RESULT_PROMISCUITY:0 == -2
         LOCAL:0 = 12
-    ELSEIF CFLAG:0:691 & 1p3
+    ELSEIF CFLAG:MASTER:691 & 1p3
         LOCAL:0 = 16
     ELSE
         LOCAL:0 = 0

@@ -8,7 +8,7 @@
 #PRI
 ;#ONLY
 ;대사 표시의 개별 설정 플래그가 미설정일 경우, 사용하는 대사 선택시킨다
-;SIF CFLAG:9 <= 0
+;SIF CFLAG:특수인계처리 <= 0
     ;CALL SELECT_TEXT_DISPLAY, TARGET
 
 ;助手が酔い潰れている場合, ここで離脱する処理を追加
@@ -349,7 +349,7 @@ SIF ABL:순종 < 4 && (TALENT:반항적 || TALENT:꿋꿋함)
 SIF ABL:욕망 < 4 && (TALENT:자제심 || TALENT:억압 || TALENT:저항)
     RETURN 0
 ;既に助手可能なら帰る
-SIF CFLAG:1 == 2
+SIF CFLAG:매각가능 == 2
     RETURN 0
 
 LOCAL = 0
@@ -360,17 +360,17 @@ SIF (ABL:기교 >= 3 && ABL:봉사정신 >= 3) || (ABL:노출증 >= 3 && ABL:자
 SIF (ABL:C감각 >= 3 && ABL:순종 >= 3 && ABL:욕망 >= 3 && ABL:기교 >= 3 && ABL:(22 + TALENT:남자) >= 3) || (ABL:순종 >= 5 && ABL:욕망 >= 4)
     LOCAL |= 2
 ;売却可能か助手可能であると判定され, 今まで売却可能でなかった場合
-IF (LOCAL & 1 || LOCAL & 2) && CFLAG:1 < 1
+IF (LOCAL & 1 || LOCAL & 2) && CFLAG:매각가능 < 1
     ;売却可能になったイベント口上呼び出し
     CALL SELF_KOJO, TARGET, 122
     PRINTFORMW %조사처리(CALLNAME:TARGET,"가")% 매각 가능해졌습니다.
-    CFLAG:1 = 1
+    CFLAG:매각가능 = 1
 ;助手可能であると判定され, 今まで助手可能でなかった場合
-ELSEIF LOCAL & 2 && CFLAG:1 < 2
+ELSEIF LOCAL & 2 && CFLAG:매각가능 < 2
     ;助手可能になったイベント口上呼び出し
     CALL SELF_KOJO, TARGET, 123
     PRINTFORMW %조사처리(CALLNAME:TARGET,"가")% 조수 가능해졌습니다.
-    CFLAG:1 = 2    
+    CFLAG:매각가능 = 2    
 ELSE
     RETURN 0
 ENDIF
@@ -522,7 +522,7 @@ IF CFLAG:ARG:99 == 0
     PRINTW ……
     PRINTFORMW ★★★%조사처리(CALLNAME:ARG,"는")% 사라졌습니다★★★
 ENDIF
-SETBIT CFLAG:ARG:4, 13
+SETBIT CFLAG:ARG:조교관외, 13
 CALL 대상_사망함(ARG)
 IF TARGET == -1
     TARGET = 0

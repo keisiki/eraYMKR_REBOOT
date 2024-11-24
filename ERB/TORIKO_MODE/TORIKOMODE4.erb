@@ -20,7 +20,7 @@ LOCAL:99 =0
 ;
 DO
     ;주인과 실종중 캐릭터는 제외
-    IF (LOCAL:99) == MASTER || CFLAG:(LOCAL:99):4 == 1 || 대상_제외됨(LOCAL:99)
+    IF (LOCAL:99) == MASTER || CFLAG:(LOCAL:99):조교관외 == 1 || 대상_제외됨(LOCAL:99)
         ;
     ELSE
         ;스트레스 레벨 계산
@@ -33,7 +33,7 @@ DO
         LOCAL:1 = LOCAL:2*5
         ;디버그
         ;PRINTFORML 스트레스 이벤트가 벌어질까 어떨까?  LOCAL:0  = {LOCAL:0 }      LOCAL:1 = {LOCAL:1}
-        ;PRINTFORML CFLAG:(LOCAL:99):4 = {CFLAG:(LOCAL:99):4} , CFLAG:(LOCAL:99):4& 1024 = {CFLAG:(LOCAL:99):4& 1024}
+        ;PRINTFORML CFLAG:(LOCAL:99):조교관외 = {CFLAG:(LOCAL:99):조교관외} , CFLAG:(LOCAL:99):조교관외& 1024 = {CFLAG:(LOCAL:99):조교관외& 1024}
         ;밧줄구속상태에서는 자해를 할 수 없다.
         IF LOCAL:0 <= LOCAL:1 && (CFLAG:ARG:4010 & 2) == 0
             ; 이벤트 - 쇼핑. 친애 상애일때 1만 이상 돈이 있으면 무조건 이쪽으로 빠짐. 스트레스 범위는 1~4렙까지.
@@ -51,7 +51,7 @@ DO
             ; 이벤트 - 창관깽판. 창관에 배치된 상태일때, 50-봉사정신*5 만큼 이쪽으로 빠짐.  스트레스 범위는 1~4
             LOCAL:0 = RAND:100
             LOCAL:1 = 100 - ((ABL:(LOCAL:99):봉사정신)*5)
-            IF LOCAL:0 <= LOCAL:1 && CFLAG:(LOCAL:99):4&1024 &&  LOCAL:2 <= 4 && LOCAL:2 >= 1
+            IF LOCAL:0 <= LOCAL:1 && CFLAG:(LOCAL:99):조교관외&1024 &&  LOCAL:2 <= 4 && LOCAL:2 >= 1
                 CALL EVENT_STRESS_SPRINGSHOPATTACK_TORIKOMODE, (LOCAL:99)
                 CONTINUE
             ENDIF
@@ -218,7 +218,7 @@ PRINTFORMW .......또 저질렀군....
 PRINTFORMW 
 PRINTFORMW %CALLNAME:MASTER%와 %조사처리(CALLNAME:ARG,"는")% 다들 떠나고 난 창관을 같이 청소했다.
 ;호감도체크
-IF CFLAG:ARG:2 >= 500
+IF CFLAG:ARG:호감도 >= 500
     PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 미안한 듯한 표정을 짓고 있다...
     PRINTFORMW 그런 모습을 본  %조사처리(CALLNAME:MASTER,"는")% 괜찮다고 위로를 건넸다.
     PRINTFORMW ...많이 쌓였겠지...
@@ -300,7 +300,7 @@ IF LOCAL:0 < 7
     PRINTFORMW 
     PRINTFORMW 잠시 뒤, 진정한 %조사처리(CALLNAME:ARG,"는")% %조사처리(CALLNAME:MASTER,"과")% 함께 방을 청소했다.
     ;호감도체크
-    IF CFLAG:ARG:2 >= 500
+    IF CFLAG:ARG:호감도 >= 500
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 미안한 듯한 표정을 짓고 있다...
         PRINTFORMW 그런 모습을 본  %조사처리(CALLNAME:MASTER,"는")% 괜찮다고 위로를 건넸다.
         PRINTFORMW ...많이 쌓였겠지...
@@ -350,7 +350,7 @@ ELSE
         PRINTFORMW 다행히도 큰 부상은 입지 않은 것 같다. 간단한 치료를 받은 후, 집으로 돌아왔다.
     ENDIF
     ;호감도체크
-    IF CFLAG:ARG:2 >= 500
+    IF CFLAG:ARG:호감도 >= 500
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 미안한 듯한 표정을 짓고 있다...
         PRINTFORMW 그런 모습을 본  %조사처리(CALLNAME:MASTER,"는")% 괜찮다고 위로를 건넸다.
         PRINTFORMW ...많이 쌓였겠지...
@@ -482,7 +482,7 @@ IF LOCAL:7 >= 7
     PRINTFORMW %CALLNAME:MASTER%의 행동이 효과가 있었는지, %조사처리(CALLNAME:ARG,"는")% 자해 행위를 그만두었다...
     PRINTFORMW 잠시 멍한 표정으로 있던 %CALLNAME:ARG%의 눈가에 눈물이 맺히기 시작한다...
     ;호감도가 높다면
-    IF (CFLAG:ARG:2) >= 500
+    IF (CFLAG:ARG:호감도) >= 500
         PRINTFORMW 이윽고, 눈물과 콧물로 범벅이 된 얼굴을 %CALLNAME:MASTER%의 가슴에 파묻고 오열하기 시작했다...
         PRINTFORMW 그런 %조사처리(CALLNAME:ARG,"를")%, %조사처리(CALLNAME:MASTER,"는")% 꼭 안아주었다.
         PRINTFORMW 그렇게 밤이 흘러갔다...
@@ -577,7 +577,7 @@ PRINTL
 
 ;말린 경우. 추가처리.
 IF LOCAL:7 >= 7
-    CFLAG:ARG:2 += 200
+    CFLAG:ARG:호감도 += 200
     JUEL:ARG:12 += 1000
     PRINTFORMW %CALLNAME:ARG%는 조금 마음을 열게 된 듯 하다... 호감도 +200. 순종의 주 +1000
 ;병원에 갔을 경우

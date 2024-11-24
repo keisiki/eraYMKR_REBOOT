@@ -82,7 +82,7 @@ SIF FLAG:1130 < 1
 DRAWLINE
 SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
     PRINTFORML ;;; 공방 작업 판정 개시
-SIF CFLAG:MASTER:4 != 3
+SIF CFLAG:MASTER:조교관외 != 3
     PRINTL 한편 공방에서는……
 ;ヤンデレ破滅判定をここに
 ;CALL JUDGE_WORKSHOP_BAD_STATE
@@ -93,12 +93,12 @@ SIF CFLAG:MASTER:4 != 3
 ;先に主人だけ確認
 CALL JUDGE_WORKSHOP_MOTIVATION_MASTER
 REPEAT CHARANUM
-    IF CFLAG:COUNT:4 == 0
+    IF CFLAG:COUNT:조교관외 == 0
         ;自室にいて今が夜ならついでに工房作業やる気フラグ類全オフ
         IF TIME
             CFLAG:COUNT:691 = 0
         ENDIF
-    ELSEIF CFLAG:COUNT:4 == 3
+    ELSEIF CFLAG:COUNT:조교관외 == 3
         ;各キャラの全判定の基本値をここで設定
         CALL JUDGE_WORKSHOP_STATE
         ;被誘惑フラグ・教育成功人数フラグも初期化
@@ -116,14 +116,14 @@ REND
 ;2. エロス判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:체력 < 500
+    SIF CFLAG:COUNT:조교관외 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_EROTICISM
 REND
 ;3. 誘惑対象判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:체력 < 500
+    SIF CFLAG:COUNT:조교관외 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_TEMPTATION_TARGET
     IF RESULT == 0
@@ -138,21 +138,21 @@ REND
 ;4. 誘惑実行判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:체력 < 500
+    SIF CFLAG:COUNT:조교관외 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_TEMPTATION
 REND
 ;5. 便乗誘惑判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:체력 < 500
+    SIF CFLAG:COUNT:조교관외 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_PHORESIS
 REND
 ;6. 抵抗判定
 REPEAT CHARANUM
     ;工房に居ないキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3
+    SIF CFLAG:COUNT:조교관외 != 3
         CONTINUE
     CALL JUDGE_WORKSHOP_RESISTANCE
 REND
@@ -163,13 +163,13 @@ FLAG:1136 = 0
 FLAG:1137 = 0
 REPEAT CHARANUM
     ;工房に居ないキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3
+    SIF CFLAG:COUNT:조교관외 != 3
         CONTINUE
     CALL JUDGE_WORKSHOP_PARTY
 REND
 REPEAT CHARANUM
     ;工房に居ないキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3
+    SIF CFLAG:COUNT:조교관외 != 3
         CONTINUE
     IF CFLAG:COUNT:792 != -1
         ;乱交仲間を設定する
@@ -218,7 +218,7 @@ RETURN 0
 ;=======================================;
 @JUDGE_WORKSHOP_MOTIVATION_MASTER
 ;主人が工房に居ないなら選択肢なし
-SIF CFLAG:MASTER:4 != 3
+SIF CFLAG:MASTER:조교관외 != 3
     RETURN 0
 ;主人一人で作業してるなら選択肢なし
 SIF FLAG:1130 == 1
@@ -341,7 +341,7 @@ IF COUNT != MASTER || FLAG:1138 == 3 || FLAG:1138 == 4
         CFLAG:COUNT:695 /= 2
     ENDIF
     ;主人の動向でやる気が変動
-    IF COUNT != MASTER && CFLAG:MASTER:4 == 3 && (CFLAG:MASTER:691 & 1p2) == 0
+    IF COUNT != MASTER && CFLAG:MASTER:조교관외 == 3 && (CFLAG:MASTER:691 & 1p2) == 0
         FLAG:1119 = CFLAG:COUNT:695
         ;主人が規律を正そうとしてたら一部の素質を持たない限りやる気増加
         IF TALENT:COUNT:반항적 || TALENT:COUNT:저항 || (MARK:COUNT:반발각인 && TALENT:COUNT:연모 == 0 && TALENT:COUNT:망신 == 0 && TALENT:COUNT:친애 == 0 && TALENT:COUNT:상애 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:예속 == 0 && TALENT:COUNT:사역마 == 0 && TALENT:COUNT:괴조인격 == 0)
@@ -456,7 +456,7 @@ IF BASE:COUNT:체력 < (MAXBASE:COUNT:체력 / 2)
     ;体力が半減しているならエロス値半減
     CFLAG:COUNT:696 /= 2
 ENDIF
-IF COUNT != MASTER && CFLAG:MASTER:4 == 3
+IF COUNT != MASTER && CFLAG:MASTER:조교관외 == 3
     ;マスター在中の時点でエロス値1.2倍
     TIMES CFLAG:COUNT:696 , 1.2
     SELECTCASE FLAG:1136
@@ -608,7 +608,7 @@ SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
 LOCAL:0 = 0
 LOCAL:1 = 0
 ;主人がいる場合、主人を選ぶ率を変動する (HARD以下の難易度の場合は主人の体力不足の場合に選択肢から外す)
-IF CFLAG:MASTER:4 == 3 && (FLAG:1111) != MASTER && (FLAG:난이도 > 3 || BASE:MASTER:체력 > 499)
+IF CFLAG:MASTER:조교관외 == 3 && (FLAG:1111) != MASTER && (FLAG:난이도 > 3 || BASE:MASTER:체력 > 499)
     ;自分と主人の相性値を確認して誘惑値に加算する(誘惑値50保障)
     CALL JUDGE_WORKSHOP_CONGENIAL, FLAG:1111, MASTER
     LOCAL:0 += RESULT + 50
@@ -632,7 +632,7 @@ FOR LOCAL:5, 0, CHARANUM
     SIF LOCAL:5 == FLAG:1111
         CONTINUE
     ;工房に居なければスキップ
-    SIF CFLAG:(LOCAL:5):4 != 3
+    SIF CFLAG:(LOCAL:5):조교관외 != 3
         CONTINUE
     ;HARD以下の難易度の場合は主人の体力不足の場合に選択肢から外す
     SIF LOCAL:5 == MASTER && FLAG:난이도 < 4 && BASE:MASTER:체력 < 500

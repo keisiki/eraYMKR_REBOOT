@@ -204,12 +204,12 @@ PRINTL
 @PRINT_SLAVE_STATUS, ARG
 ;토리코모드 스트레스 시스템
 IF FLAG:토리코모드 & 64
-    PRINTFORM (주인조교경험:{EXP:ARG:주인조교경험} 호감도:{CFLAG:ARG:2} 스트레스:
+    PRINTFORM (주인조교경험:{EXP:ARG:주인조교경험} 호감도:{CFLAG:ARG:호감도} 스트레스:
     CALL PRINT_STRESS_LEVEL_TORIKOMODE, CFLAG:ARG:65
     PRINTFORML  이상경험:{EXP:ARG:이상경험})
 ;일반모드
 ELSE
-    PRINTFORML (주인조교경험:{EXP:ARG:주인조교경험} 호감도:{CFLAG:ARG:2} 스트레스:{CFLAG:ARG:65} 이상경험:{EXP:ARG:이상경험})
+    PRINTFORML (주인조교경험:{EXP:ARG:주인조교경험} 호감도:{CFLAG:ARG:호감도} 스트레스:{CFLAG:ARG:65} 이상경험:{EXP:ARG:이상경험})
 ENDIF
 IF FLAG:커맨드확장 & 4096 && TALENT:ARG:기생
     PRINT 기생촉수성장LV:
@@ -233,9 +233,9 @@ SIF CFLAG:ARG:46
 SIF CFLAG:ARG:47 && ARG != ASSI
     PRINTFORML 조수에서 해임\@((DAY - CFLAG:ARG:47) <= 0) ? 된지 얼마 안 됩니다 # 되고 나서 {DAY - CFLAG:ARG:47}일 정도 경과하고 있습니다\@.
 ;현재 허브 개발 및 생산중이라면 그것을 표시.
-SIF CFLAG:ARG:4 == 2048
+SIF CFLAG:ARG:조교관외 == 2048
     PRINTFORML 현재 허브 개발시설에서, 신종의 허브를 개발중입니다.
-SIF CFLAG:ARG:4 == 4096
+SIF CFLAG:ARG:조교관외 == 4096
     PRINTFORML 현재 허브 생산시설에서, 허브를 생산중입니다.
 ;수면제의 영향하에 있으면 표시
 SIF EQUIP:ARG:14 > 0
@@ -1652,12 +1652,12 @@ ELSEIF MARK:ARG:80 == 2
 ENDIF
 
 ;매각 가능한가?　조수화 가능한가?
-IF TALENT:ARG:봉래인 == 2 && CFLAG:ARG:3
+IF TALENT:ARG:봉래인 == 2 && CFLAG:ARG:매각불능
     PRINTFORML %조사처리(CALLNAME:MASTER,"과")% 영원한 시간을 걷기 위해, 봉래의 죄를 그 몸과 마음에 짊어지고 살아가게 되었다.
-ELSEIF CFLAG:ARG:1 == 2
-    PRINTFORML \@(CFLAG:ARG:3) ? 조수로 삼는 것은 가능하지만, 매각은 불가능 # 매각 및 조수로 삼는 것 둘 다 가능\@하다.
-ELSEIF CFLAG:ARG:1 == 1
-    PRINTFORML \@(CFLAG:ARG:3) ? 매각조건은 채웠지만, 매각 그 자체는 불가능 # 매각이 가능\@하다.
+ELSEIF CFLAG:ARG:매각가능 == 2
+    PRINTFORML \@(CFLAG:ARG:매각불능) ? 조수로 삼는 것은 가능하지만, 매각은 불가능 # 매각 및 조수로 삼는 것 둘 다 가능\@하다.
+ELSEIF CFLAG:ARG:매각가능 == 1
+    PRINTFORML \@(CFLAG:ARG:매각불능) ? 매각조건은 채웠지만, 매각 그 자체는 불가능 # 매각이 가능\@하다.
 ELSE
     PRINTL 매각하는 것도 조수로 삼는 것도 불가능하다.
 ENDIF
@@ -1899,8 +1899,8 @@ SIF MONEY:990
     PRINTFORML 　노예 매각으로 번 수입 총합　　　:\@(MONEY:990 > 100000000) ?  1억원 이상 # {MONEY:990}원\@
 SIF MONEY:991
     PRINTFORML 　고급 노예 매각으로 번 수입 총합 :\@(MONEY:991 > 100000000) ?  1억원 이상 # {MONEY:991}원\@
-SIF CHARANUM > 1 && SUMCARRAY(CFLAG:ARG:2, 1, CHARANUM) > 0
-    PRINTFORML 　현 보유 노예의 호감도 종합계　　:{SUMCARRAY(CFLAG:ARG:2,1,CHARANUM)}
+SIF CHARANUM > 1 && SUMCARRAY(CFLAG:ARG:호감도, 1, CHARANUM) > 0
+    PRINTFORML 　현 보유 노예의 호감도 종합계　　:{SUMCARRAY(CFLAG:ARG:호감도,1,CHARANUM)}
 SIF CHARANUM > 1 && SUMCARRAY(CFLAG:ARG:65, 1, CHARANUM) > 0
     PRINTFORML 　현 보유 노예의 스트레스 종합계　:{SUMCARRAY(CFLAG:ARG:65,1,CHARANUM)}
 SIF FLAG:구입총계
@@ -2316,31 +2316,31 @@ ELSEIF NO:ARG == 400
 ELSEIF TALENT:ARG:주정
     STR:2 = %STR:145%
     RETURN 1
-ELSEIF TALENT:ARG:요정 && CFLAG:ARG:5 == 1
+ELSEIF TALENT:ARG:요정 && CFLAG:ARG:종족변경 == 1
     STR:2 = %STR:103%
     RETURN 1
-ELSEIF TALENT:ARG:흡혈귀 && CFLAG:ARG:5 == 2
+ELSEIF TALENT:ARG:흡혈귀 && CFLAG:ARG:종족변경 == 2
     STR:2 = %STR:106%
     RETURN 1
-ELSEIF TALENT:ARG:기계 && CFLAG:ARG:5 == 3
+ELSEIF TALENT:ARG:기계 && CFLAG:ARG:종족변경 == 3
     STR:2 = %STR:146%
     RETURN 1
-ELSEIF TALENT:ARG:영체 && CFLAG:ARG:5 == 4
+ELSEIF TALENT:ARG:영체 && CFLAG:ARG:종족변경 == 4
     STR:2 = %STR:143%
     RETURN 1
-ELSEIF TALENT:ARG:인형 && CFLAG:ARG:5 == 5
+ELSEIF TALENT:ARG:인형 && CFLAG:ARG:종족변경 == 5
     STR:2 = %STR:121%
     RETURN 1
-ELSEIF TALENT:ARG:악마 && CFLAG:ARG:5 == 6
+ELSEIF TALENT:ARG:악마 && CFLAG:ARG:종족변경 == 6
     STR:2 = %STR:104%
     RETURN 1
-ELSEIF TALENT:ARG:캇파 && CFLAG:ARG:5 == 7
+ELSEIF TALENT:ARG:캇파 && CFLAG:ARG:종족변경 == 7
     STR:2 = %STR:127%
     RETURN 1
-ELSEIF TALENT:ARG:요호 && CFLAG:ARG:5 == 8
+ELSEIF TALENT:ARG:요호 && CFLAG:ARG:종족변경 == 8
     STR:2 = %STR:112%
     RETURN 1
-ELSEIF TALENT:ARG:반백택 && CFLAG:ARG:5 == 9
+ELSEIF TALENT:ARG:반백택 && CFLAG:ARG:종족변경 == 9
     STR:2 = %STR:116%
     RETURN 1
 ELSEIF TALENT:ARG:SpellCard
@@ -2630,7 +2630,7 @@ SIF TALENT:ARG:기생
     PRINT 기생.
 SIF CFLAG:ARG:41 > 0
     PRINT 종.
-SIF CFLAG:ARG:0 > 0
+SIF CFLAG:ARG:SP캐릭터 > 0
     PRINT EX.
 SIF TALENT:ARG:창부 && FLAG:아이템확장 & 1024
     PRINT 창부.

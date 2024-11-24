@@ -128,7 +128,7 @@ REPEAT CHARANUM
     MARK:COUNT:98 = 0
     SIF COUNT == 0
         CONTINUE
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     SIF TALENT:COUNT:기생 == 0
         CONTINUE
@@ -284,7 +284,7 @@ REPEAT 20
     ;主人公と助手対象と調教中キャラは排除
     SIF LOCAL == 0
         CONTINUE
-    SIF CFLAG:LOCAL:4
+    SIF CFLAG:LOCAL:조교관외
         CONTINUE
     SIF MARK:LOCAL:98 == 0
         CONTINUE
@@ -294,7 +294,7 @@ REPEAT 20
         PRINT ★
     ELSEIF ISASSI:LOCAL == 1
         PRINT ●
-    ELSEIF CFLAG:LOCAL:1 == 2
+    ELSEIF CFLAG:LOCAL:매각가능 == 2
         PRINT ○
     ELSE
         PRINT 　
@@ -1006,7 +1006,7 @@ REPEAT CHARANUM
         CONTINUE
 ;    SIF COUNT == TARGET
 ;        CONTINUE
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     ;弱味, 妄信, 恋慕系, 服従系は除外
     SIF TALENT:COUNT:약점 || TALENT:COUNT:연모 || TALENT:COUNT:망신 || TALENT:COUNT:친애 || TALENT:COUNT:상애 || TALENT:COUNT:복종 || TALENT:COUNT:낙인 || TALENT:COUNT:예속 || TALENT:COUNT:사역마
@@ -1299,17 +1299,17 @@ REPEAT CHARANUM
 ;    SIF COUNT == TARGET
 ;        CONTINUE
     ;パートナーとなっている助手はダメ
-    SIF CFLAG:COUNT:3 & 4
+    SIF CFLAG:COUNT:매각불능 & 4
         CONTINUE
     SIF NO:COUNT == 401 && (FLAG:570 & 48) == 0
         CONTINUE
-    IF CFLAG:COUNT:4 == 4
+    IF CFLAG:COUNT:조교관외 == 4
         ;촉수部屋の中にいる分はOK(部屋に入れた直後は除く)
         SIF CFLAG:COUNT:39 < 1
             CONTINUE
     ELSE
         ;촉수部屋にも自室にも居ないならダメ
-        SIF CFLAG:COUNT:4
+        SIF CFLAG:COUNT:조교관외
             CONTINUE
         ;従順が3未満だと除外
         SIF ABL:COUNT:순종 < 3
@@ -1362,7 +1362,7 @@ ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
     GOTO INPUT_LOOP_0
 ENDIF
 LOCAL = RESULT
-IF CFLAG:LOCAL:4 == 4
+IF CFLAG:LOCAL:조교관외 == 4
     IF CFLAG:LOCAL:39 < 1
         PRINTFORMW %조사처리(CALLNAME:LOCAL,"는")% 지금 막 유폐시킨 참입니다.
     ELSE
@@ -1500,7 +1500,7 @@ PRINTW 　　　　　・
 PRINTW 　　　　　・
 PRINTW 　　　　　・
 CFLAG:39 = 0
-CFLAG:4 = 4
+CFLAG:조교관외 = 4
 TARGET = LOCAL
 IF ARG == TARGET
     TARGET = -1
@@ -1553,7 +1553,7 @@ ELSE
 ENDIF
 PRINTW 잠시 쉬게 하는 편이 좋을지도 모르겠다.
 CFLAG:39 = 0
-CFLAG:4 = 0
+CFLAG:조교관외 = 0
 FLAG:휴식 = 1
 TARGET = LOCAL
 DRAWLINE
@@ -1638,7 +1638,7 @@ PRINTFORMW ＜촉수의 구슬＋{LOCAL:3}개(주인)＞
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 두 번 다시 조교대상으로 선택할 수 없게 되었습니다＞
 PRINTL 
 ;촉수中毒Lv3以上で助手可能または[恋慕]・[服従]・[傀儡]・[壊造人格]のいずれかを持った名有りキャラが生贄になった場合, 判定処理へ
-SIF ((ABL:촉수중독 >= 3 && CFLAG:1 == 2) || TALENT:연모 || TALENT:복종 || TALENT:괴뢰 || TALENT:괴조인격) && (NO:TARGET > 0 && NO:TARGET < 149)
+SIF ((ABL:촉수중독 >= 3 && CFLAG:매각가능 == 2) || TALENT:연모 || TALENT:복종 || TALENT:괴뢰 || TALENT:괴조인격) && (NO:TARGET > 0 && NO:TARGET < 149)
     CALL CHARACHECK_TENTACLE_SACRIFICE
 DRAWLINE
 ;촉수に取り込まれた奴隷の周回ごとの履歴フラグはセット
@@ -1679,10 +1679,10 @@ REPEAT CHARANUM
 ;    SIF COUNT == TARGET
 ;        CONTINUE
     ;パートナーとなっている助手はダメ
-    SIF CFLAG:COUNT:3 & 4
+    SIF CFLAG:COUNT:매각불능 & 4
         CONTINUE
     ;その場に居ないならダメ
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     ;使い魔不可
     SIF TALENT:COUNT:사역마
@@ -1803,7 +1803,7 @@ PRINTFORMW ＜촉수의 구슬＋{TFLAG:234}개(주인)＞
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 두 번 다시 조교대상으로 선택할 수 없게 되었습니다＞
 PRINTL 
 ;촉수中毒Lv3以上で助手可能または[恋慕]・[服従]・[傀儡]・[壊造人格]のいずれかを持った名有りキャラが生贄になった場合, 判定処理へ
-SIF ((ABL:촉수중독 >= 3 && CFLAG:1 == 2) || TALENT:연모 || TALENT:복종 || TALENT:괴뢰 || TALENT:괴조인격) && (NO:TARGET > 0 && NO:TARGET < 149)
+SIF ((ABL:촉수중독 >= 3 && CFLAG:매각가능 == 2) || TALENT:연모 || TALENT:복종 || TALENT:괴뢰 || TALENT:괴조인격) && (NO:TARGET > 0 && NO:TARGET < 149)
     CALL CHARACHECK_TENTACLE_SACRIFICE
 DRAWLINE
 ;촉수に捧げられた奴隷の周回ごとの履歴フラグはセット
@@ -1875,7 +1875,7 @@ REPEAT CHARANUM
 ;    SIF COUNT == TARGET
 ;        CONTINUE
     ;その場にいないならダメ
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     ;処女不可
     SIF TALENT:COUNT:처녀
@@ -2376,7 +2376,7 @@ REPEAT 20
     ;主人公と助手対象と調教中キャラは排除
     SIF LOCAL == 0
         CONTINUE
-    SIF CFLAG:LOCAL:4 && CFLAG:LOCAL:4 != 4
+    SIF CFLAG:LOCAL:조교관외 && CFLAG:LOCAL:조교관외 != 4
         CONTINUE
     SIF MARK:LOCAL:98 == 0
         CONTINUE
@@ -2384,11 +2384,11 @@ REPEAT 20
         PRINT ☆
     ELSEIF LOCAL == ASSI
         PRINT ★
-    ELSEIF CFLAG:LOCAL:4 == 4
+    ELSEIF CFLAG:LOCAL:조교관외 == 4
         PRINT ◆
     ELSEIF ISASSI:LOCAL == 1
         PRINT ●
-    ELSEIF CFLAG:LOCAL:1 == 2
+    ELSEIF CFLAG:LOCAL:매각가능 == 2
         PRINT ○
     ELSE
         PRINT 　
@@ -2399,7 +2399,7 @@ REPEAT 20
         PRINT [기생]
     SIF TALENT:LOCAL:회란
         PRINT [회란]
-    SIF CFLAG:LOCAL:4 == 4
+    SIF CFLAG:LOCAL:조교관외 == 4
         PRINTFORM ＜유폐 {CFLAG:LOCAL:39}일째＞
     PRINTL 
 REND

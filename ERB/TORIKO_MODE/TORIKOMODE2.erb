@@ -796,7 +796,7 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;失踪中などこの場にいないなら除外
-    SIF CFLAG:COUNT:4 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
@@ -845,7 +845,7 @@ LOCAL:99 = 0
 DO
     LOCAL = GET_LIST((LOCAL:99) + ARG * 20)
     ;주인공과 실종 캐릭터 제외
-    IF LOCAL == 0 || CFLAG:LOCAL:4 == 1 || 대상_제외됨(LOCAL)
+    IF LOCAL == 0 || CFLAG:LOCAL:조교관외 == 1 || 대상_제외됨(LOCAL)
         ;
     ELSE
         ;상태 표시.
@@ -853,24 +853,24 @@ DO
             PRINT ☆
         ELSEIF LOCAL == ASSI
             PRINT ★
-        ELSEIF CFLAG:LOCAL:4 == 4
+        ELSEIF CFLAG:LOCAL:조교관외 == 4
             PRINT ◆
             LOCAL:3 |= 1
-        ELSEIF CFLAG:LOCAL:4 == 8
+        ELSEIF CFLAG:LOCAL:조교관외 == 8
             PRINT ▲
             LOCAL:3 |= 2
-        ELSEIF CFLAG:LOCAL:4 == 16
+        ELSEIF CFLAG:LOCAL:조교관외 == 16
             PRINT ■
             LOCAL:3 |= 4
-        ELSEIF CFLAG:LOCAL:4 & 1024
+        ELSEIF CFLAG:LOCAL:조교관외 & 1024
             PRINT ▼
             LOCAL:3 |= 16
-        ELSEIF CFLAG:LOCAL:4 == 2048 || CFLAG:LOCAL:4 == 4096
+        ELSEIF CFLAG:LOCAL:조교관외 == 2048 || CFLAG:LOCAL:조교관외 == 4096
             PRINT ▽
             LOCAL:3 |= 8
         ELSEIF ISASSI:LOCAL == 1
             PRINT ●
-        ELSEIF CFLAG:LOCAL:1 == 2
+        ELSEIF CFLAG:LOCAL:매각가능 == 2
             PRINT ○
         ELSE
             PRINT 　
@@ -954,7 +954,7 @@ RETURN RESULT:0
 CALL CHECK_MISSION_SLAVE_OK_OR_NOT_TORIKOMODE, ARG:0, ARG:1
 PRINTL
 ;스케쥴 등으로 노예가 다른 작업을 하고 있을 때 (T. 16/12/07)
-IF RESULT == 1 && CFLAG:ARG:4
+IF RESULT == 1 && CFLAG:ARG:조교관외
     PRINTFORMW %조사처리(CALLNAME:(ARG:0),"를")% 팔려면 현재 지정된 작업을 해제해야 합니다.
     PRINTL
 ;납품 가능하다
@@ -982,7 +982,7 @@ ENDIF
 ;의뢰의 보상을 계산
 LOCAL:100 = (ARG:1 %100000000000000)/100000000
 ;매각 가능한지 아닌지를 판별
-IF CFLAG:ARG:1 >= 1 && CFLAG:ARG:3 == 0 && TALENT:ARG:낙인 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:괴조인격 == 0
+IF CFLAG:ARG:매각가능 >= 1 && CFLAG:ARG:매각불능 == 0 && TALENT:ARG:낙인 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:괴조인격 == 0
     LOCAL:101 = 1
 ELSE 
     LOCAL:101 = 0
@@ -1041,7 +1041,7 @@ ENDIF
 SIF FLAG:570 & 2
     PRINTL ※노예상인이 없기 때문에、매각후 시간이 경과합니다
 IF NO:MASTER == 400 && (FLAG:570 & 6) == 0
-    SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)
+    SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)
         PRINTL ※매각후 시간이 경과합니다
 ENDIF
 PRINTL
@@ -1055,8 +1055,8 @@ IF RESULT == 0
         TIMES LOCAL , 0.10
         PRINTFORML \@(TFLAG:207) ? %CALLNAME:ARG%は수송시 파괴 폭주를 일으켜 실종했다 # 수송시 파괴 폭주를 일으켜 실종×0.10\@
         IF TALENT:ARG:연모 && TALENT:ARG:광기
-            CFLAG:ARG:1 = 0
-            CFLAG:ARG:4 = 1
+            CFLAG:ARG:매각가능 = 0
+            CFLAG:ARG:조교관외 = 1
             LOCAL:3 = 1
         ENDIF
         ;狂気脱走時の口上用
@@ -1114,7 +1114,7 @@ IF RESULT == 0
     IF FLAG:570 & 2
         FLAG:570 |= 8
     ELSEIF NO:MASTER == 400 && (FLAG:570 & 6) == 0
-        SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)
+        SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)
             FLAG:570 |= 8
     ENDIF
 

@@ -55,7 +55,7 @@ IF RESULT == 0
     MONEY -= LOCAL
     PRINTW 공방을 개설하였습니다.
     ;とりあえず工房に入る
-    CFLAG:MASTER:4 = 3
+    CFLAG:MASTER:조교관외 = 3
 ELSEIF RESULT != 1
     GOTO INPUT_LOOP
 ENDIF
@@ -130,7 +130,7 @@ ELSEIF RESULT == 100
 ;        IF FLAG:1135 < FLAG:1134
 ;            LOCAL:0 = RAND:(FLAG:1134) + 1
 ;            REPEAT CHARANUM
-;                IF CFLAG:COUNT:4 == 3 && MARK:COUNT:반발각인 == 3 && TALENT:COUNT:연모 == 0 && TALENT:COUNT:망신 == 0 && TALENT:COUNT:친애 == 0 && TALENT:COUNT:상애 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:예속 == 0 && TALENT:COUNT:사역마 == 0
+;                IF CFLAG:COUNT:조교관외 == 3 && MARK:COUNT:반발각인 == 3 && TALENT:COUNT:연모 == 0 && TALENT:COUNT:망신 == 0 && TALENT:COUNT:친애 == 0 && TALENT:COUNT:상애 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:예속 == 0 && TALENT:COUNT:사역마 == 0
 ;                    IF LOCAL:0 == 0
 ;                        TARGET = COUNT
 ;                    ENDIF
@@ -151,7 +151,7 @@ ELSEIF RESULT == 100
 ;        CALL ORDER_CANCEL
         ;作業が無ければ工房を出る
         PRINTW 공방을 뒤로했다……
-        CFLAG:MASTER:4 = 0
+        CFLAG:MASTER:조교관외 = 0
     ENDIF
 ENDIF
 RETURN 0
@@ -238,7 +238,7 @@ REPEAT LOCAL:3
         BREAK
     ENDIF
     ;居場所が自室(0)で無ければスキップ
-    IF CFLAG:(LOCAL:1):4 != 0
+    IF CFLAG:(LOCAL:1):조교관외 != 0
         COUNT -= 1
         CONTINUE
     ENDIF
@@ -260,10 +260,10 @@ $INPUT_LOOP
 INPUT
 IF RESULT > 0 && RESULT < CHARANUM
     LOCAL:2 = RESULT
-    IF CFLAG:(LOCAL:2):4 == 0
+    IF CFLAG:(LOCAL:2):조교관외 == 0
         ;対象が自室に居れば呼びつける
         PRINTFORMW %조사선택(CALLNAME:(LOCAL:2), "를")% 공방에 불렀습니다.
-        CFLAG:(LOCAL:2):4 = 3
+        CFLAG:(LOCAL:2):조교관외 = 3
         ;前ターンに工房に居なかった場合(すぐ呼び戻されたワケではない場合)は誘惑対象フラグを初期化
         IF CFLAG:(LOCAL:2):691 & 512
             CFLAG:(LOCAL:2):792 = -1
@@ -278,7 +278,7 @@ IF RESULT > 0 && RESULT < CHARANUM
         SIF (LOCAL:2) == ASSI
             ASSI = -1
         RETURN 1
-    ELSEIF CFLAG:(LOCAL:2):4 == 3
+    ELSEIF CFLAG:(LOCAL:2):조교관외 == 3
         ;対象はすでに工房にいる
         PRINTFORML %조사선택(CALLNAME:(LOCAL:2), "는")% 이미 공방에 있습니다.
     ELSE
@@ -294,7 +294,7 @@ ELSEIF RESULT == 1001
         IF LOCAL:0 < 1
             BREAK
         ENDIF
-        SIF CFLAG:(LOCAL:0):4 != 0
+        SIF CFLAG:(LOCAL:0):조교관외 != 0
             COUNT -= 1
     REND
     SIF LOCAL:0 < 0
@@ -349,7 +349,7 @@ REPEAT LOCAL:5
         BREAK
     ENDIF
     ;居ないキャラは飛ばす
-    IF CFLAG:(LOCAL:1):4 != 3
+    IF CFLAG:(LOCAL:1):조교관외 != 3
         COUNT -= 1
         CONTINUE
     ENDIF
@@ -403,7 +403,7 @@ $INPUT_LOOP_1
 INPUT
 LOCAL:2 = RESULT
 IF LOCAL:2 < CHARANUM && LOCAL:2 > -1
-    IF CFLAG:(LOCAL:2):4 != 3
+    IF CFLAG:(LOCAL:2):조교관외 != 3
         PRINTFORMW %조사선택(CALLNAME:(LOCAL:2), "는")% 공방에 없습니다.
         GOTO INPUT_LOOP_1
     ENDIF
@@ -508,7 +508,7 @@ RETURN 0
 ;=======================================;
 @STAFFRETURN_WORKSHOP
 CALL ORDER_CANCEL
-CFLAG:(FLAG:1111):4 = 0
+CFLAG:(FLAG:1111):조교관외 = 0
 PRINTFORMW %조사선택(CALLNAME:(FLAG:1111), "를")% 방으로 돌려보냈습니다.
 RETURN 0
 
@@ -537,7 +537,7 @@ IF LOCAL:0 == 1
     ELSE
         ;複数を教えているならば生徒全員の工房作業番号と工房作業対象のフラグも消す
         REPEAT CHARANUM
-            IF CFLAG:COUNT:4 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109
+            IF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109
                 CFLAG:COUNT:690 = 0
                 CFLAG:COUNT:692 = 0
             ENDIF
@@ -569,7 +569,7 @@ LOCAL:1 = 0
 LOCAL:2 = 0
 LOCAL:3 = 0
 REPEAT CHARANUM
-    SIF CFLAG:COUNT:4 == 3 && (CFLAG:COUNT:690 == 0 || (CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109)) && ABL:COUNT:공작기능 == 0
+    SIF CFLAG:COUNT:조교관외 == 3 && (CFLAG:COUNT:690 == 0 || (CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109)) && ABL:COUNT:공작기능 == 0
         LOCAL:3 += 1
 REND
 $TEACH_HANDYCRAFT_TOP
@@ -594,7 +594,7 @@ REPEAT 30
     SIF LOCAL:1 == MASTER
         CONTINUE
     ;工房にいないか他の先生が付いてるか工作技能があるならスキップ
-    IF CFLAG:(LOCAL:1):4 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):3109) || ABL:(LOCAL:1):공작기능 > 0
+    IF CFLAG:(LOCAL:1):조교관외 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):3109) || ABL:(LOCAL:1):공작기능 > 0
         COUNT -= 1
         CONTINUE
     ENDIF
@@ -615,7 +615,7 @@ SIF LOCAL:3 > 1
 $INPUT_LOOP
 INPUT
 IF RESULT > -1 && RESULT < CHARANUM
-    IF CFLAG:RESULT:4 != 3
+    IF CFLAG:RESULT:조교관외 != 3
         PRINTFORML %조사선택(CALLNAME:RESULT, "는")% 공방에 없습니다.
     ELSEIF ABL:RESULT:공작기능 > 0
         PRINTFORML %조사선택(CALLNAME:RESULT, "는")% 이미 공작 기능을 습득했습니다.
@@ -640,7 +640,7 @@ ELSEIF RESULT == 1001
         SIF LOCAL:1 == MASTER
             CONTINUE
         ;工房にいないか他の先生が付いてるか工作技能があるならスキップ
-        IF CFLAG:(LOCAL:1):4 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):3109) || ABL:(LOCAL:1):공작기능 > 0
+        IF CFLAG:(LOCAL:1):조교관외 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):3109) || ABL:(LOCAL:1):공작기능 > 0
             COUNT -= 1
             CONTINUE
         ENDIF
@@ -658,11 +658,11 @@ ELSEIF RESULT == 1008 && (LOCAL:3) > 1
     REPEAT CHARANUM
         SIF COUNT == MASTER
             CONTINUE
-        IF CFLAG:COUNT:4 == 3 && CFLAG:COUNT:690 == 0 && ABL:COUNT:공작기능 == 0
+        IF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 0 && ABL:COUNT:공작기능 == 0
             CFLAG:COUNT:690 = 2
             CFLAG:COUNT:692 = CFLAG:(FLAG:1111):3109
             CFLAG:(FLAG:1111):694 += 1
-        ELSEIF CFLAG:COUNT:4 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109 && ABL:COUNT:공작기능 == 0
+        ELSEIF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109 && ABL:COUNT:공작기능 == 0
             CFLAG:(FLAG:1111):694 += 1
         ENDIF
     REND
@@ -721,7 +721,7 @@ WHILE 1
         BREAK
     LOCAL:0 = 0
     FOR LOCAL:3, 0, CHARANUM
-        IF (CFLAG:(LOCAL:3):4 == 3) && (CFLAG:(LOCAL:3):690 == 2) && (CFLAG:(LOCAL:3):692 == CFLAG:(LOCAL:2):3109) && (ABL:(LOCAL:3):공작기능 == 0)
+        IF (CFLAG:(LOCAL:3):조교관외 == 3) && (CFLAG:(LOCAL:3):690 == 2) && (CFLAG:(LOCAL:3):692 == CFLAG:(LOCAL:2):3109) && (ABL:(LOCAL:3):공작기능 == 0)
             LOCAL:0 += 1
             LOCAL:1 = LOCAL:3
         ENDIF
@@ -900,7 +900,7 @@ FLAG:1145 = 0
 FLAG:1146 = 0
 
 REPEAT CHARANUM
-    IF CFLAG:COUNT:4 != 3
+    IF CFLAG:COUNT:조교관외 != 3
         ;対象キャラが工房に居なければスキップ
         CONTINUE
     ELSE

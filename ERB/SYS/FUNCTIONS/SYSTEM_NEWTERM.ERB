@@ -67,7 +67,7 @@ ELSEIF FLAG:주회수 >= 9 && TALENT:MASTER:치료 == 0
     LOCAL:2 = 0
     FOR LOCAL, 0, CHARANUM
         ;主人あるいは失踪中のキャラは対象外
-        SIF LOCAL == MASTER || CFLAG:LOCAL:4 == 1
+        SIF LOCAL == MASTER || CFLAG:LOCAL:조교관외 == 1
             CONTINUE
         SIF 대상_제외됨(LOCAL)
             CONTINUE
@@ -88,7 +88,7 @@ IF FLAG:난이도 >= 3 && FLAG:4000 >= 20 && TALENT:MASTER:대유도 == 0 && TAL
     LOCAL:3 = 0
     FOR LOCAL, 0, CHARANUM
         ;主人あるいは失踪中のキャラは対象外
-        SIF LOCAL == MASTER || CFLAG:LOCAL:4 == 1
+        SIF LOCAL == MASTER || CFLAG:LOCAL:조교관외 == 1
             CONTINUE
         ;恋慕も淫乱も持っていないなら対象外です
         SIF TALENT:LOCAL:연모 == 0 && TALENT:LOCAL:음란 == 0
@@ -128,7 +128,7 @@ FOR LOCAL, 0, 100
 NEXT
 
 ;종족 변경 플래그
-CFLAG:5 = CFLAG:MASTER:5
+CFLAG:종족변경 = CFLAG:MASTER:종족변경
 ;ID도 카피
 CFLAG:3109 = CFLAG:MASTER:3109
 ;종족 유전자 및 성별 반전 관련의 CFLAG를 카피
@@ -260,7 +260,7 @@ SIF FLAG:주인종족변경
 
 ;봉래인 인계 처리
 ;아나타이 인간(?)이 아니라면 인계 처리가 실행되지 않게 해둔다
-IF TALENT:MASTER:봉래인 == 1 && CFLAG:MASTER:5 == 0
+IF TALENT:MASTER:봉래인 == 1 && CFLAG:MASTER:종족변경 == 0
     CALL TAKEOVER_TALENT_HOURAI, 49
 ELSE
     TALENT:MASTER:봉래인 = 0
@@ -354,7 +354,7 @@ IF CHARANUM > 1
         SIF LOCAL == MASTER
             CONTINUE
         ;그 자리에 없으면 안됨(육아 중이거나 창관 노동중이라면 문제 없다)
-        SIF CFLAG:LOCAL:4 == 1 || CFLAG:LOCAL:4 == 4
+        SIF CFLAG:LOCAL:조교관외 == 1 || CFLAG:LOCAL:조교관외 == 4
             CONTINUE
         SIF 대상_제외됨(LOCAL)
             CONTINUE
@@ -364,10 +364,10 @@ IF CHARANUM > 1
             CONTINUE
         ENDIF
         ;조수가능해야 함
-        SIF CFLAG:LOCAL:1 < 2
+        SIF CFLAG:LOCAL:매각가능 < 2
             CONTINUE
         ;호감도 또는 주인 조교 경험 중 하나가 2000 이상이 아니면 안돼
-        SIF CFLAG:LOCAL:2 < 2000 && EXP:LOCAL:주인조교경험 < 2000
+        SIF CFLAG:LOCAL:호감도 < 2000 && EXP:LOCAL:주인조교경험 < 2000
             CONTINUE
         ;연모 또는 복종 또는 음란이 없으면 안돼
         SIF TALENT:LOCAL:연모 || TALENT:LOCAL:복종 || TALENT:LOCAL:음란
@@ -774,7 +774,7 @@ ENDIF
 @RACE_MASTER_LIST
 PRINTL 주인의 종족을 선택해 주십시오.
 DRAWLINE
-IF FLAG:파과총계 > 99 && CFLAG:MASTER:5
+IF FLAG:파과총계 > 99 && CFLAG:MASTER:종족변경
     PRINTLC [00] 원래로 돌아간다.
 ELSE
     PRINTL ※최악의 경우 원래대로 돌아갈 수 없을 가능성도 있습니다.
@@ -807,7 +807,7 @@ INPUT
 IF RESULT == 100
     PRINTW 주인의 종족을 변경하지 않습니다.
     RETURN 0
-ELSEIF RESULT == 0 && FLAG:파과총계 > 99 && CFLAG:MASTER:5
+ELSEIF RESULT == 0 && FLAG:파과총계 > 99 && CFLAG:MASTER:종족변경
     PRINTW 주인의 종족을 원래대로 되돌렸습니다.
     LOCAL = 0
 ELSEIF RESULT == 1 && FLAG:주인종족변경 & 1
@@ -845,10 +845,10 @@ ELSE
 ENDIF
 
 ;種族変更フラグセット
-CFLAG:MASTER:5 = RESULT
+CFLAG:MASTER:종족변경 = RESULT
 
 ;種族遺伝子を一旦全て初期化
-VARSET CFLAG:MASTER:0, 0, 3200, 3400
+VARSET CFLAG:MASTER:SP캐릭터, 0, 3200, 3400
 
 ;[呪精]リセット
 TALENT:MASTER:주정 = 0
@@ -958,7 +958,7 @@ REPEAT CHARANUM
     SIF MARK:COUNT:98 != 3
         MARK:COUNT:98 = 0
     ;主人、あるいはその場にいない助手はここで弾く
-    SIF COUNT == MASTER || CFLAG:COUNT:4 == 1 || CFLAG:COUNT:4 == 4
+    SIF COUNT == MASTER || CFLAG:COUNT:조교관외 == 1 || CFLAG:COUNT:조교관외 == 4
         CONTINUE
     ;[Debug]付加キャラもここで弾く
     SIF TALENT:COUNT:Debug
@@ -966,10 +966,10 @@ REPEAT CHARANUM
     ;[괴뢰]か[괴조인격]か[음마]持ちの場合は반발각인3以下ならOK
     IF (TALENT:COUNT:괴뢰 == 0 && TALENT:COUNT:괴조인격 == 0 && TALENT:COUNT:음마 == 0) || MARK:COUNT:반발각인 > 2
         ;助手可能である
-        SIF CFLAG:COUNT:1 < 2
+        SIF CFLAG:COUNT:매각가능 < 2
             CONTINUE
         ;好感度が2000以上か주인조교경험2000以上必要
-        SIF CFLAG:COUNT:2 < 2000 && EXP:COUNT:주인조교경험 < 2000
+        SIF CFLAG:COUNT:호감도 < 2000 && EXP:COUNT:주인조교경험 < 2000
             CONTINUE
         ;[연모]か[복종]か[음란]を持っている
         SIF TALENT:COUNT:연모 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:음란 == 0
@@ -1100,11 +1100,11 @@ FOR ASSI, 0, CHARANUM
     ENDIF
     ;助手がオトコでも生娘ではなく、好感度が1万以上、現在[相愛]を持っている＋(過去の周回プレイを含め)今までに恋慕、妄信、親愛、相愛を全て取得し、
     ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも生娘化を実行した場合、生娘化にするか選択できるようになる.
-    SIF (((CFLAG:ASSI:14 & 15) > 0 && FLAG:난이도 >= 3) || CFLAG:ASSI:14 & 16) && CFLAG:ASSI:2 > 9999 && TALENT:ASSI:처녀 != 1 && TALENT:ASSI:남자 == 0 && TALENT:ASSI:상애
+    SIF (((CFLAG:ASSI:14 & 15) > 0 && FLAG:난이도 >= 3) || CFLAG:ASSI:14 & 16) && CFLAG:ASSI:호감도 > 9999 && TALENT:ASSI:처녀 != 1 && TALENT:ASSI:남자 == 0 && TALENT:ASSI:상애
         CALL VIRGIN_ASSI
 
     ;캐릭터 전용 대사 내에 특수 인계 설정 처리가 있을 경우에는 그쪽 처리를 우선한다. 그 외에는 통상 인계 처리.
-    IF CFLAG:ASSI:9 == 0
+    IF CFLAG:ASSI:특수인계처리 == 0
         TRYCCALLFORM KOJO_{NO:ASSI}_EVENT_ASSI_TAKEOVER, LOCAL:4
         CATCH
             CALL ASSI_STATE_TAKEOVER, LOCAL:4
@@ -1130,7 +1130,7 @@ REPEAT 20
     ;主人公と助手対象と調教中キャラは排除
     SIF LOCAL == 0
         CONTINUE
-    SIF CFLAG:LOCAL:4 == 1
+    SIF CFLAG:LOCAL:조교관외 == 1
         CONTINUE
     SIF 대상_제외됨(LOCAL)
         CONTINUE
@@ -1174,7 +1174,7 @@ REPEAT 4
     BASE:ASSI:(COUNT+4) = 0
 REND
 ;居場所のフラグリセット
-CFLAG:ASSI:4 = 0
+CFLAG:ASSI:조교관외 = 0
 ;恐怖·反発刻印取得済み判定リセット
 MARK:ASSI:96 = 0
 MARK:ASSI:97 = 0
@@ -1241,7 +1241,7 @@ VARSET EQUIP:ASSI:0, 0, 0, 15
 ;好感度は減少させた状態で引き継ぎ
 ;最低は50(引き継ぐ時点で1000以上はあると見込んでいるため)
 ;素質が変動する700、1000、2000、5000を境界に引き継ぎ率が激減するように
-LOCAL:1 = CFLAG:ASSI:2 / 20
+LOCAL:1 = CFLAG:ASSI:호감도 / 20
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 100, 90)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 250, 80)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 500, 75)
@@ -1249,7 +1249,7 @@ LOCAL:1 = TABLE_CALC2(LOCAL:1, 700, 66)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 1000, 50)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 2000, 33)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 5000, 25)
-CFLAG:ASSI:2 = LOCAL:1
+CFLAG:ASSI:호감도 = LOCAL:1
 
 ;--------------------------------------------------
 ;조수의 가슴을 원래대로 되돌리는 처리
@@ -1264,7 +1264,7 @@ SIF !CFLAG:ARG:3006
 CALL NUM_TO_BUST(ARG, CFLAG:ARG:3006)
 CFLAG:ARG:3006 = 0 ;사용이 끝난 플래그 초기화
 ;신체측정 플래그를 재운다(다음 번 신체측정을 행하기 위해)
-CFLAG:ARG:8 = 0
+CFLAG:ARG:신체측정예약 = 0
 ;--------------------------------------------------
 ;조수의 EX화 해제 선택 처리
 ;--------------------------------------------------

@@ -285,10 +285,10 @@ RETURNF LOCAL
 LOCAL = 0
 FOR LOCAL:1, 0, CHARANUM
     ;その場にいないとだめ
-    SIF CFLAG:(LOCAL:1):4
+    SIF CFLAG:(LOCAL:1):조교관외
         CONTINUE
     ;主人か助手可能でないとだめ
-    SIF LOCAL:1 != MASTER && CFLAG:(LOCAL:1):1 < 2
+    SIF LOCAL:1 != MASTER && CFLAG:(LOCAL:1):매각가능 < 2
         CONTINUE
     
     ;調合知識持ち
@@ -329,7 +329,7 @@ SIF EXP:ARG:조교자위경험 < 50 || EXP:ARG:봉사쾌락경험 < 500
 SIF MARK:ARG:굴복각인 < 3 || MARK:ARG:반발각인
     RETURNF 0
 ;好感度が500必要
-SIF CFLAG:ARG:2 < 500
+SIF CFLAG:ARG:호감도 < 500
     RETURNF 0
 ;主人が[大甲斐性]を持っていないとき
 IF TALENT:MASTER:대범함 == 0
@@ -425,31 +425,31 @@ INPUT
 IF RESULT == 0
     PRINTFORMW %CALLNAME:ARG%에게 대사 · 지문은 사용하지 않도록 설정했습니다.
     ;대사 표시의 개별 설정 플래그에 기억
-    CFLAG:ARG:9 = 1
+    CFLAG:ARG:특수인계처리 = 1
 ELSEIF RESULT == 1
     PRINTFORMW %CALLNAME:ARG%에게 지문을 사용하도록 설정했습니다
     ;대사 표시의 개별 설정 플래그에 기억
-    CFLAG:ARG:9 = 2
+    CFLAG:ARG:특수인계처리 = 2
 ELSEIF RESULT == 2
     PRINTFORMW %CALLNAME:ARG%에게 범용 대사를 사용하도록 설정했습니다
     ;대사 표시의 개별 설정 플래그에 기억
-    CFLAG:ARG:9 = 4
+    CFLAG:ARG:특수인계처리 = 4
     ;「인격 설정」
     CALL DEFINE_JINKAKU_SELECT, ARG
 ELSEIF RESULT == 3
     PRINTFORMW %CALLNAME:ARG%에게 범용 대사와 지문을 사용하도록 설정했습니다
     ;대사 표시의 개별 설정 플래그에 기억
-    CFLAG:ARG:9 = 6
+    CFLAG:ARG:특수인계처리 = 6
     ;「인격 설정」
     CALL DEFINE_JINKAKU_SELECT, ARG
 ELSEIF RESULT == 4 && (LOCAL == 1 || LOCAL == 2)
     PRINTFORMW %CALLNAME:ARG%에게 전용 대사를 사용하도록 설정했습니다
     ;대사 표시의 개별 설정 플래그에 기억
-    CFLAG:ARG:9 = 8
+    CFLAG:ARG:특수인계처리 = 8
 ELSEIF RESULT == 5 && (LOCAL == 1 || LOCAL == 3)
     PRINTFORMW %CALLNAME:ARG%에게 전용 대사와 지문을 사용하도록 설정했습니다
     ;대사 표시의 개별 설정 플래그에 기억
-    CFLAG:ARG:9 = 10
+    CFLAG:ARG:특수인계처리 = 10
 ELSE
     GOTO INPUT_LOOP
 ENDIF

@@ -21,7 +21,7 @@ CALL JUDGE_WORKSHOP
 ;嫉妬と狂気のチェック
 IF FLAG:조교모드 & 4
     REPEAT CHARANUM
-        SIF CFLAG:COUNT:4 && CFLAG:COUNT:4 != 1
+        SIF CFLAG:COUNT:조교관외 && CFLAG:COUNT:조교관외 != 1
             CONTINUE
         SIF COUNT != TARGET && TALENT:COUNT:질투 && TALENT:COUNT:광기 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:사역마 == 0
             LOCAL:100 += 1
@@ -188,11 +188,11 @@ FOR TFLAG:900, 0, CHARANUM
 
     ;助手
     ;助手は色々と手伝うので回復力低下(酔いつぶれていたら手伝わない)
-    IF ASSI >= 0 && TFLAG:900 == ASSI && BASE:ASSI:취기 <= MAXBASE:ASSI:취기 && EQUIP:ASSI:14 == 0 && CFLAG:ASSI:4 == 0
+    IF ASSI >= 0 && TFLAG:900 == ASSI && BASE:ASSI:취기 <= MAXBASE:ASSI:취기 && EQUIP:ASSI:14 == 0 && CFLAG:ASSI:조교관외 == 0
         TIMES LOCAL:10 , 0.80
         TIMES LOCAL:11 , 0.80
     ;助手可能な場合, 吹っ切れているので気力の回復はやや早くなる
-    ELSEIF CFLAG:(TFLAG:900):1 == 2
+    ELSEIF CFLAG:(TFLAG:900):매각가능 == 2
         TIMES LOCAL:11 , 1.20
     ENDIF
 
@@ -317,10 +317,10 @@ FOR TFLAG:900, 0, CHARANUM
     ;料理技能による回復量の違い(EASYの場合は修整なし)
     ;主人と(もしおれば)助手のうち高い方の料理技能が基準(ただし助手が反発持ちの場合は修整には考慮しない), 当然酔いつぶれていては….
     LOCAL:13 = (BASE:MASTER:취기 > MAXBASE:MASTER:취기) ? 0 # ABL:MASTER:요리기능
-    SIF ASSI >= 0 && ABL:ASSI:요리기능 > ABL:MASTER:요리기능 && MARK:ASSI:반발각인 == 0 && EQUIP:ASSI:14 == 0 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기 && CFLAG:ASSI:4 == 0
+    SIF ASSI >= 0 && ABL:ASSI:요리기능 > ABL:MASTER:요리기능 && MARK:ASSI:반발각인 == 0 && EQUIP:ASSI:14 == 0 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기 && CFLAG:ASSI:조교관외 == 0
         LOCAL:13 = ABL:ASSI:요리기능
     ;NORMALの場合当該奴隷(ただしその場におり, 睡眠薬の影響がなく, 酔いつぶれていないこと)の料理技能が高ければそっちが基準になる
-    SIF FLAG:난이도 == 2 && TFLAG:900 != MASTER && TFLAG:900 != ASSI && ABL:(TFLAG:900):요리기능 > LOCAL:13 && CFLAG:(TFLAG:900):4 == 0 && EQUIP:(TFLAG:900):14 == 0 && BASE:(TFLAG:900):취기 <= MAXBASE:(TFLAG:900):취기
+    SIF FLAG:난이도 == 2 && TFLAG:900 != MASTER && TFLAG:900 != ASSI && ABL:(TFLAG:900):요리기능 > LOCAL:13 && CFLAG:(TFLAG:900):조교관외 == 0 && EQUIP:(TFLAG:900):14 == 0 && BASE:(TFLAG:900):취기 <= MAXBASE:(TFLAG:900):취기
             LOCAL:13 = ABL:(TFLAG:900):요리기능
     ;料理技能別の修整(EASYおよび技能Lv4以上およびコンフィグで弁当ライブOFFなら修整なし)
     IF FLAG:난이도 > 1 && FLAG:SHOP이벤트확장 & 16
@@ -340,23 +340,23 @@ FOR TFLAG:900, 0, CHARANUM
     ENDIF
 
     ;触手幽閉中は回復しない
-    IF CFLAG:(TFLAG:900):4 == 4
+    IF CFLAG:(TFLAG:900):조교관외 == 4
         LOCAL:10 = 0
         LOCAL:11 = 0
         SIF TIME == 1
             CALL TENTACLE_PRIVATEROOM_TRAINING, TFLAG:900
     ;地下牢収監中は回復効果激減で特殊効果あり
-    ELSEIF CFLAG:(TFLAG:900):4 == 16
+    ELSEIF CFLAG:(TFLAG:900):조교관외 == 16
         TIMES LOCAL:10 , 0.10
         TIMES LOCAL:11 , 0.15
         CALL TORTURE_FACILITIES_EFFECT, TFLAG:900
     ;ハーブ開発中は回復効果激減で作業中
-    ELSEIF CFLAG:(TFLAG:900):4 == 2048
+    ELSEIF CFLAG:(TFLAG:900):조교관외 == 2048
         TIMES LOCAL:10 , 0.25
         TIMES LOCAL:11 , 0.10
         CALL DEVELOP_HARB_TURNEND, TFLAG:900
     ;ハーブ生産中も回復効果激減で作業中
-    ELSEIF CFLAG:(TFLAG:900):4 == 4096
+    ELSEIF CFLAG:(TFLAG:900):조교관외 == 4096
         TIMES LOCAL:10 , 0.10
         TIMES LOCAL:11 , 0.25
         CALL MAKE_HARB_TURNEND, TFLAG:900
@@ -382,7 +382,7 @@ FOR TFLAG:900, 0, CHARANUM
         CFLAG:(TFLAG:900):155 |= 2
 
     ;ストレス低下
-    SIF CFLAG:(TFLAG:900):65 && CFLAG:(TFLAG:900):4 == 0
+    SIF CFLAG:(TFLAG:900):65 && CFLAG:(TFLAG:900):조교관외 == 0
         CALL STRESS_DOWN, TFLAG:900
 
     ;HARD以上では休憩フラグが立ってなくて, ストレスがあると気力回復に悪影響がある
@@ -409,11 +409,11 @@ FOR TFLAG:900, 0, CHARANUM
 
     IF (FLAG:SHOP이벤트확장 & 131072) == 0
         ;育児中以外でその場にいない(失踪中や触手幽閉中など)なら好感度は時間が経過するごとに1下がる
-        IF CFLAG:(TFLAG:900):4 && CFLAG:(TFLAG:900):4 != 2 && CFLAG:(TFLAG:900):2 > 0
-            CFLAG:(TFLAG:900):2 -= 1
+        IF CFLAG:(TFLAG:900):조교관외 && CFLAG:(TFLAG:900):조교관외 != 2 && CFLAG:(TFLAG:900):호감도 > 0
+            CFLAG:(TFLAG:900):호감도 -= 1
         ;夜→朝のみ[大甲斐性]がないと調教中のキャラ以外の好感度が1下がる
-        ELSEIF TFLAG:900 != MASTER && TFLAG:900 != TARGET && CFLAG:(TFLAG:900):2 > 0 && TALENT:MASTER:대범함 == 0 && TIME != 0
-            CFLAG:(TFLAG:900):2 -= 1
+        ELSEIF TFLAG:900 != MASTER && TFLAG:900 != TARGET && CFLAG:(TFLAG:900):호감도 > 0 && TALENT:MASTER:대범함 == 0 && TIME != 0
+            CFLAG:(TFLAG:900):호감도 -= 1
         ENDIF
     ENDIF
     ;精飲절정ゲージ低下
@@ -426,7 +426,7 @@ FOR TFLAG:900, 0, CHARANUM
 NEXT
 
 ;助手はその場に存在し, 睡眠薬の影響なくて, 酔いつぶれていなければ色々と手伝うので珠を入手するが, 同時にストレスも微量増加
-IF ASSI >= 0 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기 && CFLAG:ASSI:4 == 0 && EQUIP:ASSI:14 == 0
+IF ASSI >= 0 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기 && CFLAG:ASSI:조교관외 == 0 && EQUIP:ASSI:14 == 0
     CFLAG:ASSI:65 += (ABL:ASSI:순종 + ABL:ASSI:봉사정신)*12
     DRAWLINE
     ;地の文章カット
@@ -640,7 +640,7 @@ ENDIF
 ;こっちでREPEATするのではなく, 回すのはメイン(EVENT.ERB本体)に任せた
 @GARDEN_EFFECT
 ;主人やその場にいないもの（娼婦もだめ, 育児中はOK）や睡眠薬が効いている者は対象外
-SIF TFLAG:900 == MASTER || CFLAG:(TFLAG:900):4 == 1 || CFLAG:(TFLAG:900):4 == 4 || CFLAG:(TFLAG:900):4 == 16 || CFLAG:(TFLAG:900):4 == 1024 || CFLAG:(TFLAG:900):4 == 2048 || CFLAG:(TFLAG:900):4 == 4096 || EQUIP:(TFLAG:900):14||대상_제외됨(TFLAG:900)
+SIF TFLAG:900 == MASTER || CFLAG:(TFLAG:900):조교관외 == 1 || CFLAG:(TFLAG:900):조교관외 == 4 || CFLAG:(TFLAG:900):조교관외 == 16 || CFLAG:(TFLAG:900):조교관외 == 1024 || CFLAG:(TFLAG:900):조교관외 == 2048 || CFLAG:(TFLAG:900):조교관외 == 4096 || EQUIP:(TFLAG:900):14||대상_제외됨(TFLAG:900)
     RETURN 0
 ;添水の効果（ストレス解消と恐怖の珠UP）
 IF FLAG:정원개조 & 4
@@ -682,7 +682,7 @@ IF FLAG:정원개조 & 32
     IF TIME == 0 || FLAG:정원개조 & 2
         ;恐怖刻印と反発刻印がなく精神崩壊でない場合好感度UP
         SIF MARK:(TFLAG:900):공포각인 == 0 && MARK:(TFLAG:900):반발각인 == 0 && TALENT:(TFLAG:900):정신붕괴 == 0
-            CFLAG:(TFLAG:900):2 += RAND:5
+            CFLAG:(TFLAG:900):호감도 += RAND:5
     ENDIF
 ENDIF
 ;噴水の効果（否定の珠Downもしくは欲情もしくは恥情の珠UP）
@@ -726,7 +726,7 @@ IF FLAG:정원개조 & 256
             ;否定の珠DOWN
             JUEL:(TFLAG:900):100 -= 10 + (10 * RAND:5)
             ;好感度UP
-            CFLAG:(TFLAG:900):2 += RAND:5
+            CFLAG:(TFLAG:900):호감도 += RAND:5
             ;ストレスDOWN
             CFLAG:(TFLAG:900):65 -= 10 + (10 * RAND:5)
             CFLAG:(TFLAG:900):65 = MAX(CFLAG:(TFLAG:900):65, 0)
@@ -784,7 +784,7 @@ IF FLAG:5003 & 1
 ELSE
     SIF FLAG:구입총계 > 0
         ;버그수정을 위해 마지막 인수를 0으로 수정함. 만약 버그나면 다시 1로 고쳐야 함. (131001_V.K)
-        LOCAL = FINDCHARA(CFLAG:4, 1, 0)
+        LOCAL = FINDCHARA(CFLAG:조교관외, 1, 0)
     IF LOCAL > 0
         ;노말 모드
         DRAWLINE
@@ -794,7 +794,7 @@ ELSE
         PRINTFORMW 「좋은 아침이에요」
         PRINTW …….
         PRINTFORMW %조사처리(CALLNAME:LOCAL,"가")% 복귀했습니다….
-        CFLAG:LOCAL:4 = 0
+        CFLAG:LOCAL:조교관외 = 0
         CFLAG:LOCAL:30 += 30
     ENDIF
 ENDIF
@@ -803,7 +803,7 @@ ENDIF
 IF FLAG:캐릭터대사표시
     FOR TFLAG:900, 0 , CHARANUM
         ;その場にいないとスルー
-        SIF CFLAG:(TFLAG:900):4
+        SIF CFLAG:(TFLAG:900):조교관외
             CONTINUE
         ;主人や助手や夜イベ主犯もスルー
         SIF TFLAG:900 == MASTER || TFLAG:900 == ASSI || TFLAG:900 == TFLAG:212
@@ -835,12 +835,12 @@ FOR TFLAG:900, 0, CHARANUM
         SIF FLAG:신체측정패치 & 1
             CALL MAKE_BABY_SIZE, TFLAG:900
         ;出産3日前からは臨月突入で調教不可に
-        IF (CFLAG:(TFLAG:900):77 - 3) <= DAY && CFLAG:(TFLAG:900):4 == 0
+        IF (CFLAG:(TFLAG:900):77 - 3) <= DAY && CFLAG:(TFLAG:900):조교관외 == 0
             DRAWLINE
             CALL REACH_FULL_TERM, TFLAG:900
         ELSEIF CFLAG:(TFLAG:900):77 <= DAY && (TALENT:(TFLAG:900):임신 || TALENT:(TFLAG:900):포란중)
             ;出産予定日なら出産or孵化＆子育て部屋に移動
-            IF CFLAG:(TFLAG:900):4 == 2
+            IF CFLAG:(TFLAG:900):조교관외 == 2
                 DRAWLINE
                 IF TALENT:(TFLAG:900):임신
                     CALL CHILD_BIRTH, TFLAG:900
@@ -855,7 +855,7 @@ FOR TFLAG:900, 0, CHARANUM
         ;出産後FLAG:601日後（標準は20日後）で親離れで調教可能に
         ELSEIF (CFLAG:(TFLAG:900):77 + FLAG:성장기간설정 - EQUIP:(TFLAG:900):1) <= DAY && TALENT:(TFLAG:900):육아중
             EQUIP:(TFLAG:900):1 = 0
-            IF CFLAG:(TFLAG:900):4 == 2
+            IF CFLAG:(TFLAG:900):조교관외 == 2
                 DRAWLINE
                 CALL DEPEARENT, TFLAG:900
             ELSE
@@ -863,7 +863,7 @@ FOR TFLAG:900, 0, CHARANUM
             ENDIF
         ENDIF
     ;懐卵処理
-    ELSEIF TALENT:(TFLAG:900):회란 && CFLAG:(TFLAG:900):4 == 0
+    ELSEIF TALENT:(TFLAG:900):회란 && CFLAG:(TFLAG:900):조교관외 == 0
         ;懐卵(出産時期は妊娠よりは少し早く来る)
         CFLAG:(TFLAG:900):35 += 1
         IF CFLAG:(TFLAG:900):35 == 14
@@ -1228,7 +1228,7 @@ NEXT
 BASE:ARG:체력 = MIN(BASE:ARG:체력, MAXBASE:ARG:체력)
 BASE:ARG:기력 = MIN(BASE:ARG:기력, MAXBASE:ARG:기력)
 
-CFLAG:ARG:2 = LIMIT(CFLAG:ARG:2, 0, 999999)
+CFLAG:ARG:호감도 = LIMIT(CFLAG:ARG:호감도, 0, 999999)
 CFLAG:ARG:65 = LIMIT(CFLAG:ARG:65, 0, 999999)
 
 ;--------------------------------------------------
@@ -1268,7 +1268,7 @@ ENDIF
 
 ;キャラの管理費計算
 REPEAT CHARANUM
-    SIF CFLAG:COUNT:4 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
     IF COUNT == MASTER
         LOCAL:1 = 100
@@ -1278,7 +1278,7 @@ REPEAT CHARANUM
         IF TALENT:COUNT:연모 || TALENT:COUNT:복종 || TALENT:COUNT:괴조인격
             TIMES LOCAL:1 , 0.50
         ;助手可能もしかり.ただし上ほど積極的ではない
-        ELSEIF CFLAG:COUNT:1 == 2
+        ELSEIF CFLAG:COUNT:매각가능 == 2
             TIMES LOCAL:1 , 0.75
         ENDIF
         ;名無しキャラの管理費は低い
@@ -1310,7 +1310,7 @@ PRINTL 시설의 유지비, 노예의 관리비를 지불할 수가 없습니다
 
 REPEAT CHARANUM
     ;失踪中なら影響なし
-    SIF CFLAG:COUNT:4 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
     ;体力減少
     IF MONEY <= 0
@@ -1332,9 +1332,9 @@ REPEAT CHARANUM
     ENDIF
     ;好感度減少(壊造人格なら免除)
     IF COUNT != MASTER && TALENT:COUNT:괴조인격 == 0 && MONEY <= 0
-        CFLAG:COUNT:2 -= RAND:30
+        CFLAG:COUNT:호감도 -= RAND:30
     ELSEIF COUNT != MASTER && TALENT:COUNT:괴조인격 == 0
-        CFLAG:COUNT:2 -= RAND:10
+        CFLAG:COUNT:호감도 -= RAND:10
     ENDIF
     ;キャップ処理
     CALL EVENT_LIFE_MINIMUM, COUNT
@@ -1359,7 +1359,7 @@ LOCAL:1 = TARGET
 
 FOR TARGET, 0, CHARANUM
     ;その場にいない場合は除外
-    SIF CFLAG:4
+    SIF CFLAG:조교관외
         CONTINUE
     ;機械には通じない
     SIF TALENT:기계
@@ -1492,7 +1492,7 @@ SIF FLAG:현재비디오유행 == FLAG:현재비디오불유행 && (FLAG:현재�
 ;主人か助手可能キャラに[超常目算]がいると流行ジャンルが分かるようになる
 LOCAL = -1
 REPEAT CHARANUM
-    SIF CFLAG:COUNT:4 || CFLAG:COUNT:1 < 2 || TALENT:COUNT:초상계산 == 0
+    SIF CFLAG:COUNT:조교관외 || CFLAG:COUNT:매각가능 < 2 || TALENT:COUNT:초상계산 == 0
         CONTINUE
     LOCAL = COUNT
     BREAK

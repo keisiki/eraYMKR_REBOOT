@@ -13,20 +13,20 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;파트너가 된 상대는 불가
-    SIF CFLAG:COUNT:3 & 4
+    SIF CFLAG:COUNT:매각불능 & 4
         CONTINUE
     ;그 자리에 없는 캐릭터는 제외
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
     SIF TALENT:COUNT:사역마
         CONTINUE
     IF FLAG:SHOP이벤트확장 & 32
-        SIF (CFLAG:COUNT:3 || TALENT:COUNT:낙인 || TALENT:COUNT:사역마 || TALENT:COUNT:괴조인격) && CFLAG:COUNT:20 & 16
+        SIF (CFLAG:COUNT:매각불능 || TALENT:COUNT:낙인 || TALENT:COUNT:사역마 || TALENT:COUNT:괴조인격) && CFLAG:COUNT:20 & 16
             CONTINUE
     ELSE
-        SIF CFLAG:COUNT:3 || TALENT:COUNT:낙인 || TALENT:COUNT:사역마 || TALENT:COUNT:괴조인격 || CFLAG:COUNT:1 == 0
+        SIF CFLAG:COUNT:매각불능 || TALENT:COUNT:낙인 || TALENT:COUNT:사역마 || TALENT:COUNT:괴조인격 || CFLAG:COUNT:매각가능 == 0
             CONTINUE
     ENDIF
 
@@ -106,7 +106,7 @@ REPEAT 20
         PRINT  (조수)
     ELSEIF ISASSI:LOCAL == 1
         PRINT (원조수)
-    ELSEIF CFLAG:LOCAL:1 == 2
+    ELSEIF CFLAG:LOCAL:매각가능 == 2
         PRINT (조수가능)
     ENDIF
     PRINTL 
@@ -117,7 +117,7 @@ REND
 ;-------------------------------------------------
 @SALE_SELECT, ARG
 PRINTL 
-SIF CFLAG:ARG:1 >= 1 && CFLAG:ARG:3 == 0 && TALENT:ARG:낙인 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:괴조인격 == 0
+SIF CFLAG:ARG:매각가능 >= 1 && CFLAG:ARG:매각불능 == 0 && TALENT:ARG:낙인 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:괴조인격 == 0
     PRINTFORML [0] 판매한다
 SIF (CFLAG:ARG:20 & 16) == 0 && TALENT:ARG:사역마 == 0
     PRINTFORML [1] 해방한다
@@ -126,7 +126,7 @@ $INPUT_LOOP
 INPUT
 IF RESULT == 100
     RETURN 0
-ELSEIF RESULT == 0  && CFLAG:ARG:1 >= 1 && CFLAG:ARG:3 == 0 && TALENT:ARG:낙인 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:괴조인격 == 0
+ELSEIF RESULT == 0  && CFLAG:ARG:매각가능 >= 1 && CFLAG:ARG:매각불능 == 0 && TALENT:ARG:낙인 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:괴조인격 == 0
     CALL SALE_CONFIRM, ARG
 ELSEIF RESULT == 1 && (CFLAG:ARG:20 & 16) == 0 && TALENT:ARG:사역마 == 0
     CALL CHARA_RELEASE, ARG
@@ -282,7 +282,7 @@ ENDIF
 ;해방되어 떠나는 노예의 이벤트 대사 호출
 CALL SELF_KOJO, GOODS, 195, TFLAG:200
 
-IF CFLAG:GOODS:4 == 0
+IF CFLAG:GOODS:조교관외 == 0
     IF NO:GOODS == 401
         IF FLAG:570 & 16
             TALENT:MASTER:촉수사역술 = 0
@@ -344,7 +344,7 @@ SIF TALENT:MASTER:Debug
 SIF FLAG:570 & 2
     PRINTL ※노예상인이 없기 때문에, 매각 후 시간이 경과합니다.
 IF NO:MASTER == 400 && (FLAG:570 & 6) == 0
-    SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)
+    SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)
         PRINTL ※매각 후 시간이 경과합니다.
 ENDIF
 PRINTL 매각하겠습니까?
@@ -358,8 +358,8 @@ IF RESULT == 0
         TIMES LOCAL , 0.10
         PRINTFORML \@(TFLAG:207) ? %조사처리(CALLNAME:ARG,"는")% 수송시 파괴 폭주를 일으켜 실종됐다. # 수송시 파괴 폭주를 일으켜 실종×0.10\@
         IF TALENT:ARG:연모 && TALENT:ARG:광기
-            CFLAG:ARG:1 = 0
-            CFLAG:ARG:4 = 1
+            CFLAG:ARG:매각가능 = 0
+            CFLAG:ARG:조교관외 = 1
             LOCAL:3 = 1
         ENDIF
         ;광기 탈주시의 대사용
@@ -411,7 +411,7 @@ IF RESULT == 0
     IF FLAG:570 & 2
         FLAG:570 |= 8
     ELSEIF NO:MASTER == 400 && (FLAG:570 & 6) == 0
-        SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)
+        SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)
             FLAG:570 |= 8
     ENDIF
 
@@ -2031,7 +2031,7 @@ SIF !TFLAG:207
     PRINTFORML 주인의 %ABLNAME:99%{ABL:MASTER:조교사Lv} ×{LOCAL/100}.{LOCAL%100}
 
 ;YASAI 모드의 캐릭터 한정
-IF ((NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)) && NO:MASTER == 400 && (FLAG:570 & 4) == 0) || FLAG:570 & 2
+IF ((NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)) && NO:MASTER == 400 && (FLAG:570 & 4) == 0) || FLAG:570 & 2
     TIMES LOCAL:1 , 0.50
     SIF !TFLAG:207
         PRINTFORML 　　　중계인부재 ×0.5

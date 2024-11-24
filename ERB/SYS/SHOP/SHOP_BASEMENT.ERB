@@ -72,13 +72,13 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;その場にいないキャラは除外(収監中を除く)
-    SIF CFLAG:COUNT:4 && CFLAG:COUNT:4 != 16
+    SIF CFLAG:COUNT:조교관외 && CFLAG:COUNT:조교관외 != 16
         CONTINUE
 
     ;収監実行判定
     IF ARG == 0
         ;対象が既に収監中ならダメ
-        SIF CFLAG:COUNT:4 == 16
+        SIF CFLAG:COUNT:조교관외 == 16
             CONTINUE
         SIF 대상_제외됨(COUNT)
             CONTINUE
@@ -100,7 +100,7 @@ REPEAT CHARANUM
     ;解放実行判定
     ELSEIF ARG == 1
         ;対象が収監されていないとダメ
-        SIF CFLAG:COUNT:4 != 16
+        SIF CFLAG:COUNT:조교관외 != 16
             CONTINUE
         ;対象が収監されたばかりもしくはこのターンに拷問してたらダメ
         SIF CFLAG:COUNT:180 & 1 || CFLAG:COUNT:180 & 2
@@ -108,7 +108,7 @@ REPEAT CHARANUM
     ;矯正実行判定
     ELSEIF ARG == 2
         ;対象が収監されていないとダメ
-        SIF CFLAG:COUNT:4 != 16
+        SIF CFLAG:COUNT:조교관외 != 16
             CONTINUE
         ;対象の体力と気力が500이상でないとダメ
         SIF BASE:COUNT:체력 < 500 || BASE:COUNT:기력 < 500
@@ -210,7 +210,7 @@ PRINTW …………
 PRINTW ……
 
 ;収監フラグON
-CFLAG:4 = 16
+CFLAG:조교관외 = 16
 CFLAG:180 |= 1
 
 ;初体験時は異常経験が入る
@@ -220,8 +220,8 @@ IF (CFLAG:20 & 16384) == 0
 ENDIF
 LOCAL = 0
 ;호감도 다운
-IF CFLAG:2 > 0
-    CFLAG:2 /= 2
+IF CFLAG:호감도 > 0
+    CFLAG:호감도 /= 2
     LOCAL |= 1
 ENDIF
 SIF LOCAL & 1
@@ -261,7 +261,7 @@ PRINTW …………
 PRINTW ……
 
 ;収監フラグOFF
-CFLAG:4 = 0
+CFLAG:조교관외 = 0
 CFLAG:180 |= 4
 
 PRINTL 
@@ -334,8 +334,8 @@ CFLAG:180 |= 2
 
 LOCAL = 0
 ;호감도 다운
-IF CFLAG:2 > 0
-    TIMES CFLAG:2 , 0.80
+IF CFLAG:호감도 > 0
+    TIMES CFLAG:호감도 , 0.80
     LOCAL |= 1
 ENDIF
 SIF LOCAL & 1
@@ -375,8 +375,8 @@ CALL COMMON_UP_JUEL, ARG, 14, 5*(20 + ABL:ARG:순종 - TALENT:ARG:꿋꿋함*10),
 CALL COMMON_UP_JUEL, ARG, 17, 5*(10 + ABL:ARG:순종 + TALENT:ARG:겁쟁이*5), LOCAL:1
 
 ;호감도 다운
-SIF CFLAG:ARG:2 > 0
-    CFLAG:ARG:2 -= RAND:3
+SIF CFLAG:ARG:호감도 > 0
+    CFLAG:ARG:호감도 -= RAND:3
 ;발광 체크(完全ランダム)ただし, 既に狂気持ちorストレスフリーor気力0なら発狂しない
 IF TALENT:ARG:광기 == 0 && CFLAG:ARG:65 && BASE:ARG:기력
     IF RAND:100 < 4
@@ -607,7 +607,7 @@ RETURNF ((LOCAL:0 * 2) + (LOCAL:1 * 4) + (LOCAL:2 * 8) + (LOCAL:3 * 16) + (LOCAL
 VARSET LOCAL, 0
 
 ;その場にいない, 抱卵中, 助手可能でない奴隷は除外
-SIF CFLAG:(ARG:1):4 || TALENT:(ARG:1):포란중 || (ARG:1 != MASTER && CFLAG:(ARG:1):1 < 2)
+SIF CFLAG:(ARG:1):조교관외 || TALENT:(ARG:1):포란중 || (ARG:1 != MASTER && CFLAG:(ARG:1):매각가능 < 2)
     RETURNF 0
 
 ;呪精転生の実行資格    ：    お燐, [覚], または[鼓舞]を持つ[呪精]
@@ -625,7 +625,7 @@ LOCAL:2 = LOCAL:2 && (ABL:(ARG:1):공작기능 >= 5)
 LOCAL:3 = MAX(NO:(ARG:1) == 20, TALENT:(ARG:1):사신)
 
 ;生命封入の実行資格    :    アリス(EX不可), または[魔術技能]を持つ[工作名人]
-LOCAL:4 = MAX(NO:(ARG:1) == 14 && CFLAG:(ARG:1):0 == 0, TALENT:(ARG:1):공작명인 && TALENT:(ARG:1):마술기능)
+LOCAL:4 = MAX(NO:(ARG:1) == 14 && CFLAG:(ARG:1):SP캐릭터 == 0, TALENT:(ARG:1):공작명인 && TALENT:(ARG:1):마술기능)
     ;ただし技巧Lv5かつ工作技能Lv5の場合のみ
 LOCAL:4 = MIN(LOCAL:4, ABL:(ARG:1):기교 >= 5, ABL:(ARG:1):공작기능 >= 5)
 
@@ -645,7 +645,7 @@ RETURNF LOCAL:ARG
 VARSET LOCAL, 0
 
 ;主人, その場にいない者, 抱卵中の者は除外
-SIF MAX(ARG:1 == MASTER, CFLAG:(ARG:1):4, TALENT:(ARG:1):포란중)
+SIF MAX(ARG:1 == MASTER, CFLAG:(ARG:1):조교관외, TALENT:(ARG:1):포란중)
     RETURNF 0
 ;[親愛][烙印][傀儡][壊造人格]のいずれかでなければ除外
 SIF MAX(TALENT:(ARG:1):친애, TALENT:(ARG:1):낙인, TALENT:(ARG:1):괴뢰, TALENT:(ARG:1):괴조인격) == 0
@@ -1100,9 +1100,9 @@ ELSE
         ;이상 경험＋1
         CALL COMMON_UP_EXP, TARGET, 50, 1, 0
         ;스트레스를 호감도분증가
-        CALL COMMON_MOVE_CFLAG, TARGET, 65, CFLAG:2, 0
+        CALL COMMON_MOVE_CFLAG, TARGET, 65, CFLAG:호감도, 0
         ;호감도가 20분의 1에 감소
-        CALL COMMON_MOVE_CFLAG, TARGET, 2, (CFLAG:2 / 20 * -19), 0
+        CALL COMMON_MOVE_CFLAG, TARGET, 2, (CFLAG:호감도 / 20 * -19), 0
         ;전종의 보석을 반감시켜, 감소한 것과 같은 수만큼 부정?  ??하지만 증가
         LOCAL = 0
         REPEAT 32
@@ -1117,7 +1117,7 @@ ENDIF
 CFLAG:43 = 0
 
 ;신체 측정 플래그를 잠 다툰다(다음번 신체 측정을 실시하기 (위해)때문에)
-CFLAG:8 = 0
+CFLAG:신체측정예약 = 0
 
 ;종족 유전자 변화
 LOCAL = 0
@@ -1133,19 +1133,19 @@ NEXT
     ;([주정][흡혈귀]는 감소시킨 만큼을 해당 종족에게 상적, 그 외는 100%해당 종족에게)
 IF ARG == 0
     CFLAG:3245 += LOCAL
-    CFLAG:5 = 10
+    CFLAG:종족변경 = 10
 ELSEIF ARG == 1
     CFLAG:3206 += LOCAL
-    CFLAG:5 = 2
+    CFLAG:종족변경 = 2
 ELSEIF ARG == 2
     CFLAG:3246 = 100
-    CFLAG:5 = 3
+    CFLAG:종족변경 = 3
 ELSEIF ARG == 3
     CFLAG:3211 = 100
-    CFLAG:5 = 4
+    CFLAG:종족변경 = 4
 ELSEIF ARG == 4
     CFLAG:3221 = 100
-    CFLAG:5 = 5
+    CFLAG:종족변경 = 5
 ENDIF
 
 ;실행 이력의 기록과 주인의 종족 변화 해금 다이얼로그
@@ -1229,7 +1229,7 @@ LOCAL:1 = 0
 ;주인용으로 범용의 무엇인가를
     LOCAL:1 |= 1
 ;인원수에 여유가 있어, 앨리스(꼬맹이 앨리스 제외하다)가 주인때는 인형 제작을 실행 가능
-SIF CHARANUM < LOCAL && NO:MASTER == 14 && CFLAG:MASTER:0 == 0 && MONEY >= 100
+SIF CHARANUM < LOCAL && NO:MASTER == 14 && CFLAG:MASTER:SP캐릭터 == 0 && MONEY >= 100
     LOCAL:1 |= 2
 ;파츄리가 주인때는 소악마 소환을 실행 가능
 SIF CHARANUM < LOCAL && NO:MASTER == 8 && MONEY >= 100
@@ -1376,7 +1376,7 @@ ENDIF
 ;필요 경비 100원
 MONEY -= 100
 ;신체 측정 플래그를 잠 다툰다(다음번 신체 측정을 실시하기 (위해)때문에)
-CFLAG:MASTER:8 = 0
+CFLAG:MASTER:신체측정예약 = 0
 
 ;-----------------------------------------------
 ;마술기능을 보유했을 때 소질부여
