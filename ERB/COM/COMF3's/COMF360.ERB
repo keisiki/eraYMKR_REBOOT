@@ -15,7 +15,7 @@ SIF (FLAG:커맨드확장 & 1024) == 0
 SIF (FLAG:욕탕개조 & 1) == 0
     RETURN 0
 ;一度も벌레 목욕に入ったことが無い場合, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:VA이상조교필터 & 4 && (CFLAG:23 & 1) == 0
+SIF FLAG:VA이상조교필터 & 4 && (CFLAG:첫목욕탕 & 1) == 0
     RETURN 0
 ;순종5미만의 ASSI일 경우, 実行できない(새드거나 새드끼Lv3이상か狂気, 또는 망신이나 복종이 있다면 ＯＫ)
 IF ASSIPLAY
@@ -138,8 +138,8 @@ ELSE
     SOURCE:32 = 25000
 ENDIF
 
-IF (CFLAG:23 & 1) == 0
-    CFLAG:23 |= 1
+IF (CFLAG:첫목욕탕 & 1) == 0
+    CFLAG:첫목욕탕 |= 1
     TCVAR:50 += 1
 ENDIF
 ;촉수 경험 플래그
@@ -213,7 +213,7 @@ IF TALENT:감정결여 == 0 && TALENT:광기 == 0 && TALENT:정신붕괴 == 0 &&
             CALL SELF_KOJO, TARGET, 6, 0
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 발광했다.
             TALENT:광기 = 1
-            CFLAG:12 |= 1
+            CFLAG:트라우마판정 |= 1
             CFLAG:17 |= 2
         ELSEIF (LOCAL:4 == 1 || LOCAL:4 == 2) && MARK:반발각인 > 2
             PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 지나친 공포에 반항할 기력을 잃은 것 같다….
@@ -231,20 +231,20 @@ IF TALENT:감정결여 == 0 && TALENT:광기 == 0 && TALENT:정신붕괴 == 0 &&
                 CALL SELF_KOJO, TARGET, 6, 3
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [유아 퇴행]해 버렸다.
                 TALENT:유아퇴행 = 1
-                CFLAG:12 |= 2
+                CFLAG:트라우마판정 |= 2
                 CFLAG:17 |= 1
             ELSE
                 CALL SELF_KOJO, TARGET, 6, 4
             ENDIF
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [겁쟁이]가 되었다. 
             TALENT:겁쟁이 = 1
-            CFLAG:12 |= 4
+            CFLAG:트라우마판정 |= 4
         ELSEIF LOCAL:4 >= 8 && TALENT:겁쟁이 && TALENT:유아퇴행 == 0 && BASE:0 >= 500
             PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 지나친 공포로 벌레목욕탕에 트라우마를 가지게 된 것 같다…. 
             CALL SELF_KOJO, TARGET, 6, 3
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [유아 퇴행]해 버렸다. 
             TALENT:유아퇴행 = 1
-            CFLAG:12 |= 2
+            CFLAG:트라우마판정 |= 2
             CFLAG:17 |= 1
         ENDIF
     ENDIF

@@ -28,16 +28,16 @@ CFLAG:ARG:기력상승 = 0
 ;신체측정 플래그를 재운다(다음 번 신체측정을 실행하기 때문)
 CFLAG:ARG:신체측정예약 = 0
 ;소질 변동을 기억하고 잇는 CFLAG 초기화
-CFLAG:ARG:12 = 0
-CFLAG:ARG:13 = 0
+CFLAG:ARG:트라우마판정 = 0
+CFLAG:ARG:소실이벤트 = 0
 ;비대음핵 플래그 리셋([비대음핵] 때는 제외하고)
 IF TALENT:ARG:비대음핵 == 0
     BASE:ARG:음핵 = 0
     MAXBASE:ARG:음핵 = 0
 ENDIF
 ;범용 대사(역 대사)의 성격 설정 CFLAG 초기화
-CFLAG:ARG:43 = 0
-CFLAG:ARG:44 = 0
+CFLAG:ARG:범용대사용인격 = 0
+CFLAG:ARG:범용역대사용인격 = 0
 ;행선지 가능 플래그도 리셋
 CFLAG:ARG:300 = CSVCFLAG(NO:ARG, 300, 0)
 ;일상생활 플래그의 일부를 리셋(체력기력 상승분)
@@ -78,8 +78,8 @@ SIF TALENT:음란 == 0
 MAXBASE:0 += 500
 MAXBASE:기력 += 300
 ;일선을 넘지 않음을 없애던 플래그를 없앤다
-SIF CFLAG:13 & 64
-    CFLAG:13 -= 64
+SIF CFLAG:소실이벤트 & 64
+    CFLAG:소실이벤트 -= 64
 ;삭감 소질：楽観的,일선을 넘지 않음,貞操無頓着,痛みに強い,弱味,淫乱と淫魔以外の淫乱系,恋慕系,服従系,崩壊系,○민감
 TALENT:낙관적 = 0
 TALENT:일선을넘지않음 = 0
@@ -97,21 +97,21 @@ REPEAT 4
     LOCAL = 1
     POWER LOCAL, 2, COUNT
     IF TALENT:(150+COUNT)
-        CFLAG:14 -= LOCAL
+        CFLAG:이벤트취득연모 -= LOCAL
         TALENT:(150+COUNT) = 0
     ENDIF
 REND
 SIF TALENT:복종
-    CFLAG:15 -= 1
+    CFLAG:이벤트취득복종 -= 1
 TALENT:복종 = 0
 IF TALENT:낙인
     TALENT:낙인 = 0
     TALENT:흠집 = 1
-    SIF CFLAG:15 & 2
-        CFLAG:15 -= 2
+    SIF CFLAG:이벤트취득복종 & 2
+        CFLAG:이벤트취득복종 -= 2
 ENDIF
 SIF TALENT:예속
-    CFLAG:15 -= 4
+    CFLAG:이벤트취득복종 -= 4
 TALENT:예속 = 0
 SIF TALENT:정신붕괴
     CFLAG:17 -= 4
@@ -126,7 +126,7 @@ FOR COUNT,1,10
     LOCAL = 1
     POWER LOCAL, 2, COUNT
     IF TALENT:(170+COUNT)
-        CFLAG:16 -= LOCAL
+        CFLAG:이벤트취득음란 -= LOCAL
         TALENT:(170+COUNT) = 0
     ENDIF
 NEXT
@@ -135,8 +135,8 @@ NEXT
 TALENT:반항적 = 1
 IF TALENT:솔직함
     TALENT:솔직함 = 0
-    SIF CFLAG:12 & 2048
-        CFLAG:12 -= 2048
+    SIF CFLAG:트라우마판정 & 2048
+        CFLAG:트라우마판정 -= 2048
 ENDIF
 TALENT:꿋꿋함 = 1
 TALENT:건방짐 = 1
@@ -156,7 +156,7 @@ TALENT:A둔감 = 1
 TALENT:B둔감 = 1
 TALENT:광기 = 1
 SIF TALENT:음란 == 0
-    CFLAG:16 |= 1
+    CFLAG:이벤트취득음란 |= 1
 TALENT:음란 = 1
 ;공통 이벤트도 포함해, 순종 소멸
 ABL:순종 = (ABL:순종 > 0) ? 1 # 0
@@ -214,8 +214,8 @@ NAME:TARGET = ＥＸ루미아
 MAXBASE:0 += 200
 MAXBASE:기력 += 500
 ;유치를 없애던 플래그를 없앤다
-SIF CFLAG:13 & 128
-    CFLAG:13 -= 128
+SIF CFLAG:소실이벤트 & 128
+    CFLAG:소실이벤트 -= 128
 ;삭감 소질 : 프라이드 낮음,好奇心,貞操無頓着,恥薄い,쾌감에 솔직,작은체형,빈유(절벽),유치
 TALENT:프라이드가낮음 = 0
 TALENT:호기심 = 0
@@ -290,8 +290,8 @@ NAME:TARGET = 어드벤트 치르노
 MAXBASE:0 += 500
 MAXBASE:기력 += 200
 ;유치를 없애던 플래그를 없앤다
-SIF CFLAG:13 & 128
-    CFLAG:13 -= 128
+SIF CFLAG:소실이벤트 & 128
+    CFLAG:소실이벤트 -= 128
 ;삭감 소질：習得遅い,유치,回復遅い,妖精
 TALENT:습득느림 = 0
 TALENT:유치 = 0
@@ -472,27 +472,27 @@ REPEAT 4
     LOCAL = 1
     POWER LOCAL, 2, COUNT
     IF TALENT:(150+COUNT)
-        CFLAG:14 -= LOCAL
+        CFLAG:이벤트취득연모 -= LOCAL
         TALENT:(150+COUNT) = 0
     ENDIF
 REND
 SIF TALENT:복종
-    CFLAG:15 -= 1
+    CFLAG:이벤트취득복종 -= 1
 TALENT:복종 = 0
 IF TALENT:낙인
     TALENT:낙인 = 0
     TALENT:흠집 = 1
-    SIF CFLAG:15 & 2
-        CFLAG:15 -= 2
+    SIF CFLAG:이벤트취득복종 & 2
+        CFLAG:이벤트취득복종 -= 2
 ENDIF
 SIF TALENT:예속
-    CFLAG:15 -= 4
+    CFLAG:이벤트취득복종 -= 4
 TALENT:예속 = 0
 FOR COUNT,0,9
     LOCAL = 1
     POWER LOCAL, 2, COUNT
     IF TALENT:(170+COUNT)
-        CFLAG:16 -= LOCAL
+        CFLAG:이벤트취득음란 -= LOCAL
         TALENT:(170+COUNT) = 0
     ENDIF
 NEXT
@@ -560,8 +560,8 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 인간으로 돌아왔다＞
 MAXBASE:0 = MAX(MAXBASE:0 - 400, 600)
 MAXBASE:기력 = MAX(MAXBASE:기력 - 200, 600)
 ;무관심을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 4
-    CFLAG:13 -= 4
+SIF CFLAG:소실이벤트 & 4
+    CFLAG:소실이벤트 -= 4
 ;삭감 소질：프라이드 높음,무관심,貞操無頓着,痛みに強い,濡れにくい,魅力,魅惑,소악마,霊体
 TALENT:프라이드가높음 = 0
 TALENT:무관심 = 0
@@ -629,11 +629,11 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 봉래인이 아니게 되�
 MAXBASE:0 = MAX(MAXBASE:0 - 500, 600)
 MAXBASE:기력 = MAX(MAXBASE:기력 - 200, 600)
 ;반항적을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 8
-    CFLAG:13 -= 8
+SIF CFLAG:소실이벤트 & 8
+    CFLAG:소실이벤트 -= 8
 ;저항을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 2
-    CFLAG:13 -= 2
+SIF CFLAG:소실이벤트 & 2
+    CFLAG:소실이벤트 -= 2
 ;삭감 소질：반항적、저항、蓬莱人、倒錯的、구현
 TALENT:반항적 = 0
 TALENT:저항 = 0
@@ -667,8 +667,8 @@ PRINTFORMW ＜%CALLNAME:TARGET%의 이름은 alshflzh로 고정되었다＞
 NAME:TARGET = dkzl alshflzh
 CALLNAME:TARGET = alshflzh
 ;해방를 없애던 플래그를 없앤다
-SIF CFLAG:13 & 2048
-    CFLAG:13 -= 2048
+SIF CFLAG:소실이벤트 & 2048
+    CFLAG:소실이벤트 -= 2048
 ;삭감 소질：해방,楽観的,쾌감에 솔직,절벽,빈유
 TALENT:낙관적 = 0
 TALENT:해방 = 0
@@ -756,8 +756,8 @@ SIF TALENT:연모 == 0 && TALENT:음란 == 0
 ;기력+250
 MAXBASE:기력 += 250
 ;해방를 없애던 플래그를 없앤다
-SIF CFLAG:13 & 2048
-    CFLAG:13 -= 2048
+SIF CFLAG:소실이벤트 & 2048
+    CFLAG:소실이벤트 -= 2048
 ;삭감 소질1：大人しい,献身的,魅力,Ｃ민감,V민감
 TALENT:얌전함 = 0
 TALENT:헌신적 = 0
@@ -773,16 +773,16 @@ TALENT:아픔에강함 = 0
 TALENT:젖기쉬움 = 0
 TALENT:습득빠름 = 0
 SIF TALENT:복종
-    CFLAG:15 -= 1
+    CFLAG:이벤트취득복종 -= 1
 TALENT:복종 = 0
 IF TALENT:낙인
     TALENT:낙인 = 0
     TALENT:흠집 = 1
-    SIF CFLAG:15 & 2
-        CFLAG:15 -= 2
+    SIF CFLAG:이벤트취득복종 & 2
+        CFLAG:이벤트취득복종 -= 2
 ENDIF
 SIF TALENT:예속
-    CFLAG:15 -= 4
+    CFLAG:이벤트취득복종 -= 4
 TALENT:예속 = 0
 ;추가 소질 : 臆病,반항적,気丈,건방짐,프라이드 높음,ツンデレ,自制心,悲観的,抑圧,저항,痛みに弱い,濡れにくい,習得遅い,中毒しやすい,黄昏の怪物
 TALENT:겁쟁이 = 1
@@ -824,8 +824,8 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 야타가라스의 힘을 �
 ;체력-500(단, 최저치 600),기력-200(단, 최저치 600)
 MAXBASE:0 = MAX(MAXBASE:0 - 500, 600)
 ;반항적을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 8
-    CFLAG:13 -= 8
+SIF CFLAG:소실이벤트 & 8
+    CFLAG:소실이벤트 -= 8
 ;삭감 소질：반항적、일광욕、구현
 TALENT:반항적 = 0
 TALENT:일광욕 = 0
@@ -871,8 +871,8 @@ PRINTFORMW ＜%CALLNAME:TARGET%의 이름은 dlclfls이 되었다＞
 NAME:TARGET = znahdl dlclfls
 CALLNAME:TARGET = 들클플스
 ;일선을 넘지 않음을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 64
-    CFLAG:13 -= 64
+SIF CFLAG:소실이벤트 & 64
+    CFLAG:소실이벤트 -= 64
 ;삭감 소질：꿋꿋함, 정조관념, 일선을 넘지 않음, 부끄럼쟁이, 민감소질
 TALENT:꿋꿋함 = 0
 TALENT:일선을넘지않음 = 0
@@ -907,8 +907,8 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 인간모습으로 돌아왔
 MAXBASE:0 = MAX(MAXBASE:0 - 2400, 600)
 MAXBASE:기력 = MAX(MAXBASE:기력 - 200, 600)
 ;무관심을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 4
-    CFLAG:13 -= 4
+SIF CFLAG:소실이벤트 & 4
+    CFLAG:소실이벤트 -= 4
 ;제거소질 무관심,감정결여,비관적,선안넘음,정조관념무ㅡ,억압,
 TALENT:무관심 = 0
 TALENT:감정결여 = 0
@@ -970,8 +970,8 @@ CALLNAME:TARGET = 미노이라츠메
 MAXBASE:0 = MAX(MAXBASE:0 - 500, 600)
 MAXBASE:기력 = MAX(MAXBASE:기력 - 200, 600)
 ;무관심을 순애 모드에서 지우던 플래그를 지운다
-;SIF CFLAG:13 & 4
-;    CFLAG:13 -= 4
+;SIF CFLAG:소실이벤트 & 4
+;    CFLAG:소실이벤트 -= 4
 ;소멸 소질：반항적, 무관심, 보수적, 낙관적, 자제심, 젖기 어려움, 약물내성, 냄새둔감, 월광욕, 회복빠름, 전신둔감, 강시
 TALENT:반항적 = 0
 TALENT:자제심 = 0
@@ -1037,8 +1037,8 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 생전의 기억을 되찾�
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 토지코노이라츠메가 되었다＞
 NAME:TARGET = 토지코노이라츠메
 ;반항적을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 8
-    CFLAG:13 -= 8
+SIF CFLAG:소실이벤트 & 8
+    CFLAG:소실이벤트 -= 8
 ;원래의 느긋한 아가씨에서 태자님 일직선의 얀데레 소녀가 되어버린다
 ;삭감 소질：낙관적, 냄새둔감, 영체, V둔감, B둔감
 TALENT:낙관적 = 0

@@ -520,10 +520,10 @@ IF (LOCAL:2 & 1) == 0
     IF CHARANUM > 1
         ;蒐集品採取済みフラグのリセット
         FOR LOCAL, 0, CHARANUM
-            CFLAG:LOCAL:10 = 0
+            CFLAG:LOCAL:수집품채취여부 = 0
             ;触手出産回数は触手の能力を引き継ぐ場合のみ保存
             SIF (LOCAL:2 & 2) == 0
-                CFLAG:LOCAL:34 = 0
+                CFLAG:LOCAL:촉수출산수 = 0
         NEXT
     ENDIF
     FOR LOCAL, 100, 600
@@ -1085,10 +1085,10 @@ FOR ASSI, 0, CHARANUM
     ;조수가 즉각함락을 갖고 있지 않음＋(과거 주회 플레이를 포함해)지금까지 淫乱、淫核／淫茎、淫壷、淫尻、淫乳、尿道狂、キス魔、ドＳ、ドＭを全て([オトコ]の場合、[淫壷]は不要)취득、
     ;혹은 지금까지 [연모] [친애] [상애] [복종] [낙인] [예속] [사역마] [음란]을 전부 취득
     ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも即落ちを覚えさせた場合最初から即落ちが付加されるようになる. (이미 즉각함락 존재 시 유지 여부 추가. T(220213))
-    IF (((TALENT:ASSI:남자 && CFLAG:ASSI:16 == 507) || CFLAG:ASSI:16 == 511) && FLAG:난이도 >= 3) || CFLAG:ASSI:16 & 512
+    IF (((TALENT:ASSI:남자 && CFLAG:ASSI:이벤트취득음란 == 507) || CFLAG:ASSI:이벤트취득음란 == 511) && FLAG:난이도 >= 3) || CFLAG:ASSI:이벤트취득음란 & 512
         CALL FALLEN_ASSI, LOCAL:4
         LOCAL:4 = RESULT
-    ELSEIF CFLAG:ASSI:14 >= 15 && CFLAG:ASSI:15 >= 15 && (CFLAG:ASSI:16 & 1) > 0 && TALENT:ASSI:즉각함락 == 0
+    ELSEIF CFLAG:ASSI:이벤트취득연모 >= 15 && CFLAG:ASSI:이벤트취득복종 >= 15 && (CFLAG:ASSI:이벤트취득음란 & 1) > 0 && TALENT:ASSI:즉각함락 == 0
         CALL FALLEN_ASSI, LOCAL:4
         LOCAL:4 = RESULT
     ENDIF
@@ -1100,7 +1100,7 @@ FOR ASSI, 0, CHARANUM
     ENDIF
     ;助手がオトコでも生娘ではなく、好感度が1万以上、現在[相愛]を持っている＋(過去の周回プレイを含め)今までに恋慕、妄信、親愛、相愛を全て取得し、
     ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも生娘化を実行した場合、生娘化にするか選択できるようになる.
-    SIF (((CFLAG:ASSI:14 & 15) > 0 && FLAG:난이도 >= 3) || CFLAG:ASSI:14 & 16) && CFLAG:ASSI:호감도 > 9999 && TALENT:ASSI:처녀 != 1 && TALENT:ASSI:남자 == 0 && TALENT:ASSI:상애
+    SIF (((CFLAG:ASSI:이벤트취득연모 & 15) > 0 && FLAG:난이도 >= 3) || CFLAG:ASSI:이벤트취득연모 & 16) && CFLAG:ASSI:호감도 > 9999 && TALENT:ASSI:처녀 != 1 && TALENT:ASSI:남자 == 0 && TALENT:ASSI:상애
         CALL VIRGIN_ASSI
 
     ;캐릭터 전용 대사 내에 특수 인계 설정 처리가 있을 경우에는 그쪽 처리를 우선한다. 그 외에는 통상 인계 처리.
@@ -1311,7 +1311,7 @@ ELSE
     PRINTFORMW 수도 없이 조교를 받은 %CALLNAME:ASSI%의 몸은 완전히 %CALLNAME:MASTER%의 손에 함락되어버린 모양이다…….
     PRINTFORMW ＜%CALLNAME:MASTER%의 손으로 보다 더 느끼기 쉬운 몸으로 바꿀 수 있습니다＞
     PRINTFORML ＜%CALLNAME:ASSI%에게 [즉각함락]을 배우게 하겠습니까?＞
-    SIF (CFLAG:ASSI:16 & 512) == 0
+    SIF (CFLAG:ASSI:이벤트취득음란 & 512) == 0
         PRINTL (※아니오를 선택해도 즉각함락을 『배웠던 적이 있다』고 판정됩니다)
     PRINTLC [0] 예
     PRINTLC [1] 아니오
@@ -1327,7 +1327,7 @@ ELSE
     ELSE
         GOTO INPUT_LOOP_FALLEN_ASSI2
     ENDIF
-    CFLAG:ASSI:16 |= 512
+    CFLAG:ASSI:이벤트취득음란 |= 512
 ENDIF
 
 RETURN ARG
@@ -1384,7 +1384,7 @@ PRINTW …………
 PRINTW ………………
 PRINTFORMW ＜보주의 힘을 해방시킴으로써 %조사처리(NAME:ASSI,"를")% [숫처녀]로 되돌릴 수 있습니다＞
 PRINTFORML ＜%조사처리(NAME:ASSI,"를")% [숫처녀]로 만들겠습니까?＞
-SIF EXP:ASSI:V경험 || EXP:ASSI:V확장경험 || EXP:ASSI:V조율경험 || EXP:ASSI:산란경험 || EXP:ASSI:출산경험 || CFLAG:ASSI:34
+SIF EXP:ASSI:V경험 || EXP:ASSI:V확장경험 || EXP:ASSI:V조율경험 || EXP:ASSI:산란경험 || EXP:ASSI:출산경험 || CFLAG:ASSI:촉수출산수
     PRINTL (※예를 선택하면 [처녀]를 얻는 대신 관련된 V경험은 모두 리셋됩니다)
 PRINTLC [0] 예
 PRINTLC [1] 아니오
@@ -1395,8 +1395,8 @@ IF RESULT == 0
     PRINTFORMW %CALLNAME:ASSI%의 몸은 보주의 힘으로 숫처녀로 돌아갔습니다.
     PRINTFORMW %조사처리(NAME:ASSI,"는")% [처녀]를 얻었다.
     TALENT:ASSI:처녀 = 1
-    CFLAG:ASSI:14 |= 16
-    IF ABL:ASSI:V감각 || EXP:ASSI:V경험 || EXP:ASSI:V확장경험 || EXP:ASSI:V조율경험 || EXP:ASSI:산란경험 || EXP:ASSI:출산경험 || EXP:ASSI:피강간경험 || EXP:ASSI:피윤간경험 || EXP:ASSI:피간쾌락경험 || CFLAG:ASSI:34
+    CFLAG:ASSI:이벤트취득연모 |= 16
+    IF ABL:ASSI:V감각 || EXP:ASSI:V경험 || EXP:ASSI:V확장경험 || EXP:ASSI:V조율경험 || EXP:ASSI:산란경험 || EXP:ASSI:출산경험 || EXP:ASSI:피강간경험 || EXP:ASSI:피윤간경험 || EXP:ASSI:피간쾌락경험 || CFLAG:ASSI:촉수출산수
         PRINTFORMW 보주의 힘으로 %NAME:ASSI%의 질은 [숫처녀]의 그것으로 변화했다.
         ABL:ASSI:V감각 = 0
         EXP:ASSI:V경험 = 0
@@ -1407,7 +1407,7 @@ IF RESULT == 0
         EXP:ASSI:피강간경험 = 0
         EXP:ASSI:피윤간경험 = 0
         EXP:ASSI:피간쾌락경험 = 0
-        CFLAG:ASSI:34 = 0
+        CFLAG:ASSI:촉수출산수 = 0
     ENDIF
 ELSEIF RESULT == 1
     PRINTFORMW %조사처리(NAME:ASSI,"를")% [숫처녀]로 되돌리는 건 보류했습니다.

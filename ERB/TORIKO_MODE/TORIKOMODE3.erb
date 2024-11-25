@@ -28,7 +28,7 @@ IF !TFLAG:207
         ENDIF
         ;気丈でなく、まだ狂気でない場合、狂気を得る
         IF TALENT:ARG:꿋꿋함 == 0 && TALENT:ARG:광기 == 0
-            CFLAG:ARG:12 |= 1
+            CFLAG:ARG:트라우마판정 |= 1
             CFLAG:ARG:17 |= 2
             TALENT:ARG:광기 = 1
             PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 지고 있는 해를 향해 엷은 웃음을 띄고 중얼중얼대고 있다…
@@ -2583,17 +2583,17 @@ SIF TALENT:처녀 || TALENT:남자
 ;『매각가능』특수처리
 IF ARG == 3
     ;[해방]에 변화[억압]은 되돌린다. 또 [저항]이 소멸했을 경우, 부활.
-    IF CFLAG:13 & 1 && TALENT:억압 == 0
+    IF CFLAG:소실이벤트 & 1 && TALENT:억압 == 0
         TALENT:억압 = 1
-        CFLAG:13 -= 1
-        IF CFLAG:12 & 65536 && TALENT:해방
+        CFLAG:소실이벤트 -= 1
+        IF CFLAG:트라우마판정 & 65536 && TALENT:해방
             TALENT:해방 = 0
-            CFLAG:12 -= 65536
+            CFLAG:트라우마판정 -= 65536
         ENDIF
     ENDIF
-    IF CFLAG:13 & 2 && TALENT:저항 == 0
+    IF CFLAG:소실이벤트 & 2 && TALENT:저항 == 0
         TALENT:저항 = 1
-        CFLAG:13 -= 2
+        CFLAG:소실이벤트 -= 2
     ENDIF
     ;매각에 순종이나 욕망이 레벨4 이상 필요한 경우 인상.
     SIF TALENT:반항적 || TALENT:꿋꿋함
@@ -2607,12 +2607,12 @@ ELSE
     IF TALENT:억압
         TALENT:억압 = 0
         TALENT:해방 = 1
-        CFLAG:13 |= 1
-        CFLAG:12 |= 65536
+        CFLAG:소실이벤트 |= 1
+        CFLAG:트라우마판정 |= 65536
     ENDIF
     IF TALENT:저항
         TALENT:저항 = 0
-        CFLAG:13 |= 2
+        CFLAG:소실이벤트 |= 2
     ENDIF
     PRINTFORMW %CALLNAME:TARGET%を『육성완료』상태에 맞추었습니다.
 ENDIF

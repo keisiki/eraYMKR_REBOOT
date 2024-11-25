@@ -189,7 +189,7 @@ PRINTFORML [6] [키스마]를 %LOCALS:(TALENT:키스마)%합니다.
 PRINTFORML [7] [초S]를 %LOCALS:(TALENT:초S)%합니다.
 PRINTFORML [8] [초M]을 %LOCALS:(TALENT:초M)%합니다.
 PRINTFORML [9] [즉각함락]을 %LOCALS:(TALENT:즉각함락)%합니다.
-SIF CFLAG:14 < 15 || CFLAG:15 < 15 || CFLAG:16 < 1023
+SIF CFLAG:이벤트취득연모 < 15 || CFLAG:이벤트취득복종 < 15 || CFLAG:이벤트취득음란 < 1023
     PRINTL [97] 모든 음란 소질을 취득한다.
 SIF (TFLAG:104 & 128) == 0
     PRINTL [98] 모든 음란 소질 추가 플래그
@@ -229,11 +229,11 @@ ELSEIF RESULT == 8
 ELSEIF RESULT == 9
     PRINTFORMW [즉각함락]을 %LOCALS:(TALENT:즉각함락)%합니다.
     TALENT:즉각함락 = (TALENT:즉각함락) ? 0 # 1
-ELSEIF RESULT == 97 && (CFLAG:14 < 15 || CFLAG:15 < 15 || CFLAG:16 < 1023)
+ELSEIF RESULT == 97 && (CFLAG:이벤트취득연모 < 15 || CFLAG:이벤트취득복종 < 15 || CFLAG:이벤트취득음란 < 1023)
     PRINTW 모든 음란 소질을 취득합니다.
-    CFLAG:14 = 15
-    CFLAG:15 = 15
-    CFLAG:16 = 1023
+    CFLAG:이벤트취득연모 = 15
+    CFLAG:이벤트취득복종 = 15
+    CFLAG:이벤트취득음란 = 1023
 ELSEIF RESULT == 98 && (TFLAG:104 & 256) == 0
     PRINTW 모든 음란 소질 추가 플래그를 켭니다.
     TFLAG:104 |= 256
@@ -551,15 +551,15 @@ PRINTW 수입 랭킹을 초기화합니다.
 DRAWLINE
 LOCAL:1 = 0
 FOR LOCAL, 0, CHARANUM
-    IF CFLAG:LOCAL:30
-        CFLAG:LOCAL:30 = 0
-        IF TALENT:LOCAL:질투 && CFLAG:LOCAL:12 & 4096
+    IF CFLAG:LOCAL:질투포인트
+        CFLAG:LOCAL:질투포인트 = 0
+        IF TALENT:LOCAL:질투 && CFLAG:LOCAL:트라우마판정 & 4096
             TALENT:LOCAL:질투 = 0
-            CFLAG:LOCAL:12 -= 4096
+            CFLAG:LOCAL:트라우마판정 -= 4096
         ENDIF
-        IF TALENT:LOCAL:광기 && CFLAG:LOCAL:12 & 1
+        IF TALENT:LOCAL:광기 && CFLAG:LOCAL:트라우마판정 & 1
             TALENT:LOCAL:광기 = 0
-            CFLAG:LOCAL:12 -= 1
+            CFLAG:LOCAL:트라우마판정 -= 1
         ENDIF
         LOCAL:1 += 1
     ENDIF
@@ -582,7 +582,7 @@ FOR LOCAL, 0, CHARANUM
         CFLAG:LOCAL:매각가능 = 2
         IF TALENT:LOCAL:연모 == 0
             TALENT:LOCAL:연모 = 1
-            CFLAG:LOCAL:14 |= 1
+            CFLAG:LOCAL:이벤트취득연모 |= 1
         ENDIF
         LOCAL:1 += 1
     ENDIF
@@ -825,7 +825,7 @@ SIF TALENT:모유체질
     PRINTFORMLC [103] 분유 게이지 ({BASE:모유}) 
 SIF TALENT:오줌싸개버릇 && ((FLAG:커맨드확장 & 4096 && FLAG:촉수능력 & 32768) == 0)
     PRINTFORMLC [104] 요의 게이지 ({BASE:뇨의}) 
-SIF TALENT:음모없음 || CFLAG:36
+SIF TALENT:음모없음 || CFLAG:털성장판정
     PRINTFORMLC [105] 음모 ({BASE:음모}) 
 SIF TALENT:기생
     PRINTFORMLC [106] 촉수기생 LV ({BASE:촉수})
@@ -2563,17 +2563,17 @@ SIF TALENT:처녀 || TALENT:남자
 ;『매각가능』특수처리
 IF ARG == 3
     ;[해방]에 변화[억압]은 되돌린다. 또 [저항]이 소멸했을 경우, 부활.
-    IF CFLAG:13 & 1 && TALENT:억압 == 0
+    IF CFLAG:소실이벤트 & 1 && TALENT:억압 == 0
         TALENT:억압 = 1
-        CFLAG:13 -= 1
-        IF CFLAG:12 & 65536 && TALENT:해방
+        CFLAG:소실이벤트 -= 1
+        IF CFLAG:트라우마판정 & 65536 && TALENT:해방
             TALENT:해방 = 0
-            CFLAG:12 -= 65536
+            CFLAG:트라우마판정 -= 65536
         ENDIF
     ENDIF
-    IF CFLAG:13 & 2 && TALENT:저항 == 0
+    IF CFLAG:소실이벤트 & 2 && TALENT:저항 == 0
         TALENT:저항 = 1
-        CFLAG:13 -= 2
+        CFLAG:소실이벤트 -= 2
     ENDIF
     ;매각에 순종이나 욕망이 레벨4 이상 필요한 경우 인상.
     SIF TALENT:반항적 || TALENT:꿋꿋함
@@ -2587,12 +2587,12 @@ ELSE
     IF TALENT:억압
         TALENT:억압 = 0
         TALENT:해방 = 1
-        CFLAG:13 |= 1
-        CFLAG:12 |= 65536
+        CFLAG:소실이벤트 |= 1
+        CFLAG:트라우마판정 |= 65536
     ENDIF
     IF TALENT:저항
         TALENT:저항 = 0
-        CFLAG:13 |= 2
+        CFLAG:소실이벤트 |= 2
     ENDIF
     PRINTFORMW %조사처리(CALLNAME:TARGET,"를")% 『육성완료』 상태에 맞추었습니다.
 ENDIF

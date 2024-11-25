@@ -25,7 +25,7 @@ IF FLAG:조교모드 & 4
             CONTINUE
         SIF COUNT != TARGET && TALENT:COUNT:질투 && TALENT:COUNT:광기 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:사역마 == 0
             LOCAL:100 += 1
-        SIF CFLAG:COUNT:30 >= 130 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:사역마 == 0 && EQUIP:COUNT:14 == 0
+        SIF CFLAG:COUNT:질투포인트 >= 130 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:사역마 == 0 && EQUIP:COUNT:14 == 0
             LOCAL:101 = 1
     REND
     SIF TALENT:MASTER:대범함 && LOCAL:100 > 0
@@ -132,7 +132,7 @@ FOR TFLAG:900, 0, CHARANUM
 
     ;ボンデージ装着中
     ;体力・気力の回復量が低下し, 代わりに苦痛快楽経験と緊縛経験が増加(くどくなるので表示は無し)
-    IF CFLAG:(TFLAG:900):42 & 8
+    IF CFLAG:(TFLAG:900):특수장비 & 8
         TIMES LOCAL:10 , 0.75
         TIMES LOCAL:11 , 0.90
         EXP:(TFLAG:900):고통쾌락경험 += 3
@@ -165,7 +165,7 @@ FOR TFLAG:900, 0, CHARANUM
     ENDIF
 
     ;時間経過における陰毛成長処理
-    SIF CFLAG:(TFLAG:900):36 == 2 && BASE:(TFLAG:900):음모 < 1000
+    SIF CFLAG:(TFLAG:900):털성장판정 == 2 && BASE:(TFLAG:900):음모 < 1000
         CALL CHECK_DAY_PUBIC_HAIR
 
     ;時間経過における陰核成長処理
@@ -252,13 +252,13 @@ FOR TFLAG:900, 0, CHARANUM
     ;薬毒耐性以外のキャラが媚薬中毒になっていると体力・気力の回復量が低下する
     ;また, 日が経つと禁断症状も出てくる
     IF TEQUIP:(TFLAG:900):11 == 0 && TALENT:(TFLAG:900):약물내성 == 0 && TALENT:(TFLAG:900):미약중독
-        LOCAL:10 *= (10 - CFLAG:(TFLAG:900):32)
+        LOCAL:10 *= (10 - CFLAG:(TFLAG:900):미약중독레벨)
         LOCAL:10 /= 10
         TIMES LOCAL:11 , 0.80
-        SIF TIME != 0 && CFLAG:(TFLAG:900):32 < 7
-            CFLAG:(TFLAG:900):32 += 1
-    ELSEIF TIME != 0 && TALENT:(TFLAG:900):미약중독 == 0 && CFLAG:(TFLAG:900):32 > 0
-        CFLAG:(TFLAG:900):32 -= RAND:2
+        SIF TIME != 0 && CFLAG:(TFLAG:900):미약중독레벨 < 7
+            CFLAG:(TFLAG:900):미약중독레벨 += 1
+    ELSEIF TIME != 0 && TALENT:(TFLAG:900):미약중독 == 0 && CFLAG:(TFLAG:900):미약중독레벨 > 0
+        CFLAG:(TFLAG:900):미약중독레벨 -= RAND:2
     ENDIF
 
     ;酒が入っている場合回復スピードが低下
@@ -601,13 +601,13 @@ SIF CFLAG:ARG:65 < 0 || TALENT:ARG:괴뢰 || TALENT:ARG:괴조인격
 
 ;LUNATIC以上ではストレスによる過負荷状態(3000以上)にあるターンを記録しておく
 IF FLAG:난이도 > 3 && CFLAG:ARG:65 >= PALAMLV:3
-    CFLAG:ARG:38 += 1
+    CFLAG:ARG:스트레스과부하 += 1
     ;超過負荷状態(30000以上)ならさらに記録しておく
     SIF CFLAG:ARG:65 >= PALAMLV:5
-        CFLAG:ARG:38 += 1
+        CFLAG:ARG:스트레스과부하 += 1
 
     ;[解放]があり, 過負荷状態が1000を越えたら[解放]消失イベント発生.
-    SIF TALENT:ARG:해방 && CFLAG:ARG:38 > 1000
+    SIF TALENT:ARG:해방 && CFLAG:ARG:스트레스과부하 > 1000
         CALL DOWN_LIBERATION, ARG
 ENDIF
 
@@ -621,13 +621,13 @@ PRINTFORMW %CALLNAME:ARG%의 마음은 지속적인 스트레스에서 오는 �
 PRINTFORML %조사처리(CALLNAME:ARG,"는")% [%TALENTNAME:33%]을 잃었다.
 TALENT:ARG:해방 = 0
 ;フラグ
-CFLAG:ARG:13 |= 2048
+CFLAG:ARG:소실이벤트 |= 2048
 
 ;--------------------------------------------------
 ;調教終了直後のイベント
 ;--------------------------------------------------
 @EVENT_CHECK_AFTER
-IF CFLAG:36 == 1 && BASE:음모
+IF CFLAG:털성장판정 == 1 && BASE:음모
     PRINTFORML %CALLNAME:TARGET%의 밑쪽 털을 아주 깔끔하게 밀어버렸습니다.
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:65%]가 되었다.
     TALENT:음모없음 = 1
@@ -740,7 +740,7 @@ ENDIF
 @EVENT_NEXTDAY
 IF TARGET >= 0
     ;ふたなりイベント抑制がオフの状態で, [オトコ]でも[ふたなり]でなく, クリトリスリングを付けていないキャラが前提
-    IF TALENT:남자 == 0 && TALENT:후타나리 == 0 && (CFLAG:42 & 1) == 0 && (FLAG:조교모드 & 128) == 0
+    IF TALENT:남자 == 0 && TALENT:후타나리 == 0 && (CFLAG:특수장비 & 1) == 0 && (FLAG:조교모드 & 128) == 0
         ;不思議の根持ちで精液経験が300以上で生える
         SIF TALENT:수상한뿌리 == 1 && EXP:정액경험 >= 300
             CALL EVENT_FUTA_NEXTDAY
@@ -750,14 +750,14 @@ IF TARGET >= 0
     ENDIF
 
     ;貞操帯なしの状態で放尿レベル50(幼稚または幼児, 幼児退行持ちの場合は25)以上でおもらし癖がつく
-    IF TALENT:오줌싸개버릇 == 0 && (CFLAG:42 & 2) == 0
-        SIF ((TALENT:유아 || TALENT:유치 || TALENT:유아퇴행) && CFLAG:31 >= 25) || CFLAG:31 >= 50
+    IF TALENT:오줌싸개버릇 == 0 && (CFLAG:특수장비 & 2) == 0
+        SIF ((TALENT:유아 || TALENT:유치 || TALENT:유아퇴행) && CFLAG:방뇨레벨 >= 25) || CFLAG:방뇨레벨 >= 50
             CALL EVENT_MORASI_NEXTDAY
     ENDIF
 
     ;[壊造人格]を取得していない状態で反発刻印Lv2かつストレスが500以上または反発刻印Lv3かつストレスが1000以上またはストレスが10000以上, 
     ;この周回中に異常経験を変動させており, 異常経験が5以上のとき崩壊系素質取得イベント判定へ
-    SIF ((MARK:반발각인 == 2 && CFLAG:65 >= 500) || (MARK:반발각인 >= 3 && CFLAG:65 >= 1000) ||  CFLAG:65 >= 10000) && TALENT:괴조인격 == 0 && EXP:이상경험 >= 5 && CFLAG:11 & 4
+    SIF ((MARK:반발각인 == 2 && CFLAG:65 >= 500) || (MARK:반발각인 >= 3 && CFLAG:65 >= 1000) ||  CFLAG:65 >= 10000) && TALENT:괴조인격 == 0 && EXP:이상경험 >= 5 && CFLAG:VA이상경험변동 & 4
         CALL EVENT_BROKEN_CHECK
 ENDIF
 
@@ -795,7 +795,7 @@ ELSE
         PRINTW …….
         PRINTFORMW %조사처리(CALLNAME:LOCAL,"가")% 복귀했습니다….
         CFLAG:LOCAL:조교관외 = 0
-        CFLAG:LOCAL:30 += 30
+        CFLAG:LOCAL:질투포인트 += 30
     ENDIF
 ENDIF
 
@@ -865,18 +865,18 @@ FOR TFLAG:900, 0, CHARANUM
     ;懐卵処理
     ELSEIF TALENT:(TFLAG:900):회란 && CFLAG:(TFLAG:900):조교관외 == 0
         ;懐卵(出産時期は妊娠よりは少し早く来る)
-        CFLAG:(TFLAG:900):35 += 1
-        IF CFLAG:(TFLAG:900):35 == 14
+        CFLAG:(TFLAG:900):임신경과일수 += 1
+        IF CFLAG:(TFLAG:900):임신경과일수 == 14
             PRINTFORML %조사처리(CALLNAME:(TFLAG:900),"는")% 임월을 맞이했습니다.
             PRINTFORMW %조사처리(CALLNAME:(TFLAG:900),"를")% 촉수 전용 출산실로 데리고 갑니다.
             TFLAG:901 = TARGET
             TFLAG:902 = ASSI
             TARGET = TFLAG:900
             CALL SPAWN_TENTACLE_LARVA
-        ELSEIF CFLAG:(TFLAG:900):35 == 10
+        ELSEIF CFLAG:(TFLAG:900):임신경과일수 == 10
             PRINTFORML %CALLNAME:(TFLAG:900)%의 하복부는 상당히 부풀어 있다….
             PRINTFORMW 이제 조금이면 %조사처리(CALLNAME:(TFLAG:900),"는")% 임월을 맞이할 것 같다…….
-        ELSEIF CFLAG:(TFLAG:900):35 == 7
+        ELSEIF CFLAG:(TFLAG:900):임신경과일수 == 7
             PRINTFORML %CALLNAME:(TFLAG:900)%의 하복부는 부풀어 있다….
             PRINTFORMW 단, 출산을 맞이하기엔 아직 좀 이를지도 모르겠다…….
         ENDIF
@@ -890,7 +890,7 @@ FOR TFLAG:900, 0, CHARANUM
     SIF TALENT:(TFLAG:900):누에
         CALL EVENT_NUETALENT_RANDOM, TFLAG:900
     ;[媚薬中毒]の禁断症状イベント
-    SIF TALENT:(TFLAG:900):미약중독 && CFLAG:(TFLAG:900):32 == 7
+    SIF TALENT:(TFLAG:900):미약중독 && CFLAG:(TFLAG:900):미약중독레벨 == 7
         CALL EVENT_PHILTER_AFTEREFFECT, TFLAG:900
 NEXT
 
@@ -910,8 +910,8 @@ MAXBASE:ARG:사정 = CALC_GAUGE2_COMMON(ARG)
 MAXBASE:ARG:음핵 = BASE:ARG:음핵
 BASE:ARG:음핵 = 0
 TALENT:ARG:비대음핵 = 0
-SIF CFLAG:ARG:37 & 16
-    CFLAG:ARG:37 -= 16
+SIF CFLAG:ARG:클리상태 & 16
+    CFLAG:ARG:클리상태 -= 16
 
 ;具現消滅
 IF TALENT:ARG:구현
@@ -956,7 +956,7 @@ LOCAL = 0
 IF ABL:순종 >= 4 && ABL:욕망 >= 4 && ABL:마조끼 >= 4 && TALENT:유아 == 0 && (TALENT:유치 || (TALENT:봉래인 == 0 && EXP:이상경험 >= 7) || EXP:이상경험 >= 15) && TALENT:유아퇴행 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
     LOCAL |= 1
     ;貞操帯なしの状態で露出が5のときはさらにおもらし癖がつく
-    SIF ABL:노출증 == 5 && TALENT:오줌싸개버릇 == 0 && (CFLAG:42 & 2) == 0
+    SIF ABL:노출증 == 5 && TALENT:오줌싸개버릇 == 0 && (CFLAG:특수장비 & 2) == 0
         LOCAL |= 2
 ENDIF
 ;従順・マゾっ気が共に3以上, 異常経験が20以上, 薬物刻印と恥辱刻印が共に2以上, 恐怖刻印が3, かつストレスが5000以上で[精神崩壊]
@@ -999,35 +999,35 @@ ENDIF
 IF TALENT:일선을넘지않음
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:27%]을 잃었다.
     TALENT:일선을넘지않음 = 0
-    CFLAG:13 |= 64
+    CFLAG:소실이벤트 |= 64
 ENDIF
 ;貞操観念消滅
 IF TALENT:정조관념
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:30%]을 잃었다.
     TALENT:정조관념 = 0
-    CFLAG:13 |= 256
+    CFLAG:소실이벤트 |= 256
 ENDIF
 ;抑圧消滅
 IF TALENT:억압
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:32%]을 잃었다.
     TALENT:억압 = 0
-    CFLAG:13 |= 1
+    CFLAG:소실이벤트 |= 1
 ENDIF
 ;抵抗消滅
 IF TALENT:저항
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:34%]을 잃었다.
     TALENT:저항 = 0
-    CFLAG:13 |= 2
+    CFLAG:소실이벤트 |= 2
 ENDIF
 ;幼稚消滅
 IF TALENT:유치
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:131%]를 잃었다.
     TALENT:유치 = 0
-    CFLAG:13 |= 128
+    CFLAG:소실이벤트 |= 128
 ENDIF
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:159%]을 얻었다.
 TALENT:유아퇴행 = 1
-CFLAG:12 |= 2
+CFLAG:트라우마판정 |= 2
 CFLAG:17 |= 1
 
 ;--------------------------------------------------
@@ -1050,8 +1050,8 @@ ENDIF
 IF TALENT:유아퇴행
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:159%]을 잃었다.
     TALENT:유아퇴행 = 0
-    SIF CFLAG:12 & 2
-        CFLAG:12 -= 2
+    SIF CFLAG:트라우마판정 & 2
+        CFLAG:트라우마판정 -= 2
 ENDIF
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:167%]를 얻었다.
 TALENT:정신붕괴 = 1
@@ -1165,7 +1165,7 @@ IF ARG == MASTER
     ENDIF
 ELSEIF TALENT:ARG:광기 == 0
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 발광했다.
-    CFLAG:ARG:12 |= 1
+    CFLAG:ARG:트라우마판정 |= 1
     CFLAG:ARG:17 |= 2
     TALENT:ARG:광기 = 1
     TIMES LOCAL , 1.75
@@ -1181,7 +1181,7 @@ ELSE
         TIMES LOCAL , 1.25
     ENDIF
 ENDIF
-CFLAG:ARG:32 = 0
+CFLAG:ARG:미약중독레벨 = 0
 CFLAG:ARG:65 += LOCAL
 BASE:ARG:기력 /= 2
 ;禁断症状で体力が0以下になることは無い

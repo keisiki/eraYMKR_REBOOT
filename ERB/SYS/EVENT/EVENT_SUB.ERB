@@ -11,7 +11,7 @@
 ;남자 주인인 경우에는 레즈경험이 1000 이하, 여주인의 경우에는 BL경험이 1000 이하에다 호감도 500 이상이면 소질 변화
 ;※대상이 인계한 캐릭터일 경우, 레즈경험과 BL경험의 제한은 걸리지 않는다
 ;※바이라면 성별제한 무시. 동성간에는 경험제한이 반전
-SIF ((TALENT:MASTER:남자 == 0 && ((TALENT:남자 && EXP:BL경험 <= 1000) || ((TALENT:남자 == 0 && EXP:레즈경험 >= 1000) || TALENT:바이))) || (TALENT:MASTER:남자 && ((TALENT:남자 == 0 && EXP:레즈경험 <= 1000) || ((TALENT:남자 && EXP:BL경험 >= 1000) || TALENT:바이))) || CFLAG:18) && CFLAG:11 == 0 && CFLAG:호감도 >= 500 && MARK:굴복각인 && MARK:약물각인 == 0 && MARK:공포각인 == 0 && MARK:반발각인 == 0 && TALENT:흠집 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0 && FLAG:SHOP이벤트확장 & 32
+SIF ((TALENT:MASTER:남자 == 0 && ((TALENT:남자 && EXP:BL경험 <= 1000) || ((TALENT:남자 == 0 && EXP:레즈경험 >= 1000) || TALENT:바이))) || (TALENT:MASTER:남자 && ((TALENT:남자 == 0 && EXP:레즈경험 <= 1000) || ((TALENT:남자 && EXP:BL경험 >= 1000) || TALENT:바이))) || CFLAG:18) && CFLAG:VA이상경험변동 == 0 && CFLAG:호감도 >= 500 && MARK:굴복각인 && MARK:약물각인 == 0 && MARK:공포각인 == 0 && MARK:반발각인 == 0 && TALENT:흠집 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0 && FLAG:SHOP이벤트확장 & 32
     CALL EVENT_PURE_LOVE
 
 LOCAL = 0
@@ -93,13 +93,13 @@ SIF TFLAG:106
 TFLAG:106 = 0
 
 ;条件を満たすと媚薬中毒を追加
-IF TALENT:미약중독 == 0 && CFLAG:32 > 100 && (FLAG:커맨드확장 & 32 || FLAG:난이도 >= 3)
+IF TALENT:미약중독 == 0 && CFLAG:미약중독레벨 > 100 && (FLAG:커맨드확장 & 32 || FLAG:난이도 >= 3)
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 미약이 가져다주는 쾌감의 포로가 된 것 같다….
     CALL SELF_KOJO, TARGET, 105
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [미약중독]을 얻었다.
     TALENT:미약중독 = 1
-    CFLAG:12 |= 16384
-    CFLAG:32 = 0
+    CFLAG:트라우마판정 |= 16384
+    CFLAG:미약중독레벨 = 0
 ENDIF
 
 LOCAL = 0
@@ -134,7 +134,7 @@ ELSEIF (CFLAG:MASTER:98 >= 50 || FLAG:함락총계 >= 200) && TALENT:MASTER:대�
 ENDIF
 
 ;パンツハンター“あなた”
-SIF TALENT:남자 == 0 && TALENT:음란 && (CFLAG:10 & 32) == 0 && FLAG:SHOP이벤트확장 & 8
+SIF TALENT:남자 == 0 && TALENT:음란 && (CFLAG:수집품채취여부 & 32) == 0 && FLAG:SHOP이벤트확장 & 8
     CALL SWEET_POTATO_PANTY
 
 ;仕送り判定
@@ -198,55 +198,55 @@ IF LOCAL & 1
     CALL SELF_KOJO, TARGET, 52
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [저항]을 잃었다.
     TALENT:저항 = 0
-    CFLAG:13 |= 2
+    CFLAG:소실이벤트 |= 2
 ENDIF
 IF LOCAL & 2
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%에게 약간이지만 마음을 열기 시작한 것 같다….
     CALL SELF_KOJO, TARGET, 53
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [억압]을 잃었다.
     TALENT:억압 = 0
-    CFLAG:13 |= 1
+    CFLAG:소실이벤트 |= 1
 ENDIF
 IF LOCAL & 4
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%에게 살짝 미소지었다….
     CALL SELF_KOJO, TARGET, 54
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [무관심]을 잃었다.
     TALENT:무관심 = 0
-    CFLAG:13 |= 4
+    CFLAG:소실이벤트 |= 4
 ENDIF
 IF LOCAL & 8
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"와")%의 행위를 받아들이기 시작한 것 같다….
     CALL SELF_KOJO, TARGET, 55
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [반항적]을 잃었다.
     TALENT:반항적 = 0
-    CFLAG:13 |= 8
+    CFLAG:소실이벤트 |= 8
 ENDIF
 IF LOCAL & 16
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 말을 가만히 따르고 있다….
     CALL SELF_KOJO, TARGET, 56
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [건방짐]을 잃었다.
     TALENT:건방짐 = 0
-    CFLAG:13 |= 16
+    CFLAG:소실이벤트 |= 16
 ENDIF
 IF LOCAL & 32
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%에 대한 기피의식이 옅어진 것 같다….
     CALL SELF_KOJO, TARGET, 57
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [남자혐오]를 잃었다.
     TALENT:남성혐오 = 0
-    CFLAG:13 |= 512
+    CFLAG:소실이벤트 |= 512
 ELSEIF LOCAL & 64
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%에 대한 혐오의식이 옅어진 것 같다….
     CALL SELF_KOJO, TARGET, 58
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [여성혐오]를 잃었다.
     TALENT:여성혐오 = 0
-    CFLAG:13 |= 1024
+    CFLAG:소실이벤트 |= 1024
 ENDIF
 IF LOCAL & 128
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"가")% 주는 쾌락을 받아들이는 것 같다….
     CALL SELF_KOJO, TARGET, 59
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [쾌감의 부정]을 잃었다.
     TALENT:쾌감을부정 = 0
-    CFLAG:13 |= 32
+    CFLAG:소실이벤트 |= 32
     LOCAL:1 = 1
 ENDIF
 IF LOCAL & 256
@@ -254,7 +254,7 @@ IF LOCAL & 256
     CALL SELF_KOJO, TARGET, 60
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [일선을 넘지않음]을 잃었다.
     TALENT:일선을넘지않음 = 0
-    CFLAG:13 |= 64
+    CFLAG:소실이벤트 |= 64
     LOCAL:1 = 1
 ENDIF
 ;[快感の否定]または[一線越えない]を失うイベントを発生させた場合, [素直]を取得
@@ -264,7 +264,7 @@ IF TALENT:솔직함 == 0 && TALENT:츤데레 == 0 && LOCAL:1 == 1
     CALL SELF_KOJO, TARGET, 61
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [솔직함]을 얻었다.
     TALENT:솔직함 = 1
-    CFLAG:12 |= 2048
+    CFLAG:트라우마판정 |= 2048
 ENDIF
 
 ;周回おまけイベント
@@ -289,16 +289,16 @@ IF CFLAG:호감도 >= 5000 && (FLAG:엔딩도달 & 8 || FLAG:엔딩도달 & 16) 
         CALL SELF_KOJO, TARGET, 68
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [광기]를 잃었다.
         TALENT:광기 = 0
-        SIF CFLAG:12 & 1
-            CFLAG:12 -= 1
+        SIF CFLAG:트라우마판정 & 1
+            CFLAG:트라우마판정 -= 1
     ENDIF
     IF LOCAL & 2
         PRINTFORML 아무래도 %CALLNAME:TARGET%의 질투심이 풀린 것 같다….
         CALL SELF_KOJO, TARGET, 67
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [질투]를 잃었다.
         TALENT:질투 = 0
-        SIF CFLAG:12 & 4096
-            CFLAG:12 -= 4096
+        SIF CFLAG:트라우마판정 & 4096
+            CFLAG:트라우마판정 -= 4096
     ENDIF
 ENDIF
 
@@ -311,19 +311,19 @@ PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%에게 진심�
 CALL SELF_KOJO, TARGET, 72
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [친애]를 얻었다.
 TALENT:친애 = 1
-CFLAG:14 |= 4
+CFLAG:이벤트취득연모 |= 4
 IF FLAG:SHOP이벤트확장 & 32
     IF TALENT:쾌감을부정 && EXP:봉사쾌락경험 >= 500 && MARK:쾌락각인 >= 3
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"가")% 주는 쾌락을 받아들이는 것 같다….
         PRINTFORMW %조사처리(NAME:TARGET,"는")% [쾌감의 부정]을 잃었다.
         TALENT:쾌감을부정 = 0
-        CFLAG:13 |= 32
+        CFLAG:소실이벤트 |= 32
     ENDIF
     IF TALENT:일선을넘지않음 && EXP:애정경험 >= 500
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 마음을 받아들이는 것 같다….
         PRINTFORMW %조사처리(NAME:TARGET,"는")% [일선을 넘지않음]을 잃었다.
         TALENT:일선을넘지않음 = 0
-        CFLAG:13 |= 64
+        CFLAG:소실이벤트 |= 64
     ENDIF
 ENDIF
 ;[相愛]持ちの売却不可フラグを消去
@@ -354,7 +354,7 @@ PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 마음속 깊이 %CALLNAME:MAST
 CALL SELF_KOJO, TARGET, 71
 PRINTFORMW %조사처리(NAME:TARGET,"는")% [망신]을 얻었다.
 TALENT:망신 = 1
-CFLAG:14 |= 2
+CFLAG:이벤트취득연모 |= 2
 
 ;-------------------------------------------------
 ;依存イベント
@@ -402,30 +402,30 @@ IF LOCAL & 1
     CALL SELF_KOJO, TARGET, 70
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [연모]를 얻었다.
     TALENT:연모 = 1
-    CFLAG:14 |= 1
+    CFLAG:이벤트취득연모 |= 1
     LOCAL:1 += 1
     ;범용 대사용 플래그
-    CFLAG:43 = 0
+    CFLAG:범용대사용인격 = 0
 ENDIF
 IF LOCAL & 2
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 명령을 절대적이라고 여기게 된 모양이다….
     CALL SELF_KOJO, TARGET, 74
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [복종]을 얻었다.
     TALENT:복종 = 1
-    CFLAG:15 |= 1
+    CFLAG:이벤트취득복종 |= 1
     LOCAL:1 += 1
     ;범용 대사용 플래그
-    CFLAG:43 = 0
+    CFLAG:범용대사용인격 = 0
 ENDIF
 IF LOCAL & 4
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"가")% 자신에게 주는 쾌락에 빠져버린 것 같다….
     CALL SELF_KOJO, TARGET, 75
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [음란]을 얻었다.
     TALENT:음란 = 1
-    CFLAG:16 |= 1
+    CFLAG:이벤트취득음란 |= 1
     LOCAL:1 += 1
     ;범용 대사용 플래그
-    CFLAG:43 = 0
+    CFLAG:범용대사용인격 = 0
 ENDIF
 SIF LOCAL & 8
     CALL FALLEN_SLAVE_COUNTER
@@ -469,7 +469,7 @@ ENDIF
 ;純愛モード有効時に従順5以上, 露出癖3以上, 奉仕快楽経験250以上, 愛情経験100以上150以下(2週目以降は100以上300以下, 5週目以降は100以上に緩和), キス経験300以上, ＶＡ異常経験の変動なし, 
 ;媚薬を使うことなくその調教中に助手がいない状態で恭順と欲情が100000, 習得が30000を超えるとキス魔
 IF FLAG:SHOP이벤트확장 & 32 && TFLAG:104 & 32
-    SIF ASSI < 0 && ABL:순종 >= 5 && ABL:노출증 >= 3 && EXP:봉사쾌락경험 >= 250 && EXP:애정경험 >= 100 && (EXP:애정경험 <= 150 || (EXP:애정경험 <= 300 && FLAG:주회수 > 1) || FLAG:주회수 > 4) && EXP:키스경험 >= 300 && CFLAG:11 == 0 && TALENT:키스마 == 0
+    SIF ASSI < 0 && ABL:순종 >= 5 && ABL:노출증 >= 3 && EXP:봉사쾌락경험 >= 250 && EXP:애정경험 >= 100 && (EXP:애정경험 <= 150 || (EXP:애정경험 <= 300 && FLAG:주회수 > 1) || FLAG:주회수 > 4) && EXP:키스경험 >= 300 && CFLAG:VA이상경험변동 == 0 && TALENT:키스마 == 0
         LOCAL |= 32
 ENDIF
 ;拷問系, 精神操作系コマンド有効時に欲情3以上, サドっ気5以上(サド持ちなら3以上), 苦痛刻印3, 緊縛経験とＳＭ教育経験が両方とも150以上, 異常経験が10以上, 媚薬を使うことなく今回調教中に苦痛と欲情が30000以上でドＳ
@@ -485,7 +485,7 @@ ENDIF
 ;(過去の周回プレイを含め)今までに恋慕, 親愛, 相愛, 服従, 烙印, 隷属, 使い魔, 淫乱, 淫核／淫茎, 淫壷(オトコの場合は免除), 淫尻, 淫乳, 尿道狂, キス魔, ドＳ, ドＭ, 即落ちを取得したことがある
 ;この状態で今回の調教で助手がいない, 淫核／淫茎～ドＭの取得条件を1つ以上満たした上, 今回調教中に恭順と欲情が100000以上, 苦痛と習得がそれぞれ30000以上, 
 ;ＡＢＣＶ절정が全て30回以上(オトコの場合Ｖ절정は不要), 恋慕か妄信か服従を持っている, かつ媚薬中毒と傷物と反発刻印を持っていない状態で発生
-IF LOCAL && (((TFLAG:104 & 15) == 15 && (CFLAG:16 & 1023) == 1023) || (TALENT:남자 && (TFLAG:104 & 13) == 13 && (CFLAG:16 & 1019) == 1019)) && (CFLAG:14 & 15) == 15 && (CFLAG:15 & 15) == 15
+IF LOCAL && (((TFLAG:104 & 15) == 15 && (CFLAG:이벤트취득음란 & 1023) == 1023) || (TALENT:남자 && (TFLAG:104 & 13) == 13 && (CFLAG:이벤트취득음란 & 1019) == 1019)) && (CFLAG:이벤트취득연모 & 15) == 15 && (CFLAG:이벤트취득복종 & 15) == 15
     SIF ASSI < 0 && TFLAG:104 & 256 && (TALENT:연모 || TALENT:망신 || TALENT:복종) && TALENT:미약중독 == 0 && TALENT:흠집 == 0 && MARK:반발각인 == 0
         LOCAL = 256
 ENDIF
@@ -539,7 +539,7 @@ ELSEIF LOCAL & 1
     PRINTFORM %조사처리(CALLNAME:TARGET,"는")% 
     PRINTFORMW [음\@ (TALENT:남자 || TALENT:후타나리) ? 경 # 핵\@]을 얻었다.
     TALENT:음핵／음경 = 1
-    CFLAG:16 |= 2
+    CFLAG:이벤트취득음란 |= 2
 ELSEIF LOCAL & 2
     IF TALENT:연모 || TALENT:복종 || TALENT:괴조인격 || TALENT:음란
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 조교가 끝났음에도 불구하고, %CALLNAME:MASTER%에게 자궁의 갈증을 낫게 해 달라며 매달려 왔다….
@@ -549,7 +549,7 @@ ELSEIF LOCAL & 2
     CALL SELF_KOJO, TARGET, 82
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [음호]를 얻었다.
     TALENT:음호 = 1
-    CFLAG:16 |= 4
+    CFLAG:이벤트취득음란 |= 4
 ELSEIF LOCAL & 4
     IF TALENT:연모 || TALENT:복종 || TALENT:괴조인격 || TALENT:음란
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 조교가 끝났음에도 불구하고, %CALLNAME:MASTER%에게 엉덩이를 괴롭혀 달라며 애원해왔다….
@@ -559,7 +559,7 @@ ELSEIF LOCAL & 4
     CALL SELF_KOJO, TARGET, 83
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [음고]를 얻었다.
     TALENT:음고 = 1
-    CFLAG:16 |= 8
+    CFLAG:이벤트취득음란 |= 8
 ELSEIF LOCAL & 8
     IF TALENT:연모 || TALENT:복종 || TALENT:괴조인격 || TALENT:음란
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 조교가 끝났음에도 불구하고, %CALLNAME:MASTER%에게 가슴을 만져달라며 찰싹 달라붙었다….
@@ -569,7 +569,7 @@ ELSEIF LOCAL & 8
     CALL SELF_KOJO, TARGET, 84
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [음유]를 얻었다.
     TALENT:음유 = 1
-    CFLAG:16 |= 16
+    CFLAG:이벤트취득음란 |= 16
     CALL CALC_GAUGE3_SLAVE, TARGET, 1
 ELSEIF LOCAL & 16
     IF TALENT:연모 || TALENT:복종 || TALENT:괴조인격 || TALENT:음란
@@ -581,7 +581,7 @@ ELSEIF LOCAL & 16
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [요도광]을 얻었다.
     TALENT:요도광 = 1
     CALL CALC_GAUGE4_SLAVE, TARGET, 1
-    CFLAG:16 |= 32
+    CFLAG:이벤트취득음란 |= 32
 ELSEIF LOCAL & 32
     IF TALENT:연모 || TALENT:복종 || TALENT:괴조인격 || TALENT:음란
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"를")% 끌어안고 뜨거운 키스를 나누기 시작했다.
@@ -597,7 +597,7 @@ ELSEIF LOCAL & 32
     EXP:키스경험 += 1
     CFLAG:172 += 1
     TALENT:키스마 = 1
-    CFLAG:16 |= 64
+    CFLAG:이벤트취득음란 |= 64
 ELSEIF LOCAL & 64
     IF TALENT:연모 || TALENT:복종 || TALENT:괴조인격 || TALENT:음란
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 조교가 끝났음에도 불구하고, %CALLNAME:MASTER%에게 좀 더 심하게 괴롭혀 달라며 애원해왔다….
@@ -607,7 +607,7 @@ ELSEIF LOCAL & 64
     CALL SELF_KOJO, TARGET, 88
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [초M]을 얻었다.
     TALENT:초M = 1
-    CFLAG:16 |= 256
+    CFLAG:이벤트취득음란 |= 256
 ELSEIF LOCAL & 128
     IF TALENT:연모 || TALENT:복종 || TALENT:괴조인격 || TALENT:음란
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 조교가 끝났음에도 불구하고, %CALLNAME:MASTER%에게 다음은 자신이 공격하는 측에 서고 싶다고 말했다….
@@ -617,7 +617,7 @@ ELSEIF LOCAL & 128
     CALL SELF_KOJO, TARGET, 87
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [초S]를 얻었다.
     TALENT:초S = 1
-    CFLAG:16 |= 128
+    CFLAG:이벤트취득음란 |= 128
 ENDIF
 
 ;-------------------------------------------------
@@ -644,7 +644,7 @@ ENDIF
 CALL SELF_KOJO, TARGET, 89
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [음마]를 얻었다.
 TALENT:음마 = 1
-CFLAG:16 |= 1024
+CFLAG:이벤트취득음란 |= 1024
 FLAG:음마총계 += 1
 
 ;-------------------------------------------------
@@ -678,7 +678,7 @@ ELSE
 ENDIF
 
 TALENT:약물내성 = 0
-CFLAG:13 |= 4096
+CFLAG:소실이벤트 |= 4096
 
 ;-------------------------------------------------
 ;体質変化イベント
@@ -748,8 +748,8 @@ IF TFLAG:106 & 16
     TALENT:정애미각 = 1
     PRINTFORMW %EXPNAME:50%＋1
     EXP:이상경험 += 1
-    CFLAG:11 |= 4
-    CFLAG:12 |= 32768
+    CFLAG:VA이상경험변동 |= 4
+    CFLAG:트라우마판정 |= 32768
     ;精液中毒がLV3に上がる
     IF ABL:정액중독 < 3
         PRINTFORMW %CALLNAME:TARGET%의 %ABLNAME:31%이 3으로 올랐습니다
@@ -766,7 +766,7 @@ IF TFLAG:106 & 16
         ;精飲절정取得で弱みを握られたときのイベント口上呼び出し(TFLAG:200= 18)
         CALL SELF_KOJO, TARGET, 18
         TALENT:약점 = 1
-        CFLAG:12 |= 1024
+        CFLAG:트라우마판정 |= 1024
     ENDIF
     CFLAG:64 = 0
 ENDIF
@@ -799,7 +799,7 @@ REPEAT CHARANUM
     ENDIF
     IF COUNT == TARGET
         LOCAL = EX:0 + EX:1 + EX:2 + EX:3
-        CFLAG:COUNT:30 = MAX(CFLAG:COUNT:30 - LOCAL/2, 0)
+        CFLAG:COUNT:질투포인트 = MAX(CFLAG:COUNT:질투포인트 - LOCAL/2, 0)
     ELSE
         LOCAL = ABL:COUNT:욕망 + ABL:COUNT:순종 / 2
         ;[嫉妬しやすい]
@@ -821,18 +821,18 @@ REPEAT CHARANUM
         ;触手部屋の中にいる, かつ触手中毒がLv0
         SIF CFLAG:COUNT:조교관외 == 4 && ABL:COUNT:촉수중독 == 0
             TIMES LOCAL , 1.75
-        CFLAG:COUNT:30 += LOCAL
+        CFLAG:COUNT:질투포인트 += LOCAL
     ENDIF
-    IF CFLAG:COUNT:30 >= 50 && TALENT:COUNT:질투 == 0
+    IF CFLAG:COUNT:질투포인트 >= 50 && TALENT:COUNT:질투 == 0
         TALENT:COUNT:질투 = 1
-        CFLAG:COUNT:12 |= 4096
+        CFLAG:COUNT:트라우마판정 |= 4096
         PRINTFORMW ……%CALLNAME:COUNT%의 마음에 질투심이 싹트기 시작했다.
-    ELSEIF CFLAG:COUNT:30 >= 100 && TALENT:COUNT:광기 == 0
+    ELSEIF CFLAG:COUNT:질투포인트 >= 100 && TALENT:COUNT:광기 == 0
         TALENT:COUNT:광기 = 1
         CFLAG:COUNT:17 |= 2
-        CFLAG:COUNT:12 |= 1
+        CFLAG:COUNT:트라우마판정 |= 1
         PRINTFORMW ……%CALLNAME:COUNT%의 질투심은 광기의 영역에 달해있다.
-    ELSEIF CFLAG:COUNT:30 >= 130
+    ELSEIF CFLAG:COUNT:질투포인트 >= 130
         PRINTFORMW %CALLNAME:COUNT%의 이쪽을 보는 눈이 이상하다….
         PRINTFORMW 불길한 예감이 든다….
     ENDIF
@@ -843,9 +843,9 @@ REND
 ;-------------------------------------------------
 @FALLEN_SLAVE_COUNTER
 ;既に一度堕としていると累計のカウントは進まない
-IF (CFLAG:20 & 32) == 0
+IF (CFLAG:첫시츄에이션 & 32) == 0
     FLAG:함락총계 += 1
-    CFLAG:20 |= 32
+    CFLAG:첫시츄에이션 |= 32
 ENDIF
 CFLAG:3115 = DAY
 CFLAG:MASTER:98 += 1
@@ -1144,8 +1144,8 @@ IF TALENT:ARG:후타나리
     MAXBASE:ARG:음핵 = BASE:ARG:음핵
     BASE:ARG:음핵 = 0
     TALENT:ARG:비대음핵 = 0
-    SIF CFLAG:ARG:37 & 16
-        CFLAG:ARG:37 -= 16
+    SIF CFLAG:ARG:클리상태 & 16
+        CFLAG:ARG:클리상태 -= 16
     ;ふたなり化した場合[具現], [不思議な根]は消えて[顕在化]に
     IF TALENT:ARG:수상한뿌리
         TALENT:ARG:수상한뿌리 = 0
@@ -1255,21 +1255,21 @@ PRINTFORM %조사처리(CALLNAME:TARGET,"가")%
 IF TALENT:억압
     PRINTFORM [%TALENTNAME:32%]
     TALENT:억압 = 0
-    CFLAG:13 |= 1
+    CFLAG:소실이벤트 |= 1
     SIF TALENT:저항
         PRINT 과 
 ENDIF
 IF TALENT:저항
     PRINTFORM [%TALENTNAME:34%]
     TALENT:저항 = 0
-    CFLAG:13 |= 2
+    CFLAG:소실이벤트 |= 2
 ENDIF
 PRINTL 을 잃었다.
 ;恥辱刻印Lv3以上か[抑圧]が消失した状態で, [解放]未所持かつ消失イベントを経験していない場合, [解放]を得る
-IF (MARK:치욕각인 >= 3 || (CFLAG:13 & 1)) && TALENT:해방 == 0 && (CFLAG:12 & 65536) == 0
+IF (MARK:치욕각인 >= 3 || (CFLAG:소실이벤트 & 1)) && TALENT:해방 == 0 && (CFLAG:트라우마판정 & 65536) == 0
     PRINTFORML %조사처리(CALLNAME:TARGET,"가")% [%TALENTNAME:33%]을 얻었다.
     TALENT:해방 = 1
-    CFLAG:12 |= 65536
+    CFLAG:트라우마판정 |= 65536
 ENDIF
 IF JUEL:100
     PRINTL 부정의 구슬이 절반으로 되었다.

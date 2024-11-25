@@ -113,8 +113,8 @@ ENDIF
 MAXBASE:ARG:음핵 = BASE:ARG:음핵
 BASE:ARG:음핵 = 0
 TALENT:ARG:비대음핵 = 0
-SIF CFLAG:ARG:37 & 16
-    CFLAG:ARG:37 -= 16
+SIF CFLAG:ARG:클리상태 & 16
+    CFLAG:ARG:클리상태 -= 16
 ;身体測定フラグを寝せる(次回身体測定を行うため)
 CFLAG:ARG:신체측정예약 = 0
 RETURN 1
@@ -151,7 +151,7 @@ BASE:ARG:음핵 += (BASE:ARG:음핵 == 0) ? 1 # RAND(1, 10)
 ;成長による特殊処理
 SIF BASE:ARG:음핵 >= 150 && TALENT:ARG:비대음핵 == 0
     CALL HUGE_CLITORIS, ARG
-SIF BASE:ARG:음핵 > 200 && (CFLAG:ARG:37 & 4) == 0
+SIF BASE:ARG:음핵 > 200 && (CFLAG:ARG:클리상태 & 4) == 0
     CALL GIGATORIS, ARG
 
 CALL SELF_KOJO, ARG, 313
@@ -221,7 +221,7 @@ SIF ARG != MASTER
 PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% [오줌싸개 버릇]이 사라졌다＞
 TALENT:ARG:오줌싸개버릇 = 0
 CALL CALC_GAUGE4_SLAVE, ARG, 1
-CFLAG:ARG:31 = 0
+CFLAG:ARG:방뇨레벨 = 0
 SIF ARG != MASTER
     CALL SELF_KOJO, ARG, 323, 1
 RETURN 1
@@ -429,7 +429,7 @@ CALL COMMON_UP_EXP, ARG, 32, 1, 0, 1
 ;薬物経験
 CALL COMMON_UP_EXP, ARG, 40, 1, 0, 1
 ;異常経験
-SIF EXP:ARG:산란경험 == 0 && (CFLAG:ARG:20 & 1024) == 0
+SIF EXP:ARG:산란경험 == 0 && (CFLAG:ARG:첫시츄에이션 & 1024) == 0
     CALL COMMON_UP_EXP, ARG, 50, 1, 0, 1
 ;産卵経験
 CALL COMMON_UP_EXP, ARG, 51, 1, 0, 1
@@ -443,7 +443,7 @@ CALL COMMON_UP_JUEL, ARG, 16, LOCAL:1, 0, 1
 CALL COMMON_UP_JUEL, ARG, 17, (LOCAL/3), 1, 1
 
 ;元[卵生]かそうでないかを判断
-IF CFLAG:ARG:20 & 1024
+IF CFLAG:ARG:첫시츄에이션 & 1024
     PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% 난생 체질로 돌아왔다＞
     TALENT:ARG:난생 = 1
 ELSE
@@ -452,10 +452,10 @@ ELSE
 ENDIF
 
 ;元々[卵生]ではなく, 異常経験5以下かつ妄信, 親愛, 相愛, 服従, 傀儡, 精神崩壊, 壊造人格なしだと狂気が付く
-IF (CFLAG:ARG:20 & 1024) == 0 && EXP:ARG:이상경험 < 6 && TALENT:ARG:망신 == 0 && TALENT:ARG:친애 == 0 && TALENT:ARG:상애 == 0 && TALENT:ARG:광기 == 0 && TALENT:ARG:복종 == 0 && TALENT:ARG:정신붕괴 == 0 && TALENT:ARG:괴뢰 == 0 && TALENT:ARG:괴조인격 == 0 && ARG != MASTER
+IF (CFLAG:ARG:첫시츄에이션 & 1024) == 0 && EXP:ARG:이상경험 < 6 && TALENT:ARG:망신 == 0 && TALENT:ARG:친애 == 0 && TALENT:ARG:상애 == 0 && TALENT:ARG:광기 == 0 && TALENT:ARG:복종 == 0 && TALENT:ARG:정신붕괴 == 0 && TALENT:ARG:괴뢰 == 0 && TALENT:ARG:괴조인격 == 0 && ARG != MASTER
     PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 변화의 충격으로 미쳐 버렸다.
     TALENT:ARG:광기 = 1
-    CFLAG:ARG:12 |= 1
+    CFLAG:ARG:트라우마판정 |= 1
     CFLAG:ARG:17 |= 2
 ENDIF
 
@@ -517,14 +517,14 @@ ELSE
 ENDIF
 
 ;卵生・産卵体質別々に削除処理
-;元々卵生のキャラはCFLAG:20の1024を立てることで初回の異常経験入手処理の判別と〔난생 사탕〕で[卵生]に戻るかどうかを判別するのに使用
+;元々卵生のキャラはCFLAG:첫시츄에이션の1024を立てることで初回の異常経験入手処理の判別と〔난생 사탕〕で[卵生]に戻るかどうかを判別するのに使用
 IF TALENT:ARG:난생
     TALENT:ARG:난생 = 0
     PRINTW  
     PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% [난생]을 잃었다＞
-    IF (CFLAG:ARG:20 & 1024) == 0
+    IF (CFLAG:ARG:첫시츄에이션 & 1024) == 0
         CALL COMMON_UP_EXP, ARG, 50, 1, 0
-        CFLAG:ARG:20 |= 1024
+        CFLAG:ARG:첫시츄에이션 |= 1024
     ENDIF
 ELSE
     TALENT:ARG:산란체질 = 0
@@ -629,11 +629,11 @@ TALENT:ARG:작은체형 = 0
 SIF ARG != MASTER
     CALL SELF_KOJO, ARG, 337
 ;범용 대사용 플래그
-CFLAG:ARG:43 = 0
+CFLAG:ARG:범용대사용인격 = 0
 CALL COMMON_UP_EXP, ARG, 40, 1, 0
-IF (CFLAG:ARG:20 & 256) == 0
+IF (CFLAG:ARG:첫시츄에이션 & 256) == 0
     CALL COMMON_UP_EXP, ARG, 50, 1, 0
-    CFLAG:ARG:20 |= 256
+    CFLAG:ARG:첫시츄에이션 |= 256
 ENDIF
 ;身体測定フラグを寝せる(次回身体測定を行うため)
 CFLAG:ARG:신체측정예약 = 0
@@ -662,11 +662,11 @@ TALENT:ARG:작은체형 = 1
 SIF ARG != MASTER
     CALL SELF_KOJO, ARG, 338
 ;범용 대사용 플래그
-CFLAG:ARG:43 = 0
+CFLAG:ARG:범용대사용인격 = 0
 CALL COMMON_UP_EXP, ARG, 40, 1, 0
-IF (CFLAG:ARG:12 & 8192) == 0
+IF (CFLAG:ARG:트라우마판정 & 8192) == 0
     CALL COMMON_UP_EXP, ARG, 50, 1, 0
-    CFLAG:ARG:12 |= 8192
+    CFLAG:ARG:트라우마판정 |= 8192
 ENDIF
 ;身体測定フラグを寝せる(次回身体測定を行うため)
 CFLAG:ARG:신체측정예약 = 0
@@ -799,17 +799,17 @@ ELSE
     MAXBASE:ARG:모유 = 0
 ENDIF
 ;범용 대사용 플래그
-CFLAG:ARG:43 = 0
+CFLAG:ARG:범용대사용인격 = 0
 ;身体測定フラグを寝せる(次回身体測定を行うため)
 CFLAG:ARG:신체측정예약 = 0
 
 IF TFLAG:228 == 0
     SIF ARG != MASTER
         CALL SELF_KOJO, ARG, 339
-    IF (CFLAG:ARG:20 & 512) == 0
+    IF (CFLAG:ARG:첫시츄에이션 & 512) == 0
         ;異常経験
         CALL COMMON_UP_EXP, ARG, 50, 1, 0
-        CFLAG:ARG:20 |= 512
+        CFLAG:ARG:첫시츄에이션 |= 512
     ENDIF
     ;薬物経験
     CALL COMMON_UP_EXP, ARG, 40, 1, 1
@@ -824,7 +824,7 @@ PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% \@(ARG == MASTER) ? 〔발모 �
 SIF ARG != MASTER
     CALL SELF_KOJO, ARG, 340, 0
 PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% 음모가 나게 되었다＞
-CFLAG:ARG:36 = 2
+CFLAG:ARG:털성장판정 = 2
 SIF ARG != MASTER
     CALL SELF_KOJO, ARG, 340, 1
 RETURN 1
@@ -891,15 +891,15 @@ ENDIF
 SIF ARG != MASTER
     CALL SELF_KOJO, ARG, 343
 ;범용 대사용 플래그
-CFLAG:ARG:43 = 0
+CFLAG:ARG:범용대사용인격 = 0
 ;身体測定フラグを寝せる(次回身体測定を行うため)
 CFLAG:ARG:신체측정예약 = 0
 ;薬物経験
 CALL COMMON_UP_EXP, ARG, 40, 1, 1
-IF (CFLAG:ARG:20 & 65536) == 0
+IF (CFLAG:ARG:첫시츄에이션 & 65536) == 0
     ;異常経験
     CALL COMMON_UP_EXP, ARG, 50, 1, 0
-    CFLAG:ARG:20 |= 65536
+    CFLAG:ARG:첫시츄에이션 |= 65536
 ENDIF
 RETURN 1
 
@@ -935,14 +935,14 @@ ENDIF
 SIF ARG != MASTER
     CALL SELF_KOJO, ARG, 344
 ;범용 대사용 플래그
-CFLAG:ARG:43 = 0
+CFLAG:ARG:범용대사용인격 = 0
 ;身体測定フラグを寝せる(次回身体測定を行うため)
 CFLAG:ARG:신체측정예약 = 0
 ;薬物経験
 CALL COMMON_UP_EXP, ARG, 40, 1, 1
-IF (CFLAG:ARG:20 & 65536) == 0
+IF (CFLAG:ARG:첫시츄에이션 & 65536) == 0
     ;異常経験
     CALL COMMON_UP_EXP, ARG, 50, 1, 0
-    CFLAG:ARG:20 |= 65536
+    CFLAG:ARG:첫시츄에이션 |= 65536
 ENDIF
 RETURN 1

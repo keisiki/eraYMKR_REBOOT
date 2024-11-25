@@ -110,7 +110,7 @@ IF RESULT == 0
     PRINTW ―도중, 조건을 충족시킴으로써 특수 이벤트가 발생합니다―
     ;수수하게 여성혐오 추가 (메디는 남자가 싫은 게 아니라【사람을 혐오하는 것】이야! )
     ;다만, 이미 여자 증오가 있다, 또는 주회 플레이등으로 남자·여자 증오 제거가 끝난 상태라면 추가하지 않는다
-    SIF TALENT:남성혐오 && TALENT:여성혐오 == 0 && (CFLAG:13 & 1536) == 0
+    SIF TALENT:남성혐오 && TALENT:여성혐오 == 0 && (CFLAG:소실이벤트 & 1536) == 0
         TALENT:여성혐오 = 1
     CFLAG:5020 = 2
 ELSEIF RESULT == 1
@@ -748,13 +748,13 @@ ELSEIF CFLAG:5001 < 6 && MARK:굴복각인 == 3 && TALENT:연모
         ;마스터가 남자＋메디에 남자 싫지만 있다
         IF TALENT:MASTER:남자 && TALENT:남성혐오
             TALENT:남성혐오 = 0
-            CFLAG:13 |= 512
+            CFLAG:소실이벤트 |= 512
             PRINTW  
             PRINTW 메디슨은 [남성 혐오]를 잃었다
         ;마스터가 남자가 아닌＋메디에 여자 증오가 있다
         ELSEIF TALENT:MASTER:남자 == 0 && TALENT:여성혐오
             TALENT:여성혐오 = 0
-            CFLAG:13 |= 1024
+            CFLAG:소실이벤트 |= 1024
             PRINTW  
             PRINTW 메디슨은 [여성 혐오]를 잃었다
         ENDIF
@@ -1582,7 +1582,7 @@ ELSEIF ASSINO() == 34
         IF TALENT:연모
             ;공부 이벤트유(소질 변화 이벤트) 공부 이벤트유용 CFLAG5101
             ;메디에 약에 들어 있는 독 내성이 있어, 한편 친애 or서로 사랑함＋음 단지 or키스마(과거의 주회에 취득에서도 가능), 유카에 연모＋기교 Lv5, 함락 이벤트가 끝난＋소질 변화 이벤트 허가(엑스트라 구문)
-            IF TALENT:약물내성 && (TALENT:친애 || TALENT:상애) && (((TALENT:음호 || CFLAG:16 & 4) && TALENT:처녀 == 0 && EXIST_PENIS(MASTER)) || TALENT:키스마 || CFLAG:16 & 64) && TALENT:ASSI:연모 && ABL:ASSI:기교 >= 5 && CFLAG:5001 >= 6 && CFLAG:5020 == 2 && CFLAG:5101 != 1
+            IF TALENT:약물내성 && (TALENT:친애 || TALENT:상애) && (((TALENT:음호 || CFLAG:이벤트취득음란 & 4) && TALENT:처녀 == 0 && EXIST_PENIS(MASTER)) || TALENT:키스마 || CFLAG:이벤트취득음란 & 64) && TALENT:ASSI:연모 && ABL:ASSI:기교 >= 5 && CFLAG:5001 >= 6 && CFLAG:5020 == 2 && CFLAG:5101 != 1
                 PRINTFORMW 『그러고 보니, 그 아이는 미약이라든지 효과가 없지……? 」
                 PRINTFORMW 『있지, 주인님. 그 아이가 약으로 음란해지는 광경……보고 싶지 않아? 」
                 PRINTFORMW 『물론, 미약만이 아니어요. 저런 약이나 이런 약도……」
@@ -1603,7 +1603,7 @@ ELSEIF ASSINO() == 34
                     PRINTFORMW 『후후, 곧바로 끝나요」
                     PRINTFORM 그렇게 말하면(자), 유카는 돌연 메디슨
                     ;키스마
-                    IF TALENT:키스마 || CFLAG:16 & 64
+                    IF TALENT:키스마 || CFLAG:이벤트취득음란 & 64
                         PRINTFORMW 에게 입맞추었다
                         PRINTFORMW 「응!　응응!　아, 잠깐……무, 무슨 짓이야!?」
                         PRINTFORMW 『응……메디슨, 당신……주인님으로부터 받을 수 있는 것을 거부하고 있구나? 」
@@ -1700,7 +1700,7 @@ ELSEIF ASSINO() == 34
                     TALENT:약물내성 = 0
                     PRINTL 
                     ;키스마
-                    IF TALENT:키스마 || CFLAG:16 & 64
+                    IF TALENT:키스마 || CFLAG:이벤트취득음란 & 64
                         PRINTL 키스 경험＋5
                         PRINTL 윤활＋1500
                         PRINTL 복종＋1000
@@ -21088,7 +21088,7 @@ ELSE
     ENDIF
 ENDIF
 ;출산의 회수 기록(출산 경험-촉수 출산 회수)
-CFLAG:5200 = EXP:출산경험 - CFLAG:34
+CFLAG:5200 = EXP:출산경험 - CFLAG:촉수출산수
 
 ;관련 플래그 리셋트
 ;조수 조교 서두용(앨리스)

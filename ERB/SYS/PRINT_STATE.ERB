@@ -227,11 +227,11 @@ SIF STRLENS(MASTERNAME:ARG) > 0
 SIF TALENT:MASTER:Debug && TALENT:ARG:SpellCard
     PRINTFORML 스펠카드 사용자：%ITEMNAME:(100+TALENT:ARG:SpellCard)%
 ;마지막으로 조교 받은 일수 표시
-SIF CFLAG:ARG:46
-    PRINTFORML 조교를 \@((DAY - CFLAG:ARG:46) <= 0) ? 받은지 얼마 안 됨 # 받고 나서 {DAY - CFLAG:ARG:46}일 정도 지났다\@.
+SIF CFLAG:ARG:마지막조교일
+    PRINTFORML 조교를 \@((DAY - CFLAG:ARG:마지막조교일) <= 0) ? 받은지 얼마 안 됨 # 받고 나서 {DAY - CFLAG:ARG:마지막조교일}일 정도 지났다\@.
 ;마지막으로 조수에서 해임된 일수 표시
-SIF CFLAG:ARG:47 && ARG != ASSI
-    PRINTFORML 조수에서 해임\@((DAY - CFLAG:ARG:47) <= 0) ? 된지 얼마 안 됩니다 # 되고 나서 {DAY - CFLAG:ARG:47}일 정도 경과하고 있습니다\@.
+SIF CFLAG:ARG:마지막조수일 && ARG != ASSI
+    PRINTFORML 조수에서 해임\@((DAY - CFLAG:ARG:마지막조수일) <= 0) ? 된지 얼마 안 됩니다 # 되고 나서 {DAY - CFLAG:ARG:마지막조수일}일 정도 경과하고 있습니다\@.
 ;현재 허브 개발 및 생산중이라면 그것을 표시.
 SIF CFLAG:ARG:조교관외 == 2048
     PRINTFORML 현재 허브 개발시설에서, 신종의 허브를 개발중입니다.
@@ -1341,47 +1341,47 @@ PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ? □ 취득 완료된 함락계 소
 
 ;연모계 소질 색설정
 CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
-SIF CFLAG:ARG:14 & 1
+SIF CFLAG:ARG:이벤트취득연모 & 1
     PRINT [연모] 
-SIF CFLAG:ARG:14 & 2
+SIF CFLAG:ARG:이벤트취득연모 & 2
     PRINT [망신] 
-SIF CFLAG:ARG:14 & 4
+SIF CFLAG:ARG:이벤트취득연모 & 4
     PRINT [친애] 
-SIF CFLAG:ARG:14 & 8
+SIF CFLAG:ARG:이벤트취득연모 & 8
     PRINT [상애] 
 ;복종계 소질 색설정
 CALL SETCOLOR_TORIKOMODE, "ORENGE", 2
-SIF CFLAG:ARG:15 & 1
+SIF CFLAG:ARG:이벤트취득복종 & 1
     PRINT [복종] 
-SIF CFLAG:ARG:15 & 2
+SIF CFLAG:ARG:이벤트취득복종 & 2
     PRINT [낙인] 
-SIF CFLAG:ARG:15 & 4
+SIF CFLAG:ARG:이벤트취득복종 & 4
     PRINT [예속] 
-SIF CFLAG:ARG:15 & 8 
+SIF CFLAG:ARG:이벤트취득복종 & 8 
     PRINTFORM [\@(NO:MASTER == 21 || NO:MASTER == 22) ? 식신 # 사역마\@] 
 ;음란계 소질 색설정
 CALL SETCOLOR_TORIKOMODE, "PINK", 2
-SIF CFLAG:ARG:16 & 1
+SIF CFLAG:ARG:이벤트취득음란 & 1
     PRINT [음란] 
-SIF CFLAG:ARG:16 & 2
+SIF CFLAG:ARG:이벤트취득음란 & 2
     PRINT [음핵] 
-SIF CFLAG:ARG:16 & 4
+SIF CFLAG:ARG:이벤트취득음란 & 4
     PRINT [음호] 
-SIF CFLAG:ARG:16 & 8
+SIF CFLAG:ARG:이벤트취득음란 & 8
     PRINT [음고] 
-SIF CFLAG:ARG:16 & 16
+SIF CFLAG:ARG:이벤트취득음란 & 16
     PRINT [음유] 
-SIF CFLAG:ARG:16 & 32
+SIF CFLAG:ARG:이벤트취득음란 & 32
     PRINT [요도광] 
-SIF CFLAG:ARG:16 & 64
+SIF CFLAG:ARG:이벤트취득음란 & 64
     PRINT [키스마] 
-SIF CFLAG:ARG:16 & 128
+SIF CFLAG:ARG:이벤트취득음란 & 128
     PRINT [초S] 
-SIF CFLAG:ARG:16 & 256
+SIF CFLAG:ARG:이벤트취득음란 & 256
     PRINT [초M] 
-SIF CFLAG:ARG:16 & 512
+SIF CFLAG:ARG:이벤트취득음란 & 512
     PRINT [즉각함락] 
-SIF CFLAG:ARG:16 & 1024
+SIF CFLAG:ARG:이벤트취득음란 & 1024
     PRINT [음마] 
 ;붕괴계 소질 색설정
 CALL SETCOLOR_TORIKOMODE, "RED", 2
@@ -1461,22 +1461,22 @@ CALL NEW_DRAWLINE
 PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 음모 상태 # 음모 상태:\@
 
 ;[소인]이나 [작은체형]의 경우는 데포라면 반들반들
-IF (TALENT:ARG:소인 || TALENT:ARG:작은체형) && CFLAG:ARG:36 != 2
-    PRINTFORML 음모는 나지 않았습니다. \@(CFLAG:ARG:36 == 1) ? 탈모 처리가 되었으므로, # 그리고\@ 날 낌새도 없습니다.
+IF (TALENT:ARG:소인 || TALENT:ARG:작은체형) && CFLAG:ARG:털성장판정 != 2
+    PRINTFORML 음모는 나지 않았습니다. \@(CFLAG:ARG:털성장판정 == 1) ? 탈모 처리가 되었으므로, # 그리고\@ 날 낌새도 없습니다.
 ;소인이나 작은 몸집 이외로 데포라면 나 있다
-ELSEIF TALENT:ARG:소인 == 0 && TALENT:ARG:작은체형 == 0 && CFLAG:ARG:36 == 0 && TALENT:ARG:음모없음 == 0
+ELSEIF TALENT:ARG:소인 == 0 && TALENT:ARG:작은체형 == 0 && CFLAG:ARG:털성장판정 == 0 && TALENT:ARG:음모없음 == 0
     PRINTL 음모가 가지런하게 나 있습니다.
 ;그 이외는 BASE:음모를 참조
 ELSEIF BASE:ARG:음모 > 500
-    PRINTFORML 음모가 풍성하게 우거져 있습니다. \@(CFLAG:ARG:36 == 1) ? 탈모 처리는 하고 있으므로 향후 더 자라지는 않을 겁니다. # \@
+    PRINTFORML 음모가 풍성하게 우거져 있습니다. \@(CFLAG:ARG:털성장판정 == 1) ? 탈모 처리는 하고 있으므로 향후 더 자라지는 않을 겁니다. # \@
 ELSEIF BASE:ARG:음모 > 250
-    PRINTFORML 음모가 가지런하게 나 있습니다. \@(CFLAG:ARG:36 == 1) ? 탈모 처리는 하고 있으므로 향후 더 자라지는 않을 겁니다.  # \@
+    PRINTFORML 음모가 가지런하게 나 있습니다. \@(CFLAG:ARG:털성장판정 == 1) ? 탈모 처리는 하고 있으므로 향후 더 자라지는 않을 겁니다.  # \@
 ELSEIF BASE:ARG:음모 > 125
-    PRINTFORML 음모가 꽤 자라는 중인 것 \@(CFLAG:ARG:36 == 1) ? 같지만, 탈모 처리가 되었으므로 향후 더 자라지는 않을 겁니다.  # 같습니다. \@
+    PRINTFORML 음모가 꽤 자라는 중인 것 \@(CFLAG:ARG:털성장판정 == 1) ? 같지만, 탈모 처리가 되었으므로 향후 더 자라지는 않을 겁니다.  # 같습니다. \@
 ELSEIF BASE:ARG:음모 > 51
-    PRINTFORML 음모가 곳곳에 자라는 중인 것 \@(CFLAG:ARG:36 == 1) ? 같지만, 탈모 처리되었으므로 향후 더 자라지는 않을 겁니다.  # 같습니다. \@
+    PRINTFORML 음모가 곳곳에 자라는 중인 것 \@(CFLAG:ARG:털성장판정 == 1) ? 같지만, 탈모 처리되었으므로 향후 더 자라지는 않을 겁니다.  # 같습니다. \@
 ELSE
-    PRINTFORML 음모는 나지 않았습니다. \@(CFLAG:ARG:36 == 1) ? 탈모 처리가 되었으므로 향후 자랄 일은 없을 겁니니다. # 향후 자라게 될 겁니다. \@
+    PRINTFORML 음모는 나지 않았습니다. \@(CFLAG:ARG:털성장판정 == 1) ? 탈모 처리가 되었으므로 향후 자랄 일은 없을 겁니니다. # 향후 자라게 될 겁니다. \@
 ENDIF
 
 CALL NEW_DRAWLINE
@@ -1487,17 +1487,17 @@ CALL NEW_DRAWLINE
 @PRINT_BRAND_SLAVE_EQUIPMENT, ARG
 PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 특수 장착도구 # 특수 장착도구:\@
 
-SIF CFLAG:ARG:42 & 1
+SIF CFLAG:ARG:특수장비 & 1
     PRINT 《클리토리스 링》 
-SIF CFLAG:ARG:42 & 2
+SIF CFLAG:ARG:특수장비 & 2
     PRINT 《노예 관리용 정조대》 
-SIF CFLAG:ARG:42 & 4
+SIF CFLAG:ARG:특수장비 & 4
     PRINT 《벨리 쥬얼》 
-SIF CFLAG:ARG:42 & 8
+SIF CFLAG:ARG:특수장비 & 8
     PRINT 《본디지》 
-SIF CFLAG:ARG:42 & 16
+SIF CFLAG:ARG:특수장비 & 16
     PRINT 《라비아피어스》 
-SIF CFLAG:ARG:42 & 32
+SIF CFLAG:ARG:특수장비 & 32
     PRINT 《니플피어스》 
 
 PRINTL 
@@ -1509,25 +1509,25 @@ CALL NEW_DRAWLINE
 @PRINT_TENTACLE_INPLANT_SLAVE, ARG
 PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 촉수 이식 # 촉수 이식 개소:\@
 
-SIF CFLAG:ARG:41 & 1
+SIF CFLAG:ARG:촉수이식 & 1
     PRINT 《클리토리스》 
-SIF CFLAG:ARG:41 & 2
+SIF CFLAG:ARG:촉수이식 & 2
     PRINT 《자궁》 
-SIF CFLAG:ARG:41 & 4
+SIF CFLAG:ARG:촉수이식 & 4
     PRINT 《직장》 
-SIF CFLAG:ARG:41 & 8
+SIF CFLAG:ARG:촉수이식 & 8
     PRINT 《유방》 
-SIF CFLAG:ARG:41 & 16
+SIF CFLAG:ARG:촉수이식 & 16
     PRINT 《배꼽》 
-SIF CFLAG:ARG:41 & 32
+SIF CFLAG:ARG:촉수이식 & 32
     PRINT 《혀》 
-SIF CFLAG:ARG:41 & 64
+SIF CFLAG:ARG:촉수이식 & 64
     PRINT 《방광》 
-SIF CFLAG:ARG:41 & 128
+SIF CFLAG:ARG:촉수이식 & 128
     PRINT 《심장》 
-SIF CFLAG:ARG:41 & 256
+SIF CFLAG:ARG:촉수이식 & 256
     PRINT 《척추》 
-SIF CFLAG:ARG:41 & 512
+SIF CFLAG:ARG:촉수이식 & 512
     PRINT 《이마》
 
 PRINTL 
@@ -1559,8 +1559,8 @@ REPEAT 6
             SIF CFLAG:ARG:64
                 PRINTFORM 정음개발도:{CFLAG:ARG:64, 4}
         CASE 5
-            SIF CFLAG:ARG:31
-                PRINTFORM 방뇨 레벨 :{CFLAG:ARG:31, 4}
+            SIF CFLAG:ARG:방뇨레벨
+                PRINTFORM 방뇨 레벨 :{CFLAG:ARG:방뇨레벨, 4}
     ENDSELECT
 
     ;개행 판정
@@ -1619,29 +1619,29 @@ ENDIF
 FONTSTYLE 0
 
 ;순애모드 이벤트를 통한 소질 소거의 판정
-SIF CFLAG:ARG:13 & 1
+SIF CFLAG:ARG:소실이벤트 & 1
     PRINTL 조교에 의해 억압하고 있던 정신을 해방했다.
-SIF CFLAG:ARG:13 & 2
+SIF CFLAG:ARG:소실이벤트 & 2
     PRINTL 조교에 익숙해짐에 따라 저항을 멈췄다.
-SIF CFLAG:ARG:13 & 4
+SIF CFLAG:ARG:소실이벤트 & 4
     PRINTL 무관심했던 태도를 버리고 조교에 조금씩 관심을 가지게 된 것 같다.
-SIF CFLAG:ARG:13 & 8
+SIF CFLAG:ARG:소실이벤트 & 8
     PRINTL 애정어린 조교에 의해 반항적인 태도가 누그러졌다.
-SIF CFLAG:ARG:13 & 16
+SIF CFLAG:ARG:소실이벤트 & 16
     PRINTL 애정어린 조교에 의해 건방진 면이 누그러졌다.
-SIF CFLAG:ARG:13 & 32
+SIF CFLAG:ARG:소실이벤트 & 32
     PRINTL 조교에 의해 부정하던 쾌락을 받아들일 수 있게 된 것 같다.
-SIF CFLAG:ARG:13 & 64
+SIF CFLAG:ARG:소실이벤트 & 64
     PRINTL 선을 넘지 않으려고 하는 태도를 거둬들였다.
-SIF CFLAG:ARG:13 & 256
+SIF CFLAG:ARG:소실이벤트 & 256
     PRINTL 조교에 의해 정조에 대한 생각이 바뀌었다.
-SIF CFLAG:ARG:13 & 512
+SIF CFLAG:ARG:소실이벤트 & 512
     PRINTL 애정어린 조교에 의해 남성에 대한 거부감이 줄어든 것 같다.
-SIF CFLAG:ARG:13 & 1024
+SIF CFLAG:ARG:소실이벤트 & 1024
     PRINTL 애정어린 조교에 의해 여성에 대한 거부감이 줄어든 것 같다.
-SIF CFLAG:ARG:13 & 2048
+SIF CFLAG:ARG:소실이벤트 & 2048
     PRINTL 스트레스를 받아 해방하고 있던 정신을 조금씩 억누르게 된 것 같다.
-SIF CFLAG:ARG:13 & 4096
+SIF CFLAG:ARG:소실이벤트 & 4096
     PRINTL 수상한 힘에 의해 체질이 바뀌어 약물에 대한 내성을 잃었다.
 
 ;기타 MARK상의 이력
@@ -1961,9 +1961,9 @@ SIF FLAG:420 & 2
     PRINTL 　소악마를 소환한 적이 있다.
 SIF FLAG:신체강화
     PRINTL 　신체 강화의 마법으로 강화되고 있다.
-SIF CFLAG:ARG:20 & 512
+SIF CFLAG:ARG:첫시츄에이션 & 512
     PRINTL 　성전환 경험이 있다.
-SIF CFLAG:ARG:20 & 4096
+SIF CFLAG:ARG:첫시츄에이션 & 4096
     PRINTL 　조교중에 caved!!!!되었던 적이 있다.
 SIF CFLAG:ARG:155 & 1
     PRINTL 　마음껏 거하게 취했던 적이 있다.
@@ -2063,62 +2063,62 @@ SIF CFLAG:ARG:153 & 16
     PRINTL 　다른 노예에 NTR당한 적이 있다.
 SIF CFLAG:ARG:153 & 32
     PRINTL 　다른 노예를 주인에게서 NTR한 적이 있다.
-SIF CFLAG:ARG:20 & 1
+SIF CFLAG:ARG:첫시츄에이션 & 1
     PRINTL 　정조를 지킬 수 있다면 엉덩이를 공략당해도 된다고 생각한 적이 있다.
-SIF CFLAG:ARG:20 & 2
+SIF CFLAG:ARG:첫시츄에이션 & 2
     PRINTL 　관장당한 경험 있음.
-SIF CFLAG:ARG:20 & 16
+SIF CFLAG:ARG:첫시츄에이션 & 16
     PRINTL 　한 번 해방되었던 적이 있다.
-;SIF CFLAG:ARG:20 & 32
+;SIF CFLAG:ARG:첫시츄에이션 & 32
 ;    PRINTL 　함락된 경험 있음.
 SIF CFLAG:ARG:155 & 4
     PRINTL 　다른 노예를 데려왔던 적이 있다.
-SIF CFLAG:ARG:20 & 64
+SIF CFLAG:ARG:첫시츄에이션 & 64
     PRINTL 　산란한 경험 있음.
-SIF CFLAG:ARG:20 & 128
+SIF CFLAG:ARG:첫시츄에이션 & 128
     PRINTL 　할례받은 경험 있음.
-SIF CFLAG:ARG:20 & 256
+SIF CFLAG:ARG:첫시츄에이션 & 256
     PRINTL 　강제 성장한 경험 있음.
-SIF CFLAG:ARG:20 & 512
+SIF CFLAG:ARG:첫시츄에이션 & 512
     PRINTL 　성전환된 적이 있다.
-SIF CFLAG:ARG:20 & 1024
+SIF CFLAG:ARG:첫시츄에이션 & 1024
     PRINTL 　[난생]이 소거된 적이 있다.
-SIF CFLAG:ARG:20 & 2048
+SIF CFLAG:ARG:첫시츄에이션 & 2048
     PRINTL 　어디에서 얻었는지 모를 미약을 조달했던 적이 있다.
-SIF CFLAG:ARG:20 & 4096
+SIF CFLAG:ARG:첫시츄에이션 & 4096
     PRINTL 　조교중에 caved!!!!되었던 적이 있다.
-SIF CFLAG:ARG:20 & 8192
+SIF CFLAG:ARG:첫시츄에이션 & 8192
     PRINTL 　조교중에 폭발했던 적이 있다.
-SIF CFLAG:ARG:20 & 16384
+SIF CFLAG:ARG:첫시츄에이션 & 16384
     PRINTL 　지하실에 수감된 적이 있다.
-SIF CFLAG:ARG:20 & 32768
+SIF CFLAG:ARG:첫시츄에이션 & 32768
     PRINTL 　지하실에서 교정이라는 이름의 고문을 받은 적이 있다.
-SIF CFLAG:ARG:20 & 65536
+SIF CFLAG:ARG:첫시츄에이션 & 65536
     PRINTL 　약의 힘으로 강제로 [소인]가 된 적이 있다.
-SIF CFLAG:ARG:21 & 1
+SIF CFLAG:ARG:첫특수커맨드 & 1
     PRINTL 　공개 자위 경험이 있다.
-SIF CFLAG:ARG:21 & 16
+SIF CFLAG:ARG:첫특수커맨드 & 16
     PRINTL 　유선을 개발당해 모유체질이 된 적이 있다.
-SIF CFLAG:ARG:21 & 32 || CFLAG:ARG:21 & 64
+SIF CFLAG:ARG:첫특수커맨드 & 32 || CFLAG:ARG:첫특수커맨드 & 64
     PRINTL 　반형을 삽입당한 적이 있다.
-SIF CFLAG:ARG:21 & 128
+SIF CFLAG:ARG:첫특수커맨드 & 128
     PRINTL 　배란유발제를 먹은 적이 있다.
-SIF CFLAG:ARG:21 & 256
+SIF CFLAG:ARG:첫특수커맨드 & 256
     PRINTL 　인형들에게 구속당해 처녀를 빼앗길 정도로 ∇당한 경험이 있다.
-SIF CFLAG:ARG:22
+SIF CFLAG:ARG:첫가학
     PRINTL 　무언가 하드한 폭력 조교를 받았던 적이 있다.
-SIF CFLAG:ARG:23
+SIF CFLAG:ARG:첫목욕탕
     PRINTL 　무언가 이상한 목욕탕에 들어갔던 적이 있다.
-SIF CFLAG:ARG:24
+SIF CFLAG:ARG:첫촉수커맨드
     PRINTL 　무언가 신사적이고 특수한 촉수 체험을 했던 적이 있다.
-SIF CFLAG:ARG:25
+SIF CFLAG:ARG:첫수간
     PRINTL 　짐승과 성행위를 한 경험이 있다.
-SIF CFLAG:ARG:29
+SIF CFLAG:ARG:첫종족개조
     PRINTL 　다른 종족으로 전생한 경험이 있다.
-SIF CFLAG:ARG:33
+SIF CFLAG:ARG:은방울꽃사용횟수
     PRINTL 　은방울꽃의 독을 사용했던 적이 있다.
-SIF CFLAG:ARG:34
-    PRINTFORML 　촉수를 {CFLAG:ARG:34}마리 출산했던 적이 있다.
+SIF CFLAG:ARG:촉수출산수
+    PRINTFORML 　촉수를 {CFLAG:ARG:촉수출산수}마리 출산했던 적이 있다.
 SIF CFLAG:ARG:3002
     PRINTFORML 　돈을 보내오는 아이가 {CFLAG:ARG:3002}명 있다.
 SIF CFLAG:ARG:150 & 1
@@ -2235,9 +2235,9 @@ FOR LOCAL, 301, 340
         PRINTFORML 　\@(LOCAL >= 321) ?   %LOCALS:(LOCAL - 321)%에 조수로서 # %LOCALS:(LOCAL - 301)%에 노예로서\@ 야외 조교에 데려가졌던 적이 {CFLAG:ARG:LOCAL, 5}회 정도 있다.
 NEXT
 ;촉수 관련
-SIF CFLAG:ARG:24 & 4
+SIF CFLAG:ARG:첫촉수커맨드 & 4
     PRINTL 　촉수 방에 유폐되었던 적이 있다.
-SIF CFLAG:ARG:24 & 8
+SIF CFLAG:ARG:첫촉수커맨드 & 8
     PRINTL 　촉수의 최면술에 걸린 적이 있다.
 ;말측보다(CSTR:95~99를 사용), 말측에서 넣을 수 있던 캐릭터 라인을 그대로 표시한다
 FOR COUNT, 95, 100
@@ -2628,7 +2628,7 @@ SIF TALENT:ARG:모성
     PRINT 모성.
 SIF TALENT:ARG:기생
     PRINT 기생.
-SIF CFLAG:ARG:41 > 0
+SIF CFLAG:ARG:촉수이식 > 0
     PRINT 종.
 SIF CFLAG:ARG:SP캐릭터 > 0
     PRINT EX.

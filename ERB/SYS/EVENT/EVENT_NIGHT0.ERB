@@ -108,7 +108,7 @@ IF LOCAL:20 >= 4
         ;많이 난교 하고 싶어서 확률 손댔다
         IF NOSAMES(LOCAL:10, LOCAL:11, LOCAL:12, LOCAL:13)
             ;주인을 포함한(?) 모두가 정조대를 장비하고 있으면 안 된다
-            IF (CFLAG:MASTER:42 & 2) == 0 || (CFLAG:(LOCAL:10):42 & 2) == 0 || (CFLAG:(LOCAL:11):42 & 2) == 0 || (CFLAG:(LOCAL:12):42 & 2) == 0 || (CFLAG:(LOCAL:13):42 & 2) == 0
+            IF (CFLAG:MASTER:특수장비 & 2) == 0 || (CFLAG:(LOCAL:10):특수장비 & 2) == 0 || (CFLAG:(LOCAL:11):특수장비 & 2) == 0 || (CFLAG:(LOCAL:12):특수장비 & 2) == 0 || (CFLAG:(LOCAL:13):특수장비 & 2) == 0
                 LOCAL:1 = 1
                 LOCAL:2 = 1
                 SIF LOCAL:20 >= 11
@@ -254,7 +254,7 @@ IF RESULT == 1
     IF LOCAL:2 == 7 && LOCAL:1 == 1
         REPEAT 4
             TARGET = LOCAL:(10 + COUNT)
-            SIF (TALENT:남자 || TALENT:후타나리) && !(CFLAG:42 & 2)
+            SIF (TALENT:남자 || TALENT:후타나리) && !(CFLAG:특수장비 & 2)
                 LOCAL:2  += 1
         REND
     ENDIF
@@ -299,23 +299,23 @@ ELSE
         CALL NIGHT_EVENT_3, LOCAL:6, LOCAL:5
     ;乱交（乱交フラグの有無. 夜這い数10人以上で確率が減る. ランダム機能ON状態でないと機能しない）
     ;誰かが貞操帯ある場合はJ条件で弾いた. フラン乱交の場合は此処で弾く
-    ELSEIF LOCAL:2 == 1 && (LOCAL:1 == 1 || (LOCAL:1 == 2 && (CFLAG:42 & 2) == 0 && (CFLAG:MASTER:42 & 2) == 0))
+    ELSEIF LOCAL:2 == 1 && (LOCAL:1 == 1 || (LOCAL:1 == 2 && (CFLAG:특수장비 & 2) == 0 && (CFLAG:MASTER:특수장비 & 2) == 0))
         CALL NIGHT_HANTEI_M, LOCAL:5, LOCAL:6, LOCAL:1, LOCAL:2
     ;３Ｐ女女（誰かを連れてきた場合３Ｐ. ターゲットの奴隷が恋慕もしくは淫乱, レズっ気1以上もしくは両刀必須）
-    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && (ABL:레즈끼 >= 1 || TALENT:바이 == 1) && TALENT:남자 == 0 && TALENT:(LOCAL:15):남자 == 0 && (CFLAG:MASTER:42 & 2) == 0 && (CFLAG:42 & 2) == 0 && (CFLAG:(LOCAL:15):42 & 2) == 0
+    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && (ABL:레즈끼 >= 1 || TALENT:바이 == 1) && TALENT:남자 == 0 && TALENT:(LOCAL:15):남자 == 0 && (CFLAG:MASTER:특수장비 & 2) == 0 && (CFLAG:특수장비 & 2) == 0 && (CFLAG:(LOCAL:15):특수장비 & 2) == 0
         CALL NIGHT_HANTEI_M, LOCAL:5, LOCAL:6, LOCAL:1, LOCAL:2
     ;３Ｐ男男
-    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && (ABL:BL끼 >= 1 || TALENT:바이 == 1) && TALENT:남자 && TALENT:(LOCAL:15):남자 && (CFLAG:MASTER:42 & 2) == 0 && (CFLAG:42 & 2) == 0 && (CFLAG:(LOCAL:15):42 & 2) == 0
+    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && (ABL:BL끼 >= 1 || TALENT:바이 == 1) && TALENT:남자 && TALENT:(LOCAL:15):남자 && (CFLAG:MASTER:특수장비 & 2) == 0 && (CFLAG:특수장비 & 2) == 0 && (CFLAG:(LOCAL:15):특수장비 & 2) == 0
         CALL NIGHT_HANTEI_M, LOCAL:5, LOCAL:6, LOCAL:1, LOCAL:2
     ;３Ｐ異性
-    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && ((TALENT:남자 && TALENT:(LOCAL:15):남자 == 0) || (TALENT:남자 == 0 && TALENT:(LOCAL:15):남자)) && (CFLAG:MASTER:42 & 2) == 0 && (CFLAG:42 & 2) == 0 && (CFLAG:(LOCAL:15):42 & 2) == 0
+    ELSEIF LOCAL:15 > 0 && LOCAL:22 > 0 && RAND:4 == 0 && (TALENT:연모 || TALENT:음란) && ((TALENT:남자 && TALENT:(LOCAL:15):남자 == 0) || (TALENT:남자 == 0 && TALENT:(LOCAL:15):남자)) && (CFLAG:MASTER:특수장비 & 2) == 0 && (CFLAG:특수장비 & 2) == 0 && (CFLAG:(LOCAL:15):특수장비 & 2) == 0
         CALL NIGHT_HANTEI_M, LOCAL:5, LOCAL:6, LOCAL:1, LOCAL:2
     ;奉仕精神Lv4以上, 触手中毒Lv1以上の禁断or触手操作術持ちの奴隷が触手で一緒に楽しみに来る. 
     ;但し, 紳士的触手を解放しており, 主人が貞操帯をしていない場合のみ. 
-    ELSEIF RAND:5 == 0 && ABL:봉사정신 > 3 && ABL:촉수중독 > 0 && (TALENT:금단의지식 || TALENT:촉수사역술) && (CFLAG:MASTER:42 & 2) == 0 && FLAG:커맨드확장 & 4096
+    ELSEIF RAND:5 == 0 && ABL:봉사정신 > 3 && ABL:촉수중독 > 0 && (TALENT:금단의지식 || TALENT:촉수사역술) && (CFLAG:MASTER:특수장비 & 2) == 0 && FLAG:커맨드확장 & 4096
         CALL NIGHT_HANTEI_SHOKUSHU
     ;禁断, 触手操作を持っていなくても, 仲の良いMが禁断持ちの場合, 低確率で教えて貰ってくる. 
-    ELSEIF LOCAL:22 > 0 && TALENT:(LOCAL:15):금단의지식 && RAND:20 == 0 && ABL:봉사정신 > 3 && ABL:촉수중독 > 0 && (TALENT:금단의지식 == 0 || TALENT:촉수사역술 == 0) && (CFLAG:MASTER:42 & 2) == 0 && FLAG:커맨드확장 & 4096
+    ELSEIF LOCAL:22 > 0 && TALENT:(LOCAL:15):금단의지식 && RAND:20 == 0 && ABL:봉사정신 > 3 && ABL:촉수중독 > 0 && (TALENT:금단의지식 == 0 || TALENT:촉수사역술 == 0) && (CFLAG:MASTER:특수장비 & 2) == 0 && FLAG:커맨드확장 & 4096
         CALL NIGHT_HANTEI_SHOKUSHU
     ;SM系に必要なABLを3→2に. 
     ;マゾな奴隷が主人に叩かれにくる. もしくは仲の良い奴隷に叩かれに行く
@@ -327,8 +327,8 @@ ELSE
     ;サドな奴隷が, 仲の良い奴隷かMな主人を叩きに行く
     ELSEIF RAND:4 == 0 && (ABL:새드끼 >= 2 || TALENT:초S || TALENT:새드) && (ITEM:32 || NOITEM) && ((ABL:MASTER:마조끼 >= 2 || TALENT:MASTER:마조 || TALENT:MASTER:초M) || LOCAL:22 > 0)
         CALL NIGHT_HANTEI_SM, LOCAL:22, 2
-    ELSEIF (CFLAG:42 & 2) == 0
-        IF LOCAL:22 > 0 && RAND:3 == 0 && (CFLAG:(LOCAL:15):42 & 2) == 0
+    ELSEIF (CFLAG:특수장비 & 2) == 0
+        IF LOCAL:22 > 0 && RAND:3 == 0 && (CFLAG:(LOCAL:15):특수장비 & 2) == 0
             ;仲の良い奴隷と一緒に過す(旧襲撃系を含む
             SIF NIGHT_HANTEI_HABU1(LOCAL:15, LOCAL:10)
                 CALL NIGHT_HANTEI_HABU2, LOCAL:15, LOCAL:10, LOCAL:5, LOCAL:6
@@ -740,7 +740,7 @@ LOCAL = 0
 SIF ARG != MASTER && (RELATION:ARG:(NO:(ARG:1)) >= 150 || (ABL:(ARG:1):기교 > ABL:MASTER:기교)) && RELATION:ARG:(NO:(ARG:1)) >= RELATION:ARG:(NO:MASTER)
     LOCAL += 8
 ;どちらも貞操帯を付けていない
-SIF (CFLAG:ARG:42 & 2) == 0 && (CFLAG:(ARG:1):42 & 2) == 0
+SIF (CFLAG:ARG:특수장비 & 2) == 0 && (CFLAG:(ARG:1):특수장비 & 2) == 0
     LOCAL += 4
 ;被害者に棒があり, 襲撃者に穴があり非処女
 SIF EXIST_PENIS(ARG) && (TALENT:(ARG:1):남자 == 0 && TALENT:(ARG:1):처녀 == 0)
@@ -770,7 +770,7 @@ IF ARG:3 > 6
     SIF EXIST_PENIS(ARG:1) && (TALENT:(GET_CHARA_G(1)):120 || TALENT:(GET_CHARA_G(1)):121) && (TALENT:(GET_CHARA_G(2)):120 || TALENT:(GET_CHARA_G(2)):121) && (TALENT:(GET_CHARA_G(3)):120 || TALENT:(GET_CHARA_G(3)):121)
         LOCAL += 1
     ;関係者は全員貞操帯をつけていないか？
-    SIF (CFLAG:ARG:42 & 2) == 0 && (CFLAG:(ARG:1):42 & 2) == 0 && (CFLAG:(GET_CHARA_G(1)):42 & 2) == 0 && (CFLAG:(GET_CHARA_G(2)):42 & 2) == 0 && (CFLAG:(GET_CHARA_G(3)):42 & 2) == 0
+    SIF (CFLAG:ARG:특수장비 & 2) == 0 && (CFLAG:(ARG:1):특수장비 & 2) == 0 && (CFLAG:(GET_CHARA_G(1)):42 & 2) == 0 && (CFLAG:(GET_CHARA_G(2)):42 & 2) == 0 && (CFLAG:(GET_CHARA_G(3)):42 & 2) == 0
         LOCAL += 1
     
     ;LOCAL=3で輪姦, それ以外で暴行
@@ -781,12 +781,12 @@ IF ARG:3 > 6
     ENDIF
 ELSE
     ;禁断or触手持ちで, 相手が貞操帯を付けていない女なら触手陵辱(紳士的な触手がOFFならだめ）
-    IF RAND:2 == 0 && (TALENT:금단의지식 || TALENT:촉수사역술) && (TALENT:ARG:남자 == 0 && (CFLAG:ARG:42 & 2) == 0) && FLAG:커맨드확장 & 4096
+    IF RAND:2 == 0 && (TALENT:금단의지식 || TALENT:촉수사역술) && (TALENT:ARG:남자 == 0 && (CFLAG:ARG:특수장비 & 2) == 0) && FLAG:커맨드확장 & 4096
         CALL NIGHT_SHOKUSHU, ARG, ARG:1
     ;それ以外の場合
     ELSE
         ;襲撃者が貞操帯をつけてない
-        SIF (CFLAG:(ARG:1):42 & 2) == 0
+        SIF (CFLAG:(ARG:1):특수장비 & 2) == 0
             LOCAL += 3
         ;対象が女
         SIF TALENT:ARG:남자 == 0
@@ -801,10 +801,10 @@ ELSE
         SIF TALENT:ARG:남자 && (ARG != MASTER || (TALENT:(ARG:1):조합지식 == 0 && TALENT:(ARG:1):금단의지식 == 0))
             LOCAL = 0
         ;対象が男奴隷で, 襲撃者に穴があり処女ではなく貞操帯を装備していない
-        SIF (TALENT:ARG:남자 && ARG != MASTER) && (TALENT:(ARG:1):처녀 == 0 && TALENT:(ARG:1):남자 == 0 && (CFLAG:(ARG:1):42 & 2) == 0)
+        SIF (TALENT:ARG:남자 && ARG != MASTER) && (TALENT:(ARG:1):처녀 == 0 && TALENT:(ARG:1):남자 == 0 && (CFLAG:(ARG:1):특수장비 & 2) == 0)
             LOCAL = -1
         ;対象が貞操帯をつけている
-        SIF (CFLAG:ARG:42 & 2)
+        SIF (CFLAG:ARG:특수장비 & 2)
             LOCAL = 0
         
         ;N은 normal, S는 sleep
@@ -1144,10 +1144,10 @@ SIF TALENT:ARG:모유체질
 CALL NUM_TO_BUST(ARG, CFLAG:ARG:4997, 0)
 ;40약물경험
 CALL COMMON_UP_EXP, ARG, 40, 1, 2
-IF (CFLAG:ARG:20 & 512) == 0
+IF (CFLAG:ARG:첫시츄에이션 & 512) == 0
     ;50이상경험
     CALL COMMON_UP_EXP, ARG, 50, 1, 2
-    CFLAG:ARG:20 |= 512
+    CFLAG:ARG:첫시츄에이션 |= 512
 ENDIF
 
 ;적극성 보관용 범용 세터 게터

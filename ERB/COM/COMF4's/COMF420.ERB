@@ -21,7 +21,7 @@ SIF TALENT:약물내성 && TALENT:음유 == 0
 SIF BASE:0 < 1000
     RETURN 0
 ;使いすぎるとダメ
-SIF CFLAG:33 >= 1000
+SIF CFLAG:은방울꽃사용횟수 >= 1000
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -43,7 +43,7 @@ COM_NAME = 은방울꽃의 독
 
 LOCAL:1 = RAND:16
 TFLAG:99 = LOCAL:1
-LOCAL:2 = CFLAG:33
+LOCAL:2 = CFLAG:은방울꽃사용횟수
 CALL TRAIN_MESSAGE_COM420
 
 DOWNBASE:0 += 50 + (50 * (16-LOCAL:1) / (LOCAL:2+1))
@@ -55,9 +55,9 @@ SOURCE:31 = 8000
 
 TEQUIP:18 = 1
 
-IF LOCAL:1 == 0 && CFLAG:33 == 0
+IF LOCAL:1 == 0 && CFLAG:은방울꽃사용횟수 == 0
     CALL POISON_EFFECT
-ELSEIF LOCAL:1 == 0 && CFLAG:33 > 0
+ELSEIF LOCAL:1 == 0 && CFLAG:은방울꽃사용횟수 > 0
     SIF BASE:0 > 10
         BASE:0 = 10
 ELSEIF LOCAL:1 >= 1 && LOCAL:1 < 4
@@ -75,7 +75,7 @@ ELSE
     PALAM:21 += 5000
 ENDIF
 
-CFLAG:33 += 10 + RAND:11
+CFLAG:은방울꽃사용횟수 += 10 + RAND:11
 
 IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
@@ -98,12 +98,12 @@ DOWNBASE:0 += 100
 DOWNBASE:기력 += 90
 
 LOCAL = 1
-SIF CFLAG:33 / 10 > 0
-    LOCAL += CFLAG:33 / 10
+SIF CFLAG:은방울꽃사용횟수 / 10 > 0
+    LOCAL += CFLAG:은방울꽃사용횟수 / 10
 SOURCE:20 += 2500 / LOCAL
 SOURCE:26 += 500
 
-CFLAG:33 -= RAND:5
+CFLAG:은방울꽃사용횟수 -= RAND:5
 
 LOCAL:1 = 100
 ;[봉래인],[령체]는 빨리 내성이 붙는다
@@ -120,16 +120,16 @@ SIF TALENT:중독되기쉬움
     TIMES LOCAL:1 , 2.00
 
 LOCAL:2 = RAND:8
-IF CFLAG:33 >= LOCAL:1 && LOCAL:2 == 0 && TALENT:약물내성 == 0
+IF CFLAG:은방울꽃사용횟수 >= LOCAL:1 && LOCAL:2 == 0 && TALENT:약물내성 == 0
     CALL SELF_KOJO, TARGET, 7, 19
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 독이나 약에 대한 저항력을 가지게 되었다.
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [약독내성]을 얻었다.
-    CFLAG:33 += 1000
+    CFLAG:은방울꽃사용횟수 += 1000
     TALENT:약물내성 = 1
-ELSEIF CFLAG:33 >= LOCAL:1
+ELSEIF CFLAG:은방울꽃사용횟수 >= LOCAL:1
     CALL SELF_KOJO, TARGET, 7, 19
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 은방울꽃의 독에 대한 내성을 얻었다.
-    CFLAG:33 += 1000
+    CFLAG:은방울꽃사용횟수 += 1000
 ENDIF
 
 ;--------------------------------------------------
@@ -143,16 +143,16 @@ IF LOCAL == 0 && TALENT:겁쟁이 == 0
     CALL SELF_KOJO, TARGET, 7, 0
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [겁쟁이]가 되었다.
     TALENT:겁쟁이 = 1
-    CFLAG:12 |= 4
+    CFLAG:트라우마판정 |= 4
 ELSEIF LOCAL == 1 && TALENT:감정결여 == 0
     PRINTFORML 은방울꽃의 독은 %CALLNAME:TARGET%의 정신을 침식했다.
     CALL SELF_KOJO, TARGET, 7, 1
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [감정결여]가 되었다.
     TALENT:감정결여 = 1
-    CFLAG:12 |= 8
+    CFLAG:트라우마판정 |= 8
 ELSEIF LOCAL == 2
     PRINTFORML 은방울꽃의 독은 %CALLNAME:TARGET%의 정신을 침식했다.
-    IF CFLAG:12 & 16 || CFLAG:12 & 32
+    IF CFLAG:트라우마판정 & 16 || CFLAG:트라우마판정 & 32
         CALL SELF_KOJO, TARGET, 7, 2
         PRINTFORMW %CALLNAME:TARGET%의 기력이 소모됐다.
         BASE:기력 = MAX(BASE:기력 - 200, 0)
@@ -161,25 +161,25 @@ ELSEIF LOCAL == 2
         PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [비관적]이 되었다.
         TALENT:낙관적 = 0
         TALENT:비관적 = 1
-        CFLAG:12 |= 16
+        CFLAG:트라우마판정 |= 16
     ELSEIF TALENT:비관적
         CALL SELF_KOJO, TARGET, 7, 4
         PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [낙관적]이 되었다.
         TALENT:낙관적 = 1
         TALENT:비관적 = 0
-        CFLAG:12 |= 32
+        CFLAG:트라우마판정 |= 32
     ELSE
         LOCAL:1 = RAND:2
         IF LOCAL:1 == 0
             CALL SELF_KOJO, TARGET, 7, 3
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [비관적]이 되었다.
             TALENT:비관적 = 1
-            CFLAG:12 |= 16
+            CFLAG:트라우마판정 |= 16
         ELSE
             CALL SELF_KOJO, TARGET, 7, 4
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [낙관적]이 되었다.
             TALENT:낙관적 = 1
-            CFLAG:12 |= 32
+            CFLAG:트라우마판정 |= 32
         ENDIF
     ENDIF
 ELSEIF LOCAL == 3 && TALENT:튀고싶어함 == 0 && TALENT:억압 == 0
@@ -189,17 +189,17 @@ ELSEIF LOCAL == 3 && TALENT:튀고싶어함 == 0 && TALENT:억압 == 0
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 좀 더 자신을 드러내고 싶은 기분으로 가득 차 올랐다.
         PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [눈에 띄고 싶어함]이 되었다.
         TALENT:튀고싶어함 = 1
-        CFLAG:12 |= 64
+        CFLAG:트라우마판정 |= 64
     ELSE
         CALL SELF_KOJO, TARGET, 7, 6
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 우울한 상태에 빠졌다.
         PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [억압]이 되었다.
         TALENT:억압 = 1
-        CFLAG:12 |= 128
+        CFLAG:트라우마판정 |= 128
     ENDIF
 ELSEIF LOCAL == 4 && TALENT:불결무시
     PRINTFORML 은방울꽃의 독은 %CALLNAME:TARGET%의 신경을 침식했다.
-    IF CFLAG:12 & 256 || CFLAG:12 & 512
+    IF CFLAG:트라우마판정 & 256 || CFLAG:트라우마판정 & 512
         CALL SELF_KOJO, TARGET, 7, 2
         PRINTFORMW %CALLNAME:TARGET%의 기력이 소모했다.
         BASE:기력 = MAX(BASE:기력 - 200, 0)
@@ -208,25 +208,25 @@ ELSEIF LOCAL == 4 && TALENT:불결무시
         PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [냄새민감] 이 되었다.
         TALENT:냄새둔감 = 0
         TALENT:냄새민감 = 1
-        CFLAG:12 |= 256
+        CFLAG:트라우마판정 |= 256
     ELSEIF TALENT:냄새민감
         CALL SELF_KOJO, TARGET, 7, 8
         PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [냄새둔감] 이 되었다.
         TALENT:냄새둔감 = 1
         TALENT:냄새민감 = 0
-        CFLAG:12 |= 512
+        CFLAG:트라우마판정 |= 512
     ELSE
         LOCAL:1 = RAND:2
         IF LOCAL:1 == 0
             CALL SELF_KOJO, TARGET, 7, 7
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [냄새민감] 이 되었다.
             TALENT:냄새민감 = 1
-            CFLAG:12 |= 256
+            CFLAG:트라우마판정 |= 256
         ELSE
             CALL SELF_KOJO, TARGET, 7, 8
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% [냄새둔감] 이 되었다.
             TALENT:냄새둔감 = 1
-            CFLAG:12 |= 512
+            CFLAG:트라우마판정 |= 512
         ENDIF
     ENDIF
 ELSEIF LOCAL == 5
@@ -401,7 +401,7 @@ ELSE
     BASE:기력 = MAX(BASE:기력, 0)
 ENDIF
 
-CFLAG:33 += 50
+CFLAG:은방울꽃사용횟수 += 50
 RETURN 1
 
 ;--------------------------------------------------
@@ -414,7 +414,7 @@ SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
 
 PRINTL
 PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 은방울꽃의 독을 퍼부었다.
-IF TFLAG:99 == 0 && CFLAG:33 > 0
+IF TFLAG:99 == 0 && CFLAG:은방울꽃사용횟수 > 0
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 독으로 체력을 소모하고 있다….
 ELSEIF TFLAG:99 >= 1 && TFLAG:99 < 4
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 초점 없는 눈으로 %조사선택(CALLNAME:PLAYER, "를")% 올려보고 있다….

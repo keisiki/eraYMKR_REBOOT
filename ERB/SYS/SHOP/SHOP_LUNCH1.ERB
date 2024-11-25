@@ -59,7 +59,7 @@ ELSEIF TALENT:질투 && TALENT:광기
     LOCAL = RAND:8
 ELSEIF TALENT:질투
     LOCAL = RAND:4
-ELSEIF CFLAG:30 >= 20
+ELSEIF CFLAG:질투포인트 >= 20
     LOCAL = RAND:3
 ELSE
     LOCAL = 2
@@ -379,7 +379,7 @@ ELSE
                 ELSEIF LOCAL:1 == 4 && TALENT:(LOCAL:7):광기 == 0
                     PRINTFORMW %조사처리(CALLNAME:(LOCAL:7),"는")% [광기]를 얻었다.
                     TALENT:(LOCAL:7):광기 = 1
-                    CFLAG:(LOCAL:7):12 |= 1
+                    CFLAG:(LOCAL:7):트라우마판정 |= 1
                     CFLAG:(LOCAL:7):17 |= 2
                 ;魅力減少
                 ELSEIF (LOCAL:1 == 5 || LOCAL:1 == 2) && (TALENT:(LOCAL:7):매력 || TALENT:(LOCAL:7):매혹 || TALENT:(LOCAL:7):수수께끼의매력)
@@ -475,7 +475,7 @@ ELSE
             IF RAND:3 == 0
                 PRINTFORMW %CALLNAME:TARGET%의 [약점]을 잡는 데 성공했다.
                 TALENT:약점 = 1
-                CFLAG:12 |= 1024
+                CFLAG:트라우마판정 |= 1024
                 TIMES LOCAL:2 , 2.00
             ENDIF
         ENDIF
@@ -518,7 +518,7 @@ ELSE
             IF RAND:8 == 0
                 PRINTFORMW %CALLNAME:TARGET%의 [약점]을 잡는 데 성공했다.
                 TALENT:약점 = 1
-                CFLAG:12 |= 1024
+                CFLAG:트라우마판정 |= 1024
                 TIMES LOCAL:2 , 2.00
             ENDIF
         ENDIF
@@ -1161,9 +1161,9 @@ ELSEIF RESULT == 1
     PRINTW ……등줄기에 찌르는 듯한 시선이 느껴진다……..
     ;チョコを叩き売られた嫁
     CALL SELF_KOJO, TARGET, 118
-    CFLAG:30 += 30
+    CFLAG:질투포인트 += 30
     TFLAG:202 = 0
-    LOCAL:5 = (LOCAL:3 / 2 + CFLAG:30 * 2) * 5
+    LOCAL:5 = (LOCAL:3 / 2 + CFLAG:질투포인트 * 2) * 5
 
     ;망신
     SIF TALENT:망신
@@ -1203,16 +1203,16 @@ ELSEIF RESULT == 1
     ;下2桁は切り捨て
     LOCAL:5 = MAX(LOCAL:5 - LOCAL:5%100, 100)
     IF TALENT:복종 == 0 && TALENT:사역마 == 0
-        IF CFLAG:30 >= 50 && TALENT:질투 == 0
+        IF CFLAG:질투포인트 >= 50 && TALENT:질투 == 0
             TALENT:질투 = 1
-            CFLAG:12 |= 4096
+            CFLAG:트라우마판정 |= 4096
             PRINTFORMW ……%CALLNAME:TARGET%의 마음에 질투심이 싹트기 시작했다.
-        ELSEIF CFLAG:30 >= 100 && TALENT:광기 == 0
+        ELSEIF CFLAG:질투포인트 >= 100 && TALENT:광기 == 0
             TALENT:광기 = 1
-            CFLAG:12 |= 1
+            CFLAG:트라우마판정 |= 1
             CFLAG:17 |= 2
             PRINTFORMW ……%CALLNAME:TARGET%의 질투심은 광기의 영역에 들어섰다.
-        ELSEIF CFLAG:30 >= 130
+        ELSEIF CFLAG:질투포인트 >= 130
             PRINTFORMW %CALLNAME:TARGET%의 이쪽을 보는 눈이 기이하다….
             PRINTFORMW 불길한 예감이 든다….
             TFLAG:202 = 2
@@ -1272,15 +1272,15 @@ IF TFLAG:202 == 1 && ABL:V감각 > 0 && (FLAG:SHOP이벤트확장 & 8192) == 0
     ;[친애], [상애]를 지니고 식후 이벤트 발생 확정시 얀데레 포인트가 감소
     ;또한 초기에 [질투]를 갖고 있지 않은 캐릭터의 경우, [질투]가 있고 광기가 없으면 [질투]가 사라진다
     IF TALENT:친애 || TALENT:상애
-        CFLAG:30 = MAX(CFLAG:30 - 20, 0)
-        IF CFLAG:30 == 0 && TALENT:질투 && CFLAG:12 & 4096 && TALENT:COUNT:광기 == 0
+        CFLAG:질투포인트 = MAX(CFLAG:질투포인트 - 20, 0)
+        IF CFLAG:질투포인트 == 0 && TALENT:질투 && CFLAG:트라우마판정 & 4096 && TALENT:COUNT:광기 == 0
             PRINTFORML %CALLNAME:TARGET%의 표정이 왠지 모르게 밝다….
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 마음을 담아 만든 초콜릿을 먹어준 것을 진심으로 기뻐하고 있는 모양이다…….
             PRINTFORMW %CALLNAME:TARGET%의 [질투]가 눈녹듯 풀렸다…….
             ;질투심 빙해
             CALL SELF_KOJO, TARGET, 119
             TALENT:질투 = 0
-            CFLAG:12 -= 4096
+            CFLAG:트라우마판정 -= 4096
         ENDIF
     ENDIF
 ELSEIF TFLAG:202 == 2

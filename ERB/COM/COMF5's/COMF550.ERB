@@ -12,7 +12,7 @@ SIF DITEMTYPE:999:550 > 0
 SIF (FLAG:커맨드확장 & 4096) == 0
     RETURN 0
 ;一度も촉수催眠を実行したことが無い場合, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:VA이상조교필터 & 4 && (CFLAG:24 & 8) == 0
+SIF FLAG:VA이상조교필터 & 4 && (CFLAG:첫촉수커맨드 & 8) == 0
     RETURN 0
 ;아이템進化の秘法を持っているか, 아이템なし設定でないとダメ
 SIF ITEM:59 == 0 && NOITEM == 0
@@ -233,9 +233,9 @@ IF (LOCAL == 0 || LOCAL ==1) && EXP:촉수경험 < 600
         SOURCE:22 += (LOCAL:2 + LOCAL:3)*400
         LOCAL:5 += 1
     ENDIF
-    IF (CFLAG:24 & 8) == 0
+    IF (CFLAG:첫촉수커맨드 & 8) == 0
         TCVAR:50 += LOCAL:5/2
-        CFLAG:24 |= 8
+        CFLAG:첫촉수커맨드 |= 8
     ENDIF
     ;촉수 경험 플래그
     TFLAG:90 += 14
@@ -263,11 +263,11 @@ ELSEIF (LOCAL == 6 || LOCAL == 7) && CFLAG:호감도 < 2000
     SOURCE:11 += 250 + 250*ABL:순종
     CALL SELF_KOJO, TARGET, 8, 2
     IF TALENT:남성혐오 && TALENT:MASTER:남자 && CFLAG:호감도 >= 1500
-        CFLAG:12 |= 4096
+        CFLAG:트라우마판정 |= 4096
         TALENT:남성혐오 = 0
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% [남성혐오]을 잃었다.
     ELSEIF TALENT:여성혐오 && TALENT:MASTER:남자 == 0 && CFLAG:호감도 >= 1500
-        CFLAG:12 |= 8192
+        CFLAG:트라우마판정 |= 8192
         TALENT:여성혐오 = 0
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% [여성혐오]를 잃었다.
     ELSEIF TALENT:MASTER:남자 == 0 && TALENT:남자 == 0

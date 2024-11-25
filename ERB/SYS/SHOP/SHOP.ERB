@@ -228,7 +228,7 @@ ELSE
     ENDIF
 
     ;조교 대상 노예 및 조수의 특수 장비 표시
-    SIF (TARGET >= 0 && CFLAG:42) || (ASSI >= 0 && CFLAG:ASSI:42)
+    SIF (TARGET >= 0 && CFLAG:특수장비) || (ASSI >= 0 && CFLAG:ASSI:특수장비)
         CALL SHOW_SPECIAL_EQUIPMENT
     ;소지 아이템 표시가 유효할 때에는 소유하고 있는 아이템이 자동적으로 표시된다
     SIF FLAG:SHOP아이템표시 & 1
@@ -261,7 +261,7 @@ ELSE
                     LOCAL:3 |= 2
             ENDIF
             ;매각 또는 해방 가능한 캐릭터 수 확인
-            SIF ((FLAG:SHOP이벤트확장 & 32 && (CFLAG:COUNT:20 & 16) == 0) || (CFLAG:COUNT:매각가능 >= 1 && CFLAG:COUNT:매각불능 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:괴조인격 == 0)) && TALENT:COUNT:사역마 == 0
+            SIF ((FLAG:SHOP이벤트확장 & 32 && (CFLAG:COUNT:첫시츄에이션 & 16) == 0) || (CFLAG:COUNT:매각가능 >= 1 && CFLAG:COUNT:매각불능 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:괴조인격 == 0)) && TALENT:COUNT:사역마 == 0
                 LOCAL:1 += 1
             ;TIME에 맞는 조교 캐릭터가 있는가(주인공과 노예는 배제)
             SIF COUNT != TARGET
@@ -844,7 +844,7 @@ ELSEIF RESULT == 1009 && LOCAL < LOCAL:1
 ELSEIF RESULT == 0
     ;조수 해임된 일자 기록(턴까지는 무리)
     SIF ASSI >= 0
-        CFLAG:ASSI:47 = DAY
+        CFLAG:ASSI:마지막조수일 = DAY
     ASSI = -1
     RETURN 0
 ELSEIF RESULT < 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
@@ -853,7 +853,7 @@ ENDIF
 
 ;조수 해임된 일자 기록(턴까지는 무리)
 SIF ASSI >= 0
-    CFLAG:ASSI:47 = DAY
+    CFLAG:ASSI:마지막조수일 = DAY
 ASSI = RESULT
 ;Ｓ패치 추가분
 IF ASSI >= 0
@@ -1245,8 +1245,8 @@ IF TALENT:사역마
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:164%]를 잃었다.
     ENDIF
     TALENT:사역마 = 0
-    SIF CFLAG:15 & 8
-        CFLAG:15 -= 8
+    SIF CFLAG:이벤트취득복종 & 8
+        CFLAG:이벤트취득복종 -= 8
 ELSE
     IF NO:MASTER == 21 || NO:MASTER == 22
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 수식이 새겨져 %CALLNAME:MASTER%의 식이 되었다.
@@ -1260,7 +1260,7 @@ ELSE
         PRINTL 
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [식]을 얻었다.
         TALENT:사역마 = 1
-        CFLAG:15 |= 8
+        CFLAG:이벤트취득복종 |= 8
         PRINTFORMW ―――%조사처리(CALLNAME:TARGET,"는")% 식으로서 %CALLNAME:MASTER%의 지배하에 놓였습니다―――
         PRINTW ………………
         PRINTW …………
@@ -1273,7 +1273,7 @@ ELSE
         PRINTL 
         PRINTFORMW %조사처리(NAME:TARGET,"는")% [%TALENTNAME:164%]를 얻었다.
         TALENT:사역마 = 1
-        CFLAG:15 |= 8
+        CFLAG:이벤트취득복종 |= 8
         PRINTFORMW ―――%조사처리(NAME:TARGET,"는")% 사역마로서 %NAME:MASTER%의 지배하에 놓였습니다―――
         PRINTW ………………
         PRINTW …………
@@ -1629,7 +1629,7 @@ REPEAT 20
     CALL ARRANGE_CHARALIST, LOCAL
     CALL ARRANGE_CHARALIFE, LOCAL
     CALL ARRANGE_SEARCH_LIST, LOCAL, ARG:1
-    IF FLAG:변동경험강조패치 & 1 && (TFLAG:0 == 3 && ((ARG:1 == 0 && CFLAG:LOCAL:11 & 1) || (ARG:1 == 1 && CFLAG:LOCAL:11 & 2) || (ARG:1 == 50 && CFLAG:LOCAL:11 & 4) || (ARG:1 == 12 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:남자 && CFLAG:LOCAL:18 == 0) || (ARG:1 == 13 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:남자 == 0 && CFLAG:LOCAL:18 == 0)))
+    IF FLAG:변동경험강조패치 & 1 && (TFLAG:0 == 3 && ((ARG:1 == 0 && CFLAG:LOCAL:VA이상경험변동 & 1) || (ARG:1 == 1 && CFLAG:LOCAL:VA이상경험변동 & 2) || (ARG:1 == 50 && CFLAG:LOCAL:VA이상경험변동 & 4) || (ARG:1 == 12 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:남자 && CFLAG:LOCAL:18 == 0) || (ARG:1 == 13 && EXP:LOCAL:(ARG:1) > 999 && TALENT:MASTER:남자 == 0 && CFLAG:LOCAL:18 == 0)))
         FONTBOLD
         PRINTFORML  %STR:3%
         FONTREGULAR
