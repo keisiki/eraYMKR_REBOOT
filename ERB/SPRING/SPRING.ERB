@@ -1593,7 +1593,7 @@ IF LOCAL == 2
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 아이를 임신한 모양이다.
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:140%]했다.
     TALENT:TARGET:임신 = 1
-    CFLAG:70 = 1
+    CFLAG:임신가해자 = 1
     CALL CHANGE_N_STATUS, TARGET
 
     ;임신시의 말을 이벤트 말로 해 보는 것은 좋다고 해 분기 어떻게 하지…
@@ -1617,10 +1617,10 @@ ELSEIF LOCAL == 1
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:ASSI%의 아이를 임신한 모양이다.
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:140%]했다.
     TALENT:TARGET:임신 = 1
-    CFLAG:70 = 2
+    CFLAG:임신가해자 = 2
     ;[구애의존]
     IF TALENT:TARGET:구애의존 == 1
-        CFLAG:70 = 3
+        CFLAG:임신가해자 = 3
         TFLAG:200 = 1812
         ;임신에 수반하는 스테이터스 변동
         CALL SPRING_CHANGE_N_STATUS, TARGET
@@ -1696,16 +1696,16 @@ ENDIF
 MAXBASE:ARG:체력 -= 500
 
 ;출산계의 플래그 설정
-CFLAG:ARG:77 = DAY + FLAG:임신기간설정
+CFLAG:ARG:출산일 = DAY + FLAG:임신기간설정
 LOCAL = ASSI
 
-CFLAG:ARG:78 = NO:LOCAL
+CFLAG:ARG:아이아버지 = NO:LOCAL
 CFLAG:ARG:3004 = CFLAG:LOCAL:3109
-LOCAL:1 = CFLAG:ARG:78 + 1000
+LOCAL:1 = CFLAG:ARG:아이아버지 + 1000
 
 ;이쪽에 온 이상, 창녀나 구애 의존. 그 때문에, 문답 무용으로 굿 임신이 된다.
 ;다만, 창녀이면 굿 임신에서도 마이너스 소질이 붙는다.
-IF CFLAG:ARG:70 == 3
+IF CFLAG:ARG:임신가해자 == 3
     PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 아버지를 모르는 아이를……
     PRINTFORMW 아니, 「자신을 사랑해 준 사람」의 자식을 받아서 기뻐하고 있다.
     PRINTL 
@@ -1716,7 +1716,7 @@ ELSE
     PRINTL 
 ENDIF
     ;임신(굿) 플래그
-    CFLAG:ARG:76 = 1
+    CFLAG:ARG:임신분기 = 1
 
     ;임산부의 가슴의 크기를 플래그에 대입하는 처리
     CFLAG:ARG:3006 = BUSTSIZE(ARG)
@@ -1749,7 +1749,7 @@ ENDIF
     SIF RESULT != 0
         PRINTFORMW 을 \@(RESULT == 2) ? 얻었다 # 잃었다\@
 
-IF CFLAG:ARG:70 != 3 && TALENT:ARG:연모 && TALENT:ARG:상애 == 0
+IF CFLAG:ARG:임신가해자 != 3 && TALENT:ARG:연모 && TALENT:ARG:상애 == 0
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 누군지 알 수 없는 아이를 임신한 뒤 자신의 입장과 운명을 깨닫았다.
     PRINTFORMW %CALLNAME:MASTER%에게 바친 사랑은 마음속에 묻어두기로 했다.
     PRINTFORMW %조사처리(CALLNAME:ARG,"는")% [%TALENTNAME:150%]를 잃고 [%TALENTNAME:261%]를 얻었다.

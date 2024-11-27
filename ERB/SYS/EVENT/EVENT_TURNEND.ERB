@@ -378,15 +378,15 @@ FOR TFLAG:900, 0, CHARANUM
     TEQUIP:(TFLAG:900):11 = 0
 
     ;ストレス履歴フラグ
-    SIF CFLAG:(TFLAG:900):65 >= 1000
+    SIF CFLAG:(TFLAG:900):스트레스 >= 1000
         CFLAG:(TFLAG:900):155 |= 2
 
     ;ストレス低下
-    SIF CFLAG:(TFLAG:900):65 && CFLAG:(TFLAG:900):조교관외 == 0
+    SIF CFLAG:(TFLAG:900):스트레스 && CFLAG:(TFLAG:900):조교관외 == 0
         CALL STRESS_DOWN, TFLAG:900
 
     ;HARD以上では休憩フラグが立ってなくて, ストレスがあると気力回復に悪影響がある
-    IF FLAG:난이도 > 2 && FLAG:휴식 == 0 && CFLAG:(TFLAG:900):65
+    IF FLAG:난이도 > 2 && FLAG:휴식 == 0 && CFLAG:(TFLAG:900):스트레스
         CALL STRESS_VITAL, TFLAG:900, LOCAL:11
         LOCAL:11 = RESULT
     ENDIF
@@ -417,17 +417,17 @@ FOR TFLAG:900, 0, CHARANUM
         ENDIF
     ENDIF
     ;精飲절정ゲージ低下
-    IF CFLAG:(TFLAG:900):64
-        CFLAG:(TFLAG:900):64 -= (TIME == 0) ? 50 # 100
+    IF CFLAG:(TFLAG:900):정음개발도
+        CFLAG:(TFLAG:900):정음개발도 -= (TIME == 0) ? 50 # 100
         ;0未満になるか[精愛味覚]なら精飲절정ゲージ初期化
-        SIF CFLAG:(TFLAG:900):64 < 0 || TALENT:(TFLAG:900):정애미각
-            CFLAG:(TFLAG:900):64 = 0
+        SIF CFLAG:(TFLAG:900):정음개발도 < 0 || TALENT:(TFLAG:900):정애미각
+            CFLAG:(TFLAG:900):정음개발도 = 0
     ENDIF
 NEXT
 
 ;助手はその場に存在し, 睡眠薬の影響なくて, 酔いつぶれていなければ色々と手伝うので珠を入手するが, 同時にストレスも微量増加
 IF ASSI >= 0 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기 && CFLAG:ASSI:조교관외 == 0 && EQUIP:ASSI:14 == 0
-    CFLAG:ASSI:65 += (ABL:ASSI:순종 + ABL:ASSI:봉사정신)*12
+    CFLAG:ASSI:스트레스 += (ABL:ASSI:순종 + ABL:ASSI:봉사정신)*12
     DRAWLINE
     ;地の文章カット
     SIF CFLAG:ASSI:99 == 0
@@ -500,25 +500,25 @@ BEGIN SHOP
 ;--------------------------------------------------
 @STRESS_VITAL, ARG, ARG:1
 ;少し気が重い
-IF CFLAG:ARG:65 < 100
+IF CFLAG:ARG:스트레스 < 100
     TIMES ARG:1 , 0.95
 ;ちょっと気が重い
-ELSEIF CFLAG:ARG:65 < 250
+ELSEIF CFLAG:ARG:스트레스 < 250
     TIMES ARG:1 , 0.90
 ;ある程度重い
-ELSEIF CFLAG:ARG:65 < 500
+ELSEIF CFLAG:ARG:스트레스 < 500
     TIMES ARG:1 , 0.80
 ;結構参ってる
-ELSEIF CFLAG:ARG:65 < 1000
+ELSEIF CFLAG:ARG:스트레스 < 1000
     TIMES ARG:1 , 0.75
 ;明らかに様子がおかしい
-ELSEIF CFLAG:ARG:65 < 3000
+ELSEIF CFLAG:ARG:스트레스 < 3000
     TIMES ARG:1 , 0.70
     ;地の文カット
     SIF CFLAG:ARG:99 == 0
         PRINTFORML %조사처리(CALLNAME:ARG,"는")% 스트레스의 영향을 받고 있는 것 같다....
 ;重症
-ELSEIF CFLAG:ARG:65 < 6000
+ELSEIF CFLAG:ARG:스트레스 < 6000
     TIMES ARG:1 , 0.60
     ;地の文カット
     SIF CFLAG:ARG:99 == 0
@@ -594,16 +594,16 @@ ELSEIF TALENT:ARG:유아퇴행
     TIMES LOCAL , 0.50
 ENDIF
 
-CFLAG:ARG:65 -= LOCAL
+CFLAG:ARG:스트레스 -= LOCAL
 ;[傀儡][壊造人格]はストレスがたまらない(毎回リセット)
-SIF CFLAG:ARG:65 < 0 || TALENT:ARG:괴뢰 || TALENT:ARG:괴조인격
-    CFLAG:ARG:65 = 0
+SIF CFLAG:ARG:스트레스 < 0 || TALENT:ARG:괴뢰 || TALENT:ARG:괴조인격
+    CFLAG:ARG:스트레스 = 0
 
 ;LUNATIC以上ではストレスによる過負荷状態(3000以上)にあるターンを記録しておく
-IF FLAG:난이도 > 3 && CFLAG:ARG:65 >= PALAMLV:3
+IF FLAG:난이도 > 3 && CFLAG:ARG:스트레스 >= PALAMLV:3
     CFLAG:ARG:스트레스과부하 += 1
     ;超過負荷状態(30000以上)ならさらに記録しておく
-    SIF CFLAG:ARG:65 >= PALAMLV:5
+    SIF CFLAG:ARG:스트레스 >= PALAMLV:5
         CFLAG:ARG:스트레스과부하 += 1
 
     ;[解放]があり, 過負荷状態が1000を越えたら[解放]消失イベント発生.
@@ -646,7 +646,7 @@ SIF TFLAG:900 == MASTER || CFLAG:(TFLAG:900):조교관외 == 1 || CFLAG:(TFLAG:9
 IF FLAG:정원개조 & 4
     ;動物耳がない場合にはストレス解消効果あり
     IF TALENT:(TFLAG:900):동물귀 == 0
-        CFLAG:(TFLAG:900):65 = MAX(CFLAG:(TFLAG:900):65 - RAND:10, 0)
+        CFLAG:(TFLAG:900):스트레스 = MAX(CFLAG:(TFLAG:900):스트레스 - RAND:10, 0)
     ENDIF
     ;気丈と感情乏しいと嫉妬と狂気と精神崩壊をもたなくて…
     IF TALENT:(TFLAG:900):꿋꿋함 == 0 && TALENT:(TFLAG:900):감정결여 == 0 && TALENT:(TFLAG:900):질투 == 0 && TALENT:(TFLAG:900):광기 == 0 && TALENT:(TFLAG:900):정신붕괴 == 0
@@ -728,8 +728,8 @@ IF FLAG:정원개조 & 256
             ;好感度UP
             CFLAG:(TFLAG:900):호감도 += RAND:5
             ;ストレスDOWN
-            CFLAG:(TFLAG:900):65 -= 10 + (10 * RAND:5)
-            CFLAG:(TFLAG:900):65 = MAX(CFLAG:(TFLAG:900):65, 0)
+            CFLAG:(TFLAG:900):스트레스 -= 10 + (10 * RAND:5)
+            CFLAG:(TFLAG:900):스트레스 = MAX(CFLAG:(TFLAG:900):스트레스, 0)
         ENDIF
     ENDIF
 ENDIF
@@ -757,7 +757,7 @@ IF TARGET >= 0
 
     ;[壊造人格]を取得していない状態で反発刻印Lv2かつストレスが500以上または反発刻印Lv3かつストレスが1000以上またはストレスが10000以上, 
     ;この周回中に異常経験を変動させており, 異常経験が5以上のとき崩壊系素質取得イベント判定へ
-    SIF ((MARK:반발각인 == 2 && CFLAG:65 >= 500) || (MARK:반발각인 >= 3 && CFLAG:65 >= 1000) ||  CFLAG:65 >= 10000) && TALENT:괴조인격 == 0 && EXP:이상경험 >= 5 && CFLAG:VA이상경험변동 & 4
+    SIF ((MARK:반발각인 == 2 && CFLAG:스트레스 >= 500) || (MARK:반발각인 >= 3 && CFLAG:스트레스 >= 1000) ||  CFLAG:스트레스 >= 10000) && TALENT:괴조인격 == 0 && EXP:이상경험 >= 5 && CFLAG:VA이상경험변동 & 4
         CALL EVENT_BROKEN_CHECK
 ENDIF
 
@@ -835,10 +835,10 @@ FOR TFLAG:900, 0, CHARANUM
         SIF FLAG:신체측정패치 & 1
             CALL MAKE_BABY_SIZE, TFLAG:900
         ;出産3日前からは臨月突入で調教不可に
-        IF (CFLAG:(TFLAG:900):77 - 3) <= DAY && CFLAG:(TFLAG:900):조교관외 == 0
+        IF (CFLAG:(TFLAG:900):출산일 - 3) <= DAY && CFLAG:(TFLAG:900):조교관외 == 0
             DRAWLINE
             CALL REACH_FULL_TERM, TFLAG:900
-        ELSEIF CFLAG:(TFLAG:900):77 <= DAY && (TALENT:(TFLAG:900):임신 || TALENT:(TFLAG:900):포란중)
+        ELSEIF CFLAG:(TFLAG:900):출산일 <= DAY && (TALENT:(TFLAG:900):임신 || TALENT:(TFLAG:900):포란중)
             ;出産予定日なら出産or孵化＆子育て部屋に移動
             IF CFLAG:(TFLAG:900):조교관외 == 2
                 DRAWLINE
@@ -853,7 +853,7 @@ FOR TFLAG:900, 0, CHARANUM
                 TALENT:(TFLAG:900):포란중 = 0
             ENDIF
         ;出産後FLAG:601日後（標準は20日後）で親離れで調教可能に
-        ELSEIF (CFLAG:(TFLAG:900):77 + FLAG:성장기간설정 - EQUIP:(TFLAG:900):1) <= DAY && TALENT:(TFLAG:900):육아중
+        ELSEIF (CFLAG:(TFLAG:900):출산일 + FLAG:성장기간설정 - EQUIP:(TFLAG:900):1) <= DAY && TALENT:(TFLAG:900):육아중
             EQUIP:(TFLAG:900):1 = 0
             IF CFLAG:(TFLAG:900):조교관외 == 2
                 DRAWLINE
@@ -960,13 +960,13 @@ IF ABL:순종 >= 4 && ABL:욕망 >= 4 && ABL:마조끼 >= 4 && TALENT:유아 == 
         LOCAL |= 2
 ENDIF
 ;従順・マゾっ気が共に3以上, 異常経験が20以上, 薬物刻印と恥辱刻印が共に2以上, 恐怖刻印が3, かつストレスが5000以上で[精神崩壊]
-SIF ABL:순종 >= 3 && ABL:마조끼 >= 3 && EXP:이상경험 >= 20 && MARK:약물각인 >= 2 && MARK:치욕각인 >= 2 && MARK:공포각인 == 3 && CFLAG:65 >= 5000 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
+SIF ABL:순종 >= 3 && ABL:마조끼 >= 3 && EXP:이상경험 >= 20 && MARK:약물각인 >= 2 && MARK:치욕각인 >= 2 && MARK:공포각인 == 3 && CFLAG:스트레스 >= 5000 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
     LOCAL |= 4
 ;異常経験が25以上, 苦痛刻印・快楽刻印・屈服刻印・薬物刻印・恥辱刻印・恐怖刻印が全て3の時
 IF EXP:이상경험 >= 25 && (MARK:고통각인+MARK:쾌락각인+MARK:굴복각인+MARK:약물각인+MARK:치욕각인+MARK:공포각인 == 18) && TALENT:괴뢰 == 0
     ;[精神崩壊]を持っているかつ従順がLv5, または(以前の周回も含め)[精神崩壊]か[傀儡]を取得したことがあり, [服従]と[淫乱]を取得している状態で従順と奉仕精神が共にLv5
     ;または[狂気]か[幼児退行]を取得しており, かつ従順がLv3以上でストレスが10000以上の時[傀儡]
-    SIF (TALENT:정신붕괴 && ABL:순종 >= 5) || ((CFLAG:17 & 4 || CFLAG:17 & 8) && ABL:순종 >= 5 && ABL:봉사정신 >= 5 && TALENT:복종 && TALENT:음란) || (ABL:순종 >= 3 && (TALENT:광기 || TALENT:유아퇴행) && CFLAG:65 >= 10000)
+    SIF (TALENT:정신붕괴 && ABL:순종 >= 5) || ((CFLAG:17 & 4 || CFLAG:17 & 8) && ABL:순종 >= 5 && ABL:봉사정신 >= 5 && TALENT:복종 && TALENT:음란) || (ABL:순종 >= 3 && (TALENT:광기 || TALENT:유아퇴행) && CFLAG:스트레스 >= 10000)
         LOCAL |= 8
 ENDIF
 IF LOCAL
@@ -1075,9 +1075,9 @@ IF JUEL:100
     JUEL:100 /= 10
 ENDIF
 ;ストレス消滅
-IF CFLAG:65
+IF CFLAG:스트레스
     PRINTL 스트레스가 0이 되었다.
-    CFLAG:65 = 0
+    CFLAG:스트레스 = 0
 ENDIF
 ;狂気消滅
 IF TALENT:광기
@@ -1182,7 +1182,7 @@ ELSE
     ENDIF
 ENDIF
 CFLAG:ARG:미약중독레벨 = 0
-CFLAG:ARG:65 += LOCAL
+CFLAG:ARG:스트레스 += LOCAL
 BASE:ARG:기력 /= 2
 ;禁断症状で体力が0以下になることは無い
 BASE:ARG:체력 = MAX(BASE:ARG:체력, 1)
@@ -1229,7 +1229,7 @@ BASE:ARG:체력 = MIN(BASE:ARG:체력, MAXBASE:ARG:체력)
 BASE:ARG:기력 = MIN(BASE:ARG:기력, MAXBASE:ARG:기력)
 
 CFLAG:ARG:호감도 = LIMIT(CFLAG:ARG:호감도, 0, 999999)
-CFLAG:ARG:65 = LIMIT(CFLAG:ARG:65, 0, 999999)
+CFLAG:ARG:스트레스 = LIMIT(CFLAG:ARG:스트레스, 0, 999999)
 
 ;--------------------------------------------------
 ;ゲームオーバー時にロードしなかった時の処理
@@ -1326,9 +1326,9 @@ REPEAT CHARANUM
     ENDIF
     ;ストレス増加(傀儡・壊造人格なら免除)
     IF TALENT:COUNT:괴뢰 == 0 && TALENT:COUNT:괴조인격 == 0 && MONEY <= 0
-        CFLAG:COUNT:65 += RAND:80 + RAND:80
+        CFLAG:COUNT:스트레스 += RAND:80 + RAND:80
     ELSEIF TALENT:COUNT:괴뢰 == 0 && TALENT:COUNT:괴조인격 == 0
-        CFLAG:COUNT:65 += RAND:50 + RAND:50
+        CFLAG:COUNT:스트레스 += RAND:50 + RAND:50
     ENDIF
     ;好感度減少(壊造人格なら免除)
     IF COUNT != MASTER && TALENT:COUNT:괴조인격 == 0 && MONEY <= 0
@@ -1365,7 +1365,7 @@ FOR TARGET, 0, CHARANUM
     SIF TALENT:기계
         CONTINUE
     ;使用フラグがＯＮでストレスがあり, お金も足りている場合は鎮静茶使用チェック
-    IF FLAG:아이템확장 & 32 && MONEY >= 100 && CFLAG:65
+    IF FLAG:아이템확장 & 32 && MONEY >= 100 && CFLAG:스트레스
         CALL USE_AUTOHEAL_MENTAL, TARGET
         LOCAL:2 += RESULT * 100
     ENDIF
@@ -1387,7 +1387,7 @@ TARGET = LOCAL:1
 @USE_AUTOHEAL_MENTAL, ARG
 SIF ARG == -1
     RETURN 0
-SIF CFLAG:ARG:65 == 0
+SIF CFLAG:ARG:스트레스 == 0
     RETURN 0
 
 ;자금 부족 시 종료
@@ -1400,8 +1400,8 @@ ENDIF
 LOCAL = DRUG_HEAL_MENTAL_CALC(ARG)
 
 ;스트레스를 0으로 줄이는 데에 필요한 진정차 수 계산
-LOCAL:1 = CFLAG:ARG:65 / LOCAL
-SIF CFLAG:ARG:65 % LOCAL
+LOCAL:1 = CFLAG:ARG:스트레스 / LOCAL
+SIF CFLAG:ARG:스트레스 % LOCAL
     LOCAL:1++
 
 ;소유 자금에 따른 진정차 사용 수 보정
@@ -1410,7 +1410,7 @@ IF MONEY < LOCAL:1 * 100
     LOCAL:1 = MONEY / 100
 ENDIF
 
-CFLAG:ARG:65 = MAX(0, CFLAG:ARG:65 - (LOCAL * LOCAL:1))
+CFLAG:ARG:스트레스 = MAX(0, CFLAG:ARG:스트레스 - (LOCAL * LOCAL:1))
 MONEY -= LOCAL:1 * 100
 
 SIF TARGET == ASSI || TARGET == ARG

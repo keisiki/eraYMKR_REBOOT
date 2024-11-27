@@ -1248,7 +1248,7 @@ JUEL:PLAYER:100 += LOCAL:100
 ;조교 대상의 정음절정 체크
 ;-------------------------------------------------
 ;정음절정の仕様を大きく変更。분유などの形式に近い形にしました
-;강제정음절정の経験回数, 정음절정ゲージをCFLAG:64に格納
+;강제정음절정の経験回数, 정음절정ゲージをCFLAG:정음개발도に格納
 @TARGET_SEIIN_CHECK
 ;정액중독を見る
 IF ABL:정액중독 == 0
@@ -1318,12 +1318,12 @@ SIF TALENT:정애미각
 IF LOCAL <= 0
     RETURN 0
 ELSE
-    CFLAG:64 += LOCAL
+    CFLAG:정음개발도 += LOCAL
 ENDIF
 EJAC = 1000
-IF CFLAG:64 > EJAC * 2
+IF CFLAG:정음개발도 > EJAC * 2
     LOCAL:1 = 2
-ELSEIF CFLAG:64 > EJAC
+ELSEIF CFLAG:정음개발도 > EJAC
     LOCAL:1 = 1
 ELSE
     LOCAL:1 = 0
@@ -1409,8 +1409,8 @@ SOURCE:18 += LOCAL:1
 SOURCE:19 += LOCAL:2
 SOURCE:22 += LOCAL:3
 
-CFLAG:64 -= (EJAC * ARG - 100)
-CFLAG:64 = MIN(CFLAG:64, EJAC - 1)
+CFLAG:정음개발도 -= (EJAC * ARG - 100)
+CFLAG:정음개발도 = MIN(CFLAG:정음개발도, EJAC - 1)
 
 ;=============================================================================
 ;소스 보정 처리
@@ -2301,18 +2301,18 @@ ENDIF
 ;-------------------------------------------------
 @SOURCE_STRESS_CHECK
 ;ストレスは僅か
-IF CFLAG:65 < 100
+IF CFLAG:스트레스 < 100
     TIMES SOURCE:14 , 0.90
     TIMES SOURCE:29 , 0.95
 ;ちょっと気が重い
-ELSEIF CFLAG:65 < 250
+ELSEIF CFLAG:스트레스 < 250
     TIMES SOURCE:11 , 0.90
     TIMES SOURCE:14 , 0.80
     TIMES SOURCE:15 , 0.90
     TIMES SOURCE:16 , 0.90
     TIMES SOURCE:29 , 0.90
 ;ある程度重い
-ELSEIF CFLAG:65 < 500
+ELSEIF CFLAG:스트레스 < 500
     TIMES SOURCE:0 , 0.90
     TIMES SOURCE:1 , 0.90
     TIMES SOURCE:2 , 0.90
@@ -2327,7 +2327,7 @@ ELSEIF CFLAG:65 < 500
     TIMES SOURCE:19 , 0.95
     TIMES SOURCE:29 , 0.80
 ;結構参ってる
-ELSEIF CFLAG:65 < 1000
+ELSEIF CFLAG:스트레스 < 1000
     TIMES SOURCE:0 , 0.80
     TIMES SOURCE:1 , 0.80
     TIMES SOURCE:2 , 0.80
@@ -2344,7 +2344,7 @@ ELSEIF CFLAG:65 < 1000
     TIMES SOURCE:29 , 0.75
     TIMES SOURCE:32 , 1.10
 ;明らかに様子がおかしい
-ELSEIF CFLAG:65 < 3000
+ELSEIF CFLAG:스트레스 < 3000
     TIMES SOURCE:0 , 0.70
     TIMES SOURCE:1 , 0.70
     TIMES SOURCE:2 , 0.70
@@ -4615,18 +4615,18 @@ ENDIF
 ;判定に加えたい調教状況やアイテムを追加したい場合はここに書き加えて下さい。
 ;非挿入中且つコンドーム装備中に대량사정するとゴムから溢れる…という個人的設定のため少しややこしくなってます
 ;余りにも面倒なためテキストは사정系と装備系に分け, どちらかしか表示されないようになってます（優先度は사정＞装備）。
-;また, ぶっかけ用に使われているCFLAG:74もここで一旦リセットします。
+;また, ぶっかけ用に使われているCFLAG:붓카게장소もここで一旦リセットします。
 
 ;それ以降
 IF TFLAG:899 > 1
     IF TFLAG:11 + TFLAG:36 >= 1
-        IF SELECTCOM == 230 || CFLAG:74 == 1 || CFLAG:74 == 2
+        IF SELECTCOM == 230 || CFLAG:붓카게장소 == 1 || CFLAG:붓카게장소 == 2
             IF TEQUIP:PLAYER:31 == 0
                 TFLAG:868 += TFLAG:11 + TFLAG:36
             ELSE
                 TFLAG:868 += (TFLAG:11 + TFLAG:36) - 1
             ENDIF
-        ELSEIF SELECTCOM == 32 || CFLAG:74 == 3 || CFLAG:74 == 5
+        ELSEIF SELECTCOM == 32 || CFLAG:붓카게장소 == 3 || CFLAG:붓카게장소 == 5
             IF TEQUIP:PLAYER:31 == 0
                 TFLAG:869 += TFLAG:11 + TFLAG:36
             ELSE
@@ -4652,7 +4652,7 @@ IF TFLAG:899 > 1
     ENDIF
     TFLAG:873 += TFLAG:0
     IF TFLAG:10 + TFLAG:36 >= 1
-        IF SELECTCOM == 43 || CFLAG:74 == 4 || CFLAG:74 == 6 || CFLAG:74 == 7
+        IF SELECTCOM == 43 || CFLAG:붓카게장소 == 4 || CFLAG:붓카게장소 == 6 || CFLAG:붓카게장소 == 7
             IF TEQUIP:PLAYER:31 == 0
                 TFLAG:874 += TFLAG:36
             ELSE
@@ -4718,8 +4718,8 @@ IF TFLAG:899 == 1
     ;촉수계 커맨드 실행 중 판정
     TFLAG:882 = TEQUIP:90
 
-    SIF CFLAG:74 != 0
-        CFLAG:74 = 0
+    SIF CFLAG:붓카게장소 != 0
+        CFLAG:붓카게장소 = 0
 
 ;2회째 이후
 ELSE

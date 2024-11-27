@@ -292,9 +292,9 @@ IF TALENT:MASTER:조합지식 == 0 && RAND:(LOCAL:2) > 2
     ;ダメージを与えたフラグON
     CFLAG:150 |= 4
     CFLAG:MASTER:150 |= 16
-    IF CFLAG:65
+    IF CFLAG:스트레스
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 해냈다는 듯한 눈으로 %조사처리(CALLNAME:MASTER,"를")% 보고 있다.
-        CFLAG:65 -= 150
+        CFLAG:스트레스 -= 150
     ENDIF
 
     ;主人の死亡チェック(EASYでないとき主人が調合知識を持たず、毒を盛った奴隷が[弱味]持ちなおかつ恐怖と反発持ちで一定の確率で主人死亡)
@@ -493,7 +493,7 @@ ELSE
         LOCAL:2 = MAX(LOCAL:2, 0)
         ;부정의 구슬
         CALL COMMON_UP_JUEL, TARGET, 100, (LOCAL:2*30), 1
-        CFLAG:65 += LOCAL:2*5
+        CFLAG:스트레스 += LOCAL:2*5
     ELSE
         PRINTFORM %조사처리(CALLNAME:MASTER,"는")% 
         SIF TALENT:MASTER:새드
@@ -539,7 +539,7 @@ ELSE
         LOCAL:2 = MAX(LOCAL:2, 0)
         ;부정의 구슬
         CALL COMMON_UP_JUEL, TARGET, 100, (LOCAL:2*20), 1
-        CFLAG:65 += LOCAL:2*10
+        CFLAG:스트레스 += LOCAL:2*10
     ENDIF
 ENDIF
 
@@ -550,7 +550,7 @@ LOCAL:3 = ABL:요리기능 + (1 + RAND:5)
 ;요리경험
 CALL COMMON_UP_EXP, TARGET, 70, LOCAL:3, 1
 
-CFLAG:65 = LIMIT(CFLAG:65, 0, 999999)
+CFLAG:스트레스 = LIMIT(CFLAG:스트레스, 0, 999999)
 
 IF BASE:MASTER:체력 <= 0
     IF TALENT:주정 || TALENT:봉래인 || MARK:불사각인 || FLAG:엔드리스 & 1 || ((TALENT:새드 || TALENT:초S || ABL:새드끼 > 3) && RAND:2 == 0)
@@ -1126,9 +1126,9 @@ IF RESULT == 0
     ELSEIF BASE:MASTER:체력 < 10
         BASE:MASTER:체력 = 10
     ENDIF
-    IF CFLAG:65
+    IF CFLAG:스트레스
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 초콜릿을 먹어준 사실에 기뻐하는 것 같다.
-        CFLAG:65 -= LOCAL:5
+        CFLAG:스트레스 -= LOCAL:5
     ENDIF
     ;チョコレートを食べてもらったあと
     CALL SELF_KOJO, TARGET, 603, LOCAL:5
@@ -1250,14 +1250,14 @@ ELSEIF RESULT == 1
         ;질투 초콜렛으로 반발각인 취득
         CALL SELF_KOJO, TARGET, 604
     ENDIF
-    CFLAG:65 += LOCAL:5 * 2 / (1 + RAND:4)
+    CFLAG:스트레스 += LOCAL:5 * 2 / (1 + RAND:4)
     ;부정의 구슬
     CALL COMMON_UP_JUEL, TARGET, 100, LOCAL:5, 1
 ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-CFLAG:65 = LIMIT(CFLAG:65, 0, 999999)
+CFLAG:스트레스 = LIMIT(CFLAG:스트레스, 0, 999999)
 
 LOCAL:6 = ABL:요리기능 + 5 + LOCAL:1
 LOCAL:5 = LOCAL:6 + RAND:5

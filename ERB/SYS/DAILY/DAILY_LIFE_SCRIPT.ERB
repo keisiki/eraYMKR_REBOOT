@@ -832,7 +832,7 @@ PRINTFORMW 역시 손재주 있게 바늘을 다루고 있다
 
 ;수정(추가) 조건 변경 친애·상애 추가+친애·상애 문장 추가(임신의 유무도 조건에 포함시켰다)
 IF (TALENT:ARG:친애 || TALENT:ARG:상애) && MARK:ARG:반발각인 < 3
-    IF TALENT:ARG:임신 && CFLAG:ARG:78 == NO:MASTER
+    IF TALENT:ARG:임신 && CFLAG:ARG:아이아버지 == NO:MASTER
         PRINTFORML 때때로 배를 문지르고 있다
         PRINTFORMW 아무래도 배에 임신한 아이를 위해서 무엇인가 만들려 하고 있는 것 같다.
         PRINTFORML 매우 기분 좋게 바느질을 하고 있던 %조사처리(CALLNAME:ARG,"는")% 문득 %조사처리(CALLNAME:MASTER,"를")% 눈치채고 미소를 띠고 손짓을 한다
@@ -2548,7 +2548,7 @@ RETURN 1
 SIF !(TALENT:ARG:상애 && MARK:ARG:반발각인 < 3)
     RETURN 0
 
-IF TALENT:ARG:임신 && CFLAG:ARG:78 == NO:MASTER && RAND:6 == 0
+IF TALENT:ARG:임신 && CFLAG:ARG:아이아버지 == NO:MASTER && RAND:6 == 0
     ;임신한 신부를 돌본다
     IF ABL:ARG:가창기능 >= 3
         PRINTFORML %CALLNAME:ARG%의 방 근처를 지나가려 했는데 
@@ -6990,15 +6990,15 @@ ELSE
             PRINTFORML 행복하게 릴렉스 하고 있는 %조사처리(CALLNAME:LOCAL,"를")% 보니 %조사처리(CALLNAME:MASTER,"와")% %조사처리(CALLNAME:ARG,"는")% 무심코 미소짓고 있었다……
             PRINTFORMW %CALLNAME:ARG%의 낙원에서 느긋하게 보내고 있었다……
 
-;수정(추가) 기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
             CALL ADD_BASE(MASTER,1,300)
             CALL ADD_BASE(ARG,1,300)
             CALL ADD_BASE(LOCAL,1,300)
-            LOCAL:10 = (CFLAG:MASTER:65 <= 1000) ? (CFLAG:MASTER:65 / -10) # ((CFLAG:MASTER:65 / -15) - 100)
+            LOCAL:10 = (CFLAG:MASTER:스트레스 <= 1000) ? (CFLAG:MASTER:스트레스 / -10) # ((CFLAG:MASTER:스트레스 / -15) - 100)
             CALL DAILY_LIFE_MOVE_CFLAG,MASTER,65,LOCAL:10,0
-            LOCAL:11 = (CFLAG:ARG:65 <= 1000) ? (CFLAG:ARG:65 / -10) # ((CFLAG:ARG:65 / -15) - 100)
+            LOCAL:11 = (CFLAG:ARG:스트레스 <= 1000) ? (CFLAG:ARG:스트레스 / -10) # ((CFLAG:ARG:스트레스 / -15) - 100)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
-            LOCAL:12 = (CFLAG:LOCAL:65 <= 1000) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -15) - 100)
+            LOCAL:12 = (CFLAG:LOCAL:스트레스 <= 1000) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -15) - 100)
             CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:12,0
             IF FLAG:SHOP이벤트확장 & 128 || FLAG:997 == 0
                 CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,200,0
@@ -7016,14 +7016,14 @@ ELSE
             PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 충분히 휴식을 취했다.
             PRINTFORMW \@ TIME == 0 ? 점심식사 # 저녁식사 \@는 %CALLNAME:ARG%의 밭에서 오늘 수확한,농작물로 정했다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
             CALL ADD_BASE(MASTER,0,350)
             CALL ADD_BASE(MASTER,1,350)
             CALL ADD_BASE(ARG,0,350)
             CALL ADD_BASE(ARG,1,350)
-            LOCAL:10 = (CFLAG:MASTER:65 <= 1000) ? (CFLAG:MASTER:65 / -10) # ((CFLAG:MASTER:65 / -15) - 100)
+            LOCAL:10 = (CFLAG:MASTER:스트레스 <= 1000) ? (CFLAG:MASTER:스트레스 / -10) # ((CFLAG:MASTER:스트레스 / -15) - 100)
             CALL DAILY_LIFE_MOVE_CFLAG,MASTER,65,LOCAL:10,0
-            LOCAL:11 = (CFLAG:ARG:65 <= 1000) ? (CFLAG:ARG:65 / -10) # ((CFLAG:ARG:65 / -15) - 100)
+            LOCAL:11 = (CFLAG:ARG:스트레스 <= 1000) ? (CFLAG:ARG:스트레스 / -10) # ((CFLAG:ARG:스트레스 / -15) - 100)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
             IF FLAG:SHOP이벤트확장 & 128 || FLAG:997 == 0
                 CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,200,0
@@ -9252,7 +9252,7 @@ SIF LOCAL:1 > 1
 IF FLAG:SHOP이벤트확장 & 128 || FLAG:997 == 0
     FOR LOCAL,0,CHARANUM
         ;참가하고 있지 않는 아이는 안 됨
-        SIF CFLAG:LOCAL:75 == 0
+        SIF CFLAG:LOCAL:사용후콘돔 == 0
             CONTINUE
         ;주모자는 마지막에 표시
         SIF LOCAL == ARG
@@ -9318,7 +9318,7 @@ SIF LOCAL:1 > 1
 IF FLAG:SHOP이벤트확장 & 128 || FLAG:997 == 0
     FOR LOCAL,0,CHARANUM
         ;참가하고 있지 않는 아이는 안 됨
-        SIF CFLAG:LOCAL:75 == 0
+        SIF CFLAG:LOCAL:사용후콘돔 == 0
             CONTINUE
         ;주모자는 마지막에 표시
         SIF LOCAL == ARG
@@ -9403,7 +9403,7 @@ SIF LOCAL:1 > 1
 IF FLAG:SHOP이벤트확장 & 128 || FLAG:997 == 0
     FOR LOCAL,0,CHARANUM
         ;참가하고 있지 않는 아이는 안 됨
-        SIF CFLAG:LOCAL:75 == 0
+        SIF CFLAG:LOCAL:사용후콘돔 == 0
             CONTINUE
         ;주모자는 마지막에 표시
         SIF LOCAL == ARG
@@ -9473,7 +9473,7 @@ SIF LOCAL:1 > 1
 IF FLAG:SHOP이벤트확장 & 128 || FLAG:997 == 0
     FOR LOCAL,0,CHARANUM
         ;참가하고 있지 않는 아이는 안 됨
-        SIF CFLAG:LOCAL:75 == 0
+        SIF CFLAG:LOCAL:사용후콘돔 == 0
             CONTINUE
         ;주모자는 마지막에 표시
         SIF LOCAL == ARG
@@ -9539,7 +9539,7 @@ SIF LOCAL:1 > 1
 IF FLAG:SHOP이벤트확장 & 128 || FLAG:997 == 0
     FOR LOCAL,0,CHARANUM
         ;참가하고 있지 않는 아이는 안 됨
-        SIF CFLAG:LOCAL:75 == 0
+        SIF CFLAG:LOCAL:사용후콘돔 == 0
             CONTINUE
         ;주모자는 마지막에 표시
         SIF LOCAL == ARG
@@ -9604,7 +9604,7 @@ SIF LOCAL:1 > 1
 IF FLAG:SHOP이벤트확장 & 128 || FLAG:997 == 0
     FOR LOCAL,0,CHARANUM
         ;참가하고 있지 않는 아이는 안 됨
-        SIF CFLAG:LOCAL:75 == 0
+        SIF CFLAG:LOCAL:사용후콘돔 == 0
             CONTINUE
         ;주모자는 마지막에 표시
         SIF LOCAL == ARG
@@ -9650,7 +9650,7 @@ RETURN 1
 
 ;조건문이 길어질 것 같아서 2분에,처리 결과는 같을 것
 ;주인이 기계·및 인형은 연주했습니다.만,령체는……고민한 끝보류입니다만,님은 드러눕는 일 있는 것일까? (개인적으로는 있는 것이 멋집니다만)
-SIF !(((BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 5) || (CFLAG:MASTER:65 >= 500) || ((BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 2) && (CFLAG:MASTER:65 >= 250))) && !(TALENT:MASTER:기계) && !(TALENT:MASTER:인형))
+SIF !(((BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 5) || (CFLAG:MASTER:스트레스 >= 500) || ((BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 2) && (CFLAG:MASTER:스트레스 >= 250))) && !(TALENT:MASTER:기계) && !(TALENT:MASTER:인형))
     RETURN 0
 SIF !((TALENT:ARG:연모 || CFLAG:ARG:호감도 >= 2000) && MARK:ARG:공포각인 < 1 && MARK:ARG:반발각인 < 1)
     RETURN 0
@@ -9670,7 +9670,7 @@ LOCAL:17 = (TALENT:ARG:연모) ? 10 # 1
 LOCAL:18 = (TALENT:ARG:연모) ? 10 # 1
 LOCAL:19 = 0
 LOCAL:20 = 0
-LOCAL:21 = CFLAG:MASTER:65 / -5
+LOCAL:21 = CFLAG:MASTER:스트레스 / -5
 
 IF RAND:2 == 0
     PRINTFORML 컨디션이 나빠서 자기 방에서 %조사처리(CALLNAME:MASTER,"는")% 드러눕고 있었다.
@@ -9969,7 +9969,7 @@ ENDIF
 CFLAG:ARG:1613 += 1
 CFLAG:MASTER:1616 += 1
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),봉사 쾌락 경험(EXP:봉사쾌락경험),애정 경험(EXP:애정경험),키스 경험(EXP:키스경험),조리 경험(EXP:조리경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) "치정의 구슬"(JUEL:15) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),봉사 쾌락 경험(EXP:봉사쾌락경험),애정 경험(EXP:애정경험),키스 경험(EXP:키스경험),조리 경험(EXP:조리경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) "치정의 구슬"(JUEL:15) 취득
 
 CALL ADD_BASE(MASTER,0,LOCAL:11)
 CALL ADD_BASE(MASTER,1,LOCAL:12)
@@ -9994,7 +9994,7 @@ RETURN 1
 @NURSING_IS_RECEIVED,ARG
 
 ;이쪽도 기계·및 인형은 연주했습니다.만,령체는 보류중입니다
-SIF !((CFLAG:ARG:65 > 2000 || (CFLAG:ARG:65 > 250 && BASE:ARG:체력 < MAXBASE:ARG:체력 && BASE:ARG:기력 < MAXBASE:ARG:기력)) && !(TALENT:ARG:기계) && !(TALENT:ARG:인형))
+SIF !((CFLAG:ARG:스트레스 > 2000 || (CFLAG:ARG:스트레스 > 250 && BASE:ARG:체력 < MAXBASE:ARG:체력 && BASE:ARG:기력 < MAXBASE:ARG:기력)) && !(TALENT:ARG:기계) && !(TALENT:ARG:인형))
     RETURN 0
 
 ;연모 없음 반발 각인 Lv3의 경우,원래 방에 들어갈 수 있어 줄 수 있고 없을 것 같아서
@@ -10019,17 +10019,17 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
             PRINTFORML 괴로운 현실에서도,자그마한 행복만 있으면 충분했다--
             PRINTFORMW %CALLNAME:ARG%의 애증의 독백은 %CALLNAME:MASTER%의 마음을 크게 흔들었다
             PRINTFORML \@ TALENT:ARG:무관심 || TALENT:ARG:감정결여 ? 평상시 감정을 겉에 내지 않는 # \@%조사처리(CALLNAME:ARG,"가")% 토로한 진심으로의 감정이 전해졌다
-            PRINTFORML 쭉 참아 왔지만,넘어진 일에 의해\@ CFLAG:ARG:65 > 2000 ? 한계를 넘은 # 지금까지의 \@ 격류가 되었을 것이다
+            PRINTFORML 쭉 참아 왔지만,넘어진 일에 의해\@ CFLAG:ARG:스트레스 > 2000 ? 한계를 넘은 # 지금까지의 \@ 격류가 되었을 것이다
             PRINTFORMW 아직도 우는 %CALLNAME:ARG%의 모습에, %조사처리(CALLNAME:MASTER,"는")% 살그머니 포옹 했다
             PRINTFORML 힘을 빼%CALLNAME:MASTER%에 넘어지듯이,다가붙어 흐느끼는걸 계속하는 %CALLNAME:ARG%에게,사랑스러움을 느낀다
             PRINTFORML 지금까지 %조사처리(CALLNAME:ARG,"를")% 슬퍼하게 해 버린 사실은 뒤집히지 않지만--
             PRINTFORMW %CALLNAME:ARG%에게 접근하는 방법을 좀 더 개정하려고 생각하는 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 150
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 100
-            LOCAL:12 = (CFLAG:ARG:65 <= 300) ? -(CFLAG:ARG:65) # ((CFLAG:ARG:65 / -4) - 300)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 300) ? -(CFLAG:ARG:스트레스) # ((CFLAG:ARG:스트레스 / -4) - 300)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10045,17 +10045,17 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
             PRINTFORML …………너무나 사랑스러웠기 때문에 %CALLNAME:ARG%의 머리를 계속 상냥하게 어루만지는 것으로 대답을 했다
             PRINTFORMW %CALLNAME:ARG%도 조금 행복하게 느끼고 있는 것 같고,기쁜듯이 가만히 있었다.
             PRINTFORML %CALLNAME:ARG%의 머리를 어루만지면서 %CALLNAME:ARG%에게 접하는 방법에 대해 반성하고 있었다.
-            PRINTFORML 반드시\@ CFLAG:ARG:65 > 2000 ? 참기 어려운 # 좋은 \@스트레스를 모으고 있었더 거게지
+            PRINTFORML 반드시\@ CFLAG:ARG:스트레스 > 2000 ? 참기 어려운 # 좋은 \@스트레스를 모으고 있었더 거게지
             PRINTFORMW 속죄도 안 되지만,적어도 %CALLNAME:ARG%의 곁에 있어,간병을 계속해 주려고 생각했다
             PRINTFORML 조금이라도 회복을 빨리하기위해 %CALLNAME:ARG%의 간병을 계속하고 싶다고 전하자 %조사처리(CALLNAME:ARG,"는")% 매우 기뻐했다.
             PRINTFORML 얼음 주머니를 교환하거나 식사를 준비하거나 젖고 타월과 갈아입음을 준비해\@ TALENT:ARG:친애 || TALENT:ARG:상애 ? 땀을 닦아,덮어 씌워 주거나 # 충분하고 \@……
             PRINTFORMW 간병은 꽤 큰일이었지만 %CALLNAME:ARG%의 미소와 둘만의 시간을 독점할 수 있던 것은 매우 좋았다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 150
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 100
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -250 # ((CFLAG:ARG:65 / -5) - 250)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -250 # ((CFLAG:ARG:스트레스 / -5) - 250)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10073,11 +10073,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
             PRINTFORML %조사처리(CALLNAME:ARG,"는")% 침묵을 지킨 채로 있었다.
             PRINTFORMW 어쩔 수 없기 때문에 %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:ARG%의 방에서 나오는 일로 했다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 100
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 50
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -150 # ((CFLAG:ARG:65 / -5) - 150)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -150 # ((CFLAG:ARG:스트레스 / -5) - 150)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10095,11 +10095,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
             PRINTFORML ……거기까지 무서워하지 않아도 좋은데…………
             PRINTFORMW %CALLNAME:ARG%에 대한 평소의 태도를 다시 볼까하고 생각한 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) "공포의 구슬"(JUEL:17) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) "공포의 구슬"(JUEL:17) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 100
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 50
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -150 # ((CFLAG:ARG:65 / -5) - 150)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -150 # ((CFLAG:ARG:스트레스 / -5) - 150)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10111,15 +10111,15 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
         ELSE
             PRINTFORML 허약하게 근처를 확인하자 %조사처리(CALLNAME:MASTER,"를")% 알아차리는 것 같았다
             PRINTFORMW %CALLNAME:ARG%에 넘어져 있던 사이의 일을 간단하게 이야기하자,사죄와 감사를 해 주었다
-            PRINTFORML 재차 생각했지만,지금의 %조사처리(CALLNAME:ARG,"는")%\@ CFLAG:ARG:65 > 2000 ? 꽤 # 상당히 \@지친것 같다.
+            PRINTFORML 재차 생각했지만,지금의 %조사처리(CALLNAME:ARG,"는")%\@ CFLAG:ARG:스트레스 > 2000 ? 꽤 # 상당히 \@지친것 같다.
             PRINTFORML 이대로 혼자 두는 것도 걱정이어서,이대로 간병을 계속하기로 했다
             PRINTFORMW 생각보다는 큰 일이었지만,무엇인가를 해 줄 때에 %조사처리(CALLNAME:ARG,"가")% 감사해 주는 것이 조금 기뻤다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 100
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 50
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -200 # ((CFLAG:ARG:65 / -5) - 200)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -200 # ((CFLAG:ARG:스트레스 / -5) - 200)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10144,11 +10144,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
             PRINTFORML %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:LOCAL,"가")% %조사처리(CALLNAME:ARG,"를")%,데려 가는 것을 남몰래 지켜보고 있었다.
             PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 괜찮을 것일까 걱정했지만 %CALLNAME:LOCAL%에 맡겨 두는 일로 해 두었다
 
-;수정(추가) 체력·기력 회복,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 체력·기력 회복,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) 취득,ARG⇔LOCAL간의 궁합 상승
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 150
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 100
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -200 # ((CFLAG:ARG:65 / -5) - 200)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -200 # ((CFLAG:ARG:스트레스 / -5) - 200)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10174,11 +10174,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
                 PRINTFORML %CALLNAME:ARG%의 머리를 어루만져 주자 %조사처리(CALLNAME:ARG,"는")%\@ TALENT:ARG:연모 ? %CALLNAME:MASTER%의 이름을 중얼거려 불과에 표정을 뜯을 수 있었던 # 헛말같은 일을 말했다 \@
                 PRINTFORMW 당분간%CALLNAME:ARG%의 간병을 해 상태를 본 후 %CALLNAME:LOCAL%에 후의 일을 맡겼다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
                 LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 200
                 LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 150
-                LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -250 # ((CFLAG:ARG:65 / -5) - 250)
+                LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -250 # ((CFLAG:ARG:스트레스 / -5) - 250)
                 LOCAL:13 = (TALENT:LOCAL:연모) ? 100 # 50
                 CALL ADD_BASE(ARG,0,LOCAL:10)
                 CALL ADD_BASE(ARG,1,LOCAL:11)
@@ -10202,11 +10202,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
                     PRINTFORML 당분간%CALLNAME:ARG%의 간병을 해 주자 %조사처리(CALLNAME:ARG,"는")% 조금 행복한 표정을 했다
                     PRINTFORMW 휴게동안 %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:ARG%의 간병을 계속해 시간을 보냈다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
                     LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 150
                     LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 150
-                    LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -250 # ((CFLAG:ARG:65 / -5) - 250)
+                    LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -250 # ((CFLAG:ARG:스트레스 / -5) - 250)
                     CALL ADD_BASE(ARG,0,LOCAL:10)
                     CALL ADD_BASE(ARG,1,LOCAL:11)
                     CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10221,11 +10221,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
                     PRINTFORML 일으키지 않는 같은 범위에서 만드는 일을 %CALLNAME:ARG%로 해 주어 
                     PRINTFORMW 잠시 상태를 본 후 %조사처리(CALLNAME:MASTER,"는")% 조용하게 방을 뒤로했다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
                     LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 150
                     LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 100
-                    LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -200 # ((CFLAG:ARG:65 / -5) - 200)
+                    LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -200 # ((CFLAG:ARG:스트레스 / -5) - 200)
                     CALL ADD_BASE(ARG,0,LOCAL:10)
                     CALL ADD_BASE(ARG,1,LOCAL:11)
                     CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10264,11 +10264,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
             PRINTFORML 간병을 계속하자 %조사처리(CALLNAME:ARG,"는")% 많은 감사와……지금까지 대하는 약간의 싫은 소리를 돌려주었다.
             PRINTFORMW 간병을 통해서 %조사처리(CALLNAME:ARG,"와")%의,화해의 계기를 잡은 것 같은 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 150
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 125
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -250 # ((CFLAG:ARG:65 / -5) - 250)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -250 # ((CFLAG:ARG:스트레스 / -5) - 250)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10287,11 +10287,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
             PRINTFORML 응석부리는걸 뒤로 하고 간병을 실시했다.
             PRINTFORMW %조사처리(CALLNAME:ARG,"가")% 한시라도 빨리 회복 되었으면 생각한 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 150
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 100
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -250 # ((CFLAG:ARG:65 / -5) - 250)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -250 # ((CFLAG:ARG:스트레스 / -5) - 250)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10313,11 +10313,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
             PRINTFORML %조사처리(CALLNAME:ARG,"는")% 노려보고 있지만 해치지 않는다고 이해한 것 같아서 그남두었다.
             PRINTFORMW 그리고 %조사처리(CALLNAME:MASTER,"가")% 나갈무렵 등 뒤에서 자그마한 소리로 감사하다고 했다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 100
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 50
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -150 # ((CFLAG:ARG:65 / -5) - 150)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -150 # ((CFLAG:ARG:스트레스 / -5) - 150)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10341,11 +10341,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
             PRINTFORML 얼굴을 반쯤 이불에 숨기면서……마음에서 우러나는 감사를 했다.
             PRINTFORMW 단지 그뿐이지만,기쁘게 느낀 %조사처리(CALLNAME:MASTER,"는")% 떠날때 에 %CALLNAME:ARG%의 머리를 상냥하게 쓰다듬었다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) "공포의 구슬"(JUEL:17) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) "공포의 구슬"(JUEL:17) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 100
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 50
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -150 # ((CFLAG:ARG:65 / -5) - 150)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -150 # ((CFLAG:ARG:스트레스 / -5) - 150)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10364,11 +10364,11 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
             PRINTFORML 좀 더%CALLNAME:ARG%에게 다가는 방법을 다시 볼 필요가 있다.
             PRINTFORMW 퇴실하기 전에,한번 더%CALLNAME:ARG%의 머리를 쓰다듬고 있어 빠른 쾌유를 바랐다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 100
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 50
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -200 # ((CFLAG:ARG:65 / -5) - 200)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -200 # ((CFLAG:ARG:스트레스 / -5) - 200)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10385,7 +10385,7 @@ IF (MARK:ARG:반발각인 > 2 && !(TALENT:ARG:연모)) || RAND:2 == 0
 ELSE
     PRINTFORML %CALLNAME:ARG%의 방을 방문하니 %조사처리(CALLNAME:ARG,"는")% 드러눕고 있었다.
     PRINTFORML 아무래도 몸이 아픈것 같고,아침에도 %CALLNAME:ARG%의 안색은 좋다고는 말할 수 없었다
-    PRINTFORMW 최근\@ CFLAG:ARG:65 > 2000 ? 필사적으로 스트레스를 참는 # 피곤한 \@모습의 %조사처리(CALLNAME:ARG,"였")%으니 걱정스러웠지만
+    PRINTFORMW 최근\@ CFLAG:ARG:스트레스 > 2000 ? 필사적으로 스트레스를 참는 # 피곤한 \@모습의 %조사처리(CALLNAME:ARG,"였")%으니 걱정스러웠지만
     IF TALENT:ARG:연모 && MARK:ARG:반발각인 > 2
         PRINTFORML %조사처리(CALLNAME:MASTER,"가")% 방문한 것에 대해 %조사처리(CALLNAME:ARG,"는")% 가시 돋힌 태도로 대하고 있지만
         PRINTFORML 방문해줘서 기쁜건지 나가라는 소리는 안들었다.
@@ -10400,11 +10400,11 @@ ELSE
         PRINTFORML 결과적으로 %CALLNAME:ARG%의 태도가 유연하게 되는 계기가 되었다.
         PRINTFORMW %조사처리(CALLNAME:ARG,"가")% 안고 있던 스트레스를 해소하여,관계를 재구축 하고 싶다고 생각하는 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
         LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 175
         LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 125
-        LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -250 # ((CFLAG:ARG:65 / -5) - 250)
+        LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -250 # ((CFLAG:ARG:스트레스 / -5) - 250)
         CALL ADD_BASE(ARG,0,LOCAL:10)
         CALL ADD_BASE(ARG,1,LOCAL:11)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10436,11 +10436,11 @@ ELSE
             PRINTFORML %CALLNAME:ARG%의 뺨이 붉어졌다…… 아무래도 %조사처리(CALLNAME:LOCAL,"는")% 약삭빠르게 나가 준 것 같다.
             PRINTFORMW %CALLNAME:ARG%의 간병을 계속하면서, 조용하게 휴식 시간을 보내는 일로 했다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득,ARG⇔LOCAL간의 궁합 상승
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 250
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 250
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -250 # ((CFLAG:ARG:65 / -5) - 250)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -250 # ((CFLAG:ARG:스트레스 / -5) - 250)
             LOCAL:13 = (TALENT:LOCAL:연모) ? 100 # 50
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
@@ -10478,11 +10478,11 @@ ELSE
                 PRINTFORML 뺨이 빨개진 %조사처리(CALLNAME:ARG,"과")% 단 둘이서 남아 버렸지만, 아마 %조사처리(CALLNAME:LOCAL,"가")% 약삭빠르게 굴었을 것이다
                 PRINTFORMW 조언 받은대로 간병을 계속하면서 %조사처리(CALLNAME:ARG,"과")% 시간을 보냈다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득,ARG⇔LOCAL간의 궁합 상승
 
                 LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 200
                 LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 200
-                LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -250 # ((CFLAG:ARG:65 / -5) - 250)
+                LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -250 # ((CFLAG:ARG:스트레스 / -5) - 250)
                 LOCAL:13 = (TALENT:LOCAL:연모) ? 100 # 50
                 CALL ADD_BASE(ARG,0,LOCAL:10)
                 CALL ADD_BASE(ARG,1,LOCAL:11)
@@ -10514,11 +10514,11 @@ ELSE
                 PRINTFORML 약간 행복한 표정으로 미소짓고 있는 %조사처리(CALLNAME:ARG,"가")% 평소보다 사랑스럽게 느낀 때문 
                 PRINTFORMW 그것은 그래서 좋았다고 생각한 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
                 LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 175
                 LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 150
-                LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -250 # ((CFLAG:ARG:65 / -5) - 250)
+                LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -250 # ((CFLAG:ARG:스트레스 / -5) - 250)
                 CALL ADD_BASE(ARG,0,LOCAL:10)
                 CALL ADD_BASE(ARG,1,LOCAL:11)
                 CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10546,11 +10546,11 @@ ELSE
         PRINTFORML 자신을 간병해 주고 있는 것이 이해할 수 있으면(자),침착성을 되찾았다
         PRINTFORMW 보통의 간병을 끝마쳐 방을 뒤로 하는 무렵에는 감사를 해 주었다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) "공포의 구슬"(JUEL:17) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) "공포의 구슬"(JUEL:17) 취득
 
         LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 125
         LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 75
-        LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -150 # ((CFLAG:ARG:65 / -5) - 150)
+        LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -150 # ((CFLAG:ARG:스트레스 / -5) - 150)
         CALL ADD_BASE(ARG,0,LOCAL:10)
         CALL ADD_BASE(ARG,1,LOCAL:11)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10580,11 +10580,11 @@ ELSE
             PRINTFORML %CALLNAME:LOCAL%에는 재차 감사를 해 두려고 생각했다
             PRINTFORMW 보통의 간병을 끝마쳤으므로 후의 일은 %CALLNAME:LOCAL%에 맡겨%CALLNAME:ARG%에 안정하게 하도록(듯이) 전해 방을 뒤로했다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득,ARG⇔LOCAL간의 궁합 상승
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 200
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 150
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -200 # ((CFLAG:ARG:65 / -5) - 200)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -200 # ((CFLAG:ARG:스트레스 / -5) - 200)
             LOCAL:13 = (TALENT:LOCAL:연모) ? 100 # 50
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
@@ -10612,11 +10612,11 @@ ELSE
             PRINTFORML 약간의 작정(생각)이,상당히 시간이 지나고 있었지만,충실한 시간을 보낼 수 있었으므로 좋다로 하자
             PRINTFORMW 빨리 건강하게 되어 주어라와%CALLNAME:ARG%에게 전해 방을 뒤로했다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
             LOCAL:10 = (MAXBASE:ARG:체력 / 5) + 125
             LOCAL:11 = (MAXBASE:ARG:체력 / 5) + 75
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? -200 # ((CFLAG:ARG:65 / -5) - 200)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? -200 # ((CFLAG:ARG:스트레스 / -5) - 200)
             CALL ADD_BASE(ARG,0,LOCAL:10)
             CALL ADD_BASE(ARG,1,LOCAL:11)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10642,7 +10642,7 @@ RETURN 1
 
 ;이 이벤트를 만들려고 생각한 계기는,씨의 휴업(휴가) 연고응(ttp://www.pixiv.net/member_illust.php? mode=medium&illust_id=4702977)가 너무도 사랑스러웠기 때문에
 ;자 버리는 것은 누구라도 있을 수 있는 일이라고 생각하므로,조건은 지극히 느슨하게 설정
-SIF !(TALENT:ARG:유치 || TALENT:ARG:유아 || TALENT:ARG:유아퇴행 || CFLAG:ARG:65 || BASE:ARG:체력 < MAXBASE:ARG:체력 || BASE:ARG:기력 < MAXBASE:ARG:기력)
+SIF !(TALENT:ARG:유치 || TALENT:ARG:유아 || TALENT:ARG:유아퇴행 || CFLAG:ARG:스트레스 || BASE:ARG:체력 < MAXBASE:ARG:체력 || BASE:ARG:기력 < MAXBASE:ARG:기력)
     RETURN 0
 
 IF TALENT:ARG:연모 && MARK:ARG:공포각인 < 1 && MARK:ARG:반발각인 < 1 && RAND:8 >= 3
@@ -10656,12 +10656,12 @@ IF TALENT:ARG:연모 && MARK:ARG:공포각인 < 1 && MARK:ARG:반발각인 < 1 &
     PRINTFORML 보고 있는 사람도 행복하게 해주는 순진하고 사랑스러운 얼굴이다.
     PRINTFORMW %CALLNAME:ARG%의 잠자는 얼굴을 즐기며, 자그마한 행복에 잠긴 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
     LOCAL:10 = (MAXBASE:ARG:체력 / 8) + 125
     LOCAL:11 = (MAXBASE:ARG:체력 / 8) + 125
-    LOCAL:12 = (CFLAG:ARG:65 <= 100) ? -(CFLAG:ARG:65) # ((CFLAG:ARG:65 / -10) - 100)
-    LOCAL:13 = (CFLAG:MASTER:65 <= 50) ? -(CFLAG:MASTER:65) # ((CFLAG:MASTER:65 / -10) - 50)
+    LOCAL:12 = (CFLAG:ARG:스트레스 <= 100) ? -(CFLAG:ARG:스트레스) # ((CFLAG:ARG:스트레스 / -10) - 100)
+    LOCAL:13 = (CFLAG:MASTER:스트레스 <= 50) ? -(CFLAG:MASTER:스트레스) # ((CFLAG:MASTER:스트레스 / -10) - 50)
     CALL ADD_BASE(ARG,0,LOCAL:10)
     CALL ADD_BASE(ARG,1,LOCAL:11)
     CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10698,11 +10698,11 @@ ELSE
         PRINTFORML 살그머니 씌워 주자,기쁜 표정으로 변했다
         PRINTFORMW 표정이 순식간에 바뀌는 %조사처리(CALLNAME:ARG,"를")% 보면서 살그머니 그 자리에서 나갔다.
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
         LOCAL:10 = (MAXBASE:ARG:체력 / 8) + 100
         LOCAL:11 = (MAXBASE:ARG:체력 / 8) + 100
-        LOCAL:12 = (CFLAG:ARG:65 <= 100) ? -(CFLAG:ARG:65) # ((CFLAG:ARG:65 / -15) - 100)
+        LOCAL:12 = (CFLAG:ARG:스트레스 <= 100) ? -(CFLAG:ARG:스트레스) # ((CFLAG:ARG:스트레스 / -15) - 100)
         CALL ADD_BASE(ARG,0,LOCAL:10)
         CALL ADD_BASE(ARG,1,LOCAL:11)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10718,11 +10718,11 @@ ELSE
         PRINTFORML 살그머니%조사처리(CALLNAME:ARG,"가")% 일어나지 않게 살살 공주님 안기를 하고 천천히 방으로 데려갔다.
         PRINTFORMW 이동중의 %CALLNAME:ARG%의 잠자는 얼굴은 매우 행복한 것 같았다…….
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
         LOCAL:10 = (MAXBASE:ARG:체력 / 8) + 125
         LOCAL:11 = (MAXBASE:ARG:체력 / 8) + 125
-        LOCAL:12 = (CFLAG:ARG:65 <= 100) ? -(CFLAG:ARG:65) # ((CFLAG:ARG:65 / -10) - 100)
+        LOCAL:12 = (CFLAG:ARG:스트레스 <= 100) ? -(CFLAG:ARG:스트레스) # ((CFLAG:ARG:스트레스 / -10) - 100)
         CALL ADD_BASE(ARG,0,LOCAL:10)
         CALL ADD_BASE(ARG,1,LOCAL:11)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10738,11 +10738,11 @@ ELSE
         PRINTFORML %조사처리(CALLNAME:ARG,"가")% 확실히 자고 있는걸 확인하곤
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 살그머니 그 자리에서 멀어졌다.
 
-;수정(추가) 체력·기력 회복,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
         LOCAL:10 = (MAXBASE:ARG:체력 / 8) + 75
         LOCAL:11 = (MAXBASE:ARG:체력 / 8) + 75
-        LOCAL:12 = (CFLAG:ARG:65 <= 300) ? (CFLAG:ARG:65 / -6) # ((CFLAG:ARG:65 / -15) - 50)
+        LOCAL:12 = (CFLAG:ARG:스트레스 <= 300) ? (CFLAG:ARG:스트레스 / -6) # ((CFLAG:ARG:스트레스 / -15) - 50)
         CALL ADD_BASE(ARG,0,LOCAL:10)
         CALL ADD_BASE(ARG,1,LOCAL:11)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10756,11 +10756,11 @@ ELSE
         PRINTFORML %조사처리(CALLNAME:ARG,"가")% 차게 자지 않도록
         PRINTFORMW 용건은 다음에 전하기로 하고 조용하게 떠났다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) "공포의 구슬"(JUEL:17) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) "공포의 구슬"(JUEL:17) 취득
 
         LOCAL:10 = (MAXBASE:ARG:체력 / 8) + 100
         LOCAL:11 = (MAXBASE:ARG:체력 / 8) + 100
-        LOCAL:12 = (CFLAG:ARG:65 <= 200) ? (CFLAG:ARG:65 / -4) # ((CFLAG:ARG:65 / -15) - 50)
+        LOCAL:12 = (CFLAG:ARG:스트레스 <= 200) ? (CFLAG:ARG:스트레스 / -4) # ((CFLAG:ARG:스트레스 / -15) - 50)
         CALL ADD_BASE(ARG,0,LOCAL:10)
         CALL ADD_BASE(ARG,1,LOCAL:11)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10776,11 +10776,11 @@ ELSE
         PRINTFORML 공연히 뺨을 가볍게 쿡쿡 찌르고 싶어지지만,일어나면 불쌍하니 참았다
         PRINTFORMW 당분간%조사처리(CALLNAME:ARG,"를")% 지켜보면서 조용하게 시간을 보냈다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
         LOCAL:10 = (MAXBASE:ARG:체력 / 8) + 100
         LOCAL:11 = (MAXBASE:ARG:체력 / 8) + 100
-        LOCAL:12 = (CFLAG:ARG:65 <= 200) ? (CFLAG:ARG:65 / -2) # ((CFLAG:ARG:65 / -13) - 100)
+        LOCAL:12 = (CFLAG:ARG:스트레스 <= 200) ? (CFLAG:ARG:스트레스 / -2) # ((CFLAG:ARG:스트레스 / -13) - 100)
         CALL ADD_BASE(ARG,0,LOCAL:10)
         CALL ADD_BASE(ARG,1,LOCAL:11)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
@@ -10818,10 +10818,10 @@ PRINTFORML ………………꽤 시간이 지났지만 %조사처리(CALLNAME:A
 PRINTFORML %CALLNAME:MASTER%도 기분이 좋고 행복해서 그만두게 할 생각이 없었다.
 PRINTFORMW %조사처리(CALLNAME:ARG,"가")% 마음껏 만족할 때까지,씹기는 계속되었다…….
 
-;수정(추가) 호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-LOCAL:10 = (CFLAG:MASTER:65 <= 500) ? (CFLAG:MASTER:65 / -5) # ((CFLAG:MASTER:65 / -10) - 100)
-LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -10) - 100)
+LOCAL:10 = (CFLAG:MASTER:스트레스 <= 500) ? (CFLAG:MASTER:스트레스 / -5) # ((CFLAG:MASTER:스트레스 / -10) - 100)
+LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -10) - 100)
 CALL DAILY_LIFE_MOVE_CFLAG,MASTER,65,LOCAL:10,0
 CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
 IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
@@ -11079,7 +11079,7 @@ RETURN 1
 CALL DAILY_LIFE_PICKCHARA_TALENT,ARG,"모성"
 LOCAL = RESULT
 
-SIF !(LOCAL > 0 && MARK:LOCAL:반발각인 < 3 && TALENT:ARG:임신 && CFLAG:ARG:76 == 1 && !(TALENT:ARG:모성))
+SIF !(LOCAL > 0 && MARK:LOCAL:반발각인 < 3 && TALENT:ARG:임신 && CFLAG:ARG:임신분기 == 1 && !(TALENT:ARG:모성))
     RETURN 0
 
 PRINTFORML %CALLNAME:ARG%의 방을 들여다 보자 %조사처리(CALLNAME:ARG,"와")% %CALLNAME:LOCAL%의 모습이 보였다.
@@ -11091,7 +11091,7 @@ PRINTFORML %조사처리(CALLNAME:LOCAL,"는")% \@ RELATION:LOCAL:(NO:ARG) > 100
 PRINTFORML 먼저 \@ EXP:LOCAL:출산경험 ? 출산 # 산란 \@을 경험한 "선배"로서 무엇인가 생각하는 것이 있는 것일까……
 
 ;부친은 MASTER이다
-IF CFLAG:ARG:78 == NO:MASTER
+IF CFLAG:ARG:아이아버지 == NO:MASTER
     IF MARK:ARG:반발각인
         PRINTFORMW %CALLNAME:ARG%도 또한,진지인 태도로 조언을 듣고 있지만,잠시 후 %조사처리(CALLNAME:ARG,"는")% 초췌한 같은 표정을 했다…….
         PRINTFORML %조사처리(CALLNAME:LOCAL,"가")% 걱정스러워서 이유를 묻자,이 곳%조사처리(CALLNAME:MASTER,"와")%의 사이가\@ MARK:ARG:반발각인 > 2 ? 꽤 # 상당히 \@나빠서 괴로워 하고 있다고 대답했다.
@@ -11182,9 +11182,9 @@ IF (TALENT:ARG:연모 && TALENT:ARG:솔직함) || TALENT:ARG:친애 || TALENT:AR
     PRINTFORML %조사처리(CALLNAME:ARG,"가")% 기분이 내킬 때까지 마음껏 응석부리게 했다.
     PRINTFORMW %CALLNAME:MASTER%의 뺨도 어느새 느슨해지고 있다.
 
-;수정(추가) 호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도),애정 경험(EXP:애정경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-    LOCAL:10 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -10) - 100)
+    LOCAL:10 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -10) - 100)
     CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:10,0
     IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,200,0,1
@@ -11206,9 +11206,9 @@ ELSE
         PRINTFORML 너무 뛰어놀아서, 지친걸까
         PRINTFORMW 천사 같은 천진난만한 표정으로 잠든 \@ TALENT:ARG:남자 ? 도련님 # 공주님 \@을 상냥하게 지켜보고 있다.
 
-;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-        LOCAL:10 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -10) - 100)
+        LOCAL:10 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -10) - 100)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,200,0,1
@@ -11226,9 +11226,9 @@ ELSE
         PRINTFORML 그렇게 팔팔하던 %CALLNAME:ARG%도,지금은 %CALLNAME:MASTER%의 팔 에서 새근새근 잠들었다.
         PRINTFORMW 이런 날이 있어도 괜찮다…….라고 느끼게 해 준%CALLNAME:ARG%에게 감사했다.
 
-;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-        LOCAL:10 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -10) - 100)
+        LOCAL:10 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -10) - 100)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,150,0,1
@@ -11265,11 +11265,11 @@ IF LOCAL > 0 && RAND:7 == 0
     PRINTFORML 그 이후에도 복도를 뛰어다니는 %조사처리(CALLNAME:ARG,"와")% %조사처리(CALLNAME:LOCAL,"를")% 몇 번이나 보게 되었다.
     PRINTFORMW %조사처리(CALLNAME:ARG,"와")% %CALLNAME:LOCAL%의 생기발랄한 표정을 보면서, 미소를 짓는 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가)    ,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) 취득
+;수정(추가)    ,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) 취득
 
-    LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -15) - 100)
+    LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -15) - 100)
     CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
-    LOCAL:12 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -5) # ((CFLAG:LOCAL:65 / -15) - 100)
+    LOCAL:12 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -5) # ((CFLAG:LOCAL:스트레스 / -15) - 100)
     CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:12,0
     IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
         CALL COMMON_DAILYJUEL,ARG,11,400 + ((ABL:ARG:기교 + RAND:16) * 25),0,1
@@ -11393,11 +11393,11 @@ ELSEIF FLAG:SHOP이벤트확장 & 16 && RAND:4 == 0
             PRINTFORML 쑥스러운 듯하지만, 매우 기쁜듯이 %조사처리(CALLNAME:ARG,"는")% 미소짓는다…….
             PRINTFORMW %CALLNAME:ARG% 노래 연습에, 끝까지 교제한 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 호감도(CFLAG:호감도),애정 경험(EXP:애정경험),가창 경험(EXP:가창경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도),애정 경험(EXP:애정경험),가창 경험(EXP:가창경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-            LOCAL:11 = (CFLAG:MASTER:65 <= 500) ? (CFLAG:MASTER:65 / -5) # ((CFLAG:MASTER:65 / -10) - 100)
+            LOCAL:11 = (CFLAG:MASTER:스트레스 <= 500) ? (CFLAG:MASTER:스트레스 / -5) # ((CFLAG:MASTER:스트레스 / -10) - 100)
             CALL DAILY_LIFE_MOVE_CFLAG,MASTER,65,LOCAL:11,0
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -10) - 100)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -10) - 100)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
             IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
                 CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,150,0,1
@@ -11465,13 +11465,13 @@ ELSEIF MARK:ARG:공포각인 < 2 && MARK:ARG:반발각인 < 3 && RAND:3 == 0
                     PRINTFORML %조사처리(CALLNAME:MASTER,"와")% %CALLNAME:LOCAL%도 놀아서 지쳤지만 행복했고 %CALLNAME:ARG%의 모습에 미소가 절로 나왔다.
                     PRINTFORMW 다음에도 가족과 함께 놀러 가고 싶은 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-                    LOCAL:13 = (CFLAG:MASTER:65 <= 500) ? (CFLAG:MASTER:65 / -5) # ((CFLAG:MASTER:65 / -8) - 100)
+                    LOCAL:13 = (CFLAG:MASTER:스트레스 <= 500) ? (CFLAG:MASTER:스트레스 / -5) # ((CFLAG:MASTER:스트레스 / -8) - 100)
                     CALL DAILY_LIFE_MOVE_CFLAG,MASTER,65,LOCAL:13,0
-                    LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -8) - 100)
+                    LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -8) - 100)
                     CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
-                    LOCAL:12 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -5) # ((CFLAG:LOCAL:65 / -8) - 100)
+                    LOCAL:12 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -5) # ((CFLAG:LOCAL:스트레스 / -8) - 100)
                     CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:12,0
                     IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
                         CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,150,0,1
@@ -11493,13 +11493,13 @@ ELSEIF MARK:ARG:공포각인 < 2 && MARK:ARG:반발각인 < 3 && RAND:3 == 0
                     PRINTFORML 역시 가족 여행은 좋은 것이다……. 다음에 또 할까……
                     PRINTFORMW 까불며 떠들다 지쳐 잠든 %조사처리(CALLNAME:ARG,"를")% 업고, 다음 번에 어디로 갈지 생각했다.
 
-;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-                    LOCAL:13 = (CFLAG:MASTER:65 <= 500) ? (CFLAG:MASTER:65 / -5) # ((CFLAG:MASTER:65 / -8) - 100)
+                    LOCAL:13 = (CFLAG:MASTER:스트레스 <= 500) ? (CFLAG:MASTER:스트레스 / -5) # ((CFLAG:MASTER:스트레스 / -8) - 100)
                     CALL DAILY_LIFE_MOVE_CFLAG,MASTER,65,LOCAL:13,0
-                    LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -8) - 100)
+                    LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -8) - 100)
                     CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
-                    LOCAL:12 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -5) # ((CFLAG:LOCAL:65 / -8) - 100)
+                    LOCAL:12 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -5) # ((CFLAG:LOCAL:스트레스 / -8) - 100)
                     CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:12,0
                     IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
                         CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,200,0,1
@@ -11519,13 +11519,13 @@ ELSEIF MARK:ARG:공포각인 < 2 && MARK:ARG:반발각인 < 3 && RAND:3 == 0
                     PRINTFORML 집에 갈 무렵에 %조사처리(CALLNAME:ARG,"는")% 졸린지 꾸벅꾸벅 졸아서 %조사처리(CALLNAME:MASTER,"가")% 업고 있다.
                     PRINTFORMW %CALLNAME:LOCAL%도 즐거웠던 것 같아 보이니 다음에도 기회가 되면 가겠다고 생각했다.
 
-;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-                    LOCAL:13 = (CFLAG:MASTER:65 <= 500) ? (CFLAG:MASTER:65 / -5) # ((CFLAG:MASTER:65 / -8) - 100)
+                    LOCAL:13 = (CFLAG:MASTER:스트레스 <= 500) ? (CFLAG:MASTER:스트레스 / -5) # ((CFLAG:MASTER:스트레스 / -8) - 100)
                     CALL DAILY_LIFE_MOVE_CFLAG,MASTER,65,LOCAL:13,0
-                    LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -8) - 100)
+                    LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -8) - 100)
                     CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
-                    LOCAL:12 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -5) # ((CFLAG:LOCAL:65 / -8) - 100)
+                    LOCAL:12 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -5) # ((CFLAG:LOCAL:스트레스 / -8) - 100)
                     CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:12,0
                     IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
                         CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,150,0,1
@@ -11547,13 +11547,13 @@ ELSEIF MARK:ARG:공포각인 < 2 && MARK:ARG:반발각인 < 3 && RAND:3 == 0
                 PRINTFORML %CALLNAME:LOCAL%도 %CALLNAME:ARG%도 웃는 얼굴로 즐겼고, 가족과 함께 노는 것도 좋은 것이라고 느꼈다…….
                 PRINTFORMW 그 후 %조사처리(CALLNAME:LOCAL,"과")% %조사처리(CALLNAME:ARG,"과")% 함께 다음에 어디로 갈지를 사이좋게 결정했다.
 
-;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-                LOCAL:13 = (CFLAG:MASTER:65 <= 500) ? (CFLAG:MASTER:65 / -5) # ((CFLAG:MASTER:65 / -8) - 100)
+                LOCAL:13 = (CFLAG:MASTER:스트레스 <= 500) ? (CFLAG:MASTER:스트레스 / -5) # ((CFLAG:MASTER:스트레스 / -8) - 100)
                 CALL DAILY_LIFE_MOVE_CFLAG,MASTER,65,LOCAL:13,0
-                LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -8) - 100)
+                LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -8) - 100)
                 CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
-                LOCAL:12 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -5) # ((CFLAG:LOCAL:65 / -8) - 100)
+                LOCAL:12 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -5) # ((CFLAG:LOCAL:스트레스 / -8) - 100)
                 CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:12,0
                 IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
                     CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,100,0,1
@@ -11576,13 +11576,13 @@ ELSEIF MARK:ARG:공포각인 < 2 && MARK:ARG:반발각인 < 3 && RAND:3 == 0
                 PRINTFORML 천사 같은 미소를 하고 응석부리는 %조사처리(CALLNAME:ARG,"를")% 보니 미소가 절로 나온다… 방금 전%CALLNAME:LOCAL%도 이런 기분이었던 것일까……
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"와")% %CALLNAME:LOCAL%에게 교대로 응석부리는 %CALLNAME:ARG% 덕분에 행복한 기분이 되었다
 
-;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
-                LOCAL:13 = (CFLAG:MASTER:65 <= 500) ? (CFLAG:MASTER:65 / -5) # ((CFLAG:MASTER:65 / -8) - 100)
+                LOCAL:13 = (CFLAG:MASTER:스트레스 <= 500) ? (CFLAG:MASTER:스트레스 / -5) # ((CFLAG:MASTER:스트레스 / -8) - 100)
                 CALL DAILY_LIFE_MOVE_CFLAG,MASTER,65,LOCAL:13,0
-                LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -8) - 100)
+                LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -8) - 100)
                 CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
-                LOCAL:12 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -5) # ((CFLAG:LOCAL:65 / -8) - 100)
+                LOCAL:12 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -5) # ((CFLAG:LOCAL:스트레스 / -8) - 100)
                 CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:12,0
                 IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
                     CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,150,0,1
@@ -11595,11 +11595,11 @@ ELSEIF MARK:ARG:공포각인 < 2 && MARK:ARG:반발각인 < 3 && RAND:3 == 0
                 PRINTFORML %CALLNAME:ARG%에게 응석부릴 수 있는 상대가,기분 좋아보인다.
                 PRINTFORMW %조사처리(CALLNAME:ARG,"와")% %CALLNAME:LOCAL%의 웃는 얼굴을 볼 수 있었으므로, 기쁜 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "순종의 구슬"(JUEL:12) 취득
 
-                LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -8) - 100)
+                LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -8) - 100)
                 CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
-                LOCAL:12 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -5) # ((CFLAG:LOCAL:65 / -8) - 100)
+                LOCAL:12 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -5) # ((CFLAG:LOCAL:스트레스 / -8) - 100)
                 CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:12,0
                 IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
                     CALL COMMON_DAILYJUEL,ARG,12,400 + ((ABL:ARG:순종 + RAND:16) * 25),0,1
@@ -11617,9 +11617,9 @@ ELSEIF MARK:ARG:공포각인 < 2 && MARK:ARG:반발각인 < 3 && RAND:3 == 0
         PRINTFORML 하지만 %조사처리(CALLNAME:ARG,"는")% 많이 즐거웠는지 또 놀아달락 조른다.
         PRINTFORML ……다음에는 무엇을 하면서 놀아 줄까…………        
 
-;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-        LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -10) - 100)
+        LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -10) - 100)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,150,0,1
@@ -11682,15 +11682,15 @@ ELSEIF FLAG:SHOP이벤트확장 & 16 && RAND:2 == 0
             PRINTFORML 고맙다고 말하고…… 맛을 보니, 고가에 팔릴 정도의 물건이었다…….
             PRINTFORMW %CALLNAME:ARG%에게 감사하고 %조사처리(CALLNAME:ARG,"과")% 사이 좋게 요리를 먹었다
 
-;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험),조리 경험(EXP:조리경험) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 체력·기력 회복,호감도(CFLAG:호감도),애정 경험(EXP:애정경험),조리 경험(EXP:조리경험) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
             CALL ADD_BASE(MASTER,0,200)
             CALL ADD_BASE(MASTER,1,200)
             CALL ADD_BASE(ARG,0,200)
             CALL ADD_BASE(ARG,1,200)
-            LOCAL:11 = (CFLAG:MASTER:65 <= 500) ? (CFLAG:MASTER:65 / -5) # ((CFLAG:MASTER:65 / -10) - 100)
+            LOCAL:11 = (CFLAG:MASTER:스트레스 <= 500) ? (CFLAG:MASTER:스트레스 / -5) # ((CFLAG:MASTER:스트레스 / -10) - 100)
             CALL DAILY_LIFE_MOVE_CFLAG,MASTER,65,LOCAL:11,0
-            LOCAL:12 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -5) # ((CFLAG:ARG:65 / -10) - 100)
+            LOCAL:12 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -5) # ((CFLAG:ARG:스트레스 / -10) - 100)
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:12,0
             IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
                 CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,150,0,1
@@ -11741,9 +11741,9 @@ ELSE
         PRINTFORML …………대단히 사랑스럽다……. 무심코 꼭 껴안고 싶다. 이것이 보호욕구인가……
         PRINTFORMW %CALLNAME:ARG%에게 주의를 주었지만 그래도 응석부리게 해 버린 %조사처리(CALLNAME:MASTER,"였")%다……
 
-;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
+;수정(추가) 호감도(CFLAG:호감도) 상승,스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) 취득
 
-        LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -10) # ((CFLAG:ARG:65 / -20) - 50)
+        LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -10) # ((CFLAG:ARG:스트레스 / -20) - 50)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL DAILY_LIFE_MOVE_CFLAG,ARG,2,50,0,1
@@ -11755,9 +11755,9 @@ ELSE
         PRINTFORML 모든 장소에서 %조사처리(CALLNAME:ARG,"는")% 매우 기분이 좋은지 돌아다니고 있다.
         
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) 취득
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) 취득
 
-        LOCAL:11 = (CFLAG:ARG:65 <= 500) ? (CFLAG:ARG:65 / -10) # ((CFLAG:ARG:65 / -15) - 50)
+        LOCAL:11 = (CFLAG:ARG:스트레스 <= 500) ? (CFLAG:ARG:스트레스 / -10) # ((CFLAG:ARG:스트레스 / -15) - 50)
         CALL DAILY_LIFE_MOVE_CFLAG,ARG,65,LOCAL:11,0
         SIF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,250 + ((ABL:ARG:기교 + RAND:16) * 15),1,1
@@ -11791,9 +11791,9 @@ IF MARK:LOCAL:반발각인 > 2
         PRINTFORML 그런 교환이 계속되어……어느새 %조사처리(CALLNAME:LOCAL,"과")% %조사처리(CALLNAME:ARG,"는")% 미소를 띠었다.
         PRINTFORMW 신변의 위험을 강하게 느낀 %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:LOCAL,"과")% %CALLNAME:ARG%의 비위를 맞춰야 하는게 아닐까 진지하게 고민했다.
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) 취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 750) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -15) - 75)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 750) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -15) - 75)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,300 + ((ABL:ARG:기교 + RAND:16) * 15),1,1
@@ -11806,9 +11806,9 @@ IF MARK:LOCAL:반발각인 > 2
         PRINTFORML …………%조사처리(CALLNAME:ARG,"가")% 조언을 해 줘서 %조사처리(CALLNAME:LOCAL,"는")% \@ TALENT:LOCAL:연모 ? 약간 안심한 표정이다. # 상당히 기분이 풀린 것 같다……. \@
         PRINTFORMW %CALLNAME:ARG%에게 감사를 한 %조사처리(CALLNAME:MASTER,"였")%다.
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) 취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -15) - 50)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -15) - 50)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,800 + ((ABL:ARG:기교 + RAND:16) * 35),1,1
@@ -11821,9 +11821,9 @@ IF MARK:LOCAL:반발각인 > 2
         PRINTFORML ……그런 대화가 길게 계속된 후 %CALLNAME:LOCAL%의 푸념에 가까운 상담은 간신히 끝났다…….
         
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) 취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -15) - 50)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -15) - 50)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,600 + ((ABL:ARG:기교 + RAND:16) * 30),1,1
@@ -11845,9 +11845,9 @@ ELSEIF TALENT:LOCAL:연모 && !(TALENT:LOCAL:망신 || TALENT:LOCAL:친애 || TA
         PRINTFORML 그리고 지금 안고 있는 감정을 소중히 하여 %CALLNAME:ARG%에게 전하고
         PRINTFORMW %조사처리(CALLNAME:LOCAL,"는")% 감사하며 떠났다.
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12),취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12),취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 1000) ? (CFLAG:LOCAL:65 / -8) # ((CFLAG:LOCAL:65 / -12) - 125)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 1000) ? (CFLAG:LOCAL:스트레스 / -8) # ((CFLAG:LOCAL:스트레스 / -12) - 125)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,1000 + ((ABL:ARG:기교 + RAND:16) * 45),0,1
@@ -11863,9 +11863,9 @@ ELSEIF TALENT:LOCAL:연모 && !(TALENT:LOCAL:망신 || TALENT:LOCAL:친애 || TA
         PRINTFORML 조언을 다 들은 %조사처리(CALLNAME:LOCAL,"는")% %CALLNAME:ARG%에게 감사했다.
         PRINTFORMW %조사처리(CALLNAME:ARG,"와")% %조사처리(CALLNAME:LOCAL,"는")% 서로 노력하자고, 서로 격려했다…….
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12),취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12),취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 1000) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -13) - 100)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 1000) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -13) - 100)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,800 + ((ABL:ARG:기교 + RAND:16) * 40),0,1
@@ -11881,9 +11881,9 @@ ELSEIF TALENT:LOCAL:연모 && !(TALENT:LOCAL:망신 || TALENT:LOCAL:친애 || TA
         PRINTFORML 그래도 협력해준 %CALLNAME:ARG%에게 깊이 감사했다.
         PRINTFORMW 이게 쓸모없던 일이 되지 않게 노력하려 하는 %조사처리(CALLNAME:LOCAL,"였")%다.
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12),취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12),취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -15) - 50)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -15) - 50)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,400 + ((ABL:ARG:기교 + RAND:16) * 20),0,1
@@ -11896,9 +11896,9 @@ ELSEIF TALENT:LOCAL:연모 && !(TALENT:LOCAL:망신 || TALENT:LOCAL:친애 || TA
         PRINTFORML %CALLNAME:LOCAL%의 마음 속 불안은 최대한 없애려고 노력했다.
         PRINTFORMW %조사처리(CALLNAME:ARG,"과")% 상담해서 기분이 편안해진 %조사처리(CALLNAME:LOCAL,"는")% 감사해했다.
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12),취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12),취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 1000) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -15) - 100)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 1000) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -15) - 100)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,600 + ((ABL:ARG:기교 + RAND:16) * 30),0,1
@@ -11921,9 +11921,9 @@ ELSEIF MARK:LOCAL:공포각인 > 2 && !(TALENT:LOCAL:복종)
         PRINTFORML %조사처리(CALLNAME:LOCAL,"는")% %CALLNAME:ARG%에게 감사해했다.
         PRINTFORMW %CALLNAME:ARG%의 상냥함 덕분에 %조사처리(CALLNAME:LOCAL,"는")% 상당히 기분이 편해진 것 같다…….
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) "공포의 구슬"(JUEL:17) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "순종의 구슬"(JUEL:12) "공포의 구슬"(JUEL:17) 취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 1000) ? (CFLAG:LOCAL:65 / -8) # ((CFLAG:LOCAL:65 / -13) - 125)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 1000) ? (CFLAG:LOCAL:스트레스 / -8) # ((CFLAG:LOCAL:스트레스 / -13) - 125)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,1000 + ((ABL:ARG:기교 + RAND:16) * 40),0,1
@@ -11937,9 +11937,9 @@ ELSEIF MARK:LOCAL:공포각인 > 2 && !(TALENT:LOCAL:복종)
         PRINTFORML 이번에 무슨 일이 있으면, 사양 말고 자신에게 오라고 하며 믿음직한 표정을 보였다.
         PRINTFORMW %CALLNAME:ARG%의 배려에 %조사처리(CALLNAME:LOCAL,"는")% 다소 안심했다.
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "공포의 구슬"(JUEL:17) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "공포의 구슬"(JUEL:17) 취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -15) - 50)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -15) - 50)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,600 + ((ABL:ARG:기교 + RAND:16) * 35),0,1
@@ -11952,9 +11952,9 @@ ELSEIF MARK:LOCAL:공포각인 > 2 && !(TALENT:LOCAL:복종)
         PRINTFORML 계속 무서워하는 %조사처리(CALLNAME:LOCAL,"를")% %조사처리(CALLNAME:ARG,"는")% 상냥하게 꼭 껴안았다…….
         PRINTFORMW 지금 뿐이라도 %CALLNAME:LOCAL%의 마음을 편안하게 했으면……
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "공포의 구슬"(JUEL:17) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "공포의 구슬"(JUEL:17) 취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 1000) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -15) - 100)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 1000) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -15) - 100)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,500 + ((ABL:ARG:기교 + RAND:16) * 25),0,1
@@ -11969,9 +11969,9 @@ ELSEIF MARK:LOCAL:공포각인 > 2 && !(TALENT:LOCAL:복종)
         PRINTFORML 공황 상태로부터 회복한 %조사처리(CALLNAME:LOCAL,"는")% 상냥하게 상담에 응해 준%CALLNAME:ARG%에게 감사해했다.
 
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) "공포의 구슬"(JUEL:17) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) "공포의 구슬"(JUEL:17) 취득,ARG⇔LOCAL간의 궁합 상승
 
-        LOCAL:10 = (CFLAG:LOCAL:65 <= 500) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -15) - 50)
+        LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 500) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -15) - 50)
         CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
         IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
             CALL COMMON_DAILYJUEL,ARG,11,600 + ((ABL:ARG:기교 + RAND:16) * 30),0,1
@@ -11985,9 +11985,9 @@ ELSE
     PRINTFORML 거듭해서 %CALLNAME:ARG%에게 답례를 하고, 상쾌한 표정으로 %조사처리(CALLNAME:LOCAL,"는")% 나갔다.
     PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 미소지으면서 %조사처리(CALLNAME:LOCAL,"를")% 배웅하고 있었다……
 
-;수정(추가) 스트레스치(CFLAG:65) 감소 "습득의 구슬"(JUEL:11) 취득,ARG⇔LOCAL간의 궁합 상승
+;수정(추가) 스트레스치(CFLAG:스트레스) 감소 "습득의 구슬"(JUEL:11) 취득,ARG⇔LOCAL간의 궁합 상승
 
-    LOCAL:10 = (CFLAG:LOCAL:65 <= 1000) ? (CFLAG:LOCAL:65 / -10) # ((CFLAG:LOCAL:65 / -15) - 100)
+    LOCAL:10 = (CFLAG:LOCAL:스트레스 <= 1000) ? (CFLAG:LOCAL:스트레스 / -10) # ((CFLAG:LOCAL:스트레스 / -15) - 100)
     CALL DAILY_LIFE_MOVE_CFLAG,LOCAL,65,LOCAL:10,0
     IF FLAG:SHOP이벤트확장 & 128 || !FLAG:997
         CALL COMMON_DAILYJUEL,ARG,11,600 + ((ABL:ARG:기교 + RAND:16) * 30),1,1

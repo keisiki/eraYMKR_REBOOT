@@ -212,7 +212,7 @@ REPEAT CHARANUM
     SIF TALENT:COUNT:포란중
         CONTINUE
     ;酔っ払い, 気力切れ, 体力少ない, ストレス過多なのはスキップ
-    SIF BASE:COUNT:취기 > MAXBASE:COUNT:취기 || BASE:COUNT:체력 < 500 || BASE:COUNT:기력 < 1 || CFLAG:COUNT:65 >= PALAMLV:3
+    SIF BASE:COUNT:취기 > MAXBASE:COUNT:취기 || BASE:COUNT:체력 < 500 || BASE:COUNT:기력 < 1 || CFLAG:COUNT:스트레스 >= PALAMLV:3
         CONTINUE
     ;反発刻印持ち排除システム発動
     SIF MARK:COUNT:반발각인 && FLAG:SHOP이벤트확장 & 1024 && FLAG:난이도 < 4
@@ -705,14 +705,14 @@ TARGET = ASSI
 ;相愛or親愛の場合ストレスが0になる. 直後に日を跨ぐから又増えるけど. 
 ;相愛とか親愛付いてるのは, もう育てる必要なかったりエンディング後だったり. なのでバランスには影響ないはず. 
 IF RESULT == 0 && (TALENT:ASSI:친애 || TALENT:ASSI:상애)
-    CFLAG:ASSI:65 = 0
+    CFLAG:ASSI:스트레스 = 0
 ;恋慕ならストレスが半分になる. 
 ELSEIF RESULT == 0 && TALENT:ASSI:연모
-    CFLAG:ASSI:65 = CFLAG:ASSI:65/2
+    CFLAG:ASSI:스트레스 = CFLAG:ASSI:스트레스/2
 ;乗り気じゃなかった場合. ストレスが倍になる. 
 ;既に助手可の状態で, このケースがあるのかは不明
 ELSEIF RESULT == 0 && GET_AGG(TARGET) < 50
-    CFLAG:ASSI:65 = 2*CFLAG:ASSI:65
+    CFLAG:ASSI:스트레스 = 2*CFLAG:ASSI:스트레스
 ;どれでもなければストレスそのまま. 
 ENDIF
 
@@ -942,7 +942,7 @@ SIF CFLAG:조교관외 || EQUIP:14
 SIF TALENT:포란중
     LOCAL = 0
 ;体力が切れ掛かっているとき, 気力切れのとき, 酔っ払っているとき, ストレスが大きいときはは夜這いせずに休む
-SIF BASE:취기 > MAXBASE:취기 || BASE:0 < 500 || BASE:기력 < 1 || CFLAG:65 >= PALAMLV:3
+SIF BASE:취기 > MAXBASE:취기 || BASE:0 < 500 || BASE:기력 < 1 || CFLAG:스트레스 >= PALAMLV:3
     LOCAL = 0
 
 ;反発刻印持ち排除システム発動
@@ -977,7 +977,7 @@ REPEAT CHARANUM
     SIF TALENT:COUNT:포란중
         CONTINUE
     ;対象の体力が切れ掛かっているとき, 気力切れのとき, 酔っ払っているとき, ストレスが大きいときはスキップ
-    SIF BASE:COUNT:취기 > MAXBASE:COUNT:취기 || BASE:COUNT:체력 < 500 || BASE:COUNT:기력 < 1 || CFLAG:COUNT:65 >= PALAMLV:3
+    SIF BASE:COUNT:취기 > MAXBASE:COUNT:취기 || BASE:COUNT:체력 < 500 || BASE:COUNT:기력 < 1 || CFLAG:COUNT:스트레스 >= PALAMLV:3
         CONTINUE
     ;対象が欲望LV3未満, 従順LV0だとダメ
     ;反発刻印3で奴隷に棒有り犯しに来る(誰得

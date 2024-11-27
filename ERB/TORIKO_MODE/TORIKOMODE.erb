@@ -993,7 +993,7 @@ REPEAT 20
     ;스트레스 모드 사용 중일때
     IF FLAG:토리코모드 & 64 && ARG:3 & 8
         PRINT  ♨스트레스:
-        CALL PRINT_STRESS_LEVEL_TORIKOMODE, CFLAG:LOCAL:65
+        CALL PRINT_STRESS_LEVEL_TORIKOMODE, CFLAG:LOCAL:스트레스
     ENDIF
     ;줄바꿈
     SIF (FLAG:토리코모드 & 1024 || FLAG:토리코모드 & 64) && ARG:3 & 8
@@ -1426,7 +1426,7 @@ PALAM:TARGET:12 += LOCAL:12
 PALAM:TARGET:20 += LOCAL:13
 PALAM:TARGET:14 += LOCAL:14
 PALAM:TARGET:22 += LOCAL:15
-CFLAG:TARGET:65 += LOCAL:16
+CFLAG:TARGET:스트레스 += LOCAL:16
 
 PRINTL
 PRINTFORML 애정경험 + {LOCAL:10}
@@ -1950,7 +1950,7 @@ IF FLAG:토리코모드 & 32
                 PRINTFORMW <%CALLNAME:COUNT%의 스트레스가 대폭 상승했습니다.>
                 CFLAG:COUNT:4001 = CFLAG:COUNT:4002
                 CFLAG:COUNT:4003 = CFLAG:COUNT:4004
-                CFLAG:COUNT:65 += 5000
+                CFLAG:COUNT:스트레스 += 5000
             ;아니라면 죽는다.
             ELSE
                 CALL BADEND_13, COUNT
@@ -2123,7 +2123,7 @@ ELSEIF RESULT:0 == 1
     ;지불할 돈이 있으면 밥을 먹인다.
     IF MONEY >= LOCAL:0
         ;디버그
-        ;PRINTFORML 밥 먹기전 스트레스 CFLAG:ARG:65 {CFLAG:ARG:65}
+        ;PRINTFORML 밥 먹기전 스트레스 CFLAG:ARG:스트레스 {CFLAG:ARG:스트레스}
         ;밥을 먹인다
         CALL CALC_EAT_MENU_TORIKOMODE, ARG
         ;만복영양 상승.
@@ -2133,15 +2133,15 @@ ELSEIF RESULT:0 == 1
         ;PRINTFORML {RESULT:3} 메뉴의 스트레스
         CFLAG:ARG:4001 += RESULT:1
         CFLAG:ARG:4003 += RESULT:2
-        CFLAG:ARG:65 += RESULT:3
+        CFLAG:ARG:스트레스 += RESULT:3
         ;디버그용
         ;PRINTFORML CFLAG:ARG:4001 {CFLAG:ARG:4001}
         ;PRINTFORML CFLAG:ARG:4003 {CFLAG:ARG:4003}
-        ;PRINTFORML 밥 먹기은 후 스트레스 CFLAG:ARG:65 {CFLAG:ARG:65}
+        ;PRINTFORML 밥 먹기은 후 스트레스 CFLAG:ARG:스트레스 {CFLAG:ARG:스트레스}
         ;수치 정리.
         CFLAG:ARG:4001 = LIMIT(CFLAG:ARG:4001, 0, CFLAG:ARG:4002)
         CFLAG:ARG:4003 = LIMIT(CFLAG:ARG:4003, 0, CFLAG:ARG:4004)
-        CFLAG:ARG:65 = LIMIT(CFLAG:ARG:65, 0, 999999)
+        CFLAG:ARG:스트레스 = LIMIT(CFLAG:ARG:스트레스, 0, 999999)
         ;식사 멘트 출력
         PRINTFORM %조사처리(CALLNAME:ARG,"는")% 
         CALL CALC_EATEN_FOOD_TORIKOMODE, CFLAG:ARG:4000, NO:ARG
@@ -2174,8 +2174,8 @@ ELSEIF RESULT:0 == 1
 ELSEIF RESULT:0 == 2
     ;스트레스 상승
     CALL CALC_EAT_MENU_TORIKOMODE, ARG
-    CFLAG:ARG:65 += RESULT:3
-    CFLAG:ARG:65 = LIMIT(CFLAG:ARG:65, 0, 999999)
+    CFLAG:ARG:스트레스 += RESULT:3
+    CFLAG:ARG:스트레스 = LIMIT(CFLAG:ARG:스트레스, 0, 999999)
     ;굶은회수1회 증가
     CFLAG:ARG:4005 += 1
     ;상태출력
@@ -2482,22 +2482,22 @@ LOCAL:0 += 100 - (LOCAL:3 *2)
 ;PRINTFORML {LOCAL:0} 메뉴보정 받은 직후
 
 ;스트레스 보정
-IF CFLAG:ARG:65 < 100
+IF CFLAG:ARG:스트레스 < 100
     LOCAL:0 -= 0
 ;ちょっと気が重い
-ELSEIF CFLAG:ARG:65 < 250
+ELSEIF CFLAG:ARG:스트레스 < 250
     LOCAL:0 -= 10
 ;ある程度重い
-ELSEIF CFLAG:ARG:65 < 500
+ELSEIF CFLAG:ARG:스트레스 < 500
     LOCAL:0 -= 20
 ;結構参ってる
-ELSEIF CFLAG:ARG:65 < 1000
+ELSEIF CFLAG:ARG:스트레스 < 1000
     LOCAL:0 -= 30
 ;明らかに様子がおかしい
-ELSEIF CFLAG:ARG:65 < 3000
+ELSEIF CFLAG:ARG:스트레스 < 3000
     LOCAL:0 -= 50
 ;重症
-ELSEIF CFLAG:ARG:65 < 6000
+ELSEIF CFLAG:ARG:스트레스 < 6000
     LOCAL:0 -= 100
 ;짜증폭발!
 ELSE
@@ -3107,8 +3107,8 @@ ENDIF
 @CALC_GAUGEX_SLAVE_TORIKOMODE
 LOCAL = 1000
 ;PRINT 정음
-;BAR CFLAG:64,LOCAL,32
-;PRINTFORML  ({CFLAG:64, 4}/{LOCAL, 4})
+;BAR CFLAG:정음개발도,LOCAL,32
+;PRINTFORML  ({CFLAG:정음개발도, 4}/{LOCAL, 4})
 
 ;-------------------------------------------------
 ;오토세이브 옵션. 디코드 된 위치값을 받아서 알아서 저장한다.
