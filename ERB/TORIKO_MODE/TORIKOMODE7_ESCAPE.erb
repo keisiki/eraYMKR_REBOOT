@@ -129,39 +129,39 @@ LOCAL += - (ABL:ARG:순종)*2 - (MARK:ARG:고통각인) - (MARK:ARG:쾌락각인
 
 ;구속구 보정 (*)
     ;문
-    SIF CFLAG:ARG:4010 & 1
+    SIF CFLAG:ARG:스케줄_구속상태 & 1
         TIMES LOCAL, 0.85
         LOCAL -= 4
     ;밧줄
-    SIF CFLAG:ARG:4010 & 2
+    SIF CFLAG:ARG:스케줄_구속상태 & 2
         TIMES LOCAL, 0.85
         LOCAL -= 4
     ;볼재갈
-    SIF CFLAG:ARG:4010 & 4
+    SIF CFLAG:ARG:스케줄_구속상태 & 4
         TIMES LOCAL, 0.95
         LOCAL -= 2
     ;옷
-    SIF CFLAG:ARG:4010 & 8
+    SIF CFLAG:ARG:스케줄_구속상태 & 8
         TIMES LOCAL, 0.9
         LOCAL -= 4
     ;아이마스크
-    SIF CFLAG:ARG:4010 & 16
+    SIF CFLAG:ARG:스케줄_구속상태 & 16
         TIMES LOCAL, 0.95
         LOCAL -= 2
     ;로터
-    SIF CFLAG:ARG:4010 & 32
+    SIF CFLAG:ARG:스케줄_구속상태 & 32
         TIMES LOCAL, 0.95
         LOCAL -= 2
     ;애널비즈
-    SIF CFLAG:ARG:4010 & 64
+    SIF CFLAG:ARG:스케줄_구속상태 & 64
         TIMES LOCAL, 0.95
         LOCAL -= 2
     ;클리캡
-    SIF CFLAG:ARG:4010 & 128
+    SIF CFLAG:ARG:스케줄_구속상태 & 128
         TIMES LOCAL, 0.95
         LOCAL -= 2
     ;니플캡
-    SIF CFLAG:ARG:4010 & 256
+    SIF CFLAG:ARG:스케줄_구속상태 & 256
         TIMES LOCAL, 0.95
         LOCAL -= 2
 ;디버그
@@ -173,7 +173,7 @@ LOCAL += - (ABL:ARG:순종)*2 - (MARK:ARG:고통각인) - (MARK:ARG:쾌락각인
     ; 미작성
 
 ;친자식일때, 탈출확률은 0에 수렴한다.
-SIF CFLAG:ARG:3105 == CFLAG:MASTER:3109 || CFLAG:ARG:3107 == CFLAG:MASTER:3109
+SIF CFLAG:ARG:친모CSV번호 == CFLAG:MASTER:CSV번호 || CFLAG:ARG:아빠CSV번호 == CFLAG:MASTER:CSV번호
     LOCAL = 0
 
 ;감시력에 따라 가감. 감시력 50당 10%씩 지수로 낮아짐.
@@ -226,7 +226,7 @@ RETURN RESULT
 LOCAL:0 = 1
 
 ;밧줄해제
-IF (CFLAG:ARG:4010 & 2) &&LOCAL:0 == 1
+IF (CFLAG:ARG:스케줄_구속상태 & 2) &&LOCAL:0 == 1
     IF RAND:100 > 10
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 밧줄의 느슨한 부분을 찾아 겨우겨우 풀어냈다.
     ELSE
@@ -235,7 +235,7 @@ IF (CFLAG:ARG:4010 & 2) &&LOCAL:0 == 1
     ENDIF
 ENDIF
 ;알몸해제
-IF (CFLAG:ARG:4010 & 8)  &&LOCAL:0 == 1
+IF (CFLAG:ARG:스케줄_구속상태 & 8)  &&LOCAL:0 == 1
     IF RAND:100 > 10
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 이불을 벗겨 알몸을 감쌌다.
     ELSEIF
@@ -245,7 +245,7 @@ IF (CFLAG:ARG:4010 & 8)  &&LOCAL:0 == 1
     ENDIF
 ENDIF
 ;철문해제
-IF (CFLAG:ARG:4010 & 1) &&LOCAL:0 == 1
+IF (CFLAG:ARG:스케줄_구속상태 & 1) &&LOCAL:0 == 1
     IF RAND:100 > 10
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 잠궈놓은 문을 머리핀으로 여는 데 성공했다.
     ELSE
@@ -257,8 +257,8 @@ ENDIF
 ;스케쥴, 구속구 처리.
 IF LOCAL:0 == 1
     ;남은 구속구가 있다면 모두 해방한다!
-    IF CFLAG:ARG:4010 >0 && LOCAL:0 == 1
-        CFLAG:ARG:4010 = 0
+    IF CFLAG:ARG:스케줄_구속상태 >0 && LOCAL:0 == 1
+        CFLAG:ARG:스케줄_구속상태 = 0
         CALL SETCOLOR_TORIKOMODE, "RED", 2
         PRINTFORMW <%조사처리(CALLNAME:ARG,"는")% 구속에서 풀려났다>
         RESETCOLOR
@@ -342,37 +342,37 @@ RETURN RESULT
 ;--------------------------------------------
 ;노예의 구속상태를 표시한다.
 @ARRANGE_RESTRICTION_TORIKOMODE, ARG
-IF CFLAG:ARG:4010 == 0
+IF CFLAG:ARG:스케줄_구속상태 == 0
     CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
     PRINTFORM <없음>
     RESETCOLOR
 ENDIF
-IF CFLAG:ARG:4010&1
+IF CFLAG:ARG:스케줄_구속상태&1
     CALL SETCOLOR_TORIKOMODE, "MAGENTA", 3
     PRINTFORM <감금>
     RESETCOLOR
 ENDIF
-IF CFLAG:ARG:4010&2
+IF CFLAG:ARG:스케줄_구속상태&2
     CALL SETCOLOR_TORIKOMODE, "MAGENTA", 3
     PRINTFORM <밧줄구속>
     RESETCOLOR
 ENDIF
-IF CFLAG:ARG:4010&4
+IF CFLAG:ARG:스케줄_구속상태&4
     CALL SETCOLOR_TORIKOMODE, "MAGENTA", 3
     PRINTFORM <알몸> 
     RESETCOLOR
 ENDIF
-IF CFLAG:ARG:4010&8
+IF CFLAG:ARG:스케줄_구속상태&8
     CALL SETCOLOR_TORIKOMODE, "RED", 2
     PRINTFORM <볼재갈>
     RESETCOLOR
 ENDIF
-IF CFLAG:ARG:4010&16
+IF CFLAG:ARG:스케줄_구속상태&16
     CALL SETCOLOR_TORIKOMODE, "RED", 2
     PRINTFORM <아이마스크> 
     RESETCOLOR
 ENDIF
-IF CFLAG:ARG:4010&32
+IF CFLAG:ARG:스케줄_구속상태&32
     CALL SETCOLOR_TORIKOMODE, "PINK", 1
     IF TALENT:ARG:남자
         PRINTFORM <로터부착>
@@ -381,17 +381,17 @@ IF CFLAG:ARG:4010&32
     ENDIF
     RESETCOLOR
 ENDIF
-IF CFLAG:ARG:4010&64
+IF CFLAG:ARG:스케줄_구속상태&64
     CALL SETCOLOR_TORIKOMODE, "PINK", 1
     PRINTFORM <애널비즈>
     RESETCOLOR
 ENDIF
-IF CFLAG:ARG:4010&128
+IF CFLAG:ARG:스케줄_구속상태&128
     CALL SETCOLOR_TORIKOMODE, "PINK", 1
     PRINTFORM <클리캡>
     RESETCOLOR
 ENDIF
-IF CFLAG:ARG:4010&256
+IF CFLAG:ARG:스케줄_구속상태&256
     CALL SETCOLOR_TORIKOMODE, "PINK", 1
     PRINTFORM <니플캡>
     RESETCOLOR
@@ -403,22 +403,22 @@ ENDIF
 ;ARG:노예번호
 ;ARGS:풀 도구
 @RESTRICTION_RELEASE, ARG
-IF CFLAG:ARG:4010&2 > 0
+IF CFLAG:ARG:스케줄_구속상태&2 > 0
     ;문
-    SIF CFLAG:ARG:4010 & 1 
-    CFLAG:ARG:4010 -= 1
+    SIF CFLAG:ARG:스케줄_구속상태 & 1 
+    CFLAG:ARG:스케줄_구속상태 -= 1
     ;밧줄
-    SIF CFLAG:ARG:4010 & 2
-    CFLAG:ARG:4010 -= 2
+    SIF CFLAG:ARG:스케줄_구속상태 & 2
+    CFLAG:ARG:스케줄_구속상태 -= 2
     ;알몸
-    SIF CFLAG:ARG:4010 & 4
-    CFLAG:ARG:4010 -= 4
+    SIF CFLAG:ARG:스케줄_구속상태 & 4
+    CFLAG:ARG:스케줄_구속상태 -= 4
     ;볼재갈
-    SIF CFLAG:ARG:4010 & 8
-    CFLAG:ARG:4010 -= 8
+    SIF CFLAG:ARG:스케줄_구속상태 & 8
+    CFLAG:ARG:스케줄_구속상태 -= 8
     ;아이마스크
-    SIF CFLAG:ARG:4010 & 16
-    CFLAG:ARG:4010 -= 16
+    SIF CFLAG:ARG:스케줄_구속상태 & 16
+    CFLAG:ARG:스케줄_구속상태 -= 16
     CALL SETCOLOR_TORIKOMODE, "GREEN", 2
     PRINTFORMW <%CALLNAME:ARG%의 구속을 풀고 옷을 입혔다>
     RESETCOLOR
@@ -431,10 +431,10 @@ ENDIF
 ;ARG:노예번호
 ;ARGS:묶을 도구
 @RESTRICTION_BIND, ARG
-IF CFLAG:ARG:4010 & 2
+IF CFLAG:ARG:스케줄_구속상태 & 2
     ;
 ELSE
-    CFLAG:ARG:4010 ^= 2
+    CFLAG:ARG:스케줄_구속상태 ^= 2
     CALL SETCOLOR_TORIKOMODE, "RED", 2
     PRINTFORMW <%CALLNAME:ARG%를 밧줄로 구속했다>
     RESETCOLOR
@@ -461,7 +461,7 @@ SIF TALENT:ARG:연모 || TALENT:ARG:복종 || TALENT:ARG:음란
 CALL CALC_CHARANUM_INHOUSE_TORIKOMODE
 LOCAL:0 += RESULT*50
 ;플래그에 저장한다.
-CFLAG:ARG:4011 = LOCAL:0
+CFLAG:ARG:실종치 = LOCAL:0
 
 
 
@@ -471,12 +471,12 @@ CFLAG:ARG:4011 = LOCAL:0
 ;경비력 계산.
 CALL CALC_SECURITY_POWER_TORIKOMODE
 ;실종 포인트와 비교해서 계산한다.
-LOCAL:0 =  FLAG:5043*100 / ((FLAG:5043) + (CFLAG:ARG:4011))
+LOCAL:0 =  FLAG:5043*100 / ((FLAG:5043) + (CFLAG:ARG:실종치))
 ;보정
 LOCAL:0 = LIMIT (LOCAL:0, 1, 95)
 RESULT = LOCAL:0
 ;디버그
-;PRINTFORML %CALLNAME:ARG%의 실종력은 {CFLAG:ARG:4011}
+;PRINTFORML %CALLNAME:ARG%의 실종력은 {CFLAG:ARG:실종치}
 ;PRINTFORML 수색력은 {FLAG:5043}
 ;PRINTFORML LOCAL:0 ={LOCAL:0}
 RETURN RESULT
@@ -493,7 +493,7 @@ LOCAL:0 = 0
 ;모드1: 턴종료시의 처리.
 IF ARG:1 == 1
     ;감금
-    IF CFLAG:ARG:4010&1
+    IF CFLAG:ARG:스케줄_구속상태&1
         IF RAND:100 > 10
             PRINTFORML %조사처리(CALLNAME:ARG,"는")% 감금당한 것에 불만을 품는 것 같다...
             CALL SETCOLOR_TORIKOMODE, "RED", 2
@@ -508,7 +508,7 @@ IF ARG:1 == 1
         ENDIF
     ENDIF
     ;밧줄
-    IF CFLAG:ARG:4010&2
+    IF CFLAG:ARG:스케줄_구속상태&2
         IF RAND:100 > 90
             ;구상출력
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 224
@@ -527,7 +527,7 @@ IF ARG:1 == 1
         ENDIF
     ENDIF
     ;알몸
-    IF CFLAG:ARG:4010&4
+    IF CFLAG:ARG:스케줄_구속상태&4
         IF RAND:100 > 90
             PRINTFORML %조사처리(CALLNAME:ARG,"를")% 벗겨둔 것이 효과를 낸 것 같다...
             CALL SETCOLOR_TORIKOMODE, "RED", 2
@@ -544,7 +544,7 @@ IF ARG:1 == 1
         ENDIF
     ENDIF
     ;볼개그
-    IF CFLAG:ARG:4010&8
+    IF CFLAG:ARG:스케줄_구속상태&8
         IF RAND:100 > 90
             ;구상출력
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 226
@@ -561,7 +561,7 @@ IF ARG:1 == 1
         ENDIF
     ENDIF
     ;아이마스크
-    IF CFLAG:ARG:4010&16
+    IF CFLAG:ARG:스케줄_구속상태&16
         IF RAND:100 > 90
             ;구상출력
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 225
@@ -579,7 +579,7 @@ IF ARG:1 == 1
         ENDIF
     ENDIF
     ;로터
-    IF CFLAG:ARG:4010&32
+    IF CFLAG:ARG:스케줄_구속상태&32
         IF RAND:100 > 90
             ;구상
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 10
@@ -599,7 +599,7 @@ IF ARG:1 == 1
         ENDIF
     ENDIF
     ;애널비즈
-    IF CFLAG:ARG:4010&64
+    IF CFLAG:ARG:스케줄_구속상태&64
         IF RAND:100 > 90
             ;구상
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 172
@@ -619,7 +619,7 @@ IF ARG:1 == 1
         ENDIF
     ENDIF
     ;클리캡
-    IF CFLAG:ARG:4010&128
+    IF CFLAG:ARG:스케줄_구속상태&128
         IF RAND:100 > 90
             ;클리
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 14
@@ -639,7 +639,7 @@ IF ARG:1 == 1
         ENDIF
     ENDIF
     ;니플캡
-    IF CFLAG:ARG:4010&256
+    IF CFLAG:ARG:스케줄_구속상태&256
         IF RAND:100 > 90
             ;니플
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 15
@@ -663,7 +663,7 @@ IF ARG:1 == 1
 ;결과값을 돌려주며, 결과에 따라 스케쥴을 실패하기도 한다.
 ELSEIF ARG:1 == 2
     ;로터
-    IF CFLAG:ARG:4010&32
+    IF CFLAG:ARG:스케줄_구속상태&32
         IF RAND:100 > 80
             ;구상
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 10
@@ -687,7 +687,7 @@ ELSEIF ARG:1 == 2
         ENDIF
     ENDIF
     ;애널비즈
-    IF CFLAG:ARG:4010&64
+    IF CFLAG:ARG:스케줄_구속상태&64
         IF RAND:100 > 80
             ;구상
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 172
@@ -711,7 +711,7 @@ ELSEIF ARG:1 == 2
         ENDIF
     ENDIF
     ;클리캡
-    IF CFLAG:ARG:4010&128
+    IF CFLAG:ARG:스케줄_구속상태&128
         IF RAND:100 > 80
             ;클리
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 14
@@ -735,7 +735,7 @@ ELSEIF ARG:1 == 2
         ENDIF
     ENDIF
     ;니플캡
-    IF CFLAG:ARG:4010&256
+    IF CFLAG:ARG:스케줄_구속상태&256
         IF RAND:100 > 80
             ;니플
             CALL KOJO_JUSTSAY_TORIKOMODE, ARG, 15

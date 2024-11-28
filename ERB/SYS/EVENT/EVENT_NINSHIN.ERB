@@ -254,7 +254,7 @@ ELSE
     LOCAL = TARGET
 ENDIF
 CFLAG:ARG:아이아버지 = NO:LOCAL
-CFLAG:ARG:3004 = CFLAG:LOCAL:3109
+CFLAG:ARG:아이아버지CSV번호 = CFLAG:LOCAL:CSV번호
 LOCAL:1 = CFLAG:ARG:아이아버지 + 1000
 ;임신 시킨 사람 이름
 CSTR:ARG:40 = %CALLNAME:LOCAL%
@@ -269,7 +269,7 @@ IF ARG == MASTER
     CFLAG:ARG:임신분기 = 1
 
     ;임부의 가슴 크기를 플래그에 대입하는 처리
-    CFLAG:ARG:3006 = BUSTSIZE(ARG)
+    CFLAG:ARG:원래의가슴 = BUSTSIZE(ARG)
 
     ;가슴이 한 단계 커진다.
     ;절벽→빈유, 빈유→보통, 보통→거유, 거유・폭유→변화 없음
@@ -297,7 +297,7 @@ ELSEIF ((TALENT:ARG:연모 || TALENT:ARG:낙인 || TALENT:ARG:예속 || TALENT:A
     CFLAG:ARG:임신분기 = 1
 
     ;임부의 가슴 크기를 플래그에 대입하는 처리
-    CFLAG:ARG:3006 = BUSTSIZE(ARG)
+    CFLAG:ARG:원래의가슴 = BUSTSIZE(ARG)
 
     ;가슴이 한 단계 커진다.
     ;절벽→빈유, 빈유→보통, 보통→거유, 거유・폭유→변화 없음
@@ -458,7 +458,7 @@ SIF GETCHARA(CFLAG:ARG:아이아버지) >= 0
 @CHILD_BIRTH, ARG
 
 LOCAL:1 = CFLAG:ARG:아이아버지 + 1000
-CFLAG:ARG:3000 = -1 ;변수 초기화
+CFLAG:ARG:모친캐릭번호 = -1 ;변수 초기화
 
 PRINTFORML %조사처리(CALLNAME:ARG,"는")% %조사처리(CSTR:ARG:40,"의")% 아이를 무사히 출산했습니다.
 PRINTL 
@@ -480,8 +480,8 @@ IF ARG == MASTER
         ;임신에서 육아로 이행
         TALENT:ARG:임신 = 0
         TALENT:ARG:육아중 = 1
-        CFLAG:ARG:3000 = NO:ARG
-        CFLAG:ARG:3003 = CFLAG:ARG:3109
+        CFLAG:ARG:모친캐릭번호 = NO:ARG
+        CFLAG:ARG:모친CSV번호 = CFLAG:ARG:CSV번호
         IF TALENT:ARG:모성 == 0
             PRINTFORMW %조사처리(CALLNAME:ARG,"는")% [%TALENTNAME:142%]에 눈을 떴다!
             TALENT:ARG:모성 = 1
@@ -531,8 +531,8 @@ ELSEIF CFLAG:ARG:임신분기 == 1
     ;임신에서 육아로 이행
     TALENT:ARG:임신 = 0
     TALENT:ARG:육아중 = 1
-    CFLAG:ARG:3000 = NO:ARG
-    CFLAG:ARG:3003 = CFLAG:ARG:3109
+    CFLAG:ARG:모친캐릭번호 = NO:ARG
+    CFLAG:ARG:모친CSV번호 = CFLAG:ARG:CSV번호
     IF TALENT:ARG:모성 == 0
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% [%TALENTNAME:142%]에 눈을 떴다!
         TALENT:ARG:모성 = 1
@@ -582,8 +582,8 @@ ELSE
     ;임신에서 육아로 이행
     TALENT:ARG:임신 = 0
     TALENT:ARG:육아중 = 1
-    CFLAG:ARG:3000 = NO:ARG
-    CFLAG:ARG:3003 = CFLAG:ARG:3109
+    CFLAG:ARG:모친캐릭번호 = NO:ARG
+    CFLAG:ARG:모친CSV번호 = CFLAG:ARG:CSV번호
 ENDIF
 
 ;출산시의 대사를 이벤트 대사로 해보는 건 좋다 치고 분기 어쩌지…
@@ -626,14 +626,14 @@ ELSE
     ;육아 기간을 설정한다
     CFLAG:LOCAL:출산일 = DAY
     CFLAG:LOCAL:아이아버지 = CFLAG:ARG:아이아버지
-    CFLAG:LOCAL:3000 = NO:ARG
-    CFLAG:LOCAL:3003 = CFLAG:ARG:3109
+    CFLAG:LOCAL:모친캐릭번호 = NO:ARG
+    CFLAG:LOCAL:모친CSV번호 = CFLAG:ARG:CSV번호
      ;임신 시킨 사람 이름
     CSTR:LOCAL:40 = %CSTR:ARG:40%
      ;친모의 이름
     CSTR:LOCAL:41 = %CSTR:ARG:41%
     ;生みの親が持つ精子提供者の固有IDコピー
-    CFLAG:LOCAL:3004 = CFLAG:ARG:3004
+    CFLAG:LOCAL:아이아버지CSV번호 = CFLAG:ARG:아이아버지CSV번호
     ;EQUIP:1(성장촉진 사탕)のフラグを育ての親に譲渡する.
     EQUIP:LOCAL:1 = EQUIP:ARG:1
     EQUIP:ARG:1 = 0
@@ -772,7 +772,7 @@ ELSE
 ENDIF
 ;출산 후, 육아실에 온 것을 기록(자식의 호감도에 영향 있다)
 SIF TALENT:RESULT:임신 == 0 && TALENT:RESULT:포란중 == 0
-    CFLAG:RESULT:3009 += RAND(1, 5)
+    CFLAG:RESULT:육아실방문횟수 += RAND(1, 5)
 RETURN 1
 
 ;-------------------------------------------------
@@ -789,7 +789,7 @@ CFLAG:ARG:조교관외 = 0
 IF CFLAG:ARG:유모여부 == 0
     MAXBASE:ARG:체력 += 500
     PRINTFORML %CALLNAME:ARG%의 가슴은 모유를 수유하는 역할을 마쳤습니다.
-    IF CFLAG:ARG:3006
+    IF CFLAG:ARG:원래의가슴
         ;임신 시에 커진 가슴 사이즈를 한 단계 작게 한다
         CALL REVERSE_B_SIZE, ARG
     ELSE
@@ -859,10 +859,10 @@ CFLAG:ARG:임신분기 = 0
 ;출산예정일 초기화
 CFLAG:ARG:출산일 =  0
 CFLAG:ARG:아이아버지 = -1
-CFLAG:ARG:3004 = -1
+CFLAG:ARG:아이아버지CSV번호 = -1
 MARK:ARG:89 = 0
 ;育児室に通った回数をリセット
-CFLAG:ARG:3009 = 0
+CFLAG:ARG:육아실방문횟수 = 0
 FOR LOCAL, 0, CHARANUM
     ;他にも対象キャラがいれば、フラグを再設定
     SIF CFLAG:LOCAL:조교관외 == 2
@@ -871,16 +871,16 @@ NEXT
 
 ;육아 종료 or 임신 강제 종료시의 가슴 사이즈의 축소 처리
 @REVERSE_B_SIZE, ARG
-SIF CFLAG:ARG:3006 == 0
+SIF CFLAG:ARG:원래의가슴 == 0
     RETURN 0
 
 ;확대전의 상태로 돌아간다.
 ;절벽으로는 돌아가지 않는다
-IF CFLAG:ARG:3006 < BUSTSIZE(ARG) && CFLAG:ARG:3006 > 1
+IF CFLAG:ARG:원래의가슴 < BUSTSIZE(ARG) && CFLAG:ARG:원래의가슴 > 1
     PRINTFORMW 아이에 대한 수유를 마쳤으므로 %CALLNAME:ARG%의 가슴이 작아졌습니다.
     CALL BUSTSIZE_DOWN(ARG, 2, 6)
 ENDIF
-CFLAG:ARG:3006 = 0 ;사용이 끝난 플래그 초기화
+CFLAG:ARG:원래의가슴 = 0 ;사용이 끝난 플래그 초기화
 ;신체측정 플래그를 재운다(다음 번 신체측정을 행하기 위해)
 CFLAG:ARG:신체측정예약 = 0
 
@@ -1011,7 +1011,7 @@ IF EXP:이상경험 < 6 && TALENT:망신 == 0 && TALENT:친애 == 0 && TALENT:�
     IF TALENT:난생 == 0 && TALENT:연모 == 0
         TALENT:광기 = 1
         CFLAG:트라우마판정 |= 1
-        CFLAG:17 |= 2
+        CFLAG:이벤트취득붕괴 |= 2
         ;산란으로 발광하는 이벤트 대사
         CALL SELF_KOJO, TARGET, 184
         ;지문 컷
@@ -1047,7 +1047,7 @@ IF FLAG:SHOP이벤트확장 & 8
         CFLAG:출산일 = DAY + FLAG:임신기간설정
         LOCAL = MASTER
         CFLAG:아이아버지 = NO:LOCAL
-        CFLAG:3004 = CFLAG:LOCAL:3109
+        CFLAG:아이아버지CSV번호 = CFLAG:LOCAL:CSV번호
         ;임신 시킨 사람 이름
         CSTR:ARG:40 = %CALLNAME:LOCAL%
         ;임산부 이름
@@ -1066,7 +1066,7 @@ IF FLAG:SHOP이벤트확장 & 8
         ENDIF
 
         ;임부의 가슴 크기를 플래그에 대입하는 처리
-        CFLAG:ARG:3006 = BUSTSIZE(ARG)
+        CFLAG:ARG:원래의가슴 = BUSTSIZE(ARG)
 
         ;가슴이 한 단계 커진다.
         ;절벽→빈유, 빈유→보통, 보통→거유, 거유・폭유→변화 없음
@@ -1104,7 +1104,7 @@ PRINTL
 ;-------------------------------------------------
 @EGG_BIRTH, ARG
 LOCAL = CFLAG:ARG:아이아버지 + 100
-CFLAG:ARG:3000 = -1 ;변수초기화
+CFLAG:ARG:모친캐릭번호 = -1 ;변수초기화
 DRAWLINE
 ;부화 이벤트 대사
 CALL SELF_KOJO, ARG, 176
@@ -1119,8 +1119,8 @@ CALL CHILD_CHECK_AND_NAME, ARG, 3
 ;포란에서 육아로 이행
 PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 아기를 돌보기 위해 육아실로 이동합니다.
 CFLAG:ARG:조교관외 = 2
-CFLAG:ARG:3000 = NO:ARG
-CFLAG:ARG:3003 = CFLAG:ARG:3109
+CFLAG:ARG:모친캐릭번호 = NO:ARG
+CFLAG:ARG:모친CSV번호 = CFLAG:ARG:CSV번호
 TALENT:ARG:포란중 = 0
 TALENT:ARG:육아중 = 1
 IF TALENT:ARG:모성 == 0
@@ -1154,7 +1154,7 @@ RETURN 0
 ;50% 확률로 친부가 방문
 IF RAND:2 == 0  
     LOCAL = -1
-    LOCAL = FINDCHARA(CFLAG:3109, CFLAG:MASTER:3004, 0)
+    LOCAL = FINDCHARA(CFLAG:CSV번호, CFLAG:MASTER:아이아버지CSV번호, 0)
     SIF LOCAL < 0 ;아버지 매각시 랜덤
         LOCAL = RAND:(CHARANUM - 1) + 1 ;주인을 제외한 방문자
 ELSE
@@ -1184,16 +1184,16 @@ PRINTFORM %조사처리(CALLNAME:LOCAL,"는")%
 ;아직 출산 전인 경우
 IF TALENT:MASTER:임신
     ;부친이 친애거나 상애 보유
-    IF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && (TALENT:LOCAL:친애 || TALENT:LOCAL:상애)
+    IF CFLAG:MASTER:아이아버지CSV번호 == CFLAG:LOCAL:CSV번호 && (TALENT:LOCAL:친애 || TALENT:LOCAL:상애)
         PRINTFORMW %조사처리(CALLNAME:MASTER,"의")% 배를 보며 행복한 표정을 짓고 있다.
         PRINTFORMW 둘 사이에 생긴 사랑의 결실이 빨리 태어나길 기대하는 것 같다.
     ;부친이 함락됨 (연모, 복종, 음란)
-    ELSEIF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && (TALENT:LOCAL:연모 || TALENT:LOCAL:복종 || TALENT:LOCAL:음란)
+    ELSEIF CFLAG:MASTER:아이아버지CSV번호 == CFLAG:LOCAL:CSV번호 && (TALENT:LOCAL:연모 || TALENT:LOCAL:복종 || TALENT:LOCAL:음란)
         PRINTFORMW %조사처리(CALLNAME:MASTER,"의")% 배를 보며 긴장한 표정을 짓고 있다.
         PRINTFORMW 아빠가 된다는 사실에 부담을 느끼는 것 같다.
         PRINTFORMW %조사처리(CALLNAME:MASTER,"을")% 돕기 위해 요즘 육아 서적을 많이 읽고 있다고 한다.
     ;부친이 함락 안 됨.
-    ELSEIF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109
+    ELSEIF CFLAG:MASTER:아이아버지CSV번호 == CFLAG:LOCAL:CSV번호
         PRINTFORMW %조사처리(CALLNAME:MASTER,"의")% 배를 보며 복잡한 표정을 짓고 있다.
         PRINTFORMW 원하지도 않은 아이의 아빠가 된다는 사실에 복잡한 감정을 느끼는 것 같다.
     ;부친이 아님. 연모
@@ -1214,7 +1214,7 @@ ELSEIF TALENT:MASTER:포란중
     PRINTFORMW MASTER 산란 구현 안 됨.
     
 ;[연모계]인 부친
-ELSEIF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && LOCAL:1 == 1
+ELSEIF CFLAG:MASTER:아이아버지CSV번호 == CFLAG:LOCAL:CSV번호 && LOCAL:1 == 1
     IF TIME == 0 ;낮
         PRINTFORMW 아이에게 아빠가 얼마나 %조사처리(CALLNAME:MASTER,"를")% 사랑하는지 자랑했다.
         PRINTFORMW 아이는 엄마, 아빠 같은 배우자를 만나고 싶다고 한다.
@@ -1224,7 +1224,7 @@ ELSEIF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && LOCAL:1 == 1
         PRINTFORMW %조사처리(CALLNAME:LOCAL,"는")% 당신을 살며시 안아주었다.
     ENDIF
 ;[복종계]인 부친
-ELSEIF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && LOCAL:1 == 2
+ELSEIF CFLAG:MASTER:아이아버지CSV번호 == CFLAG:LOCAL:CSV번호 && LOCAL:1 == 2
     IF TIME == 0 ;낮
         PRINTFORMW 아이의 앞에서 %조사처리(CALLNAME:MASTER,"에게")% 존경심을 표현했다.
         PRINTFORMW 아이는 서열에 대해서 배우고 있는 것 같다.
@@ -1234,7 +1234,7 @@ ELSEIF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && LOCAL:1 == 2
         PRINTFORMW 청소를 마친 %조사처리(CALLNAME:LOCAL,"는")% 조용히 방을 나갔다.
     ENDIF
 ;[음란계]인 부친
-ELSEIF CFLAG:MASTER:3004 == CFLAG:LOCAL:3109 && LOCAL:1 == 3
+ELSEIF CFLAG:MASTER:아이아버지CSV번호 == CFLAG:LOCAL:CSV번호 && LOCAL:1 == 3
     IF TIME == 0 ;낮
         PRINTFORMW %조사처리(CALLNAME:MASTER,"에게")% 안마를 해주었다. 그런데 은근슬쩍 은밀한 곳을 더듬고 있다.
         PRINTFORMW 아이는 아빠를 돕겠다며 작은 손으로 따라하고 있다.

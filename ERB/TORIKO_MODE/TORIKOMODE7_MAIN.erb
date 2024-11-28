@@ -226,10 +226,10 @@ DO
                     ;잡히면 다시 구속당한다
                     PRINTFORMW 그리고, 이전보다 더욱 강하게 구속당했다….
                     ;잠그고, 묶고, 벗긴다.
-                    CFLAG:(LOCAL:99):4010 += 1
+                    CFLAG:(LOCAL:99):스케줄_구속상태 += 1
                     SIF ITEM:29 == 1
-                        CFLAG:(LOCAL:99):4010 += 2
-                    CFLAG:(LOCAL:99):4010 += 4
+                        CFLAG:(LOCAL:99):스케줄_구속상태 += 2
+                    CFLAG:(LOCAL:99):스케줄_구속상태 += 4
                     ;꿈도 희망도 없이 실패했다.
                     CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
                     PRINTFORMW <%조사처리(CALLNAME:(LOCAL:99),"는")% 탈출에 실패했다….>
@@ -278,15 +278,15 @@ DO
         ;그러나 최소 1점은 상승한다.
         LOCAL:0 = LIMIT(LOCAL:0,1,99)
         ;구출 포인트 증가.
-        CFLAG:(LOCAL:99):4012 += LOCAL:0
+        CFLAG:(LOCAL:99):구출력 += LOCAL:0
         ;구출력 캐스팅.
-        CFLAG:(LOCAL:99):4012 = LIMIT(CFLAG:(LOCAL:99):4012, 1, 99)
+        CFLAG:(LOCAL:99):구출력 = LIMIT(CFLAG:(LOCAL:99):구출력, 1, 99)
         ;구출포인트 판정. 100을 굴려서 구출 포인트보다 작으면 구출 발생한다. (단, 무명캐릭터는 구하러 오지 않는다)
-        IF CFLAG:(LOCAL:99):4012 > RAND:100 && NO:(LOCAL:99) <= 148
+        IF CFLAG:(LOCAL:99):구출력 > RAND:100 && NO:(LOCAL:99) <= 148
             ;디버그
             ;PRINTFORML %CALLNAME:(LOCAL:99)% 는 구출받습니다.
             ;구출 포인트 초기화.
-            CFLAG:(LOCAL:99):4012 = 0
+            CFLAG:(LOCAL:99):구출력 = 0
             ;구출 캐릭터를 선정
             CALL SELECT_CHARA_RESCUE_TORIKOMODE, (NO:(LOCAL:99))
             SIF RESULT:1 > 0
@@ -294,7 +294,7 @@ DO
                 CALL EVENT_RESCUE_TORIKOMODE, RESULT:1, LOCAL:99
         ENDIF
         ;디버그
-        ;PRINTFORML %CALLNAME:(LOCAL:99)%의 구출확률은{CFLAG:(LOCAL:99):4012}퍼센트.
+        ;PRINTFORML %CALLNAME:(LOCAL:99)%의 구출확률은{CFLAG:(LOCAL:99):구출력}퍼센트.
     ENDIF
     LOCAL:99++
 LOOP LOCAL:99 < CHARANUM
@@ -625,14 +625,14 @@ IF FLAG:5043 > 0
                 ;
             ELSE
                 PRINTFORM [{LOCAL:99}] %CALLNAME:(LOCAL:99)% (구출자 침입 확률 : 
-                IF CFLAG:(LOCAL:99):4012 > 30
+                IF CFLAG:(LOCAL:99):구출력 > 30
                     CALL SETCOLOR_TORIKOMODE, "RED", 2
-                ELSEIF CFLAG:(LOCAL:99):4012 > 15
+                ELSEIF CFLAG:(LOCAL:99):구출력 > 15
                     CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
                 ELSE
                     CALL SETCOLOR_TORIKOMODE, "GREEN", 2
                 ENDIF
-                PRINTFORM {CFLAG:(LOCAL:99):4012}
+                PRINTFORM {CFLAG:(LOCAL:99):구출력}
                 RESETCOLOR
                 PRINTFORML 퍼센트)
             ENDIF
@@ -648,19 +648,19 @@ IF FLAG:5043 > 0
             LOCAL:4 = RESULT
             PRINTFORMW 수색대는 %CALLNAME:(LOCAL:4)%에 대한 소문을 내었다….
             ;구출력 증가. 수색력에 따라 달라짐. 수색력의 10%증가.
-            CFLAG:(LOCAL:4):4012 += FLAG:5043/10
+            CFLAG:(LOCAL:4):구출력 += FLAG:5043/10
             ;구출력 캐스팅.
-            CFLAG:(LOCAL:4):4012 = LIMIT(CFLAG:(LOCAL:4):4012, 1, 99)
+            CFLAG:(LOCAL:4):구출력 = LIMIT(CFLAG:(LOCAL:4):구출력, 1, 99)
             PRINTFORMW 소문이 퍼져, %조사처리(CALLNAME:(LOCAL:4),"를")% 구출하겠다는 사람들이 늘고 있다….
             PRINTFORM <구출자 침입 확률이 
-            IF CFLAG:(LOCAL:4):4012 > 30
+            IF CFLAG:(LOCAL:4):구출력 > 30
                 CALL SETCOLOR_TORIKOMODE, "RED", 2
-            ELSEIF CFLAG:(LOCAL:4):4012 > 15
+            ELSEIF CFLAG:(LOCAL:4):구출력 > 15
                 CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
             ELSE
                 CALL SETCOLOR_TORIKOMODE, "GREEN", 2
             ENDIF
-            PRINTFORM {CFLAG:(LOCAL:4):4012}
+            PRINTFORM {CFLAG:(LOCAL:4):구출력}
             RESETCOLOR
             PRINTFORMW 퍼센트가 되었습니다>
         ELSE    
@@ -682,7 +682,7 @@ ENDIF
 @EVENT_COMEBACK_TORIKOMODE
 LOCAL:99 =0
 DO 
-    IF CFLAG:(LOCAL:99):4011 < 100 && CFLAG:(LOCAL:99):조교관외 == 1
+    IF CFLAG:(LOCAL:99):실종치 < 100 && CFLAG:(LOCAL:99):조교관외 == 1
         ;복귀한다.
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
@@ -719,12 +719,12 @@ DO
         PRINTL
     ELSE
         ;실종치를 일정량 감소시킨다.
-        CFLAG:(LOCAL:99):4011 -= RAND:50
+        CFLAG:(LOCAL:99):실종치 -= RAND:50
         ;실종치 보정
-        CFLAG:(LOCAL:99):4011 = LIMIT(CFLAG:(LOCAL:99):4011, 1, 9999)
+        CFLAG:(LOCAL:99):실종치 = LIMIT(CFLAG:(LOCAL:99):실종치, 1, 9999)
     ENDIF
     ;디버그
-    ;PRINTFORML %CALLNAME:(LOCAL:99 )%의 실종포인트 ={CFLAG:(LOCAL:99):4011}
+    ;PRINTFORML %CALLNAME:(LOCAL:99 )%의 실종포인트 ={CFLAG:(LOCAL:99):실종치}
     LOCAL:99 ++
 LOOP LOCAL:99 < CHARANUM
 
@@ -779,7 +779,7 @@ DO
         PRINTFORM %UNICODE(0x222E)%구속:
         CALL ARRANGE_RESTRICTION_TORIKOMODE, LOCAL:99
         ;디버그
-        ;PRINTFORML LOCAL:99 ={LOCAL:99}, CFLAG:(LOCAL:99):4010 = {CFLAG:(LOCAL:99):4010}
+        ;PRINTFORML LOCAL:99 ={LOCAL:99}, CFLAG:(LOCAL:99):스케줄_구속상태 = {CFLAG:(LOCAL:99):스케줄_구속상태}
         PRINTL
         DRAWLINE
         ;CUSTOMDRAWLINE ･
@@ -826,27 +826,27 @@ ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
     PRINTL
     CUSTOMDRAWLINE ･
 
-    PRINTFORML \@ (CFLAG:(LOCAL:1):4010&1)? ○ # × \@ [0] 문을 \@ (CFLAG:(LOCAL:1):4010&1)? 연다 # 잠근다 : 탈출확률 감소. 각종 이벤트 등장불가, 감금효과 \@
-    PRINTFORML \@ (CFLAG:(LOCAL:1):4010&2)? ○ # × \@ [1] 밧줄을 \@ (CFLAG:(LOCAL:1):4010&2)? 푼다 # 묶는다 : 탈출확률 감소. 자해불가. 긴박효과 \@
-    PRINTFORML \@ (CFLAG:(LOCAL:1):4010&4)? ○ # × \@ [2] 옷을 \@ (CFLAG:(LOCAL:1):4010&4)? 입힌다 # 벗긴다 : 탈출확률 감소. 수치효과. \@
-    PRINTFORML \@ (CFLAG:(LOCAL:1):4010&8)? ○ # × \@ [3] 볼재갈을 \@ (CFLAG:(LOCAL:1):4010&8)? 푼다 # 끼운다 : 탈출확률 감소. 구출확률 감소. \@
-    PRINTFORML \@ (CFLAG:(LOCAL:1):4010&16)? ○ # × \@ [4] 아이마스크를 \@ (CFLAG:(LOCAL:1):4010&16)? 푼다 # 씌운다 : 탈출확률 감소. 공포효과 \@
-    PRINTFORML \@ (CFLAG:(LOCAL:1):4010&32)? ○ # × \@ [5] 로터를 \@ (CFLAG:(LOCAL:1):4010&32)? 푼다 # 끼운다 : V조교효과. \@
-    PRINTFORML \@ (CFLAG:(LOCAL:1):4010&64)? ○ # × \@ [6] 애널비즈를 \@ (CFLAG:(LOCAL:1):4010&64)? 뺀다 # 끼운다 : A조교효과. \@
-    PRINTFORML \@ (CFLAG:(LOCAL:1):4010&128)? ○ # × \@ [7] 클리캡을 \@ (CFLAG:(LOCAL:1):4010&128)? 뗀다 # 단다 : C조교효과. \@
-    PRINTFORML \@ (CFLAG:(LOCAL:1):4010&256)? ○ # × \@ [8] 니플캡을 \@ (CFLAG:(LOCAL:1):4010&256)? 뗀다 # 단다 : B조교효과. \@
+    PRINTFORML \@ (CFLAG:(LOCAL:1):스케줄_구속상태&1)? ○ # × \@ [0] 문을 \@ (CFLAG:(LOCAL:1):스케줄_구속상태&1)? 연다 # 잠근다 : 탈출확률 감소. 각종 이벤트 등장불가, 감금효과 \@
+    PRINTFORML \@ (CFLAG:(LOCAL:1):스케줄_구속상태&2)? ○ # × \@ [1] 밧줄을 \@ (CFLAG:(LOCAL:1):스케줄_구속상태&2)? 푼다 # 묶는다 : 탈출확률 감소. 자해불가. 긴박효과 \@
+    PRINTFORML \@ (CFLAG:(LOCAL:1):스케줄_구속상태&4)? ○ # × \@ [2] 옷을 \@ (CFLAG:(LOCAL:1):스케줄_구속상태&4)? 입힌다 # 벗긴다 : 탈출확률 감소. 수치효과. \@
+    PRINTFORML \@ (CFLAG:(LOCAL:1):스케줄_구속상태&8)? ○ # × \@ [3] 볼재갈을 \@ (CFLAG:(LOCAL:1):스케줄_구속상태&8)? 푼다 # 끼운다 : 탈출확률 감소. 구출확률 감소. \@
+    PRINTFORML \@ (CFLAG:(LOCAL:1):스케줄_구속상태&16)? ○ # × \@ [4] 아이마스크를 \@ (CFLAG:(LOCAL:1):스케줄_구속상태&16)? 푼다 # 씌운다 : 탈출확률 감소. 공포효과 \@
+    PRINTFORML \@ (CFLAG:(LOCAL:1):스케줄_구속상태&32)? ○ # × \@ [5] 로터를 \@ (CFLAG:(LOCAL:1):스케줄_구속상태&32)? 푼다 # 끼운다 : V조교효과. \@
+    PRINTFORML \@ (CFLAG:(LOCAL:1):스케줄_구속상태&64)? ○ # × \@ [6] 애널비즈를 \@ (CFLAG:(LOCAL:1):스케줄_구속상태&64)? 뺀다 # 끼운다 : A조교효과. \@
+    PRINTFORML \@ (CFLAG:(LOCAL:1):스케줄_구속상태&128)? ○ # × \@ [7] 클리캡을 \@ (CFLAG:(LOCAL:1):스케줄_구속상태&128)? 뗀다 # 단다 : C조교효과. \@
+    PRINTFORML \@ (CFLAG:(LOCAL:1):스케줄_구속상태&256)? ○ # × \@ [8] 니플캡을 \@ (CFLAG:(LOCAL:1):스케줄_구속상태&256)? 뗀다 # 단다 : B조교효과. \@
     PRINTFORML [99] 모든 구속구를 해제한다.
     PRINTFORML [100] 그만둔다
     INPUT
     ;문을 잠근다.
     IF RESULT == 0
         CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
-        IF CFLAG:(LOCAL:1):4010&1
+        IF CFLAG:(LOCAL:1):스케줄_구속상태&1
             PRINTFORMW %CALLNAME:(LOCAL:1)%의 방 문을 열어두었다.
-            CFLAG:(LOCAL:1):4010 ^= 1
+            CFLAG:(LOCAL:1):스케줄_구속상태 ^= 1
         ELSE
             PRINTFORMW %조사처리(CALLNAME:(LOCAL:1),"를")% 방에 집어넣고, 단단히 자물쇠를 채웠다.
-            CFLAG:(LOCAL:1):4010 ^= 1
+            CFLAG:(LOCAL:1):스케줄_구속상태 ^= 1
         ENDIF
         RESETCOLOR
     ;밧줄구속. 밧줄이 필요하다.
@@ -855,10 +855,10 @@ ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
             ;지시문 출력
             CALL MESSAGE_JUSTSAY_TORIKOMODE, LOCAL:1, 224
             ;있으면 끄고 없으면 켜고
-            IF CFLAG:(LOCAL:1):4010&2
-                CFLAG:(LOCAL:1):4010 -= 2
+            IF CFLAG:(LOCAL:1):스케줄_구속상태&2
+                CFLAG:(LOCAL:1):스케줄_구속상태 -= 2
             ELSE
-                CFLAG:(LOCAL:1):4010 ^= 2
+                CFLAG:(LOCAL:1):스케줄_구속상태 ^= 2
             ENDIF
             ;구상 출력
             CALL KOJO_JUSTSAY_TORIKOMODE, LOCAL:1, 224
@@ -868,12 +868,12 @@ ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
     ;옷
     ELSEIF RESULT == 2
         CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
-        IF CFLAG:(LOCAL:1):4010&4
+        IF CFLAG:(LOCAL:1):스케줄_구속상태&4
             PRINTFORMW %CALLNAME:(LOCAL:1)%에게 옷을 입혔다.
-            CFLAG:(LOCAL:1):4010 -= 4
+            CFLAG:(LOCAL:1):스케줄_구속상태 -= 4
         ELSE
             PRINTFORMW %CALLNAME:(LOCAL:1)%의 옷을 벗겨서 알몸으로 만들었다.
-            CFLAG:(LOCAL:1):4010 ^= 4
+            CFLAG:(LOCAL:1):스케줄_구속상태 ^= 4
         ENDIF
         RESETCOLOR
     
@@ -883,10 +883,10 @@ ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
             ;지시문 출력
             CALL MESSAGE_JUSTSAY_TORIKOMODE, LOCAL:1, 226
             ;있으면 끄고 없으면 켜고
-            IF CFLAG:(LOCAL:1):4010&8
-                CFLAG:(LOCAL:1):4010 -= 8
+            IF CFLAG:(LOCAL:1):스케줄_구속상태&8
+                CFLAG:(LOCAL:1):스케줄_구속상태 -= 8
             ELSE
-                CFLAG:(LOCAL:1):4010 ^= 8
+                CFLAG:(LOCAL:1):스케줄_구속상태 ^= 8
             ENDIF
             ;구상 출력
             CALL KOJO_JUSTSAY_TORIKOMODE, LOCAL:1, 226
@@ -899,10 +899,10 @@ ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
             ;지시문 출력
             CALL MESSAGE_JUSTSAY_TORIKOMODE, LOCAL:1, 225
             ;있으면 끄고 없으면 켜고
-            IF CFLAG:(LOCAL:1):4010&16
-                CFLAG:(LOCAL:1):4010 -= 16
+            IF CFLAG:(LOCAL:1):스케줄_구속상태&16
+                CFLAG:(LOCAL:1):스케줄_구속상태 -= 16
             ELSE
-                CFLAG:(LOCAL:1):4010 ^= 16
+                CFLAG:(LOCAL:1):스케줄_구속상태 ^= 16
             ENDIF
             ;구상 출력
             CALL KOJO_JUSTSAY_TORIKOMODE, LOCAL:1, 225
@@ -919,10 +919,10 @@ ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
                 CALL MESSAGE_JUSTSAY_TORIKOMODE, LOCAL:1, 151
             ENDIF
             ;있으면 끄고 없으면 켜고
-            IF CFLAG:(LOCAL:1):4010&32
-                CFLAG:(LOCAL:1):4010 -= 32
+            IF CFLAG:(LOCAL:1):스케줄_구속상태&32
+                CFLAG:(LOCAL:1):스케줄_구속상태 -= 32
             ELSE
-                CFLAG:(LOCAL:1):4010 ^= 32
+                CFLAG:(LOCAL:1):스케줄_구속상태 ^= 32
             ENDIF
             ;구상 출력
             CALL KOJO_JUSTSAY_TORIKOMODE, LOCAL:1, 10
@@ -935,10 +935,10 @@ ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
             ;지시문 출력
             CALL MESSAGE_JUSTSAY_TORIKOMODE, LOCAL:1, 172
             ;있으면 끄고 없으면 켜고
-            IF CFLAG:(LOCAL:1):4010&64
-                CFLAG:(LOCAL:1):4010 -= 64
+            IF CFLAG:(LOCAL:1):스케줄_구속상태&64
+                CFLAG:(LOCAL:1):스케줄_구속상태 -= 64
             ELSE
-                CFLAG:(LOCAL:1):4010 ^= 64
+                CFLAG:(LOCAL:1):스케줄_구속상태 ^= 64
             ENDIF
             ;구상 출력
             CALL KOJO_JUSTSAY_TORIKOMODE, LOCAL:1, 172
@@ -953,10 +953,10 @@ ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
             ;지시문 출력
             CALL MESSAGE_JUSTSAY_TORIKOMODE, LOCAL:1, 14
             ;있으면 끄고 없으면 켜고
-            IF CFLAG:(LOCAL:1):4010&128
-                CFLAG:(LOCAL:1):4010 -= 128
+            IF CFLAG:(LOCAL:1):스케줄_구속상태&128
+                CFLAG:(LOCAL:1):스케줄_구속상태 -= 128
             ELSE
-                CFLAG:(LOCAL:1):4010 ^= 128
+                CFLAG:(LOCAL:1):스케줄_구속상태 ^= 128
             ENDIF
             ;구상 출력
             CALL KOJO_JUSTSAY_TORIKOMODE, LOCAL:1, 14
@@ -972,10 +972,10 @@ ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
             ;지시문 출력
             CALL MESSAGE_JUSTSAY_TORIKOMODE, LOCAL:1, 15
             ;있으면 끄고 없으면 켜고
-            IF CFLAG:(LOCAL:1):4010&256
-                CFLAG:(LOCAL:1):4010 -= 256
+            IF CFLAG:(LOCAL:1):스케줄_구속상태&256
+                CFLAG:(LOCAL:1):스케줄_구속상태 -= 256
             ELSE
-                CFLAG:(LOCAL:1):4010 ^= 256
+                CFLAG:(LOCAL:1):스케줄_구속상태 ^= 256
             ENDIF
             ;구상 출력
             CALL KOJO_JUSTSAY_TORIKOMODE, LOCAL:1, 15
@@ -986,7 +986,7 @@ ELSEIF RESULT < CHARANUM &&  RESULT >0 && CFLAG:RESULT:조교관외 != 1
         CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
         PRINTFORMW %CALLNAME:(LOCAL:1)%의 구속을 해제했다….
         RESETCOLOR
-        CFLAG:(LOCAL:1):4010 = 0
+        CFLAG:(LOCAL:1):스케줄_구속상태 = 0
     ELSEIF RESULT == 100
         GOTO SELECT_SLAVE
     ELSE
@@ -1121,7 +1121,7 @@ LOCAL:9 = 0
 ;
 $SELECT_GUARDSMAN
 ;경비대장 추출.
-LOCAL:8 = FINDCHARA(CFLAG:4013, 2 )
+LOCAL:8 = FINDCHARA(CFLAG:경비대장, 2 )
 ;봉급 총액 리셋
 LOCAL:7 = 0
 ;경비원의 고용가격 계산.
@@ -1447,7 +1447,7 @@ ELSEIF RESULT == 99
                 CALL CALC_ATTACKPOWER_GUARDSMAN_SLAVE, LOCAL:99 ,1
                 PRINTFORM ♆전투력:{RESULT} 
                 ;경비대장 임명여부
-                IF CFLAG:(LOCAL:99):4013 == 2
+                IF CFLAG:(LOCAL:99):경비대장 == 2
                     CALL SETCOLOR_TORIKOMODE, "GREEN", 2
                     PRINTFORM <경비대장 임무중>
                     RESETCOLOR
@@ -1467,7 +1467,7 @@ ELSEIF RESULT == 99
         INPUT
         IF RESULT < CHARANUM && RESULT !=0 && (TALENT:RESULT:연모 || TALENT:RESULT:복종 || TALENT:RESULT:음란)
             PRINTFORMW <%조사처리(CALLNAME:RESULT,"를")% 경비대장으로 임명했다.>
-            CFLAG:RESULT:4013 = 2
+            CFLAG:RESULT:경비대장 = 2
         ELSEIF RESULT < CHARANUM
             PRINTFORMW <%조사처리(CALLNAME:RESULT,"는")% 함락 상태가 아니므로 경비대장에 임명할 수 없습니다.>
             GOTO LOOP_DESIGNATION_GUARDSMAN_CAPTAIN
@@ -1478,7 +1478,7 @@ ELSEIF RESULT == 99
         ENDIF
     ;해임한다
     ELSEIF RESULT == 1 && LOCAL:8 > 0
-        CFLAG:(LOCAL:8):4013 = 0
+        CFLAG:(LOCAL:8):경비대장 = 0
         PRINTFORMW <%조사처리(CALLNAME:(LOCAL:8),"를")% 경비대장에서 해임했다.>
     ELSEIF RESULT == 999
         GOTO SELECT_GUARDSMAN

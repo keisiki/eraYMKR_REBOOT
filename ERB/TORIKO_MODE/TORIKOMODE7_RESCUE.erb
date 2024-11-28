@@ -113,7 +113,7 @@ LOCAL:2 = 0
 ;전투결과 처리용
 LOCAL:3 = 0
 ;경비대장 추출.
-LOCAL:8 = FINDCHARA(CFLAG:4013, 2 )
+LOCAL:8 = FINDCHARA(CFLAG:경비대장, 2 )
 ;구출캐릭터 임시 추가
 ADDCHARA ARG
 ;타겟변경
@@ -420,7 +420,7 @@ PRINTL
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 어두운 조교관 속에서, 한참이나 %조사처리(CALLNAME:ARG,"를")% 찾아 헤맸다….
 PRINTFORMW ..................
 ;PHASE1. 발견할 것인가? . 기본확률 95%, 볼개그 장착시 85%
-IF RAND:100 > 5 +(CFLAG:ARG:4010 & 2)*10
+IF RAND:100 > 5 +(CFLAG:ARG:스케줄_구속상태 & 2)*10
     PRINTFORMW %조사처리(CALLNAME:ARG,"를")% 찾아냈다!
 ELSE
     CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 1
@@ -501,7 +501,7 @@ ENDIF
 
 ;PHASE3. 구속해제
 ;철문해제
-IF (CFLAG:ARG:4010 & 1) &&LOCAL:0 == 1
+IF (CFLAG:ARG:스케줄_구속상태 & 1) &&LOCAL:0 == 1
     IF RAND:100 > 10
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 여러 번 시도한 끝에, 자물쇠를 열어냈다.
     ELSE
@@ -520,7 +520,7 @@ IF (CFLAG:ARG:4010 & 1) &&LOCAL:0 == 1
     ENDIF
 ENDIF
 ;밧줄해제
-IF (CFLAG:ARG:4010 & 2) &&LOCAL:0 == 1
+IF (CFLAG:ARG:스케줄_구속상태 & 2) &&LOCAL:0 == 1
     IF RAND:100 > 10
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:ARG,"를")% 묶고있는 밧줄의 느슨한 부분을 찾아 풀어냈다.
     ELSE
@@ -539,13 +539,13 @@ IF (CFLAG:ARG:4010 & 2) &&LOCAL:0 == 1
     ENDIF
 ENDIF
 ;알몸해제. 무조건 성공
-IF (CFLAG:ARG:4010 & 8) &&LOCAL:0 == 1
+IF (CFLAG:ARG:스케줄_구속상태 & 8) &&LOCAL:0 == 1
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 외투를 벗어 %CALLNAME:ARG%의 알몸을 감쌌다.
 ENDIF
 ;기타 구속구 해제
 SIF LOCAL:0 == 1
     PRINTFORMW 그리고 %CALLNAME:ARG%의 몸을 구속하던 것들을 전부 떼어냈다.
-CFLAG:ARG:4010 = 0
+CFLAG:ARG:스케줄_구속상태 = 0
 
 ;결과반환
 ;디버그
@@ -587,7 +587,7 @@ LOCAL:11 = 0
 ;침입자의 기력%상태
 LOCAL:12 = 0
 ;경비대장의 캐릭터 번호 저장
-LOCAL:13 = FINDCHARA(CFLAG:4013, 2)
+LOCAL:13 = FINDCHARA(CFLAG:경비대장, 2)
 ;침입자의 버프 상태
 LOCALS:0 = 
 ;침입자가 때릴 캐릭터의 대표명. 만약 경비대장이 있으면 경비대장명이, 아니면 그냥 '경비원' 이 된다.
@@ -703,7 +703,7 @@ ENDIF
 LOCAL:0 = 0
 DO
     ;경비대장 체크 (이 전 턴에 뻗었을 수도 있으니까)
-    LOCAL:13 = FINDCHARA(CFLAG:4013, 2)
+    LOCAL:13 = FINDCHARA(CFLAG:경비대장, 2)
     DRAWLINE
     ;턴 정보 표시
     PRINTFORML <{LOCAL:0+1}/5 턴>
@@ -957,9 +957,9 @@ DO
                 PRINTFORMW (%조사처리(CALLNAME:(LOCAL:13),"는")% 퇴각했습니다)
                 ;경비대장 해임
                 PRINTFORMW (%조사처리(CALLNAME:(LOCAL:13),"는")% 경비대장에서 해임 되었습니다)
-                CFLAG:(LOCAL:13):4013 = 0
+                CFLAG:(LOCAL:13):경비대장 = 0
                 ;경비대장 정보 갱신.
-                LOCAL:13 = FINDCHARA(CFLAG:4013, 2)
+                LOCAL:13 = FINDCHARA(CFLAG:경비대장, 2)
             ;경비대장이 살았다.
             ELSE
                 ;경비대장 피격 배틀크라이. 100%확률로 발동함
@@ -1121,7 +1121,7 @@ LOCAL:1 = 0
 ;조수번호 대피
 LOCAL:2 = ASSI
 ;경비대장 추출.
-LOCAL:3 = FINDCHARA(CFLAG:4013, 2 )
+LOCAL:3 = FINDCHARA(CFLAG:경비대장, 2 )
 ;
 ;임시캐러 삭제
 DELCHARA CHARANUM-1
@@ -1873,7 +1873,7 @@ FLAG:구입총계 += 1
 ;입수 방법의 기록
 CSTR:3  = %CALLNAME:MASTER%의 조교관에 침입했다가 붙잡혔다.
 ;구입된 날을 기록
-CFLAG:3111 = DAY
+CFLAG:구입한날 = DAY
 
 ;구입 가능한 노예의 인원수 산출
 LOCAL = CALC_SLAVE_CAPACITY() - CHARANUM

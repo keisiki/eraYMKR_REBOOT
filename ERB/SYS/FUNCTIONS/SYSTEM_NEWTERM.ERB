@@ -130,7 +130,7 @@ NEXT
 ;종족 변경 플래그
 CFLAG:종족변경 = CFLAG:MASTER:종족변경
 ;ID도 카피
-CFLAG:3109 = CFLAG:MASTER:3109
+CFLAG:CSV번호 = CFLAG:MASTER:CSV번호
 ;종족 유전자 및 성별 반전 관련의 CFLAG를 카피
 FOR LOCAL, 3200, 3400
     CFLAG:LOCAL = CFLAG:MASTER:LOCAL
@@ -1094,7 +1094,7 @@ FOR ASSI, 0, CHARANUM
     ENDIF
     ;助手が壊造人格を持っていない＋(過去の周回プレイを含め)今までに幼児退行、狂気、精神崩壊、傀儡を全て取得し、記憶消去薬を1回以上飲ませ、
     ;かつ今回の周回プレイで難易度HARD以上をクリアした場合、または一度でも壊造人格を覚えさせた場合最初から壊造人格が付加されるようになる.
-    IF ((CFLAG:ASSI:17 == 31 && FLAG:난이도 >= 3) || CFLAG:ASSI:17 & 32) && TALENT:ASSI:괴조인격 == 0
+    IF ((CFLAG:ASSI:이벤트취득붕괴 == 31 && FLAG:난이도 >= 3) || CFLAG:ASSI:이벤트취득붕괴 & 32) && TALENT:ASSI:괴조인격 == 0
         CALL CONVERTED_ASSI, LOCAL:4
         LOCAL:4 = RESULT
     ENDIF
@@ -1153,7 +1153,7 @@ PRINTL 　　　★：조수로서 인계할 예정인 캐릭터를 표시합니
 ;助手を経験したことを示す
 ISASSI:ASSI = 1
 ;引き継いだキャラであることを判別するためのフラグ
-CFLAG:ASSI:18 = 1
+CFLAG:ASSI:계승여부 = 1
 ;称号リセット
 NICKNAME:ASSI = %CSVNICKNAME (NO:ASSI , 0)%
 ;館にいた時の状況
@@ -1257,12 +1257,12 @@ CFLAG:ASSI:호감도 = LOCAL:1
 ;[妊娠]等による胸の大きさの変動をここで修正
 @RESET_ASSI_PREGNANT, ARG
 ;胸の素質が変化していないなら帰る
-SIF !CFLAG:ARG:3006
+SIF !CFLAG:ARG:원래의가슴
     RETURN 0
 ;확대전의 상태로 돌아간다.
 ;출산 전이므로 절벽으로도 돌아간다.
-CALL NUM_TO_BUST(ARG, CFLAG:ARG:3006)
-CFLAG:ARG:3006 = 0 ;사용이 끝난 플래그 초기화
+CALL NUM_TO_BUST(ARG, CFLAG:ARG:원래의가슴)
+CFLAG:ARG:원래의가슴 = 0 ;사용이 끝난 플래그 초기화
 ;신체측정 플래그를 재운다(다음 번 신체측정을 행하기 위해)
 CFLAG:ARG:신체측정예약 = 0
 ;--------------------------------------------------
@@ -1341,7 +1341,7 @@ PRINTFORMW %조사처리(CALLNAME:ASSI,"는")% 뿌얘진 유리구슬 같은 눈
 PRINTFORMW 수도 없이 가혹한 조교를 받은 %CALLNAME:ASSI%의 인격은 형체도 없이 파괴되고 만 모양이다…….
 PRINTFORMW ＜%CALLNAME:MASTER%의 손으로 새로운 인격을 심어줄 수 있습니다＞
 PRINTFORML ＜%CALLNAME:ASSI%에게 [괴조인격]을 심어주겠습니까?＞
-SIF (CFLAG:ASSI:17 & 32) == 0
+SIF (CFLAG:ASSI:이벤트취득붕괴 & 32) == 0
     PRINTL (※아니오를 선택해도 괴조인격을 『익혔던 적이 있다』고 판정됩니다)
 PRINTLC [0] 예
 PRINTLC [1] 아니오
@@ -1366,9 +1366,9 @@ ELSEIF RESULT == 1
 ELSE
     GOTO INPUT_LOOP_CONVERTED_ASSI
 ENDIF
-SIF (CFLAG:ASSI:17 & 32) == 0
+SIF (CFLAG:ASSI:이벤트취득붕괴 & 32) == 0
     FLAG:괴조총계 += 1
-CFLAG:ASSI:17 |= 32
+CFLAG:ASSI:이벤트취득붕괴 |= 32
 
 RETURN ARG
 

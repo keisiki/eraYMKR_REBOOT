@@ -672,11 +672,11 @@ CALL SHOW_EQUIP_2
 
 
 ;디버그용
-;PRINTFORML {CFLAG:TARGET:4000}  메뉴
-;PRINTFORML {CFLAG:TARGET:4001}  현재만복도
-;PRINTFORML {CFLAG:TARGET:4002}  최대만복도
-;PRINTFORML {CFLAG:TARGET:4003}  현재영양도
-;PRINTFORML {CFLAG:TARGET:4004}  최대영양도
+;PRINTFORML {CFLAG:TARGET:메뉴}  메뉴
+;PRINTFORML {CFLAG:TARGET:현재만복도}  현재만복도
+;PRINTFORML {CFLAG:TARGET:최대만복도}  최대만복도
+;PRINTFORML {CFLAG:TARGET:현재영양도}  현재영양도
+;PRINTFORML {CFLAG:TARGET:최대영양도}  최대영양도
 
 ;-------------------------------------------------
 ;토리코모드용 체력 표시 함수
@@ -737,14 +737,14 @@ PRINTFORM /{MAXBASE:ARG:기력})
 ;-------------------------------------------------
 @HUNGER_BAR_TORIKOMODE, ARG
 ;우선 만복도 정보가 있는지부터 체크해본다. 정보가 없으면 세텡할 것. (이렇게 하지 않으면  /0 연산으로 뻗어버리는 수가 있다)
-SIF CFLAG:ARG:4002 == 0
+SIF CFLAG:ARG:최대만복도 == 0
     CALL INIT_HUNGERSYSTEM_TORIKOMODE
 
 ;최저최대값 세팅.
-CFLAG:ARG:4001 = LIMIT(CFLAG:ARG:4001, 0, CFLAG:ARG:4002)
+CFLAG:ARG:현재만복도 = LIMIT(CFLAG:ARG:현재만복도, 0, CFLAG:ARG:최대만복도)
 ;계산, 출력. CFLAG 라서 바로 계산하지 못하고 로칼변수에 대입해서 계산.
-LOCAL:1 = CFLAG:ARG:4001
-LOCAL:2 = CFLAG:ARG:4002
+LOCAL:1 = CFLAG:ARG:현재만복도
+LOCAL:2 = CFLAG:ARG:최대만복도
 LOCAL:3 = (LOCAL:1 *100 / LOCAL:2)
 
 ;디버그
@@ -775,7 +775,7 @@ IF FLAG:토리코모드 & 1
         PRINT 텅빔
         RESETCOLOR
     ENDIF
-    PRINTFORM /{CFLAG:ARG:4002}) 
+    PRINTFORM /{CFLAG:ARG:최대만복도}) 
 ELSE
     PRINT 만복
     IF LOCAL:3 >= 95
@@ -789,20 +789,20 @@ ELSE
     ELSE 
         CALL SETCOLOR_TORIKOMODE, "RED", 5
     ENDIF
-    PRINTFORM ({CFLAG:ARG:4001, 4}/{CFLAG:ARG:4002, 4}) 
+    PRINTFORM ({CFLAG:ARG:현재만복도, 4}/{CFLAG:ARG:최대만복도, 4}) 
     RESETCOLOR
 ENDIF
 
 ;디버그
 ;LOCAL:0 = LOCAL:3*100
 ;PRINTFORML {LOCAL:0}LOCAL:0
-;LOCAL:1 = CFLAG:ARG:4001
+;LOCAL:1 = CFLAG:ARG:현재만복도
 ;PRINTFORML {LOCAL:1}LOCAL:1
-;LOCAL:2 = CFLAG:ARG:4002
+;LOCAL:2 = CFLAG:ARG:최대만복도
 ;PRINTFORML {LOCAL:2}LOCAL:2
 ;LOCAL:3 = LOCAL:1 *100 / LOCAL:2
 ;PRINTFORML {LOCAL:3}LOCAL:3
-;PRINTFORM (현재:{CFLAG:ARG:4001}) 
+;PRINTFORM (현재:{CFLAG:ARG:현재만복도}) 
 
 
 
@@ -812,19 +812,19 @@ ENDIF
 ;-------------------------------------------------
 @NUTRITION_BAR_TORIKOMODE, ARG
 ;우선 영양도 정보가 있는지부터 체크해본다. 정보가 없으면 세텡할 것. (이렇게 하지 않으면  /0 연산으로 뻗어버리는 수가 있다)
-SIF CFLAG:ARG:4004 == 0
+SIF CFLAG:ARG:최대영양도 == 0
     CALL INIT_HUNGERSYSTEM_TORIKOMODE
 
 ;최저최대값 세팅.
-CFLAG:ARG:4003 = LIMIT(CFLAG:ARG:4003, 0, CFLAG:ARG:4004)
+CFLAG:ARG:현재영양도 = LIMIT(CFLAG:ARG:현재영양도, 0, CFLAG:ARG:최대영양도)
 
 
 ;디버그
 ;PRINTFORML %CALLNAME:ARG%를 체크하는 중입니다...@NUTRITION_BAR_TORIKOMODE, ARG
 
 ;계산. CFLAG 라서 바로 계산하지 못하고 로칼변수에 대입해서 계산.
-LOCAL:1 = CFLAG:ARG:4003
-LOCAL:2 = CFLAG:ARG:4004
+LOCAL:1 = CFLAG:ARG:현재영양도
+LOCAL:2 = CFLAG:ARG:최대영양도
 LOCAL:3 = (LOCAL:1 *100 / LOCAL:2)
 
 ;표시방식이 토리코식이면,
@@ -854,7 +854,7 @@ IF FLAG:토리코모드 & 1
         FONTREGULAR
         RESETCOLOR
     ENDIF
-    PRINTFORM /{CFLAG:ARG:4004}) 
+    PRINTFORM /{CFLAG:ARG:최대영양도}) 
 ELSE
     PRINT 영양
     IF LOCAL:3 >= 95
@@ -868,7 +868,7 @@ ELSE
     ELSE 
         CALL SETCOLOR_TORIKOMODE, "RED", 5
     ENDIF
-    PRINTFORM ({CFLAG:ARG:4003, 4}/{CFLAG:ARG:4002, 4}) 
+    PRINTFORM ({CFLAG:ARG:현재영양도, 4}/{CFLAG:ARG:최대만복도, 4}) 
     RESETCOLOR
 ENDIF
 
@@ -881,28 +881,28 @@ ENDIF
 CALL CALC_PRICE_MENU_TORIKOMODE
 
 PRINT 방침:
-IF CFLAG:ARG:4000 == 0
+IF CFLAG:ARG:메뉴 == 0
     CALL SETCOLOR_TORIKOMODE, "RED", 4
     PRINT 굶긴다 
     PRINTFORM {RESULT:0}원/日
     RESETCOLOR
-ELSEIF CFLAG:ARG:4000 == 1
+ELSEIF CFLAG:ARG:메뉴 == 1
     CALL SETCOLOR_TORIKOMODE, "MAGENTA", 4
     PRINT 싸구려 
     PRINTFORM {RESULT:1}원/日
     RESETCOLOR
 
-ELSEIF CFLAG:ARG:4000 == 2
+ELSEIF CFLAG:ARG:메뉴 == 2
     CALL SETCOLOR_TORIKOMODE, "YELLOW", 4
     PRINT 일반식 
     PRINTFORM {RESULT:2}원/日
     RESETCOLOR
-ELSEIF CFLAG:ARG:4000 == 3
+ELSEIF CFLAG:ARG:메뉴 == 3
     CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
     PRINT 영양식 
     PRINTFORM {RESULT:3}원/日
     RESETCOLOR
-ELSEIF  CFLAG:ARG:4000 == 4
+ELSEIF  CFLAG:ARG:메뉴 == 4
     CALL SETCOLOR_TORIKOMODE, "GREEN", 4
     PRINT 특제식 
     PRINTFORM {RESULT:4}원/日
@@ -915,27 +915,27 @@ ENDIF
 ;-------------------------------------------------
 @STARVE_BAR_TORIKOMODE, ARG
 ;계산, 출력
-IF CFLAG:ARG:4005 >= 5
+IF CFLAG:ARG:굶은끼니 >= 5
     CALL SETCOLOR_TORIKOMODE, "RED", 5
     FONTBOLD
-    PRINTFORML ......계속 계속 굶고 있다...... ({CFLAG:ARG:4005}끼)
+    PRINTFORML ......계속 계속 굶고 있다...... ({CFLAG:ARG:굶은끼니}끼)
     FONTREGULAR
     RESETCOLOR
-ELSEIF CFLAG:ARG:4005 == 4
+ELSEIF CFLAG:ARG:굶은끼니 == 4
     CALL SETCOLOR_TORIKOMODE, "RED", 3
     PRINTL ...이틀 동안 아무것도 먹지 못했다...
     RESETCOLOR
-ELSEIF CFLAG:ARG:4005 == 3
+ELSEIF CFLAG:ARG:굶은끼니 == 3
     CALL SETCOLOR_TORIKOMODE, "RED", 2
     PRINTL ...3끼 연속 아무것도 먹지 못했다...
     RESETCOLOR
-ELSEIF CFLAG:ARG:4005 == 2
+ELSEIF CFLAG:ARG:굶은끼니 == 2
     CALL SETCOLOR_TORIKOMODE, "RED", 1
     PRINTL ...하룻동안 아무것도 먹지 못했다...
     RESETCOLOR
-ELSEIF  CFLAG:ARG:4005 == 1
+ELSEIF  CFLAG:ARG:굶은끼니 == 1
     PRINTL ...1끼 굶었다.
-ELSEIF  CFLAG:ARG:4005 == 0
+ELSEIF  CFLAG:ARG:굶은끼니 == 0
     PRINTL ...맛있게 먹고 있는 듯 하다.
 ELSE
     PRINTL 에러발생!!!
@@ -1274,11 +1274,11 @@ IF LOCAL:3 ==1
     ;디버그용
     ;PRINTFORML {RESULT:1} 메뉴의 만복도
     ;PRINTFORML {RESULT:2} 메뉴의 영양도
-    CFLAG:TARGET:4001 += RESULT:1
-    CFLAG:TARGET:4003 += RESULT:2
+    CFLAG:TARGET:현재만복도 += RESULT:1
+    CFLAG:TARGET:현재영양도 += RESULT:2
     ;수치 정리.
-    CFLAG:TARGET:4001 = LIMIT(CFLAG:TARGET:4001, 0, CFLAG:TARGET:4002)
-    CFLAG:TARGET:4003 = LIMIT(CFLAG:TARGET:4003, 0, CFLAG:TARGET:4004)
+    CFLAG:TARGET:현재만복도 = LIMIT(CFLAG:TARGET:현재만복도, 0, CFLAG:TARGET:최대만복도)
+    CFLAG:TARGET:현재영양도 = LIMIT(CFLAG:TARGET:현재영양도, 0, CFLAG:TARGET:최대영양도)
 
     ;식사 멘트 출력. 식사 상태에 따라 약간의 추가 표현.
     PRINTFORM %조사처리(CALLNAME:TARGET,"는")% 
@@ -1331,14 +1331,14 @@ IF LOCAL:3 ==1
     MONEY -=LOCAL:10
     PRINTFORML 식비:-{LOCAL:10} / 현재 잔고:{MONEY}
     ;배가 가득찼는지 알려줌. (더 못 먹이게)
-    IF CFLAG:TARGET:4001 == CFLAG:TARGET:4002
+    IF CFLAG:TARGET:현재만복도 == CFLAG:TARGET:최대만복도
         PRINTL
         CALL SETCOLOR_TORIKOMODE, "GREEN", 5
         PRINTFORML %CALLNAME:TARGET%의 배가 가득 찼다….
         RESETCOLOR
     ENDIF
     ;굶은 회수 초기화
-    CFLAG:TARGET:4005 = 0
+    CFLAG:TARGET:굶은끼니 = 0
 ;안 먹었다면
 ELSE
 ENDIF
@@ -1610,7 +1610,7 @@ REND
 ;만복도, 영양도 설정. 메뉴, 굶은회수 설정. 노예 구매시 불려지는 함수들이다.
 ;………………………………………………
 @SET_DEAFAULT_MENU_TORIKOMODE , ARG
-    CFLAG:ARG:4000 = 1
+    CFLAG:ARG:메뉴 = 1
 
 @SET_DEAFAULT_HUNGER_TORIKOMODE , ARG
 ;위장 크기의 기본값은 2000이며, 소질<덩치>에 따라 변한다.
@@ -1628,18 +1628,18 @@ LOCAL = 2000
     ELSE
     ENDIF
 ;위장크기 세팅
-CFLAG:ARG:4002 = LOCAL
+CFLAG:ARG:최대만복도 = LOCAL
 
 ;위장의 50%만 채워서 만복도로 세팅.
-CFLAG:ARG:4001 = CFLAG:ARG:4002 / 2
+CFLAG:ARG:현재만복도 = CFLAG:ARG:최대만복도 / 2
 
 @SET_DEAFAULT_NUTRITION_TORIKOMODE , ARG
 ;초기 영양도는 모든 캐릭 공히 1500/3000이다.
-    CFLAG:ARG:4003 = 1500
-    CFLAG:ARG:4004 = 3000
+    CFLAG:ARG:현재영양도 = 1500
+    CFLAG:ARG:최대영양도 = 3000
 
 @SET_DEAFAULT_STARVE_TORIKOMODE , ARG
-    CFLAG:ARG:4005 = 0
+    CFLAG:ARG:굶은끼니 = 0
 
 ;………………………………………………
 ;만복도 감소량 계산 함수
@@ -1711,8 +1711,8 @@ RETURN 1
 
 ;만복보정 계산 (100배값)
 LOCAL:0 = 200
-LOCAL:1 = CFLAG:ARG:4001
-LOCAL:2 = CFLAG:ARG:4002
+LOCAL:1 = CFLAG:ARG:현재만복도
+LOCAL:2 = CFLAG:ARG:최대만복도
 LOCAL:3 = 125 - (LOCAL:1 * 50 /LOCAL:2)
 LOCAL:0 = LOCAL:0 * LOCAL:3
 
@@ -1920,10 +1920,10 @@ IF FLAG:토리코모드 & 32
 
         ;디버그 
         ;PRINTFORML COUNT %CALLNAME:COUNT% {COUNT}
-        ;PRINTFORML CFLAG:COUNT:4001 {CFLAG:COUNT:4001}
-        ;PRINTFORML CFLAG:COUNT:4003 {CFLAG:COUNT:4003}
+        ;PRINTFORML CFLAG:COUNT:현재만복도 {CFLAG:COUNT:현재만복도}
+        ;PRINTFORML CFLAG:COUNT:현재영양도 {CFLAG:COUNT:현재영양도}
 
-        IF CFLAG:COUNT:4001 == 0 && CFLAG:COUNT:4003 == 0
+        IF CFLAG:COUNT:현재만복도 == 0 && CFLAG:COUNT:현재영양도 == 0
             ;디버그
             ;PRINTFORML {TALENT:COUNT:봉래인} TALENT:COUNT:봉래인
             ;PRINTFORML {TALENT:TARGET:봉래인} TALENT:TARGET:봉래인
@@ -1948,8 +1948,8 @@ IF FLAG:토리코모드 & 32
                 PRINTFORMW 아마도 상당히 불만을 가지고 있겠지….
                 PRINTFORMW <%CALLNAME:COUNT%의 만복, 영양도가 최대가 되었습니다.>
                 PRINTFORMW <%CALLNAME:COUNT%의 스트레스가 대폭 상승했습니다.>
-                CFLAG:COUNT:4001 = CFLAG:COUNT:4002
-                CFLAG:COUNT:4003 = CFLAG:COUNT:4004
+                CFLAG:COUNT:현재만복도 = CFLAG:COUNT:최대만복도
+                CFLAG:COUNT:현재영양도 = CFLAG:COUNT:최대영양도
                 CFLAG:COUNT:스트레스 += 5000
             ;아니라면 죽는다.
             ELSE
@@ -1978,15 +1978,15 @@ IF FLAG:토리코모드 & 32
             ;
         ELSE
         ;할당된 메뉴로 식를 더해간다.
-            IF CFLAG:(LOCAL:99):4000 == 0
+            IF CFLAG:(LOCAL:99):메뉴 == 0
                 LOCAL:0 += RESULT:0
-            ELSEIF CFLAG:(LOCAL:99):4000 == 1
+            ELSEIF CFLAG:(LOCAL:99):메뉴 == 1
                 LOCAL:0 += RESULT:1
-            ELSEIF CFLAG:(LOCAL:99):4000 == 2
+            ELSEIF CFLAG:(LOCAL:99):메뉴 == 2
                 LOCAL:0 += RESULT:2
-            ELSEIF CFLAG:(LOCAL:99):4000 == 3
+            ELSEIF CFLAG:(LOCAL:99):메뉴 == 3
                 LOCAL:0 += RESULT:3
-            ELSEIF CFLAG:(LOCAL:99):4000 == 4
+            ELSEIF CFLAG:(LOCAL:99):메뉴 == 4
                 LOCAL:0 += RESULT:4
             ELSE
             ENDIF
@@ -2007,7 +2007,7 @@ PRINTFORML 입니다. 현재 잔고 : {MONEY}원.
 ;판정은 최대 만복도가 0 인지로 판정한다. 이 수치는 모드를 켠 후 구매시 부여받지 않으면 무조건 0이기 때문이다.
 @INIT_HUNGERSYSTEM_TORIKOMODE
 REPEAT CHARANUM
-    IF CFLAG:COUNT:4002 == 0
+    IF CFLAG:COUNT:최대만복도 == 0
         PRINTFORMW 시스템 체크중.........
         PRINTFORMW ....
         PRINTFORMW %CALLNAME:COUNT% 의 만복도 정보를 찾지 못했습니다.
@@ -2016,17 +2016,17 @@ REPEAT CHARANUM
         CALL SET_DEAFAULT_NUTRITION_TORIKOMODE , COUNT
         CALL SET_DEAFAULT_MENU_TORIKOMODE , COUNT
         ;디버그용
-        ;PRINTFORML {CFLAG:COUNT:4000}  메뉴
-        ;PRINTFORML {CFLAG:COUNT:4001}  현재만복도
-        ;PRINTFORML {CFLAG:COUNT:4002}  최대만복도
-        ;PRINTFORML {CFLAG:COUNT:4003}  현재영양도
-        ;PRINTFORML {CFLAG:COUNT:4004}  최대영양도
+        ;PRINTFORML {CFLAG:COUNT:메뉴}  메뉴
+        ;PRINTFORML {CFLAG:COUNT:현재만복도}  현재만복도
+        ;PRINTFORML {CFLAG:COUNT:최대만복도}  최대만복도
+        ;PRINTFORML {CFLAG:COUNT:현재영양도}  현재영양도
+        ;PRINTFORML {CFLAG:COUNT:최대영양도}  최대영양도
     ELSE
     ENDIF
 REND
 
 ;그리고 주인의 정보를 세팅한다.
-IF CFLAG:MASTER:4002 == 0
+IF CFLAG:MASTER:최대만복도 == 0
     PRINTFORMW 시스템 체크중.........
     PRINTFORMW ....
     PRINTFORMW %CALLNAME:MASTER% 의 만복도 정보를 찾지 못했습니다.
@@ -2036,11 +2036,11 @@ IF CFLAG:MASTER:4002 == 0
     CALL SET_DEAFAULT_MENU_TORIKOMODE , MASTER
     ;디버그용
     ;PRINTFORMW 만복도 정보가 세팅 완료 되었습니다.
-    ;PRINTFORML {CFLAG:MASTER:4000}  메뉴
-    ;PRINTFORML {CFLAG:MASTER:4001}  현재만복도
-    ;PRINTFORML {CFLAG:MASTER:4002}  최대만복도
-    ;PRINTFORML {CFLAG:MASTER:4003}  현재영양도
-    ;PRINTFORML {CFLAG:MASTER:4004}  최대영양도
+    ;PRINTFORML {CFLAG:MASTER:메뉴}  메뉴
+    ;PRINTFORML {CFLAG:MASTER:현재만복도}  현재만복도
+    ;PRINTFORML {CFLAG:MASTER:최대만복도}  최대만복도
+    ;PRINTFORML {CFLAG:MASTER:현재영양도}  현재영양도
+    ;PRINTFORML {CFLAG:MASTER:최대영양도}  최대영양도
 ELSE
 ENDIF
 
@@ -2059,17 +2059,17 @@ LOCAL:0 = 0
 ;PHASE1. 일반 배를 꺼트린다.
 ;만복하락
 CALL CALC_DEGRADE_HUNGER_TORIKOMODE, ARG
-CFLAG:ARG:4001 -= RESULT:1
+CFLAG:ARG:현재만복도 -= RESULT:1
 ;디버그
 ;PRINTFORML %CALLNAME:ARG%의 배가 {RESULT:1} 만큼 고파졌다... 라고 해도 0 이하로는 떨어지지 않지롱
 ;영양하락
 CALL CALC_DEGRADE_NUTRITION_TORIKOMODE, ARG
-CFLAG:ARG:4003 -= RESULT:1
+CFLAG:ARG:현재영양도 -= RESULT:1
 ;디버그
 ;PRINTFORML %CALLNAME:ARG%의 영양도가 {RESULT:1} 만큼 떨어졌다...라고 해도 0 이하로는 떨어지지 않지롱
 ;수치정리
-CFLAG:ARG:4001 = LIMIT(CFLAG:ARG:4001, 0, CFLAG:ARG:4002)
-CFLAG:ARG:4003 = LIMIT(CFLAG:ARG:4003, 0, CFLAG:ARG:4004)
+CFLAG:ARG:현재만복도 = LIMIT(CFLAG:ARG:현재만복도, 0, CFLAG:ARG:최대만복도)
+CFLAG:ARG:현재영양도 = LIMIT(CFLAG:ARG:현재영양도, 0, CFLAG:ARG:최대영양도)
 
 ;PHASE2. 밥을 먹는다.
 ;자율식사 보정치 생성. ARG에 캐릭터번호가 들어간다.
@@ -2080,7 +2080,7 @@ CALL CALC_EAT_SELF_TORIKOMODE , ARG
 ;먹을지 말지를 체크해서 RESULT:1 에 반환.
 CALL CHECK_EAT_OR_NOT_TORIKOMODE, RESULT:0
 ;굶길경우엔 별도의 RESUL:1 생성
-SIF CFLAG:ARG:4000 == 0
+SIF CFLAG:ARG:메뉴 == 0
     RESULT:0 = 2
 
 
@@ -2091,7 +2091,7 @@ IF RESULT:0 == 0
     PRINTFORML %조사처리(CALLNAME:ARG,"는")%… 밥 먹기를 거부했다….
     RESETCOLOR
     ;굶은회수1회 증가
-    CFLAG:ARG:4005 += 1
+    CFLAG:ARG:굶은끼니 += 1
 
 ;밥을 먹기로 했다면
 ELSEIF RESULT:0 == 1
@@ -2105,15 +2105,15 @@ ELSEIF RESULT:0 == 1
         ;PRINTFORML RESULT:4 {RESULT:4}
         ;PRINTFORML RESULT:5 {RESULT:5}
     ;이 캐릭터에 할당된 메뉴를 참조해서, 음식 값을 정한다.
-    IF CFLAG:ARG:4000 == 0
+    IF CFLAG:ARG:메뉴 == 0
         LOCAL:0 = RESULT:0
-    ELSEIF CFLAG:ARG:4000 == 1
+    ELSEIF CFLAG:ARG:메뉴 == 1
         LOCAL:0 = RESULT:1
-    ELSEIF CFLAG:ARG:4000 == 2
+    ELSEIF CFLAG:ARG:메뉴 == 2
         LOCAL:0 = RESULT:2
-    ELSEIF CFLAG:ARG:4000 == 3
+    ELSEIF CFLAG:ARG:메뉴 == 3
         LOCAL:0 = RESULT:3
-    ELSEIF CFLAG:ARG:4000 == 4
+    ELSEIF CFLAG:ARG:메뉴 == 4
         LOCAL:0 = RESULT:4
     ELSE
     ENDIF
@@ -2131,20 +2131,20 @@ ELSEIF RESULT:0 == 1
         ;PRINTFORML {RESULT:1} 메뉴의 만복도
         ;PRINTFORML {RESULT:2} 메뉴의 영양도
         ;PRINTFORML {RESULT:3} 메뉴의 스트레스
-        CFLAG:ARG:4001 += RESULT:1
-        CFLAG:ARG:4003 += RESULT:2
+        CFLAG:ARG:현재만복도 += RESULT:1
+        CFLAG:ARG:현재영양도 += RESULT:2
         CFLAG:ARG:스트레스 += RESULT:3
         ;디버그용
-        ;PRINTFORML CFLAG:ARG:4001 {CFLAG:ARG:4001}
-        ;PRINTFORML CFLAG:ARG:4003 {CFLAG:ARG:4003}
+        ;PRINTFORML CFLAG:ARG:현재만복도 {CFLAG:ARG:현재만복도}
+        ;PRINTFORML CFLAG:ARG:현재영양도 {CFLAG:ARG:현재영양도}
         ;PRINTFORML 밥 먹기은 후 스트레스 CFLAG:ARG:스트레스 {CFLAG:ARG:스트레스}
         ;수치 정리.
-        CFLAG:ARG:4001 = LIMIT(CFLAG:ARG:4001, 0, CFLAG:ARG:4002)
-        CFLAG:ARG:4003 = LIMIT(CFLAG:ARG:4003, 0, CFLAG:ARG:4004)
+        CFLAG:ARG:현재만복도 = LIMIT(CFLAG:ARG:현재만복도, 0, CFLAG:ARG:최대만복도)
+        CFLAG:ARG:현재영양도 = LIMIT(CFLAG:ARG:현재영양도, 0, CFLAG:ARG:최대영양도)
         CFLAG:ARG:스트레스 = LIMIT(CFLAG:ARG:스트레스, 0, 999999)
         ;식사 멘트 출력
         PRINTFORM %조사처리(CALLNAME:ARG,"는")% 
-        CALL CALC_EATEN_FOOD_TORIKOMODE, CFLAG:ARG:4000, NO:ARG
+        CALL CALC_EATEN_FOOD_TORIKOMODE, CFLAG:ARG:메뉴, NO:ARG
         PRINTFORML 먹었습니다.
         ;식비차감
         MONEY -=LOCAL:0
@@ -2154,10 +2154,10 @@ ELSEIF RESULT:0 == 1
         ;CALL HUNGER_BAR_TORIKOMODE,  ARG
         ;CALL NUTRITION_BAR_TORIKOMODE,  ARG
         ;디버그용
-        ;PRINTFORML {CFLAG:ARG:4001} 현재 만복
-        ;PRINTFORML {CFLAG:ARG:4003} 현재 영양
+        ;PRINTFORML {CFLAG:ARG:현재만복도} 현재 만복
+        ;PRINTFORML {CFLAG:ARG:현재영양도} 현재 영양
         ;굶은 회수 초기화
-        CFLAG:ARG:4005 = 0
+        CFLAG:ARG:굶은끼니 = 0
         ;밥을 먹었을 경우, 소비한 밥값을 보고한다.
         RETURN LOCAL:0
 
@@ -2167,7 +2167,7 @@ ELSEIF RESULT:0 == 1
         PRINTFORML 식비가 떨어져, %조사처리(CALLNAME:ARG,"는")% 굶어야만 했습니다….
         RESETCOLOR
         ;굶은회수1회 증가
-        CFLAG:ARG:4005 += 1
+        CFLAG:ARG:굶은끼니 += 1
     ENDIF
         
 ;메뉴가 굶어라 일 때는...
@@ -2177,7 +2177,7 @@ ELSEIF RESULT:0 == 2
     CFLAG:ARG:스트레스 += RESULT:3
     CFLAG:ARG:스트레스 = LIMIT(CFLAG:ARG:스트레스, 0, 999999)
     ;굶은회수1회 증가
-    CFLAG:ARG:4005 += 1
+    CFLAG:ARG:굶은끼니 += 1
     ;상태출력
     CALL SETCOLOR_TORIKOMODE, "RED", 3
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 아무것도 먹지 못하고 굶어야 했습니다…. (스트레스 상승)
@@ -2252,7 +2252,7 @@ ENDIF
 RESTART
 
 ;………………………………………………
-;개별 캐릭터 메뉴 설정 CFLAG:4002
+;개별 캐릭터 메뉴 설정 CFLAG:최대만복도
 ;………………………………………………
 ; 0 - 굶긴다
 ; 1 - 저렴한 식사
@@ -2311,19 +2311,19 @@ $INPUT_LOOP
 INPUT
 IF RESULT == 0
     PRINTFORMW %조사처리(CALLNAME:ARG,"를")% 굶깁니다.
-    CFLAG:ARG:4000 = 0
+    CFLAG:ARG:메뉴 = 0
 ELSEIF RESULT == 1
     PRINTFORMW %조사처리(CALLNAME:ARG,"를")% 굶어 죽지 않을 정도로 먹입니다.
-    CFLAG:ARG:4000 = 1
+    CFLAG:ARG:메뉴 = 1
 ELSEIF RESULT == 2
     PRINTFORMW %CALLNAME:ARG%에게 일반적인 식사를 제공합니다. 후식은 없음.
-    CFLAG:ARG:4000 = 2
+    CFLAG:ARG:메뉴 = 2
 ELSEIF RESULT == 3
     PRINTFORMW %CALLNAME:ARG%에게 영양만점의 식사를 제공합니다. 후식은 파르페.
-    CFLAG:ARG:4000 = 3
+    CFLAG:ARG:메뉴 = 3
 ELSEIF RESULT == 4
     PRINTFORMW %CALLNAME:ARG%의 식성에 맞는 영양만점의 식사를 제공합니다. 후식은 초이스 가능.
-    CFLAG:ARG:4000 = 4
+    CFLAG:ARG:메뉴 = 4
 ELSEIF RESULT == 999
     RETURN 0
 ELSE
@@ -2384,23 +2384,23 @@ RESULT:4 = LOCAL:4
 ;디버그
 ;PRINTFORML 현재 %CALLNAME:ARG%를 체크하고 있습니다...@CALC_EAT_MENU_TORIKOMODE, ARG
 
-IF CFLAG:ARG:4000 == 0
+IF CFLAG:ARG:메뉴 == 0
     RESULT:1 = 0
     RESULT:2 = 0
     RESULT:3 = 100
-ELSEIF CFLAG:ARG:4000 == 1
+ELSEIF CFLAG:ARG:메뉴 == 1
     RESULT:1 = 1000
     RESULT:2 = 250
     RESULT:3 = 0
-ELSEIF CFLAG:ARG:4000 == 2
+ELSEIF CFLAG:ARG:메뉴 == 2
     RESULT:1 = 1000
     RESULT:2 = 500
     RESULT:3 = 0
-ELSEIF CFLAG:ARG:4000 == 3
+ELSEIF CFLAG:ARG:메뉴 == 3
     RESULT:1 = 1000
     RESULT:2 = 700
     RESULT:3 = 0
-ELSEIF CFLAG:ARG:4000 == 4
+ELSEIF CFLAG:ARG:메뉴 == 4
     RESULT:1 = 1000
     RESULT:2 = 1000
     RESULT:3 = -200
@@ -2457,8 +2457,8 @@ LOCAL:0 = 50
 ;PRINTFORML {LOCAL:0} 기본값
 
 ;만복도 보정. 50%를 기준으로 적으면 +100까지. 많으면 -100까지. (배부르면 먹기 싫다는 뜻)
-LOCAL:1 = CFLAG:ARG:4001
-LOCAL:2 = CFLAG:ARG:4002
+LOCAL:1 = CFLAG:ARG:현재만복도
+LOCAL:2 = CFLAG:ARG:최대만복도
 LOCAL:3 = (100 * LOCAL:1) / LOCAL:2
 LOCAL:0 += 100 - (LOCAL:3 *2)
 
@@ -2475,7 +2475,7 @@ LOCAL:0 += 100 - (LOCAL:3 *2)
     IF ARG:1 > 0
         LOCAL:0 += ARG:1 * 20
     ELSE
-        LOCAL:0 += CFLAG:ARG:4000 * 20
+        LOCAL:0 += CFLAG:ARG:메뉴 * 20
     ENDIF
 
 ;디버그
@@ -2759,11 +2759,11 @@ IF ARG:1 == TARGET
     ;디버그용
     ;PRINTFORM {RESULT:1} 메뉴의 만복도
     ;PRINTFORM {RESULT:2} 메뉴의 영양도
-    CFLAG:TARGET:4001 += RESULT:1*2
-    CFLAG:TARGET:4003 += RESULT:2*2
+    CFLAG:TARGET:현재만복도 += RESULT:1*2
+    CFLAG:TARGET:현재영양도 += RESULT:2*2
     ;수치 정리.
-    CFLAG:TARGET:4001 = LIMIT(CFLAG:TARGET:4001, 0, CFLAG:TARGET:4002)
-    CFLAG:TARGET:4003 = LIMIT(CFLAG:TARGET:4003, 0, CFLAG:TARGET:4004)
+    CFLAG:TARGET:현재만복도 = LIMIT(CFLAG:TARGET:현재만복도, 0, CFLAG:TARGET:최대만복도)
+    CFLAG:TARGET:현재영양도 = LIMIT(CFLAG:TARGET:현재영양도, 0, CFLAG:TARGET:최대영양도)
 
     CALL HUNGER_BAR_TORIKOMODE, TARGET
     CALL NUTRITION_BAR_TORIKOMODE, TARGET
@@ -2780,11 +2780,11 @@ ELSEIF ARG:1 == ASSI
     ;디버그용
     ;PRINTFORM {RESULT:1} 메뉴의 만복도
     ;PRINTFORM {RESULT:2} 메뉴의 영양도
-    CFLAG:ASSI:4001 += RESULT:1*2
-    CFLAG:ASSI:4003 += RESULT:2*2
+    CFLAG:ASSI:현재만복도 += RESULT:1*2
+    CFLAG:ASSI:현재영양도 += RESULT:2*2
     ;수치 정리.
-    CFLAG:ASSI:4001 = LIMIT(CFLAG:ASSI:4001, 0, CFLAG:ASSI:4002)
-    CFLAG:ASSI:4003 = LIMIT(CFLAG:ASSI:4003, 0, CFLAG:ASSI:4004)
+    CFLAG:ASSI:현재만복도 = LIMIT(CFLAG:ASSI:현재만복도, 0, CFLAG:ASSI:최대만복도)
+    CFLAG:ASSI:현재영양도 = LIMIT(CFLAG:ASSI:현재영양도, 0, CFLAG:ASSI:최대영양도)
 
     CALL HUNGER_BAR_TORIKOMODE, ASSI
     CALL NUTRITION_BAR_TORIKOMODE, ASSI
@@ -3557,27 +3557,27 @@ LOCAL:0 = TARGET
 ;타겟치환
 TARGET = ARG
 
-;TEQUIP 세팅. CFLAG:4010를 체크
+;TEQUIP 세팅. CFLAG:스케줄_구속상태를 체크
 ;밧줄
-SIF CFLAG:4010 & 2
+SIF CFLAG:스케줄_구속상태 & 2
     TEQUIP:40 =1
 ;볼재갈
-SIF CFLAG:4010 & 8
+SIF CFLAG:스케줄_구속상태 & 8
     TEQUIP:42 =1
 ;아이마스크
-SIF CFLAG:4010 & 16
+SIF CFLAG:스케줄_구속상태 & 16
     TEQUIP:41 =1
 ;V로터삽입. 어째서인지는 모르겠으나, 3을 넣어줘야 지시문이 제대로 출력됨 -_-
-SIF CFLAG:4010 & 32
+SIF CFLAG:스케줄_구속상태 & 32
     TEQUIP:20 =3
 ;A비즈
-SIF CFLAG:4010 & 64
+SIF CFLAG:스케줄_구속상태 & 64
     TEQUIP:25 =1
 ;C캡
-SIF CFLAG:4010 & 128
+SIF CFLAG:스케줄_구속상태 & 128
     TEQUIP:30 =1
 ;B캡
-SIF CFLAG:4010 & 256
+SIF CFLAG:스케줄_구속상태 & 256
     TEQUIP:35 =1
 
 ;지시문 출력
@@ -3610,27 +3610,27 @@ LOCAL:0 = TARGET
 ;타겟치환
 TARGET = ARG
 
-;TEQUIP 세팅. CFLAG:4010를 체크
+;TEQUIP 세팅. CFLAG:스케줄_구속상태를 체크
 ;밧줄
-SIF CFLAG:4010 & 2
+SIF CFLAG:스케줄_구속상태 & 2
     TEQUIP:40 =1
 ;볼재갈
-SIF CFLAG:4010 & 8
+SIF CFLAG:스케줄_구속상태 & 8
     TEQUIP:42 =1
 ;아이마스크
-SIF CFLAG:4010 & 16
+SIF CFLAG:스케줄_구속상태 & 16
     TEQUIP:41 =1
 ;V로터
-SIF CFLAG:4010 & 32
+SIF CFLAG:스케줄_구속상태 & 32
     TEQUIP:20 =1
 ;A비즈
-SIF CFLAG:4010 & 64
+SIF CFLAG:스케줄_구속상태 & 64
     TEQUIP:25 =1
 ;C캡
-SIF CFLAG:4010 & 128
+SIF CFLAG:스케줄_구속상태 & 128
     TEQUIP:30 =1
 ;B캡
-SIF CFLAG:4010 & 256
+SIF CFLAG:스케줄_구속상태 & 256
     TEQUIP:35 =1
 
 ;구상 부르기

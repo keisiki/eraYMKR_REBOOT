@@ -19,24 +19,24 @@ LOCAL:1 = RAND:100
 ;알에서는 어디까지나 1명뿐
 IF ARG:1 != 3
     IF LOCAL:1 == 0
-        CFLAG:ARG:3011 = 3
+        CFLAG:ARG:첫째성별 = 3
         PRINTFORML 놀랍게도 태어난 아이는 세 쌍둥이였다.
     ELSEIF LOCAL == 0
-        CFLAG:ARG:3011 = 2
+        CFLAG:ARG:첫째성별 = 2
         PRINTFORML 놀랍게도 태어난 아이는 쌍둥이였다.
     ELSE
-        CFLAG:ARG:3011 = 1
+        CFLAG:ARG:첫째성별 = 1
     ENDIF
 ELSE
-    CFLAG:ARG:3011 = 1
+    CFLAG:ARG:첫째성별 = 1
 ENDIF
 
-FOR LOCAL, 0, CFLAG:ARG:3011
+FOR LOCAL, 0, CFLAG:ARG:첫째성별
     ;개별로 성별 판정
     LOCAL:1 = (FLAG:SHOP이벤트확장 & 2048) ? RAND:2 # 0
     
     CFLAG:ARG:(3012+LOCAL) = LOCAL:1
-    PRINTFORML %조사처리(CALLNAME:ARG,"가")% \@(ARG:1 == 2 || ARG:1 == 3) ? 기르는 # 낳은\@ \@(CFLAG:ARG:3011 > 1) ? {LOCAL+1}명째의 # \@아이는 \@(LOCAL:1 == 0) ? 여자아이 # 사내아이\@입니다.
+    PRINTFORML %조사처리(CALLNAME:ARG,"가")% \@(ARG:1 == 2 || ARG:1 == 3) ? 기르는 # 낳은\@ \@(CFLAG:ARG:첫째성별 > 1) ? {LOCAL+1}명째의 # \@아이는 \@(LOCAL:1 == 0) ? 여자아이 # 사내아이\@입니다.
 
     ;명명 처리. 또 경우에 따라서는 주인이 붙일 수밖에 없는 상황도 있을 수 있음
     IF CFLAG:ARG:임신분기 == 1 || ARG:1 == 3
@@ -122,22 +122,22 @@ RETURN 1
 ;-------------------------------------------------
 @CHILD_CHECK, ARG
 ;ARG는 키워준 부모의 등록 번호
-FOR LOCAL, 0, CFLAG:ARG:3011
+FOR LOCAL, 0, CFLAG:ARG:첫째성별
     TFLAG:651 = LOCAL
     TFLAG:654 = 0
     ;구입 가능한 노예의 인원수를 본다
     IF FLAG:자식조교패치
         ;디버그
-        ;PRINTFORML FLAG:5005={FLAG:5005}, CHARANUM={CHARANUM}, CALC_SLAVE_CAPACITY()={CALC_SLAVE_CAPACITY()}, FLAG:게임모드={FLAG:게임모드}, CFLAG:ARG:3000={CFLAG:ARG:3000}, TALENT:MASTER:금단의지식={TALENT:MASTER:금단의지식}, 
+        ;PRINTFORML FLAG:5005={FLAG:5005}, CHARANUM={CHARANUM}, CALC_SLAVE_CAPACITY()={CALC_SLAVE_CAPACITY()}, FLAG:게임모드={FLAG:게임모드}, CFLAG:ARG:모친캐릭번호={CFLAG:ARG:모친캐릭번호}, TALENT:MASTER:금단의지식={TALENT:MASTER:금단의지식}, 
         ;만약 임신패치(토리코모드)를 켰다면, 금단지식이 없어도 된다.
-        IF FLAG:5005 == 1 && CHARANUM < CALC_SLAVE_CAPACITY() && FLAG:게임모드 < 50 && CFLAG:ARG:3000 != -1
+        IF FLAG:5005 == 1 && CHARANUM < CALC_SLAVE_CAPACITY() && FLAG:게임모드 < 50 && CFLAG:ARG:모친캐릭번호 != -1
             IF CFLAG:ARG:(3012+LOCAL)
                 CALL SON_BIRTH, ARG, LOCAL
             ELSE
                 CALL TRAINABLE_CHILD_BIRTH, ARG, LOCAL
             ENDIF
 
-        ELSEIF CHARANUM < CALC_SLAVE_CAPACITY() && FLAG:게임모드 < 50 && CFLAG:ARG:3000 != -1 && TALENT:MASTER:금단의지식
+        ELSEIF CHARANUM < CALC_SLAVE_CAPACITY() && FLAG:게임모드 < 50 && CFLAG:ARG:모친캐릭번호 != -1 && TALENT:MASTER:금단의지식
             ;디버그
             ;PRINTFORML 아이를 획득했다.
             IF CFLAG:ARG:(3012+LOCAL)
@@ -145,7 +145,7 @@ FOR LOCAL, 0, CFLAG:ARG:3011
             ELSE
                 CALL TRAINABLE_CHILD_BIRTH, ARG, LOCAL
             ENDIF
-        ELSEIF CFLAG:ARG:3000 != -1
+        ELSEIF CFLAG:ARG:모친캐릭번호 != -1
         ;조건을 만족시키지 못해도 낳은 자식의 숫자는 늘어난다
             CALL CHILD_PLUS, ARG, LOCAL
             PRINTFORML %조사처리(CALLNAME:ARG,"가")% 기르고 있던 %조사처리(CSTR:ARG:(21+ARG:1),"는")% 급격히 성장해 어른이 되었습니다.
@@ -154,7 +154,7 @@ FOR LOCAL, 0, CFLAG:ARG:3011
             ;디버그
             PRINTFORML 버그발생 SYSTEM_CHILD.ERB의 @CHILD_CHECK
         ENDIF
-    ELSEIF CFLAG:ARG:3000 != -1
+    ELSEIF CFLAG:ARG:모친캐릭번호 != -1
         CALL CHILD_PLUS, ARG, LOCAL
         PRINTFORML %조사처리(CALLNAME:ARG,"가")% 기르고 있던 %조사처리(CSTR:ARG:(21+ARG:1),"는")% 급격히 성장해 어른이 되었습니다.
         PRINTFORMW 아이를 심한 환경에 놔두고 싶지 않았던 %조사처리(CALLNAME:MASTER,"는")% 아이를 양자로 보냈습니다.
@@ -162,8 +162,8 @@ FOR LOCAL, 0, CFLAG:ARG:3011
     PRINTL 
 NEXT
 ;키워준 부모의 플래그 리셋
-CFLAG:ARG:3000 = -1
-CFLAG:ARG:3003 = 0
+CFLAG:ARG:모친캐릭번호 = -1
+CFLAG:ARG:모친CSV번호 = 0
 
 ;-------------------------------------------------
 ;자식 탄생 범용 처리
@@ -175,14 +175,14 @@ TFLAG:652 = -1
 ;정자제공역
 TFLAG:653 = -1
 
-TFLAG:652 = FINDCHARA(CFLAG:3109, CFLAG:ARG:3003, 0)
-TFLAG:653 = FINDCHARA(CFLAG:3109, CFLAG:ARG:3004, 0)
+TFLAG:652 = FINDCHARA(CFLAG:CSV번호, CFLAG:ARG:모친CSV번호, 0)
+TFLAG:653 = FINDCHARA(CFLAG:CSV번호, CFLAG:ARG:아이아버지CSV번호, 0)
 
 ;낳은 자식의 숫자를 검색한 낳은 부모에 추가
 SIF TFLAG:652 >= 0
-    CFLAG:(TFLAG:652):3001 += 1
+    CFLAG:(TFLAG:652):자식수 += 1
 SIF TFLAG:653 >= 0
-    CFLAG:(TFLAG:653):3001 += 1
+    CFLAG:(TFLAG:653):자식수 += 1
 
 ;-------------------------------------------------
 ;남자아이 탄생 처리
@@ -201,7 +201,7 @@ IF TFLAG:652 == -1
 ELSE
     PRINTFORMW %조사처리(CSTR:ARG:(21+ARG:1),"는")% 자기를 키워주었다는 사실에 감사하며 홀로 생활하기 시작했습니다….
     ;仕送り人数増加
-    CFLAG:(TFLAG:652):3002 += 1
+    CFLAG:(TFLAG:652):송금인원수 += 1
 ENDIF
 
 ;-------------------------------------------------
@@ -220,8 +220,8 @@ LOCAL:2 = TARGET
 LOCAL = (TFLAG:654 == 1) ? 148 # 149
 ADDCHARA LOCAL
 TARGET = CHARANUM - 1
-CFLAG:3110 = DAY - FLAG:성장기간설정 + EQUIP:ARG:1
-CFLAG:3109 = FLAG:998
+CFLAG:생일 = DAY - FLAG:성장기간설정 + EQUIP:ARG:1
+CFLAG:CSV번호 = FLAG:998
 FLAG:998 += 1
 
 ;親が過去に何を取得したかも遺伝
@@ -240,20 +240,20 @@ REPEAT 500
     ENDIF
 REND
 ;부모와의 상성
-RELATION:(CFLAG:ARG:아이아버지) = (CFLAG:ARG:아이아버지 == MASTER && CFLAG:ARG:3009 == 0) ? 80 # 300
+RELATION:(CFLAG:ARG:아이아버지) = (CFLAG:ARG:아이아버지 == MASTER && CFLAG:ARG:육아실방문횟수 == 0) ? 80 # 300
 RELATION:(NO:(TFLAG:652)) = 300
 
 ;플래그 켜기
-CFLAG:호감도 = CFLAG:ARG:3009 * RAND:5
-CFLAG:3100 = NO:(TFLAG:652)
-CFLAG:3101 = NO:ARG
-CFLAG:3102 = CFLAG:(TFLAG:652):3001
-CFLAG:3103 = CFLAG:ARG:아이아버지
-CFLAG:3104 = (TFLAG:653 >= 0) ? CFLAG:(TFLAG:653):3001 # 0
-CFLAG:3105 = CFLAG:(TFLAG:652):3109
-CFLAG:3106 = CFLAG:ARG:3109
-CFLAG:3107 = CFLAG:ARG:3004
-CFLAG:3108 = CFLAG:(TFLAG:652):3108 + 1
+CFLAG:호감도 = CFLAG:ARG:육아실방문횟수 * RAND:5
+CFLAG:친모캐릭터번호 = NO:(TFLAG:652)
+CFLAG:유모캐릭터번호 = NO:ARG
+CFLAG:친모아이수 = CFLAG:(TFLAG:652):자식수
+CFLAG:아빠캐릭터번호 = CFLAG:ARG:아이아버지
+CFLAG:아빠아이수 = (TFLAG:653 >= 0) ? CFLAG:(TFLAG:653):자식수 # 0
+CFLAG:친모CSV번호 = CFLAG:(TFLAG:652):CSV번호
+CFLAG:유모CSV번호 = CFLAG:ARG:CSV번호
+CFLAG:아빠CSV번호 = CFLAG:ARG:아이아버지CSV번호
+CFLAG:세대수 = CFLAG:(TFLAG:652):세대수 + 1
 ;아버지의 이름
 CSTR:37 = %CSTR:ARG:40%
 ;친모의 이름
@@ -294,7 +294,7 @@ CALL CALC_GAUGE8, TARGET, 0
 PRINTL 
 IF ARG == MASTER
     PRINTFORMW \@(TFLAG:654 == 1) ? 아들 # 딸\@은 어머니인 %조사처리(CALLNAME:MASTER,"를")% 따르고 있는 모양이다….
-ELSEIF CFLAG:ARG:3009 == 0
+ELSEIF CFLAG:ARG:육아실방문횟수 == 0
     PRINTFORMW \@(TFLAG:654 == 1) ? 아들 # 딸\@은 %조사처리(CALLNAME:ARG,"과")% 떨어지기를 싫어하며, 처음으로 만나는 %CALLNAME:MASTER%에게 의심과 반감을 품고 있는 모양이다….
     MARK:반발각인 = 1
 ELSE
@@ -315,7 +315,7 @@ LOCAL = 0
 REPEAT CHARANUM
     SIF COUNT == 0
         CONTINUE
-    LOCAL += CFLAG:COUNT:3002
+    LOCAL += CFLAG:COUNT:송금인원수
 REND
 ;0명이라면 돌아가라
 ;DAY와 송금하는 총인원수의 7로 나눈 나머지가 같을 때에 송금이 온다

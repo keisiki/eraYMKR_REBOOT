@@ -368,7 +368,7 @@ REPEAT LOCAL:5
     ELSEIF LOCAL:3 == 1
         PRINT [지도중] 대상：
         IF CFLAG:(LOCAL:1):692 > -1
-            FINDCHARA CFLAG:3109, CFLAG:(LOCAL:1):692
+            FINDCHARA CFLAG:CSV번호, CFLAG:(LOCAL:1):692
             LOCAL:4 = RESULT
             IF LOCAL:4 > -1
                 PRINTFORML %CALLNAME:(LOCAL:4)%
@@ -380,7 +380,7 @@ REPEAT LOCAL:5
         ENDIF
     ELSEIF LOCAL:3 == 2
         PRINT [공부중] 선생：
-        FINDCHARA CFLAG:3109, CFLAG:(LOCAL:1):692
+        FINDCHARA CFLAG:CSV번호, CFLAG:(LOCAL:1):692
         LOCAL:4 = RESULT
         IF LOCAL:4 > -1
             PRINTFORML %CALLNAME:(LOCAL:4)%
@@ -530,14 +530,14 @@ CFLAG:(FLAG:1111):692 = 0
 IF LOCAL:0 == 1
     ;教師役であれば生徒の工房作業番号と工房作業対象のフラグも消す
     IF (LOCAL:1) > -1
-        FINDCHARA CFLAG:3109, LOCAL:1
+        FINDCHARA CFLAG:CSV번호, LOCAL:1
         LOCAL:2 = RESULT
         CFLAG:(LOCAL:2):690 = 0
         CFLAG:(LOCAL:2):692 = 0
     ELSE
         ;複数を教えているならば生徒全員の工房作業番号と工房作業対象のフラグも消す
         REPEAT CHARANUM
-            IF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109
+            IF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):CSV번호
                 CFLAG:COUNT:690 = 0
                 CFLAG:COUNT:692 = 0
             ENDIF
@@ -569,7 +569,7 @@ LOCAL:1 = 0
 LOCAL:2 = 0
 LOCAL:3 = 0
 REPEAT CHARANUM
-    SIF CFLAG:COUNT:조교관외 == 3 && (CFLAG:COUNT:690 == 0 || (CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109)) && ABL:COUNT:공작기능 == 0
+    SIF CFLAG:COUNT:조교관외 == 3 && (CFLAG:COUNT:690 == 0 || (CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):CSV번호)) && ABL:COUNT:공작기능 == 0
         LOCAL:3 += 1
 REND
 $TEACH_HANDYCRAFT_TOP
@@ -594,7 +594,7 @@ REPEAT 30
     SIF LOCAL:1 == MASTER
         CONTINUE
     ;工房にいないか他の先生が付いてるか工作技能があるならスキップ
-    IF CFLAG:(LOCAL:1):조교관외 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):3109) || ABL:(LOCAL:1):공작기능 > 0
+    IF CFLAG:(LOCAL:1):조교관외 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):CSV번호) || ABL:(LOCAL:1):공작기능 > 0
         COUNT -= 1
         CONTINUE
     ENDIF
@@ -623,9 +623,9 @@ IF RESULT > -1 && RESULT < CHARANUM
         LOCAL:4 = RESULT
         CALL ORDER_CANCEL
         CFLAG:(FLAG:1111):690 = 1
-        CFLAG:(FLAG:1111):692 = CFLAG:(LOCAL:4):3109
+        CFLAG:(FLAG:1111):692 = CFLAG:(LOCAL:4):CSV번호
         CFLAG:(LOCAL:4):690 = 2
-        CFLAG:(LOCAL:4):692 = CFLAG:(FLAG:1111):3109
+        CFLAG:(LOCAL:4):692 = CFLAG:(FLAG:1111):CSV번호
         RETURN 1
     ENDIF
 ELSEIF RESULT == 1000
@@ -640,7 +640,7 @@ ELSEIF RESULT == 1001
         SIF LOCAL:1 == MASTER
             CONTINUE
         ;工房にいないか他の先生が付いてるか工作技能があるならスキップ
-        IF CFLAG:(LOCAL:1):조교관외 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):3109) || ABL:(LOCAL:1):공작기능 > 0
+        IF CFLAG:(LOCAL:1):조교관외 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):CSV번호) || ABL:(LOCAL:1):공작기능 > 0
             COUNT -= 1
             CONTINUE
         ENDIF
@@ -660,9 +660,9 @@ ELSEIF RESULT == 1008 && (LOCAL:3) > 1
             CONTINUE
         IF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 0 && ABL:COUNT:공작기능 == 0
             CFLAG:COUNT:690 = 2
-            CFLAG:COUNT:692 = CFLAG:(FLAG:1111):3109
+            CFLAG:COUNT:692 = CFLAG:(FLAG:1111):CSV번호
             CFLAG:(FLAG:1111):694 += 1
-        ELSEIF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109 && ABL:COUNT:공작기능 == 0
+        ELSEIF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):CSV번호 && ABL:COUNT:공작기능 == 0
             CFLAG:(FLAG:1111):694 += 1
         ENDIF
     REND
@@ -688,7 +688,7 @@ $INPUT_LOOP
 INPUT
 IF RESULT == 0
     CFLAG:MASTER:690 = 2
-    CFLAG:MASTER:692 = CFLAG:(FLAG:1111):3109
+    CFLAG:MASTER:692 = CFLAG:(FLAG:1111):CSV번호
     CFLAG:(FLAG:1111):694 += 1
     RETURN 1
 ELSEIF RESULT != 1
@@ -721,14 +721,14 @@ WHILE 1
         BREAK
     LOCAL:0 = 0
     FOR LOCAL:3, 0, CHARANUM
-        IF (CFLAG:(LOCAL:3):조교관외 == 3) && (CFLAG:(LOCAL:3):690 == 2) && (CFLAG:(LOCAL:3):692 == CFLAG:(LOCAL:2):3109) && (ABL:(LOCAL:3):공작기능 == 0)
+        IF (CFLAG:(LOCAL:3):조교관외 == 3) && (CFLAG:(LOCAL:3):690 == 2) && (CFLAG:(LOCAL:3):692 == CFLAG:(LOCAL:2):CSV번호) && (ABL:(LOCAL:3):공작기능 == 0)
             LOCAL:0 += 1
             LOCAL:1 = LOCAL:3
         ENDIF
     NEXT
     ;生徒数一人なら「対象全員」を「対象その生徒」に変更
     IF LOCAL:0 == 1
-        CFLAG:(LOCAL:2):692 = CFLAG:(LOCAL:1):3109
+        CFLAG:(LOCAL:2):692 = CFLAG:(LOCAL:1):CSV번호
     ;生徒数ゼロなら待機状態に変更
     ELSEIF LOCAL:0 < 1
         CFLAG:(LOCAL:2):690 = 0

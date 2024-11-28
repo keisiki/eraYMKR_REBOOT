@@ -456,7 +456,7 @@ IF (CFLAG:ARG:첫시츄에이션 & 1024) == 0 && EXP:ARG:이상경험 < 6 && TAL
     PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 변화의 충격으로 미쳐 버렸다.
     TALENT:ARG:광기 = 1
     CFLAG:ARG:트라우마판정 |= 1
-    CFLAG:ARG:17 |= 2
+    CFLAG:ARG:이벤트취득붕괴 |= 2
 ENDIF
 
 ;入手した卵を展示室に
@@ -678,33 +678,33 @@ RETURN 1
 @USE_DRUG_39, ARG, ARG:1
 ;性別再反転時（元に戻る時）に必要な情報の保存
 ;ここらへんはYM用性別反転コマンドから借用
-;初回時に元の性別をCFLAG:4995に保存
-;処女の情報をCFLAG:4996に保存
-;胸の大きさをCFLAG:4997に保存
-;ふたなりの情報をCFLAG:4998に保存
-;母乳体質の情報をCFLAG:4999に保存
+;初回時に元の性別をCFLAG:원래의성별に保存
+;処女の情報をCFLAG:원래의처녀に保存
+;胸の大きさをCFLAG:원래의가슴に保存
+;ふたなりの情報をCFLAG:원래의자지に保存
+;母乳体質の情報をCFLAG:원래의모유に保存
 
-IF CFLAG:ARG:4995 == 0
+IF CFLAG:ARG:원래의성별 == 0
     IF TALENT:ARG:남자
-        CFLAG:ARG:4995 = 1
+        CFLAG:ARG:원래의성별 = 1
         ;男が初めてTSしたら処女に決まってんだろJK
-        CFLAG:ARG:4996 = 1
+        CFLAG:ARG:원래의처녀 = 1
         ;元が男の場合は胸のサイズをランダムで決定
         ;ただし, 小柄・[소인]はそこから1サイズ小さく, 巨躯は1サイズ大きくする
         LOCAL:1 = RAND:100
         IF LOCAL:1 < 5
-            CFLAG:ARG:4997 = 1
+            CFLAG:ARG:원래의가슴 = 1
         ELSEIF LOCAL:1 < 25
-            CFLAG:ARG:4997 = 2
+            CFLAG:ARG:원래의가슴 = 2
         ELSEIF LOCAL:1 >= 95
-            CFLAG:ARG:4997 = 5
+            CFLAG:ARG:원래의가슴 = 5
         ELSEIF LOCAL:1 >= 75
-            CFLAG:ARG:4997 = 4
+            CFLAG:ARG:원래의가슴 = 4
         ELSE
-            CFLAG:ARG:4997 = 3
+            CFLAG:ARG:원래의가슴 = 3
         ENDIF
     ELSE
-        CFLAG:ARG:4995 = 2
+        CFLAG:ARG:원래의성별 = 2
     ENDIF
 ENDIF
 
@@ -743,9 +743,9 @@ IF TALENT:ARG:남자
     PRINTW  
     PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% 여자가 되었다＞
     ;女性化の処理
-    TALENT:ARG:처녀 = CFLAG:ARG:4996
+    TALENT:ARG:처녀 = CFLAG:ARG:원래의처녀
     TALENT:ARG:남자 = 0
-    TALENT:ARG:후타나리 = CFLAG:ARG:4998
+    TALENT:ARG:후타나리 = CFLAG:ARG:원래의자지
     ;[早漏], [遅漏]関係の保存
     CALL CHANGE_SORO_COMMON, ARG
     IF TALENT:ARG:후타나리
@@ -753,11 +753,11 @@ IF TALENT:ARG:남자
     ELSE
         MAXBASE:ARG:사정 = 0
     ENDIF
-    TALENT:ARG:모유체질 = CFLAG:ARG:4999
+    TALENT:ARG:모유체질 = CFLAG:ARG:원래의모유
     SIF TALENT:ARG:모유체질
         CALL CALC_GAUGE3_SLAVE, ARG, 1
     ;가슴 크기를 변경한다.
-    CALL NUM_TO_BUST(ARG, CFLAG:ARG:4997, 0)
+    CALL NUM_TO_BUST(ARG, CFLAG:ARG:원래의가슴, 0)
 ELSE
     IF ARG != MASTER
         PRINTFORML %CALLNAME:ARG%의 가슴과 엉덩이가 작아지기 시작한다.
@@ -780,11 +780,11 @@ ELSE
     PRINTW  
     PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% 남자가 되었다＞
     ;男性化の処理
-    CFLAG:ARG:4996 = TALENT:ARG:처녀
-    CFLAG:ARG:4998 = TALENT:ARG:후타나리
-    CFLAG:ARG:4999 = TALENT:ARG:모유체질
+    CFLAG:ARG:원래의처녀 = TALENT:ARG:처녀
+    CFLAG:ARG:원래의자지 = TALENT:ARG:후타나리
+    CFLAG:ARG:원래의모유 = TALENT:ARG:모유체질
     ;가슴 크기를 기억한다.
-    CFLAG:ARG:4997 = BUSTSIZE(ARG)
+    CFLAG:ARG:원래의가슴 = BUSTSIZE(ARG)
     TALENT:ARG:처녀 = 0
     TALENT:ARG:절벽 = 0
     TALENT:ARG:빈유 = 0

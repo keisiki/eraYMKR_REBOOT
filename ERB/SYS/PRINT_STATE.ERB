@@ -136,13 +136,13 @@ SIF FLAG:현낙인총계
 SIF FLAG:현산제물총계
     PRINTFORML 이번에 산제물로 바친 노예 수:{FLAG:현산제물총계, 5}명
 ;마지막으로 조교 받은 캐릭터를 표시
-IF FLAG:422 != CFLAG:MASTER:3109 && FLAG:422 != 0
+IF FLAG:422 != CFLAG:MASTER:CSV번호 && FLAG:422 != 0
     LOCAL = SEARCH_CHARA_ID(FLAG:422 , 1)
     SIF LOCAL > 0
         PRINTFORML 마지막으로 조교한 것은 %CALLNAME:LOCAL%입니다.
 ENDIF
 ;마지막으로 조교에서 조수를 한 캐릭터를 표시
-IF FLAG:423 != CFLAG:MASTER:3109 && FLAG:423 != 0
+IF FLAG:423 != CFLAG:MASTER:CSV번호 && FLAG:423 != 0
     LOCAL = SEARCH_CHARA_ID(FLAG:423 , 1)
     SIF LOCAL > 0
         PRINTFORML 마지막 조교에서 조수를 담당한 것은 %CALLNAME:LOCAL%입니다.
@@ -874,7 +874,7 @@ IF FLAG:신체측정패치 & 2 && (CFLAG:ARG:3502 % 1000000)
     ENDIF
 ;임신 소유의 경우 표시 수치 보정
 ELSEIF TALENT:ARG:임신
-    LOCAL:11 = BASE:ARG:체중 + CFLAG:ARG:3500
+    LOCAL:11 = BASE:ARG:체중 + CFLAG:ARG:임신추가사이즈
     IF BASE:ARG:체중 > 10000
         PRINTFORM    체중:{LOCAL:11 / 10000}.{LOCAL:11 % 10000 / 1000} kg
         PRINTFORML  임신전({BASE:ARG:체중 / 10000}.{BASE:ARG:체중 % 10000 / 1000} kg)
@@ -900,7 +900,7 @@ IF ! TALENT:ARG:남자
         PRINTFORM    임신전({BASE:ARG:웨스트 / 10}.{BASE:ARG:웨스트 % 10} cm) /
     ;임신 소유의 경우 표시 수치 보정
     ELSEIF TALENT:ARG:임신
-        LOCAL:13 = BASE:ARG:웨스트 + CFLAG:ARG:3500 * 3 / 1000 ;체중 1kg 에  30 mm 정도 허리둘레가 늘어난다고 치자
+        LOCAL:13 = BASE:ARG:웨스트 + CFLAG:ARG:임신추가사이즈 * 3 / 1000 ;체중 1kg 에  30 mm 정도 허리둘레가 늘어난다고 치자
         PRINTFORM / W:{LOCAL:13 / 10}.{LOCAL:13 % 10} cm
         PRINTFORM  임신전({BASE:ARG:웨스트 / 10}.{BASE:ARG:웨스트 % 10} cm) /
     ELSE
@@ -1005,7 +1005,7 @@ LOCAL = 0
 REPEAT CHARANUM
     SIF COUNT == 0
         CONTINUE
-    LOCAL += CFLAG:COUNT:3002
+    LOCAL += CFLAG:COUNT:송금인원수
 REND
 SIF LOCAL
     PRINTFORML 　송금을 보내주는 인원수　　: {LOCAL, 5}명
@@ -1029,50 +1029,50 @@ CALL NEW_DRAWLINE
 ;-------------------------------------------------
 @PRINT_MEMORIALDAY, ARG
 PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 기념일 # 기념일:\@
-IF CFLAG:ARG:3110 > 0
-    CALL CALENDAR_CALC, CFLAG:ARG:3110
+IF CFLAG:ARG:생일 > 0
+    CALL CALENDAR_CALC, CFLAG:ARG:생일
     PRINTFORM 생일은 
     CALL CALENDAR_PRINT, 0
     PRINTL 입니다.
 ENDIF
-IF CFLAG:ARG:3111 > 0
-    CALL CALENDAR_CALC, CFLAG:ARG:3111
+IF CFLAG:ARG:구입한날 > 0
+    CALL CALENDAR_CALC, CFLAG:ARG:구입한날
     PRINTFORM 구입된 날은 
     CALL CALENDAR_PRINT, 0
     PRINTL 입니다.
 ENDIF
-IF CFLAG:ARG:3112 > 0
-    CALL CALENDAR_CALC, CFLAG:ARG:3112
+IF CFLAG:ARG:끌려온날 > 0
+    CALL CALENDAR_CALC, CFLAG:ARG:끌려온날
     PRINTFORM 데려온 날은 
     CALL CALENDAR_PRINT, 0
     PRINTL 입니다.
 ENDIF
-IF CFLAG:ARG:3115 > 0
-    CALL CALENDAR_CALC, CFLAG:ARG:3115
+IF CFLAG:ARG:함락된날 > 0
+    CALL CALENDAR_CALC, CFLAG:ARG:함락된날
     PRINTFORM 함락된 날은 
     CALL CALENDAR_PRINT, 0
     PRINTL 입니다.
 ENDIF
-IF CFLAG:ARG:3113 > 0
-    CALL CALENDAR_CALC, CFLAG:ARG:3113
+IF CFLAG:ARG:결혼기념일 > 0
+    CALL CALENDAR_CALC, CFLAG:ARG:결혼기념일
     PRINTFORM 결혼기념일은 
     CALL CALENDAR_PRINT, 0
     PRINTL 입니다.
 ENDIF
-IF CFLAG:ARG:3114 > 0
-    CALL CALENDAR_CALC, CFLAG:ARG:3114
+IF CFLAG:ARG:계약기념일 > 0
+    CALL CALENDAR_CALC, CFLAG:ARG:계약기념일
     PRINTFORM 계약기념일은 
     CALL CALENDAR_PRINT, 0
     PRINTL 입니다.
 ENDIF
-IF CFLAG:ARG:3116 > 0
-    CALL CALENDAR_CALC, CFLAG:ARG:3116
+IF CFLAG:ARG:첫임신일 > 0
+    CALL CALENDAR_CALC, CFLAG:ARG:첫임신일
     PRINTFORM 처음으로 임신한 날은 
     CALL CALENDAR_PRINT, 0
     PRINTL 입니다.
 ENDIF
-IF CFLAG:ARG:3117 > 0
-    CALL CALENDAR_CALC, CFLAG:ARG:3117
+IF CFLAG:ARG:첫조수피임명일 > 0
+    CALL CALENDAR_CALC, CFLAG:ARG:첫조수피임명일
     PRINTFORM 처음으로 조수가 된 날은 
     CALL CALENDAR_PRINT, 0
     PRINTL 입니다.
@@ -1093,23 +1093,23 @@ CALL NEW_DRAWLINE
 @PRINT_PARENT, ARG
 SIF FLAG:SHOP이벤트확장 & 2
     PRINTL □ 자녀관계
-LOCAL:2 = CFLAG:ARG:3104
-LOCAL:3 = CFLAG:ARG:3102
+LOCAL:2 = CFLAG:ARG:아빠아이수
+LOCAL:3 = CFLAG:ARG:친모아이수
 
 IF CSTR:ARG:37 == "" ;아버지 이름이 없을 때 아버지의 아이템 이름 호출
-    LOCAL = CFLAG:ARG:3103 + 100
+    LOCAL = CFLAG:ARG:아빠캐릭터번호 + 100
     CSTR:ARG:37 = %ITEMNAME:(LOCAL:0)%
 ENDIF
 
 IF CSTR:ARG:38 == "" ;어머니 이름이 없을 때 어머니의 아이템 이름 호출
-    LOCAL:1 = CFLAG:ARG:3100 + 100
+    LOCAL:1 = CFLAG:ARG:친모캐릭터번호 + 100
     CSTR:ARG:38 = %ITEMNAME:(LOCAL:1)%
 ENDIF
 
 PRINTFORML 아버지：%CSTR:ARG:37%({LOCAL:2}번째 아이) 어머니：%CSTR:ARG:38%({LOCAL:3}번째 아이)
-IF CFLAG:ARG:3100 != CFLAG:ARG:3101
+IF CFLAG:ARG:친모캐릭터번호 != CFLAG:ARG:유모캐릭터번호
     IF CSTR:ARG:39 == "" ;유모이름이 없을 때 유모의 아이템 이름 호출
-        LOCAL:4 = CFLAG:ARG:3101 + 100
+        LOCAL:4 = CFLAG:ARG:유모캐릭터번호 + 100
         CSTR:ARG:39 = %ITEMNAME:(LOCAL:4)%
     ENDIF
     PRINTFORML 키워준 부모는 %CSTR:ARG:39%입니다.
@@ -1385,17 +1385,17 @@ SIF CFLAG:ARG:이벤트취득음란 & 1024
     PRINT [음마] 
 ;붕괴계 소질 색설정
 CALL SETCOLOR_TORIKOMODE, "RED", 2
-SIF CFLAG:ARG:17 & 1
+SIF CFLAG:ARG:이벤트취득붕괴 & 1
     PRINT [유아퇴행] 
-SIF CFLAG:ARG:17 & 2
+SIF CFLAG:ARG:이벤트취득붕괴 & 2
     PRINT [광기] 
-SIF CFLAG:ARG:17 & 4
+SIF CFLAG:ARG:이벤트취득붕괴 & 4
     PRINT [정신붕괴] 
-SIF CFLAG:ARG:17 & 8
+SIF CFLAG:ARG:이벤트취득붕괴 & 8
     PRINT [괴뢰] 
-SIF CFLAG:ARG:17 & 16
+SIF CFLAG:ARG:이벤트취득붕괴 & 16
     PRINT [기억소거] 
-SIF CFLAG:ARG:17 & 32
+SIF CFLAG:ARG:이벤트취득붕괴 & 32
     PRINT [괴조인격] 
 ;색 리셋
 RESETCOLOR
@@ -1663,7 +1663,7 @@ ELSE
 ENDIF
 
 ;계승했는지 어떠했는지?
-PRINTFORML \@(CFLAG:ARG:18 == 1) ? 전 주차에서 계승한 캐릭터 # 계승된 캐릭터는 아님\@.
+PRINTFORML \@(CFLAG:ARG:계승여부 == 1) ? 전 주차에서 계승한 캐릭터 # 계승된 캐릭터는 아님\@.
 
 CALL NEW_DRAWLINE
 
@@ -1894,7 +1894,7 @@ CALL NEW_DRAWLINE
 PRINTFORML \@(FLAG:SHOP이벤트확장 & 2) ?  □ 그 외 주인에 관한 정보 # 그 외 주인에 관한 정보:\@
 ;디버그 모드 전용
 SIF TALENT:MASTER:Debug
-    PRINTFORML 　캐릭터 고유 번호:{CFLAG:ARG:3109}
+    PRINTFORML 　캐릭터 고유 번호:{CFLAG:ARG:CSV번호}
 SIF MONEY:990
     PRINTFORML 　노예 매각으로 번 수입 총합　　　:\@(MONEY:990 > 100000000) ?  1억원 이상 # {MONEY:990}원\@
 SIF MONEY:991
@@ -2010,7 +2010,7 @@ VARSET LOCALS,""
 SPLIT "하쿠레이 신사, 홍마관, 명계, 죽림, 피안, 요괴의 산, 구지옥터 시외, 요정의 숲, 유정천, 태양의 밭, 달의 도시, 마계, 지옥계, 명련사, 315,316,317,318, 인간마을",",", LOCALS
 ;디버그 모드 전용
 SIF TALENT:MASTER:Debug
-    PRINTFORML 　캐릭터 고유 번호:{CFLAG:ARG:3109}
+    PRINTFORML 　캐릭터 고유 번호:{CFLAG:ARG:CSV번호}
 SIF CFLAG:ARG:코스프레실행회수
     PRINTFORML 　지금까지 {CFLAG:ARG:코스프레실행회수, 5}회 정도, 코스프레를 했던 적이 있다.
 SIF CFLAG:ARG:노출라이브성공회수
@@ -2119,8 +2119,8 @@ SIF CFLAG:ARG:은방울꽃사용횟수
     PRINTL 　은방울꽃의 독을 사용했던 적이 있다.
 SIF CFLAG:ARG:촉수출산수
     PRINTFORML 　촉수를 {CFLAG:ARG:촉수출산수}마리 출산했던 적이 있다.
-SIF CFLAG:ARG:3002
-    PRINTFORML 　돈을 보내오는 아이가 {CFLAG:ARG:3002}명 있다.
+SIF CFLAG:ARG:송금인원수
+    PRINTFORML 　돈을 보내오는 아이가 {CFLAG:ARG:송금인원수}명 있다.
 SIF CFLAG:ARG:도시락기록 & 1
     PRINTL 　잘 하는 요리를 선보인 적이 있다.
 SIF CFLAG:ARG:도시락기록 & 2048
@@ -2466,11 +2466,11 @@ IF FLAG:토리코모드 & 1
 
     ;디버그
     ;PRINTL
-    ;PRINTFORML CFLAG:ARG:4000 {CFLAG:ARG:4000}
-    ;PRINTFORML CFLAG:ARG:4001 {CFLAG:ARG:4001}
-    ;PRINTFORML CFLAG:ARG:4002 {CFLAG:ARG:4002}
-    ;PRINTFORML CFLAG:ARG:4003 {CFLAG:ARG:4003}
-    ;PRINTFORML CFLAG:ARG:4004 {CFLAG:ARG:4004}
+    ;PRINTFORML CFLAG:ARG:메뉴 {CFLAG:ARG:메뉴}
+    ;PRINTFORML CFLAG:ARG:현재만복도 {CFLAG:ARG:현재만복도}
+    ;PRINTFORML CFLAG:ARG:최대만복도 {CFLAG:ARG:최대만복도}
+    ;PRINTFORML CFLAG:ARG:현재영양도 {CFLAG:ARG:현재영양도}
+    ;PRINTFORML CFLAG:ARG:최대영양도 {CFLAG:ARG:최대영양도}
     ;PRINTL
 
 ELSE
