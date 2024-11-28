@@ -73,8 +73,8 @@ CFLAG:5231 = 0
 
 ;※追加機能D1『抜かずにウフフ機能』
 ;抜かずにウフフ関連フラグのリセット
-SIF CFLAG:5220 > 1
-    CFLAG:5220 = 2
+SIF CFLAG:체위판정 > 1
+    CFLAG:체위판정 = 2
 SELECTCOM:1 = -1
 
 ;反発刻印別処理　CFLAG:5264
@@ -130,7 +130,7 @@ ENDIF
 
 
 ;--------------------------------------------------
-;エキストラモード構文　CFLAG:5220を使用
+;エキストラモード構文　CFLAG:체위판정を使用
 ;はいを選択した時に初調教時に口上設定用の素質に変更できます
 ;--------------------------------------------------
 ;※追加機能D1『抜かずにウフフ機能』(上級者向け)
@@ -138,7 +138,7 @@ ENDIF
 ;デフォルト無効
 
 
-IF CFLAG:5220 == 0
+IF CFLAG:체위판정 == 0
     PRINTL 처녀 모드로 이행하겠습니까? (본 대사는 처녀 모드 미대응입니다)
     PRINTL [0] 예
     PRINTL [1] 아니오
@@ -163,10 +163,10 @@ IF CFLAG:5220 == 0
     INPUT
     IF RESULT == 0
         PRINTFORMW ―뽑지 않고 우후후 모드로 조교를 개시합니다―
-        CFLAG:5220 = 2
+        CFLAG:체위판정 = 2
     ELSEIF RESULT == 1
         PRINTFORMW ―일반 모드로 조교를 개시합니다―
-        CFLAG:5220 = 1
+        CFLAG:체위판정 = 1
     ELSE
         GOTO INPUT_LOOP
     ENDIF
@@ -899,12 +899,12 @@ ENDIF
 ;-------------------------------------------------
 ;※追加機能D1『抜かずにウフフ機能』(上級者向け)
 ;※追加機能D2『サポートプレイ機能』(上級者向け)
-;エキストラモード構文で許可する(CFLAG:5220 > 0)必要があります
+;エキストラモード構文で許可する(CFLAG:체위판정 > 0)必要があります
 ;有効になっている場合, コンボ口上・サポート口上を呼びます. 
 ;ここを編集する必要はありませんが, コンボ口上・サポート口上はファイル末尾にあります. 別途記入願います
 
 ;サポートプレイ
-IF CFLAG:5220 >= 2000
+IF CFLAG:체위판정 >= 2000
     CALL COMBOASSI_58
     IF RESULT == 1
         ;コマンド初回判定を更新
@@ -920,13 +920,13 @@ IF CFLAG:5220 >= 2000
         RETURN 0
     ELSE
         SIF RESULT == 0
-            CFLAG:5220 -= 2000
+            CFLAG:체위판정 -= 2000
         ;コンボ＋１
         SIF RESULT == 2
             CFLAG:5203 += 1
     ENDIF
 ;コンボプレイ
-ELSEIF CFLAG:5220 > 0
+ELSEIF CFLAG:체위판정 > 0
     CALL COMBO_58
     IF RESULT == 1 || RESULT == 3
         ;コマンド初回判定を更新
@@ -944,7 +944,7 @@ ELSEIF CFLAG:5220 > 0
     ELSEIF RESULT == 2
         SELECTCOM = SELECTCOM:1
         CALL KOJO_MESSAGE_COM_58_3
-        SELECTCOM = CFLAG:5220
+        SELECTCOM = CFLAG:체위판정
         ;コンボ＋１
         CFLAG:5203 += 1
         RETURN 0
@@ -6920,7 +6920,7 @@ RETURN 0
 ;-------------------------------------------------
 ;コンボ口上テンプレ集
 ;特定の順序でコマンドを実行した場合に口上とプレイ結果を変化させます
-;エキストラモード構文で許可する(CFLAG:5220 > 0)必要があります
+;エキストラモード構文で許可する(CFLAG:체위판정 > 0)必要があります
 ;-------------------------------------------------
 ;※追加機能D1『抜かずにウフフ機能』(上級者向け)
 ;主にセックス系コマンドから愛撫系コマンドを同一の調教者で実行した場合, 特殊な口上を表示します
@@ -6936,7 +6936,7 @@ A = 1
 ;Ｖ挿入系　デフォルト条件：연모＋Ｖ感覚Lv3以上
 IF TALENT:연모 && ABL:V감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
     ;正常位
-    IF CFLAG:5220 == 20
+    IF CFLAG:체위판정 == 20
         ;正常位→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -6995,7 +6995,7 @@ IF TALENT:연모 && ABL:V감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;後背位
-    ELSEIF CFLAG:5220 == 21
+    ELSEIF CFLAG:체위판정 == 21
         ;後背位→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7040,7 +7040,7 @@ IF TALENT:연모 && ABL:V감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;対面座位
-    ELSEIF CFLAG:5220 == 22
+    ELSEIF CFLAG:체위판정 == 22
         ;対面座位→アナル愛撫
         IF SELECTCOM == 2
             CALL COMBOPLAY
@@ -7125,7 +7125,7 @@ IF TALENT:연모 && ABL:V감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;乱れ牡丹
-    ELSEIF (CFLAG:5220 == 23 && TEQUIP:56) || CFLAG:5220 == 612
+    ELSEIF (CFLAG:체위판정 == 23 && TEQUIP:56) || CFLAG:체위판정 == 612
         ;乱れ牡丹→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7227,7 +7227,7 @@ IF TALENT:연모 && ABL:V감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;背面座位
-    ELSEIF CFLAG:5220 == 23
+    ELSEIF CFLAG:체위판정 == 23
         ;背面座位→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7337,7 +7337,7 @@ IF TALENT:연모 && ABL:V감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;騎乗位
-    ELSEIF CFLAG:5220 == 24
+    ELSEIF CFLAG:체위판정 == 24
         ;騎乗位→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7414,7 +7414,7 @@ ENDIF
 ;Ａ挿入系　デフォルト条件：연모＋Ａ感覚Lv3以上
 IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
     ;正常位アナルorアナルセックス
-    IF CFLAG:5220 == 30 || CFLAG:5220 == 30
+    IF CFLAG:체위판정 == 30 || CFLAG:체위판정 == 30
         ;正常位Ａ→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7442,7 +7442,7 @@ IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 2
         ENDIF
     ;後背位アナル
-    ELSEIF CFLAG:5220 == 31
+    ELSEIF CFLAG:체위판정 == 31
         ;後背位Ａ→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7466,7 +7466,7 @@ IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 2
         ENDIF
     ;対面座位アナル
-    ELSEIF CFLAG:5220 == 32
+    ELSEIF CFLAG:체위판정 == 32
         ;対面座位Ａ→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7484,7 +7484,7 @@ IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 2
         ENDIF
     ;背面座位アナル
-    ELSEIF CFLAG:5220 == 33
+    ELSEIF CFLAG:체위판정 == 33
         ;背面座位Ａ→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7552,7 +7552,7 @@ IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 2
         ENDIF
     ;騎乗位Ａ
-    ELSEIF CFLAG:5220 == 34
+    ELSEIF CFLAG:체위판정 == 34
         ;騎乗位Ａ→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7591,7 +7591,7 @@ ENDIF
 A = 0
 IF TALENT:연모 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
     ;助手を犯す
-    IF CFLAG:5220 == 2026
+    IF CFLAG:체위판정 == 2026
         ;助手を犯すはA=1でよい
         A = 1
         ;助手セックス愛撫
@@ -7644,7 +7644,7 @@ IF TALENT:연모 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0
             RETURN 1
         ENDIF
     ;泡踊り
-    ELSEIF CFLAG:5220 == 352
+    ELSEIF CFLAG:체위판정 == 352
         ;泡踊り素股
         IF SELECTCOM == 43
         CALL COMBOPLAY
@@ -7656,7 +7656,7 @@ IF TALENT:연모 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0
         RETURN 1
         ENDIF
     ;アナル舐め
-    ELSEIF CFLAG:5220 == 180
+    ELSEIF CFLAG:체위판정 == 180
         ;アナル舐めキス
         IF SELECTCOM == 6
         CALL COMBOPLAY
@@ -7676,7 +7676,7 @@ RETURN 0
 ;-------------------------------------------------
 ;サポート口上テンプレ集
 ;주인→奴隷の流れで特定の順序でコマンドを実行した場合に口上とプレイ結果を変化させます
-;エキストラモード構文で許可する(CFLAG:5220 > 0)必要があります
+;エキストラモード構文で許可する(CFLAG:체위판정 > 0)必要があります
 ;サポート口上有りのプレイを続けた場合, 続けてサポートプレイができます. 
 ;そのまま주인に交代した場合, 挿入れっぱなしでの再開になります. 
 ;-------------------------------------------------
@@ -7704,7 +7704,7 @@ A = 1
 ;Ｖ挿入系　デフォルト条件：연모＋Ｖ感覚Lv3以上
 IF TALENT:연모 && ABL:V감각 > 2
     ;주인の正常位から
-    IF CFLAG:5220 == 2020
+    IF CFLAG:체위판정 == 2020
         ;正常位サポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7776,7 +7776,7 @@ IF TALENT:연모 && ABL:V감각 > 2
             RETURN 1
         ENDIF
     ;後背位
-    ELSEIF CFLAG:5220 == 2021
+    ELSEIF CFLAG:체위판정 == 2021
         ;後背位サポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7845,7 +7845,7 @@ IF TALENT:연모 && ABL:V감각 > 2
             RETURN 1
         ENDIF
     ;対面座位
-    ELSEIF CFLAG:5220 == 2022
+    ELSEIF CFLAG:체위판정 == 2022
         ;対面座位サポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7923,7 +7923,7 @@ IF TALENT:연모 && ABL:V감각 > 2
             RETURN 1
         ENDIF
     ;背面座位+乱れ牡丹
-    ELSEIF CFLAG:5220 == 2023 || CFLAG:5220 == 2612
+    ELSEIF CFLAG:체위판정 == 2023 || CFLAG:체위판정 == 2612
         ;背面座位サポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8020,7 +8020,7 @@ IF TALENT:연모 && ABL:V감각 > 2
             RETURN 1
         ENDIF
     ;騎乗位
-    ELSEIF CFLAG:5220 == 2024
+    ELSEIF CFLAG:체위판정 == 2024
         ;騎乗位サポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8113,7 +8113,7 @@ ENDIF
 ;Ａ挿入系　デフォルト条件：연모＋Ａ感覚Lv3以上
 IF TALENT:연모 && ABL:A감각 > 2
     ;正常位アナルorアナルセックス
-    IF CFLAG:5220 == 2030 || CFLAG:5220 == 2030
+    IF CFLAG:체위판정 == 2030 || CFLAG:체위판정 == 2030
         ;正常位Ａサポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8162,7 +8162,7 @@ IF TALENT:연모 && ABL:A감각 > 2
             RETURN 1
         ENDIF
     ;後背位アナル
-    ELSEIF CFLAG:5220 == 2031
+    ELSEIF CFLAG:체위판정 == 2031
         ;後背位Ａサポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8246,7 +8246,7 @@ IF TALENT:연모 && ABL:A감각 > 2
             RETURN 1
         ENDIF
     ;対面座位アナル
-    ELSEIF CFLAG:5220 == 2032
+    ELSEIF CFLAG:체위판정 == 2032
         ;対面座位Ａサポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8292,7 +8292,7 @@ IF TALENT:연모 && ABL:A감각 > 2
             RETURN 1
         ENDIF
     ;背面座位アナル
-    ELSEIF CFLAG:5220 == 2033
+    ELSEIF CFLAG:체위판정 == 2033
         ;背面座位Ａサポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8393,7 +8393,7 @@ IF TALENT:연모 && ABL:A감각 > 2
             RETURN 2
         ENDIF
     ;騎乗位Ａ
-    ELSEIF CFLAG:5220 == 2034
+    ELSEIF CFLAG:체위판정 == 2034
         ;騎乗位Ａサポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8496,7 +8496,7 @@ ENDIF
 A = 0
 IF TALENT:연모
     ;助手を犯す
-    IF CFLAG:5220 == 2026
+    IF CFLAG:체위판정 == 2026
         A = 1
         ;助手セックスサポートクンニ強制
         IF SELECTCOM == 300

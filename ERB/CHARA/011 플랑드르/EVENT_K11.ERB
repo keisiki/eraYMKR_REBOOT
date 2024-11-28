@@ -41,8 +41,8 @@ FLAG:11 = 2
 ;FLAG:1011 = 0
 ;※追加機能D1『抜かずにウフフ機能』
 ;抜かずにウフフ関連フラグのリセット
-SIF CFLAG:5220 > 1
-    CFLAG:5220 = 2
+SIF CFLAG:체위판정 > 1
+    CFLAG:체위판정 = 2
 SELECTCOM:1 = -1
 ;--------------------------------------------------
 ;EVENTTRAIN関係(11をキャラ番号に置換)
@@ -54,7 +54,7 @@ SIF FLAG:11 == 0
 SIF NO != 11
     RETURN 0
 ;--------------------------------------------------
-;エ키스トラモ─ド構文　CFLAG:5220を사용
+;エ키스トラモ─ド構文　CFLAG:체위판정を사용
 ;はいを選択했다時に初조교時に口上設定用の素質に変更できます
 ;下記に처녀化한다場合の構文をサンプルとして載せておきます
 ;-------------------------------------------------;
@@ -62,7 +62,7 @@ SIF NO != 11
 ;FONTSTYLE 1
 ;FONTSTYLE 0
 
-IF CFLAG:5220 == 0
+IF CFLAG:체위판정 == 0
     PRINTL 　
     PRINTFORML 플랑과 처음 노는 %조사처리(CALLNAME:MASTER,"는")% 난이도 착오를 막기 위해 『디폴트』를 선택합시다.
     PRINTFORMW ※주회 플레이로 계승했을 경우엔 여러 가지 상태(경험 등)은 유지됩니다.
@@ -83,7 +83,7 @@ IF CFLAG:5220 == 0
         ;上級者用遊びイベントフラグ
         CFLAG:5815 = 1
         ;コンボ関連
-        CFLAG:5220 = 2
+        CFLAG:체위판정 = 2
         PRINTL 　
         PRINTL 당신의 플랑드르는――
         PRINTL ※적당한 자리의 대사와, 성격을 나타내는 소질이 약간 바뀝니다
@@ -231,7 +231,7 @@ IF CFLAG:5220 == 0
     ELSEIF RESULT == 1
         CFLAG:5800 = 1
         CFLAG:5801 = 2
-        CFLAG:5220 = 1
+        CFLAG:체위판정 = 1
     ELSE
         GOTO INPUT_LOOP_0
     ENDIF
@@ -2280,12 +2280,12 @@ SIF TEQUIP:54 && SELECTCOM != 351
 ;-------------------------------------------------
 ;※追加機能D1『抜かずにウフフ機能』(上級者向け)
 ;※追加機能D2『サポ─ト플레이機能』(上級者向け)
-;エ키스トラモ─ド構文で許可한다(CFLAG:5220 > 0)必要があります
+;エ키스トラモ─ド構文で許可한다(CFLAG:체위판정 > 0)必要があります
 ;有効になっている場合, コンボ口上・サポ─ト口上を呼びます
 ;ここを編集한다必要はありませんが, コンボ口上・サポ─ト口上はファイル末尾にあります. 別途記入願います
 
 ;서포트 플레이
-IF CFLAG:5220 >= 2000
+IF CFLAG:체위판정 >= 2000
     CALL COMBOASSI_11
     IF RESULT == 1
         ;커맨드 첫회 판정을 갱신(현 시스템에서 이걸 그대로 사용하면 200번 커맨드를 사용할 때 첫경험 상대가 바뀌는 오류가 우려됨. 만약 사용하고 싶다면 아래 CFLAG 관리를 전면적으로 바꿔야 하지만 비효율적이므로 일단 비활성화. T
@@ -2299,9 +2299,9 @@ IF CFLAG:5220 >= 2000
         RETURN 0
     ELSE
         SIF RESULT == 0
-            CFLAG:5220 -= 2000
+            CFLAG:체위판정 -= 2000
     ENDIF
-ELSEIF CFLAG:5220 > 0
+ELSEIF CFLAG:체위판정 > 0
     CALL COMBO_11
     IF RESULT == 1 || RESULT == 3
         ;커맨드 첫회 판정을 갱신
@@ -2316,7 +2316,7 @@ ELSEIF CFLAG:5220 > 0
     ELSEIF RESULT == 2
         SELECTCOM = SELECTCOM:1
         CALL KOJO_MESSAGE_COM_11_3
-        SELECTCOM = CFLAG:5220
+        SELECTCOM = CFLAG:체위판정
         RETURN 0
     ENDIF
 ENDIF
@@ -16607,7 +16607,7 @@ RETURN 0
 ;-------------------------------------------------
 ;コンボ口上テンプレ集
 ;特定の順序で커맨드を実行했다場合に口上と플레이結果を変化させます
-;エ키스トラモ─ド構文で許可한다(CFLAG:5220 > 0)必要があります
+;エ키스トラモ─ド構文で許可한다(CFLAG:체위판정 > 0)必要があります
 ;-------------------------------------------------
 
 @COMBO_11
@@ -16617,7 +16617,7 @@ A = 1
 IF TALENT:연모 && ABL:V감각 > 3 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
     ;残し
     ;정상위
-    IF CFLAG:5220 == 20
+    IF CFLAG:체위판정 == 20
         ;정상위→애무
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -16715,7 +16715,7 @@ IF TALENT:연모 && ABL:V감각 > 3 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;후배위
-    ELSEIF CFLAG:5220 == 21
+    ELSEIF CFLAG:체위판정 == 21
         ;후배위→애무
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -16866,7 +16866,7 @@ IF TALENT:연모 && ABL:V감각 > 3 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;대면좌위
-    ELSEIF CFLAG:5220 == 22
+    ELSEIF CFLAG:체위판정 == 22
         ;대면좌위→애무
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -16987,7 +16987,7 @@ IF TALENT:연모 && ABL:V감각 > 3 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;배면좌위
-    ELSEIF CFLAG:5220 == 23
+    ELSEIF CFLAG:체위판정 == 23
         ;배면좌위→애무
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -17098,7 +17098,7 @@ IF TALENT:연모 && ABL:V감각 > 3 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;기승위 　残し
-    ELSEIF CFLAG:5220 == 24
+    ELSEIF CFLAG:체위판정 == 24
         ;기승위 →애무
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -17206,7 +17206,7 @@ ENDIF
 ;いつか어딘가 の애널紳士が全て書き直してくれることを願います. 僕は이제疲れたよパトラッシュ(시러어후아
 IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
     ;정상위애널
-    IF CFLAG:5220 == 30
+    IF CFLAG:체위판정 == 30
         ;정상위→애무
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -17304,7 +17304,7 @@ IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;후배위애널
-    ELSEIF CFLAG:5220 == 31
+    ELSEIF CFLAG:체위판정 == 31
         IF SELECTCOM == 0
             CALL COMBOPLAY
             PRINTFORMW 「응, 후읏! 앗, 앗, %K11CL()%, 제대로, 뒤에, 있는 거지잇?」
@@ -17404,7 +17404,7 @@ IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;대면좌위애널
-    ELSEIF CFLAG:5220 == 32
+    ELSEIF CFLAG:체위판정 == 32
         ;대면좌위→애무
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -17496,7 +17496,7 @@ IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;배면좌위애널
-    ELSEIF CFLAG:5220 == 33
+    ELSEIF CFLAG:체위판정 == 33
         ;배면좌위→애무
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -17607,7 +17607,7 @@ IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 ==
             RETURN 1
         ENDIF
     ;기승위 Ａ
-    ELSEIF CFLAG:5220 == 34
+    ELSEIF CFLAG:체위판정 == 34
         ;기승위 →애무
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -17714,7 +17714,7 @@ ENDIF
 A = 0
 IF TALENT:연모 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
     ;조수를 범한다
-    IF CFLAG:5220 == 26
+    IF CFLAG:체위판정 == 26
         ;조수를 범한다はA=1でよい
         A = 1
         ;조수섹스애무
@@ -17807,7 +17807,7 @@ IF TALENT:연모 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0
     ;앗핫は, いくら絵になるからってなぁ. でも누가に探し当てられるコンボな気がしてならないのが笑えない
     ;ってゆ─か, おしっこ属性無いのになんでここまで凝ってんだ俺はｗｗ
     ;素股
-    ELSEIF CFLAG:5220 == 43
+    ELSEIF CFLAG:체위판정 == 43
         ;방뇨
         IF GROUPMATCH(SELECTCOM, 111, 620)
             CALL COMBOPLAY
@@ -17847,7 +17847,7 @@ IF TALENT:연모 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0
         ENDIF
         RETURN 1
     ;足扱き방뇨
-    ELSEIF CFLAG:5220 == 47
+    ELSEIF CFLAG:체위판정 == 47
         IF GROUPMATCH(SELECTCOM, 111, 620)
             CALL COMBOPLAY
             PRINTFORMW 「에─, %K11CN()% 자지 밟히면서 플랑에게 쉬야 뿌려지고 싶은 거야?」
@@ -17863,7 +17863,7 @@ IF TALENT:연모 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0
             RETURN 1
         ENDIF
     ;펠라치오 사정しないけど, まあシチュ的にいいよね
-    ELSEIF CFLAG:5220 == 41
+    ELSEIF CFLAG:체위판정 == 41
         ;자위
         IF SELECTCOM == 7
             CALL COMBOPLAY
@@ -17888,7 +17888,7 @@ RETURN 0
 ;-------------------------------------------------
 ;サポ─ト口上テンプレ集
 ;主人→奴隷の流れで特定の順序で커맨드を実行했다場合に口上と플레이結果を変化させます
-;エ키스トラモ─ド構文で許可한다(CFLAG:5220 > 0)必要があります
+;エ키스トラモ─ド構文で許可한다(CFLAG:체위판정 > 0)必要があります
 ;サポ─ト口上有りの플레이を続けた場合, 続けてサポ─ト플레이ができます
 ;そのまま主人に交代했다場合, 삽입っぱなしでの再開になります
 ;-------------------------------------------------

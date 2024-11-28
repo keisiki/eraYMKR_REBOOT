@@ -101,13 +101,13 @@ SIF NO:TARGET != 0
 SIF NO:MASTER != 32
     RETURN 0
 ;--------------------------------------------------
-;エキストラモード構文　CFLAG:5220を使用
+;エキストラモード構文　CFLAG:체위판정を使用
 ;-------------------------------------------------;
-IF CFLAG:5220 == 0
+IF CFLAG:체위판정 == 0
     CALL OPT_ITEM_M32
     CALL OPT_INSEQ_M32
     CALL OPT_HC_M32
-    CFLAG:5220 |= 1
+    CFLAG:체위판정 |= 1
 ENDIF
 ;--------------------------------------------------
 ;簡易助手口上の発動時に初調教時口上をスキップ（Z1を助手のキャラ番号にする）
@@ -648,7 +648,7 @@ IF SELECTCOM == 102
         ENDIF
         
         ;前回コマンドがセックス系で助手でなくハメ撮りモードON
-        IF A & 3 && CFLAG:5220 & 2 && (CFLAG:5220 & 16) == 0
+        IF A & 3 && CFLAG:체위판정 & 2 && (CFLAG:체위판정 & 16) == 0
             ;騎乗系
             IF RAND:3 == 0 && A & 4
                 PRINTFORMW 「下から見上げるアングルも素敵ですね」
@@ -659,7 +659,7 @@ IF SELECTCOM == 102
                 PRINTFORMW 「あややや、キュッと締まりましたよぉ？　興奮しましたね？」
             ENDIF
             ;気分だけじゃないならぶっぱ
-            IF CFLAG:5220 & 4
+            IF CFLAG:체위판정 & 4
                 ;ぱんくしょんの入れっぱなし関数
                 IF A & 1
                     CALL COMBOPLAY_V
@@ -668,7 +668,7 @@ IF SELECTCOM == 102
                 ENDIF
             ENDIF
         ;前回コマンドが自慰系ハメ撮りモードON
-        ELSEIF B & 1 && RAND:3 == 0 && (CFLAG:5220 & 16) == 0
+        ELSEIF B & 1 && RAND:3 == 0 && (CFLAG:체위판정 & 16) == 0
             ;自慰中毒LV3以上
             IF ABL:자위중독 >= 3
                 PRINTFORMW 「あややや、手が止まらないみたいですねぇ」
@@ -678,7 +678,7 @@ IF SELECTCOM == 102
             ENDIF
             ;自慰コマンドってなにげに構造複雑なのでぶっぱは無し
         ;前回コマンドがフェラ系ハメ撮りモードON
-        ELSEIF B & 2 && (CFLAG:5220 & 16) == 0
+        ELSEIF B & 2 && (CFLAG:체위판정 & 16) == 0
             ;パイズリ系
             IF RAND:3 == 0 && B & 4
                 PRINTFORMW 「白い胸からはみ出た肉棒……」
@@ -691,12 +691,12 @@ IF SELECTCOM == 102
                 PRINTFORMW 「舐めてるところ撮りたいんですから」
             ENDIF
             ;気分だけじゃないならぶっぱ
-            IF CFLAG:5220 & 4
+            IF CFLAG:체위판정 & 4
                 P = B & 4
                 CALL COMBOPLAY_F
             ENDIF
         ;前回コマンドが騎乗逆レ系で助手でなくハメ撮りモードON
-        ELSEIF C & 1 && CFLAG:5220 & 2 && (CFLAG:5220 & 16) == 0
+        ELSEIF C & 1 && CFLAG:체위판정 & 2 && (CFLAG:체위판정 & 16) == 0
             IF RAND:2 == 0
                 PRINTFORMW 「んっ……いけませんねぇ」
                 PRINTFORMW 「どうにも……手元が……んく」
@@ -705,18 +705,18 @@ IF SELECTCOM == 102
                 PRINTFORMW 「……ふふ、今の頂きましたよぉ？」
             ENDIF
             ;気分だけじゃないならぶっぱ
-            IF CFLAG:5220 & 4
+            IF CFLAG:체위판정 & 4
                 CALL COMBOPLAY_P
             ENDIF
         ;それ以外
         ELSE
             ;前回助手
-            IF RAND:4 == 0 && CFLAG:5220 & 16
+            IF RAND:4 == 0 && CFLAG:체위판정 & 16
                 PRINTFORMW 「撮るのに専念できると、やっぱり楽ですねぇ」
             ;髪に精液汚れ
             ELSEIF RAND:3 == 0 && STAIN:발 & 4
                 ;髪の色で分岐
-                IF CFLAG:5220 & 8
+                IF CFLAG:체위판정 & 8
                     PRINTFORMW 「黒髪に白い精液は映えますねぇ……」
                     PRINTFORMW 「……と、見とれてる場合じゃありませんね」
                     PRINTFORMW 「一枚頂きますよ」
@@ -750,10 +750,10 @@ ENDIF
 
 ;助手が調教した時にフラグを立てて口上をスキップする
 IF ASSIPLAY
-    CFLAG:5220 |= 16
+    CFLAG:체위판정 |= 16
     RETURN 0
 ELSE
-    CFLAG:5220 -= CFLAG:5220 & 16
+    CFLAG:체위판정 -= CFLAG:체위판정 & 16
 ENDIF
 
 ;-------------------------------------------------
@@ -4369,7 +4369,7 @@ IF TFLAG:16
     ;髪扱きの場合
     IF SELECTCOM == 48
         IF CFLAG:5241 == 0 || FLAG:11 == 2
-            IF CFLAG:5220 & 8
+            IF CFLAG:체위판정 & 8
                 PRINTFORMW 「黒髪に白……美しいコントラストです」
             ELSE
                 PRINTFORMW 「髪の色が薄いせいで目立ちませんけど、艶が出てキレイですね」
@@ -5557,11 +5557,11 @@ SIF RESULT != 1 && RESULT != 0 && RESULT != 2
     GOTO INPUT_LOOP
 IF RESULT == 0
     PRINTFORMW ハメ撮りモードを有効にしました
-    CFLAG:5220 |= 2
-    CFLAG:5220 |= 4
+    CFLAG:체위판정 |= 2
+    CFLAG:체위판정 |= 4
 ELSEIF RESULT == 2
     PRINTFORMW ハメ撮りモードを(気分だけ)有効にしました
-    CFLAG:5220 |= 2
+    CFLAG:체위판정 |= 2
 ENDIF
 PRINTL  
 
@@ -5576,7 +5576,7 @@ SIF RESULT != 1 && RESULT != 0
 
 PRINTFORMW %CALLNAME:TARGET%の髪の色を設定しました
 IF RESULT == 0
-    CFLAG:5220 |= 8
+    CFLAG:체위판정 |= 8
 ENDIF
 PRINTL  
 
