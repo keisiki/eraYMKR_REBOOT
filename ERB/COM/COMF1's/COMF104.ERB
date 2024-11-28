@@ -305,7 +305,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM104
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -355,7 +355,7 @@ LOCAL:1 = 0
 REPEAT 20
     LOCAL = 1
     POWER LOCAL, 2, COUNT
-    SIF CFLAG:MASTER:300 & LOCAL || CFLAG:300 & LOCAL || (ASSI >= 0 && CFLAG:ASSI:300 & LOCAL)
+    SIF CFLAG:MASTER:외출가능장소 & LOCAL || CFLAG:외출가능장소 & LOCAL || (ASSI >= 0 && CFLAG:ASSI:외출가능장소 & LOCAL)
         LOCAL:1 |= LOCAL
 REND
 
@@ -461,7 +461,7 @@ CALL OUTDOOR_MESSAGE_TRAVEL
 ;장소 이동 메시지
 ;--------------------------------------------------
 @OUTDOOR_MESSAGE_TRAVEL
-SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1
     RETURN 0
 
 PRINTL
@@ -477,21 +477,21 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 1
+        ELSEIF CFLAG:외출가능장소 & 1
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
         ENDIF
     CASE 2
         ;홍
-        IF CFLAG:MASTER:300 & 2
+        IF CFLAG:MASTER:외출가능장소 & 2
             PRINTFORM %조사선택(CALLNAME:MASTER, "가")% 승낙을 하자 
-        ELSEIF CFLAG:300 & 2 && NO:TARGET != 151 && NO:TARGET != 161
+        ELSEIF CFLAG:외출가능장소 & 2 && NO:TARGET != 151 && NO:TARGET != 161
             PRINTFORM %CALLNAME:TARGET%의 이름을 대고 
         ELSEIF NO:TARGET == 151 || NO:TARGET == 161
             PRINTFORM %CALLNAME:TARGET%에게 승낙을 받고 
         ELSEIF ASSI >= 0
-            SIF CFLAG:ASSI:300 & 2
+            SIF CFLAG:ASSI:외출가능장소 & 2
                 PRINTFORM %조사선택(CALLNAME:ASSI, "가")% 승낙을 해서, 
         ENDIF
         PRINTFORML %조사선택(CALLNAME:MASTER, "는")% 홍마관 복도에서 조교를 했다.
@@ -499,7 +499,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 2
+        ELSEIF CFLAG:외출가능장소 & 2
             PRINTFORMW 주위의 메이드 요정의 시선을 느끼고 \@(ABL:노출증 >= 3) ? 두근두근 거리며 몸을 떨고 있다. # 부끄러워하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -511,7 +511,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 4
+        ELSEIF CFLAG:외출가능장소 & 4
             PRINTFORMW 주위의 메이드 요정의 시선을 느끼고 \@(ABL:노출증 >= 3) ? 두근두근 거리며 몸을 떨고 있다. # 부끄러워하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -523,7 +523,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 8
+        ELSEIF CFLAG:외출가능장소 & 8
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -534,7 +534,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 16
+        ELSEIF CFLAG:외출가능장소 & 16
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -545,7 +545,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 32
+        ELSEIF CFLAG:외출가능장소 & 32
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -557,7 +557,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTFORMW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 64
+        ELSEIF CFLAG:외출가능장소 & 64
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -568,7 +568,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 128
+        ELSEIF CFLAG:외출가능장소 & 128
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -584,7 +584,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 256
+        ELSEIF CFLAG:외출가능장소 & 256
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -600,9 +600,9 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF TIME == 0 && CFLAG:300 & 512
+        ELSEIF TIME == 0 && CFLAG:외출가능장소 & 512
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
-        ELSEIF TIME == 1 && CFLAG:300 & 1024
+        ELSEIF TIME == 1 && CFLAG:외출가능장소 & 1024
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -610,7 +610,7 @@ SELECTCASE TFLAG:150
     CASE 11
         ;달속에 있다는 궁전
         PRINTFORML %조사선택(CALLNAME:MASTER, "는")% 환상향에서 떨어진 달로 갔다.
-        IF TEQUIP:41 == 0 && CFLAG:300 & 2048
+        IF TEQUIP:41 == 0 && CFLAG:외출가능장소 & 2048
             PRINTFORML 여기가 어디인지 이해한 %조사선택(CALLNAME:TARGET, "는")% 순간적으로 몸이 움츠러든다.
         ELSE
             IF TIME == 0
@@ -622,7 +622,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 2048
+        ELSEIF CFLAG:외출가능장소 & 2048
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -633,7 +633,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 4096
+        ELSEIF CFLAG:외출가능장소 & 4096
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -649,7 +649,7 @@ SELECTCASE TFLAG:150
 ;        PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
 ;;        IF TEQUIP:43
 ;            PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-;        ELSEIF CFLAG:300 & 32768
+;        ELSEIF CFLAG:외출가능장소 & 32768
 ;            PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
 ;        ELSE
 ;            PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -667,7 +667,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 16384
+        ELSEIF CFLAG:외출가능장소 & 16384
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -676,14 +676,14 @@ SELECTCASE TFLAG:150
         ;당신관
         IF NO:MASTER == 400
             PRINTFORM %CALLNAME:MASTER%의 결정으로 
-        ELSEIF CFLAG:MASTER:300 & 32768 || (NO:MASTER == 1 && CFLAG:MASTER:SP캐릭터 == 2)
+        ELSEIF CFLAG:MASTER:외출가능장소 & 32768 || (NO:MASTER == 1 && CFLAG:MASTER:SP캐릭터 == 2)
             PRINTFORM %조사선택(CALLNAME:MASTER, "가")% 승낙을 받아 
-        ELSEIF CFLAG:300 & 32768 || (NO:TARGET == 1 && CFLAG:SP캐릭터 == 2)
+        ELSEIF CFLAG:외출가능장소 & 32768 || (NO:TARGET == 1 && CFLAG:SP캐릭터 == 2)
             PRINTFORM %CALLNAME:TARGET%의 이름을 대고 
         ELSEIF ASSI >= 0
             IF NO:ASSI == 400
                 PRINTFORM %CALLNAME:ASSI%의 결정으로 
-            ELSEIF CFLAG:ASSI:300 & 32768 || (NO:ASSI == 1 && CFLAG:ASSI:SP캐릭터 == 2)
+            ELSEIF CFLAG:ASSI:외출가능장소 & 32768 || (NO:ASSI == 1 && CFLAG:ASSI:SP캐릭터 == 2)
                 PRINTFORM %조사선택(CALLNAME:MASTER, "가")% 승낙을 받아 
             ENDIF
         ENDIF
@@ -692,7 +692,7 @@ SELECTCASE TFLAG:150
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
         IF TEQUIP:41
             PRINTW 여기가 어딘지 몰라서 불안한 것 같다.
-        ELSEIF CFLAG:300 & 32768 || (NO:TARGET == 1 && CFLAG:SP캐릭터 == 2)
+        ELSEIF CFLAG:외출가능장소 & 32768 || (NO:TARGET == 1 && CFLAG:SP캐릭터 == 2)
             PRINTFORMW 아는 사람을 만나지 않을까 \@(ABL:노출증 >= 3) ? 기대하고 있다. # 불안해 하고 있다.\@
         ELSE
             PRINTW 따분한 듯이 주위를 둘러보고 있다.
@@ -740,7 +740,7 @@ ENDIF
 ;야외 조교, 집단시간모드시의 메시지
 ;--------------------------------------------------
 @OUTDOOR_SITUATION_6
-SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1
     RETURN 0
 
 PRINTL
@@ -789,7 +789,7 @@ ENDIF
 ;야외 조교, 상황 악화 3 단계눈(집단시간모드에 이행)의 메시지
 ;--------------------------------------------------
 @OUTDOOR_SITUATION_5
-SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1
     RETURN 0
 
 PRINTL
@@ -813,149 +813,149 @@ ENDIF
 LOCAL = 0
 IF TFLAG:150 == 99
     ;마을
-    IF CFLAG:MASTER:300 & 16384
+    IF CFLAG:MASTER:외출가능장소 & 16384
         LOCAL = 1
-    ELSEIF CFLAG:300 & 16384
+    ELSEIF CFLAG:외출가능장소 & 16384
         LOCAL = 2
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 16384
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 16384
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 831
     ;당신관
-    IF CFLAG:MASTER:300 & 524288
+    IF CFLAG:MASTER:외출가능장소 & 524288
         LOCAL = 1
-    ELSEIF CFLAG:300 & 524288
+    ELSEIF CFLAG:외출가능장소 & 524288
         PRINTFORM 조교되고 있는 것이 %CALLNAME:TARGET%인걸 눈치채자 얼굴을 붉히면서 
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 524288
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 524288
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 1
     ;박려신사
-    IF CFLAG:MASTER:300 & 1
+    IF CFLAG:MASTER:외출가능장소 & 1
         LOCAL = 1
-    ELSEIF CFLAG:300 & 1
+    ELSEIF CFLAG:외출가능장소 & 1
         LOCAL = 2
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 1
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 1
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 2
     ;홍마관
-    IF CFLAG:MASTER:300 & 2
+    IF CFLAG:MASTER:외출가능장소 & 2
         LOCAL = 1
-    ELSEIF CFLAG:300 & 2 && NO:TARGET != 151 && NO:TARGET != 161
+    ELSEIF CFLAG:외출가능장소 & 2 && NO:TARGET != 151 && NO:TARGET != 161
         PRINTFORM 조교되고 있는 %CALLNAME:TARGET%에게 몇 번이나 사과하면서, 
     ELSEIF NO:TARGET == 151 || NO:TARGET == 161
         LOCAL = 4
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 2
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 2
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 3
     ;명계
-    IF CFLAG:MASTER:300 & 4
+    IF CFLAG:MASTER:외출가능장소 & 4
         LOCAL = 1
-    ELSEIF CFLAG:300 & 4
+    ELSEIF CFLAG:외출가능장소 & 4
         PRINTFORM 조교되고 있는 것이, %CALLNAME:TARGET%인 것이 기분 좋은지 
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 4
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 4
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 4
     ;타케바야시
-    IF CFLAG:MASTER:300 & 8
+    IF CFLAG:MASTER:외출가능장소 & 8
         LOCAL = 1
-    ELSEIF CFLAG:300 & 8
+    ELSEIF CFLAG:외출가능장소 & 8
         LOCAL = 2
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 8
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 8
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 5
     ;피안
-    IF CFLAG:MASTER:300 & 16
+    IF CFLAG:MASTER:외출가능장소 & 16
         LOCAL = 1
-    ELSEIF CFLAG:300 & 16
+    ELSEIF CFLAG:외출가능장소 & 16
         LOCAL = 2
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 8
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 8
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 6
     ;요괴의 산
-    IF CFLAG:MASTER:300 & 32
+    IF CFLAG:MASTER:외출가능장소 & 32
         LOCAL = 1
-    ELSEIF CFLAG:300 & 32
+    ELSEIF CFLAG:외출가능장소 & 32
         LOCAL = 2
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 32
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 32
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 7
     ;구지옥자취 시외
-    IF CFLAG:MASTER:300 & 64
+    IF CFLAG:MASTER:외출가능장소 & 64
         LOCAL = 1
-    ELSEIF CFLAG:300 & 64
+    ELSEIF CFLAG:외출가능장소 & 64
         LOCAL = 2
     ELSEIF ASSI >= 0
-        SIF CFLAG:ASSI:300 & 64
+        SIF CFLAG:ASSI:외출가능장소 & 64
             LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 8
     ;요정의 숲
-    IF CFLAG:MASTER:300 & 128
+    IF CFLAG:MASTER:외출가능장소 & 128
         LOCAL = 1
-    ELSEIF CFLAG:300 & 128
+    ELSEIF CFLAG:외출가능장소 & 128
         LOCAL = 4
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 128
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 128
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 9
     ;기쁨의 절정
-    IF CFLAG:MASTER:300 & 256
+    IF CFLAG:MASTER:외출가능장소 & 256
         LOCAL = 1
-    ELSEIF CFLAG:300 & 256
+    ELSEIF CFLAG:외출가능장소 & 256
         PRINTFORM 조교되고 있는 것이, %CALLNAME:TARGET%인걸 알아내고 술병을 들고 
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 256
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 256
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 10 && TIME == 0
     ;태양의 밭(낮)
-    IF CFLAG:MASTER:300 & 512
+    IF CFLAG:MASTER:외출가능장소 & 512
         LOCAL = 1
-    ELSEIF CFLAG:300 & 512
+    ELSEIF CFLAG:외출가능장소 & 512
         LOCAL = 4
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 512
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 512
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 10
     ;태양의 밭(밤)
-    IF CFLAG:MASTER:300 & 1024
+    IF CFLAG:MASTER:외출가능장소 & 1024
         LOCAL = 1
-    ELSEIF CFLAG:300 & 1024
+    ELSEIF CFLAG:외출가능장소 & 1024
         LOCAL = 2
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 1024
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 1024
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 11
     ;달속에 있다는 궁전
-    IF CFLAG:MASTER:300 & 2048
+    IF CFLAG:MASTER:외출가능장소 & 2048
         LOCAL = 1
-    ELSEIF CFLAG:300 & 2048
+    ELSEIF CFLAG:외출가능장소 & 2048
         LOCAL = 2
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 2048
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 2048
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 12
     ;악마의 세계
-    IF CFLAG:MASTER:300 & 4096
+    IF CFLAG:MASTER:외출가능장소 & 4096
         LOCAL = 1
-    ELSEIF CFLAG:300 & 4096
+    ELSEIF CFLAG:외출가능장소 & 4096
         LOCAL = 2
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 4096
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 4096
         LOCAL = 3
     ENDIF
 ELSEIF TFLAG:150 == 12
     ;악마의 세계
-    IF CFLAG:MASTER:300 & 4096
+    IF CFLAG:MASTER:외출가능장소 & 4096
         LOCAL = 1
-    ELSEIF CFLAG:300 & 4096
+    ELSEIF CFLAG:외출가능장소 & 4096
         LOCAL = 2
-    ELSEIF ASSI >= 0 && CFLAG:ASSI:300 & 4096
+    ELSEIF ASSI >= 0 && CFLAG:ASSI:외출가능장소 & 4096
         LOCAL = 3
     ENDIF
 ENDIF
@@ -975,7 +975,7 @@ PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% \@(ABL:노출증 >= 3) ? 매�
 ;야외 조교, 상황 악화 2 단계눈의 메시지
 ;--------------------------------------------------
 @OUTDOOR_SITUATION_4
-SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1
     RETURN 0
 
 PRINTL
@@ -994,7 +994,7 @@ PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% \@(ABL:노출증 >= 3) ? 기�
 ;야외 조교, 상황 악화 1 단계눈의 메시지
 ;--------------------------------------------------
 @OUTDOOR_SITUATION_3
-SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1
     RETURN 0
 
 PRINTL
@@ -1037,7 +1037,7 @@ PRINTFORMW %CALLNAME:TARGET%\@(ABL:노출증 >= 3) ? 의 눈동자는 기대로 
 ;야외 조교, 발견자 도망시의 메시지
 ;--------------------------------------------------
 @OUTDOOR_SITUATION_2
-SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1
     RETURN 0
 
 PRINTL
@@ -1056,7 +1056,7 @@ ENDIF
 ;야외 조교, 상황 회복시의 메시지
 ;--------------------------------------------------
 @OUTDOOR_SITUATION_1
-SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1
     RETURN 0
 
 PRINTL
@@ -1073,7 +1073,7 @@ PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% \@(ABL:노출증 >= 3) ? 유�
 ;야외 조교, 현상 유지시의 메시지
 ;--------------------------------------------------
 @OUTDOOR_SITUATION_0
-SIF FLAG:조교시텍스트표시 == 0 || CFLAG:99 == 1
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1
     RETURN 0
 
 PRINTL

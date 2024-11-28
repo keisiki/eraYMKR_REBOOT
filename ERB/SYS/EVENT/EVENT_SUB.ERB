@@ -124,11 +124,11 @@ IF LOCAL == 1 && (FLAG:게임모드 == 1 || FLAG:게임모드 == 2)
 ENDIF
 
 ;堕とした人数が5人以上で, 謎の魅力が付く
-IF CFLAG:MASTER:98 >= 5 && TALENT:MASTER:수수께끼의매력 == 0
+IF CFLAG:MASTER:현회차연모음란수 >= 5 && TALENT:MASTER:수수께끼의매력 == 0
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% [수수께끼의 매력]을 몸에 익혔다.
     TALENT:MASTER:수수께끼의매력 = 1
 ;その周回で堕とした人数が50人以上または累計で200人以上で, 大甲斐性が付く
-ELSEIF (CFLAG:MASTER:98 >= 50 || FLAG:함락총계 >= 200) && TALENT:MASTER:대범함 == 0
+ELSEIF (CFLAG:MASTER:현회차연모음란수 >= 50 || FLAG:함락총계 >= 200) && TALENT:MASTER:대범함 == 0
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% [대범함]을 몸에 익혔다.
     TALENT:MASTER:대범함 = 1
 ENDIF
@@ -340,7 +340,7 @@ REPEAT CHARANUM
         CFLAG:COUNT:매각불능 -= 1
         IF TALENT:MASTER:Debug == 0
             CALL GET_NICK, MASTER, "『바람둥이』"
-            CFLAG:MASTER:157 |= 4
+            CFLAG:MASTER:주인칭호 |= 4
         ENDIF
     ENDIF
 REND
@@ -595,7 +595,7 @@ ELSEIF LOCAL & 32
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [키스마]를 얻었다.
     PRINTFORML %EXPNAME:23%＋1
     EXP:키스경험 += 1
-    CFLAG:172 += 1
+    CFLAG:주인과조교키스수 += 1
     TALENT:키스마 = 1
     CFLAG:이벤트취득음란 |= 64
 ELSEIF LOCAL & 64
@@ -848,7 +848,7 @@ IF (CFLAG:첫시츄에이션 & 32) == 0
     CFLAG:첫시츄에이션 |= 32
 ENDIF
 CFLAG:3115 = DAY
-CFLAG:MASTER:98 += 1
+CFLAG:MASTER:현회차연모음란수 += 1
 ;初期段階では変動しない
 IF FLAG:자택 == 0
     LOCAL = 0
@@ -1176,18 +1176,18 @@ ENDIF
 ;--------------------------------------------------
 @CHANGE_SORO_COMMON, ARG
 IF EXIST_PENIS(ARG)
-    IF CFLAG:ARG:158 & 1
+    IF CFLAG:ARG:조루및지루 & 1
         TALENT:ARG:조루 = 1
-    ELSEIF CFLAG:ARG:158 & 2
+    ELSEIF CFLAG:ARG:조루및지루 & 2
         TALENT:ARG:지루 = 1
     ENDIF
-    CFLAG:ARG:158 = 0
+    CFLAG:ARG:조루및지루 = 0
 ELSE
     IF TALENT:ARG:조루
-        CFLAG:ARG:158 |= 1
+        CFLAG:ARG:조루및지루 |= 1
         TALENT:ARG:조루 = 0
     ELSEIF TALENT:ARG:지루
-        CFLAG:ARG:158 |= 2
+        CFLAG:ARG:조루및지루 |= 2
         TALENT:ARG:지루 = 0
     ENDIF
 ENDIF
@@ -1226,7 +1226,7 @@ PRINTW
 @JUJUN_UP_CHECK
 IF ABL:순종 >= 4 && TALENT:반항적 && TALENT:츤데레
     ;地の文章表示
-    SIF CFLAG:99 == 0
+    SIF CFLAG:지문소거판정 == 0
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 마음에 들고 싶어서 안달이 난 것 같다….
     CALL SELF_KOJO, TARGET, 50
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:11%]을 잃고, [%TALENTNAME:13%]을 얻었다.
@@ -1234,7 +1234,7 @@ IF ABL:순종 >= 4 && TALENT:반항적 && TALENT:츤데레
     TALENT:솔직함 = 1
 ELSEIF ABL:순종 < 4 && TALENT:솔직함 && TALENT:츤데레
     ;地の文章表示
-    SIF CFLAG:99 == 0
+    SIF CFLAG:지문소거판정 == 0
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"가")% 좀 더 신경써줬으면 하는 모양이다….
     CALL SELF_KOJO, TARGET, 51
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:13%]을 잃고, [%TALENTNAME:11%]을 얻었다.

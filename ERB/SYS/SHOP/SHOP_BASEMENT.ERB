@@ -95,7 +95,7 @@ REPEAT CHARANUM
         SIF MARK:COUNT:반발각인 == 0
             CONTINUE
         ;対象がこのターンに解放されたばかりならダメ
-        SIF CFLAG:COUNT:180 & 4
+        SIF CFLAG:COUNT:지하감옥플래그 & 4
             CONTINUE
     ;解放実行判定
     ELSEIF ARG == 1
@@ -103,7 +103,7 @@ REPEAT CHARANUM
         SIF CFLAG:COUNT:조교관외 != 16
             CONTINUE
         ;対象が収監されたばかりもしくはこのターンに拷問してたらダメ
-        SIF CFLAG:COUNT:180 & 1 || CFLAG:COUNT:180 & 2
+        SIF CFLAG:COUNT:지하감옥플래그 & 1 || CFLAG:COUNT:지하감옥플래그 & 2
             CONTINUE
     ;矯正実行判定
     ELSEIF ARG == 2
@@ -114,7 +114,7 @@ REPEAT CHARANUM
         SIF BASE:COUNT:체력 < 500 || BASE:COUNT:기력 < 500
             CONTINUE
         ;この収監されたばかりもしくはこのターンに拷問してたらダメ
-        SIF CFLAG:COUNT:180 & 1 || CFLAG:COUNT:180 & 2
+        SIF CFLAG:COUNT:지하감옥플래그 & 1 || CFLAG:COUNT:지하감옥플래그 & 2
             CONTINUE
 
     ENDIF
@@ -181,7 +181,7 @@ ENDIF
 
 TARGET = LOCAL:3
 ;収監があったとき
-IF TARGET >= 0 && ARG == 0 && CFLAG:180 & 1
+IF TARGET >= 0 && ARG == 0 && CFLAG:지하감옥플래그 & 1
     TARGET = -1
     FLAG:996 = -1
 ENDIF
@@ -192,7 +192,7 @@ ENDIF
 ;地下牢に閉じ込める.攻略に使うにはネガティブすぎるかもしれない.
 @TORTURE_FACILITIES_INN
 ;지문 컷
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%에게 단단히 묶인 채 
     PRINTW 지하감옥에 갇혔다.
     PRINTFORML 어떻게든 도망치고자 %조사처리(CALLNAME:TARGET,"는")% 노력했지만 실패하고 
@@ -211,7 +211,7 @@ PRINTW ……
 
 ;収監フラグON
 CFLAG:조교관외 = 16
-CFLAG:180 |= 1
+CFLAG:지하감옥플래그 |= 1
 
 ;初体験時は異常経験が入る
 IF (CFLAG:첫시츄에이션 & 16384) == 0
@@ -234,7 +234,7 @@ PRINTL
 ;地下牢から解放してやる.攻略に使うにはネガティブすぎるかもしれない.
 @TORTURE_FACILITIES_OUT
 ;지문 컷
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 지하감옥에 갇혀있는 %CALLNAME:TARGET%에게 갔다.
     ;체력/기력적으로 자력으로 움직일 수 없는 케이스
     IF BASE:0 < 500 || BASE:기력 < 500
@@ -262,7 +262,7 @@ PRINTW ……
 
 ;収監フラグOFF
 CFLAG:조교관외 = 0
-CFLAG:180 |= 4
+CFLAG:지하감옥플래그 |= 4
 
 PRINTL 
 
@@ -272,7 +272,7 @@ PRINTL
 ;お待ちかねの拷問だけどあっさり風味.
 @TORTURE_FACILITIES_TRAINNING
 ;지문 컷
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINTFORML %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:TARGET,"가")% 갇혀 있는 지하감옥으로 갔다.
     PRINTFORMW 그리고 지하감옥에 있는 %CALLNAME:TARGET%에게 차분히 예의범절을 가르치기로 했던 것이다….
     PRINTW      ·
@@ -330,7 +330,7 @@ BASE:0 -= LOCAL
 BASE:기력 -= LOCAL:1
 PRINTFORML %CALLNAME:TARGET%의 체력이 {LOCAL}, 기력이 {LOCAL:1} 감소했다.
 ;今回拷問したフラグ
-CFLAG:180 |= 2
+CFLAG:지하감옥플래그 |= 2
 
 LOCAL = 0
 ;호감도 다운
@@ -398,7 +398,7 @@ IF BASE:ARG:체력 < 500 & BASE:ARG:기력 < 500 && TALENT:ARG:봉래인 == 0 &&
     ENDIF
 ENDIF
 ;各種地下牢フラグ消去
-CFLAG:ARG:180 = 0
+CFLAG:ARG:지하감옥플래그 = 0
 
 ;-----------------------------------------------
 ;종족 개조 시설 메인 메뉴
@@ -691,7 +691,7 @@ RETURNF LOCAL:ARG
 VARSET LOCAL, 0
 
 ;지문 컷
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     ;主人と実行者が同一人物でなければ事前に相談する
     IF ARG:1 != MASTER
         PRINTFORML %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:(ARG:1),"를")% 호출해, 
@@ -794,7 +794,7 @@ ENDIF
 CALL SELF_KOJO, TARGET, 280 + ARG, 0
 
 ;지문 컷
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     ;주정전생을 실행
     IF ARG == 0
         PRINTFORMW %조사처리(CALLNAME:(ARG:1),"는")% %CALLNAME:TARGET%에게 강렬한 암시를 걸친다.
@@ -1043,7 +1043,7 @@ ENDIF
 ;[봉래인]은 이 처리를 스킵
 IF TALENT:봉래인
     ;지문 컷
-    IF CFLAG:99 == 0
+    IF CFLAG:지문소거판정 == 0
         PRINTFORML 보통, 이런 일을 하면 강렬한 거부반응이 있는 것이지만,
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 마음에도 몸에도 전혀 위화감을 느끼고 있지 않은 것 같다
         PRINTFORML ……과연 [%TALENTNAME:49%]다, 정말 없는거야!

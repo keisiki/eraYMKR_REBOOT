@@ -309,7 +309,7 @@ ELSE
     ;조교 돌입 커맨드지만, 네이밍은 식중 함수에서 오려냈다.
     
 
-    SIF TARGET >= 0 && BASE:취기 <= MAXBASE:취기 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기 && CFLAG:MASTER:1501 == 0 && TALENT:MASTER:매춘중독 == 0
+    SIF TARGET >= 0 && BASE:취기 <= MAXBASE:취기 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기 && CFLAG:MASTER:매춘상태 == 0 && TALENT:MASTER:매춘중독 == 0
         PRINTFORMLC [100] - %NAME_SHOPCOMMAND_100()%
     SIF CHARANUM > 0
         PRINTLC [101] - 능력 보기
@@ -497,7 +497,7 @@ ELSE
             ELSEIF TALENT:MASTER:육아중
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 육아 중이라 조교를 할 수 없다.
             ENDIF
-        ELSEIF CFLAG:MASTER:1501 != 0
+        ELSEIF CFLAG:MASTER:매춘상태 != 0
             PRINTW 매춘과 조교를 동시에 할 수 없다.
         ELSEIF TALENT:MASTER:매춘중독 != 0
             PRINTW 이런 일을 할 틈이 없을 것이다.
@@ -773,10 +773,10 @@ IF RESULT != -1 && TARGET != RESULT
     SIF TARGET > 0
         CALL SELF_KOJO, TARGET, 124, LOCAL:6
     ;Ｓ패치 추가분
-    IF CFLAG:TARGET:1501 && TARGET > 0
+    IF CFLAG:TARGET:매춘상태 && TARGET > 0
         PRINTL 매춘 상태가 해제됐습니다.
         CFLAG:TARGET:조교관외 = 0
-        CFLAG:TARGET:1501 = 0
+        CFLAG:TARGET:매춘상태 = 0
         FLAG:3001 -= 1
     ENDIF
 ELSEIF RESULT != -1
@@ -857,10 +857,10 @@ SIF ASSI >= 0
 ASSI = RESULT
 ;Ｓ패치 추가분
 IF ASSI >= 0
-    IF CFLAG:ASSI:1501
+    IF CFLAG:ASSI:매춘상태
         PRINTL 매춘 상태가 해제됐습니다.
         CFLAG:ASSI:조교관외 = 0
-        CFLAG:ASSI:1501 = 0
+        CFLAG:ASSI:매춘상태 = 0
         FLAG:3001 -= 1
     ENDIF
 ENDIF
@@ -1706,7 +1706,7 @@ ELSE
     STR:2 = ({LOCAL})
 ENDIF
 STR:3 = %COM_NAME, 12%%STR:2%
-SIF TFLAG:0 == 2 && ARG:1 == 153 && CFLAG:ARG:156 & 1
+SIF TFLAG:0 == 2 && ARG:1 == 153 && CFLAG:ARG:칭호기록 & 1
     STR:3 = %"상사상애", 12%%STR:2%
 
 RETURN 1
@@ -2027,10 +2027,10 @@ MONEY:998 = MAX(MONEY:998, MONEY:1)
 @NEW_HIGH_INCOME_SLAVE, ARG
 CFLAG:ARG = MONEY:1
 ;하이스코어 갱신 처리
-CFLAG:96 = MAX(CFLAG:96, MONEY:1)
+CFLAG:최고금액_전수입 = MAX(CFLAG:최고금액_전수입, MONEY:1)
 
 ;--------------------------------------------------
 ;노예가 번 합계 처리
 ;--------------------------------------------------
 @TOTAL_INCOME_SLAVE, ARG
-CFLAG:97 = MIN (CFLAG:97+ARG, 10000000000000000)
+CFLAG:벌이총액 = MIN (CFLAG:벌이총액+ARG, 10000000000000000)

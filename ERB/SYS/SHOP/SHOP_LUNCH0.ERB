@@ -349,7 +349,7 @@ SIF TALENT:친애 || TALENT:상애
     PRINTFORM 애정이 듬뿍 담긴 
 IF LOCAL == 0 && (ABL:요리기능 >= 4 || LOCAL:1 == 1)
     ;경력 플래그를 ON
-    CFLAG:150 |= 1
+    CFLAG:도시락기록 |= 1
     ;(전용) 말측에서 정의되고 있는 고유 요리가25%의 확률로 나온다
     IF CSTR:88 != "" && RAND:4 == 0
         PRINTS CSTR:88
@@ -2737,7 +2737,7 @@ ELSE
         ;도시락(노예)으로 번 최고 금액 판정 처리
         SIF MONEY:1 > MONEY:996
             CALL NEW_HIGH_INCOME_ALL, 996
-        SIF MONEY:1 > CFLAG:93
+        SIF MONEY:1 > CFLAG:최고금액_도시락
             CALL NEW_HIGH_INCOME_SLAVE, 93
         CALL TOTAL_INCOME_SLAVE, MONEY:1
         ;--------------------------------------------------
@@ -3007,8 +3007,8 @@ $INPUT_LOOP
 INPUT
 IF RESULT == 0
     ;(추가) 주인의 도시락을 먹은 플래그 ON
-    CFLAG:150 |= 2048
-    CFLAG:MASTER:150 |= 4096
+    CFLAG:도시락기록 |= 2048
+    CFLAG:MASTER:도시락기록 |= 4096
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:TARGET,"과")% 함께 요리를 먹기로 했다.
     PRINTL      ・
     PRINTL      ・
@@ -3056,8 +3056,8 @@ IF RESULT == 0
 ELSEIF ASSI >= 0 && RESULT == 1
     TFLAG:202 = 0
     ;(추가) 주인의 도시락을 먹은 플래그 ON
-    CFLAG:ASSI:150 |= 2048
-    CFLAG:MASTER:150 |= 4096
+    CFLAG:ASSI:도시락기록 |= 2048
+    CFLAG:MASTER:도시락기록 |= 4096
     PRINTFORML %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:ASSI,"과")% 함께 요리를 먹기로 했다.
     PRINTL      ・
     PRINTL      ・
@@ -3363,8 +3363,8 @@ ELSEIF RESULT == 1
             ;욕정의 주
             CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL*300), 1
             IF TALENT:처녀
-                IF CFLAG:TARGET:500 == 0
-                    CFLAG:TARGET:500 = NO:MASTER + 1
+                IF CFLAG:TARGET:첫경험상대의캐릭터번호 == 0
+                    CFLAG:TARGET:첫경험상대의캐릭터번호 = NO:MASTER + 1
                     CSTR:TARGET:5 = %CALLNAME:MASTER%
                 ENDIF
                 PRINTL
