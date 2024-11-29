@@ -4,13 +4,13 @@
 ;未完成……というより未調整
 @ABLUP98
 DRAWLINE
-IF MARK:8 <= 0
+IF MARK:공포각인 <= 0
     PRINTW 공포각인이 없습니다.
     RETURN 0
 ENDIF
 
 ;恐怖刻印Lvと同じLvの快楽刻印と恐怖刻印Lv+2Lvの従順が必要
-PRINTFORML %MARKNAME:1% {MARK:8}LV 이상(현재 {MARK:1}), 그리고 %ABLNAME:10% {COST98(2)}LV 이상
+PRINTFORML %MARKNAME:1% {MARK:공포각인}LV 이상(현재 {MARK:쾌락각인}), 그리고 %ABLNAME:10% {COST98(2)}LV 이상
 
 PRINTFORM [0] - %PALAMNAME:12%의 구슬×{COST98(0)}\@(COST98(1) > 0) ? , %PALAMNAME:13%의 구슬×{COST98(1)} # \@……
 CALL SHOW_ISABLUP_COMMON, CAN98(0)
@@ -31,8 +31,8 @@ ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-MARK:8 -= 1
-PRINTFORMW %MARKNAME:8%의 레벨이 %조사처리(TOSTR(MARK:8),"가")% 되었습니다.
+MARK:공포각인 -= 1
+PRINTFORMW %MARKNAME:8%의 레벨이 %조사처리(TOSTR(MARK:공포각인),"가")% 되었습니다.
 
 @AUTO_ABLUP98
 #LOCALSIZE 1
@@ -44,7 +44,7 @@ RETURN 0
 ;レベルアップに必要な珠計算、レベルアップ予告処理
 ;--------------------------------------------------
 @ISABLUP98
-SIF MARK:8 <= 0
+SIF MARK:공포각인 <= 0
     RETURN 0
 
 CALLF CALC_COST98, "CALC"
@@ -63,53 +63,53 @@ SIF ARGS == "GET"
 ;必要な条件の算出
 VARSET LOCAL, 0
 
-IF MARK:8 == 1
+IF MARK:공포각인 == 1
     LOCAL:0 = 5000
     LOCAL:1 = 1000
-ELSEIF MARK:8 == 2
+ELSEIF MARK:공포각인 == 2
     LOCAL:0 = 10000
     LOCAL:1 = 2000
-ELSEIF MARK:8 == 3
+ELSEIF MARK:공포각인 == 3
     LOCAL:0 = 50000
     LOCAL:1 = 5000
 ENDIF
 
 ;臆病
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL:0 , 3.00
 ;気丈
-IF TALENT:12
+IF TALENT:꿋꿋함
     TIMES LOCAL:0 , 1.50
     TIMES LOCAL:1 , 1.50
 ENDIF
 ;素直
-IF TALENT:13
+IF TALENT:솔직함
     TIMES LOCAL:0 , 0.50
     TIMES LOCAL:1 , 0.50
 ENDIF
 ;生意気
-SIF TALENT:15
+SIF TALENT:건방짐
     TIMES LOCAL:0 , 1.50
 ;楽観的
-IF TALENT:25
+IF TALENT:낙관적
     TIMES LOCAL:0 , 0.75
     TIMES LOCAL:1 , 0.75
 ;悲観的
-ELSEIF TALENT:26
+ELSEIF TALENT:비관적
     TIMES LOCAL:0 , 1.25
     TIMES LOCAL:1 , 1.25
 ENDIF
 ;恋慕、服従
-IF TALENT:150 || TALENT:160
+IF TALENT:연모 || TALENT:복종
     TIMES LOCAL:0 , 0.50
     TIMES LOCAL:1 , 0.50
 ENDIF
 
 ;恐怖刻印Lv+2Lvの従順が必要
-LOCAL:2 = MARK:8 + 2
+LOCAL:2 = MARK:공포각인 + 2
 
 ;難易度HARD이상の場合、必要な恭順의 구슬は減るが、欲情의 구슬も必要になってくる
-IF FLAG:3 > 2
+IF FLAG:난이도 > 2
     TIMES LOCAL:0 , 0.75
 ELSE
     LOCAL:1 = 0
@@ -127,10 +127,10 @@ SIF ARGS == "GET"
     RETURNF LOCAL:ARG
 VARSET LOCAL, 0
 ;恐怖刻印Lvと同じLvの快楽刻印が必要
-SIF MARK:8 > MARK:1
+SIF MARK:공포각인 > MARK:쾌락각인
     LOCAL:0 |= 8
 
-SIF COST98(2) > ABL:10
+SIF COST98(2) > ABL:순종
     LOCAL:0 |= 4
 
 ;恭順의 구슬で減らす

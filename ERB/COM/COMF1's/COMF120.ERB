@@ -9,10 +9,10 @@
 SIF DITEMTYPE:999:120 > 0
     RETURN 0
 ;Ｃ계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 1) == 0
+SIF (FLAG:커맨드확장 & 1) == 0
     RETURN 0
 ;조교자에게 기교3이상 없으면 안 됨(새드 · 소악마라면 OK)
-SIF ABL:PLAYER:12 < 3 && TALENT:PLAYER:81 == 0 && TALENT:PLAYER:93 == 0
+SIF ABL:PLAYER:기교 < 3 && TALENT:PLAYER:새드 == 0 && TALENT:PLAYER:소악마 == 0
     RETURN 0
 ;촉수 조교 중에는 불가
 SIF TEQUIP:90
@@ -30,15 +30,15 @@ COM_NAME = 애태우기플레이
 CALL TRAIN_MESSAGE_COM120
 
 DOWNBASE:0 += 10
-DOWNBASE:1 += 50
+DOWNBASE:기력 += 50
 
 SOURCE:18 = 120
 SOURCE:22 = 70
 SOURCE:31 = 70
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -59,7 +59,7 @@ TFLAG:99 = 0
 IF SELECTCOM == 7 || SELECTCOM == 182 || SELECTCOM == 205 || SELECTCOM == 613
     TFLAG:99 = 1
 ;기승위·기승위 애널·가랑이·더블 가랑이·거품 춤·짝 맞추기 놀이·조수를 범하게 하는(페니스 있어)·조수의 A를 범하게 하는(페니스 있어)·정상위 시키는·후배위 시키는·A정상위 시키는·A 후배위 시킨다
-ELSEIF SELECTCOM == 24 || SELECTCOM == 34 || SELECTCOM == 43 || SELECTCOM == 301 || SELECTCOM == 305 || ((SELECTCOM == 307 || SELECTCOM == 308) && (TALENT:120 || TALENT:121)) || SELECTCOM == 352 || SELECTCOM == 323 || SELECTCOM == 324 || SELECTCOM == 332 || SELECTCOM == 333
+ELSEIF SELECTCOM == 24 || SELECTCOM == 34 || SELECTCOM == 43 || SELECTCOM == 301 || SELECTCOM == 305 || ((SELECTCOM == 307 || SELECTCOM == 308) && (TALENT:남자 || TALENT:후타나리)) || SELECTCOM == 352 || SELECTCOM == 323 || SELECTCOM == 324 || SELECTCOM == 332 || SELECTCOM == 333
     TFLAG:99 = 2
 ;시리코다마 빼기
 ELSEIF SELECTCOM == 402
@@ -71,7 +71,7 @@ ELSEIF (SELECTCOM >= 80 && SELECTCOM < 90)
 ELSEIF TEQUIP:55
     TFLAG:99 = 6
 ;사정 멈춤 해제에서의 사정
-ELSEIF SELECTCOM == 191 && TEQUIP:69 == 0 && BASE:2 >= MAXBASE:2
+ELSEIF SELECTCOM == 191 && TEQUIP:69 == 0 && BASE:사정 >= MAXBASE:사정
     TFLAG:99 = 7
 ;초조하게 할 수 없을 것 같은 장비 아이템(주관)
 ;바이브래이터·애널 바이브래이터·클리캡·유두캡·착유기·오나호르·전극 오나호르·관장·A전극·B전극·V전극·거봉·군고구마·고드름
@@ -88,7 +88,7 @@ ENDIF
 PRINTL <애태우기 플레이 중>
 
 DOWNBASE:0 += 25
-DOWNBASE:1 += 40
+DOWNBASE:기력 += 40
 
 LOCAL:1 = 160
 
@@ -106,15 +106,15 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL:1 , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL:1 , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL:1 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL:1 , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL:1 , 1.20
 ELSE
     TIMES LOCAL:1 , 1.30
@@ -128,9 +128,9 @@ SOURCE:18 += 50
 SOURCE:22 += LOCAL:1
 SOURCE:31 += 50
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 ;촉수 경험 플래그
@@ -144,7 +144,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM120
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -165,7 +165,7 @@ ENDIF
 
 [IF ENABLE_KOJO_EQUIP_MESSAGE]
 CALL KOJO_EQUIP_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 [ENDIF]
 

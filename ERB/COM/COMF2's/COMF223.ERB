@@ -13,7 +13,7 @@ SIF ITEM:80 == 0 && NOITEM == 0
     RETURN 0
 ;순종5미만의 ASSI일 경우, 実行できない(새드거나 새드끼Lv3이상か狂気, 또는 망신이나 복종이 있다면 ＯＫ)
 IF ASSIPLAY
-    SIF ABL:ASSI:10 < 5 && TALENT:ASSI:81 == 0 && ABL:ASSI:20 < 3 && TALENT:ASSI:158 == 0 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF ABL:ASSI:순종 < 5 && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:광기 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;욕실 플레이 중에는 불가
@@ -62,57 +62,57 @@ ELSE
 ENDIF
 
 ;C계 장착 도구를 사용하고 있지 않는 경우
-IF TEQUIP:30 == 0 && ((TALENT:120 && TEQUIP:31 == 0 && TEQUIP:32 == 0) || TALENT:120 == 0)
+IF TEQUIP:30 == 0 && ((TALENT:남자 && TEQUIP:31 == 0 && TEQUIP:32 == 0) || TALENT:남자 == 0)
     ;C감각이 4이상
-    SIF ABL:0 > 3
+    SIF ABL:C감각 > 3
         TIMES SOURCE:20 , 1.20
     ;C민감
-    IF TALENT:100
+    IF TALENT:C민감
         TIMES SOURCE:20 , 1.50
     ;C둔감
-    ELSEIF TALENT:101
+    ELSEIF TALENT:C둔감
         TIMES SOURCE:20 , 0.50
     ENDIF
 ENDIF
 ;B계 장착 도구를 사용하고 있지 않는 경우
 IF TEQUIP:35 == 0 && TEQUIP:36 == 0
     ;B감각이 4이상
-    SIF ABL:3 > 3
+    SIF ABL:B감각 > 3
         TIMES SOURCE:20 , 1.20
     ;B민감
-    IF TALENT:106
+    IF TALENT:B민감
         TIMES SOURCE:20 , 1.50
     ;B둔감
-    ELSEIF TALENT:107
+    ELSEIF TALENT:B둔감
         TIMES SOURCE:20 , 0.50
     ENDIF
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     SOURCE:24 = 10
     SOURCE:31 += 40000
-    DOWNBASE:1 += 120
-ELSEIF ABL:21 == 1
+    DOWNBASE:기력 += 120
+ELSEIF ABL:마조끼 == 1
     SOURCE:24 = 50
     SOURCE:31 += 10000
-    DOWNBASE:1 += 100
-ELSEIF ABL:21 == 2
+    DOWNBASE:기력 += 100
+ELSEIF ABL:마조끼 == 2
     SOURCE:24 = 250
     SOURCE:31 += 5000
-    DOWNBASE:1 += 80
-ELSEIF ABL:21 == 3
+    DOWNBASE:기력 += 80
+ELSEIF ABL:마조끼 == 3
     SOURCE:24 = 1000
     SOURCE:31 += 1000
-    DOWNBASE:1 += 60
-ELSEIF ABL:21 == 4
+    DOWNBASE:기력 += 60
+ELSEIF ABL:마조끼 == 4
     SOURCE:24 = 1600
     SOURCE:31 += 100
-    DOWNBASE:1 += 50
+    DOWNBASE:기력 += 50
 ELSE
     SOURCE:24 = 2500
     SOURCE:31 += 50
-    DOWNBASE:1 += 40
+    DOWNBASE:기력 += 40
 ENDIF
 
 ;긴박 하고 있으면(자) 효과 업
@@ -124,16 +124,16 @@ ENDIF
 IF SELECTCOM == PREVCOM
     TIMES SOURCE:20 , 1.25
     TIMES SOURCE:24 , 1.20
-    TIMES DOWNBASE:1 , 1.10
+    TIMES DOWNBASE:기력 , 1.10
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 2
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 2
 ENDIF
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && ABL:21 >= 3
+SIF ASSIPLAY == 0 && ABL:마조끼 >= 3
     TFLAG:50 += 1
 ;SM교육 경험 플래그
 SIF ASSIPLAY
@@ -141,7 +141,7 @@ SIF ASSIPLAY
 
 IF NOITEM == 0
     ITEM:80 -= 1
-    SIF FLAG:13 & 16 && MONEY:0 >= ITEMPRICE:80
+    SIF FLAG:아이템확장 & 16 && MONEY:0 >= ITEMPRICE:80
         CALL FILL_PLURAL_ITEM, 80
 ENDIF
 
@@ -156,7 +156,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM223
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -164,11 +164,11 @@ PRINTFORM %조사선택(CALLNAME:PLAYER, "는")% 초에 불을 붙여 뜨거워�
 SIF TEQUIP:40
     PRINT 결박되어 움직일 수 없는 
 PRINTFORM %CALLNAME:TARGET%의 
-IF TALENT:PLAYER:81 || TALENT:PLAYER:177
+IF TALENT:PLAYER:새드 || TALENT:PLAYER:초S
     PRINT 민감한 부분에 집중적으로 
 ELSE
     ;(eraElona용 소질[아르비노]의 대신 )
-    IF TALENT:40
+    IF TALENT:아픔에약함
         PRINT 진주와 같이 새하얗고 요염한 맨 살에 
     ELSE
         PRINT 몸 위에 

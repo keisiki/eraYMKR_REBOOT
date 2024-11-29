@@ -19,7 +19,7 @@ DRAWLINE
 PRINTL 어떤 목욕탕을 개발하겠습니까?
 PRINTFORML 소지금:{MONEY}원
 FOR COUNT,0, 16
-    SIF !GETBIT(FLAG:74, COUNT) && GETBIT(LOCAL, COUNT)
+    SIF !GETBIT(FLAG:욕탕개조, COUNT) && GETBIT(LOCAL, COUNT)
         PRINTFORML   [{COUNT, 2}] %STR:(500+COUNT),16,LEFT%(%SHOW_YEN(SPECIAL_BATH_PRICE(COUNT))%)
 NEXT
 PRINTL [100] 돌아가기
@@ -27,7 +27,7 @@ $INPUT_LOOP
 INPUT
 IF RESULT == 100
     RETURN 0
-ELSEIF RESULT >= 0 && RESULT <= 15 && !GETBIT(FLAG:74, RESULT) && GETBIT(LOCAL, RESULT)
+ELSEIF RESULT >= 0 && RESULT <= 15 && !GETBIT(FLAG:욕탕개조, RESULT) && GETBIT(LOCAL, RESULT)
     LOCAL:1 = SPECIAL_BATH_PRICE(RESULT)
 ELSE
     GOTO INPUT_LOOP
@@ -37,7 +37,7 @@ IF MONEY < LOCAL:1
     RESTART
 ELSE
     MONEY -= LOCAL:1
-    SETBIT FLAG:74, RESULT
+    SETBIT FLAG:욕탕개조, RESULT
     PRINTL 목욕탕 기능을 확장했다.
     PRINTFORMW 커맨드 \@(RESULT == 13) ? 《%STR:513%》%조사만처리(STR:513,"를")% # ＜%STR:(500+RESULT)%＞%조사만처리(STR:(500+RESULT),"를")%\@ 사용할 수 있게 되었다.
 ENDIF
@@ -107,11 +107,11 @@ ENDSELECT
 ;목욕탕의 개장 상황을 표시
 ;-----------------------------------------------
 @SHOW_BATH_ABL
-IF FLAG:74 == 0
+IF FLAG:욕탕개조 == 0
     PRINT ＊미개발＊
 ELSE
     FOR COUNT, 0, 16
-        SIF !GETBIT(FLAG:74, COUNT)
+        SIF !GETBIT(FLAG:욕탕개조, COUNT)
             CONTINUE
         IF COUNT == 9
             PRINT [모두 개발] 
@@ -135,19 +135,19 @@ LOCAL |= 4
 LOCAL |= 8
 LOCAL |= 16
 ;精液風呂は触手に[精液放出量強化]能力があれば追加可能
-SIF FLAG:75 & 16384
+SIF FLAG:촉수능력 & 16384
     LOCAL |= 64
 ;主人が禁断の知識を持っていると鰻, 蟲風呂両方追加可能
-IF TALENT:MASTER:56
+IF TALENT:MASTER:금단의지식
     LOCAL |= 1
     LOCAL |= 2
 ENDIF
 REPEAT CHARANUM
     ;失踪中なら除外
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     ;主人か助手可能でなければ除外
-    SIF COUNT != MASTER && CFLAG:COUNT:1 < 2
+    SIF COUNT != MASTER && CFLAG:COUNT:매각가능 < 2
         CONTINUE
     ;リグルかヤマメの内誰かが主人もしくは助手可能の場合, 蟲風呂を追加可能
     SIF NO:COUNT == 24 || NO:COUNT == 68
@@ -179,8 +179,8 @@ REPEAT CHARANUM
         LOCAL |= 4096
     ;妖精が主人もしくは助手可能, かつ堕とした妖精がその時点で50人以上で[つるぺた堕し]か[大乳導]を取得している, または主人が[妖精知識]を取得している場合, 妖精風呂を追加可能
     ;CHALLENGEモードのときは妖精が主人もしくは助手可能かつ堕とした妖精が累計20人以上のとき妖精風呂を追加可能
-    IF (FLAG:4 >= 50 && FLAG:32 >= 20) || FLAG:32 >= 50 && (TALENT:MASTER:96 || TALENT:MASTER:97) || TALENT:MASTER:57
-        SIF TALENT:COUNT:200
+    IF (FLAG:게임모드 >= 50 && FLAG:요정함락총계 >= 20) || FLAG:요정함락총계 >= 50 && (TALENT:MASTER:대유도 || TALENT:MASTER:절벽가슴격추왕) || TALENT:MASTER:요정지식
+        SIF TALENT:COUNT:요정
             LOCAL |= 8192
     ENDIF
     ;理香子, ちゆり, 夢美の内誰かが主人もしくは助手可能の場合, 岩盤浴を追加可能
@@ -188,10 +188,10 @@ REPEAT CHARANUM
         LOCAL |= 16384
 REND
 ;주인의 조교사 Lv이 4 이상일 경우에는 돈다발 목욕탕을 추가 가능
-SIF ABL:MASTER:99 >= 4
+SIF ABL:MASTER:조교사Lv >= 4
     LOCAL |= 32768
 ;디버그 모드시에는 무조건 개조 가능
-SIF TALENT:MASTER:998
+SIF TALENT:MASTER:Debug
     LOCAL = 65535
 RETURNF LOCAL
 
@@ -203,7 +203,7 @@ RETURNF LOCAL
 #FUNCTION
 LOCAL:1 = 0
 FOR LOCAL, 0, 20
-    LOCAL:1 += GETBIT(FLAG:74, LOCAL)
+    LOCAL:1 += GETBIT(FLAG:욕탕개조, LOCAL)
 NEXT
 RETURNF LOCAL:1
 
@@ -218,21 +218,21 @@ LOCAL:1 = 0
 LOCAL:2 = 0
 REPEAT CHARANUM
     ;주인, [남자]는 조건 상 튕김
-    SIF COUNT == MASTER || TALENT:COUNT:120
+    SIF COUNT == MASTER || TALENT:COUNT:남자
         CONTINUE
     ;그 자리에 없는 캐릭터는 제외
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     ;임신, 포란, 회란도 제외
-    SIF TALENT:COUNT:140 || TALENT:COUNT:143 || TALENT:COUNT:145
+    SIF TALENT:COUNT:임신 || TALENT:COUNT:포란중 || TALENT:COUNT:회란
         CONTINUE
     ;요정이 아니라면 튕김
-    SIF TALENT:COUNT:200 == 0
+    SIF TALENT:COUNT:요정 == 0
         CONTINUE
-    IF TALENT:COUNT:151 || TALENT:COUNT:152 || TALENT:COUNT:153 || TALENT:COUNT:160 || TALENT:COUNT:161 || TALENT:COUNT:162 || TALENT:COUNT:164
+    IF TALENT:COUNT:망신 || TALENT:COUNT:친애 || TALENT:COUNT:상애 || TALENT:COUNT:복종 || TALENT:COUNT:낙인 || TALENT:COUNT:예속 || TALENT:COUNT:사역마
         LOCAL:1 += 1
         LOCAL:2 += 1
-    ELSEIF TALENT:COUNT:150 || TALENT:COUNT:170
+    ELSEIF TALENT:COUNT:연모 || TALENT:COUNT:음란
         LOCAL:1 += 1
     ENDIF
     LOCAL += 1
@@ -283,7 +283,7 @@ PRINTW …………
 PRINTW ……
 IF EXIST_PENIS(MASTER) && LOCAL:3 / 64
     PRINTFORML %조사처리(CALLNAME:MASTER,"는")% {LOCAL:3/64}번 사정했다.
-    EXP:MASTER:3 += (LOCAL:3 / 64) * 2
+    EXP:MASTER:사정경험 += (LOCAL:3 / 64) * 2
 ENDIF
 
 PRINTFORML %EXPNAME:2%＋?
@@ -300,111 +300,111 @@ PRINTW (다만 0인경우도 있다.)
 
 REPEAT CHARANUM
     ;主人, [オトコ]は条件からはじく
-    SIF COUNT == 0 || TALENT:COUNT:120
+    SIF COUNT == 0 || TALENT:COUNT:남자
         CONTINUE
     ;失踪中は除外
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     ;[妊娠], [抱卵中], [懐卵]も除外
-    SIF TALENT:COUNT:140 || TALENT:COUNT:143 || TALENT:COUNT:145
+    SIF TALENT:COUNT:임신 || TALENT:COUNT:포란중 || TALENT:COUNT:회란
         CONTINUE
     ;[妖精]以外は除外
-    SIF TALENT:COUNT:200 == 0
+    SIF TALENT:COUNT:요정 == 0
         CONTINUE
     ;快Ｃの珠, 절정経験, (射精経験, 異常経験)
-    LOCAL:4 = (ABL:COUNT:3 + 1) * (LOCAL:3/2)
-    SIF TALENT:COUNT:101
+    LOCAL:4 = (ABL:COUNT:B감각 + 1) * (LOCAL:3/2)
+    SIF TALENT:COUNT:C둔감
         TIMES LOCAL:4 , 0.67
-    SIF TALENT:COUNT:100
+    SIF TALENT:COUNT:C민감
         TIMES LOCAL:4 , 1.50
     JUEL:COUNT:0 += LOCAL:4
     LOCAL:5 = LOCAL:4 / 20
     IF LOCAL:4 >= 1000
-        EXP:COUNT:2 += LOCAL:4 / 1000
-        IF TALENT:COUNT:121
-            IF EXP:COUNT:3 == 0
-                EXP:COUNT:50 += 1
-                CFLAG:COUNT:11 |= 4
+        EXP:COUNT:절정경험 += LOCAL:4 / 1000
+        IF TALENT:COUNT:후타나리
+            IF EXP:COUNT:사정경험 == 0
+                EXP:COUNT:이상경험 += 1
+                CFLAG:COUNT:VA이상경험변동 |= 4
             ENDIF
-            EXP:COUNT:3 += LOCAL:4 / 1000
+            EXP:COUNT:사정경험 += LOCAL:4 / 1000
         ENDIF
     ENDIF
     ;快Ｂの珠, 절정経験, (噴乳経験, 異常経験)
-    LOCAL:4 = (ABL:COUNT:3 + 1) * (LOCAL:3/4)
-    SIF TALENT:COUNT:107
+    LOCAL:4 = (ABL:COUNT:B감각 + 1) * (LOCAL:3/4)
+    SIF TALENT:COUNT:B둔감
         TIMES LOCAL:4 , 0.67
-    SIF TALENT:COUNT:106
+    SIF TALENT:COUNT:B민감
         TIMES LOCAL:4 , 1.50
-    IF TALENT:COUNT:110
+    IF TALENT:COUNT:절벽
         TIMES LOCAL:4 , 2.00
-    ELSEIF TALENT:COUNT:111
+    ELSEIF TALENT:COUNT:빈유
         TIMES LOCAL:4 , 1.50
-    ELSEIF TALENT:COUNT:112
+    ELSEIF TALENT:COUNT:거유
         TIMES LOCAL:4 , 0.67
-    ELSEIF TALENT:COUNT:113
+    ELSEIF TALENT:COUNT:폭유
         TIMES LOCAL:4 , 0.50
     ENDIF
     JUEL:COUNT:3 += LOCAL:4
     LOCAL:5 += LOCAL:4 / 20
     IF LOCAL:4 >= 1000
-        EXP:COUNT:2 += LOCAL:4 / 1000
-        IF TALENT:COUNT:134
-            IF EXP:COUNT:5 == 0
-                EXP:COUNT:50 += 1
-                CFLAG:COUNT:11 |= 4
+        EXP:COUNT:절정경험 += LOCAL:4 / 1000
+        IF TALENT:COUNT:모유체질
+            IF EXP:COUNT:분유경험 == 0
+                EXP:COUNT:이상경험 += 1
+                CFLAG:COUNT:VA이상경험변동 |= 4
             ENDIF
-            EXP:COUNT:5 += LOCAL:4 / 1000
+            EXP:COUNT:분유경험 += LOCAL:4 / 1000
         ENDIF
     ENDIF
     ;정액경험
     IF RAND:2 == 0
         LOCAL:4 = (LOCAL:3/128 < 2) ? RAND:2 # RAND:(LOCAL:3/128)
-        EXP:COUNT:4 += LOCAL:4
+        EXP:COUNT:정액경험 += LOCAL:4
         LOCAL:5 += LOCAL:4
     ENDIF
     ;恭順の珠, 欲情の珠, 奉仕快楽経験
-    LOCAL:5 *= 2 + (TALENT:COUNT:150 + TALENT:COUNT:151 + TALENT:COUNT:152 + TALENT:COUNT:153 + TALENT:COUNT:160 + TALENT:COUNT:161 + TALENT:COUNT:162 + TALENT:COUNT:164 + TALENT:COUNT:170 + TALENT:COUNT:180) * 2
+    LOCAL:5 *= 2 + (TALENT:COUNT:연모 + TALENT:COUNT:망신 + TALENT:COUNT:친애 + TALENT:COUNT:상애 + TALENT:COUNT:복종 + TALENT:COUNT:낙인 + TALENT:COUNT:예속 + TALENT:COUNT:사역마 + TALENT:COUNT:음란 + TALENT:COUNT:음마) * 2
     JUEL:COUNT:13 += LOCAL:5
     JUEL:COUNT:12 += LOCAL:5 / 10
-    EXP:COUNT:20 += LOCAL:5 / 20
+    EXP:COUNT:봉사쾌락경험 += LOCAL:5 / 20
     ;今回から否定の珠も追加.数を計算する.
     ;反発刻印によって基礎値が, 屈服刻印によってランダム値が決定される
-    IF MARK:COUNT:9 > MARK:COUNT:2
-        LOCAL:6 = (MARK:COUNT:9 - MARK:COUNT:2) * LOCAL:5 / 5
-    ELSEIF MARK:COUNT:9 > 0
-        LOCAL:6 = MARK:COUNT:9 * LOCAL:5 / 20
+    IF MARK:COUNT:반발각인 > MARK:COUNT:굴복각인
+        LOCAL:6 = (MARK:COUNT:반발각인 - MARK:COUNT:굴복각인) * LOCAL:5 / 5
+    ELSEIF MARK:COUNT:반발각인 > 0
+        LOCAL:6 = MARK:COUNT:반발각인 * LOCAL:5 / 20
     ELSE
         LOCAL:6 = 0
     ENDIF
     IF LOCAL:3 < 10000
-        LOCAL:6 += RAND:20 * (3 - MARK:COUNT:2) / 3
+        LOCAL:6 += RAND:20 * (3 - MARK:COUNT:굴복각인) / 3
     ELSE
-        LOCAL:6 += RAND:(SQRT(LOCAL:3)/5) * (3 - MARK:COUNT:2) / 3
+        LOCAL:6 += RAND:(SQRT(LOCAL:3)/5) * (3 - MARK:COUNT:굴복각인) / 3
     ENDIF
     ;반발 0이면 보너스
     IF LOCAL:6 == 0
         JUEL:COUNT:13 += LOCAL:5
         JUEL:COUNT:12 += LOCAL:5 / 9
-        EXP:COUNT:20 += LOCAL:5 / 18
+        EXP:COUNT:봉사쾌락경험 += LOCAL:5 / 18
     ELSEIF LOCAL:6 > LOCAL:5 * 11 / 10
         JUEL:COUNT:100 += LOCAL:6 - LOCAL:5 * 11 / 10
     ELSE
         JUEL:COUNT:13 += LOCAL:5 - LOCAL:6 * 10 / 11
         JUEL:COUNT:12 += LOCAL:5 / 10 - LOCAL:6 / 11
-        EXP:COUNT:20 += LOCAL:5 / 20
+        EXP:COUNT:봉사쾌락경험 += LOCAL:5 / 20
     ENDIF
 
     ;마지막으로 체력을 한계로 한다
-    BASE:COUNT:0 = 1 + RAND:499
+    BASE:COUNT:체력 = 1 + RAND:499
 REND
-BASE:MASTER:0 = 1 + RAND:499
+BASE:MASTER:체력 = 1 + RAND:499
 PRINTFORMW %CALLNAME:MASTER% 및 요정들은 피곤해져서 그 자리에 잠들어 버렸다….
 ;妖精の総数が100以上, または堕ちている妖精の数が50以上, または心酔している妖精の数が30以上, 
 ;または妖精の総数が心酔している妖精の数と同じ, または堕ちている妖精の数が妖精の総数の半分以上を占めているなら風呂は壊れる
 ;(暴れまわると解釈)
 IF LOCAL >= 100 || LOCAL:1 >= 50 || LOCAL:2 >= 30 || LOCAL == LOCAL:2 || LOCAL:1 >= LOCAL/2
         PRINTFORMW 너무 신나게 날뛴 탓인지 요정목욕탕은 부서져서 사용 불능이 되어버렸다…….
-    FLAG:74 -= 8192
+    FLAG:욕탕개조 -= 8192
 ENDIF
 BEGIN TURNEND
 
@@ -419,11 +419,11 @@ RETURN 1
 ;--------------------------------------------------
 @GROUP_BATH_CHECK
 ;캐릭터 전용 커맨드, 일상 생활, 밤 이벤트 확장 전부 ON 필수
-SIF (FLAG:15 & 16384) == 0 || (FLAG:12 & 64) == 0 || (FLAG:12 & 256) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0 || (FLAG:SHOP이벤트확장 & 64) == 0 || (FLAG:SHOP이벤트확장 & 256) == 0
     RETURN 0
 
 ;eratohoYM, ABNORMAL, EXTRA 모드 전용이랄까 그 외에서 이것의 상상이 안 감(DEBUG 모드는 ＯＫ)
-SIF FLAG:4 != 0 && FLAG:4 != 1 && FLAG:4 != 2 && TALENT:MASTER:998 != 1
+SIF FLAG:게임모드 != 0 && FLAG:게임모드 != 1 && FLAG:게임모드 != 2 && TALENT:MASTER:Debug != 1
     RETURN 0
 
 ;현재 아무도 조교하고 있지 않다, 주인을 넣지 않고 모든 등록 캐릭터가 3명 이하라면 돌아간다
@@ -431,7 +431,7 @@ SIF TARGET < 0 || CHARANUM < 4
     RETURN 0
 
 ;발생할 확률은 EASY～NORMAL에서 주인의 조교사 Lv*6%, HARD 이상에서 조교사 Lv*4%로 한다
-SIF (FLAG:3 <= 2 && RAND:100 > 6*(ABL:MASTER:99)) || (FLAG:3 > 2 && RAND:100 > 4*(ABL:MASTER:99))
+SIF (FLAG:난이도 <= 2 && RAND:100 > 6*(ABL:MASTER:조교사Lv)) || (FLAG:난이도 > 2 && RAND:100 > 4*(ABL:MASTER:조교사Lv))
     RETURN 0
 
 ;이벤트 분기용 한 문자 변수의 초기화
@@ -443,19 +443,19 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;그 자리에 없는 캐릭터는 제외
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     ;연모 또는 복종 또는 음란 없는 캐릭터는 제외
-    SIF TALENT:COUNT:150 == 0 && TALENT:COUNT:160 == 0 && TALENT:COUNT:170 == 0
+    SIF TALENT:COUNT:연모 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:음란 == 0
         CONTINUE
     ;유아퇴행 또는 정신붕괴 또는 괴뢰 또는 괴조인격 또는 미약중독 또는 포란 중인 캐릭터는 제외
-    SIF TALENT:COUNT:159 || TALENT:COUNT:167 || TALENT:COUNT:168 || TALENT:COUNT:169 || TALENT:COUNT:46 || TALENT:COUNT:143
+    SIF TALENT:COUNT:유아퇴행 || TALENT:COUNT:정신붕괴 || TALENT:COUNT:괴뢰 || TALENT:COUNT:괴조인격 || TALENT:COUNT:미약중독 || TALENT:COUNT:포란중
         CONTINUE
     ;특수 장비를 장착하고 있는 경우에는 제외
-    SIF CFLAG:COUNT:42
+    SIF CFLAG:COUNT:특수장비
         CONTINUE
     ;반발각인 2 이상, 공포각인 3 이상, 약물각인 3 이상인 캐릭터는 제외
-    SIF MARK:COUNT:9 >= 2 || MARK:COUNT:8 >= 3 || MARK:COUNT:3 >= 3
+    SIF MARK:COUNT:반발각인 >= 2 || MARK:COUNT:공포각인 >= 3 || MARK:COUNT:약물각인 >= 3
         CONTINUE
 
     LOCAL = NO:COUNT
@@ -481,7 +481,7 @@ REPEAT CHARANUM
     SIF LOCAL == 61 || LOCAL == 62 || LOCAL == 63 || LOCAL == 64
         LOCAL:17 += 1
     ;앨리스와 귀여운 인형들(앨리스 EX 불가, 샹하이, 호라이, 골리아테, 오오에도)
-    SIF (LOCAL == 14 && CFLAG:COUNT:0 == 0) || LOCAL == 66 || LOCAL == 67 || LOCAL == 96 || LOCAL == 97
+    SIF (LOCAL == 14 && CFLAG:COUNT:SP캐릭터 == 0) || LOCAL == 66 || LOCAL == 67 || LOCAL == 96 || LOCAL == 97
         LOCAL:18 += 1
     ;뱌쿠렌 씨와 유쾌한 모두들(나즈, 이치린, 무라사, 쇼우, 뱌쿠렌, 누에)
     SIF LOCAL == 71 || LOCAL == 73 || LOCAL == 75 || LOCAL == 76 || LOCAL == 77 || LOCAL == 78
@@ -496,10 +496,10 @@ REPEAT CHARANUM
     SIF LOCAL == 1 || LOCAL == 2 || LOCAL == 9 || LOCAL == 32 || LOCAL == 42
         LOCAL:22 += 1
     ;마리사 하렘(마리사 EX 불가, 앨리스, 파체, 플랑, 니토리, 코이시)
-    SIF (LOCAL == 2 && CFLAG:COUNT:0 == 0 ) || LOCAL == 8 || LOCAL == 11 || LOCAL == 14 || LOCAL == 40 || LOCAL == 64
+    SIF (LOCAL == 2 && CFLAG:COUNT:SP캐릭터 == 0 ) || LOCAL == 8 || LOCAL == 11 || LOCAL == 14 || LOCAL == 40 || LOCAL == 64
         LOCAL:23 += 1
     ;두근! 남자뿐인 집단 서비스 신(린노스케, 요우키, 반령(요우키), 운잔, 신교쿠, 유겐마간, 타츠미, 텐지에 전원 [남자] 보유)
-    SIF (LOCAL == 69 && TALENT:COUNT:120) || (LOCAL == 70 && TALENT:COUNT:120)  || (LOCAL == 74 && TALENT:COUNT:120) || (LOCAL == 99 && TALENT:COUNT:120) || (LOCAL == 120 && TALENT:COUNT:120)  || (LOCAL == 121 && TALENT:COUNT:120) || (LOCAL == 140 && TALENT:COUNT:120) || (LOCAL == 142 && TALENT:COUNT:120)
+    SIF (LOCAL == 69 && TALENT:COUNT:남자) || (LOCAL == 70 && TALENT:COUNT:남자)  || (LOCAL == 74 && TALENT:COUNT:남자) || (LOCAL == 99 && TALENT:COUNT:남자) || (LOCAL == 120 && TALENT:COUNT:남자)  || (LOCAL == 121 && TALENT:COUNT:남자) || (LOCAL == 140 && TALENT:COUNT:남자) || (LOCAL == 142 && TALENT:COUNT:남자)
         LOCAL:24 += 1
     ;몽전대사묘 여러분(요시카, 청아, 토지코, 후토, 미코)
     SIF LOCAL == 82 || LOCAL == 83 || LOCAL == 84 || LOCAL == 85 || LOCAL == 86
@@ -595,7 +595,7 @@ SIF LOCAL <= 0
     RETURN 0
 
 ;디버그 모드에서 표시
-SIF TALENT:MASTER:998 == 1
+SIF TALENT:MASTER:Debug == 1
     PRINTFORML LOCAL = {LOCAL}
 
 ;--------------------------------------------------
@@ -619,7 +619,7 @@ REPEAT 16
 REND
 
 ;디버그 모드에서 표시
-SIF TALENT:MASTER:998 == 1
+SIF TALENT:MASTER:Debug == 1
     PRINTFORML LOCAL:200 = {LOCAL:200}
 
 SIF LOCAL:200 != 0
@@ -633,7 +633,7 @@ RETURN 1
 @GROUP_BATH_EVENT, ARG
 DRAWLINE
 ;지문 컷
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     IF ARG == 1
         PRINTL 치르노와 레티가 사이좋게 전용 욕조에 들어가자, 
         PRINTL 대요정과 루미아와 미스티나 리글 등의 멤버도 욕실에 들어왔다.
@@ -802,7 +802,7 @@ FOR LOCAL:1 , 1 , 3 , 1
                 ;대사 호출, TFLAG:200의 501～를 사용
                 CALL SELF_KOJO, COUNT, 500+ARG
             ELSE
-                IF FLAG:12 & 128 || FLAG:997 == 0
+                IF FLAG:SHOP이벤트확장 & 128 || FLAG:997 == 0
                     JUEL:COUNT:12 += 150
                     PRINTFORML %CALLNAME:COUNT%의 순종의 구슬＋150
                 ENDIF
@@ -814,7 +814,7 @@ NEXT
 FLAG:997 = 1
 
 ;지문 컷
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     IF ARG == 1
         PRINTW 즐거운 목욕 뒤에 여섯 명 각자 각각의 마음을 품은 채 밤을 보내게 되었다….
     ELSEIF ARG == 2

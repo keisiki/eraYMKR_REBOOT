@@ -10,17 +10,17 @@ RETURN 0
 
 @EXCOM_ABLE628
 ;수치 플레이계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 512) == 0
+SIF (FLAG:커맨드확장 & 512) == 0
     RETURN 0
 ;순종4미만 · 레즈끼(BL끼) 4 미만의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(소악마か망신か복종ならＯＫ)
 IF ASSIPLAY
-    SIF (ABL:ASSI:10 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:22 < 4) || (TALENT:120 && TALENT:ASSI:120 && ABL:ASSI:23 < 4))) && TALENT:ASSI:93 == 0 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:남자 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;野外もしくは公開自慰を行ったことがない場合の野外およびビデオ撮影中は, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && (CFLAG:21 & 1) == 0 && (TEQUIP:50 || TEQUIP:52)
+SIF FLAG:VA이상조교필터 & 4 && (CFLAG:첫특수커맨드 & 1) == 0 && (TEQUIP:50 || TEQUIP:52)
     RETURN 0
-SIF ASSIPLAY && FLAG:2 & 4 && (CFLAG:ASSI:21 & 1) == 0 && (TEQUIP:50 || TEQUIP:52)
+SIF ASSIPLAY && FLAG:VA이상조교필터 & 4 && (CFLAG:ASSI:첫특수커맨드 & 1) == 0 && (TEQUIP:50 || TEQUIP:52)
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -44,10 +44,10 @@ SIF TEQUIP:54
 SIF TEQUIP:55
     RETURN 0
 ;조수가 훈도시 착용 중일 경우 , 助手の기교4이상 필수
-SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:59 == 17 && ABL:ASSI:12 < 4
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:59 == 17 && ABL:ASSI:기교 < 4
     RETURN 0
 ;훈도시 착용 중일 경우 기교4이상 필수
-SIF TEQUIP:59 == 17 && ABL:12 < 4
+SIF TEQUIP:59 == 17 && ABL:기교 < 4
     RETURN 0
 ;나체정식 중에는 불가
 SIF TEQUIP:60
@@ -121,15 +121,15 @@ CALL TRAIN_MESSAGE_COM628
 LOCAL = 0
 
 ;조교자의 기교를 본다
-IF ABL:PLAYER:12 == 0
+IF ABL:PLAYER:기교 == 0
     LOCAL = 800
-ELSEIF ABL:PLAYER:12 == 1
+ELSEIF ABL:PLAYER:기교 == 1
     LOCAL = 1600
-ELSEIF ABL:PLAYER:12 == 2
+ELSEIF ABL:PLAYER:기교 == 2
     LOCAL = 2400
-ELSEIF ABL:PLAYER:12 == 3
+ELSEIF ABL:PLAYER:기교 == 3
     LOCAL = 3200
-ELSEIF ABL:PLAYER:12 == 4
+ELSEIF ABL:PLAYER:기교 == 4
     LOCAL = 4000
 ELSE
     LOCAL = 4800
@@ -139,17 +139,17 @@ ENDIF
 LOCAL = EJACULATIONCHECK_ABL_0_2(PLAYER, LOCAL)
 
 ;Ｃ感覚の上げられない主人かつ남자の場合2倍(ということにしておく&それでも10000には届かないんだぜウフフ)
-SIF ASSIPLAY == 0 && TALENT:PLAYER:120
+SIF ASSIPLAY == 0 && TALENT:PLAYER:남자
     TIMES LOCAL , 2.00
 
 SIF EXIST_PENIS(PLAYER)
-    BASE:PLAYER:2 += LOCAL
+    BASE:PLAYER:사정 += LOCAL
 
 ;-------------------------------------------------
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 10
-DOWNBASE:1 += 60
+DOWNBASE:기력 += 60
 
 SOURCE:30 = 100
 SOURCE:31 = 600
@@ -164,23 +164,23 @@ IF TEQUIP:50 || TEQUIP:74
 ENDIF
 
 ;ABL:Ｃ감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 15
     SOURCE:12 = 2000
     SOURCE:22 = 500
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 50
     SOURCE:12 = 2300
     SOURCE:22 = 800
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 300
     SOURCE:12 = 2600
     SOURCE:22 = 1200
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 700
     SOURCE:12 = 2900
     SOURCE:22 = 1900
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 1100
     SOURCE:12 = 3200
     SOURCE:22 = 2500
@@ -191,15 +191,15 @@ ELSE
 ENDIF
 
 ;ABL:Ｂ감각을 본다
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     SOURCE:3 = 15
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     SOURCE:3 = 50
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     SOURCE:3 = 300
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     SOURCE:3 = 700
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     SOURCE:3 = 1100
 ELSE
     SOURCE:3 = 1600
@@ -208,19 +208,19 @@ ENDIF
 ;バイブ挿入中を確認
 IF TEQUIP:20
     ;ABL:Ｖ감각을 본다
-    IF ABL:1 == 0
+    IF ABL:V감각 == 0
         LOCAL:1 += 40
         LOCAL:4 += 150
-    ELSEIF ABL:1 == 1
+    ELSEIF ABL:V감각 == 1
         LOCAL:1 += 120
         LOCAL:4 += 400
-    ELSEIF ABL:1 == 2
+    ELSEIF ABL:V감각 == 2
         LOCAL:1 += 300
         LOCAL:4 += 700
-    ELSEIF ABL:1 == 3
+    ELSEIF ABL:V감각 == 3
         LOCAL:1 += 500
         LOCAL:4 += 900
-    ELSEIF ABL:1 == 4
+    ELSEIF ABL:V감각 == 4
         LOCAL:1 += 650
         LOCAL:4 += 1000
     ELSE
@@ -228,18 +228,18 @@ IF TEQUIP:20
         LOCAL:4 += 1200
     ENDIF
 
-    ;EXP:Ｖ경험을 본다
+    ;EXP:V경험을 본다
     ;처녀는 있을 수 없다
-    IF EXP:0 < EXPLV:2
+    IF EXP:V경험 < EXPLV:2
         TIMES LOCAL:1 , 0.60
         LOCAL:3 += 150
-    ELSEIF EXP:0 < EXPLV:3
+    ELSEIF EXP:V경험 < EXPLV:3
         TIMES LOCAL:1 , 1.00
         LOCAL:3 += 20
-    ELSEIF EXP:0 < EXPLV:4
+    ELSEIF EXP:V경험 < EXPLV:4
         TIMES LOCAL:1 , 1.20
         LOCAL:3 += 0
-    ELSEIF EXP:0 < EXPLV:5
+    ELSEIF EXP:V경험 < EXPLV:5
         TIMES LOCAL:1 , 1.40
         LOCAL:3 += 0
     ELSE
@@ -247,10 +247,10 @@ IF TEQUIP:20
         LOCAL:3 += 0
     ENDIF
     ;V민감、둔감을 본다
-    IF TALENT:103
+    IF TALENT:V둔감
         TIMES LOCAL:3 , 1.50
         TIMES LOCAL:4 , 1.50
-    ELSEIF TALENT:102
+    ELSEIF TALENT:V민감
         TIMES LOCAL:3 , 0.60
         TIMES LOCAL:4 , 0.60
     ENDIF
@@ -261,22 +261,22 @@ ENDIF
 ;アナルバイブ挿入中を確認
 IF TEQUIP:25
     DOWNBASE:0 += 30
-    DOWNBASE:1 += 80
+    DOWNBASE:기력 += 80
 
     ;ABL:Ａ감각을 본다
-    IF ABL:2 == 0
+    IF ABL:A감각 == 0
         LOCAL:2 += 40
         LOCAL:4 += 150
-    ELSEIF ABL:2 == 1
+    ELSEIF ABL:A감각 == 1
         LOCAL:2 += 120
         LOCAL:4 += 400
-    ELSEIF ABL:2 == 2
+    ELSEIF ABL:A감각 == 2
         LOCAL:2 += 300
         LOCAL:4 += 700
-    ELSEIF ABL:2 == 3
+    ELSEIF ABL:A감각 == 3
         LOCAL:2 += 500
         LOCAL:4 += 900
-    ELSEIF ABL:2 == 4
+    ELSEIF ABL:A감각 == 4
         LOCAL:2 += 650
         LOCAL:4 += 1000
     ELSE
@@ -284,20 +284,20 @@ IF TEQUIP:25
         LOCAL:4 += 1200
     ENDIF
 
-    ;EXP:Ａ경험을 본다
-    IF EXP:1 < EXPLV:1
+    ;EXP:A경험을 본다
+    IF EXP:A경험 < EXPLV:1
         TIMES LOCAL:2 , 0.50
         LOCAL:3 += 1000
-    ELSEIF EXP:1 < EXPLV:2
+    ELSEIF EXP:A경험 < EXPLV:2
         TIMES LOCAL:2 , 1.00
         LOCAL:3 += 150
-    ELSEIF EXP:1 < EXPLV:3
+    ELSEIF EXP:A경험 < EXPLV:3
         TIMES LOCAL:2 , 1.10
         LOCAL:3 += 20
-    ELSEIF EXP:1 < EXPLV:4
+    ELSEIF EXP:A경험 < EXPLV:4
         TIMES LOCAL:2 , 1.20
         LOCAL:3 += 0
-    ELSEIF EXP:1 < EXPLV:5
+    ELSEIF EXP:A경험 < EXPLV:5
         TIMES LOCAL:2 , 1.40
         LOCAL:3 += 0
     ELSE
@@ -306,10 +306,10 @@ IF TEQUIP:25
     ENDIF
 
     ;Ａ민감、둔감을 본다
-    IF TALENT:105
+    IF TALENT:A둔감
         TIMES LOCAL:3 , 1.50
         TIMES LOCAL:4 , 1.50
-    ELSEIF TALENT:104
+    ELSEIF TALENT:A민감
         TIMES LOCAL:3 , 0.60
         TIMES LOCAL:4 , 0.60
     ENDIF
@@ -320,23 +320,23 @@ ENDIF
 ;シャワー使用中を確認
 IF TEQUIP:54
     ;ABL:Ｃ감각을 본다
-    IF ABL:0 == 0
+    IF ABL:C감각 == 0
         SOURCE:0 += 150
         SOURCE:12 += 1000
         SOURCE:22 = 50
-    ELSEIF ABL:0 == 1
+    ELSEIF ABL:C감각 == 1
         SOURCE:0 += 400
         SOURCE:12 += 1300
         SOURCE:22 = 80
-    ELSEIF ABL:0 == 2
+    ELSEIF ABL:C감각 == 2
         SOURCE:0 += 800
         SOURCE:12 += 1600
         SOURCE:22 = 120
-    ELSEIF ABL:0 == 3
+    ELSEIF ABL:C감각 == 3
         SOURCE:0 += 1200
         SOURCE:12 += 1900
         SOURCE:22 = 190
-    ELSEIF ABL:0 == 4
+    ELSEIF ABL:C감각 == 4
         SOURCE:0 += 1500
         SOURCE:12 += 2200
         SOURCE:22 = 250
@@ -347,19 +347,19 @@ IF TEQUIP:54
     ENDIF
 
     ;ABL:Ｖ감각을 본다
-    IF ABL:1 == 0
+    IF ABL:V감각 == 0
         LOCAL:1 = 0
         LOCAL:4 = 0
-    ELSEIF ABL:1 == 1
+    ELSEIF ABL:V감각 == 1
         LOCAL:1 = 100
         LOCAL:4 = 300
-    ELSEIF ABL:1 == 2
+    ELSEIF ABL:V감각 == 2
         LOCAL:1 = 200
         LOCAL:4 = 400
-    ELSEIF ABL:1 == 3
+    ELSEIF ABL:V감각 == 3
         LOCAL:1 = 300
         LOCAL:4 = 500
-    ELSEIF ABL:1 == 4
+    ELSEIF ABL:V감각 == 4
         LOCAL:1 = 400
         LOCAL:4 = 600
     ELSE
@@ -368,19 +368,19 @@ IF TEQUIP:54
     ENDIF
 
     ;ABL:Ａ감각을 본다
-    IF ABL:2 == 0
+    IF ABL:A감각 == 0
         LOCAL:2 = 40
         LOCAL:4 += 150
-    ELSEIF ABL:2 == 1
+    ELSEIF ABL:A감각 == 1
         LOCAL:2 = 120
         LOCAL:4 += 400
-    ELSEIF ABL:2 == 2
+    ELSEIF ABL:A감각 == 2
         LOCAL:2 = 300
         LOCAL:4 += 700
-    ELSEIF ABL:2 == 3
+    ELSEIF ABL:A감각 == 3
         LOCAL:2 = 500
         LOCAL:4 += 900
-    ELSEIF ABL:2 == 4
+    ELSEIF ABL:A감각 == 4
         LOCAL:2 = 650
         LOCAL:4 += 1000
     ELSE
@@ -389,18 +389,18 @@ IF TEQUIP:54
     ENDIF
 
     ;V민감、둔감을 본다
-    IF TALENT:103
+    IF TALENT:V둔감
         TIMES LOCAL:3 , 1.50
         TIMES LOCAL:4 , 1.50
-    ELSEIF TALENT:102
+    ELSEIF TALENT:V민감
         TIMES LOCAL:3 , 0.60
         TIMES LOCAL:4 , 0.60
     ENDIF
     ;Ａ민감、둔감을 본다
-    IF TALENT:105
+    IF TALENT:A둔감
         TIMES LOCAL:3 , 1.50
         TIMES LOCAL:4 , 1.50
-    ELSEIF TALENT:104
+    ELSEIF TALENT:A민감
         TIMES LOCAL:3 , 0.60
         TIMES LOCAL:4 , 0.60
     ENDIF
@@ -411,7 +411,7 @@ ENDIF
 ;バイブ、アナルバイブを計算
 IF TEQUIP:20 || TEQUIP:25
     ;ＶかＡが上昇するとき、上昇に従ってSOURCE:0、SOURCE:3を減らす
-    LOCAL:5 = ABL:1 + ABL:2
+    LOCAL:5 = ABL:V감각 + ABL:A감각
     IF LOCAL:5 <= 1
         TIMES SOURCE:0 , 1.00
         TIMES SOURCE:3 , 1.00
@@ -474,19 +474,19 @@ IF TEQUIP:20 || TEQUIP:25
     ENDIF
 
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1 , 0.80
         TIMES LOCAL:2 , 0.80
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1 , 0.90
         TIMES LOCAL:2 , 0.90
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1 , 1.00
         TIMES LOCAL:2 , 1.00
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1 , 1.10
         TIMES LOCAL:2 , 1.10
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1 , 1.20
         TIMES LOCAL:2 , 1.20
     ELSE
@@ -495,10 +495,10 @@ IF TEQUIP:20 || TEQUIP:25
     ENDIF
 
     ;정조관념
-    SIF TALENT:30
+    SIF TALENT:정조관념
         TIMES LOCAL:3 , 3.00
     ;小柄体形
-    SIF TALENT:128
+    SIF TALENT:작은체형
         TIMES LOCAL:3 , 2.00
 ENDIF
 
@@ -546,19 +546,19 @@ IF TEQUIP:54
     ENDIF
 
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1 , 0.80
         TIMES LOCAL:2 , 0.80
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1 , 0.90
         TIMES LOCAL:2 , 0.90
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1 , 1.00
         TIMES LOCAL:2 , 1.00
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1 , 1.10
         TIMES LOCAL:2 , 1.10
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1 , 1.20
         TIMES LOCAL:2 , 1.20
     ELSE
@@ -572,31 +572,31 @@ SOURCE:2 = LOCAL:2
 SOURCE:20 = LOCAL:3
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     SOURCE:15 = 100
     TIMES SOURCE:0 , 0.30
     TIMES SOURCE:1 , 0.30
     TIMES SOURCE:2 , 0.30
     TIMES SOURCE:3 , 0.30
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     SOURCE:15 = 160
     TIMES SOURCE:0 , 0.70
     TIMES SOURCE:1 , 0.70
     TIMES SOURCE:2 , 0.70
     TIMES SOURCE:3 , 0.70
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     SOURCE:15 = 220
     TIMES SOURCE:0 , 1.00
     TIMES SOURCE:1 , 1.00
     TIMES SOURCE:2 , 1.00
     TIMES SOURCE:3 , 1.00
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     SOURCE:15 = 280
     TIMES SOURCE:0 , 1.20
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.20
     TIMES SOURCE:3 , 1.20
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     SOURCE:15 = 340
     TIMES SOURCE:0 , 1.40
     TIMES SOURCE:1 , 1.40
@@ -611,31 +611,31 @@ ELSE
 ENDIF
 
 ;ABL:자위중독을 본다
-IF ABL:30 == 0
+IF ABL:자위중독 == 0
     SOURCE:24 = 0
     TIMES SOURCE:0 , 1.00
     TIMES SOURCE:1 , 1.00
     TIMES SOURCE:2 , 1.00
     TIMES SOURCE:3 , 1.00
-ELSEIF ABL:30 == 1
+ELSEIF ABL:자위중독 == 1
     SOURCE:24 = 100
     TIMES SOURCE:0 , 1.10
     TIMES SOURCE:1 , 1.10
     TIMES SOURCE:2 , 1.10
     TIMES SOURCE:3 , 1.10
-ELSEIF ABL:30 == 2
+ELSEIF ABL:자위중독 == 2
     SOURCE:24 = 300
     TIMES SOURCE:0 , 1.20
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.20
     TIMES SOURCE:3 , 1.20
-ELSEIF ABL:30 == 3
+ELSEIF ABL:자위중독 == 3
     SOURCE:24 = 800
     TIMES SOURCE:0 , 1.30
     TIMES SOURCE:1 , 1.30
     TIMES SOURCE:2 , 1.30
     TIMES SOURCE:3 , 1.30
-ELSEIF ABL:30 == 4
+ELSEIF ABL:자위중독 == 4
     SOURCE:24 = 1500
     TIMES SOURCE:0 , 1.50
     TIMES SOURCE:1 , 1.50
@@ -651,35 +651,35 @@ ENDIF
 
 ;公開のときは、ABL:노출벽을 본다
 IF TEQUIP:50
-    IF ABL:14 == 0
+    IF ABL:노출증 == 0
         SOURCE:24 += 0
         TIMES SOURCE:0 , 1.00
         TIMES SOURCE:1 , 1.00
         TIMES SOURCE:2 , 1.00
         TIMES SOURCE:3 , 1.00
         TIMES SOURCE:12 , 1.00
-    ELSEIF ABL:14 == 1
+    ELSEIF ABL:노출증 == 1
         SOURCE:24 += 100
         TIMES SOURCE:0 , 1.10
         TIMES SOURCE:1 , 1.10
         TIMES SOURCE:2 , 1.10
         TIMES SOURCE:3 , 1.10
         TIMES SOURCE:12 , 1.20
-    ELSEIF ABL:14 == 2
+    ELSEIF ABL:노출증 == 2
         SOURCE:24 += 300
         TIMES SOURCE:0 , 1.20
         TIMES SOURCE:1 , 1.20
         TIMES SOURCE:2 , 1.20
         TIMES SOURCE:3 , 1.20
         TIMES SOURCE:12 , 1.40
-    ELSEIF ABL:14 == 3
+    ELSEIF ABL:노출증 == 3
         SOURCE:24 += 800
         TIMES SOURCE:0 , 1.30
         TIMES SOURCE:1 , 1.30
         TIMES SOURCE:2 , 1.30
         TIMES SOURCE:3 , 1.30
         TIMES SOURCE:12 , 1.60
-    ELSEIF ABL:14 == 4
+    ELSEIF ABL:노출증 == 4
         SOURCE:24 += 1500
         TIMES SOURCE:0 , 1.50
         TIMES SOURCE:1 , 1.50
@@ -698,35 +698,35 @@ ENDIF
 
 ;読心のときは、ABL:노출벽을 본다
 IF TEQUIP:74
-    IF ABL:14 == 0
+    IF ABL:노출증 == 0
         SOURCE:24 += 0
         TIMES SOURCE:0 , 1.00
         TIMES SOURCE:1 , 1.00
         TIMES SOURCE:2 , 1.00
         TIMES SOURCE:3 , 1.00
         TIMES SOURCE:12 , 1.00
-    ELSEIF ABL:14 == 1
+    ELSEIF ABL:노출증 == 1
         SOURCE:24 += 100
         TIMES SOURCE:0 , 1.10
         TIMES SOURCE:1 , 1.10
         TIMES SOURCE:2 , 1.10
         TIMES SOURCE:3 , 1.10
         TIMES SOURCE:12 , 1.20
-    ELSEIF ABL:14 == 2
+    ELSEIF ABL:노출증 == 2
         SOURCE:24 += 300
         TIMES SOURCE:0 , 1.20
         TIMES SOURCE:1 , 1.20
         TIMES SOURCE:2 , 1.20
         TIMES SOURCE:3 , 1.20
         TIMES SOURCE:12 , 1.40
-    ELSEIF ABL:14 == 3
+    ELSEIF ABL:노출증 == 3
         SOURCE:24 += 800
         TIMES SOURCE:0 , 1.30
         TIMES SOURCE:1 , 1.30
         TIMES SOURCE:2 , 1.30
         TIMES SOURCE:3 , 1.30
         TIMES SOURCE:12 , 1.60
-    ELSEIF ABL:14 == 4
+    ELSEIF ABL:노출증 == 4
         SOURCE:24 += 1500
         TIMES SOURCE:0 , 1.50
         TIMES SOURCE:1 , 1.50
@@ -752,13 +752,13 @@ ELSE
     TCVAR:11 += 1
     TCVAR:PLAYER:10 += 1
 ENDIF
-IF (TEQUIP:50 || TEQUIP:52) && (CFLAG:21 & 1) == 0
+IF (TEQUIP:50 || TEQUIP:52) && (CFLAG:첫특수커맨드 & 1) == 0
     TCVAR:50 += 1
-    CFLAG:21 |= 1
+    CFLAG:첫특수커맨드 |= 1
 ENDIF
-IF ASSIPLAY && (TEQUIP:50 || TEQUIP:52) && (CFLAG:ASSI:21 & 1) == 0
+IF ASSIPLAY && (TEQUIP:50 || TEQUIP:52) && (CFLAG:ASSI:첫특수커맨드 & 1) == 0
     TCVAR:ASSI:50 += 1
-    CFLAG:ASSI:21 |= 4
+    CFLAG:ASSI:첫특수커맨드 |= 4
 ENDIF
 
 ;-------------------------------------------------
@@ -772,19 +772,19 @@ IF TFLAG:91 >= 1
     TIMES SOURCE:15 , 3.00
 
     ;ABL:정액중독을 본다
-    IF ABL:31 == 0
+    IF ABL:정액중독 == 0
         SOURCE:24 += 0
         TIMES SOURCE:22, 2.00
-    ELSEIF ABL:31 == 1
+    ELSEIF ABL:정액중독 == 1
         SOURCE:24 += 200
         TIMES SOURCE:22, 1.60
-    ELSEIF ABL:31 == 2
+    ELSEIF ABL:정액중독 == 2
         SOURCE:24 += 600
         TIMES SOURCE:22, 1.00
-    ELSEIF ABL:31 == 3
+    ELSEIF ABL:정액중독 == 3
         SOURCE:24 += 1500
         TIMES SOURCE:22, 0.70
-    ELSEIF ABL:31 == 4
+    ELSEIF ABL:정액중독 == 4
         SOURCE:24 += 3000
         TIMES SOURCE:22, 0.40
     ELSE
@@ -803,30 +803,30 @@ ENDIF
 
 
 ;노예의 손가락⇔노예의 Ｂ의 불결이 이동
-STAIN:1 |= STAIN:5
-STAIN:5 |= STAIN:1
+STAIN:손 |= STAIN:가슴
+STAIN:가슴 |= STAIN:손
 
 ;노예의 손가락⇔노예의 Ｖ의 불결이 이동
-STAIN:1 |= STAIN:3
-STAIN:3 |= STAIN:1
+STAIN:손 |= STAIN:보지
+STAIN:보지 |= STAIN:손
 
 ;조교자의 指⇔조교자의 Ｐ의 불결이 이동
 IF EXIST_PENIS(PLAYER)
-    STAIN:PLAYER:1 |= STAIN:PLAYER:2
-    STAIN:PLAYER:2 |= STAIN:PLAYER:1
+    STAIN:PLAYER:손 |= STAIN:PLAYER:자지
+    STAIN:PLAYER:자지 |= STAIN:PLAYER:손
 ;조교자의 指⇔조교자의 Ｖ의 불결이 이동
 ELSE
-    STAIN:PLAYER:3 |= STAIN:PLAYER:2
-    STAIN:PLAYER:2 |= STAIN:PLAYER:3
+    STAIN:PLAYER:보지 |= STAIN:PLAYER:자지
+    STAIN:PLAYER:자지 |= STAIN:PLAYER:보지
 ENDIF
 
 
 ;シャワーオナニーの場合汚れをリセット、潤滑更に半分. 
 IF TEQUIP:54 == 1
-    STAIN:1 = 0
-    STAIN:2 = 2
-    STAIN:3 = 1
-    STAIN:4 = 8
+    STAIN:손 = 0
+    STAIN:자지 = 2
+    STAIN:보지 = 1
+    STAIN:애널 = 8
     PALAM:10 /= 2
 ENDIF
 
@@ -843,9 +843,9 @@ ELSEIF TEQUIP:74
     TFLAG:122 = 995
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 4
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 4
 ENDIF
 
@@ -859,7 +859,7 @@ RETURN 1
 ;--------------------------------------------------
 @DENIAL_MESSAGE_COM_628
 CALL KOJO_DENIAL_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -877,7 +877,7 @@ ENDIF
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM628
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -892,9 +892,9 @@ IF EX:20 || EX:23
 ELSEIF TFLAG:240 < 50
     PRINTFORM %조사선택(CALLNAME:PLAYER, "가")% %CALLNAME:TARGET%의 눈 앞에서 자위를 하며 %CALLNAME:TARGET%에게 
     PRINTFORM 자위를 명령하자, %조사선택(CALLNAME:TARGET, "는")% 
-    SIF TALENT:16
+    SIF TALENT:프라이드가높음
         PRINT 높은 자존심을 티 내면서 
-    SIF TALENT:11
+    SIF TALENT:반항적
         PRINT 반항적인 태도로 
     PRINT 노려봤지만 다시 한 번 명령하자 주저하며 
 ELSEIF TFLAG:240 < 80
@@ -904,7 +904,7 @@ ELSE
 ENDIF
 SIF TEQUIP:50
     PRINT 비디오 카메라 앞에서 
-SIF ABL:14 > 3
+SIF ABL:노출증 > 3
     PRINT 보여주듯이 
 IF TEQUIP:20 == 1 && TEQUIP:25 == 1
     PRINT 단단히 꽂힌 2개의 바이브를 스스로 넣고 빼면서 
@@ -928,19 +928,19 @@ ELSE
     PRINT 비소를 손가락으로 비벼대며 
 ENDIF
 PRINTL 쾌감을 맛보고 있다….
-IF TEQUIP:20 == 1 && TEQUIP:25 == 1 && ABL:0 >= 5 && ABL:1 >= 5 && ABL:2 >= 5 && ABL:3 >= 5 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7
+IF TEQUIP:20 == 1 && TEQUIP:25 == 1 && ABL:C감각 >= 5 && ABL:V감각 >= 5 && ABL:A감각 >= 5 && ABL:B감각 >= 5 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7
     PRINTL
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 침을 흘리며, 덜덜 몸을 떨\@(TEQUIP:42) ? 면서 울부짖고 # 고 \@ 있다.
     PRINTL 아무래도 절정이 멈추지 않는 듯, 계속해서 가고 있는 것 같다….
-ELSEIF TEQUIP:20 == 1 && ABL:0 >= 5 && ABL:1 >= 5 && ABL:3 >= 5 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7
+ELSEIF TEQUIP:20 == 1 && ABL:C감각 >= 5 && ABL:V감각 >= 5 && ABL:B감각 >= 5 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7
     PRINTL
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 애액이 흩날리는 것도 상관없이, 바이브를 격렬하게 쑤셔대고 있다.
     PRINTL 아무래도 이제 다른 일을 신경 쓸 여유 따윈 없는 것 같다….
-ELSEIF TEQUIP:25 == 1 && ABL:0 >= 5 && ABL:2 >= 5 && ABL:3 >= 5 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7
+ELSEIF TEQUIP:25 == 1 && ABL:C감각 >= 5 && ABL:A감각 >= 5 && ABL:B감각 >= 5 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7
     PRINTL
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 덜덜 몸을 떨면서, 항문에 바이브를 찌르고 있다.
     PRINTL 아무래도 벽을 비벼댈 때 마다 몇 번이나 가버리고 있는 것 같다….
-ELSEIF ABL:0 >= 5 && ABL:3 >= 5 && ABL:30 >= 3 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7
+ELSEIF ABL:C감각 >= 5 && ABL:B감각 >= 5 && ABL:자위중독 >= 3 && PALAM:13 >= PALAMLV:4 && PREVCOM == 7
     PRINTL
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% \@(TEQUIP:42) ? 열심히 # 교성을 지르며 열심히 \@ 자신의 비부를 애무했다.
     PRINTL 멈추고 싶어도 손이 멋대로 움직이고 있는 것 같다….
@@ -953,35 +953,35 @@ PRINTW
 @COM_ORDER_628, ARG
 LOCAL:99 = ARG
 ;ABL:욕망
-IF ABL:11
+IF ABL:욕망
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:11
+    LOCAL:99 = ABL:욕망
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 ;ABL:노출벽
-IF ABL:14
+IF ABL:노출증
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:14
+    LOCAL:99 = ABL:노출증
     TFLAG:240 += LOCAL:99 * 4
     RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 4})
 ENDIF
 ;ABL:자위중독
-IF ABL:30
+IF ABL:자위중독
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:30
+    LOCAL:99 = ABL:자위중독
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:30%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 
 ;쾌락각인
-IF MARK:1
+IF MARK:쾌락각인
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = MARK:1
+    LOCAL:99 = MARK:쾌락각인
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
@@ -998,20 +998,20 @@ IF LOCAL:2
 ENDIF
 
 ;자제심
-IF TALENT:20
+IF TALENT:자제심
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
 ENDIF
 ;부끄럼쟁이
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ;恥薄い
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 2
@@ -1019,7 +1019,7 @@ ELSEIF TALENT:36
     RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
 ENDIF
 ;自慰しやすい
-IF TALENT:60
+IF TALENT:자위하기쉬움
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
@@ -1027,14 +1027,14 @@ IF TALENT:60
     RESULTS = %RESULTS% %TALENTNAME:60%({LOCAL:99})
 ENDIF
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
 ;쾌감의 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99

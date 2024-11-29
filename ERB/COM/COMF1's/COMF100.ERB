@@ -9,18 +9,18 @@
 SIF DITEMTYPE:999:100 > 0
     RETURN 0
 ;강력 아이템 · 커맨드 무효시에는 불가
-SIF (FLAG:13 & 2) == 0
+SIF (FLAG:아이템확장 & 2) == 0
     RETURN 0
 ;해제는 언제든 가능
 SIF TEQUIP:50
     RETURN 1
 ;조수가 使う場合, 「あなた」か, [家電사역知識]か[工作名人]か[報道者]のいずれかを取得している, 撮影경험＋工作경험＋教育경험의 합계가 200이상なら問題なし
-IF ASSIPLAY && NO:PLAYER != 0 && TALENT:PLAYER:189 == 0 && TALENT:PLAYER:195 == 0 && TALENT:PLAYER:196 == 0 && (EXP:PLAYER:71 + EXP:PLAYER:74 + EXP:PLAYER:75) < 200
+IF ASSIPLAY && NO:PLAYER != 0 && TALENT:PLAYER:가전제품지식 == 0 && TALENT:PLAYER:공작명인 == 0 && TALENT:PLAYER:보도자 == 0 && (EXP:PLAYER:촬영경험 + EXP:PLAYER:공작경험 + EXP:PLAYER:교육경험) < 200
     ;주인이 「あなた」か, [家電사역知識]か[工作名人]か[報道者]のいずれかを取得している, 撮影경험＋工作경험＋教育경험의 합계가 200이상なら助手に使い方を教えられる
-    SIF NO:MASTER != 0 && TALENT:MASTER:189 == 0 && TALENT:MASTER:195 == 0 && TALENT:MASTER:196 == 0 && (EXP:MASTER:71 + EXP:MASTER:74 + EXP:MASTER:75) < 200
+    SIF NO:MASTER != 0 && TALENT:MASTER:가전제품지식 == 0 && TALENT:MASTER:공작명인 == 0 && TALENT:MASTER:보도자 == 0 && (EXP:MASTER:촬영경험 + EXP:MASTER:공작경험 + EXP:MASTER:교육경험) < 200
         RETURN 0
     ;この場合, 기교가 3이상 필요
-    SIF ABL:PLAYER:12 < 3
+    SIF ABL:PLAYER:기교 < 3
         RETURN 0
 ENDIF
 ;ビデオカメラとビデオテープの아이템を持っているか, 아이템なし設定でないとダメ
@@ -42,12 +42,12 @@ IF TEQUIP:50
     ;테이프는 종료시에 수를 줄인다
     IF NOITEM == 0
         ITEM:75 -= 1
-        SIF FLAG:13 & 16 && MONEY:0 >= ITEMPRICE:75
+        SIF FLAG:아이템확장 & 16 && MONEY:0 >= ITEMPRICE:75
             CALL FILL_PLURAL_ITEM, 75
     ENDIF
 ;비디오 촬영하고 있지 않으면 초기화해 개시
 ELSE
-    DOWNBASE:1 += 10
+    DOWNBASE:기력 += 10
     TEQUIP:50 = 1
     TFLAG:121 = 0
     ;카운트는 10회로 합니다
@@ -55,7 +55,7 @@ ELSE
         FLAG:(COUNT+40) = 0
     REND
     ;콘피그로 촬영 확장의 기능을 유효하게 하고 있을지 어떨지로 변화
-    IF FLAG:15 & 128 && ASSI >= 0
+    IF FLAG:커맨드확장 & 128 && ASSI >= 0
         CALL SET_VIDEO
     ELSE
         FLAG:61 = 0
@@ -112,13 +112,13 @@ ELSEIF TFLAG:121 > 0 && TFLAG:121 <= LOCAL:5
     ;파라미터 변화
     ;TODO 밸런스 조정(비디오에 의한 파라미터 변화는 고려하지 않는가? )
     DOWNBASE:0 += 0
-    DOWNBASE:1 += 50
+    DOWNBASE:기력 += 50
 
     ;촬영자는 신경을 쓴다
     IF FLAG:61 == 1
-        DOWNBASE:MASTER:1 += 5
+        DOWNBASE:MASTER:기력 += 5
     ELSEIF FLAG:61 == 2
-        DOWNBASE:ASSI:1 += 5
+        DOWNBASE:ASSI:기력 += 5
     ENDIF
 
     LOCAL:1 = 370
@@ -139,34 +139,34 @@ ELSEIF TFLAG:121 > 0 && TFLAG:121 <= LOCAL:5
     ENDIF
 
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1 , 0.40
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1 , 0.60
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1 , 0.80
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1 , 1.00
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1 , 1.10
     ELSE
         TIMES LOCAL:1 , 1.20
     ENDIF
 
     ;ABL:노출벽을 본다
-    IF ABL:14 == 0
+    IF ABL:노출증 == 0
         TIMES LOCAL:1 , 0.80
         TIMES LOCAL:3 , 2.00
-    ELSEIF ABL:14 == 1
+    ELSEIF ABL:노출증 == 1
         TIMES LOCAL:1 , 1.00
         TIMES LOCAL:3 , 1.70
-    ELSEIF ABL:14 == 2
+    ELSEIF ABL:노출증 == 2
         TIMES LOCAL:1 , 1.30
         TIMES LOCAL:3 , 1.40
-    ELSEIF ABL:14 == 3
+    ELSEIF ABL:노출증 == 3
         TIMES LOCAL:1 , 1.60
         TIMES LOCAL:3 , 1.00
-    ELSEIF ABL:14 == 4
+    ELSEIF ABL:노출증 == 4
         TIMES LOCAL:1 , 2.00
         TIMES LOCAL:3 , 0.80
     ELSE
@@ -175,13 +175,13 @@ ELSEIF TFLAG:121 > 0 && TFLAG:121 <= LOCAL:5
     ENDIF
 
     ;도착적
-    SIF TALENT:80
+    SIF TALENT:도착적
         TIMES LOCAL:1 , 2.00
     ;튀고 싶어함
-    SIF TALENT:28
+    SIF TALENT:튀고싶어함
         TIMES LOCAL:1 , 1.50
     ;겁쟁이
-    SIF TALENT:10
+    SIF TALENT:겁쟁이
         TIMES LOCAL:3 , 1.70
 
     SOURCE:18 += LOCAL:1
@@ -196,7 +196,7 @@ IF TFLAG:121 <= 0 || TFLAG:121 > LOCAL:5
     TEQUIP:50 = 0
     IF NOITEM == 0
         ITEM:75 -= 1
-        SIF FLAG:13 & 16 && MONEY:0 >= ITEMPRICE:75
+        SIF FLAG:아이템확장 & 16 && MONEY:0 >= ITEMPRICE:75
             CALL FILL_PLURAL_ITEM, 75
     ENDIF
     PRINTL <테이프의 용량이 꽉 찼습니다. 비디오 촬영을 종료합니다>
@@ -205,7 +205,7 @@ ENDIF
 ;노출 쾌락 경험 입수 판정
 TFLAG:100 |= 2
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && ABL:14 >= 3
+SIF ASSIPLAY == 0 && ABL:노출증 >= 3
     TFLAG:50 += 1
 
 RETURN 1
@@ -215,7 +215,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM100
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

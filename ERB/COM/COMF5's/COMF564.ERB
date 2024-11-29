@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:564 > 0
     RETURN 0
 ;신사적인 촉수계 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 4096) == 0
+SIF (FLAG:커맨드확장 & 4096) == 0
     RETURN 0
 ;아이템進化の秘法を持っているか, 아이템なし設定でないとダメ
 SIF ITEM:59 == 0 && NOITEM == 0
@@ -18,16 +18,16 @@ SIF ITEM:59 == 0 && NOITEM == 0
 SIF TEQUIP:90 == 0
     RETURN 0
 ;촉수가 [特殊ホルモン分泌]を得ていないとダメ
-SIF (FLAG:75 & 1024) == 0
+SIF (FLAG:촉수능력 & 1024) == 0
     RETURN 0
 ;脱毛状態ではダメ, [작은체형] · [소인]では手を付けていない状態でもダメ
-SIF CFLAG:36 == 1 || ((TALENT:128 || TALENT:127) && CFLAG:36 == 0)
+SIF CFLAG:털성장판정 == 1 || ((TALENT:작은체형 || TALENT:소인) && CFLAG:털성장판정 == 0)
     RETURN 0
 ;薬毒耐性だとダメ
-SIF TALENT:44
+SIF TALENT:약물내성
     RETURN 0
 ;기계면 불가
-SIF TALENT:206
+SIF TALENT:기계
     RETURN 0
 RETURN 1
 
@@ -40,7 +40,7 @@ COM_NAME = 촉수 탈모제
 CALL TRAIN_MESSAGE_COM564
 
 DOWNBASE:0 += 25
-DOWNBASE:1 += 70
+DOWNBASE:기력 += 70
 
 SOURCE:18 = 1500
 SOURCE:19 = 1500
@@ -49,10 +49,10 @@ SOURCE:26 = 75
 SOURCE:31 = 7000
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:31 , 0.50
 
-CFLAG:36 = 1
+CFLAG:털성장판정 = 1
 
 ;약물 경험
 TCVAR:40 += 1
@@ -68,7 +68,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM564
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

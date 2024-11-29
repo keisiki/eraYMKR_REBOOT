@@ -3,7 +3,7 @@
 ;=============================================================================
 @ABLUP0
 DRAWLINE
-SIF ABL:0 >= 5
+SIF ABL:C감각 >= 5
     JUMP ABLUP_MAX
 
 PRINTFORM [0] - %PALAMNAME:0%의 구슬×{COST0(0)}
@@ -26,8 +26,8 @@ ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-ABL:0 += 1
-PRINTFORMW %ABLNAME:0%의 레벨이 %조사처리(TOSTR(ABL:0),"가")% 되었습니다.
+ABL:C감각 += 1
+PRINTFORMW %ABLNAME:0%의 레벨이 %조사처리(TOSTR(ABL:C감각),"가")% 되었습니다.
 
 @AUTO_ABLUP0
 #LOCALSIZE 1
@@ -38,14 +38,14 @@ ELSE
     RETURN 0
 ENDIF
 
-ABL:0 += 1
+ABL:C감각 += 1
 RETURN 1
 
 ;--------------------------------------------------
 ;レベルアップ可能かの判定
 ;--------------------------------------------------
 @ISABLUP0
-SIF ABL:0 >= 5
+SIF ABL:C감각 >= 5
     RETURN 0
 
 CALLF CALC_COST0, "CALC"
@@ -64,50 +64,50 @@ SIF ARGS == "GET"
 ;必要な条件の算出
 VARSET LOCAL, 0
 
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     LOCAL:0 = 1
     LOCAL:1 = 0
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     LOCAL:0 = 20
     LOCAL:1 = 0
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     LOCAL:0 = 400
     LOCAL:1 = 10
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     LOCAL:0 = 5000
     LOCAL:1 = 25
     ;一線越えない
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 1.50
         TIMES LOCAL:1 , 1.20
     ENDIF
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     LOCAL:0 = 20000
     LOCAL:1 = 50
     ;一線越えない
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 2.50
         TIMES LOCAL:1 , 2.00
     ENDIF
 ENDIF
 
 ;Ｃ敏感
-IF TALENT:100
+IF TALENT:C민감
     TIMES LOCAL:0 , 0.80
     TIMES LOCAL:1 , 0.70
 ;Ｃ鈍感
-ELSEIF TALENT:101
+ELSEIF TALENT:C둔감
     TIMES LOCAL:0 , 1.20
     TIMES LOCAL:1 , 1.10
 ENDIF
 ;淫乱
-IF TALENT:170
+IF TALENT:음란
     TIMES LOCAL:0 , 0.80
     TIMES LOCAL:1 , 0.80
 ENDIF
 
 ;淫乱無しかつ必要珠数が0以下の場合修正
-SIF TALENT:170 == 0 && LOCAL:0 < 1
+SIF TALENT:음란 == 0 && LOCAL:0 < 1
     LOCAL:0 = 1
 
 RETURNF 0
@@ -125,7 +125,7 @@ VARSET LOCAL, 0
 SIF JUEL:0 < COST0(0)
     LOCAL:0 |= 1
 ;Ｃ調律経験が必要
-SIF EXP:41 < COST0(1)
+SIF EXP:C조율경험 < COST0(1)
     LOCAL:0 |= 2
 
 RETURNF (LOCAL:0 == 0)

@@ -17,8 +17,8 @@ SIF TFLAG:899 == 0
 ;-------------------------------------------------
 IF EQUIP:14 == 0
     CALL SOURCE_SEX_CHECK
-    IF ASSIPLAY == 0 && TALENT:PLAYER:120 && TALENT:120 == 0 && TALENT:150
-        IF FLAG:3 == 1
+    IF ASSIPLAY == 0 && TALENT:PLAYER:남자 && TALENT:남자 == 0 && TALENT:연모
+        IF FLAG:난이도 == 1
             CALL SOURCE_SEX_MALE_CHECK_EASY
         ELSE
             CALL SOURCE_SEX_MALE_CHECK_NORMAL
@@ -26,10 +26,10 @@ IF EQUIP:14 == 0
     ENDIF
     CALL PLAYER_SKILL_CHECK
     CALL MASTER_SKILL_CHECK
-    SIF CFLAG:41
+    SIF CFLAG:촉수이식
         CALL SOURCE_INPLANT
     ;EASY가 아니며, 실신 중이 아니면 스트레스에 따른 영향이 있다
-    SIF FLAG:3 > 1 && TFLAG:899 > 0
+    SIF FLAG:난이도 > 1 && TFLAG:899 > 0
         CALL SOURCE_STRESS_CHECK
 ENDIF
 
@@ -48,15 +48,15 @@ CALL CHECK_TEQUIPMENT_TRAIN
 ;-------------------------------------------------
 ;처녀 상실의 체크
 ;-------------------------------------------------
-IF TCVAR:0 && TALENT:0 && TFLAG:1
+IF TCVAR:0 && TALENT:처녀 && TFLAG:1
     CALL SETCOLOR_TORIKOMODE, "RED", 3
     PRINTW 【처녀 상실】
     RESETCOLOR
     ;처녀 따먹기 회수 카운트
-    SIF TFLAG:2 && TALENT:0 == 1
-        FLAG:400 += 1
-    TALENT:0 = 0
-    STAIN:3 |= 32
+    SIF TFLAG:2 && TALENT:처녀 == 1
+        FLAG:파과총계 += 1
+    TALENT:처녀 = 0
+    STAIN:보지 |= 32
 
     ;처녀 상실 플래그(이번 커맨드)
     TFLAG:0 = 1
@@ -65,7 +65,7 @@ IF TCVAR:0 && TALENT:0 && TFLAG:1
     ;처녀 상실 플래그(비디오 촬영)
     SIF TEQUIP:50
         TFLAG:120 |= 1
-    SIF FLAG:12 & 8
+    SIF FLAG:SHOP이벤트확장 & 8
         CALL SWEET_POTATO_VIRGIN_BLOOD
 
     CALL LOST_VIRGIN, TARGET, PLAYER
@@ -74,7 +74,7 @@ ENDIF
 ;-------------------------------------------------
 ;기력 오링에 따른 시간 정지의 강제 해제
 ;-------------------------------------------------
-SIF TEQUIP:71 == 1 && BASE:(TFLAG:158):1 <= 0
+SIF TEQUIP:71 == 1 && BASE:(TFLAG:158):기력 <= 0
     CALL TIMESTOP_RELEASE
 
 ;-------------------------------------------------
@@ -140,14 +140,14 @@ CALL UP_TALENT_CVA_CHECK
 ;-------------------------------------------------
 LOCAL:1 = UP:0 + UP:1 + UP:2 + UP:3
 ;機械持ちの場合には陥落していなくて快感に素直もないとと分泌しずらい(盛り上がりにくい)
-SIF TALENT:206 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0 && TALENT:70 == 0
+SIF TALENT:기계 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0 && TALENT:쾌감에솔직 == 0
     TIMES LOCAL:1 , 0.2
 ;쾌Ｃ＋쾌Ｖ＋쾌Ａ＋쾌Ｂが合わせて100以上上昇ならその20%の液体의 소스が加わる（オトコはダメ）
-IF LOCAL:1 > 100 && TALENT:120 == 0
+IF LOCAL:1 > 100 && TALENT:남자 == 0
     ;濡れやすいと濡れにくいはここで処理
-    IF TALENT:42
+    IF TALENT:젖기쉬움
         TIMES LOCAL:1 , 3.00
-    ELSEIF TALENT:43
+    ELSEIF TALENT:젖기어려움
         TIMES LOCAL:1 , 0.40
     ENDIF
     SOURCE:19 += LOCAL:1 / 5
@@ -159,7 +159,7 @@ ENDIF
 ;強精神薬が効果を発揮しているときは別処理
 
 ;토리코모드. 특별한 건 없고, 색만 살짝 칠해준다. (핑크)
-IF FLAG:5000 & 16
+IF FLAG:토리코모드 & 16
     CALL SETCOLOR_TORIKOMODE, "PINK", 5
     CALL ORGASM_PROCESS
     RESETCOLOR
@@ -176,7 +176,7 @@ ENDIF
 ;-------------------------------------------------
 ;まだ射精していない場合に조교 대상の射精チェック(ふたなり・オトコ)
 ;-------------------------------------------------
-IF (TALENT:120 || TALENT:121)
+IF (TALENT:남자 || TALENT:후타나리)
     ;
     SIF TFLAG:705 == 0
         TFLAG:703 = -1
@@ -193,10 +193,10 @@ TFLAG:705 = 0
 ;-------------------------------------------------
 ;조교 대상の噴乳チェック(母乳体質)
 ;-------------------------------------------------
-IF TALENT:134
+IF TALENT:모유체질
     
     ;토리코 모드시 색 강조 (연노랑)
-    IF FLAG:5000 & 16
+    IF FLAG:토리코모드 & 16
         CALL SETCOLOR_TORIKOMODE, "YELLOW", 4
         CALL TARGET_MILK_CHECK
         RESETCOLOR
@@ -212,10 +212,10 @@ ENDIF
 ;-------------------------------------------------
 ;조교 대상의 방뇨 체크(お漏らし癖・利尿剤・カテーテル・放尿経験)
 ;-------------------------------------------------
-IF TEQUIP:12 || TEQUIP:32 || TALENT:45 || (EXP:6 + TCVAR:6)
+IF TEQUIP:12 || TEQUIP:32 || TALENT:오줌싸개버릇 || (EXP:방뇨경험 + TCVAR:6)
     
     ;토리코 모드시 색 강조 (진노랑)
-    IF FLAG:5000 & 16
+    IF FLAG:토리코모드 & 16
         CALL SETCOLOR_TORIKOMODE, "YELLOW", 5
         CALL TARGET_PEE_CHECK
         RESETCOLOR
@@ -234,7 +234,7 @@ ENDIF
 ;입 안에 사정했을 때에도 정액을 삼킨 걸로 취급
 SIF TFLAG:11
     TFLAG:3 += TFLAG:11
-SIF TFLAG:3 && (TALENT:66 || TFLAG:51) && FLAG:1200 & 2
+SIF TFLAG:3 && (TALENT:정애미각 || TFLAG:51) && FLAG:정액도시락및정음절정패치 & 2
     CALL TARGET_SEIIN_CHECK
 
 ;-------------------------------------------------
@@ -392,23 +392,23 @@ SIF ASSI >= 0 && SOURCE:ASSI:42
 ;-------------------------------------------------
 ;触手を寄生させているときの処理
 ;-------------------------------------------------
-IF FLAG:15 & 4096
-    SIF TALENT:146
+IF FLAG:커맨드확장 & 4096
+    SIF TALENT:기생
         CALL PARASITIC_TENTACLE_TARGET
-    SIF ASSI >= 0 && TALENT:ASSI:146
+    SIF ASSI >= 0 && TALENT:ASSI:기생
         CALL PARASITIC_TENTACLE_ASSI
 ENDIF
 
 ;-------------------------------------------------
 ;酒酔いチェック
 ;-------------------------------------------------
-SIF BASE:8 > 0
+SIF BASE:취기 > 0
     CALL ALCOHOL_DRUNK_CHECK,TARGET
 ;もし主人が酔っていたら
-SIF BASE:MASTER:8 > 0
+SIF BASE:MASTER:취기 > 0
     CALL ALCOHOL_DRUNK_CHECK,MASTER
 ;もし助手が酔っていたら
-SIF ASSI >= 0 && BASE:ASSI:8 > 0
+SIF ASSI >= 0 && BASE:ASSI:취기 > 0
     CALL ALCOHOL_DRUNK_CHECK,ASSI
 
 ;-------------------------------------------------
@@ -449,7 +449,7 @@ SIF SELECTCOM == PREVCOM && TFLAG:96 == 0
 ;ルーチンワークなコマンド実行を糾弾する嫁
 ;-------------------------------------------------
 ;HARD以上の難易度の時に呼び出す
-SIF FLAG:3 > 2
+SIF FLAG:난이도 > 2
     CALL CRITICISM_ROUTINE_WORK
 
 ;-------------------------------------------------
@@ -460,7 +460,7 @@ CALL UP_VIGOR_CHECK
 ;-------------------------------------------------
 ;嫉妬しやすいによる上下の処理
 ;-------------------------------------------------
-SIF TALENT:19 && TALENT:150
+SIF TALENT:질투하기쉬움 && TALENT:연모
     CALL UP_ENVY_CHECK
 
 ;-------------------------------------------------
@@ -471,20 +471,20 @@ CALL CHECK_TRAIN_PAIN
 ;-------------------------------------------------
 ;기력이 0이하일 경우
 ;-------------------------------------------------
-IF BASE:1 <= 0
+IF BASE:기력 <= 0
     ;음마가 없으면 체력 추가소모
-    IF TALENT:180 == 0
+    IF TALENT:음마 == 0
         TIMES DOWNBASE:0 , 1.50
-        DOWNBASE:0 += (FLAG:3 == 4 || FLAG:3 == 5) ? 100 # 80
+        DOWNBASE:0 += (FLAG:난이도 == 4 || FLAG:난이도 == 5) ? 100 # 80
     ENDIF
 
-    DOWNBASE:1 = 0
+    DOWNBASE:기력 = 0
 ENDIF
 
 ;-------------------------------------------------
 ;조교 대상の失神チェック
 ;-------------------------------------------------
-IF FLAG:3999
+IF FLAG:실신패치
     CALL PASSOUT_CHECK
     ;野外プレイ中の失神処理
     SIF TEQUIP:52 && TFLAG:899 > 0
@@ -534,7 +534,7 @@ TFLAG:699 = 0
 ;-------------------------------------------------
 ;[爆発物]の爆発判定に
 ;-------------------------------------------------
-SIF TALENT:220
+SIF TALENT:폭발물
     CALL TRAIN_EXPLOSION_CHECK
 
 ;-------------------------------------------------
@@ -546,9 +546,9 @@ CALL CHECK_TRAIN_LIFE_SLAVE
 ;체력 · 기력의 감소 보정(공통 처리)及び減少処理
 ;-------------------------------------------------
 CALL CHECK_TRAIN_LIFE, TARGET
-SIF (DOWNBASE:MASTER:0 || DOWNBASE:MASTER:1)
+SIF (DOWNBASE:MASTER:체력 || DOWNBASE:MASTER:기력)
     CALL CHECK_TRAIN_LIFE, MASTER
-SIF ASSI >= 0 && (DOWNBASE:ASSI:0 || DOWNBASE:ASSI:1)
+SIF ASSI >= 0 && (DOWNBASE:ASSI:체력 || DOWNBASE:ASSI:기력)
     CALL CHECK_TRAIN_LIFE, ASSI
 
 ;-------------------------------------------------
@@ -577,7 +577,7 @@ CALL TRAIN_MESSAGE_A
 ;パラメータ変動による口上
 ;-------------------------------------------------
 IF TFLAG:899 == 0
-    SIF FLAG:11 > 0 || CFLAG:5000 & 1
+    SIF FLAG:캐릭터대사표시 > 0 || CFLAG:대사템플릿 & 1
         CALL KOJO_MESSAGE_PALAMCNG
 
 ;-------------------------------------------------
@@ -595,7 +595,7 @@ IF TFLAG:899 == 0
 ;-------------------------------------------------
     IF EQUIP:14 == 0
         CALL MARK_GOT_CHECK
-        SIF FLAG:11 > 0 || CFLAG:5000 & 1
+        SIF FLAG:캐릭터대사표시 > 0 || CFLAG:대사템플릿 & 1
             CALL KOJO_MESSAGE_MARKCNG
     ENDIF
 
@@ -632,7 +632,7 @@ SIF SELECTCOM == 236
 ;조교 소스의 표시
 ;-------------------------------------------------
 ;토리코모드
-IF FLAG:5000 & 128
+IF FLAG:토리코모드 & 128
     ; 끈다.
 
 ;일반모드
@@ -664,7 +664,7 @@ PREVCOM = SELECTCOM
 TFLAG:133 = (ASSIPLAY) ? 1 # 0
 
 ;기력 ０
-IF BASE:1 <= 0
+IF BASE:기력 <= 0
     SETCOLOR 255,10,10
     PRINTFORML ★%CALLNAME:TARGET%의 기력０★
     RESETCOLOR
@@ -674,17 +674,17 @@ ENDIF
 ;체력 · 기력의 감소량 표시
 ;-------------------------------------------------
 ;토리코모드 옵션에 따라
-IF FLAG:5000 & 1
+IF FLAG:토리코모드 & 1
 ;토리코모드
     CALL PRINT_USEDLIFEVITAL_TORIKOMODE
 ;일반모드
 ELSE    
     FONTBOLD
-    PRINTFORML 체력－{DOWNBASE:0, 3, LEFT} 기력－{DOWNBASE:1, 3, LEFT}
-    SIF (DOWNBASE:MASTER:0 || DOWNBASE:MASTER:1)
-        PRINTFORML %CALLNAME:MASTER%의 체력－{DOWNBASE:MASTER:0, 3, LEFT} 기력－{DOWNBASE:MASTER:1, 3, LEFT}
-    SIF ASSI >= 0 && (DOWNBASE:ASSI:0 || DOWNBASE:ASSI:1)
-        PRINTFORML %CALLNAME:ASSI%의 체력－{DOWNBASE:ASSI:0, 3, LEFT} 기력－{DOWNBASE:ASSI:1, 3, LEFT}
+    PRINTFORML 체력－{DOWNBASE:0, 3, LEFT} 기력－{DOWNBASE:기력, 3, LEFT}
+    SIF (DOWNBASE:MASTER:체력 || DOWNBASE:MASTER:기력)
+        PRINTFORML %CALLNAME:MASTER%의 체력－{DOWNBASE:MASTER:체력, 3, LEFT} 기력－{DOWNBASE:MASTER:기력, 3, LEFT}
+    SIF ASSI >= 0 && (DOWNBASE:ASSI:체력 || DOWNBASE:ASSI:기력)
+        PRINTFORML %CALLNAME:ASSI%의 체력－{DOWNBASE:ASSI:체력, 3, LEFT} 기력－{DOWNBASE:ASSI:기력, 3, LEFT}
     FONTREGULAR
 ENDIF
 
@@ -715,10 +715,10 @@ ENDIF
 ;-------------------------------------------------
 ;そのままでは見にくいので全角空白で改行を入れてみる
 IF TFLAG:899 < 1
-    SIF FLAG:3999
+    SIF FLAG:실신패치
         CALL PASSOUT_TEXT
     ;焦らしプレイ中は不自然になるため呼ばない
-    SIF TEQUIP:68 == 0 && FLAG:10 && CFLAG:99 == 0 && NOT_PRINT_ADDITIONAL_TEXT(SELECTCOM) == 1
+    SIF TEQUIP:68 == 0 && FLAG:조교시텍스트표시 && CFLAG:지문소거판정 == 0 && NOT_PRINT_ADDITIONAL_TEXT(SELECTCOM) == 1
         TRYCALLFORM TEXT_{SELECTCOM}
 ELSEIF TFLAG:899 >= 1
     CALL PASSOUT_TEXT
@@ -727,7 +727,7 @@ ELSEIF TFLAG:899 >= 1
     IF TFLAG:896 == 3 || TFLAG:897 == 3 || TFLAG:898 == 3
         CALL PASSOUT_PALAM_UP
         CALL MARK_GOT_CHECK
-        SIF FLAG:11 > 0
+        SIF FLAG:캐릭터대사표시 > 0
             CALL KOJO_MESSAGE_MARKCNG
     ENDIF
 ENDIF
@@ -761,14 +761,14 @@ SIF FLAG:1100 & 1
 ;-------------------------------------------------
 ;[Debug]의 체크
 ;-------------------------------------------------
-SIF TALENT:998
+SIF TALENT:Debug
     CALL DEBUG_CHECK
 
 ;-------------------------------------------------
 ;パラメータの上昇＆表示（DOWNもここで）
 ;-------------------------------------------------
 ;토리코모드
-IF FLAG:5000 & 128
+IF FLAG:토리코모드 & 128
     CALL UPCHECK_TORIKOMODE
 
 ;일반모드
@@ -819,7 +819,7 @@ SIF TEQUIP:11 == 0 && PALAM:14 >= 30000 && PALAM:16 >= 30000
     TFLAG:104 |= 128
 SIF TEQUIP:11 == 0 && PALAM:11 >= 30000 && PALAM:12 >= 100000 && PALAM:13 >= 100000 && PALAM:16 >= 30000 && ASSI < 0
     TFLAG:104 |= 256
-SIF TEQUIP:11 == 0 && PALAM:13 >= 250000 && EX:0 >= 50 && (EX:1 >= 50 || TALENT:120) && EX:2 >= 50 && EX:3 >= 50 && ASSI < 0
+SIF TEQUIP:11 == 0 && PALAM:13 >= 250000 && EX:0 >= 50 && (EX:1 >= 50 || TALENT:남자) && EX:2 >= 50 && EX:3 >= 50 && ASSI < 0
     TFLAG:104 |= 512
 ;의존 이벤트용
 SIF PALAM:12 >= 10000 && PALAM:13 >= 10000 && PALAM:14 >= 10000
@@ -829,16 +829,16 @@ SIF PALAM:12 >= 10000 && PALAM:13 >= 10000 && PALAM:14 >= 10000
 ;개발도 상승에 따른 소질 변동 조건을 기록
 ;-------------------------------------------------
 ;위에서부터 Ｃ개발도, Ｖ개발도, Ａ개발도, Ｂ개발도, 강제정음절정 개발도
-SIF CFLAG:60 >= 1000 && TALENT:100 == 0
+SIF CFLAG:Ｃ개발도 >= 1000 && TALENT:C민감 == 0
     TFLAG:106 |= 1
-SIF CFLAG:61 >= 2000 && TALENT:102 == 0
+SIF CFLAG:Ｖ개발도 >= 2000 && TALENT:V민감 == 0
     TFLAG:106 |= 2
-SIF CFLAG:62 >= 2500 && TALENT:104 == 0
+SIF CFLAG:Ａ개발도 >= 2500 && TALENT:A민감 == 0
     TFLAG:106 |= 4
-SIF CFLAG:63 >= 5000 && TALENT:106 == 0
+SIF CFLAG:Ｂ개발도 >= 5000 && TALENT:B민감 == 0
     TFLAG:106 |= 8
-IF CFLAG:64 >= 10000 && TALENT:66 == 0
-    SIF FLAG:10 && (TFLAG:106 & 16) == 0
+IF CFLAG:정음개발도 >= 10000 && TALENT:정애미각 == 0
+    SIF FLAG:조교시텍스트표시 && (TFLAG:106 & 16) == 0
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 완전히 정액의 맛을 익혀 버린 것 같다……
     TFLAG:106 |= 16
 ENDIF
@@ -854,8 +854,8 @@ CALL ADD_TRAINING_TIME, 2
 ;EASYか時間停止発動中か自動レベルアップモードONの時は時間経過なし
 ;NORMALの時はまだゆっくりと時間は流れていく.
 @ADD_TRAINING_TIME, ARG
-SIF FLAG:3 != 1 && TEQUIP:71 == 0 && TALENT:998 == 0
-    TFLAG:107 += (FLAG:3 == 2) ? 1 # ARG
+SIF FLAG:난이도 != 1 && TEQUIP:71 == 0 && TALENT:Debug == 0
+    TFLAG:107 += (FLAG:난이도 == 2) ? 1 # ARG
 
 ;-------------------------------------------------
 ;상성 처리
@@ -864,18 +864,18 @@ SIF FLAG:3 != 1 && TEQUIP:71 == 0 && TALENT:998 == 0
 #FUNCTION
 LOCAL = 0
 ;[拒絶]
-IF TALENT:830
+IF TALENT:거절
     ;[相愛][隷属][壊造人格]
-    LOCAL = (TALENT:153 || TALENT:162 || TALENT:169) ? 53 # 50
+    LOCAL = (TALENT:상애 || TALENT:예속 || TALENT:괴조인격) ? 53 # 50
 ;[SpellCard]
-ELSEIF TALENT:833
-    IF TALENT:833 == NO:ARG
+ELSEIF TALENT:SpellCard
+    IF TALENT:SpellCard == NO:ARG
         LOCAL = 500
-    ELSEIF TALENT:833 == TALENT:ARG:833
+    ELSEIF TALENT:SpellCard == TALENT:ARG:SpellCard
         LOCAL = 250
     ELSE
         ;[相愛][隷属][壊造人格]
-        LOCAL = (TALENT:153 || TALENT:162 || TALENT:169) ? 10 # 1
+        LOCAL = (TALENT:상애 || TALENT:예속 || TALENT:괴조인격) ? 10 # 1
     ENDIF
 ELSE
     LOCAL = RELATION:(NO:ARG)
@@ -889,7 +889,7 @@ RETURNF LOCAL
 REPEAT 100
     SIF TCVAR:ARG:COUNT <= 0
         CONTINUE
-    IF COUNT == 39 && TFLAG:55 && ARG == ASSI && (TALENT:ARG:81 || TALENT:ARG:177)
+    IF COUNT == 39 && TFLAG:55 && ARG == ASSI && (TALENT:ARG:새드 || TALENT:ARG:초S)
         PRINTFORML 가학 조교 경험(%CALLNAME:ARG%) ＋ {TCVAR:ARG:COUNT}
         EXP:ARG:COUNT += TCVAR:ARG:COUNT
     ELSE
@@ -908,7 +908,7 @@ REPEAT 33
 REND
 SIF (SOURCE:40 + SOURCE:41) > 0
     PRINTFORM 술에 취함({SOURCE:40 + SOURCE:41})
-SIF SOURCE:42 > 0 && TALENT:MASTER:998
+SIF SOURCE:42 > 0 && TALENT:MASTER:Debug
     PRINTFORM 미약침윤({SOURCE:42}) 
 PRINTL 
 
@@ -918,28 +918,28 @@ PRINTL
 @CHECK_TRAIN_PAIN
 LOCAL:0 = UP:16 / 25
 ;[痛みに弱い]
-IF TALENT:40
+IF TALENT:아픔에약함
     TIMES LOCAL:0 , 1.20
 ;[痛みに強い]
-ELSEIF TALENT:41
+ELSEIF TALENT:아픔에강함
     TIMES LOCAL:0 , 0.80
 ENDIF
 
 LOCAL:1 = LOCAL:0
 ;ABL:マゾっ気をみる
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     TIMES LOCAL:0 , 1.00
     TIMES LOCAL:1 , 1.00
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     TIMES LOCAL:0 , 0.95
     TIMES LOCAL:1 , 0.85
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     TIMES LOCAL:0 , 0.90
     TIMES LOCAL:1 , 0.70
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     TIMES LOCAL:0 , 0.80
     TIMES LOCAL:1 , 0.55
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     TIMES LOCAL:0 , 0.65
     TIMES LOCAL:1 , 0.40
 ELSE
@@ -948,38 +948,38 @@ ELSE
 ENDIF
 
 ;[倒錯的]
-SIF TALENT:83
+SIF TALENT:바이
     TIMES LOCAL:1 , 0.75
 ;[マゾ]・[ドＭ]
-IF TALENT:82 && TALENT:178
+IF TALENT:마조 && TALENT:초M
     TIMES LOCAL:0 , 0.50
     TIMES LOCAL:1 , 0.10
-ELSEIF TALENT:82 || TALENT:178
+ELSEIF TALENT:마조 || TALENT:초M
     TIMES LOCAL:0 , 0.60
     TIMES LOCAL:1 , 0.20
 ENDIF
 ;[人形]
-IF TALENT:208
+IF TALENT:인형
     TIMES LOCAL:0 , 0.75
     TIMES LOCAL:1 , 0.75
 ENDIF
 ;[鬼]
-SIF TALENT:214
+SIF TALENT:오니
     TIMES LOCAL:0 , 0.75
 ;ベリージュエル装着時
-IF CFLAG:42 & 4
+IF CFLAG:특수장비 & 4
     TIMES LOCAL:0 , 0.90
     TIMES LOCAL:1 , 0.90
 ENDIF
 
 ;触手調教中でない、かつ調教者が[針さばき]を持っており針を使った場合、軽減
-IF TALENT:PLAYER:53 && TEQUIP:90 == 0 && SELECTCOM == 222
+IF TALENT:PLAYER:바느질 && TEQUIP:90 == 0 && SELECTCOM == 222
     TIMES LOCAL:0 , 0.20
     TIMES LOCAL:1 , 0.50
 ENDIF
 
 DOWNBASE:0 += LOCAL:0
-DOWNBASE:1 += LOCAL:1
+DOWNBASE:기력 += LOCAL:1
 
 ;-------------------------------------------------
 ;技師パッチ：改造苦痛系調教器具による体力消耗・気力消耗減少の補正
@@ -993,33 +993,33 @@ ENDIF
 ;-------------------------------------------------
 @CHECK_TRAIN_LIFE_SLAVE
 ;조교 대상이 [覚](心の目を閉ざしているか[精神崩壊]は除く)
-SIF TALENT:213 == 1 && TALENT:167 == 0
-    TIMES DOWNBASE:1 , 1.25
+SIF TALENT:사토리 == 1 && TALENT:정신붕괴 == 0
+    TIMES DOWNBASE:기력 , 1.25
 ;主人による[使い魔]調教時
-IF PLAYER == MASTER && TALENT:164
+IF PLAYER == MASTER && TALENT:사역마
     TIMES DOWNBASE:0 , 0.95
-    TIMES DOWNBASE:1 , 0.95
+    TIMES DOWNBASE:기력 , 0.95
 ENDIF
 ;ベリージュエル装着時
-IF CFLAG:42 & 4
+IF CFLAG:특수장비 & 4
     TIMES DOWNBASE:0 , 0.90
-    TIMES DOWNBASE:1 , 0.90
+    TIMES DOWNBASE:기력 , 0.90
 ENDIF
 ;조교 대상이 [淫魔]
-IF TALENT:180
-    IF DOWNBASE:0 > DOWNBASE:1
+IF TALENT:음마
+    IF DOWNBASE:0 > DOWNBASE:기력
         TIMES DOWNBASE:0 , 0.75
     ELSE
-        TIMES DOWNBASE:1 , 0.75
+        TIMES DOWNBASE:기력 , 0.75
     ENDIF
 ENDIF
 ;조교 대상이 勝手にコマンドを実行した場合は체력 · 기력の消費が軽減される
 IF TFLAG:699 > 0
     TIMES DOWNBASE:0 , 0.80
-    TIMES DOWNBASE:1 , 0.80
+    TIMES DOWNBASE:기력 , 0.80
 ENDIF
 ;EASYの場合、体調が万全だと1回の調教でいきなり体力が0にならない(ただしキャラ共通補正は受ける)
-SIF FLAG:3 == 1 && BASE:0 == MAXBASE:0 && BASE:1 == MAXBASE:1 && DOWNBASE:0 >= MAXBASE:0
+SIF FLAG:난이도 == 1 && BASE:0 == MAXBASE:0 && BASE:기력 == MAXBASE:기력 && DOWNBASE:0 >= MAXBASE:0
     DOWNBASE:0 = MAXBASE:0 - 1
 
 ;-------------------------------------------------
@@ -1030,23 +1030,23 @@ SIF FLAG:3 == 1 && BASE:0 == MAXBASE:0 && BASE:1 == MAXBASE:1 && DOWNBASE:0 >= M
 ;체력 · 기력의 감소 보정(공통 처리)
 ;………………………………………………
 ;[천식]
-SIF TALENT:ARG:47
-    TIMES DOWNBASE:ARG:0 , 1.20
+SIF TALENT:ARG:천식
+    TIMES DOWNBASE:ARG:체력 , 1.20
 ;[거구]
-SIF TALENT:ARG:129
-    TIMES DOWNBASE:ARG:0 , 0.75
+SIF TALENT:ARG:거구
+    TIMES DOWNBASE:ARG:체력 , 0.75
 ;[영체]
-IF TALENT:ARG:207
-    TIMES DOWNBASE:ARG:0 , 0.50
-    TIMES DOWNBASE:ARG:1 , 1.50
+IF TALENT:ARG:영체
+    TIMES DOWNBASE:ARG:체력 , 0.50
+    TIMES DOWNBASE:ARG:기력 , 1.50
 ENDIF
 ;[구문지]
-SIF TALENT:ARG:216
-    TIMES DOWNBASE:ARG:0 , 1.20
+SIF TALENT:ARG:구문지
+    TIMES DOWNBASE:ARG:체력 , 1.20
 ;[신령]
-IF TALENT:ARG:222
-    TIMES DOWNBASE:ARG:0 , 0.90
-    TIMES DOWNBASE:ARG:1 , 0.90
+IF TALENT:ARG:신령
+    TIMES DOWNBASE:ARG:체력 , 0.90
+    TIMES DOWNBASE:ARG:기력 , 0.90
 ENDIF
 
 ;………………………………………………

@@ -9,30 +9,30 @@
 SIF DITEMTYPE:999:232 > 0
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
-;조교 대상のＡ확장경험이 ない場合には, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && EXP:33 <= 1
+;조교 대상のA확장경험이 ない場合には, 이상계 조교 필터가 오프되어 있지 않으면 불가
+SIF FLAG:VA이상조교필터 & 4 && EXP:A확장경험 <= 1
     RETURN 0
 ;[작은체형]なら순종이 4이상かつ마조끼が4이상じゃないと実行できない
-IF TALENT:128
-    SIF ABL:10 < 4 || ABL:21 < 4
+IF TALENT:작은체형
+    SIF ABL:순종 < 4 || ABL:마조끼 < 4
         RETURN 0
 ENDIF
 ;조교 대상이 [소인]일 경우에는 주인이 금단의 지식 보유자가 아니면 불가
-SIF TALENT:127 && TALENT:MASTER:56 == 0
+SIF TALENT:소인 && TALENT:MASTER:금단의지식 == 0
     RETURN 0
 ;ASSI일 경우, 순종3이상이거나 새드じゃないとできない。
 IF ASSIPLAY
-    SIF ABL:ASSI:10 < 4 && TALENT:ASSI:81 == 0
+    SIF ABL:ASSI:순종 < 4 && TALENT:ASSI:새드 == 0
         RETURN 0
 ENDIF
-;일정의 Ａ경험이 필요([巨躯]の場合は軽減)
-LOCAL = (TALENT:129) ? 75 # 150
-SIF EXP:1 < LOCAL
+;일정의 A경험이 필요([巨躯]の場合は軽減)
+LOCAL = (TALENT:거구) ? 75 # 150
+SIF EXP:A경험 < LOCAL
     RETURN 0
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 조교자가 汚れ無視もしくは汚臭鈍感を持たないなら実行できない
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;쿠스코 채웠으면 불가
 SIF TEQUIP:21
@@ -75,7 +75,7 @@ CALL TRAIN_MESSAGE_COM232
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 600
-DOWNBASE:1 += 300
+DOWNBASE:기력 += 300
 
 SOURCE:20 = 1200
 SOURCE:12 = 1200
@@ -84,23 +84,23 @@ SOURCE:31 = 1200
 SOURCE:17 = 1200
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 10
     SOURCE:11 = 10
     SOURCE:22 += 100
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 30
     SOURCE:11 = 30
     SOURCE:22 += 700
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 500
     SOURCE:11 = 100
     SOURCE:22 += 1500
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 1000
     SOURCE:11 = 200
     SOURCE:22 += 3000
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 1700
     SOURCE:11 = 450
     SOURCE:22 += 5000
@@ -111,19 +111,19 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES SOURCE:2 , 0.10
     SOURCE:20 += 20000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES SOURCE:2 , 0.30
     SOURCE:20 += 12000
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES SOURCE:2 , 0.50
     SOURCE:20 += 5000
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES SOURCE:2 , 1.00
     SOURCE:20 += 1800
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.40
     SOURCE:20 += 1000
 ELSE
@@ -168,26 +168,26 @@ ELSE
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
 
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:22 , 0.60
     TIMES SOURCE:31 , 0.60
 ENDIF
 
 ;처녀로 정조관념
-SIF TALENT:0 == 1 && TALENT:30
+SIF TALENT:처녀 == 1 && TALENT:정조관념
     SOURCE:22 /= 3
 
-SIF EXP:33 == 0
+SIF EXP:A확장경험 == 0
     TCVAR:50 += 1
 TCVAR:1 += 25
 TCVAR:33 += 1
@@ -199,7 +199,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM232
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -209,13 +209,13 @@ ELSE
     PRINTFORML %CALLNAME:TARGET%의 항문은 %CALLNAME:ASSI%의 주먹으로 휘저어졌다.
 ENDIF
 PRINTL
-IF ABL:2 <= 1
+IF ABL:A감각 <= 1
     PRINTFORMW %CALLNAME:TARGET%의 항문은 경련하고 있는 것 같이 벌름거린다.
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     PRINTFORMW %CALLNAME:TARGET%의 항문은 뻐끔 입을 열고 있다.
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     PRINTFORMW %CALLNAME:TARGET%의 항문은 벌려진 채로 좀처럼 돌아오지 않는다.
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     PRINTFORML %CALLNAME:TARGET%의 항문에서는 장벽의 살들이 밀려나와,
     PRINTFORMW 뱃속이 훤히 보이게 되어있다.
 ELSE

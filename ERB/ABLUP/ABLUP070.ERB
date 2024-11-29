@@ -2,10 +2,10 @@
 ;요리 기능
 ;=============================================================================
 @ABLUP70
-SIF (FLAG:12 & 16) == 0
+SIF (FLAG:SHOP이벤트확장 & 16) == 0
     RETURN 0
 DRAWLINE
-SIF ABL:70 >= 5
+SIF ABL:요리기능 >= 5
     JUMP ABLUP_MAX
 
 PRINTFORM [0] - %PALAMNAME:11%의 구슬×{COST70(0)}, %EXPNAME:70% {COST70(1)} 이상……
@@ -25,8 +25,8 @@ ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-ABL:70 += 1
-PRINTFORMW %ABLNAME:70%의 레벨이 %조사처리(TOSTR(ABL:70),"가")% 되었습니다.
+ABL:요리기능 += 1
+PRINTFORMW %ABLNAME:70%의 레벨이 %조사처리(TOSTR(ABL:요리기능),"가")% 되었습니다.
 
 @AUTO_ABLUP70
 #LOCALSIZE 1
@@ -37,14 +37,14 @@ ELSE
     RETURN 0
 ENDIF
 
-ABL:70 += 1
+ABL:요리기능 += 1
 RETURN 1
 
 ;--------------------------------------------------
 ;レベルアップに必要な珠計算、レベルアップ予告処理
 ;--------------------------------------------------
 @ISABLUP70
-SIF ABL:70 >= 5
+SIF ABL:요리기능 >= 5
     RETURN 0
 
 CALLF CALC_COST70, "CALC"
@@ -63,52 +63,52 @@ SIF ARGS == "GET"
 ;必要な条件の算出
 VARSET LOCAL, 0
 
-IF ABL:70 == 0
+IF ABL:요리기능 == 0
     LOCAL:0 = 75
     LOCAL:1 = 1
-ELSEIF ABL:70 == 1
-    LOCAL:0 = (EXP:70 >= EXPLV:3) ? 250 # 500
+ELSEIF ABL:요리기능 == 1
+    LOCAL:0 = (EXP:조리경험 >= EXPLV:3) ? 250 # 500
     LOCAL:1 = 10
-ELSEIF ABL:70 == 2
-    LOCAL:0 = (EXP:70 >= EXPLV:4) ? 1500 # 3000
+ELSEIF ABL:요리기능 == 2
+    LOCAL:0 = (EXP:조리경험 >= EXPLV:4) ? 1500 # 3000
     LOCAL:1 = 25
-ELSEIF ABL:70 == 3
-    LOCAL:0 = (EXP:70 >= EXPLV:5) ? 4500 # 9000
+ELSEIF ABL:요리기능 == 3
+    LOCAL:0 = (EXP:조리경험 >= EXPLV:5) ? 4500 # 9000
     LOCAL:1 = 50
-ELSEIF ABL:70 == 4
-    LOCAL:0 = (EXP:70 >= EXPLV:5) ? 12000 # 24000
+ELSEIF ABL:요리기능 == 4
+    LOCAL:0 = (EXP:조리경험 >= EXPLV:5) ? 12000 # 24000
     LOCAL:1 = 100
 ENDIF
 
 ;習得早い
-IF TALENT:50
+IF TALENT:습득빠름
     TIMES LOCAL:0 , 0.80
     TIMES LOCAL:1 , 0.75
 ;習得遅い
-ELSEIF TALENT:51
+ELSEIF TALENT:습득느림
     TIMES LOCAL:0 , 1.20
     TIMES LOCAL:1 , 1.10
 ENDIF
 ;調合知識
-IF TALENT:55
+IF TALENT:조합지식
     TIMES LOCAL:0 , 0.90
     TIMES LOCAL:1 , 0.90
 ENDIF
 ;恋慕
-IF TALENT:150
+IF TALENT:연모
     TIMES LOCAL:0 , 0.80
     TIMES LOCAL:1 , 0.80
 ENDIF
 ;調理名人
-IF TALENT:194
+IF TALENT:조리명인
     TIMES LOCAL:0 , 0.50
     TIMES LOCAL:1 , 0.50
 ;料理得意
-ELSEIF TALENT:193
+ELSEIF TALENT:요리잘함
     TIMES LOCAL:0 , 0.75
     TIMES LOCAL:1 , 0.75
 ;料理苦手
-ELSEIF TALENT:192
+ELSEIF TALENT:요리못함
     TIMES LOCAL:0 , 1.20
     TIMES LOCAL:1 , 1.20
 ENDIF
@@ -128,7 +128,7 @@ VARSET LOCAL, 0
 SIF JUEL:11 < COST70(0)
     LOCAL:0 |= 1
 ;調理経験が必要
-SIF EXP:70 < COST70(1)
+SIF EXP:조리경험 < COST70(1)
     LOCAL:0 |= 2
 
 RETURNF (LOCAL:0 == 0)

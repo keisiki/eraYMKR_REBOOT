@@ -56,8 +56,8 @@ FLAG:11 = 2
     INPUT
     IF RESULT == 0
         PRINTFORMW ―소질을 변경했습니다―
-        TALENT:41 = 0
-        TALENT:40 = 1
+        TALENT:아픔에강함 = 0
+        TALENT:아픔에약함 = 1
     ELSEIF RESULT == 1
         PRINTFORMW ―소질을 변경하지 않았습니다―
     ELSE
@@ -73,7 +73,7 @@ SIF FLAG:11 == 0
 SIF NO:TARGET != 41
     RETURN 0
 ;[정신 붕괴][꼭두각시]때 말을 스킵 한다
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;--------------------------------------------------
 ;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, 41을 주인의 캐릭터 번호에 치환)
@@ -104,7 +104,7 @@ IF CFLAG:5001 == 0
     DRAWLINE
     ;봉사 정신 Lv4 이상＋반발 각인 Lv0
     ;일단 이어받아 용. 위자즈·등산가의 상위 모드 모두를 보고 있으면(자) 갑자기 쓰고 싶고. 조역 포함해 캐릭터 서 있어 재미있다
-    IF ABL:13 >= 4 && MARK:9 == 0 && (CFLAG:17 & 16) == 0
+    IF ABL:봉사정신 >= 4 && MARK:반발각인 == 0 && (CFLAG:이벤트취득붕괴 & 16) == 0
         PRINTFORMW 방에 들어가자마자 모미지가 부비부비 엉겨들었다.
         PRINTFORMW 「응～♪」
         PRINTL 
@@ -128,7 +128,7 @@ IF CFLAG:5001 == 0
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 절실한 물음에 답하지 않고 모미지의 옷에 손을 얹었다――
     ENDIF
     CFLAG:5001 = 1
-    CFLAG:99 = 1
+    CFLAG:지문소거판정 = 1
     RETURN 1
 
 ;-------------------------------------------------
@@ -138,7 +138,7 @@ IF CFLAG:5001 == 0
 
 ;연모
 ;트라이 Gun의 산발의 장면을 좋아합니다. 남녀가 역입니다만
-ELSEIF CFLAG:5001 < 5 && TALENT:150
+ELSEIF CFLAG:5001 < 5 && TALENT:연모
     DRAWLINE
     PRINTFORMW 「우으으……」
     PRINTFORMW 방에 들어가자 모미지가 우울한 얼굴로 머리털을 만지작거리고 있었다.
@@ -154,38 +154,38 @@ ELSEIF CFLAG:5001 < 5 && TALENT:150
     PRINTFORMW 느닷없이 모미지의 얼굴이 다가와 그 입술이 볼에 닿는다.
     PRINTFORMW 「에헤헤, 감사 인사예요…… 자아, 정리하고 조교 시작하죠」
     CFLAG:5001 = 5
-    CFLAG:99 = 1
+    CFLAG:지문소거판정 = 1
     RETURN 1
 
 ;굴복 각인 Lv3 또는 봉사 정신 Lv4 이상
-ELSEIF CFLAG:5001 < 4 && (MARK:2 == 3 || ABL:13 >= 4)
+ELSEIF CFLAG:5001 < 4 && (MARK:굴복각인 == 3 || ABL:봉사정신 >= 4)
     DRAWLINE
     PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 방에 들어가자 모미지는 벌써 옷을 벗은 상태였다.
     PRINTFORML 조교 방은 적당한 온도를 유지하도록 의식된 구조이긴 하지만
     PRINTFORMW 옷을 벗고 마냥 있었더래서야 아무리 그래도 추워질 것이다.
     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 마음가짐을 한차례 칭찬한 뒤, 이후에는 옷을 입고 기다리도록 말해두었다.
     CFLAG:5001 = 4
-    CFLAG:99 = 1
+    CFLAG:지문소거판정 = 1
     RETURN 1
 
 ;굴복 각인 Lv2 또는 봉사 정신 Lv3 이상
-ELSEIF CFLAG:5001 < 3 && (MARK:2 == 2 || ABL:13 >= 3)
+ELSEIF CFLAG:5001 < 3 && (MARK:굴복각인 == 2 || ABL:봉사정신 >= 3)
     DRAWLINE
     PRINTFORMW (요즘 여기 있는 게 불편하게 느껴지지 않기 시작했는 걸……)
     PRINTFORMW (잠깐만 다정하고, 나머지 시간은 지독한 짓만 해대는데)
     PRINTFORMW (길이 든 걸까, 나……)
     CFLAG:5001 = 3
-    CFLAG:99 = 1
+    CFLAG:지문소거판정 = 1
     RETURN 1
 
 ;굴복 각인 Lv1 또는 봉사 정신 Lv2 이상
-ELSEIF CFLAG:5001 < 2 && (MARK:2 == 1 || ABL:13 >= 2)
+ELSEIF CFLAG:5001 < 2 && (MARK:굴복각인 == 1 || ABL:봉사정신 >= 2)
     DRAWLINE
     PRINTFORMW (사실은 물어뜯거나 해야되겠지만서도)
     PRINTFORMW (……하지만 그러면 뒷일이 무서우니 말야)
     PRINTFORMW (근성 없구나, 나……)
     CFLAG:5001 = 2
-    CFLAG:99 = 1
+    CFLAG:지문소거판정 = 1
     RETURN 1
 
 ;조수의 유무를 체크(없는 경우는 2회째 이후에 난다)
@@ -202,7 +202,7 @@ ELSEIF ASSI < 0
 ;    ;처음
 ;    IF CFLAG:5002 == 0
 ;        ;연모＋연모시 처음상(함락 이벤트)이 발생이 끝난 상태
-;        IF TALENT:150 && CFLAG:201 >= 5
+;        IF TALENT:연모 && CFLAG:201 >= 5
 ;            PRINTFORMW 
 ;        ;그 이외
 ;        ELSE
@@ -213,7 +213,7 @@ ELSEIF ASSI < 0
 ;    ;2회째 이후
 ;    ELSEIF CFLAG:5002 == 1 && FLAG:11 == 2
 ;        ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
 ;        ;그 이외
 ;        ELSE
@@ -227,7 +227,7 @@ ELSEIF ASSI < 0
 ;    ;처음
 ;    IF CFLAG:5003 == 0
 ;        ;연모＋연모시 처음상(함락 이벤트)이 발생이 끝난 상태
-;        IF TALENT:150 && CFLAG:201 >= 5
+;        IF TALENT:연모 && CFLAG:201 >= 5
 ;            PRINTFORMW 
 ;        ;그 이외
 ;        ELSE
@@ -238,7 +238,7 @@ ELSEIF ASSI < 0
 ;    ;2회째 이후
 ;    ELSEIF CFLAG:5003 == 1 && FLAG:11 == 2
 ;        ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
 ;        ;그 이외
 ;        ELSE
@@ -256,34 +256,34 @@ ENDIF
 ;-------------------------------------------------
 @K41_KOJO2
 SIF 1
-CFLAG:99 = 1
+CFLAG:지문소거판정 = 1
 ;반발 각인 Lv3
 ;어째서 이렇게 될 때까지 방치했다
-IF MARK:9 == 3 && FLAG:11 == 2
+IF MARK:반발각인 == 3 && FLAG:11 == 2
     DRAWLINE
     PRINTFORMW (마음에 한 폭의 방패만 있으면, 어떤 간난신고에도 지지 않아……!!)
     RETURN 1
 
 ;연모＋낙인
 ;분기의 나 몇개(살) 조건을 채울까로 변동합니다만 등 확률로는 되지 않습니다. 대체로 하위 분기 쪽이 나오기 쉽다
-ELSEIF TALENT:150 && TALENT:161
+ELSEIF TALENT:연모 && TALENT:낙인
     DRAWLINE
     ;낙인 취득시에 매직을 선택했다
     IF CFLAG:9717 == 1
         ;B감각 Lv5＋모유 체질
-        IF RAND:5 == 0 && ABL:3 >= 5 && TALENT:134
+        IF RAND:5 == 0 && ABL:B감각 >= 5 && TALENT:모유체질
             PRINTFORMW 모미지의 유방에 『목표 200cc』라고 적었다.
             PRINTFORMW 「젖이 텅텅 빌 때까지 짜주세요……」
         ;V감각 Lv5＋비처녀이다(남자·재생 처녀의 경우 연주한다)
-        ELSEIF RAND:4 == 0 && ABL:1 >= 5 && TALENT:0 == 0 && TALENT:120 == 0
+        ELSEIF RAND:4 == 0 && ABL:V감각 >= 5 && TALENT:처녀 == 0 && TALENT:남자 == 0
             PRINTFORMW 모미지의 하복부에 『1회 100원』이라 적고 거기서부터 비부까지 화살표를 그었다.
             PRINTFORMW 「20번 정도 짜내면 내일은 맛있는 식사인 거군요!」
         ;C감각 Lv5＋남자 또는 양성
-        ELSEIF RAND:3 == 0 && ABL:0 >= 5 && (TALENT:120 || TALENT:121)
+        ELSEIF RAND:3 == 0 && ABL:C감각 >= 5 && (TALENT:남자 || TALENT:후타나리)
             PRINTFORMW 모미지의 페니스에 『만년발정 자지』라고 적었다.
             PRINTFORMW 「네… 금방 야한 거 생각해서 발딱 서는 고추에 벌을 주세요……」
         ;A감각 Lv5＋매저키스트기분 Lv3 이상
-        ELSEIF RAND:2 == 0 && ABL:2 >= 5 && ABL:21 >= 3
+        ELSEIF RAND:2 == 0 && ABL:A감각 >= 5 && ABL:마조끼 >= 3
             PRINTFORMW 모미지의 엉덩이에 『무료 항문 변기』라 적고, 거기서부터 항문의 가장자리까지 화살표를 그었다.
             PRINTFORMW 「뭐라고 썼어요…?」
             PRINTFORML 이미 짐작은 하고 있는 모양이지만 새삼 귓가에 속삭여주자
@@ -336,7 +336,7 @@ ELSEIF TALENT:150 && TALENT:161
 
 ;연모
 ;휴식이라든지의 지문을 보는 한, 연모라든지 붙는 무렵에 되면(자) 노예도 보통으로 집안을 어슬렁 어슬렁 하는 것이겠지 밭이랑
-ELSEIF TALENT:150 && FLAG:11 == 2
+ELSEIF TALENT:연모 && FLAG:11 == 2
     DRAWLINE
     ;체력 600 미만
     IF BASE:0 < 600
@@ -352,13 +352,13 @@ ELSEIF TALENT:150 && FLAG:11 == 2
         PRINTFORMW 분명 닫힌 눈꺼풀 뒤에서 그녀는 재촉받아 옷을 벗고 있을 것이다.
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 별 수 없이 모미지가 눈을 뜰 때까지 기다리기로 했다――
     ;양성(1회 한정)
-    ELSEIF RAND:6 == 0 && TALENT:121 && CFLAG:9726 == 0
+    ELSEIF RAND:6 == 0 && TALENT:후타나리 && CFLAG:9726 == 0
         PRINTFORMW 「지금의 저, 여자의 몸에 고추가 나있잖아요」
         PRINTFORMW 「이 경우 보지 뒤집기가 될지 자지 뒤집기가 될지……」
         PRINTFORMW 아무래도 상관없는 데에 어떨까 생각하는 모미지였다.
         CFLAG:9726 = 1
     ;남자(1회 한정)
-    ELSEIF RAND:5 == 0 && TALENT:120 && CFLAG:9722 == 0
+    ELSEIF RAND:5 == 0 && TALENT:남자 && CFLAG:9722 == 0
         PRINTFORMW 「원래대로 되돌릴 생각이 없다면 남자 속옷쯤은 좀 사다주세요오」
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 낭자애에게 여자팬티를 입히는 매력을 설명했지만 모미지는 한숨을 내뱉을 뿐이었다.
         CFLAG:9722 = 1
@@ -371,12 +371,12 @@ ELSEIF TALENT:150 && FLAG:11 == 2
         PRINTFORMW 뭔가 정체 모를 공포를 느꼈으므로 이 게임은 봉인하자…….
         CFLAG:9718 = 1
     ;서로 사랑함
-    ELSEIF RAND:5 == 0 && TALENT:153
+    ELSEIF RAND:5 == 0 && TALENT:상애
         PRINTFORMW 「단풍 무늬는 고령자의 증거라나봐요. 정말이지 무례한 얘기예요」
         PRINTFORMW 잠시 푸념을 들었다.
         PRINTFORMW (※주: 일본어로 '단풍 = 모미지')
     ;서로 사랑함
-    ELSEIF RAND:4 == 0 && TALENT:153
+    ELSEIF RAND:4 == 0 && TALENT:상애
         PRINTFORMW 「자아, 오늘은 근사한 게스트의 소개입니다!」
         PRINTFORMW 「짜잔, 벼룩!」
         PRINTFORMW 당장 목욕탕에 던져넣었다.
@@ -396,14 +396,14 @@ ELSEIF TALENT:150 && FLAG:11 == 2
     RETURN 1
 
 ;굴복 각인 Lv3 또는 봉사 정신 Lv4 이상
-ELSEIF (MARK:2 == 3 || ABL:13 >= 4) && FLAG:11 == 2
+ELSEIF (MARK:굴복각인 == 3 || ABL:봉사정신 >= 4) && FLAG:11 == 2
     DRAWLINE
     PRINTFORMW 「 괜찮아요. 오늘은 제데로 입고 있어요」
     PRINTFORMW 「 좋아하는 곳부터, 벗겨 주세요……」
     RETURN 1
 
 ;굴복 각인 Lv2 또는 봉사 정신 Lv3 이상
-ELSEIF (MARK:2 == 2 || ABL:13 >= 3) && FLAG:11 == 2
+ELSEIF (MARK:굴복각인 == 2 || ABL:봉사정신 >= 3) && FLAG:11 == 2
     DRAWLINE
     PRINTFORMW 「우와아, 이런 짓도 하는구나――  앗」
     PRINTFORMW 모미지는 책장에서 책을 꺼내서 읽고 있었다. 조교자료용의 살짝 과격한 내용의 물건이다.
@@ -411,7 +411,7 @@ ELSEIF (MARK:2 == 2 || ABL:13 >= 3) && FLAG:11 == 2
     RETURN 1
 
 ;굴복 각인 Lv1 또는 봉사 정신 Lv2 이상
-ELSEIF (MARK:2 == 1 || ABL:13 >= 2) && FLAG:11 == 2
+ELSEIF (MARK:굴복각인 == 1 || ABL:봉사정신 >= 2) && FLAG:11 == 2
     DRAWLINE
     PRINTFORMW 「솔직히 말하면 해방해줬으면 좋겠어요. 하지만 무리겠죠……」
     PRINTFORMW %CALLNAME:MASTER%의 침묵을 긍정이라 이해했는지, 그 이상은 아무 말도 않고 옷을 벗기 시작했다.
@@ -436,7 +436,7 @@ SIF FLAG:11 == 0
 SIF NO:TARGET != 41
     RETURN 0
 ;[정신 붕괴][꼭두각시]때 말을 스킵 한다
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;--------------------------------------------------
 ;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, 41을 주인의 캐릭터 번호에 치환)
@@ -454,8 +454,8 @@ SIF TALENT:167 || TALENT:168
 ;조교 종료시의 대사 CFLAG 211~220을 사용
 ;--------------------------------------------------
 SIF 1
-CFLAG:99 = 0
-IF MARK:9 == 3
+CFLAG:지문소거판정 = 0
+IF MARK:반발각인 == 3
 ;반발 각인 Lv3
     DRAWLINE
     PRINTFORML (무기는 없어도 이빨은 있어. 반격할 기회는 반드시 찾아올거야……)
@@ -464,7 +464,7 @@ IF MARK:9 == 3
     RETURN 1
 
 ;서로 사랑함＋체력 500 미만＋욕정 100만 이상＋남자가 아니다
-ELSEIF TALENT:153 && BASE:0 < 500 && PALAM:13 >= PALAMLV:11 && TALENT:120 == 0
+ELSEIF TALENT:상애 && BASE:0 < 500 && PALAM:13 >= PALAMLV:11 && TALENT:남자 == 0
     DRAWLINE
     PRINTFORMW 행위를 마친 뒤에도 모미지의 얼굴은 쾌락의 여운으로 해이해진 채였다.
     PRINTFORMW 그리고 해이해진 건 얼굴만이 아니었는지 가랑이 사이에서 황금수가 흘러나온다.
@@ -475,7 +475,7 @@ ELSEIF TALENT:153 && BASE:0 < 500 && PALAM:13 >= PALAMLV:11 && TALENT:120 == 0
 
 ;연모＋낙인＋체력 500 미만＋모미지가 전신 정액 더러워지고(페니스는 제외하다)
 ;실은 사정 회수라든지를 보지 않기 때문에 더러움을 옮겨 가는 것만으로도 이 분기는 낼 수 있다
-ELSEIF TALENT:150 && TALENT:161 && BASE:0 < 500 && (STAIN:0 & 4 && STAIN:1 & 4 && STAIN:3 & 4 && STAIN:4 & 4 && STAIN:5 & 4 && STAIN:6 & 4 && STAIN:7 & 4)
+ELSEIF TALENT:연모 && TALENT:낙인 && BASE:0 < 500 && (STAIN:입 & 4 && STAIN:손 & 4 && STAIN:보지 & 4 && STAIN:애널 & 4 && STAIN:가슴 & 4 && STAIN:다리 & 4 && STAIN:발 & 4)
     DRAWLINE
     PRINTFORMW 모미지는 마치 집단 윤간당한 뒤처럼 축 늘어져 정액 웅덩이에 누워있다.
     PRINTFORMW 「우아, 아… 굉장한 냄새……♪」
@@ -488,7 +488,7 @@ ELSEIF TALENT:150 && TALENT:161 && BASE:0 < 500 && (STAIN:0 & 4 && STAIN:1 & 4 &
     PRINTFORMW 장대를 훑어올려 마지막 한 방울까지 모미지의 몸에 뿌렸다.
     PRINTFORMW 「아흐아아… 정애액……♪」
     PRINTFORM 모미지는 뿌려진 정액을 건져올리고는 기쁜 듯이
-    IF TALENT:120 || TALENT:121
+    IF TALENT:남자 || TALENT:후타나리
         PRINTFORMW 자기 페니스에다 문질렀다――
     ELSE
         PRINTFORMW 입으로 옮겨 할짝였다――
@@ -497,7 +497,7 @@ ELSEIF TALENT:150 && TALENT:161 && BASE:0 < 500 && (STAIN:0 & 4 && STAIN:1 & 4 &
 
 ;연모＋낙인
 ;스킨쉽으로부터 조교 후 섹스로 발전하면 확변! ……우사
-ELSEIF TALENT:150 && TALENT:161
+ELSEIF TALENT:연모 && TALENT:낙인
     DRAWLINE
     PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 조교의 마무리로서 양물에 키스하도록 시켰다.
     PRINTFORML 「응, 쪽……」
@@ -505,7 +505,7 @@ ELSEIF TALENT:150 && TALENT:161
     RETURN 1
 
 ;연모＋체력 500 미만
-ELSEIF TALENT:150 && BASE:0 < 500
+ELSEIF TALENT:연모 && BASE:0 < 500
     DRAWLINE
     PRINTFORML 「하아, 하아, 아아, 으, 이쯤되니, 역시 지쳤어요……」
     PRINTFORML 더 이상하면 아무래도 일방적인 행위가 되고 만다.
@@ -513,31 +513,31 @@ ELSEIF TALENT:150 && BASE:0 < 500
     RETURN 1
 
 ;연모
-ELSEIF TALENT:150
+ELSEIF TALENT:연모
     DRAWLINE
     PRINTFORMW 「만족하셨어요? 에헤헤」
     RETURN 1
 
 ;굴복 각인 Lv3 또는 봉사 정신 Lv4 이상
-ELSEIF MARK:2 == 3 || ABL:13 >= 4
+ELSEIF MARK:굴복각인 == 3 || ABL:봉사정신 >= 4
     DRAWLINE
     PRINTFORMW 「기분 좋으셨어요?」 
     RETURN 1
 
 ;굴복 각인 Lv2 또는 봉사 정신 Lv3 이상
-ELSEIF MARK:2 == 2 || ABL:13 >= 3
+ELSEIF MARK:굴복각인 == 2 || ABL:봉사정신 >= 3
     DRAWLINE
     PRINTFORMW 「앗…… 저, 수고하셨습니다」
     RETURN 1
 
 ;굴복 각인 Lv1 또는 봉사 정신 Lv2 이상
-ELSEIF MARK:2 == 1 || ABL:13 >= 2
+ELSEIF MARK:굴복각인 == 1 || ABL:봉사정신 >= 2
     DRAWLINE
     PRINTFORMW 「하아……」
     RETURN 1
     
 ;굴복 각인 Lv0
-ELSEIF MARK:2 == 0
+ELSEIF MARK:굴복각인 == 0
     DRAWLINE
     PRINTFORMW (괜찮아. 나도 텐구라고. 빈틈을 봐서 달아나는 정도는 틀림없이 할 수 있어……)
     PRINTFORMW (만지는 것뿐이라면 닳는 것도 아니고, 얌전히 있으면 아마 괜찮을거야……)
@@ -561,7 +561,7 @@ SIF TEQUIP:42 && (SELECTCOM != 226 && SELECTCOM != 229 && SELECTCOM != 506 && SE
 SIF TEQUIP:14 || TFLAG:899 > 0
     RETURN 0
 ;[정신 붕괴][꼭두각시]때에도 말을 스킵 한다(광기는 보통으로 말하거나 할 수 있으므로 보류)
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;--------------------------------------------------
 ;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, 41을 주인의 캐릭터 번호에 치환)
@@ -587,7 +587,7 @@ IF SELECTCOM == 0
     ;처음
     IF CFLAG:9000 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 휘청휘청 박자기처럼 흔들리는 모미미의 꼬리를 천천히 잡아봤다.
             PRINTFORMW 「앗, 갑자기 꼬리, 그럴 수가, 아, 대담…… 아으」
             PRINTFORMW 머뭇머뭇거리면서도 거절할 기색이 없기에 제 맘대로 여기저기 조물락거렸다――
@@ -602,18 +602,18 @@ IF SELECTCOM == 0
     ELSE
         ;연모
         ;굴복으로 에로틱 된 뒤 연모로 또 사랑스러워지는 흐름이 져스티스
-        IF TALENT:150 && (CFLAG:9000 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9000 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「꼬리가 만져지면, 이상한 소리가 나와서 창피해요……」
             PRINTFORMW 「햐악! 그러니까 꼬리는, 으아… 냥, 아으……」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지가 흐물흐물해질 때까지 꼬리를 귀여워해줬다.
             CFLAG:9000 = 4
         ;굴복 각인 Lv2 이상
-        ELSEIF MARK:2 >= 2 && (CFLAG:9000 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 >= 2 && (CFLAG:9000 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「듬뿍 만져주세요. 가슴도, 여기도……」
             PRINTFORMW 그녀는 그렇게 말하며 %CALLNAME:MASTER%의 손을 잡고 이끌었다.
             CFLAG:9000 = 3
         ;그 이외
-        ELSEIF MARK:2 <= 1 && (CFLAG:9000 <= 1 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 <= 1 && (CFLAG:9000 <= 1 || FLAG:11 == 2)
             PRINTFORMW 「아아…… 꼬리는, 그게…… 애가 타니까, 안돼, 앗, 아흥…… 우냐아……」
             PRINTFORMW 처음에는 꼬리를 흔들어 저항했었지만 애무를 계속하자 금세 얌전해졌다.
             CFLAG:9000 = 2
@@ -630,7 +630,7 @@ IF SELECTCOM == 1 && TEQUIP:56 == 0
     ;처음
     IF CFLAG:9001 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「 후아, 아, 아아, 응, 혀, 엣찌예요 」
         ;그 이외
         ELSE
@@ -641,7 +641,7 @@ IF SELECTCOM == 1 && TEQUIP:56 == 0
     ;2회째 이후
     ELSE
         ;연모 또한 클리캡 사용중
-        IF TALENT:150 && TEQUIP:30 == 1 && (CFLAG:9001 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && TEQUIP:30 == 1 && (CFLAG:9001 <= 5 || FLAG:11 == 2)
             PRINTFORMW 클리토리스에 달라붙은 캡을 한입 가득 물고, 혀로 부드럽게 굴렸다.
             PRINTFORMW 「아후우…… 클리, 먹히고 있어, 더, 더 먹어줘어……」
             PRINTFORMW 느닷없이 모미지의 손이 %CALLNAME:MASTER%의 머리를 잡고 이라마치오를 시키듯이 허리를 밀어댔다.
@@ -655,12 +655,12 @@ IF SELECTCOM == 1 && TEQUIP:56 == 0
             PRINTFORMW 민감한 만큼 아픔도 강할 것이다. 입을 떼고 올려다보자 모미지의 볼에는 눈물 줄기가 생겨있었다.
             CFLAG:9001 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9001 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9001 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「하응, 저, 저기, 저도―― 햐악! 저, 잠깐 스톱―― 하응, 하아아」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 제안을 어쩔까 생각하면서 핥아올렸다.
             CFLAG:9001 = 4
         ;굴복 각인 Lv2 이상
-        ELSEIF MARK:2 >= 2 && (CFLAG:9001 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 >= 2 && (CFLAG:9001 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아, 훗, 하응……」
             PRINTFORMW 소리를 내면서 핥아올릴 때마다 모미지의 입에서 요염스런 목소리가 새어나온다.
             CFLAG:9001 = 3
@@ -675,7 +675,7 @@ IF SELECTCOM == 1 && TEQUIP:56 == 0
 ENDIF
 
 ;-------------------------------------------------
-;어널 애무 CFLAG9002
+;애널 애무 CFLAG9002
 ;플러그 빼기삽 해가 야리타캇타타″케이
 ;또한 A계 커맨드 전반에 관해서 A감각 Lv3 이상이 말변모미지의 조건의 하나가 되어 있습니다
 ;연모만으로는 미움 받으므로 부디 주의를
@@ -690,7 +690,7 @@ IF SELECTCOM == 2
     ;2회째 이후
     ELSE
         ;관장중＋A감각 Lv3 이상＋매저키스트기분 Lv3 이상 또는 낙인
-        IF TEQUIP:25 == 7 && ABL:2 >= 3 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:9002 <= 7 || FLAG:11 == 2)
+        IF TEQUIP:25 == 7 && ABL:A감각 >= 3 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:9002 <= 7 || FLAG:11 == 2)
             PRINTFORMW 관장액을 틀어막고 있는 플러그를 잡고 항문을 후볐다.
             PRINTFORMW 「히아아아!! 엉덩잇, 엉덩이 찌걱찌걱당하고 있어어!!!」
             CFLAG:9002 = 8
@@ -700,7 +700,7 @@ IF SELECTCOM == 2
             PRINTFORMW 「싫엇, 그만, 나와버려!! 안돼!! 안돼요!! 싫어어어엇!!」
             CFLAG:9002 = 7
         ;연모＋A감각 Lv3 이상
-        ELSEIF TALENT:150 && ABL:2 >= 3 && (CFLAG:9002 <= 5 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9002 <= 5 || FLAG:11 == 2)
             IF RAND:3 == 0
                 PRINTFORMW 「으으응, 엉덩이, 엉덩이이……」
                 PRINTFORMW 볼록 부푼 항문이 마치 입봉사라도 하는 것처럼 손가락에 달라붙는다.
@@ -714,19 +714,19 @@ IF SELECTCOM == 2
             ENDIF
             CFLAG:9002 = 6
         ;A감각 Lv3 이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9002 <= 4 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9002 <= 4 || FLAG:11 == 2)
             PRINTFORMW 손가락을 두 개 모아서 격렬하게 문질러댄다.
             PRINTFORMW 「후아아아, 엉덩이, 기분 좋아아, 이러면, 안되는데에……」
             PRINTFORMW 때때로 손가락 움직임을 멈추면 안타까운 듯한 얼굴로 이쪽을 쳐다본다. 감도는 충분하다.
             CFLAG:9002 = 5
         ;A감각 Lv2
-        ELSEIF ABL:2 == 2 && (CFLAG:9002 <= 3 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 == 2 && (CFLAG:9002 <= 3 || FLAG:11 == 2)
             PRINTFORMW 손가락을 제2관절까지 박고 괄약근을 안쪽으로부터 자극해준다..
             PRINTFORMW 「윽, 후, 아아……」
             PRINTFORMW 모미지는 구부러진 손가락이 걸릴 때마다 촉촉한 목소리를 흘리고 있다.
             CFLAG:9002 = 4
         ;A감각 Lv1
-        ELSEIF ABL:2 == 1 && (CFLAG:9002 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 == 1 && (CFLAG:9002 <= 2 || FLAG:11 == 2)
             PRINTFORMW 손가락을 제1관절까지 박고 천천히 돌린다.
             PRINTFORMW 「응, 윽……」
             PRINTFORMW 입구가 손가락의 굵기를 익혔는지 그다지 저항은 강하지 않다.
@@ -749,7 +749,7 @@ IF SELECTCOM == 3
     ;처음
     IF CFLAG:9003 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 모미지의 부드러운 두 언덕을 숫처녀를 다루는 것처럼 다정하게 애무했다.
             PRINTFORMW 「아으으, 새삼스럽게, 살짝 부끄러워라…… 으응, 으」
         ;그 이외
@@ -761,7 +761,7 @@ IF SELECTCOM == 3
     ;2회째 이후
     ELSE
         ;연모＋폭유
-        IF TALENT:150 && TALENT:113 && (CFLAG:9003 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && TALENT:폭유 && (CFLAG:9003 <= 4 || FLAG:11 == 2)
             IF RAND:3 == 0
                 PRINTFORMW 정면에서 손바닥으로 밀어누르듯이 모미지의 폭유를 빙글빙글 몇 번이고 이겨대었다.
                 PRINTFORMW 「아으으, 가슴 그렇게나 해대다간, 축 늘어져버려요오……」
@@ -769,7 +769,7 @@ IF SELECTCOM == 3
                 PRINTFORMW 모미지의 젖꼭지에 손끝을 대고 폭유 속으로 밀어넣기 시작했다.
                 PRINTFORMW 「흐윽, 흐응, 좀 더어, 가슴 뭉개지는 거, 기분 좋아요」
             ELSE
-                IF CFLAG:42 & 32
+                IF CFLAG:특수장비 & 32
                     PRINTFORMW 젖꼭지에 단 피어스를 잡고 위로 잡아당겼다.
                     PRINTFORMW 「아으, 무거워서 무리라고요오. 젖꼭지 떨어지겠어……」
                     PRINTFORMW 조금만 들어올렸다가 떨어뜨리자, 그 때마다 유방이 크게 흔들렸다.
@@ -781,11 +781,11 @@ IF SELECTCOM == 3
             ENDIF
             CFLAG:9003 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9003 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9003 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「핫, 앗, 젖꼭지, 젖꼭지이♪」
             CFLAG:9003 = 4
         ;屈服刻印Lv2以上
-        ELSEIF MARK:2 >= 2 && (CFLAG:9003 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 >= 2 && (CFLAG:9003 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「핫, 앗, 젖꼭지, 기분, 좋아요」
             CFLAG:9003 = 3
         ;それ以外
@@ -803,13 +803,13 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 4
     ;처음으로 처녀의 경우, 처녀 상실 말에
-    IF CFLAG:9004 == 0 && TALENT:0 == 1
+    IF CFLAG:9004 == 0 && TALENT:처녀 == 1
         CFLAG:9004 = 1
         RETURN 0
     ;처녀가 아니다
     ELSE
         ;V감각 Lv2 이상 또는 굴복 각인 Lv2 이상
-        IF (ABL:1 >= 2 || MARK:2 >= 2) && (CFLAG:9004 <= 2 || FLAG:11 == 2)
+        IF (ABL:V감각 >= 2 || MARK:굴복각인 >= 2) && (CFLAG:9004 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「으으응… 흐윽… 흐응……」
             PRINTFORMW 모미지의 요염스런 목소리와 꿀단지에서 울리는 끈기 있는 소리가 음탕하게 합창한다.
             CFLAG:9004 = 3
@@ -826,7 +826,7 @@ ENDIF
 ;G 스폿 자극
 IF SELECTCOM == 600
     ;V감각 Lv2 이상 또는 굴복 각인 Lv2 이상
-    IF (ABL:1 >= 2 || MARK:2 >= 2) && (CFLAG:9600 < 2 || FLAG:11 == 2)
+    IF (ABL:V감각 >= 2 || MARK:굴복각인 >= 2) && (CFLAG:9600 < 2 || FLAG:11 == 2)
         PRINTFORMW 질내에서 손가락을 굽혀 G스폿을 중점적으로 공격해댔다.
         PRINTFORMW 「핫, 앗, 아아, 익, 하아악!」
         PRINTFORMW 모미지는 허벅지를 떨며 암컷의 쾌락에 허덕이고 있다.
@@ -848,7 +848,7 @@ IF SELECTCOM == 5
     ;처음
     IF CFLAG:9005 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「제 자지, 먹혀서…… 흐윽, 깨물면, 안돼, 으……, 아…으」
             PRINTFORMW 귀두를 혀끝으로 칠하자 촉촉한 목소리가 돌아왔다.
         ;그 이외
@@ -860,7 +860,7 @@ IF SELECTCOM == 5
     ;2회째 이후
     ELSE
         ;연모 한편 스쿠미즈 사용중
-        IF TALENT:150 && TEQUIP:59 == 2 && (CFLAG:9005 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && TEQUIP:59 == 2 && (CFLAG:9005 <= 5 || FLAG:11 == 2)
             PRINTFORMW 옷을 입을 때의 마찰로 발기한 모미지의 페니스를 수영복 너머로 물었다.
             PRINTFORMW 「아앗, 굉장, 수영복, 까칠까칠해서 굉장해애♪」
             PRINTFORMW 입을 떼고 보자 벌써 쿠퍼액이 수영복에 얼룩을 만들고 있다.
@@ -871,14 +871,14 @@ IF SELECTCOM == 5
             PRINTFORMW 「히잉, 먹으면, 윽, 아아아 안돼요, 더럽혀…!」
             CFLAG:9005 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9005 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9005 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「햐아아악♪ 허리가 빠지겠어! 이상해져엇♪」
             PRINTFORMW 귀두가 약한지 혀로 문지를 때마다 허벅지가 긴장하는 게 느껴진다.
             PRINTFORMW 「입보지 좋아아! 자지 입보지 당하는 거, 아주 좋아요오♪」
             PRINTFORMW 모미지는 꼼짝없이 페니스를 통해 얻는 쾌감의 포로가 되어있다.
             CFLAG:9005 = 4
         ;굴복 각인 Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9005 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9005 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「하아아아아, 기, 기분 좋, 혀엇, 아, 핥으면, 흐응아아…!」
             CFLAG:9005 = 3
         ;그 이외
@@ -897,7 +897,7 @@ IF SELECTCOM == 6
     ;처음
     IF CFLAG:9006 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「흐웅♪ ……쪽…… 훅……」
             PRINTFORMW 「……아응……푸핫」
             PRINTFORMW 두 명의 입이 떨어지자 뒤얽히던 타액의 실이 힘없이 축 늘어지다 떨어졌다.
@@ -908,7 +908,7 @@ IF SELECTCOM == 6
             PRINTFORMW 그 말을 듣고 밀려오는 사랑스러움에 못 견딘 %조사처리(CALLNAME:MASTER,"는")%
             PRINTFORMW 모미지를 껴안고 또 한 번 길디 긴 키스를 나누었다.
         ;굴복 각인 Lv2 이상 또는 봉사 정신 Lv3 이상
-        ELSEIF MARK:2 >= 2 || ABL:13 >= 3
+        ELSEIF MARK:굴복각인 >= 2 || ABL:봉사정신 >= 3
             PRINTFORMW 「아응……」
             PRINTFORMW 긴장으로 살짝 메마른 입술을 쪼았다.
             PRINTFORMW 여러 번 하다보면 머잖아 익숙해질 것이다.
@@ -921,9 +921,9 @@ IF SELECTCOM == 6
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9006 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9006 <= 3 || FLAG:11 == 2)
             ;조교자와 모미지가 어느쪽이나 폭유
-            IF TALENT:113 && TALENT:PLAYER:113
+            IF TALENT:폭유 && TALENT:PLAYER:폭유
                 PRINTFORMW 「으응～ 서로 안고 있는 상태면 입까지 닿지 않는 건 고민거리네요」
                 PRINTFORMW 지나치게 풍만한 유방을 양쪽 다 밀어붙이며 두 명이 쓴웃음지었다.
                 PRINTFORMW 「쭈웁, 할짝――」
@@ -934,7 +934,7 @@ IF SELECTCOM == 6
             ENDIF
             CFLAG:9006 = 4
         ;굴복 각인 Lv2 이상 또는 봉사 정신 Lv3 이상
-        ELSEIF (MARK:2 >= 2 || ABL:13 >= 3) && (CFLAG:9006 <= 2 || FLAG:11 == 2)
+        ELSEIF (MARK:굴복각인 >= 2 || ABL:봉사정신 >= 3) && (CFLAG:9006 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아응… 쪽……」
             PRINTFORMW 입술을 요구받자 다소 당황하면서도 응하기 시작했다.
             CFLAG:9006 = 3
@@ -953,11 +953,11 @@ ENDIF
 ;지나친 파생이 많음에 접혀 모미지가 남자인가 양성의 시한정에
 ;-------------------------------------------------
 ;자위기구 사용중(센즈리)
-IF SELECTCOM == 7 && (TALENT:120 == 1 || TALENT:121 == 1) && TEQUIP:30 == 2
+IF SELECTCOM == 7 && (TALENT:남자 == 1 || TALENT:후타나리 == 1) && TEQUIP:30 == 2
     ;처음
     IF CFLAG:9710 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 문득 못된 장난기가 들어 용두질을 시켜보기로 했다.
             PRINTFORMW 「남성용의 도구로는 한 번도 해본 적 없어요……」
             PRINTFORMW 「아응, 이런 식으로 하는 게 맞, 죠?」
@@ -975,7 +975,7 @@ IF SELECTCOM == 7 && (TALENT:120 == 1 || TALENT:121 == 1) && TEQUIP:30 == 2
     ;2회째 이후
     ELSE
         ;연모 또는 자위 중독 Lv1 이상
-        IF (TALENT:150 || ABL:30 >= 1) && (CFLAG:9710 <= 2 || FLAG:11 == 2)
+        IF (TALENT:연모 || ABL:자위중독 >= 1) && (CFLAG:9710 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「하아, 하아, 응…… 으응… 아아……」
             PRINTFORMW 모미지는 오나홀을 두 손으로 움직이며 일심불란하게 용두질하고 있다.
             CFLAG:9710 = 3
@@ -988,11 +988,11 @@ IF SELECTCOM == 7 && (TALENT:120 == 1 || TALENT:121 == 1) && TEQUIP:30 == 2
         RETURN 0
     ENDIF
 ;그 이외
-ELSEIF SELECTCOM == 7 && (TALENT:120 == 1 || TALENT:121 == 1)
+ELSEIF SELECTCOM == 7 && (TALENT:남자 == 1 || TALENT:후타나리 == 1)
     ;처음
     IF CFLAG:9007 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 평상시 모미지가 어떤 식으로 자위하고 있는지 실제로 시켜봤다.
             PRINTFORMW 「우응, 자지, 뿌, 뿌리 쪽부터 꼬옥 크게 딸치고요」
             PRINTFORMW 「그리고, 아흑, 꼭지가 충혈되면, 조금씩 앞쪽으로 옮겨서 작게 여러 번…」
@@ -1009,7 +1009,7 @@ ELSEIF SELECTCOM == 7 && (TALENT:120 == 1 || TALENT:121 == 1)
     ;2회째 이후
     ELSE
         ;연모 또는 자위 중독 Lv1 이상
-        IF (TALENT:150 || ABL:30 >= 1) && (CFLAG:9007 <= 2 || FLAG:11 == 2)
+        IF (TALENT:연모 || ABL:자위중독 >= 1) && (CFLAG:9007 <= 2 || FLAG:11 == 2)
             PRINTFORMW 모미지는 가지런히 손가락을 모아 자기 페니스를 꼭 쥐고 집중하여 훑어올렸다.
             PRINTFORMW 「하아, 하아, 응…… 흐윽… 아아……」
             CFLAG:9007 = 3
@@ -1032,7 +1032,7 @@ IF SELECTCOM == 10
     ;처음
     IF CFLAG:9010 == 0 && CFLAG:9702 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「아, 겨우 등장했네요. 이거」
             PRINTFORMW 「기본인데 아무리 시간이 지나도 나오지 않길래 안 갖고 있나 생각했어요」
             PRINTFORMW 예상 외의 반응에 놀란 %조사처리(CALLNAME:MASTER,"는")% 모미지의 성인용품 편력을 적나라하게 고백시켜보기로 했다――
@@ -1040,7 +1040,7 @@ IF SELECTCOM == 10
             PRINTFORMW 「저, 저도 무르익은 나이라구요! 네. 무르익었으니 한둘쯤은 갖고 있다구요. 뭐 잘못됐어요!?」
             PRINTFORMW 자폭해서 반쯤 울먹이는 모미지를 안고 머리를 쓰다듬어주었다.
         ;굴복 각인 Lv2 이상 또는 봉사 정신 Lv3 이상
-        ELSEIF MARK:2 >= 2 || ABL:13 >= 3
+        ELSEIF MARK:굴복각인 >= 2 || ABL:봉사정신 >= 3
             PRINTFORMW 「후아아… 아, 아아……」
             PRINTFORMW 살짝 갖다대고 바로 떼는 걸 반복한다.
             PRINTFORMW 「…해, 주세요… 더, 갖다눌러줘요…」
@@ -1054,25 +1054,25 @@ IF SELECTCOM == 10
     ;2회째 이후
     ELSE
         ;연모＋남자 또는 양성
-        IF TALENT:150 && (TALENT:120 || TALENT:121) && (CFLAG:9010 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && (TALENT:남자 || TALENT:후타나리) && (CFLAG:9010 <= 5 || FLAG:11 == 2)
             PRINTFORMW 기대에 젖은 모미지의 물건에 로터를 갖다대었다.
             PRINTFORMW 「앗, 자지, 자지가 파닥파닥 떤다아♪」
             PRINTFORMW 진동을 약으로 설정했는데도 불구하고 모미지의 물건은 민감하게 반응해 허리가 들썩였다.
             CFLAG:9010 = 6
         ;남자 또는 양성
-        ELSEIF (TALENT:120 || TALENT:121) && (CFLAG:9010 <= 4 || FLAG:11 == 2)
+        ELSEIF (TALENT:남자 || TALENT:후타나리) && (CFLAG:9010 <= 4 || FLAG:11 == 2)
             PRINTFORMW 모미지의 물건에 로터를 갖다대었다.
             PRINTFORMW 「히악, 자지 부르르 떨어서, 앗, 힉!!」
             PRINTFORMW 서서히 진동을 강하게 하자 모미지의 상체가 자극에서 달아나려는 듯 뒤로 젖혀졌다.
             CFLAG:9010 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9010 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9010 <= 3 || FLAG:11 == 2)
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 스위치를 약하게 줄이고 모미지의 민감한 클리토리스에 갖다대었다.
             PRINTFORMW 「하악, 아아앗♪」
             PRINTFORMW 모미지의 클리토리스는 미약한 진동으로도 민감하게 반응해 불룩 솟아있었다.
             CFLAG:9010 = 4
         ;굴복 각인 Lv2 이상 또는 봉사 정신 Lv3 이상
-        ELSEIF (MARK:2 >= 2 || ABL:13 >= 3) && (CFLAG:9010 <= 2 || FLAG:11 == 2)
+        ELSEIF (MARK:굴복각인 >= 2 || ABL:봉사정신 >= 3) && (CFLAG:9010 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「아우, 우응, 하, 아, 끄으응……」
             PRINTFORMW 모미지는 민감한 장소를 자극받아 애달픈 소리를 질렀다.
             PRINTFORMW 자기 손가락을 물고 잘근대며 어떻게든 소리를 억누르려는 모습이 못 견디게 색정적이다.
@@ -1096,7 +1096,7 @@ IF SELECTCOM == 190
     ;처음
     IF CFLAG:9190 == 0 && CFLAG:9702 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「아, 겨우 등장했네요. 이거」
             PRINTFORMW 「기본인데 아무리 시간이 지나도 나오지 않길래 안 갖고 있나 생각했어요」
             PRINTFORMW 예상 외의 반응에 놀란 %조사처리(CALLNAME:MASTER,"는")% 모미지의 성인용품 편력을 적나라하게 고백시켜보기로 했다――
@@ -1113,7 +1113,7 @@ IF SELECTCOM == 190
     ;2회째 이후
     ELSE
         ;연모＋폭유
-        IF TALENT:150 && TALENT:113 && (CFLAG:9190 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && TALENT:폭유 && (CFLAG:9190 <= 4 || FLAG:11 == 2)
             IF RAND:2 == 0
                 PRINTFORMW 풍만한 유방의 중심, 발기한 유두에 로터를 갖다대었다.
                 PRINTFORMW 「히으, 흐앙, 가슴 안쪽이, 저릿저릿해애……」
@@ -1127,13 +1127,13 @@ IF SELECTCOM == 190
             ENDIF
             CFLAG:9190 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9190 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9190 <= 3 || FLAG:11 == 2)
             PRINTFORMW 유륜의 선을 따라 그리듯이 로터를 문질렀다.
             PRINTFORMW 「하아, 으응, 심술 부리지 마세요오……」
             PRINTFORMW 모미지가 스스로 유두를 갖다밀기 시작했다.
             CFLAG:9190 = 4
         ;굴복 각인 Lv2 이상 또는 봉사 정신 Lv3 이상
-        ELSEIF (MARK:2 >= 2 || ABL:13 >= 3) && (CFLAG:9190 <= 2 || FLAG:11 == 2)
+        ELSEIF (MARK:굴복각인 >= 2 || ABL:봉사정신 >= 3) && (CFLAG:9190 <= 2 || FLAG:11 == 2)
             PRINTFORMW 눈을 감고 가슴에 의식을 집중하도록 지시했다.
             PRINTFORMW 「으, 흐응, 아, 하아아……」
             PRINTFORMW 모미지는 고분고분하게 눈을 감고 로터가 주는 쾌감을 향수하고 있다.
@@ -1155,7 +1155,7 @@ IF SELECTCOM == 151 && TEQUIP:20
     ;처음
     IF CFLAG:9151 == 0 && CFLAG:9702 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「아, 겨우 등장했네요. 이거」
             PRINTFORMW 「기본인데 아무리 시간이 지나도 나오지 않길래 안 갖고 있나 생각했어요」
             PRINTFORMW 예상 외의 반응에 놀란 %조사처리(CALLNAME:MASTER,"는")% 모미지의 성인용품 편력을 적나라하게 고백시켜보기로 했다――
@@ -1163,7 +1163,7 @@ IF SELECTCOM == 151 && TEQUIP:20
             PRINTFORMW 「저, 저도 무르익은 나이라구요! 네. 무르익었으니 한둘쯤은 갖고 있다구요. 뭐 잘못됐어요!?」
             PRINTFORMW 자폭해서 반쯤 울먹이는 모미지를 안고 머리를 쓰다듬어주었다.
         ;굴복 각인 Lv2 이상 또는 봉사 정신 Lv3 이상
-        ELSEIF MARK:2 >= 2 || ABL:13 >= 3
+        ELSEIF MARK:굴복각인 >= 2 || ABL:봉사정신 >= 3
             PRINTFORMW 「아흥, 들어왔어……」
             PRINTFORMW 모미지는 상기된 표정으로 질구에서 뻗어나온 코드를 만지작거렸다.
         ;그 이외
@@ -1178,19 +1178,19 @@ IF SELECTCOM == 151 && TEQUIP:20
     ;2회째 이후
     ELSE
         ;연모＋처녀＋V감각 Lv2 이상
-        ;재생 처녀는 TALENT:0 == 2로 판정되는 것 같다. 잘되었네!
+        ;재생 처녀는 TALENT:처녀 == 2로 판정되는 것 같다. 잘되었네!
         ;그렇다고는 해도 이 말의 모미지는 텐션 오르면(자) 이상한 일 말해버리네요
-        IF TALENT:150 && TALENT:0 == 1 && ABL:1 >= 2 && (CFLAG:9151 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && TALENT:처녀 == 1 && ABL:V감각 >= 2 && (CFLAG:9151 <= 4 || FLAG:11 == 2)
             PRINTFORMW 소녀인 채 그대로 개발된 모미지의 질에 로터를 삽입했다.
             PRINTFORMW 「앗, 흐응, 소중하게 개발해주신 보지, 기분 좋아, 요오……」
             CFLAG:9151 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9151 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9151 <= 3 || FLAG:11 == 2)
             PRINTFORMW 로터로 음순을 가볍게 덧그리고 나서 그 중심에 삽입했다.
             PRINTFORMW 「흐으아, 아, 하아아……♪」
             CFLAG:9151 = 4
         ;굴복 각인 Lv2 이상 또는 봉사 정신 Lv3 이상
-        ELSEIF (MARK:2 >= 2 || ABL:13 >= 3) && (CFLAG:9151 <= 2 || FLAG:11 == 2)
+        ELSEIF (MARK:굴복각인 >= 2 || ABL:봉사정신 >= 3) && (CFLAG:9151 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「하아, 흐윽……」
             CFLAG:9151 = 3
         ;그 이외
@@ -1203,16 +1203,16 @@ IF SELECTCOM == 151 && TEQUIP:20
 ;탈착시
 ELSEIF SELECTCOM == 151 && TEQUIP:20 == 0
     ;연모＋처녀＋V감각 Lv2 이상
-    IF TALENT:150 && TALENT:0 == 1 && ABL:1 >= 2 && (CFLAG:8842 < 4 || FLAG:11 == 2)
+    IF TALENT:연모 && TALENT:처녀 == 1 && ABL:V감각 >= 2 && (CFLAG:8842 < 4 || FLAG:11 == 2)
         PRINTFORMW 「보이세요? 처녀 보지, 기분 좋아서 벌어졌어요……」
         PRINTFORMW 모미지의 질은 이미 성기를 받아들일 준비를 마친 것 같다.
         CFLAG:8842 = 4
     ;연모
-    ELSEIF TALENT:150 && (CFLAG:8842 < 3 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && (CFLAG:8842 < 3 || FLAG:11 == 2)
         PRINTFORMW 「벌써 눅진눅진한 상태예요…… 다음은, 아시죠?」
         CFLAG:8842 = 3
     ;굴복 각인 Lv2 이상 또는 봉사 정신 Lv3 이상
-    ELSEIF (MARK:2 >= 2 || ABL:13 >= 3) && (CFLAG:8842 < 2 || FLAG:11 == 2)
+    ELSEIF (MARK:굴복각인 >= 2 || ABL:봉사정신 >= 3) && (CFLAG:8842 < 2 || FLAG:11 == 2)
         PRINTFORMW 「하흐으……」
         CFLAG:8842 = 2
     ;그 이외
@@ -1232,7 +1232,7 @@ IF SELECTCOM == 170 && TEQUIP:25
     ;처음
     IF CFLAG:9170 == 0 && CFLAG:9702 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「아, 겨우 등장했네요. 이거」
             PRINTFORMW 「기본인데 아무리 시간이 지나도 나오지 않길래 안 갖고 있나 생각했어요」
             PRINTFORMW 예상 외의 반응에 놀란 %조사처리(CALLNAME:MASTER,"는")% 모미지의 성인용품 편력을 적나라하게 고백시켜보기로 했다――
@@ -1240,7 +1240,7 @@ IF SELECTCOM == 170 && TEQUIP:25
             PRINTFORMW 「저, 저도 무르익은 나이라구요! 네. 무르익었으니 한둘쯤은 갖고 있다구요. 뭐 잘못됐어요!?」
             PRINTFORMW 자폭해서 반쯤 울먹이는 모미지를 안고 머리를 쓰다듬어주었다.
         ;굴복 각인 Lv2 이상 또는 A감각 Lv1 이상
-        ELSEIF MARK:2 >= 2 || ABL:2 >= 1
+        ELSEIF MARK:굴복각인 >= 2 || ABL:A감각 >= 1
             PRINTFORMW 모미지의 항문을 핥아 힘을 빼고 나서 로터를 밀어넣었다.
             PRINTFORMW 「아아… 엉덩이에, 들어왔어……」
             PRINTFORMW 모미지는 상기된 표정으로 항문에서 뻗어나온 코드를 만지작거렸다.
@@ -1254,7 +1254,7 @@ IF SELECTCOM == 170 && TEQUIP:25
     ;2회째 이후
     ELSE
         ;연모＋A확장 경험 10이상
-        IF TALENT:150 && EXP:33 >= 10 && (CFLAG:9170 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && EXP:A확장경험 >= 10 && (CFLAG:9170 <= 4 || FLAG:11 == 2)
             PRINTFORMW 모미지의 항문에서는 이미 수도 없이 코드가 뻗어나와있다.
             PRINTFORMW 「아, 아아, 윽, 흐으아아……」
             PRINTFORML 힘없이 사지를 내던지고 항문의 쾌락을 향수하고 있는 모미지를 안아올려 무릎으로 서게 시키자
@@ -1262,12 +1262,12 @@ IF SELECTCOM == 170 && TEQUIP:25
             PRINTFORMW 「히아아악! 입구가 부르르 떨어 굉장해애애♪」
             CFLAG:9170 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9170 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9170 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「로터가 들어갈 때의 감촉, 꽤 기분 좋을지도……」
             PRINTFORMW 모미지는 손가락과 함께 파고들어가는 로터의 감촉을 즐기고 있다.
             CFLAG:9170 = 4
         ;굴복 각인 Lv2 이상 또는 A감각 Lv1 이상
-        ELSEIF (MARK:2 >= 2 || ABL:2 >= 1) && (CFLAG:9170 <= 2 || FLAG:11 == 2)
+        ELSEIF (MARK:굴복각인 >= 2 || ABL:A감각 >= 1) && (CFLAG:9170 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「네, 네에……」
             PRINTFORMW 손끝으로 가볍게 힘을 풀고 나서 로터를 삽입했다――
             CFLAG:9170 = 3
@@ -1281,17 +1281,17 @@ IF SELECTCOM == 170 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 170 && TEQUIP:25 == 0
     ;연모＋A확장 경험 10이상
-    IF TALENT:150 && EXP:33 >= 10 && (CFLAG:8856 < 4 || FLAG:11 == 2)
+    IF TALENT:연모 && EXP:A확장경험 >= 10 && (CFLAG:8856 < 4 || FLAG:11 == 2)
         PRINTFORMW 모미지의 항문에 손을 넣고 돌돌 뭉친 로터들을 단숨에 잡아뺐다.
         PRINTFORMW 「흐응아아아, 엉덩이 벌어져어어어♪」
         PRINTFORMW 모미지는 빠져나온 로터를 넋 잃은 표정으로 보고 있다.
         CFLAG:8856 = 4
     ;연모
-    ELSEIF TALENT:150 && (CFLAG:8856 < 3 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && (CFLAG:8856 < 3 || FLAG:11 == 2)
         PRINTFORMW 「하아아우으, 하앙……」
         CFLAG:8856 = 3
     ;굴복 각인 Lv2 이상 또는 봉사 정신 Lv3 이상
-    ELSEIF (MARK:2 >= 2 || ABL:13 >= 3) && (CFLAG:8856 < 2 || FLAG:11 == 2)
+    ELSEIF (MARK:굴복각인 >= 2 || ABL:봉사정신 >= 3) && (CFLAG:8856 < 2 || FLAG:11 == 2)
         PRINTFORMW 「아흐, 하앙……」
         PRINTFORMW 로터가 빠진 뒤 오므라드는 구멍은 어렴풋이 붉은 기를 띠고 있다.
         CFLAG:8856 = 2
@@ -1313,12 +1313,12 @@ IF SELECTCOM == 12 && TEQUIP:20
     ;처음
     IF CFLAG:9012 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「 므∼……」
             ;굴복 각인 Lv3(각인이 초기화되고 있는 것 같으면 V감각 근처로 할지도)
-            ELSEIF MARK:2 == 3
+            ELSEIF MARK:굴복각인 == 3
             PRINTFORMW 모미지를 밑에 깔고 누르며 바이브를 한손에 들고 마지막 의사결정을 다그쳤다.
                 PRINTFORMW 「네, 넷… 참아, 볼게요……」
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 굴복의 말을 듣고 손에 든 바이브를 꿀단지로 밀어넣기 시작했다.
@@ -1330,13 +1330,13 @@ IF SELECTCOM == 12 && TEQUIP:20
         ;비처녀
         ELSE
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「또 꽤나 많이도 갖고 계시네요. 만든 물건이라 해도 이렇게나 남성기가 줄줄이 있으니……」
                 PRINTFORMW 모미지는 가볍게 깬다는 태도를 보였지만 일단 적당한 크기의 물건을 꽂아봤다.
                 PRINTFORMW 「그거보다 이쪽 게 기분 좋아보여요. 아, 그치만 손질하기 힘들 것 같은데……」
                 PRINTFORMW 잠시 '이것도 아니다 저것도 아니다'면서 바이브의 품평이 이어졌다――
             ;굴복 각인 Lv3(각인이 초기화되고 있는 것 같으면 V감각 근처로 할지도)
-            ELSEIF MARK:2 == 3
+            ELSEIF MARK:굴복각인 == 3
                 PRINTFORMW 「하, 아앙, 흐응……」
                 PRINTFORMW 남성기를 본뜬 완구가 모미지의 꿀단지를 휘저었다――
             ;그 이외
@@ -1350,11 +1350,11 @@ IF SELECTCOM == 12 && TEQUIP:20
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9012 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9012 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「아아아아아, 뱃속이, 움직이고 있어어…♪」
             CFLAG:9012 = 4
         ;굴복 각인 Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9012 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9012 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「하, 아앙, 흐응……」
             PRINTFORMW 남성기를 본뜬 완구가 모미지의 꿀단지를 휘저었다――
             CFLAG:9012 = 3
@@ -1368,12 +1368,12 @@ IF SELECTCOM == 12 && TEQUIP:20
 ;탈착시
 ELSEIF SELECTCOM == 12 && TEQUIP:20 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8811 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8811 < 3 || FLAG:11 == 2)
         PRINTFORMW 질의 압력으로 밀려나온 바이브가 바닥에 굴러떨어졌다.
         PRINTFORMW 「빠져버렸네요. 다음은 자지로……」
         CFLAG:8811 = 3
     ;굴복 각인 Lv3
-    ELSEIF MARK:2 == 3 && (CFLAG:8811 < 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && (CFLAG:8811 < 2 || FLAG:11 == 2)
         PRINTFORMW 「하아, 으…… 아, 끝, 났어요……?」
         PRINTFORMW 모미지는 빼낸 바이브를 지그시 바라보고 있다.
         CFLAG:8811 = 2
@@ -1387,14 +1387,14 @@ ELSEIF SELECTCOM == 12 && TEQUIP:20 == 0
 ENDIF
 
 ;-------------------------------------------------
-;어널 바이브 CFLAG9013 CFLAG8812
+;애널 바이브 CFLAG9013 CFLAG8812
 ;-------------------------------------------------
 ;개시시
 IF SELECTCOM == 13 && TEQUIP:25
     ;처음
     IF CFLAG:9013 == 0
         ;A감각 Lv3 이상
-        IF ABL:2 >= 3
+        IF ABL:A감각 >= 3
             PRINTFORMW 「와아, 엄청나게 울퉁불퉁해라……」
             PRINTFORMW 네 발로 기는 자세가 된 모미지의 항문에 애널 바이브를 밀어넣기 시작했다.
             PRINTFORMW 「으응아아아……」
@@ -1407,14 +1407,14 @@ IF SELECTCOM == 13 && TEQUIP:25
     ;2회째 이후
     ELSE
         ;연모＋A감각 Lv3 이상
-        IF TALENT:150 && ABL:2 >= 3 && (CFLAG:9013 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9013 <= 3 || FLAG:11 == 2)
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 애널 바이브를 들고 오자 모미지는 네 발로 엎드리는 자세가 되어 왼손으로 엉덩이를 벌려보였다.
             PRINTFORMW 「보기만 해도 흥분해버린다구요」
             PRINTFORMW 「모미지의 엉덩이는 야한 짓하는 구멍이 되어버렸어요……」
             PRINTFORMW 개발된 모미지의 항문이 게걸스레 바이브를 집어삼키기 시작했다――
             CFLAG:9013 = 4
         ;A감각 Lv3 이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9013 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9013 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「흐응, 흐윽……」
             PRINTFORMW 모미지는 눈을 감고 항문을 통과하는 애널 바이브의 감촉에 집중하고 있다.
             CFLAG:9013 = 3
@@ -1429,12 +1429,12 @@ IF SELECTCOM == 13 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 13 && TEQUIP:25 == 0
     ;연모＋A감각 Lv3 이상
-    IF TALENT:150 && ABL:2 >= 3 && (CFLAG:8812 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:8812 < 3 || FLAG:11 == 2)
         PRINTFORMW 「다음에는 더 굵은 걸로……」
         PRINTFORMW 모미지가 기대가 담긴 시선을 보냈다.
         CFLAG:8812 = 3
     ;A감각 Lv3 이상
-    ELSEIF ABL:2 >= 3 && (CFLAG:8812 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && (CFLAG:8812 < 2 || FLAG:11 == 2)
         PRINTFORMW 「앗, 뺀다니, 지, 지금, 민감해져서, 안돼―― 힉, 아학 아아아아♪」
         PRINTFORMW 물고 있던 물건이 뽑히는 자극에 모미지의 입에서 교성이 터졌다.
         CFLAG:8812 = 2
@@ -1454,7 +1454,7 @@ IF SELECTCOM == 14 && TEQUIP:30
     ;처음
     IF CFLAG:9014 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「살살 부탁드립니다……」
             PRINTFORMW 민감한 장소를 상처내지 않도록 신중하게 캡을 달았다.
             PRINTFORMW 「흐윽, 아, 클리가, 고스란히 커진 것 같아…!」
@@ -1467,14 +1467,14 @@ IF SELECTCOM == 14 && TEQUIP:30
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9014 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9014 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「아. 이거 잘 보니 자지가 난 것 같은데요……」
             PRINTFORMW 「남성은 혼자할 때 이렇게 한다죠?」
             PRINTFORMW 그렇게 말하고 위를 물끄러미 쳐다보며 캡을 페니스처럼 훑는 모미지의 웃는 얼굴은 어딘지 도착적이었다.
             PRINTFORMW 그녀가 가진 뜻밖의 장난기를 슬쩍 훔쳐본 기분이 들었다.
             CFLAG:9014 = 4
         ;C감각 Lv3 이상
-        ELSEIF ABL:0 >= 3 && (CFLAG:9014 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:C감각 >= 3 && (CFLAG:9014 <= 2 || FLAG:11 == 2)
             PRINTFORMW 클리토리스에 달라붙은 캡을 좆대를 문지르듯이 부드럽게 훑어냈다.
             PRINTFORMW 「후, 앗, 이렇게, 섰다간, 보지가 안 다물어져요……」
             CFLAG:9014 = 3
@@ -1489,12 +1489,12 @@ IF SELECTCOM == 14 && TEQUIP:30
 ;탈착시
 ELSEIF SELECTCOM == 14 && TEQUIP:30 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8813 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8813 < 3 || FLAG:11 == 2)
         PRINTFORMW 「히악, 아아…♪」
         PRINTFORMW 모미지는 캡을 뽑아내는 자극에 허리를 들썩이며 허덕였다.
         CFLAG:8813 = 3
     ;C감각 Lv3 이상
-    ELSEIF ABL:0 >= 3 && (CFLAG:8813 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:C감각 >= 3 && (CFLAG:8813 < 2 || FLAG:11 == 2)
         PRINTFORMW 「으, 아…!」
         PRINTFORMW 공기가 빠지는 '뽁'하는 소리와 함께 모미지의 허리가 떨렸다.
         CFLAG:8813 = 2
@@ -1516,16 +1516,16 @@ IF SELECTCOM == 16 && TEQUIP:30
     ;처음
     IF CFLAG:9016 == 0
         ;연모＋클리캡 경험제
-        IF TALENT:150 && CFLAG:9014 >= 1
+        IF TALENT:연모 && CFLAG:9014 >= 1
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지에게 오나홀을 건넸다.
             PRINTFORMW 「클리캡도 기분 좋았었는데 이쪽도 기대돼요. 에헤헤」
             PRINTFORMW 모미지는 쑥쓰럽게 웃으며 오나홀에 페니스를 밀어넣기 시작했다――
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 페니스를 잡고 오나홀을 씌웠다.
             PRINTFORMW 「응～ 왠지 멍청해보이는 꼬락서니……」
         ;사정 경험 5이상
-        ELSEIF EXP:3 >= 5
+        ELSEIF EXP:사정경험 >= 5
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 오나홀을 꺼내고는 모미지에게 장착하라고 말했다.
             PRINTFORMW 「네, 네에……」
         ;그 이외
@@ -1538,12 +1538,12 @@ IF SELECTCOM == 16 && TEQUIP:30
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9016 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9016 <= 3 || FLAG:11 == 2)
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 오나홀을 양손으로 누르며 모미지에게 삽입을 재촉했다.
             PRINTFORMW 「하윽, 아, 하아……♪」
             CFLAG:9016 = 4
         ;사정 경험 5이상
-        ELSEIF EXP:3 >= 5 && (CFLAG:9016 <= 2 || FLAG:11 == 2)
+        ELSEIF EXP:사정경험 >= 5 && (CFLAG:9016 <= 2 || FLAG:11 == 2)
             PRINTFORMW 모미지에게 오나홀을 장착시켰다.
             PRINTFORMW (이거, 꽤 기분 좋았지……)
             CFLAG:9016 = 3
@@ -1557,12 +1557,12 @@ IF SELECTCOM == 16 && TEQUIP:30
 ;종료시
 ELSEIF SELECTCOM == 16 && TEQUIP:30 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8815 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8815 < 3 || FLAG:11 == 2)
         PRINTFORMW 모미지의 페니스를 힘주어 훑어내고 나서 오나홀을 빼냈다.
         PRINTFORMW 「후아아아, 굉장해. 실 이어졌어어…♪」
         CFLAG:8815 = 3
     ;C감각 Lv3 이상＋사정 경험 5이상
-    ELSEIF ABL:0 >= 3 && EXP:3 >= 5 && (CFLAG:8815 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:C감각 >= 3 && EXP:사정경험 >= 5 && (CFLAG:8815 < 2 || FLAG:11 == 2)
         PRINTFORMW 「하아, 으…!」
         PRINTFORMW 오나홀에서 벗어난 순간 모미지의 페니스가 크게 퍼득였다.
         PRINTFORMW 「하아, 하아――」
@@ -1583,9 +1583,9 @@ IF SELECTCOM == 20
     ;처음
     IF CFLAG:9020 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모+쾌락각인Lv.3
-            IF TALENT:150 && MARK:1 == 3
+            IF TALENT:연모 && MARK:쾌락각인 == 3
                 PRINTFORMW 모미지는 순결을 깨트리는 행위를 거부하지 않았다.
                 PRINTFORMW 스스로 위를 보고 누워서 다리를 벌리고 뒤로 젖히는 보지 뒤집기 자세를 잡았다.
                 PRINTFORMW 그녀가 마음 속에서 우러나오는 경애와 복종을 드러내는 자세.
@@ -1599,7 +1599,7 @@ IF SELECTCOM == 20
                 PRINTFORMW 「우우, 정말. 심술쟁이라니까」
                 PRINTFORMW 화를 내는 모미지에게 %조사처리(CALLNAME:MASTER,"는")% 정중히 사과하였다.
             ;연모+굴복각인Lv.3
-            ELSEIF TALENT:150 && MARK:2 == 3
+            ELSEIF TALENT:연모 && MARK:굴복각인 == 3
                 PRINTFORMW 모미지는 순결을 깨트리는 행위를 거부하지 않았다.
                 PRINTFORMW 스스로 위를 보고 누워서 다리를 벌리고 뒤로 젖히는 보지 뒤집기 자세를 잡았다.
                 PRINTFORMW 그녀가 마음 속에서 우러나오는 경애와 복종을 드러내는 자세.
@@ -1610,7 +1610,7 @@ IF SELECTCOM == 20
                 PRINTFORMW 「정말로 좋아합니다. 사랑해요, %CALLNAME:MASTER%!」
                 PRINTFORMW 모미지는 그렇게 말하면서, 입을 겹쳐왔다.
             ;연모
-            ELSEIF TALENT:150
+            ELSEIF TALENT:연모
                 PRINTFORMW 모미지는 순결을 깨트리는 행위를 거부하지 않았다.
                 PRINTFORMW 스스로 위를 보고 누워서 다리를 벌리고 뒤로 젖히는 보지 뒤집기 자세를 잡았다.
                 PRINTFORMW 그녀가 마음 속에서 우러나오는 경애와 복종을 드러내는 자세.
@@ -1618,7 +1618,7 @@ IF SELECTCOM == 20
                 PRINTFORMW 「여기까지 와서 그만두신다면 저 진짜로 울거예요……」
                 PRINTFORMW 그 마음에 응답하고자 %조사처리(CALLNAME:MASTER,"는")% 그녀의 다리를 안고 허리를 밀었다.
             ;굴복 각인 Lv3
-            ELSEIF MARK:2 == 3
+            ELSEIF MARK:굴복각인 == 3
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지를 위로 보도록 깔아눕히고 그 비부에 양물을 갖다댔다.
                 PRINTFORMW 「앗……」
                 PRINTFORMW 모미지는 딱 한 순간 몸을 떨고 난 뒤, %CALLNAME:MASTER%에게 모든 것을 맡겼다.
@@ -1630,14 +1630,14 @@ IF SELECTCOM == 20
         ;비처녀
         ELSE
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지를 위를 보도록 눕혔다.
                 PRINTFORMW 「에헤헤. 배 보여버렸네……」
                 PRINTFORMW 하복부를 쓰다듬고는 넋 잃은 표정으로 손을 포개왔다.
                 PRINTFORMW 모미지의 긴장을 충분히 풀고 %조사처리(CALLNAME:MASTER,"는")% 꿀단지에다 삽입했다.
                 PRINTFORMW 「흐윽, 후, 아아, 들어왔다아…… 자지, 뜨거워……」
             ;굴복 각인 Lv3
-            ELSEIF MARK:2 == 3
+            ELSEIF MARK:굴복각인 == 3
                 PRINTFORMW 꼿꼿하게 선 물건으로 모미지의 꿀단지를 격렬하게 휘저었다.
                 PRINTFORMW 「흐아아, 학, 앗, 아아아앗…!」
             ;그 이외
@@ -1651,20 +1651,20 @@ IF SELECTCOM == 20
     ;2회째 이후
     ELSE
         ;연모＋V감각 Lv3 이상
-        IF TALENT:150 && ABL:1 >= 3 && (CFLAG:9020 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:V감각 >= 3 && (CFLAG:9020 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「앗 히이아아! 섹스 좋아아!! 마킹 섹스 너무 좋아해애!!」
             PRINTFORMW 「모미지는 사육당하고 있어요오!! 배 드러내며 섹스해버리고 있어요오옷!!」
             PRINTFORMW 모미지는 방아를 찧을 때마다 음탕한 말과 애액을 뱉으며 쾌감에 떨었다――
             CFLAG:9020 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9020 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9020 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「……끼잉」
             PRINTFORMW 허리 움직임을 멈추자 애완동물 같은 소리와 눈동자로 이쪽을 보았다.
             PRINTFORMW 「열심히 할테니까, 제대로요……」
             PRINTFORMW 그 말에 음심이 자극되어 이번에는 배려 없는 피스톤질로 모미지를 범했다――
             CFLAG:9020 = 4
         ;굴복 각인 Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9020 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9020 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「하으아, 익, 아앗, 더어…!」
             PRINTFORMW 거품이 일어난 탁액이 결합부에서 소리를 내고 있다.
             CFLAG:9020 = 3
@@ -1684,9 +1684,9 @@ IF SELECTCOM == 21
     ;처음
     IF CFLAG:9021 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모+굴복각인lv.3
-            IF TALENT:150 && MARK:2 == 3
+            IF TALENT:연모 && MARK:굴복각인 == 3
                 PRINTFORMW 모미지는 순결을 깨트리는 행위를 거부하지 않았다.
                 PRINTFORMW 스스로 네 발로 엎드려서 엉덩이를 높이 들고 교미할 자세를 잡았다.
                 PRINTFORMW 모미지에게 있어 복종과 굴종, 그리고 각오를 했다는 의미이다.
@@ -1694,7 +1694,7 @@ IF SELECTCOM == 21
                 PRINTFORMW 그 말을 들은 %조사처리(CALLNAME:MASTER,"는")% 곧바로,
                 PRINTFORMW 모미지를 뒤에서 꽉 안으며 상냥하게, 그리고 힘차게 모미지의 처녀를 꿰뚫었다.
             ;연모
-            ELSEIF TALENT:150
+            ELSEIF TALENT:연모
                 PRINTFORMW 모미지는 순결을 깨트리는 행위를 거부하지 않았다.
                 PRINTFORMW 스스로 네 발로 엎드려서 엉덩이를 높이 들고 교미할 자세를 잡았다.
                 PRINTFORMW 「저 열심히 할테니……」
@@ -1704,7 +1704,7 @@ IF SELECTCOM == 21
                 PRINTFORMW 「저기… 그, 열심히 아이 만들어요? 전 언제라도 준비가 되어 있으니까……」
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 더이상 참지 못하고 허리를 격렬히 움직여 간다.
             ;굴복 각인 Lv3(각인이 초기화되고 있는 것 같으면 V감각 근처로 할지도)
-            ELSEIF MARK:2 == 3
+            ELSEIF MARK:굴복각인 == 3
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지를 뒤에서 꽉 껴안으며 그대로 네 발로 엎드리게 시켰다.
                 PRINTFORMW 「앗……」
                 PRINTFORMW 모미지는 딱 한 순간 몸을 떨고 난 뒤, %CALLNAME:MASTER%에게 모든 것을 맡겼다.
@@ -1716,7 +1716,7 @@ IF SELECTCOM == 21
         ;비처녀
         ELSE
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「있는 힘껏 세게 해주세요. 짐승 같아도 괜찮으니까요……」
                 PRINTFORMW 「으응, 아니…… 짐승처럼 해줬으면 좋겠어요」
                 PRINTFORMW 그렇게 말하고 네 발로 엎드린 모미지는 미지의 체위에 대한 흥분으로 안달하며 꼬리를 흔들고 있다.
@@ -1725,7 +1725,7 @@ IF SELECTCOM == 21
                 PRINTFORMW 「죄송해요. 이젠 괜찮아요……」
                 PRINTFORMW 모미지의 호흡에 맞춰 %조사처리(CALLNAME:MASTER,"는")% 천천히 허리를 움직이기 시작했다――
             ;굴복 각인 Lv3
-            ELSEIF MARK:2 == 3
+            ELSEIF MARK:굴복각인 == 3
                 PRINTFORMW 모미지의 허리를 잡고 꿀단지를 격렬하게 이리저리 휘저었다.
                 PRINTFORMW 「흐아아, 핫, 앗, 아아아아…!」
             ;그 이외
@@ -1739,13 +1739,13 @@ IF SELECTCOM == 21
     ;2회째 이후
     ELSE
         ;연모＋V감각 Lv3 이상
-        IF TALENT:150 && ABL:1 >= 3 && (CFLAG:9021 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:V감각 >= 3 && (CFLAG:9021 <= 3 || FLAG:11 == 2)
             PRINTFORMW 모미지의 꼬리를 잡고 짐승이 교미하듯이 격렬하게 방아를 찧었다.
             PRINTFORMW 「흐으으아아!! 나 동물이 됐어!! 늑대 섹스하고 있어어어!!」
             PRINTFORMW 「정액, 정액 마킹해줘요!! 전용 보지로 만들어요오오오!!」
             CFLAG:9021 = 4
         ;굴복 각인 Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9021 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9021 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「크, 앗, 학, 학, 하악――」
             PRINTFORMW 찔러넣는 리듬에 맞춰 모미지의 입에서 쾌락의 숨결이 흘러나왔다.
             CFLAG:9021 = 3
@@ -1765,20 +1765,20 @@ IF SELECTCOM == 22
     ;처음
     IF CFLAG:9022 == 0
         ;연모+굴복Lv3
-        IF TALENT:150 && MARK:2 == 3
+        IF TALENT:연모 && MARK:굴복각인 == 3
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 앉은 채 모미지를 끌어안으며 자신의 양물을 비부 앞에 갖다 대었다.
             PRINTFORMW 「엣………」
             PRINTFORMW 모미지는 %조사처리(CALLNAME:MASTER,"가")% 앞으로 할 행동을 예상한듯 얼굴을 붉게 물들였다.
             PRINTFORMW 「우우우, 저기, 그, 마음의 준비랄까! 자, 자자자 잠시만 기다려주세요! 곧……」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 당황해 하는 모미지의 입술에 손가락을 갖다 대었다.
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 「앗, 굉장해. 야한 소리난다……」
             PRINTFORMW 삽입할 때 '찌걱'하고 미끈거리는 애액 소리가 나자 서로 마주보고 있는 모미지의 얼굴이 어렴풋이 붉어졌다.
             PRINTFORMW 「저기, 창피하니 어서 시작하죠……」
             PRINTFORMW 뜨겁게 꾸불텅거리는 꿀단지를 위로 박자 수줍어하던 표정은 금세 희열의 표정으로 바뀌었다――
         ;굴복 각인 Lv3(각인이 초기화되고 있는 것 같으면 V감각 근처로 할지도)
-        ELSEIF MARK:2 == 3
+        ELSEIF MARK:굴복각인 == 3
             PRINTFORMW 「꽤나 좋은 자세인데요… 매달릴 수 있겠고」
             PRINTFORMW 무릎 위에다 허리를 떨군 모미지가 한 호흡 다음에 허리를 흔들기 시작했다.
             PRINTFORMW 「하, 악, 앗, 흐윽, 아아…!」
@@ -1792,13 +1792,13 @@ IF SELECTCOM == 22
     ;2회째 이후
     ELSE
         ;연모＋V감각 Lv3 이상
-        IF TALENT:150 && ABL:1 >= 3 && (CFLAG:9022 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:V감각 >= 3 && (CFLAG:9022 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「앗, 하, 악, 학, 하아, 하아…!」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 무릎 위에서 요분질하는 모미지를 올려다보며 입술을 탐했다.
             PRINTFORMW 「흐응…… 쮸웁…… 합, 쪽…」
             CFLAG:9022 = 4
         ;굴복 각인 Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9022 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9022 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「앗, 하, 악, 학, 하아, 하아…!」
             PRINTFORMW 매달리며 요분질하는 모미지의 입에서 열띤 한숨이 흘러나왔다.
             CFLAG:9022 = 3
@@ -1819,7 +1819,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 23 || SELECTCOM == 612
     ;굴복 각인 Lv3
-    IF MARK:2 == 3 && (CFLAG:9023 < 2 || FLAG:11 == 2)
+    IF MARK:굴복각인 == 3 && (CFLAG:9023 < 2 || FLAG:11 == 2)
         PRINTFORMW 「앗, 하아, 윽, 응, 아…!」
         PRINTFORMW 모미지는 몸무게를 실으며 순순히 쾌락을 받아들이고 있다.
         CFLAG:9023 = 2
@@ -1840,14 +1840,14 @@ IF SELECTCOM == 24
     ;처음
     IF CFLAG:9024 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「참. 조교는 잘 알아도 여자애에 대해서는 전혀 모르네요」
                 PRINTFORMW 「……알고서 하는 말이라면 절교감이예요」
                 PRINTFORMW 모미지는 마지못해 %CALLNAME:MASTER%의 위에 걸터앉고 엉덩이를 내밀며 허리를 떨구었다.
             ;굴복 각인 Lv3
-            ELSEIF MARK:2 == 3
+            ELSEIF MARK:굴복각인 == 3
                 PRINTFORMW (무리. 이런 게 들어갈 리……)
                 PRINTFORMW 걸터앉은 채 머뭇거리는 모미지 때문에 애가 탄 %조사처리(CALLNAME:MASTER,"는")% 허리를 잡고 억지로 밑으로 당겼다.
                 PRINTFORMW 「히으!? 끄으, 아…!!」
@@ -1860,7 +1860,7 @@ IF SELECTCOM == 24
         ;비처녀
         ELSE
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「역시 제가 하는 건 긴장되는걸요……」
                 PRINTFORMW 「우으, 그치만 먼저 가버리면 창피하잖아요」
                 PRINTFORMW 「어, 반대면 침울해지니까 딱히 상관없다고요……? 앗, 그런 뜻인가요」
@@ -1868,7 +1868,7 @@ IF SELECTCOM == 24
                 PRINTFORMW 이야기하는 도중에 긴장이 풀렸는지 모미지는 예상 외로 스무스하게 요분질을 시작했다.
                 PRINTFORMW 「거기다, 앗, 굵어서, 기분 좋은, 최고의, 자지예요, 앗, 아아아♪」
             ;굴복 각인 Lv3(각인이 초기화되고 있는 것 같으면 V감각 근처로 할지도)
-            ELSEIF MARK:2 == 3
+            ELSEIF MARK:굴복각인 == 3
                 PRINTFORMW 「창피하니 이쪽으로 돌아서……」
                 PRINTFORMW 모미지는 등을 보이고 걸터앉고는 조용히 허리를 떨구었다.
                 PRINTFORMW 「앙, 하악, 앗, 하아, 하아…!」
@@ -1886,12 +1886,12 @@ IF SELECTCOM == 24
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9024 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9024 <= 3 || FLAG:11 == 2)
             PRINTFORMW 모미지는 다리를 M자로 벌리고 과시하듯이 요분질한다.
             PRINTFORMW 「하앙, 앗, 학, 조, 좋아, 아아아…♪」
             CFLAG:9024 = 4
         ;굴복 각인 Lv3(각인이 초기화되고 있는 것 같으면 V감각 근처로 할지도)
-        ELSEIF MARK:2 == 3 && (CFLAG:9024 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9024 <= 2 || FLAG:11 == 2)
             PRINTFORMW 등을 보이며 요분질 치는 모미지의 엉덩이를 양손으로 짓이기듯 주물렀다.
             PRINTFORMW 「아흐앙, 아, 하아, 으, 아아…!」
             CFLAG:9024 = 3
@@ -1911,14 +1911,14 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 40
     ;처음으로＋낙인이 아니다
-    IF CFLAG:9040 == 0 && TALENT:161 == 0
+    IF CFLAG:9040 == 0 && TALENT:낙인 == 0
         ;봉사 정신 Lv4 이상
-        IF ABL:13 >= 4
+        IF ABL:봉사정신 >= 4
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지를 상반신으로 껴안듯이 그 손을 양물로 이끌었다.
             PRINTFORMW 「와아, 따뜻해라…… 힘은 이 정도쯤 넣으면 되려나…?」
             PRINTFORMW 모미지는 애지중지하듯이 양물 전체를 쓰다듬은 뒤 좆대를 꾹 쥐고 훑어올리기 시작했다.
         ;봉사 정신 Lv2 이상
-        ELSEIF ABL:13 >= 2
+        ELSEIF ABL:봉사정신 >= 2
             PRINTFORMW 「뭐 문지르는 정도라면야……」
             PRINTFORMW 모미지의 손이 서투른 움직임으로 양물을 문질렀다.
         ;그 이외
@@ -1931,12 +1931,12 @@ IF SELECTCOM == 40
     ;2회째 이후
     ELSE
         ;낙인
-        IF TALENT:161 && (CFLAG:9040 <= 4 || FLAG:11 == 2)
+        IF TALENT:낙인 && (CFLAG:9040 <= 4 || FLAG:11 == 2)
             PRINTFORMW 모미지는 상기된 표정으로 일심불란하게 양물을 훑어올렸다.
             PRINTFORMW (우아… 문지를 때마다 야한 냄새가 올라와서… 어질어질해……)
             CFLAG:9040 = 5
         ;연모＋봉사 정신 Lv4 이상
-        ELSEIF TALENT:150 && ABL:13 >= 4 && (CFLAG:9040 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:봉사정신 >= 4 && (CFLAG:9040 <= 3 || FLAG:11 == 2)
             IF RAND:10 > 0
                 PRINTFORMW 쿠퍼액이 맺히는 귀두를 모미지의 손가락이 이리저리 조물락거렸다.
                 PRINTFORMW 「이 미끈거리는 액으로 조물락거리는 걸 좋아하시죠?」
@@ -1947,7 +1947,7 @@ IF SELECTCOM == 40
             ENDIF
             CFLAG:9040 = 4
         ;봉사 정신 Lv2 이상
-        ELSEIF ABL:13 >= 2 && (CFLAG:9040 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 2 && (CFLAG:9040 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「앗, 참고 계시네요. 살짝 나왔어요」
             PRINTFORMW 손으로 하는 봉사에 익숙해졌는지 %CALLNAME:MASTER%의 상태를 살필 여유도 생긴 모양이다.
             CFLAG:9040 = 3
@@ -1969,7 +1969,7 @@ IF SELECTCOM == 41
     ;처음
     IF CFLAG:9041 == 0
         ;봉사 정신 Lv2 이상
-        IF ABL:13 >= 2
+        IF ABL:봉사정신 >= 2
             PRINTFORMW (제대로 할 수 있으려나……)
             PRINTFORMW 「응쮸, 프쮸…… 으읍! 콜록, 켈록……」
             PRINTFORMW 여러 번 입을 떼긴 했지만 열심히 봉사하고 있음을 알 수 있다.
@@ -1983,9 +1983,9 @@ IF SELECTCOM == 41
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9041 <= 2 || FLAG:11 == 2)
-            ;매저키스트기분 Lv3 이상 또는 낙인＋전회가 주인에 의한 어널 섹스(조수의 A를 범하는 포함한다)
-            IF (ABL:21 >= 3 || TALENT:161) && ASSIPLAY == 0 && TFLAG:133 == 0 && (PREVCOM == 30 || PREVCOM == 31 || PREVCOM == 32 || PREVCOM == 33 || PREVCOM == 34 || PREVCOM == 36 || PREVCOM == 37 || PREVCOM == 38 || PREVCOM == 106 || PREVCOM == 618 || PREVCOM == 619)
+        IF TALENT:연모 && (CFLAG:9041 <= 2 || FLAG:11 == 2)
+            ;매저키스트기분 Lv3 이상 또는 낙인＋전회가 주인에 의한 애널 섹스(조수의 A를 범하는 포함한다)
+            IF (ABL:마조끼 >= 3 || TALENT:낙인) && ASSIPLAY == 0 && TFLAG:133 == 0 && (PREVCOM == 30 || PREVCOM == 31 || PREVCOM == 32 || PREVCOM == 33 || PREVCOM == 34 || PREVCOM == 36 || PREVCOM == 37 || PREVCOM == 38 || PREVCOM == 106 || PREVCOM == 618 || PREVCOM == 619)
                 PRINTFORMW 「읍푸, 우으으급, 응, 쮸――」
                 PRINTFORM 모미지는 방금 전까지 
                 IF PREVCOM == 36
@@ -1996,7 +1996,7 @@ IF SELECTCOM == 41
                 PRINTFORMW 항문에 삽입되었던 물건을 사랑스러운 듯 물고 있다.
                 PRINTFORMW (자지와 엉덩이의…… 끙아 냄새가 섞여서 어질어질해라아)
                 PRINTFORMW 머리 움직임에 맞춰 코에서 새는 숨결에는 때때로 요염한 기색이 섞여있었다.
-            ;전회가 주인에 의한 어널 섹스(조수의 A를 범하는 포함한다)
+            ;전회가 주인에 의한 애널 섹스(조수의 A를 범하는 포함한다)
             ELSEIF ASSIPLAY == 0 && TFLAG:133 == 0 && (PREVCOM == 30 || PREVCOM == 31 || PREVCOM == 32 || PREVCOM == 33 || PREVCOM == 34 || PREVCOM == 36 || PREVCOM == 37 || PREVCOM == 38 || PREVCOM == 106 || PREVCOM == 618 || PREVCOM == 619)
                 PRINTFORMW 「이상한 짓시키고 그러네요」
                 PRINTFORMW 「흐읍, 프츄, 찹, 쮸루, 쪽――」
@@ -2041,12 +2041,12 @@ IF SELECTCOM == 41
             RETURN 0
         ;그 이외
         ELSEIF CFLAG:9041 <= 1 || FLAG:11 == 2
-            ;전회가 주인에 의한 어널 섹스(조수의 A를 범하는 포함한다)
+            ;전회가 주인에 의한 애널 섹스(조수의 A를 범하는 포함한다)
             IF ASSIPLAY == 0 && TFLAG:133 == 0 && (PREVCOM == 30 || PREVCOM == 31 || PREVCOM == 32 || PREVCOM == 33 || PREVCOM == 34 || PREVCOM == 36 || PREVCOM == 37 || PREVCOM == 38 || PREVCOM == 106 || PREVCOM == 618 || PREVCOM == 619)
                 PRINTFORMW 「어, 그치만 이거 엉덩이에―― 우급!? 으으응읍!?」
                 PRINTFORMW 불문곡직하고 옅은 갈색으로 더러워진 양물을 모미지 입 속에다 쑤셔넣었다.
             ;봉사 정신 Lv2 이상
-            ELSEIF ABL:13 >= 2
+            ELSEIF ABL:봉사정신 >= 2
                 PRINTFORMW 「피쯉, 쪽, 하풉, 흐읍, 쮸웁, 츄읍――」
                 PRINTFORMW 모미지의 펠라치오는 확실하게 숙달되고 있다.
                 PRINTFORML 표정과 성격, 그리고 있는 힘을 다해 봉사하는 모습.
@@ -2070,13 +2070,13 @@ IF SELECTCOM == 42
     ;처음
     IF CFLAG:9042 == 0
         ;거유 또는 폭유
-        IF TALENT:112 || TALENT:113
+        IF TALENT:거유 || TALENT:폭유
             PRINTFORMW 「그러네요…… 이 크기라면 할 수 있을지도 모르겠어요」
             PRINTFORMW 모미지는 커진 가슴으로 %CALLNAME:MASTER%의 물건을 끼우고 문지르기 시작했다.
             PRINTFORMW 「아, 굉장해…… 진짜로 끼워졌어」
             PRINTFORMW 모미지는 %CALLNAME:MASTER%의 성적 기호를 반영한 가슴을 사용해 헌신적으로 봉사했다――
         ;奉仕精神Lv2以上
-        ELSEIF ABL:13 >= 2
+        ELSEIF ABL:봉사정신 >= 2
             PRINTFORMW 「가슴으로 문지르는 거 말이죠? 들은 적은 있어요」
             PRINTFORMW 모미지는 다소 크기에 불안이 있는 가슴으로 봉사를 시작했다.
             PRINTFORMW 「으음~ 문지르니 단단해지긴 하는데…… 으~ 영 답답해라」
@@ -2093,13 +2093,13 @@ IF SELECTCOM == 42
     ;2회째 이후
     ELSE
         ;거유 또는 폭유
-        IF (TALENT:112 || TALENT:113) && (CFLAG:9042 <= 3 || FLAG:11 == 2)
+        IF (TALENT:거유 || TALENT:폭유) && (CFLAG:9042 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「꼼질꼼질～」
             PRINTFORMW 모미지가 하고 싶은대로 시키자 양쪽 유방을 교차해 돌리듯이 양물을 자극하기 시작했다.
             PRINTFORMW 「커다라니 꽤나 재밌는걸요. 에헤헤」
             CFLAG:9042 = 4
         ;奉仕精神Lv2以上
-        ELSEIF ABL:13 >= 2 && (CFLAG:9042 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 2 && (CFLAG:9042 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「제법 난폭하게 해도 걱정 없을 것 같네요」
             PRINTFORMW 모미지는 %조사처리(CALLNAME:MASTER,"를")% 옆으로 뉘이고 수직으로 우뚝 선 양물을 밀어 쓰러뜨리듯이 덮었다.
             PRINTFORMW 「뜨거워…… 비비겠습니다」
@@ -2123,7 +2123,7 @@ IF SELECTCOM == 43
     ;처음
     IF CFLAG:9043 == 0
         ;봉사 정신 Lv2 이상
-        IF ABL:13 >= 2
+        IF ABL:봉사정신 >= 2
             PRINTFORMW (허벅지를 사용하는 편이 좋으려나……)
             PRINTFORMW 모미지는 %CALLNAME:MASTER%의 위에서 정좌하듯이 무릎을 오므려 양물을 꽉 조이고 나서 허리를 움직였다.
             PRINTFORMW 「어디, 어떠세요?」
@@ -2131,7 +2131,7 @@ IF SELECTCOM == 43
         ;それ以外
         ELSE
             ;処女
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
                 PRINTFORMW 「힉!? 싫, 어, 그만…… 아, 엑?」
                 PRINTFORMW 삽입된다고 착각 중이던 모미지는 치구가 문질러지자 곤혹해하고 있다.
                 PRINTFORMW (대, 대체 뭐야. 이거어……)
@@ -2147,7 +2147,7 @@ IF SELECTCOM == 43
     ;2회째 이후
     ELSE
         ;봉사 정신 Lv2 이상
-        IF ABL:13 >= 2 && (CFLAG:9043 <= 2 || FLAG:11 == 2)
+        IF ABL:봉사정신 >= 2 && (CFLAG:9043 <= 2 || FLAG:11 == 2)
             PRINTFORMW 모미지는 위를 보고 누운 %CALLNAME:MASTER%의 위에 무릎 끓어 홀딱 젖은 음순을 비벼댔다.
             PRINTFORMW 「흐윽, 아, 으, 응――」
             CFLAG:9043 = 3
@@ -2169,7 +2169,7 @@ IF SELECTCOM == 47
     ;처음
     IF CFLAG:9047 == 0
         ;연모＋새디즘기분 Lv1 이상
-        IF TALENT:150 && ABL:20 >= 1
+        IF TALENT:연모 && ABL:새드끼 >= 1
             PRINTFORMW 「이젠 사정만 할 수 있으면 뭐든 상관없다 이거군요……」
             PRINTFORMW 「자각하고 계세요? 상궤에서 벗어나있다구요. 변태예요, 변태」
             PRINTFORMW 「참내…… 자, 얼른 바닥에 앉든 눕든 하세요. 높으면 다리가 힘드니까」
@@ -2179,12 +2179,12 @@ IF SELECTCOM == 47
             PRINTFORMW 「발바닥이 끈적거리잖아요.  자, 어서. 씻고 싶으니 빨리 사정하지 그러세요」
             PRINTFORMW 모미지는 입으로는 기가 막힌다는 식으로 말하면서도 때때로 부끄러워하며 봉사해주었다――
         ;봉사 정신 Lv2 이상＋남자 또는 양성
-        ELSEIF ABL:13 >= 2 && (TALENT:120 || TALENT:121)
+        ELSEIF ABL:봉사정신 >= 2 && (TALENT:남자 || TALENT:후타나리)
             PRINTFORMW 「어디, 이런 식으로요?」
             PRINTFORMW 모미지는 양물을 양쪽 발바닥에다 끼우고 사정을 재촉하듯이 비비기 시작했다.
             PRINTFORMW 양발을 움직일 때마다 모미지의 사타구니에서 흔들거리는 페니스가 참으로 외설스럽다.
         ;봉사 정신 Lv2 이상
-        ELSEIF ABL:13 >= 2
+        ELSEIF ABL:봉사정신 >= 2
             PRINTFORMW 「어디, 이런 식으로요?」
             PRINTFORMW 모미지는 양물을 양쪽 발바닥에다 끼우고 사정을 재촉하듯이 비비기 시작했다.
             PRINTFORMW 열심히 양물을 비비는 발 너머, 허벅지를 벌리고 노출한 사타구니가 참으로 외설스럽다.
@@ -2201,20 +2201,20 @@ IF SELECTCOM == 47
     ;2회째 이후
     ELSE
         ;연모＋새디즘기분 Lv1 이상
-        IF TALENT:150 && ABL:20 >= 1 && (CFLAG:9047 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:새드끼 >= 1 && (CFLAG:9047 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「볼썽 사납군요. 발로 밟히는데 쿠퍼액 줄줄 흘리긴」
             PRINTFORMW 모미지가 엄지 발가락으로 귀두 끝에 맺힌 액체를 바르기 시작한다.
             PRINTFORMW 「이런 기분으로 제 몸을 마음대로 쓰고 있었다 이거죠. 이거 꽤나……」
             PRINTFORMW 무슨 스위치가 켜졌는지 밟기만 할 뿐이었던 발로 양물을 난폭하게 굴리기 시작했다――
             CFLAG:9047 = 5
         ;봉사 정신 Lv2 이상＋남자 또는 양성
-        ELSEIF ABL:13 >= 2 && (TALENT:120 || TALENT:121) && (CFLAG:9047 <= 3 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 2 && (TALENT:남자 || TALENT:후타나리) && (CFLAG:9047 <= 3 || FLAG:11 == 2)
             PRINTFORMW 모미지는 허벅지를 벌리고 두 발을 요령 좋게 사용해서 양물을 훑어냈다.
             PRINTFORMW 「……저기, 자지를 물끄러미 바라보면 부끄러워요」
             PRINTFORMW 발을 움직일 때마다 흔들리는 페니스에 볼을 물들이는 모미지의 모습이 한층 더 %CALLNAME:MASTER%의 흥분을 부추겼다.
             CFLAG:9047 = 4
         ;봉사 정신 Lv2 이상
-        ELSEIF ABL:13 >= 2 && (CFLAG:9047 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 2 && (CFLAG:9047 <= 2 || FLAG:11 == 2)
             PRINTFORMW 모미지는 허벅지를 벌리고 비부를 드러내며 두 발을 요령 좋게 사용해서 양물을 훑어냈다.る。
             PRINTFORMW 「……저기, 너무 물끄러미 바라보면 부끄러워요」
             PRINTFORMW 손으로 피부를 가리려 드는 그 모습이 도리어 선정적이라 한층 더 %CALLNAME:MASTER%의 흥분을 부추겼다.
@@ -2235,9 +2235,9 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 220
     ;처음으로＋낙인이 아니다
-    IF CFLAG:9220 == 0 && TALENT:161 == 0
+    IF CFLAG:9220 == 0 && TALENT:낙인 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「살살, 살살해야 돼요? 아프면 울 거니까……」
             PRINTFORMW 신신당부한 뒤에 소극적으로 내민 엉덩이를 잘 주물러 힘을 빼고 손바닥을 후려쳤다.
             PRINTFORMW 「히아아! 앗, 의외로―― 아아앗! 기분 좋을, 지도―― 하아앙!」
@@ -2250,13 +2250,13 @@ IF SELECTCOM == 220
     ;2회째 이후
     ELSE
         ;낙인
-        IF TALENT:161 && (CFLAG:9220 <= 3 || FLAG:11 == 2)
+        IF TALENT:낙인 && (CFLAG:9220 <= 3 || FLAG:11 == 2)
             PRINTFORMW 손바닥으로 모미지의 엉덩이에 듬뿍 버릇을 들여놓았다.
             PRINTFORMW 「힉, 아…… 으하앙…♪」
             PRINTFORMW 빨개진 엉덩이살에 혀를 대자 허벅지 부근이 실룩실룩 떨었다.
             CFLAG:9220 = 4
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9220 <= 2 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9220 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「엉덩이, 때리고 싶다구요? 괜찮긴 한데……」
             PRINTFORMW 「하기 전에 주물러주시면, 그…… 좋을까, 싶은데」
             PRINTFORML 점점 목소리가 작아져가는 모미지의 요망을 들어
@@ -2285,9 +2285,9 @@ ENDIF
 IF SELECTCOM == 174 && TEQUIP:25
     IF TFLAG:99 > 0
         ;처음으로＋낙인이 아니다
-        IF CFLAG:9174 == 0 && CFLAG:9716 == 0 && TALENT:161 == 0
+        IF CFLAG:9174 == 0 && CFLAG:9716 == 0 && TALENT:낙인 == 0
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 분별을 지키라며 화내는 모미지를 어떻게든 달랬다.
                 PRINTFORMW 「만약 보고 웃거나 그러면 두 번 다시 말도 안할거예요……」
                 PRINTFORMW 마지못해 엉덩이를 들이민 모미지의 심기가 상하지 않도록 자상하게 기구 끄트머리를 갖다댔다.
@@ -2305,7 +2305,7 @@ IF SELECTCOM == 174 && TEQUIP:25
         ;2회째 이후
         ELSE
             ;연모＋A감각 Lv3 이상＋매저키스트기분 Lv3 이상 또는 낙인
-            IF TALENT:150 && ABL:2 >= 3 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:9174 <= 3 || FLAG:11 == 2)
+            IF TALENT:연모 && ABL:A감각 >= 3 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:9174 <= 3 || FLAG:11 == 2)
                 PRINTFORML %조사처리(CALLNAME:MASTER,"가")% 기구를 준비하는 사이
                 PRINTFORMW 모미지는 말을 하지도 않았는데 스스로 항문을 조물락거려 준비하고 있었다.
                 PRINTFORML 그리고 그녀가 글종했다는 증거인 보지 뒤집기 자세를 잡고
@@ -2313,7 +2313,7 @@ IF SELECTCOM == 174 && TEQUIP:25
                 PRINTFORMW 「아아아아, 들어온다아……♪」
                 CFLAG:9174 = 4
             ;A감각 Lv3 이상＋매저키스트기분 Lv3 이상 또는 낙인
-            ELSEIF ABL:2 >= 3 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:9174 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:A감각 >= 3 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:9174 <= 2 || FLAG:11 == 2)
                 PRINTFORMW 「저기…… 그거, 약 같은 거 안 넣었어요?」
                 PRINTFORMW 「그게, 요새…… 응가할 때 기분이 이상해져서……」
                 PRINTFORMW 거기까지 말하고 창피해졌는지 모미지는 고개를 숙여버렸다.
@@ -2335,9 +2335,9 @@ ENDIF
 ;개시시
 IF SELECTCOM == 175 && TEQUIP:25
     ;처음으로＋낙인이 아니다
-    IF CFLAG:9175 == 0 && CFLAG:9716 == 0 && TALENT:161 == 0
+    IF CFLAG:9175 == 0 && CFLAG:9716 == 0 && TALENT:낙인 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 분별을 지키라며 화내는 모미지를 어떻게든 달랬다.
             PRINTFORMW 「만약 보고 웃거나 그러면 두 번 다시 말도 안할거예요……」
             PRINTFORMW 마지못해 엉덩이를 들이민 모미지의 심기가 상하지 않도록 자상하게 기구 끄트머리를 갖다댔다.
@@ -2355,13 +2355,13 @@ IF SELECTCOM == 175 && TEQUIP:25
     ;2회째 이후
     ELSE
         ;연모＋A감각 Lv3 이상＋매저키스트기분 Lv3 이상 또는 낙인
-        IF TALENT:150 && ABL:2 >= 3 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:9175 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:9175 <= 3 || FLAG:11 == 2)
             PRINTFORMW 모미지의 엉덩이 구멍에 최대한 공기를 주입하고 마개로 막았다.
             PRINTFORMW 「배가 빵빵해라아. 자요. 만져보세요……」
             PRINTFORMW 손바닥으로 하복부를 눌러주자 모미지는 기쁘고도 부끄럽다는 느낌으로 수줍어했다.
             CFLAG:9175 = 4
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9175 <= 2 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9175 <= 2 || FLAG:11 == 2)
             PRINTFORMW 모미지의 엉덩이 구멍에 최대한 공기를 주입하고 마개로 막았다.
             PRINTFORMW 「후, 으으, 학, 흐으으……」
             PRINTFORMW 장이 땡겨서 숨이 막히는지 그 호흡은 평상시보다 크고 가빴다.
@@ -2379,14 +2379,14 @@ IF SELECTCOM == 175 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 175 && TEQUIP:25 == 0
     ;연모＋A감각 Lv3 이상＋매저키스트기분 Lv3 이상 또는 낙인
-    IF TALENT:150 && ABL:2 >= 3 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:8855 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && ABL:A감각 >= 3 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:8855 < 3 || FLAG:11 == 2)
         PRINTFORMW 기대에 눈동자를 적신 모미지더러 엉덩이를 향하라 시키고 항문에 꽂은 플러그를 뽑아냈다.
         PRINTFORMW 「아아아, 나와, 방귀 나와아아아아!!」
         PRINTFORMW 「아, 아아아아♪ 엉덩이 벌어져어어, 방귀 소리 굉장해애애애♪」
         PRINTFORMW 항문을 떨며 추잡한 소리를 질질 흘리면서 모미지의 표정은 수치심으로 완전히 녹아있었다.
         CFLAG:8855 = 3
     ;연모
-    ELSEIF TALENT:150 && (CFLAG:8855 < 2 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && (CFLAG:8855 < 2 || FLAG:11 == 2)
         PRINTFORMW 「우으, 그야 뽑지 않으면 계속해서 괴롭긴 하지만요……」
         PRINTFORML 머무적거리는 모미지를 달래고 항문에 꽂은 플러그를 뽑아내자
         PRINTFORMW 장내에 밀려들어간 공기가 맹렬하게 추잡한 소리를 내며 분출했다.
@@ -2408,9 +2408,9 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 174 && TEQUIP:25 == 0
     ;처음으로＋낙인이 아니다
-    IF CFLAG:8854 == 0 && TALENT:161 == 0
+    IF CFLAG:8854 == 0 && TALENT:낙인 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「창피한 건 창피하다구요… 으」
             PRINTFORMW 「악, 크으으, 한계, 싸겠어, 보여버려……」
             PRINTFORML %조사처리(CALLNAME:MASTER,"가")% 긴장으로 굳어진 엉덩이살을 양쪽으로 벌리자
@@ -2428,13 +2428,13 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
     ;2회째 이후
     ELSE
         ;연모＋A감각 Lv3 이상＋매저키스트기분 Lv3 이상 또는 낙인
-        IF TALENT:150 && ABL:2 >= 3 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:8854 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:8854 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「더, 한계까지, 참으며언, 굉장한 게 와, 아아아, 근데 못해, 더 못 참겠어어♪」
             PRINTFORMW 「아아아아아아악!! 나온다아!! 더러운 걸 보고 있어, 굉장해! 기분 좋아아아♪」
             PRINTFORMW 성기로서 개발된 항문을 배설물이 통과할 때마다 모미지의 몸은 수치의 쾌락에 떨었다.
             CFLAG:8854 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:8854 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:8854 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「보고 싶다는 말을 들으면 약해지네요……」
             PRINTFORMW 「배를 꾹 눌러주세요…… 전부 내보낼테니까」
             PRINTFORMW 「크으윽…… 갑니다, 나갑니다, 흐으응～～!!」
@@ -2442,7 +2442,7 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
             PRINTFORMW 그녀는 창피해하면서도 %CALLNAME:MASTER%의 기대에 부응했다는 사실에 만족스런 얼굴을 하고 있었다.
             CFLAG:8854 = 4
         ;A感覚Lv3以上＋マゾっ気Lv3以上または烙印
-        ELSEIF ABL:2 >= 3 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:8854 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:8854 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「앗…… 마개, 뽑나봐요?」
             PRINTFORMW 물음에 끄덕이자 모미지는 순순히 엉덩이를 내밀었다.
             PRINTFORMW 「흐윽, 뽑으면, 앗, 앗, 온다, 큭, 응～～!!」
@@ -2466,7 +2466,7 @@ IF SELECTCOM == 60
     ;처음
     IF CFLAG:9060 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「잡지 같은데서 본 적은 있어요. 그, 광택이 야시시… 한 것 같더라구요……」
             PRINTFORMW 얼굴을 붉게 물든 채 부끄러워 고개숙인 모미지가 사랑스럽다. 
         ;그 이외
@@ -2479,7 +2479,7 @@ IF SELECTCOM == 60
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9060 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9060 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「내가 바르겠으니 미끈미끈하게 되는 모습을 보고 계세요」
             PRINTFORMW 모미지는 로션을 듬뿍 가슴에 늘어뜨리고는 보여주듯이 넓게 펴서 바르기 시작했다――
             CFLAG:9060 = 3
@@ -2501,7 +2501,7 @@ IF SELECTCOM == 100 && TEQUIP:50
     ;처음
     IF CFLAG:9100 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「우으, 긴장된다아. 저 이런 거 전혀 못해서――」
             PRINTFORMW 「엑? 벌써 틀고 있어요!? 아직 마음의 준비가, 아, 앞으로 30초만이라도오～!」
             PRINTFORMW 엉성한 시작이 되고 말았지만 나중에 편집하면 문제는 없을 것이다.
@@ -2515,9 +2515,9 @@ IF SELECTCOM == 100 && TEQUIP:50
     ;2회째 이후
     ELSE
         ;연모＋인기
-        IF TALENT:150 && TALENT:94 && (CFLAG:9100 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && TALENT:인기 && (CFLAG:9100 <= 3 || FLAG:11 == 2)
             ;거유 또는 폭유
-            IF TALENT:112 || TALENT:113
+            IF TALENT:거유 || TALENT:폭유
                 PRINTFORMW 「오늘도 즐겨주세요～」
                 PRINTFORMW 모미지는 풍만한 가슴을 의식시키듯이 자기 손가락으로 포동포동 찌르고 있다――
             ;그 이외
@@ -2527,7 +2527,7 @@ IF SELECTCOM == 100 && TEQUIP:50
             ENDIF
                 CFLAG:9100 = 4
         ;연모 또는 인기
-        ELSEIF (TALENT:150 || TALENT:94) && (CFLAG:9100 <= 2 || FLAG:11 == 2)
+        ELSEIF (TALENT:연모 || TALENT:인기) && (CFLAG:9100 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「착한 어린이 여러분, 이 비디오에서는 야한 일을 하고 있으니 어른이 된 다음에 봐주세요～」
             PRINTL 
             PRINTFORMW 「……저, 성인용 비디오 첫머리에 이런 경고해도 뒤늦은 거 아닌가요?」
@@ -2557,13 +2557,13 @@ IF SELECTCOM == 230
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9230 <= 2 || FLAG:11 == 2)
-            ;매저키스트기분 Lv3 이상 또는 낙인＋전회가 주인에 의한 어널 섹스(조수의 A를 범하는 포함한다)
-            IF (ABL:21 >= 3 || TALENT:161) && ASSIPLAY == 0 && TFLAG:133 == 0 && (PREVCOM == 30 || PREVCOM == 31 || PREVCOM == 32 || PREVCOM == 33 || PREVCOM == 34 || PREVCOM == 36 || PREVCOM == 37 || PREVCOM == 38 || PREVCOM == 106 || PREVCOM == 618 || PREVCOM == 619)
+        IF TALENT:연모 && (CFLAG:9230 <= 2 || FLAG:11 == 2)
+            ;매저키스트기분 Lv3 이상 또는 낙인＋전회가 주인에 의한 애널 섹스(조수의 A를 범하는 포함한다)
+            IF (ABL:마조끼 >= 3 || TALENT:낙인) && ASSIPLAY == 0 && TFLAG:133 == 0 && (PREVCOM == 30 || PREVCOM == 31 || PREVCOM == 32 || PREVCOM == 33 || PREVCOM == 34 || PREVCOM == 36 || PREVCOM == 37 || PREVCOM == 38 || PREVCOM == 106 || PREVCOM == 618 || PREVCOM == 619)
                 PRINTFORMW 옅은 갈색으로 더러워진 페니스를 모미지의 목구멍에 찔러넣었다.
                 PRINTFORMW 「으풉, 끕, 쭈웁, 흐윽, 쭉, 흐으으――」
                 PRINTFORMW (목 안쪽까지 문대고 있어어… 응가 냄새에 중독되어버릴 것 같아……)
-            ;전회가 주인에 의한 어널 섹스(조수의 A를 범하는 포함한다)
+            ;전회가 주인에 의한 애널 섹스(조수의 A를 범하는 포함한다)
             ELSEIF ASSIPLAY == 0 && TFLAG:133 == 0 && (PREVCOM == 30 || PREVCOM == 31 || PREVCOM == 32 || PREVCOM == 33 || PREVCOM == 34 || PREVCOM == 36 || PREVCOM == 37 || PREVCOM == 38 || PREVCOM == 106 || PREVCOM == 618 || PREVCOM == 619)
                 PRINTFORMW 옅은 갈색으로 더러워진 페니스를 모미지의 목구멍에 찔러넣었다.
                 PRINTFORMW 「흐으읍～～……」
@@ -2586,13 +2586,13 @@ IF SELECTCOM == 230
             RETURN 0
         ;그 이외
         ELSEIF CFLAG:9230 <= 1 || FLAG:11 == 2
-            ;전회가 주인에 의한 어널 섹스(조수의 A를 범하는 포함한다)
+            ;전회가 주인에 의한 애널 섹스(조수의 A를 범하는 포함한다)
             IF ASSIPLAY == 0 && TFLAG:133 == 0 && (PREVCOM == 30 || PREVCOM == 31 || PREVCOM == 32 || PREVCOM == 33 || PREVCOM == 34 || PREVCOM == 36 || PREVCOM == 37 || PREVCOM == 38 || PREVCOM == 106 || PREVCOM == 618 || PREVCOM == 619)
                 PRINTFORMW 옅은 갈색으로 더러워진 페니스를 모미지의 목구멍에 찔러넣었다.
                 PRINTFORMW 「싫어! 으급! 으으으으읍!!」
                 PRINTFORMW (좀 전에 엉덩이 들어왔었는데… 우으으, 더러워어……)
             ;봉사 정신 Lv2 이상
-            ELSEIF ABL:13 >= 2
+            ELSEIF ABL:봉사정신 >= 2
                 PRINTFORMW 「으급, 흐읍, 읍읍읍!」
                 PRINTFORMW 억지로 입이 범해지는 행위에 익숙해졌는지 때때로 혀를 움직여 좆대 뒤를 자극한다.
             ;그 이외
@@ -2613,7 +2613,7 @@ IF SELECTCOM == 351 && TEQUIP:54
     ;처음
     IF CFLAG:9351 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW (나 혹시, 체취가 지독한가……?)
             PRINTFORML 모미지를 샤워를 하고 있는 동안 줄곧 떨떠름한 얼굴을 하고 있었다.
             PRINTFORMW 뭔가 마음에 들지 않는 일이라도 있었던 걸까.
@@ -2626,7 +2626,7 @@ IF SELECTCOM == 351 && TEQUIP:54
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9351 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9351 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「저기…… 저 말이죠. 그게, 뭐랄까…… 냄새가 심한가요?」
             PRINTFORMW 「요새 야한 짓할 때 이 곳에 자주 오잖아요. 역시 그래서 그런 거죠……?」
             PRINTFORML 무슨 대답을 해도 나쁜 쪽으로 받아들일 것 같은 느낌이 든 %조사처리(CALLNAME:MASTER,"는")%
@@ -2649,7 +2649,7 @@ IF SELECTCOM == 352
     ;처음
     IF CFLAG:9352 == 0
         ;봉사 정신 Lv2 이상
-        IF ABL:13 >= 2
+        IF ABL:봉사정신 >= 2
             PRINTFORMW 「몸으로 씻는다라…… 일단 위에서 덮으면 되는 거죠?」
             PRINTFORMW 모미지는 바디 소프를 두르고 매트 위에 누운 %조사처리(CALLNAME:MASTER,"를")% 어색한 움직임으로 씻었다――
         ;그 이외
@@ -2662,14 +2662,14 @@ IF SELECTCOM == 352
     ELSE
         ;낙인
         ;이것은 낙인으로 하는 것 같은 플레이인가
-        IF TALENT:161 && (CFLAG:9352 <= 4 || FLAG:11 == 2)
+        IF TALENT:낙인 && (CFLAG:9352 <= 4 || FLAG:11 == 2)
             PRINTFORMW 모미지는 사타구니에서 엉덩이에 걸쳐 듬뿍 거품을 바르고 엉덩이살에다 양물을 끼워넣었다.
             PRINTFORMW 그리고 비누를 손에 들고 귀두에 갖다대고는 허리를 움직여 거품소리를 내기 시작했다.
             PRINTFORMW 「에헤헤, 비누 공격받는 감촉은 어떠신지요~」
             PRINTFORMW 허리 움직임에 맞춰 비누가 귀두를 스칠 때, 허리가 들썩일 정도의 쾌감이 덮쳐든다――
             CFLAG:9352 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9352 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9352 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「엑…… 제가 씻겨지는 쪽이예요?」
             PRINTFORMW 매트에 눕혀진 모미지는 쭈뼛쭈뼛거리고 있다.
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 몸 앞면에 바디 소프를 더덕더덕 처바르고 모미지를 덮어눌렀다.
@@ -2678,7 +2678,7 @@ IF SELECTCOM == 352
             PRINTFORMW 이후 잠시 동안 공수교대하며 어른의 목욕이 이어졌다――
             CFLAG:9352 = 4
         ;봉사 정신 Lv2 이상
-        ELSEIF ABL:13 >= 2 && (CFLAG:9352 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 2 && (CFLAG:9352 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「등골 주변 말인가요? 여기를 어쩌라고…… 어, 앉고 있기만 하면 돼요?」
             PRINTFORMW 연일 계속된 조교로 뻐근한 몸에 모미지의 무게가 실리자 참으로 개운하다.
             PRINTFORMW 「저기 혼자서 누그러지면 전 할 일도 없이 따분한데요……」
@@ -2700,7 +2700,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 62
     ;낙인
-    IF TALENT:161 && (CFLAG:9062 < 2 || FLAG:11 == 2)
+    IF TALENT:낙인 && (CFLAG:9062 < 2 || FLAG:11 == 2)
         PRINTFORMW 「오줌 누게 하는 약이죠?」
         PRINTFORMW 모미지가 건네받은 약을 조용히 삼키고는 기대가 맺힌 눈으로 쳐다보았다.
         PRINTFORMW 「에헤헤… 오줌 누는 버릇 잘 가르쳐주세요」
@@ -2720,7 +2720,7 @@ IF SELECTCOM == 111 || SELECTCOM == 620
     ;야외 플레이
     IF TEQUIP:52
         ;낙인
-        IF TALENT:161 && (CFLAG:9111 < 2 || FLAG:11 == 2)
+        IF TALENT:낙인 && (CFLAG:9111 < 2 || FLAG:11 == 2)
             PRINTFORMW 모미지는 네 발로 엎드리고 한쪽 발을 들어 마치 개처럼 소변을 누었다.
             PRINTFORMW 「하아아아……♪」
             PRINTFORMW 야성을 만족시키는 방뇨의 쾌감에 모미지는 훤히 다 드러난 엉덩이를 떨며 즐거워하고 있다.
@@ -2735,7 +2735,7 @@ IF SELECTCOM == 111 || SELECTCOM == 620
     ;그 이외
     ELSE
         ;낙인
-        IF TALENT:161 && (CFLAG:9111 < 2 || FLAG:11 == 2)
+        IF TALENT:낙인 && (CFLAG:9111 < 2 || FLAG:11 == 2)
             PRINTFORMW 모미지를 뒤에서 끌어안으며 양허벅지를 크게 벌렸다.
             PRINTFORMW 「흐응… 아, 하아아……♪」
             PRINTFORMW 요도가 젖혀져 분출된 황금수가 호선을 그리며 흘러나오기 시작한다.
@@ -2782,13 +2782,13 @@ ELSEIF SELECTCOM == 350 && TEQUIP:53 == 0
 ENDIF
 
 ;-------------------------------------------------
-;어널 빨고 CFLAG9180
+;애널 빨고 CFLAG9180
 ;-------------------------------------------------
 IF SELECTCOM == 180
     ;처음
     IF CFLAG:9180 == 0
         ;A감각 Lv3 이상
-        IF ABL:2 >= 3
+        IF ABL:A감각 >= 3
             PRINTFORMW 모미지의 엉덩이에 얼굴을 묻고 후끈한 냄새와 맛을 즐긴다.
             PRINTFORMW 「흐윽, 아, 하아, 으……」
         ;그 이외
@@ -2801,8 +2801,8 @@ IF SELECTCOM == 180
     ;2회째 이후
     ELSE
         ;연모＋A감각 Lv3 이상
-        IF TALENT:150 && ABL:2 >= 3 && (CFLAG:9180 <= 5 || FLAG:11 == 2)
-            ;전회 커맨드가 어널 섹스계, 육변기, 확장 풍선, 피스트, 엉덩이 시교쿠를 뺀 언젠가(졸탑파라든지 모퉁이라든지는 굵기를 자주(잘) 모르기 때문에 보류), 또는 로터 A삽입의 해제시 말(손을 돌진해 긁어낸다)의 뒤
+        IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9180 <= 5 || FLAG:11 == 2)
+            ;전회 커맨드가 애널 섹스계, 육변기, 확장 풍선, 피스트, 엉덩이 시교쿠를 뺀 언젠가(졸탑파라든지 모퉁이라든지는 굵기를 자주(잘) 모르기 때문에 보류), 또는 로터 A삽입의 해제시 말(손을 돌진해 긁어낸다)의 뒤
             IF PREVCOM == 30 || PREVCOM == 31 || PREVCOM == 32 || PREVCOM == 33 || PREVCOM == 34 || PREVCOM == 37 || PREVCOM == 38 || PREVCOM == 106 || PREVCOM == 173 || PREVCOM == 232 || PREVCOM == 233 || PREVCOM == 313 || PREVCOM == 402 || PREVCOM == 618 || PREVCOM == 619 || (PREVCOM == 170 && TEQUIP:25 == 0 && CFLAG:8856 >= 4)
                 IF RAND:3 == 0
                     PRINTFORMW 확장된 직후라 해이해진 항문에 혀를 꽂아넣어 장벽을 이러지리 핥았다.
@@ -2828,19 +2828,19 @@ IF SELECTCOM == 180
             ENDIF
             CFLAG:9180 = 6
         ;A감각 Lv3 이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9180 <= 4 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9180 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「앗…… 또 엉덩이요?」
             PRINTFORMW 순순히 내놓은 히프에 키스하고 항문을 핥아올렸다.
             PRINTFORMW 「아, 흐윽, 하아아……」
             CFLAG:9180 = 5
         ;A感覚Lv2
-        ELSEIF ABL:2 == 2 && (CFLAG:9180 <= 3 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 == 2 && (CFLAG:9180 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「아, 알았다구요오……」
             PRINTFORMW 쭈뼛쭈뼛 일어서서 엉덩이를 양쪽으로 벌리는 모미지의 목소리에 이전만한 혐오의 기색은 없다.
             PRINTFORMW 「읏, 아우……」
             CFLAG:9180 = 4
         ;A感覚Lv1
-        ELSEIF ABL:2 == 1 && (CFLAG:9180 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 == 1 && (CFLAG:9180 <= 2 || FLAG:11 == 2)
             PRINTFORMW 보지 뒤집기를 시킨 모미지의 항문을 과시하듯이 핥아올렸다.
             PRINTFORMW 「히으, 이런, 자세로, 에… 아, 으, 흐으…!」
             PRINTFORMW 모미지는 굴종의 자세로 항문을 핥아져서 어찌할 바를 몰라하고 있다.
@@ -2856,19 +2856,19 @@ IF SELECTCOM == 180
 ENDIF
 
 ;-------------------------------------------------
-;어널 유리구슬 개시시 CFLAG9172 종료시 CFLAG8852
+;애널 유리구슬 개시시 CFLAG9172 종료시 CFLAG8852
 ;-------------------------------------------------
 ;개시시
 IF SELECTCOM == 172 && TEQUIP:25
     ;처음
     IF CFLAG:9172 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「엉덩이에 넣는 물건이죠? 좀 귀엽다…… 싶으려나」
             PRINTFORMW 살짝 부끄러운 것 같았지만 금세 알아서 엉덩이를 향했다.
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 유리구슬 사이즈의 비즈를 하나씩 모미지의 엉덩이에 집어넣기 시작했다.
         ;A感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORMW 「우와아, 진짜로 전부 들어갔어……」
             PRINTFORMW 모미지는 항문을 쓰다듬어 비즈의 상태를 확인하고 있다.
         ;それ以外
@@ -2881,13 +2881,13 @@ IF SELECTCOM == 172 && TEQUIP:25
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上
-        IF TALENT:150 && ABL:2 >= 3 && (CFLAG:9172 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9172 <= 3 || FLAG:11 == 2)
             PRINTFORMW 마지막 구슬이 삼켜지자 끈과 그 끝에 달린 하트 장식만이 남았다.
             PRINTFORMW 「흐아앙……」
             PRINTFORMW 모미지가 움직일 때마다 하트 장식이 음란하게 흔들렸다.
             CFLAG:9172 = 4
         ;A感覚Lv3以上
-        ELSEIF ABL:2 >= 3 && (CFLAG:9172 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9172 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「핫, 또, 윽, 들어왔어. 아…!」
             CFLAG:9172 = 3
         ;それ以外
@@ -2901,7 +2901,7 @@ IF SELECTCOM == 172 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 172 && TEQUIP:25 == 0
     ;연모＋A감각 Lv3 이상
-    IF TALENT:150 && ABL:2 >= 3 && (CFLAG:8852 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:8852 < 3 || FLAG:11 == 2)
         PRINTFORMW 「흐윽, 앗, 아아♪」
         PRINTFORMW 비즈가 항문을 벌릴 때마다 모미지의 몸이 떨며 쾌감이 신음성이 되어 새어나온다.
         PRINTFORMW 「어, 엉덩이 구멍, 당겨져서 기분, 좋아요오, 더, 더어……」
@@ -2909,7 +2909,7 @@ ELSEIF SELECTCOM == 172 && TEQUIP:25 == 0
         PRINTFORMW 「햑! 앗, 흐으앙, 아아아아앗!!」
         CFLAG:8852 = 3
     ;A感覚Lv3以上
-    ELSEIF ABL:2 >= 3 && (CFLAG:8852 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && (CFLAG:8852 < 2 || FLAG:11 == 2)
         PRINTFORML 모미지는 순순히 엉덩이 양쪽을 잡고 벌렸다.
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 엉덩이를 쓰다듬으며 항문에서 뻗은 끈을 당겼다.
         PRINTFORMW 「핫, 앗, 아아……」
@@ -2926,14 +2926,14 @@ ELSEIF SELECTCOM == 172 && TEQUIP:25 == 0
 ENDIF
 
 ;------------------------------------------------
-;정상 위 어널 CFLAG9030 어널 섹스계를 처음으로 실행할지 어떨지의 관리 CFLAG9700 이것으로 첫회 말은 어떤 것이나 1개 밖에 나오지 않을 것
-;연모 2회째 이후는 야외 파생 있어(내용은 후배위 어널과 공통된의로 머리 속 보완 바랍니다)
+;정상 위 애널 CFLAG9030 애널 섹스계를 처음으로 실행할지 어떨지의 관리 CFLAG9700 이것으로 첫회 말은 어떤 것이나 1개 밖에 나오지 않을 것
+;연모 2회째 이후는 야외 파생 있어(내용은 후배위 애널과 공통된의로 머리 속 보완 바랍니다)
 ;-------------------------------------------------
 IF SELECTCOM == 30
     ;처음
     IF CFLAG:9030 == 0 && CFLAG:9700 == 0
         ;A감각 Lv3 이상
-        IF ABL:2 >= 3
+        IF ABL:A감각 >= 3
             PRINTFORMW 드러누운 모미지의 허리 밑에 베개를 두 개 늘어놓고 들려올라간 항문에 삽입했다.
             PRINTFORMW 「흐윽, 우으으… 아, 드, 들어왔다아…!」
             PRINTFORMW 모미지가 느끼는 장소를 찾으며 몇 번이고 직장에 찔러넣는다――
@@ -2948,7 +2948,7 @@ IF SELECTCOM == 30
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上＋야외플레이 중
-        IF TALENT:150 && ABL:2 >= 3 && TEQUIP:52 > 0 && (CFLAG:9030 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && TEQUIP:52 > 0 && (CFLAG:9030 <= 4 || FLAG:11 == 2)
             PRINTFORMW 두 명은 생물의 법도에 반하는 구멍으로 교합했다.
             PRINTFORMW 「아으으, 흐윽, 자지 왔다아……♪」
             PRINTFORMW 「바깥에서 하고 있는 시점에서 짐승 같은데, 엉덩이로 섹스……」
@@ -2958,14 +2958,14 @@ IF SELECTCOM == 30
             PRINTFORMW 모미지는 주위에 신경쓰지 않고 연신 음탕한 소리를 질렀다.
             CFLAG:9030 = 5
         ;恋慕＋A感覚Lv3以上
-        ELSEIF TALENT:150 && ABL:2 >= 3 && (CFLAG:9030 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9030 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「흐으응, 엉덩이이, 엉덩이로 섹스, 너무 좋아아…!」
             PRINTFORMW 「제 엉덩이는 나오는 구멍이 아니라 들어오는 구멍이예요오오!!」
             PRINTFORMW 모미지는 부자유스런 자세임에도 불구하고 괄약근을 요령 좋게 움직여 정액을 짜내려 했다.
             PRINTFORMW 「흐윽, 히아, 윽, 핫, 하아, 하아아아…♪」
             CFLAG:9030 = 4
         ;A感覚Lv3以上
-        ELSEIF ABL:2 >= 3 && (CFLAG:9030 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9030 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「흐으응, 아, 엉덩이, 엉덩이이……」
             PRINTFORMW 귀두가 입구를 스칠 때마다 촉촉한 소리가 새어나왔다.
             CFLAG:9030 = 3
@@ -2980,13 +2980,13 @@ IF SELECTCOM == 30
 ENDIF
 
 ;-------------------------------------------------
-;후배위 어널 CFLAG9031
+;후배위 애널 CFLAG9031
 ;-------------------------------------------------
 IF SELECTCOM == 31
     ;처음
     IF CFLAG:9031 == 0 && CFLAG:9700 == 0
         ;A감각 Lv3 이상
-        IF ABL:2 >= 3
+        IF ABL:A감각 >= 3
             PRINTFORMW 애널 섹스한다고 선고하자 모미지는 알아서 네 발로 엎드렸다.
             PRINTFORMW 「앗, 저기… 얼마든지요……」
             PRINTFORMW 「흐응…… 아응, 기분 좋으, 세요?」
@@ -3005,7 +3005,7 @@ IF SELECTCOM == 31
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上＋野外プレイ中
-        IF TALENT:150 && ABL:2 >= 3 && TEQUIP:52 > 0 && (CFLAG:9031 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && TEQUIP:52 > 0 && (CFLAG:9031 <= 4 || FLAG:11 == 2)
             PRINTFORMW 두 명은 하늘 밑에서 생물의 법도에 반하는 구멍으로 교합했다.
             PRINTFORMW 「아으으, 흐윽, 자지 왔다아……♪」
             PRINTFORMW 「바깥에서 하고 있는 시점에서 짐승 같은데, 엉덩이로 섹스……」
@@ -3015,13 +3015,13 @@ IF SELECTCOM == 31
             PRINTFORMW 모미지는 주위에 신경쓰지 않고 연신 음탕한 소리를 질렀다.
             CFLAG:9031 = 5
         ;恋慕＋A感覚Lv3以上
-        ELSEIF TALENT:150 && ABL:2 >= 3 && (CFLAG:9031 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9031 <= 3 || FLAG:11 == 2)
             PRINTFORMW 모미지는 네 발로 엎드리고 고개를 숙여 엉덩이 안쪽에 있는 항문을 드러냈다.
             PRINTFORMW 「후아아아, 자지 들어왔습니다아♪」
             PRINTFORMW 「흐윽, 하아, 윽, 핫, 하아, 하아아아…♪」
             CFLAG:9031 = 4
         ;A感覚Lv3以上
-        ELSEIF ABL:2 >= 3 && (CFLAG:9031 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9031 <= 2 || FLAG:11 == 2)
             PRINTFORMW 깊숙히 찔러넣고는 배설을 상기시키듯이 서서히 허리를 뺐다.
             PRINTFORMW 「흐으으, 아, 어, 엉덩이, 으, 이상, 해져어……」
             CFLAG:9031 = 3
@@ -3036,8 +3036,8 @@ IF SELECTCOM == 31
 ENDIF
 
 ;-------------------------------------------------
-;대면좌위 어널 CFLAG9032
-;대면 어널가슴 애무 CFLAG9619
+;대면좌위 애널 CFLAG9032
+;대면 애널가슴 애무 CFLAG9619
 ;대면에는 로망이 있다. 수려 성능은 지극히 높다고 말해도 좋다
 ;연모폭유의 첫회 말, 쓴 본인은 매우 진지함이지만 게임적으로 어때 이것……
 ;-------------------------------------------------
@@ -3046,7 +3046,7 @@ IF SELECTCOM == 32
     IF CFLAG:9032 == 0 && CFLAG:9700 == 0
         ;연모＋폭유
         ;야외에서 하면(자) 어머나 불가사의. 어디에서 난데없이 좌식 의자를 꺼내는 ANATA의 웅자를 빌 수 있습니다
-        IF TALENT:150 && TALENT:113
+        IF TALENT:연모 && TALENT:폭유
             PRINTFORMW 「아~ ……응. 물리적으로 무리겠는데요……」
             PRINTFORMW 무릎 위에 걸터앉으려던 모미지는 가슴이 방해된다는 사실을 깨닫고는 방법이 없어 참으로 애탄다는 느낌으로 중얼거렸다.
             PRINTFORMW 잠시 동안 둘은 방법을 생각했다――
@@ -3060,13 +3060,13 @@ IF SELECTCOM == 32
             PRINTFORMW 「감동해서 그런지 엉덩이 살짝 가버렸을지도……」
             PRINTFORMW 모미지는 %CALLNAME:MASTER%의 얼굴에 풍만한 가슴을 떠맡기듯 기대고 요분질했다――
         ;恋慕＋巨乳
-        ELSEIF TALENT:150 && TALENT:112
+        ELSEIF TALENT:연모 && TALENT:거유
             PRINTFORMW 「허리가 좀 빠듯하려나. 이렇게 커다랗게 만들어버리니까 이렇죠, 참」
             PRINTFORMW 모미지가 허리를 딱 붙이도록 허리를 밀자 풍만한 가슴이 %CALLNAME:MASTER%의 얼굴 앞에 튀어나왔다.
             PRINTFORMW 「흐윽, 큭, 후으으…… 아, 드, 들어왔다아」
             PRINTFORMW 모미지는 %CALLNAME:MASTER%의 상반신에 기대며 예상 외로 순조로운 움직임으로 요분질했다――
         ;恋慕
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 「가슴 밀착하고 있어요~ 에헤헷」
             PRINTFORMW 지금부터 애널 섹스를 한다는데 모미지는 껴안기는데 푹 빠져 있었다.
             PRINTFORML 모미지는 올라탄 채 %CALLNAME:MASTER%의 몸을 마음껏 애무하다가
@@ -3074,7 +3074,7 @@ IF SELECTCOM == 32
             PRINTFORMW 「흐으응, 크윽…… 아아, 엉덩이, 섹스하고 있어」
             PRINTFORMW 모미지는 %CALLNAME:MASTER%의 상반신에 기대며 예상 외로 순조로운 움직임으로 요분질했다――
         ;A感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORMW 보지 뒤집는 자세가 된 모지의 항문에 삽입해 등에 손을 두르고 안아 일으켰다.
             PRINTFORMW 「우아, 학… 하아아아……」
             PRINTFORMW 성감이 개발된 모미지는 안아올릴 때의 자극에도 달작지근하고 어릿한 소리를 질렀다.
@@ -3091,9 +3091,9 @@ IF SELECTCOM == 32
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上
-        IF TALENT:150 && ABL:2 >= 3 && (CFLAG:9032 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9032 <= 3 || FLAG:11 == 2)
             ;爆乳
-            IF TALENT:113
+            IF TALENT:폭유
                 PRINTFORMW 다리 없는 의자에 앉아 모미지를 무릎 위로 손짓해 불렀다.
                 PRINTFORMW 「가슴에 질식하지 마요~」
                 PRINTFORMW 등받이를 상당히 뒤로 눕혔음에도 불구하고 안겨든 모미지의 유방이 얼굴에 달라붙었다.
@@ -3107,7 +3107,7 @@ IF SELECTCOM == 32
             ENDIF
             CFLAG:9032 = 4
         ;A感覚Lv3以上
-        ELSEIF ABL:2 >= 3 && (CFLAG:9032 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9032 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「흐윽, 흐윽, 흐윽, 흐응응――」
             PRINTFORMW 콧구멍에서 쾌락의 소리를 흘리며 요분질하고 있다.
             PRINTFORMW 「나, 진짜로 엉덩이로 하는 거 좋아져버렸어어…!」
@@ -3125,13 +3125,13 @@ IF SELECTCOM == 32
     ENDIF
 ENDIF
 
-;대면 어널가슴 애무
+;대면 애널가슴 애무
 IF SELECTCOM == 619
     ;연모＋A감각 Lv3 이상
-    IF TALENT:150 && ABL:2 >= 3 && (CFLAG:9619 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9619 < 3 || FLAG:11 == 2)
         ;폭유
         ;젖가슴은 때에 흉기. 그렇다고 할까 엉덩이 들어온 채로인데 상당히 여유…
-        IF TALENT:113
+        IF TALENT:폭유
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 거동하지 못하는 상태로 혀를 움직여 저항을 시도했다.
             PRINTFORMW 「응～ 저항하는 것도 기특해라～」
             PRINTFORMW 모미지는 %CALLNAME:MASTER%의 상반신에 두르고 있던 손을 목 부근까지 올려 꽉 껴안았다.
@@ -3144,7 +3144,7 @@ IF SELECTCOM == 619
         ENDIF
         CFLAG:9619 = 3
     ;A感覚Lv3以上
-    ELSEIF ABL:2 >= 3 && (CFLAG:9619 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && (CFLAG:9619 < 2 || FLAG:11 == 2)
         PRINTFORMW 모미지의 유두를 빨며 중심에 있는 홈을 혀끝으로 자극했다.
         PRINTFORMW 「응, 후으, 아, 하아, 아…!」
         CFLAG:9619 = 2
@@ -3158,8 +3158,8 @@ IF SELECTCOM == 619
 ENDIF
 
 ;-------------------------------------------------
-;배면좌위 어널 CFLAG9033
-;비디오 촬영용의 어널 섹스 커맨드와 결론짓는 것에
+;배면좌위 애널 CFLAG9033
+;비디오 촬영용의 애널 섹스 커맨드와 결론짓는 것에
 ;사실은 IRC로 어드바이스 된 대거울 파생(비디오를 병용 하면(자) 모미지가 셀프 촬영)도 넣고 싶었지만, 상자가 카오스가 되었으므로 단념
 ;-------------------------------------------------
 IF SELECTCOM == 33
@@ -3169,7 +3169,7 @@ IF SELECTCOM == 33
         IF CFLAG:9033 == 0 && CFLAG:9700 == 0
             ;연모
             ;막이 없기 때문에 주인이 조리 아이 넣을 때까지는 버진! (키릭
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「기, 깊, 흐으, 아…!」
                 PRINTFORMW 허벅지를 바닥에 대며 주저앉듯이 허리를 내린 모미지를 진정시키듯이 껴안았다.
                 PRINTFORMW 「하아─ 하아─」
@@ -3177,7 +3177,7 @@ IF SELECTCOM == 33
                 PRINTFORMW 「에헤헤, 엉덩이 처녀 바쳤어요. 예쁘게 찍혔으면 좋겠는데……」
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 있는 힘껏 껴안고 싶은 기분을 억누르며 모미지의 직장을 위로 찔러댔다――
             ;A感覚Lv3以上
-            ELSEIF ABL:2 >= 3
+            ELSEIF ABL:A감각 >= 3
                 PRINTFORMW 네 발로 엎드린 모미지의 항문에 삽입하고 무릎을 안아올리듯 일으켜세웠다.
                 PRINTFORMW 「우아, 학… 하아아아……」
                 PRINTFORMW 성감이 개발된 모미지는 안아올릴 때의 자극에도 달작지근하고 어릿한 소리를 질렀다.
@@ -3196,12 +3196,12 @@ IF SELECTCOM == 33
         ;二回目以降
         ELSE
             ;人気
-            IF TALENT:94 && (CFLAG:9033 <= 2 || FLAG:11 == 2)
+            IF TALENT:인기 && (CFLAG:9033 <= 2 || FLAG:11 == 2)
                 ;恋慕＋A感覚Lv3以上
-                IF TALENT:150 && ABL:2 >= 3
+                IF TALENT:연모 && ABL:A감각 >= 3
                     ;オトコまたはふたなり
                     ;クリ자지って表現エロいよね.思わず普段の口調を無視するほどに
-                    IF TALENT:120 || TALENT:121
+                    IF TALENT:남자 || TALENT:후타나리
                         PRINTFORMW 모미지는 M자로 다리를 벌리더니 페니스를 꺼덕이며 허리를 움직였다.
                         PRINTFORMW 「아날 섹스로 좋아하는 자지, 왕창 보여주고 있어어어♪」
                         PRINTFORMW 「망상에서 클리자지 괴롭힘당해서 사정해버려어어♪」
@@ -3214,7 +3214,7 @@ IF SELECTCOM == 33
                         PRINTFORMW 완전히 보여지는 쾌감에 눈뜬 모미지는 범해지는 망상만으로도 절정에 달할 기세였다.
                     ENDIF
                 ;A感覚Lv3以上
-                ELSEIF ABL:2 >= 3
+                ELSEIF ABL:A감각 >= 3
                     PRINTFORMW 모미지는 카메라를 신경 쓰며 개발된 항문으로 양물을 집어삼켰다.
                     PRINTFORMW 「아, 으, 엉덩이, 왔다아, 하, 아, 학, 하아…!」
                 ;それ以外
@@ -3227,9 +3227,9 @@ IF SELECTCOM == 33
             ;それ以外
             ELSEIF CFLAG:9033 <= 1 || FLAG:11 == 2
                 ;恋慕＋A感覚Lv3以上
-                IF TALENT:150 && ABL:2 >= 3
+                IF TALENT:연모 && ABL:A감각 >= 3
                     ;オトコまたはふたなり
-                    IF TALENT:120 || TALENT:121
+                    IF TALENT:남자 || TALENT:후타나리
                         PRINTFORML 허벅지를 바닥에 대며 주저앉아 허리를 움직이던 모미지의 다리를 M자로 벌리고
                         PRINTFORMW 볼썽 사납게 꺼덕이는 페니스, 그리고 양물을 머금은 항문을 카메라 앞에 드러냈다.
                         PRINTFORMW 「시, 시러어, 안, 된다구요오」
@@ -3244,7 +3244,7 @@ IF SELECTCOM == 33
                         PRINTFORMW 모미지의 손을 부드럽게 치우고 발기한 클리토리스를 카메라 앞에서 이리저리 농락했다――
                     ENDIF
                 ;A感覚Lv3以上
-                ELSEIF ABL:2 >= 3
+                ELSEIF ABL:A감각 >= 3
                     PRINTFORMW 개발된 모미지의 항문은 양물을 가볍게 받아들여 쾌락에 장액을 내보냈다.
                     PRINTFORMW 「응아아아, 으, 하아아, 하아…!」
                 ;それ以外
@@ -3257,18 +3257,18 @@ IF SELECTCOM == 33
             RETURN 0
         ENDIF
     ENDIF
-;비디오 촬영중 이외에 실행해도 어널 섹스 경험제의 플래그가 서도록(듯이) 이 정도치
+;비디오 촬영중 이외에 실행해도 애널 섹스 경험제의 플래그가 서도록(듯이) 이 정도치
 CFLAG:9700 = 1
 ENDIF
 
 ;-------------------------------------------------
-;기승위(여성상위) 어널 CFLAG9034
+;기승위(여성상위) 애널 CFLAG9034
 ;-------------------------------------------------
 IF SELECTCOM == 34
     ;처음
     IF CFLAG:9034 == 0 && CFLAG:9700 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「앗, 어라……?」
             PRINTFORMW 의기양양하게 %CALLNAME:MASTER%의 위에 올라타 양물을 머금은 모미지의 움직임이 느닷없이 멎었다.
             PRINTFORMW 「저기……너무 깊게 들어가서, 움직일수 없게 되버렸어요……」
@@ -3276,7 +3276,7 @@ IF SELECTCOM == 34
             PRINTFORML 어쩔 도리가 없는것 같아서 엉덩이를 잡아 올려서 구해내자
             PRINTFORMW 이번엔 너무 깊게 들어가지 않도록 신중하게 허리를 내려갔다――
         ;A感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORMW 모미지는 한번 무릎위에 앉자, 그대로 몸을 조금 옮겨서 엉덩이에 강직을 삼켰다.
             PRINTFORMW 「응아…앗」
             PRINTFORMW 개발당한 항문에 줄기까지 삼켜지고, 그리고 괄약근에 훑어올려진다.
@@ -3296,7 +3296,7 @@ IF SELECTCOM == 34
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上
-        IF TALENT:150 && ABL:2 >= 3 && (CFLAG:9034 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9034 <= 3 || FLAG:11 == 2)
             IF RAND:2 == 0
                 PRINTFORMW 「엣, 마음대로 움직여도 괜찮은건가요?？」
                 PRINTFORMW 방법을 맡기자, 모미지는 스스로가 제일 좋아하는 입에으의 자극을 구하며 허리를 돌리기 시작했다.
@@ -3311,7 +3311,7 @@ IF SELECTCOM == 34
             ENDIF
                 CFLAG:9034 = 4
         ;A感覚Lv3以上
-        ELSEIF ABL:2 >= 3 && (CFLAG:9034 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9034 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「응아, 앗, 핫, 아아, 하아…읏」
             PRINTFORMW 삽입시에 밀려들어간 공기가 때때로 방귀같은 소리를 내고있다.
             PRINTFORMW 「우우, 웃으면, 읏, 아, 핫, 응아아…읏」
@@ -3327,15 +3327,15 @@ IF SELECTCOM == 34
 ENDIF
 
 ;-------------------------------------------------
-;대면립 정도 어널 CFLAG9037
-;우선 어널 섹스 경험 플래그만
+;대면립 정도 애널 CFLAG9037
+;우선 애널 섹스 경험 플래그만
 ;-------------------------------------------------
 IF SELECTCOM == 37
 CFLAG:9700 = 1
 ENDIF
 
 ;-------------------------------------------------
-;배면립 정도 어널 CFLAG9038
+;배면립 정도 애널 CFLAG9038
 ;pixiv의 그림을 보고 쓰고 싶어졌지만 실내 시츄가 생각해내지 못하기 때문에 결론지어 야외 플레이 전용으로 해 보았다
 ;현상 야외 플레이의 이동처가 옥내에서도 어디에선가 나무가 나는 수려 사양. 이식하고 나무의 법칙이군요 압니다
 ;-------------------------------------------------
@@ -3346,13 +3346,13 @@ IF SELECTCOM == 38
         IF CFLAG:9038 == 0 && CFLAG:9700 == 0
             ;연모
             ;주인이 조리 아이 넣을 때까지는(ry
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「하아ー, 하아ー――」
                 PRINTFORMW 모미지는 삽입을 확인하듯이 결합부를 어루만진다.
                 PRINTFORMW 「에헤헤, 엉덩이의 처녀 줘버렸어요.그것도 밖에서……」
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 애널버진을 충분히 찔러올렸다――
             ;A感覚Lv3以上
-            ELSEIF ABL:2 >= 3
+            ELSEIF ABL:A감각 >= 3
                 PRINTFORMW 모미지를 뒤에서 범하듯이 나무에 손을 짚도록 해, 항문에 강직의 끝을 문질렀다.
                 PRINTFORMW 「하, 아, 뜨거운, 거…들어와, 아…앗」
                 PRINTFORMW 눈 앞에서 흔들리는 꼬리를 잡아 훑어주자 항문이 기쁜듯이 단단하게 조여온다.
@@ -3368,14 +3368,14 @@ IF SELECTCOM == 38
         ;二回目以降
         ELSE
             ;恋慕＋A感覚Lv3以上
-            IF TALENT:150 && ABL:2 >= 3 && (CFLAG:9038 <= 3 || FLAG:11 == 2)
+            IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9038 <= 3 || FLAG:11 == 2)
                 PRINTFORMW 모미지는 근처의 나무앞에 서서 엉덩이를 벌려 넓혀, 꼬리를 흔들흔들 하며 항문을 보여온다.
                 PRINTFORMW 「여기 파져서 멍멍……되버려서」
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 항문이 가능한 만큼 파내기로 했다.
                 PRINTFORMW 「응아아아, 파 줘어♪ 잔뜩 파내줘어어♪」
                 CFLAG:9038 = 4
             ;A感覚Lv3以上
-            ELSEIF ABL:2 >= 3 && (CFLAG:9038 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:A감각 >= 3 && (CFLAG:9038 <= 2 || FLAG:11 == 2)
                 PRINTFORMW 「하, 아, 조, 좋아, 읏, 하, 앙……」
                 PRINTFORMW 개발당한 항문을 도려내져서, 모미지는 나무에 매달린 채로 침을 늘어뜨려 허덕이고 있다.
                 CFLAG:9038 = 3
@@ -3389,12 +3389,12 @@ IF SELECTCOM == 38
             RETURN 0
         ENDIF
     ENDIF
-;야외 플레이중 이외에 실행해도 어널 섹스 경험제의 플래그가 서도록(듯이) 이 정도치
+;야외 플레이중 이외에 실행해도 애널 섹스 경험제의 플래그가 서도록(듯이) 이 정도치
 CFLAG:9700 = 1
 ENDIF
 
 ;-------------------------------------------------
-;어널 빨고 강제 CFLAG9044 어널 봉사 이력 관리용 CFLAG9701
+;애널 빨고 강제 CFLAG9044 애널 봉사 이력 관리용 CFLAG9701
 ;회음(에이 응)은 엉덩이의 구멍과 불알의 사이에 있는 수직근 에 대한 것도 google 선생님이 말했다. 에~~인가∼
 ;그 런 데 양성 주인에게 전립선은 있을 것인가. 미
 ;-------------------------------------------------
@@ -3402,7 +3402,7 @@ IF SELECTCOM == 44
     ;처음
     IF CFLAG:9044 == 0 && CFLAG:9701 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「정중히 거절합니다」
             PRINTFORMW 넌지시 거절당했으므로 열의로써 눌러보기로 했다――
             PRINTL 
@@ -3411,7 +3411,7 @@ IF SELECTCOM == 44
             PRINTFORMW 네 발로 엎드린 자세가 된 %CALLNAME:MASTER%의 엉덩이에 모미지가 얼굴을 가까이 했다.
             PRINTFORMW 「정말……읏, 할짝, 츗――」
         ;奉仕精神Lv3以上
-        ELSEIF ABL:13 >= 3
+        ELSEIF ABL:봉사정신 >= 3
             PRINTFORMW 「읏……할짝, 할짝」
             PRINTFORMW 과연 중심에 입을 대는것을 주저했는지, 주름부분을 중점적으로 핥아온다.
         ;それ以外
@@ -3425,18 +3425,18 @@ IF SELECTCOM == 44
     ;二回目以降
     ELSE
         ;恋慕＋従順Lv5
-        IF TALENT:150 && ABL:10 >= 5 && (CFLAG:9044 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:순종 >= 5 && (CFLAG:9044 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「츄픕, 츄, 쥬릅, 읏, 할짝……」
             PRINTFORMW 모미지의 혀 끝이 괄약근을 벌려 넓혀서 기분좋은 자극을 전해온다.
             PRINTFORMW 「확실히, 이 안쪽에 전립선이 있네요.나중에 손가락으로 만져볼까요」
             CFLAG:9044 = 5
         ;恋慕
-        ELSEIF TALENT:150 && (CFLAG:9044 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9044 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「이쪽이 조교하는것 같아서 굉장히 즐겁네요ー」
             PRINTFORMW 「푸츕, 츄, 쥬릅, 후으음우～」
             CFLAG:9044 = 4
         ;奉仕精神Lv3以上
-        ELSEIF ABL:13 >= 3 && (CFLAG:9044 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:9044 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「츄프……할짝……읏, 어떤가요？」
             PRINTFORMW （응～, 구멍만이 아니라, 회음도 희롱해주는쪽이 좋을까나？）
             CFLAG:9044 = 3
@@ -3450,14 +3450,14 @@ IF SELECTCOM == 44
 ENDIF
 
 ;-------------------------------------------------
-;어널 애원 CFLAG9045……라고 생각했지만 실행 이력을 사용하는 용무가 없기 때문에 확보만
-;지문 OFF 추천의 외교 문서 싫어해라고이지만, 노출버릇 고레벨시의 어널 애원 지문의 에로 좌파 이상
+;애널 애원 CFLAG9045……라고 생각했지만 실행 이력을 사용하는 용무가 없기 때문에 확보만
+;지문 OFF 추천의 외교 문서 싫어해라고이지만, 노출버릇 고레벨시의 애널 애원 지문의 에로 좌파 이상
 ;연모 미만은 말을 복창시키는 느껴 연모 이상은 모미지가 좋아하는 대로 권하는 느낌
 ;-------------------------------------------------
 IF SELECTCOM == 45
     ;연모＋A감각 Lv3 이상
     ;지금 다시(새삼스럽게) 보면(자) 돼지 폭지나 읽기 어려운 일 이 이상 없네요(Emuera 초기설정이라면 전각 39 문자로 되풀이해)
-    IF TALENT:150 && ABL:2 >= 3
+    IF TALENT:연모 && ABL:A감각 >= 3
         IF RAND:10 > 0
             ;욕정 10000이상
             IF PALAM:13 >= PALAMLV:4
@@ -3483,7 +3483,7 @@ IF SELECTCOM == 45
             PRINTFORMW 「아, 평소보다 커요.엣찌……」
         ENDIF
     ;A感覚Lv3以上
-    ELSEIF ABL:2 >= 3
+    ELSEIF ABL:A감각 >= 3
         ;欲情10000以上
         IF PALAM:13 >= PALAMLV:4
             PRINTFORMW 모미지는 상기한 얼굴로, %CALLNAME:MASTER%에게 가르쳐진대로 애원의 말을 내뱉는다.
@@ -3507,7 +3507,7 @@ IF SELECTCOM == 51
     ;처음
     IF CFLAG:9051 == 0
         ;봉사 정신 Lv2 이상
-        IF ABL:13 >= 2
+        IF ABL:봉사정신 >= 2
             PRINTFORMW 엉덩이사이에 강직을 꽂자, 모미지는 자신의  엉덩이에 손을 대고 좌우에서 비볐다.
             PRINTFORMW 「확실이 사이에 끼우는 편이 좋, 네요……？」
             PRINTFORMW 모미지가 엉덩이 사이에 힘을 주자 골짜기가 한층 깊어져, 끼워졌던 강직을 압박한다.
@@ -3516,7 +3516,7 @@ IF SELECTCOM == 51
         ;それ以外
         ELSE
             ;処女
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
                 PRINTFORMW 「힛！？ 싫, 엇, 그만……아, 엣？」
                 PRINTFORMW 삽입당한다고 착각하고 있던 모미지는, 엉덩이의 골짜기를 비벼져서 곤혹해 하고 있다.
                 PRINTFORMW （뭐, 뭐야, 이거언……）
@@ -3532,7 +3532,7 @@ IF SELECTCOM == 51
     ;二回目以降
     ELSE
         ;奉仕精神Lv2以上
-        IF ABL:13 >= 2 && (CFLAG:9051 <= 2 || FLAG:11 == 2)
+        IF ABL:봉사정신 >= 2 && (CFLAG:9051 <= 2 || FLAG:11 == 2)
             IF RAND:2 == 0
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 꼬리뼈를 강직에 훑어올렸다.
                 PRINTFORMW 「굉장햇, 거칠거칠한게, 꼬리에 닿아서…읏」
@@ -3564,13 +3564,13 @@ IF SELECTCOM == 52
     ;2회째 이후
     ELSE
         ;낙인
-        IF TALENT:161 && (CFLAG:9052 <= 4 || FLAG:11 == 2)
+        IF TALENT:낙인 && (CFLAG:9052 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「 흐응 …자지, 씩씩합니다……」
             PRINTFORMW 「 핫, 하앗, 아앗,  응…하앗……」
             PRINTFORMW 둘이서 요도구멍을 맞추고 쿠퍼액을 얽히게 한다--
             CFLAG:9052 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9052 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9052 <= 3 || FLAG:11 == 2)
             IF RAND:2 == 0
                 PRINTFORMW 「역시 크기로는 이길 수 없네요」
                 PRINTFORMW 안리끼리 맞대도록 해서、그걸 모미지의 손이 감싸온다。
@@ -3582,7 +3582,7 @@ IF SELECTCOM == 52
             ENDIF
             CFLAG:9052 = 4
         ;사정 경험 5이상
-        ELSEIF EXP:3 >= 5 && (CFLAG:9052 <= 2 || FLAG:11 == 2)
+        ELSEIF EXP:사정경험 >= 5 && (CFLAG:9052 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「하、아、아아、앙……」
             PRINTFORMW 이쪽이 움직임을 멈추자 어색하게 페니스를 비벼온다――
             CFLAG:9052 = 3
@@ -3597,20 +3597,20 @@ IF SELECTCOM == 52
 ENDIF
 
 ;-------------------------------------------------
-;어널 애무 강제 CFLAG9055 어널 봉사 이력 관리용 CFLAG9701
+;애널 애무 강제 CFLAG9055 애널 봉사 이력 관리용 CFLAG9701
 ;양성에 전립선은(ry
 ;-------------------------------------------------
 IF SELECTCOM == 55
     ;처음
     IF CFLAG:9055 == 0 && CFLAG:9701 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「상관없지만……기분 나쁘면 바로 멈출테니까요」
             PRINTFORMW 모미지의 중지가 조금씩 파묻힌다。
             PRINTFORMW 「이 감촉은、꽤나……」
             PRINTFORMW 그렇지만도 않은건지、이것저것 불평하면서도 멈출 기미는 없었다.
         ;봉사 정신 Lv3 이상
-        ELSEIF ABL:13 >= 3
+        ELSEIF ABL:봉사정신 >= 3
             PRINTFORMW 「응～、꼬리뼈 쪽이 좋을까요、아니면 자지 쪽이 졸을까요……」
             PRINTFORMW 모미지는 %CALLNAME:MASTER%의 반응을 보면서 시행착오 하고있다.
         ;그 이외
@@ -3625,8 +3625,8 @@ IF SELECTCOM == 55
     ;2회째 이후
     ELSE
         ;연모＋순종 Lv5
-        IF TALENT:150 && ABL:10 >= 5 && (CFLAG:9055 <= 4 || FLAG:11 == 2)
-            ;전회가 어널 빨고 강제
+        IF TALENT:연모 && ABL:순종 >= 5 && (CFLAG:9055 <= 4 || FLAG:11 == 2)
+            ;전회가 애널 빨고 강제
             IF PREVCOM == 44
                 PRINTFORMW 열심히 핥아 풀어진 엉덩이구멍에 모미지의 손가락이 찔러들어온다。
                 PRINTFORMW 「아하아…무릎 떨리고 있어요…♪」
@@ -3641,12 +3641,12 @@ IF SELECTCOM == 55
             ENDIF
             CFLAG:9055 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9055 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9055 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「엉덩이만은 나의 노예~」
             PRINTFORMW 불온한 말을 중얼거리면서 손가락으로 휘저어 온다.
             CFLAG:9055 = 4
         ;봉사 정신 Lv3 이상
-        ELSEIF ABL:13 >= 3 && (CFLAG:9055 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:9055 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「이렇게 벌려지네요……어떤의미로 신비해요」
             PRINTFORMW 모미지는 손가락이 두개나 들어간 것에 혼자서 관심을 보이고 있다.
             CFLAG:9055 = 3
@@ -3668,7 +3668,7 @@ IF SELECTCOM == 173 && TEQUIP:25
     ;처음
     IF CFLAG:9173 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「저기、왠지 엉덩이에 이상한걸 하려고 하지 않아요？」
             PRINTFORMW 「하지만、손에 들거있는게、그게、그런 도구고……」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 긍정하자、모미지는 이런이런하고 말하며 엉덩이를 벌려 넓혔다。
@@ -3683,14 +3683,14 @@ IF SELECTCOM == 173 && TEQUIP:25
     ;二回目以降
     ELSE
         ;恋慕＋A感覚Lv3以上＋マゾっ気Lv3以上または烙印
-        IF TALENT:150 && ABL:2 >= 3 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:9173 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:9173 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「스으～、하아～……스으으～、하아～……하앗、봐、봤나요？」
             PRINTFORMW 모미지는 스스로 펌프를 잡아 가슴을 전부 사용해 호흡하면서 구멍을 넓혀간다。
             PRINTFORMW 「굉장해……이제 제 팔 정도라면 들어가버릴지도」
             PRINTFORMW 애처로운 확장행위로 쾌감을 탐내는 그녀의 구멍은 이미 배설기가 아니고 성기 그 자체였다。
             CFLAG:9173 = 4
         ;A感覚Lv3以上＋マゾっ気Lv3以上または烙印
-        ELSEIF ABL:2 >= 3 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:9173 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:9173 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「이거、엄청 대단할지도。내 엉덩이、이상해져 버렸다。기분좋아……」
             CFLAG:9173 = 3
         ;それ以外
@@ -3703,12 +3703,12 @@ IF SELECTCOM == 173 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 173 && TEQUIP:25 == 0
     ;연모＋A감각 Lv5＋매저키스트기분 Lv3 이상 또는 낙인
-    IF TALENT:150 && ABL:2 >= 5 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:8853 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && ABL:A감각 >= 5 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:8853 < 3 || FLAG:11 == 2)
         PRINTFORMW 「아우우、이렇게 벌어지면、엉덩이로 섹스 할수없게 될지도……」
         PRINTFORMW 「아、그래도 그 때는 자지도 크게해서 사랑해주세요……♪」
         CFLAG:8853 = 3
     ;A感覚Lv3以上＋マゾっ気Lv3以上または烙印
-    ELSEIF ABL:2 >= 3 && (ABL:21 >= 3 || TALENT:161) && (CFLAG:8853 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && (ABL:마조끼 >= 3 || TALENT:낙인) && (CFLAG:8853 < 2 || FLAG:11 == 2)
         PRINTFORMW 「벌어져버려、엉덩이 벌어져버려어……」
         CFLAG:8853 = 2
     ;それ以外
@@ -3727,9 +3727,9 @@ IF SELECTCOM == 602
     ;처음
     IF CFLAG:9602 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;남자 또는 양성
-            IF TALENT:120 || TALENT:121
+            IF TALENT:남자 || TALENT:후타나리
                 PRINTFORMW 서로의 물건을 삼키던 중、갑자기 모미지가 입을 떼어놓았다。
                 PRINTFORMW 「조교는 면허라던지 있나요？ 실기시험이라던가」
                 PRINTFORMW 「하지만、나보다 핥는게 능숙……」
@@ -3750,9 +3750,9 @@ IF SELECTCOM == 602
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9602 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9602 <= 2 || FLAG:11 == 2)
             ;남자 또는 양성
-            IF TALENT:120 || TALENT:121
+            IF TALENT:남자 || TALENT:후타나리
                 PRINTFORMW 모미지가 위가 되어、%CALLNAME:MASTER%의 입에 팽창한 것을 넣었다。
                 PRINTFORMW 「목、너무 심하게 하진 말아주세요？」
                 PRINTFORMW 제대로 안전은 확인하고、모미지는 %CALLNAME:MASTER%의 강직한 것에 키스를 한다。
@@ -3771,11 +3771,11 @@ IF SELECTCOM == 602
         ;그 이외
         ELSEIF CFLAG:9602 <= 1 || FLAG:11 == 2
             ;남자 또는 양성
-            IF TALENT:120 || TALENT:121
+            IF TALENT:남자 || TALENT:후타나리
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 물건을 삼켜、자극주는 방법따위를 전수해 간다。
                 PRINTFORMW 「응움、츄웁、어던가효……？」
             ;奉仕精神Lv4以上
-                IF ABL:13 >= 4
+                IF ABL:봉사정신 >= 4
                 PRINTFORMW 능숙해진 것에 대한 포상으로 모미지의 물건을 열심히 핥아돌렸다――
             ;それ以外
                 ELSE
@@ -3795,16 +3795,16 @@ IF SELECTCOM == 602
 ENDIF
 
 ;-------------------------------------------------
-;A 정상 위 시키는 CFLAG9332 A정상·A 후배·역어널 강간·A승마 첫회 판정용 CFLAG9704
+;A 정상 위 시키는 CFLAG9332 A정상·A 후배·역애널 강간·A승마 첫회 판정용 CFLAG9704
 ;곁눈질에는 필시 얼간이일 것이다 체위. ANATA는 거기까지 해 파지고 싶은 것인지, 라고
 ;-------------------------------------------------
 IF SELECTCOM == 332
     ;처음
     IF CFLAG:9332 == 0 && CFLAG:9704 == 0
-        ;연모＋욕정 Lv3(3000) 이상＋모미지가 어널 섹스 되었던 적이 있다
-        IF TALENT:150 && PALAM:13 >= PALAMLV:3 && CFLAG:9700 == 1
+        ;연모＋욕정 Lv3(3000) 이상＋모미지가 애널 섹스 되었던 적이 있다
+        IF TALENT:연모 && PALAM:13 >= PALAMLV:3 && CFLAG:9700 == 1
             PRINTFORMW 「저도 엉덩이로、그、하는거……기분좋나요？」
-            PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 삽입하는 측에서 본 어널 섹스의 인상을 솔직하게 대답했다.
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 삽입하는 측에서 본 애널 섹스의 인상을 솔직하게 대답했다.
             PRINTFORMW 「 ……에、그러니까、그게、해보지도 않고 싫어하는건 않좋은거예요！」
             PRINTFORMW 솔직하게 하고 싶다고 말하는 것이 부끄러운 것인지 애매하게 동의를 요구해 온다.
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 기분이 변함없는 동안에 다리를 벌려 손짓 했다.
@@ -3814,7 +3814,7 @@ IF SELECTCOM == 332
             PRINTFORMW %CALLNAME:MASTER%의 의사에 의해 길러진 물건이 용서 없이 항문을 범해 간다.
             PRINTFORMW 「 히히힛, 얼굴이 야무지지 못하게 되고 있어요. 그렇게나 엉덩이 범해지고 싶었어요?」
         ;욕망 Lv3 이상
-        ELSEIF ABL:11 >= 3
+        ELSEIF ABL:욕망 >= 3
             PRINTFORMW 「에엣、제가 하는거에요…?」
             PRINTFORMW 말없이  수긍하는 %CALLNAME:MASTER%에게 곤혹하면서도, 흠칫흠칫 끝부분을 비빈다.
             PRINTFORMW 「응、읏、엉덩이란건 이렇게나 뜨거운 거네요……」
@@ -3829,7 +3829,7 @@ IF SELECTCOM == 332
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9332 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9332 <= 3 || FLAG:11 == 2)
             IF RAND:2 == 0
                 PRINTFORMW 「 웃,  응……엉덩이에 넣자마자, 금방 질퍽질퍽해져서 귀여워요」
                 PRINTFORMW 「 지금만큼은 주종 역전이에요. 대소변을 무의식중에 쌀 때까지 범해줄게요……」
@@ -3840,7 +3840,7 @@ IF SELECTCOM == 332
             ENDIF
             CFLAG:9332 = 4
         ;욕망 Lv3 이상
-        ELSEIF ABL:11 >= 3 && (CFLAG:9332 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:욕망 >= 3 && (CFLAG:9332 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「하아、하아、굉장햇、넣어서、앗、하아、핫――」
             PRINTFORMW 모미지는 거칠게 숨을 쉬면서 성욕대로 %CALLNAME:MASTER%의 항문을 범하고 있다.
             CFLAG:9332 = 3
@@ -3860,10 +3860,10 @@ ENDIF
 IF SELECTCOM == 333
     ;처음
     IF CFLAG:9333 == 0 && CFLAG:9704 == 0
-        ;연모＋욕정 Lv3(3000) 이상＋모미지가 어널 섹스 되었던 적이 있다
-        IF TALENT:150 && PALAM:13 >= PALAMLV:3 && CFLAG:9700 == 1
+        ;연모＋욕정 Lv3(3000) 이상＋모미지가 애널 섹스 되었던 적이 있다
+        IF TALENT:연모 && PALAM:13 >= PALAMLV:3 && CFLAG:9700 == 1
             PRINTFORMW 「저도 엉덩이로、그、하는거네요……기분좋아요?」
-            PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 삽입하는 측에서 본 어널 섹스의 인상을 솔직하게 대답했다.
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 삽입하는 측에서 본 애널 섹스의 인상을 솔직하게 대답했다.
             PRINTFORMW 「 ……에、그러니까、그게、해보지도 않고 싫어하는건 않좋은거예요！」
             PRINTFORMW 솔직하게 하고 싶다고 말하는 것이 부끄러운 건지 애매하게 동의를 요구해 온다.
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 기분이 변함없는 동안에 엎드린 자세가 되어 눈으로 신호를 보낸다.
@@ -3873,7 +3873,7 @@ IF SELECTCOM == 333
             PRINTFORMW %CALLNAME:MASTER%의 의사에 의해 길러진 물건이 용서 없이 항문을 범해 간다.
             PRINTFORMW 「하앗、하앗、좀 더 격렬하게 할게요！？ 엉덩이구멍、범할게요！？」
         ;욕망 Lv3 이상
-        ELSEIF ABL:11 >= 3
+        ELSEIF ABL:욕망 >= 3
             PRINTFORMW 「 에엣, 내가 하는거에요…?」
             PRINTFORMW 말없이 수긍하는 %CALLNAME:MASTER%에게 곤혹하면서도, 흠칫흠칫 끝을 갖다댄다.
             PRINTFORMW 「응、읏、엉덩이란건 이렇게나 뜨겁네요……」
@@ -3888,14 +3888,14 @@ IF SELECTCOM == 333
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9333 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9333 <= 3 || FLAG:11 == 2)
             IF RAND:2 == 0
                 PRINTFORMW 「 네엣. 나전용의 오나홀이 될 때까지 확실히 개발합시다♪」
-                PRINTFORMW ……일단 어널 섹스라고 정정해 두었다.
+                PRINTFORMW ……일단 애널 섹스라고 정정해 두었다.
                 PRINTFORMW 「 에∼, 그래도 좋지 않아요?  오나홀이라고 말하는 편이 음란한 느낌으로……」
                 PRINTFORMW 항문으로 연결된 채로 어긋난 회화가 계속된다--
             ELSE
-                PRINTFORML 완전히 어널 섹스의 포로가 되어 버렸는가
+                PRINTFORML 완전히 애널 섹스의 포로가 되어 버렸는가
                 PRINTFORMW 모미지는 발기한 물건을 숨기지도 않고 %CALLNAME:MASTER%의 엉덩이에 가까워진다.
                 PRINTFORMW 「 정액 관장이나 정액주사인가……고민되네요」
                 PRINTFORMW 너무나 기쁜 듯해서 촌스러운 장난은 멈추기로 했다.
@@ -3905,7 +3905,7 @@ IF SELECTCOM == 333
             ENDIF
             CFLAG:9333 = 4
         ;욕망 Lv3 이상
-        ELSEIF ABL:11 >= 3 && (CFLAG:9333 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:욕망 >= 3 && (CFLAG:9333 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「하아、하아、저、여자、읏、인데에、앗、하아、하앗--」
             PRINTFORMW 모미지는 발정기의 수컷과 같이 격렬하게 허리를 부딪혀 온다.
             CFLAG:9333 = 3
@@ -3919,18 +3919,18 @@ IF SELECTCOM == 333
 ENDIF
 
 ;-------------------------------------------------
-;역어널 강간·A 기승위(여성상위) 하는 CFLAG9035
-;우후후·역조교계에 어널 섹스 시킨다든가 추가되었을 경우는 CFLAG로 노예의 A삽입 이력을 관리할 필요가 있어?
+;역애널 강간·A 기승위(여성상위) 하는 CFLAG9035
+;우후후·역조교계에 애널 섹스 시킨다든가 추가되었을 경우는 CFLAG로 노예의 A삽입 이력을 관리할 필요가 있어?
 ;아~조수의 A를 범하게 하는 것도 같은 시츄구나
 ;덧붙여 씀 조수의 A를 범하게 하고는 조수측으로부터 실행하는 커맨드이므로 이 말이라고 써도 무의미한 것을 알아차린다(조수가 조교할 때 스킵)
 ;-------------------------------------------------
 IF SELECTCOM == 35 || SELECTCOM == 334
     ;처음
     IF CFLAG:9035 == 0 && CFLAG:9704 == 0
-        ;연모＋욕정 Lv3(3000) 이상＋모미지가 어널 섹스 되었던 적이 있다
-        IF TALENT:150 && PALAM:13 >= PALAMLV:3 && CFLAG:9700 == 1
+        ;연모＋욕정 Lv3(3000) 이상＋모미지가 애널 섹스 되었던 적이 있다
+        IF TALENT:연모 && PALAM:13 >= PALAMLV:3 && CFLAG:9700 == 1
             PRINTFORMW 「저도 엉덩이로、그、하는거네요……기분좋은 건가요?」
-            PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 삽입하는 측에서 본 어널 섹스의 인상을 솔직하게 대답했다.
+            PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 삽입하는 측에서 본 애널 섹스의 인상을 솔직하게 대답했다.
             PRINTFORMW 「 ……에、그러니까、그게、해보지도 않고 싫어하는건 않좋은거예요！」
             PRINTFORMW 솔직하게 하고 싶다고 말하는 것이 부끄러운 건지 애매하게 동의를 요구해 온다.
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 기분이 변함없는 동안에 그녀를 눕혔다.
@@ -3940,7 +3940,7 @@ IF SELECTCOM == 35 || SELECTCOM == 334
             PRINTFORMW 「읏、하앗、엉덩이、꽉 해서、아、기、기분、좋、아요오」
             PRINTFORMW 욕정도 도와, 모미지는 항문 성교의 감촉에 도취해 버리고 있다--
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 「 싫습니다. 자신의 것이라도 넣으면 돼잖습니까」
             PRINTFORMW 간단히 거부되어 버려, 어쩔 수 없이 억지로 밀어 넘어뜨려 엉덩이의 구멍으로 삼킨다.
             PRINTFORMW 「 아아!  굉장해, 자지 찢어져 버려어어엇!!」
@@ -3956,7 +3956,7 @@ IF SELECTCOM == 35 || SELECTCOM == 334
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9035 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9035 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「 자지, 자지가 엉덩이의 구멍으로 범해지고 있는!」
             PRINTFORMW 「 후아아, 아날 섹스, 아날 섹스 버릇 될 것 같아아♪」
             CFLAG:9035 = 3
@@ -3975,14 +3975,14 @@ ENDIF
 ;양성의 아이가 센즈리 하는 것은 굉장히 좋아하는 음식입니다
 ;-------------------------------------------------
 IF SELECTCOM == 36
-    ;연모＋모미지가 어널 섹스 되었던 적이 없다
-    IF TALENT:150 && CFLAG:9700 == 0
+    ;연모＋모미지가 애널 섹스 되었던 적이 없다
+    IF TALENT:연모 && CFLAG:9700 == 0
         ;남자 또는 양성＋조수가 연모 또는 A감각 Lv3 이상
-        IF (TALENT:120 || TALENT:121) && (TALENT:ASSI:150 || ABL:ASSI:2 >= 3)
+        IF (TALENT:남자 || TALENT:후타나리) && (TALENT:ASSI:연모 || ABL:ASSI:A감각 >= 3)
             PRINTFORMW (굉장해, 엉덩이로 엣찌 하고 있어……, 보고 있으면 흥분해서, 자지가 서버려)
             PRINTFORMW 모미지는 살그머니 자위를 하면서 삼킬 듯이 보고 있다.
         ;조수가 연모 또는 A감각 Lv3 이상
-        ELSEIF TALENT:ASSI:150 || ABL:ASSI:2 >= 3
+        ELSEIF TALENT:ASSI:연모 || ABL:ASSI:A감각 >= 3
             PRINTFORMW (후와아, 들어가 버렸다……기분 좋은 것 같은 얼굴 하고 있네)
             PRINTFORMW 모미지는%조사처리(CALLNAME:ASSI,"가")% 직장을 찔려 흐트러지는 모습을 부끄러운듯이 보고 있다.
         ;그 이외
@@ -3990,16 +3990,16 @@ IF SELECTCOM == 36
             PRINTFORMW (늘어나버리고 있어……아프지 않은 건가? )
             PRINTFORMW 모미지는%조사처리(CALLNAME:ASSI,"가")% 직장을 찔리며 신음하는 모습을 걱정스러운 듯이 보고 있다.
         ENDIF
-    ;연모＋모미지가 어널 섹스 되었던 적이 있다
-    ELSEIF TALENT:150 && CFLAG:9700 >= 1
+    ;연모＋모미지가 애널 섹스 되었던 적이 있다
+    ELSEIF TALENT:연모 && CFLAG:9700 >= 1
         ;남자 또는 양성＋조수가 연모 또는 A감각 Lv3 이상
-        IF (TALENT:120 || TALENT:121) && (TALENT:ASSI:150 || ABL:ASSI:2 >= 3)
+        IF (TALENT:남자 || TALENT:후타나리) && (TALENT:ASSI:연모 || ABL:ASSI:A감각 >= 3)
             PRINTFORMW %CALLNAME:ASSI%의 항문에 찔러넣고, 고육을 벌려 결합부를 과시했다.
             PRINTFORMW 「 %CALLNAME:ASSI%씨의 엉덩이, 기분 좋을 것 같아……」
             PRINTFORMW 그렇게 말하며 자위를 시작한 모미지를%조사처리(CALLNAME:ASSI,"가")% 손짓해 불러, 무엇인가 귀엣말하고 있다.
             PRINTFORMW 모미지의 얼굴이 새빨갛게 되어 있는데, 도대체 무슨이야기였던 것일까?
         ;조수가 연모 또는 A감각 Lv3 이상
-        ELSEIF TALENT:ASSI:150 || ABL:ASSI:2 >= 3
+        ELSEIF TALENT:ASSI:연모 || ABL:ASSI:A감각 >= 3
             PRINTFORMW 「 좋겠다, 부러워……」
             PRINTFORMW 모미지는%CALLNAME:ASSI%의 항문을 후벼 파내어 돌리는 육봉을 삼킬듯이 보고 있다.
         ;그 이외
@@ -4052,9 +4052,9 @@ IF SELECTCOM == 112
     ;처음
     IF CFLAG:9112 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;남자 또는 양성
-            IF TALENT:120 || TALENT:121
+            IF TALENT:남자 || TALENT:후타나리
                 PRINTFORMW 모미지의 고간에 젤을 듬뿍 바르고, 거기에 난 털을 신중하게 깎아 간다.
                 PRINTFORMW 「 위험하니까 움직이지 말아라 라고 말해도……, 무리예요」
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 맹장 수술과 같다고 쓴 웃음 하면서 처리를 계속했다.
@@ -4064,9 +4064,9 @@ IF SELECTCOM == 112
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 자그마한 푸념을 들으면서 정중하게 털을 처리했다.
             ENDIF
         ;굴복 각인 Lv3
-        ELSEIF MARK:2 >= 3
+        ELSEIF MARK:굴복각인 >= 3
             ;남자 또는 양성
-            IF TALENT:120 || TALENT:121
+            IF TALENT:남자 || TALENT:후타나리
                 PRINTFORMW 「 으아…흣, 차가워……」
                 PRINTFORMW 칼날을 넣어 반들반들해진 부분을 닦으면 모미지는 작게 몸부림쳤다.
             ELSE
@@ -4077,7 +4077,7 @@ IF SELECTCOM == 112
         ;그 이외
         ELSE
             ;남자 또는 양성
-            IF TALENT:120 || TALENT:121
+            IF TALENT:남자 || TALENT:후타나리
                 PRINTFORMW 모미지의 고간에 젤을 듬뿍 바르고, 거기에 난 털을 신중하게 깎아 간다.
                 PRINTFORMW ( 시럿, 이, 안돼……자지 서버려……)
             ;그 이외
@@ -4091,9 +4091,9 @@ IF SELECTCOM == 112
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9112 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9112 <= 3 || FLAG:11 == 2)
             ;남자 또는 양성
-            IF TALENT:120 || TALENT:121
+            IF TALENT:남자 || TALENT:후타나리
                 IF RAND:3 == 0
                     PRINTFORMW 「 히죽히죽 웃으면서, 뭐 하는 겁니까, 정말……」
                 ELSEIF RAND:2 == 0
@@ -4119,9 +4119,9 @@ IF SELECTCOM == 112
             ENDIF
             CFLAG:9112 = 4
         ;굴복 각인 Lv3
-        ELSEIF MARK:2 >= 3 && (CFLAG:9112 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 >= 3 && (CFLAG:9112 <= 2 || FLAG:11 == 2)
             ;남자 또는 양성
-            IF TALENT:120 || TALENT:121
+            IF TALENT:남자 || TALENT:후타나리
                 PRINTFORMW 「 후아…」
                 PRINTFORMW 모미지의 페니스를 단단히 잡고, 밑에 난 털을 가위로 정중하게 처리했다.
                 PRINTFORMW 「 다시 반들반들해져 버렸다……」
@@ -4135,7 +4135,7 @@ IF SELECTCOM == 112
         ;그 이외
         ELSEIF CFLAG:9112 <= 1 || FLAG:11 == 2
             ;남자 또는 양성
-            IF TALENT:120 || TALENT:121
+            IF TALENT:남자 || TALENT:후타나리
                 PRINTFORMW 「 아……새, 생리현상입니다, 이런 게 나 버려서--」
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 발기한 물건을 잡은 채로 처리를 계속했다.
             ;그 이외
@@ -4154,9 +4154,9 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 115 && EXIST_PENIS(MASTER)
     ;연모
-    IF TALENT:150 && (CFLAG:9115 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:9115 < 3 || FLAG:11 == 2)
         ;욕정 Lv3(3000) 이상 또는 낙인
-        IF (PALAM:13 >= PALAMLV:3) || TALENT:161
+        IF (PALAM:13 >= PALAMLV:3) || TALENT:낙인
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지가 보고 있는 앞에서 육봉을 피스톤질했다.
             PRINTFORMW 「 냄새만으로 어질 어질해 옵니다……」
             PRINTFORMW 모미지는 귀두에 코끝이 닿을 만큼 얼굴을 가까이 해 킁킁 하며 냄새를 맡고 있다.
@@ -4167,7 +4167,7 @@ IF SELECTCOM == 115 && EXIST_PENIS(MASTER)
         ENDIF
         CFLAG:9115 = 3
     ;봉사 정신 Lv2 이상
-    ELSEIF ABL:13 >= 3  && (CFLAG:9115 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:봉사정신 >= 3  && (CFLAG:9115 < 2 || FLAG:11 == 2)
         ;욕정 Lv3(3000) 이상
         IF PALAM:13 >= PALAMLV:3
             PRINTFORMW 「 저기, 그러한 것은 혼자 있을 때에 하는 것으로, 그……」
@@ -4199,14 +4199,14 @@ ENDIF
 ;음뇨 하는 CFLAG9145 CFLAG9721
 ;연모 또는 낙인 후만
 ;-------------------------------------------------
-IF SELECTCOM == 145 && (TALENT:150 || TALENT:161)
+IF SELECTCOM == 145 && (TALENT:연모 || TALENT:낙인)
     ;처음
     IF CFLAG:9145 == 0
         PRINTFORMW 「 저기, 정말로 마실 겁니까…?」
         PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 아주 당연하다는 식으로 긍정하고는
         PRINTFORM 모미지의
         ;남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 페니스를 물고, 혀로 핥으며 요도를 빨았다.
         ;남자가 아니다(양성의 경우도 이쪽)
         ELSE
@@ -4219,9 +4219,9 @@ IF SELECTCOM == 145 && (TALENT:150 || TALENT:161)
     ;2회째 이후
     ELSE
         ;남자
-        IF TALENT:120
+        IF TALENT:남자
             ;새디즘기분 Lv2 이상
-            IF ABL:20 >= 2 && (CFLAG:9145 < 3 || FLAG:11 == 2)
+            IF ABL:새드끼 >= 2 && (CFLAG:9145 < 3 || FLAG:11 == 2)
                 PRINTFORMW 「 그럼, 입 열어 주세요……」
                 PRINTFORMW 모미지는 페니스를 양손으로 들고 %CALLNAME:MASTER%의 입 안을 목표로 해 방뇨하기 시작했다.
                 PRINTFORMW 「 아직입니다. 전부 낼 때까지 움직이면 안돼요」
@@ -4236,7 +4236,7 @@ IF SELECTCOM == 145 && (TALENT:150 || TALENT:161)
             ENDIF
         ELSE
             ;새디즘기분 Lv2 이상
-            IF ABL:20 >= 2 && (CFLAG:9721 < 2 || FLAG:11 == 2)
+            IF ABL:새드끼 >= 2 && (CFLAG:9721 < 2 || FLAG:11 == 2)
                 PRINTFORMW 「 그렇게 화장실이 되고 싶습니까?」
                 PRINTFORMW 「 그럼, 마지막 한 방울까지 짜내겠습니다……」
                 PRINTFORMW 모미지는 그렇게 말하고는 무릎 꿇은 %CALLNAME:MASTER%의 입에 음순을 갖다 대고 인후를 목표로 해 방뇨하기 시작했다.
@@ -4259,9 +4259,9 @@ ENDIF
 ;연모 또는 낙인 후만
 ;변함 없이 지문에 거역하는 심한 말인 것에서 만났다. (이)라도 조리 아이의 안에 조리 아이라든지 크게 하지 않다고 물리적으로 들어가지 않지 않다……
 ;-------------------------------------------------
-IF SELECTCOM == 146 && (TALENT:150 || TALENT:161)
+IF SELECTCOM == 146 && (TALENT:연모 || TALENT:낙인)
     ;남자(페니스에 삽입)
-    IF TALENT:120
+    IF TALENT:남자
         ;처음
         IF CFLAG:9146 == 0
             PRINTFORMW 모미지의 페니스에 약을 주사한다.
@@ -4321,7 +4321,7 @@ IF SELECTCOM == 146 && (TALENT:150 || TALENT:161)
 ENDIF
 
 ;-------------------------------------------------
-;어널 면봉 CFLAG9181
+;애널 면봉 CFLAG9181
 ;시츄적으로 성감 개발기에 사용하고 싶은 커맨드이므로 연모전을 중시
 ;한 번이라도 연모 앞에 사용해 두면(음고 잡았을 경우 한정입니다만) 연모 후에 그리워하는 말이 나옵니다
 ;-------------------------------------------------
@@ -4329,7 +4329,7 @@ IF SELECTCOM == 181
     ;처음
     IF CFLAG:9181 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 중간 정도까지 꽂아 넣은 면봉을 손가락으로 가볍게 튕긴다.
             PRINTFORMW 「 우으읏, 무엇을 할까하고 생각했더니. 성실하게 하지 않으면 안되요」
             PRINTFORMW 엉덩이를 벌벌 떨며 말해도 설득력은 없다.
@@ -4345,7 +4345,7 @@ IF SELECTCOM == 181
     ELSE
         ;아래와 같은 조건의 2회째 이후
         ;줄어드는 것은 한 개. 불가사의!
-        IF TALENT:150 && TALENT:173 && ABL:2 >= 5 && CFLAG:9711 == 2 && (CFLAG:9181 <= 6 || FLAG:11 == 2)
+        IF TALENT:연모 && TALENT:음고 && ABL:A감각 >= 5 && CFLAG:9711 == 2 && (CFLAG:9181 <= 6 || FLAG:11 == 2)
             IF RAND:2 == 0
                 PRINTFORMW 벌렁 뒤집어질 듯한 모습을 한 모미지의 항문으로부터 무수한 면봉이 나와 있다.
                 PRINTFORMW 「 으음, 엉덩이가 모판처럼 되어 버렸어……」
@@ -4362,8 +4362,8 @@ IF SELECTCOM == 181
                 PRINTFORMW 「 안, 대애, 바로 가버, 려엇!  아아앙아아, 하아아아앗!」
             ENDIF
             CFLAG:9181 = 7
-        ;연모＋음고＋A감각 Lv5＋연모 앞에 어널 면봉을 했던 적이 있다
-        ELSEIF TALENT:150 && TALENT:173 && ABL:2 >= 5 && CFLAG:9711 == 1 && (CFLAG:9181 <= 5 || FLAG:11 == 2)
+        ;연모＋음고＋A감각 Lv5＋연모 앞에 애널 면봉을 했던 적이 있다
+        ELSEIF TALENT:연모 && TALENT:음고 && ABL:A감각 >= 5 && CFLAG:9711 == 1 && (CFLAG:9181 <= 5 || FLAG:11 == 2)
             PRINTFORMW 초심으로 돌아가 면봉으로 즐기기로 했다.
             PRINTFORMW 「 응, 아, 이 간지러운 느낌 그립습니다」
             PRINTFORMW 「 이렇게, 음란한 구멍으로…아앗, 응, 으음 ……」
@@ -4372,8 +4372,8 @@ IF SELECTCOM == 181
             CFLAG:9181 = 6
             CFLAG:9711 = 2
         ;A감각 Lv3 이상
-        ;연모 이전에 어널 면봉을 실행했던 적이 없는 경우는 여기까지
-        ELSEIF ABL:2 >= 3 && (CFLAG:9181 <= 4 || FLAG:11 == 2)
+        ;연모 이전에 애널 면봉을 실행했던 적이 없는 경우는 여기까지
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9181 <= 4 || FLAG:11 == 2)
             PRINTFORMW 「 예, 부탁합니다……」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 꽂아 넣은 면봉을 격렬하게 전후로 움직여 배설감을 부추긴다.
             PRINTFORMW 「 히앗, 아, 응앗, 아아아……」
@@ -4381,7 +4381,7 @@ IF SELECTCOM == 181
             PRINTFORMW 이만큼 감도가 높아지면 좀 더 하드한 일을 해도 될 것이다.
             CFLAG:9181 = 5
         ;A감각 Lv2
-        ELSEIF ABL:2 == 2 && (CFLAG:9181 <= 3 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 == 2 && (CFLAG:9181 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「 엉덩이, 군요……」
             PRINTFORMW 면봉을 보이자 솔직하게 엉덩이를 향하여 온다.
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 꽂아 넣은 면봉을 냄비를 젓듯이 빙글빙글 돌렸다.
@@ -4389,7 +4389,7 @@ IF SELECTCOM == 181
             PRINTFORMW 모미지가 흘리는 소리에도 서서히 열이 더해 오고 있다.
             CFLAG:9181 = 4
         ;A감각 Lv1
-        ELSEIF ABL:2 == 1 && (CFLAG:9181 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 == 1 && (CFLAG:9181 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「 또 면봉, 입니까」
             PRINTFORMW 모미지는 조금 주저한 후, 흠칫흠칫 엉덩이를 향한다.
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 오므라진 곳에 면봉을 꽂아 넣어 안쪽에 걸듯이 전후로 움직였다.
@@ -4413,11 +4413,11 @@ ENDIF
 ;손가락 애널 자위
 IF SELECTCOM == 182 && TEQUIP:25 == 0 && TEQUIP:50 == 0
     ;연모＋A감각 3이상
-    IF TALENT:150 && ABL:2 >= 3
+    IF TALENT:연모 && ABL:A감각 >= 3
         PRINTFORMW 「 응, 흐읏, 응, 읏, 하악--」
         PRINTFORMW 모미지는 스스로의 손가락으로 항문을 후벼 파내어 돌리고 있다.
     ;A감각 3이상
-    ELSEIF ABL:2 >= 3
+    ELSEIF ABL:A감각 >= 3
         PRINTFORMW 「 응……후우, 간신히 안까지 들어왔습니다」
         PRINTFORML 조금 모미지의 손을 잡고 움직여 리듬을 타게 하자
         PRINTFORMW 얼마 후 혼자서 손가락을 넣고 빼기 시작했다.
@@ -4430,11 +4430,11 @@ IF SELECTCOM == 182 && TEQUIP:25 == 0 && TEQUIP:50 == 0
 ;바이브 애널 자위
 ELSEIF SELECTCOM == 182 && TEQUIP:25 == 1 && TEQUIP:50 == 0
     ;연모＋A감각 3이상
-    IF TALENT:150 && ABL:2 >= 3
+    IF TALENT:연모 && ABL:A감각 >= 3
         PRINTFORMW 「 응, 아아, 봐줘, 바이브 똥같이 싸는 거 봐줘……」
         PRINTFORMW 모미지가 배에 힘을 주자 항문으로부터 바이브가 부들부들 떨며 얼굴을 내밀어 간다--
     ;A감각 3이상
-    ELSEIF ABL:2 >= 3
+    ELSEIF ABL:A감각 >= 3
         PRINTFORMW 「 응, 이렇게, 일까……응, 후우, 응…읏」
         PRINTFORMW 모미지는 이것 저것 자세를 바꾸면서 바이브를 만지작거리고 있다.
     ;그 이외
@@ -4446,11 +4446,11 @@ ELSEIF SELECTCOM == 182 && TEQUIP:25 == 1 && TEQUIP:50 == 0
 ;유리구슬 애널 자위
 ELSEIF SELECTCOM == 182 && TEQUIP:25 == 5 && TEQUIP:50 == 0
     ;연모＋A감각 3이상
-    IF TALENT:150 && ABL:2 >= 3
+    IF TALENT:연모 && ABL:A감각 >= 3
         PRINTFORMW 「 응, 보입니까, 응, 아, 엉덩이로부터 한 개씩, 으음, 나와서, 응히♪」
         PRINTFORMW 모미지가 하복부에 힘을 집중할 때마다, 항문을 헤치며 유리구슬이 나와 간다--
     ;A감각 3이상
-    ELSEIF ABL:2 >= 3
+    ELSEIF ABL:A감각 >= 3
         PRINTFORMW 「 응히…응…응…으음…」
         PRINTFORMW 1개씩 뽑아낼 때마다 허리를 진동시키며 교성을 내고 있다.
     ;그 이외
@@ -4463,7 +4463,7 @@ ELSEIF SELECTCOM == 182 && TEQUIP:25 == 5 && TEQUIP:50 == 0
 ;공개 애널 자위
 ELSEIF SELECTCOM == 182 && TEQUIP:25 == 0 && TEQUIP:50 == 1
     ;연모＋A감각 3이상＋인기
-    IF TALENT:150 && ABL:2 >= 3 && TALENT:94
+    IF TALENT:연모 && ABL:A감각 >= 3 && TALENT:인기
         PRINTFORMW 모미지는 스스로 고육을 벌려 넓히며, 항문을 카메라의 앞에 노출시킨다.
         PRINTFORMW 「 지금부터 엉덩이의 구멍으로 자위-합니다. 이 추접스러운 구멍을 딸감으로 해 주세요……」
         PRINTFORMW 어느 정도 흥분하고 있는지, 행위 전의 설명을 말하는 동안에도 손가락끝으로 오므라든 곳을 어루만지고 있다.
@@ -4471,7 +4471,7 @@ ELSEIF SELECTCOM == 182 && TEQUIP:25 == 0 && TEQUIP:50 == 1
         PRINTFORMW 카메라에 어필을 하면서 최종적으로는 3개의 손가락을 꽂아넣고 항문 자위를 시작했다.
         PRINTFORMW 「 아아, 윽, 응, 음, 엉덩이, 엉덩이 대단해, 이제, 카메라 생각할수……!」
     ;A감각 3이상
-    ELSEIF ABL:2 >= 3
+    ELSEIF ABL:A감각 >= 3
         PRINTFORMW 엎드린 자세로 된 모미지의 고육을 잡아, 항문을 카메라의 앞에 노출시킨다.
         PRINTFORMW 「 딸감이 되어버려, 나……」
         PRINTFORMW 결심을 굳히며 손가락끝을 대고, 돌리듯이 해서 입구를 풀기 시작했다.
@@ -4487,14 +4487,14 @@ ELSEIF SELECTCOM == 182 && TEQUIP:25 == 0 && TEQUIP:50 == 1
 ;공개 바이브 애널 자위
 ELSEIF SELECTCOM == 182 && TEQUIP:25 == 1 && TEQUIP:50 == 1
     ;연모＋A감각 3이상＋인기
-    IF TALENT:150 && ABL:2 >= 3 && TALENT:94
+    IF TALENT:연모 && ABL:A감각 >= 3 && TALENT:인기
         PRINTFORMW 모미지는 스스로 고육을 벌려서 넓히며, 바이브를 머금은 항문을 카메라의 앞에 노출시킨다.
-        PRINTFORMW 「 어널 바이브를 꽂은 이 추접스러운 구멍을 딸감으로 해 주세요……」
-        PRINTFORMW 어느 정도 흥분하고 있는지, 행위 전의 설명을 말하는 동안도 몇번이나 어널 바이브에 손을 대고 있다.
+        PRINTFORMW 「 애널 바이브를 꽂은 이 추접스러운 구멍을 딸감으로 해 주세요……」
+        PRINTFORMW 어느 정도 흥분하고 있는지, 행위 전의 설명을 말하는 동안도 몇번이나 애널 바이브에 손을 대고 있다.
         PRINTFORMW 「 아, 하앗, 으응, 응, 윽, 엉덩이, 가, 기분이 좋아!」
-        PRINTFORMW 그 후로도 엉덩이를 높게 쳐들고 집중해서 어널 바이브를 출입하고 있다--
+        PRINTFORMW 그 후로도 엉덩이를 높게 쳐들고 집중해서 애널 바이브를 출입하고 있다--
     ;A감각 3이상
-    ELSEIF ABL:2 >= 3
+    ELSEIF ABL:A감각 >= 3
         PRINTFORML 엎드린 자세로 된 모미지의 고육을 잡고
         PRINTFORMW 바이브를 머금은 항문을 카메라의 앞에 노출시킨다.
         PRINTFORMW 「 으음, 카메라 앞에서 엉덩이 휘저어, 아앗, 더러운 국물 나와버려어……」
@@ -4511,14 +4511,14 @@ ELSEIF SELECTCOM == 182 && TEQUIP:25 == 1 && TEQUIP:50 == 1
 ;공개 유리구슬 항문 자위
 ELSEIF SELECTCOM == 182 && TEQUIP:25 == 5 && TEQUIP:50 == 1
     ;연모＋A감각 3이상＋인기
-    IF TALENT:150 && ABL:2 >= 3 && TALENT:94
+    IF TALENT:연모 && ABL:A감각 >= 3 && TALENT:인기
         PRINTFORMW 모미지는 스스로 고육을 벌려서 넓히며, 유리구슬을 삼킨 항문을 카메라의 앞에 노출시킨다.
         PRINTFORMW 「 유리구슬 나올 마다 가버리는 변태구멍을 딸감으로 해 주세요……」
         PRINTFORMW 모미지는 일부러 구멍을 잡고 괄약근으로 빨듯이 한 개씩 끌어내기 시작해 간다.
         PRINTFORMW 「  나, 응, 아, 엉덩이, 하아, 으음, 빠질 때가, 좋습니다, 으응♪」
         PRINTFORMW 빠져 나온 유리구슬을 익숙해진 손놀림으로 항문에 다시 묻어 가는 모습이 매우 선정적이다.
     ;A감각 3이상
-    ELSEIF ABL:2 >= 3
+    ELSEIF ABL:A감각 >= 3
         PRINTFORMW 엎드린 자세로 된 모미지의 고육을 잡고, 유리구슬을 넣은 항문을 카메라의 앞에 노출시킨다.
         PRINTFORMW 「 …응핫, 하, 한 개…으응, 두, 두 개…, 세 개, 응히앗…!」
         PRINTFORMW 「 응……응아…앗……후아, 아아……♪」
@@ -4543,7 +4543,7 @@ IF SELECTCOM == 183
     ;처음
     IF CFLAG:9183 == 0
         ;봉사 정신 Lv2 이상
-        IF ABL:13 >= 2
+        IF ABL:봉사정신 >= 2
             PRINTFORMW 모미지는 자신의 고육에 손을 대어 틈새를 제대로 조인다.
             PRINTFORMW 「 시작합니다…」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 고육에 의한 봉사를 받았다--
@@ -4557,11 +4557,11 @@ IF SELECTCOM == 183
     ;2회째 이후
     ELSE
         ;봉사 정신 Lv2 이상
-        IF ABL:13 >= 2 && (CFLAG:9183 <= 2 || FLAG:11 == 2)
+        IF ABL:봉사정신 >= 2 && (CFLAG:9183 <= 2 || FLAG:11 == 2)
             PRINTFORMW 모미지는 위로 우뚝 선 %CALLNAME:MASTER%의 자지에 엉덩이를 대고 틈새에 고육을 부빈다.
             PRINTFORMW 「 응, 으음, 아, 후우-」
             ;A감각 Lv5
-            SIF ABL:2 >= 5
+            SIF ABL:A감각 >= 5
             PRINTFORMW 불기둥을 부비는 움직임에 맞추어 모미지의 항문이 벌렁 벌렁 하고 꿈틀거리고 있다.
             CFLAG:9183 = 3
         ;그 이외
@@ -4583,12 +4583,12 @@ IF SELECTCOM == 186
     ;처음
     IF CFLAG:9186 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「 윽, 엉덩이가 퍼진 것 같아요. 최근 운동부족이고……」
             PRINTFORMW 말과는 정반대로 깨끗한 곡선을 그리는 엉덩이를 한껏 주물러 준다.
             PRINTFORMW 「 아…후우, 아…읏」
         ;굴복 각인 Lv1 이상
-        ELSEIF MARK:2 >= 1
+        ELSEIF MARK:굴복각인 >= 1
             PRINTFORMW 모미지의 고육을 양손으로 돌리듯이 비빈다.
             PRINTFORMW 「 후아, 하, 읏, 하아아…앗」
         ;그 이외
@@ -4601,7 +4601,7 @@ IF SELECTCOM == 186
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9186 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9186 <= 2 || FLAG:11 == 2)
             ;관장중
             IF TEQUIP:25 == 7
                 PRINTFORMW 플러그를 의식시키듯이 엉덩이를 주무른다.
@@ -4647,8 +4647,8 @@ IF SELECTCOM == 186
 ENDIF
 
 ;-------------------------------------------------
-;안면기승위 어널 CFLAG9187
-;갑자기 엉덩이를 훈스 되면(자) 연모 붙고 있든 어널 섹스 경험이 끝난 상태겠지만 이런 반응이 된다고 생각합니다
+;안면기승위 애널 CFLAG9187
+;갑자기 엉덩이를 훈스 되면(자) 연모 붙고 있든 애널 섹스 경험이 끝난 상태겠지만 이런 반응이 된다고 생각합니다
 ;-------------------------------------------------
 IF SELECTCOM == 187
     ;처음
@@ -4662,7 +4662,7 @@ IF SELECTCOM == 187
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9187 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9187 <= 3 || FLAG:11 == 2)
             IF RAND:3 == 0
                 PRINTFORMW 모미지는 주저하는 일 없이 고육을 벌려서 넓히며,%CALLNAME:MASTER%의 안면에 앉았다.
                 PRINTFORMW 「 하아, 읏, 어떻습니까, 오늘의 냄새……좋아하는 만큼 빨아 주세요」
@@ -4676,7 +4676,7 @@ IF SELECTCOM == 187
             ENDIF
             CFLAG:9187 = 4
         ;굴복 각인 Lv2 이상
-        ELSEIF MARK:2 >= 2 && (CFLAG:9187 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 >= 2 && (CFLAG:9187 <= 2 || FLAG:11 == 2)
             PRINTFORMW 조심스럽게 가려진 고육을 벌리고 오므라든 곳을 빤다.
             PRINTFORMW 「 으아, 읏, 혀, 들어가…」
             CFLAG:9187 = 3
@@ -4690,15 +4690,15 @@ IF SELECTCOM == 187
 ENDIF
 
 ;-------------------------------------------------
-;어널의 주름 셈 CFLAG9188
+;애널의 주름 셈 CFLAG9188
 ;-------------------------------------------------
 IF SELECTCOM == 188
     ;연모
-    IF TALENT:150 && (CFLAG:9188 < 3 || FLAG:11 == 2)
-        ;전회 커맨드가 어널 섹스계, 육변기, 확장 풍선, 피스트, 엉덩이 시교쿠를 뺀 언젠가(졸탑파라든지 모퉁이라든지는 굵기를 자주(잘) 모르기 때문에 보류), 또는 로터 A삽입의 해제시 말(손을 돌진해 긁어낸다)의 뒤
+    IF TALENT:연모 && (CFLAG:9188 < 3 || FLAG:11 == 2)
+        ;전회 커맨드가 애널 섹스계, 육변기, 확장 풍선, 피스트, 엉덩이 시교쿠를 뺀 언젠가(졸탑파라든지 모퉁이라든지는 굵기를 자주(잘) 모르기 때문에 보류), 또는 로터 A삽입의 해제시 말(손을 돌진해 긁어낸다)의 뒤
         IF PREVCOM == 30 || PREVCOM == 31 || PREVCOM == 32 || PREVCOM == 33 || PREVCOM == 34 || PREVCOM == 37 || PREVCOM == 38 || PREVCOM == 106 || PREVCOM == 173 || PREVCOM == 232 || PREVCOM == 233 || PREVCOM == 313 || PREVCOM == 402 || PREVCOM == 618 || PREVCOM == 619 || (PREVCOM == 170 && TEQUIP:25 == 0 && CFLAG:8856 >= 4)
             ;A감각 3이상
-            IF ABL:2 >= 3
+            IF ABL:A감각 >= 3
                 PRINTFORMW 「 조금 전까지 굵은 것이 들어가고 있었기 때문에, 주름도 펴져 버렸을지도」
                 PRINTFORMW 격렬하게 범해진 모미지의 항문은 주름이 퍼져서 볼록하게 부풀어 오르고 있다.
                 PRINTFORMW 「 히히힛, 주름이 돌아올 때까지 가볍게 만지작거렸으면 좋겠네요오……」
@@ -4711,7 +4711,7 @@ IF SELECTCOM == 188
         ;그 이외
         ELSE
             ;A감각 3이상
-            IF ABL:2 >= 3
+            IF ABL:A감각 >= 3
                 IF RAND:2 == 0
                     PRINTFORMW 「 엉덩이의 구멍의 주름, 입니까. 으응, 적다고 생각합니다만」
                     PRINTFORMW 「 하지만, 여기에 오고 나서 매일같이 만지작거려지고 있으니……」
@@ -4730,7 +4730,7 @@ IF SELECTCOM == 188
         ENDIF
         CFLAG:9188 = 3
     ;굴복 각인 Lv2 이상
-    ELSEIF MARK:2 >= 2 && (CFLAG:9188 < 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 >= 2 && (CFLAG:9188 < 2 || FLAG:11 == 2)
         PRINTFORMW 「 몇개, 였습니다…?」
         PRINTFORMW %CALLNAME:MASTER%의 대답을 들은 모미지는 혼자 얼굴을 붉히고 있다.
         CFLAG:9188 = 2
@@ -4744,13 +4744,13 @@ ENDIF
 
 ;-------------------------------------------------
 ;유선 개발 CFLAG9192
-;변수 A가 없어졌으므로 CFLAG:21을 참조하도록(듯이)
+;변수 A가 없어졌으므로 CFLAG:첫특수커맨드을 참조하도록(듯이)
 ;-------------------------------------------------
 IF SELECTCOM == 192
     ;낙인 없음으로 연모
-    IF TALENT:150 && TALENT:161 == 0 && (CFLAG:9192 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && TALENT:낙인 == 0 && (CFLAG:9192 < 3 || FLAG:11 == 2)
         ;성공
-        IF CFLAG:21 & 16
+        IF CFLAG:첫특수커맨드 & 16
             PRINTFORMW 「 웃, 끄, 으윽, 아…읏」
             PRINTFORMW 「 괘, 괜찮, 습니다, 계속, 해, 읏……」
             PRINTFORMW 이윽고 확실한 반응과 함께, 엷은 분홍색의 유두로부터 황백색의 액체가 배어 나오고 있다.
@@ -4767,9 +4767,9 @@ IF SELECTCOM == 192
         CFLAG:9192 = 3
     ;굴복 각인 Lv3
     ;이쪽이 에로 집합인 생각이 들었으므로 낙인시는 이쪽이 나오도록(듯이)
-    ELSEIF MARK:2 >= 3 && (CFLAG:9192 < 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 >= 3 && (CFLAG:9192 < 2 || FLAG:11 == 2)
         ;성공
-        IF CFLAG:21 & 16
+        IF CFLAG:첫특수커맨드 & 16
             PRINTFORMW 「 웃, 끄, 으윽, 아…읏」
             PRINTFORMW 「 괘, 괜찮, 아요, 읏, 하아…!」
             PRINTFORMW 이윽고 확실한 반응과 함께, 엷은 분홍색의 유두로부터 황백색의 액체가 배어 나오고 했다.
@@ -4788,7 +4788,7 @@ IF SELECTCOM == 192
     ;그 이외
     ELSEIF CFLAG:9192 < 1 || FLAG:11 == 2
         ;성공
-        IF CFLAG:21 & 16
+        IF CFLAG:첫특수커맨드 & 16
             PRINTFORMW 「 아, 읏, 큿, 으으…읏!」
             PRINTFORMW 반응을 느끼고 모미지의 유두를 확인하자, 모유가 한줄기 흘러나오고 있었다.
             PRINTFORMW 「 훌쩍, 웃, 우우, 이제, 싫어……」
@@ -4808,13 +4808,13 @@ ENDIF
 ;모처럼 피어스(귀걸이) 붙여도 대응 커맨드 없으면 외로운 생각이 들었으므로 사용하지 않았던 전극을 전용에
 ;-------------------------------------------------
 ;개시시
-IF SELECTCOM == 193 && TEQUIP:35 && (CFLAG:42 & 32)
+IF SELECTCOM == 193 && TEQUIP:35 && (CFLAG:특수장비 & 32)
     IF CFLAG:9193 < 1 || FLAG:11 == 2
         PRINTFORMW 모미지의 유두를 장식하는 피어스에 전극을 붙여서 자극한다.
         PRINTFORMW 「 히아아아아아앗,  아아아아앗♪」
         PRINTFORM 가슴을 타고 전신을 뛰어 돌아다니는 쾌감에 몸을 비틀 때
         ;거유 또는 폭유
-        IF TALENT:112 || TALENT:113
+        IF TALENT:거유 || TALENT:폭유
             PRINTFORMW 풍만한 유방이 흔들리며 종을 울린다--
         ;그 이외
         ELSE
@@ -4824,7 +4824,7 @@ IF SELECTCOM == 193 && TEQUIP:35 && (CFLAG:42 & 32)
     ENDIF
     RETURN 0
 ;탈착시
-ELSEIF SELECTCOM == 193 && TEQUIP:35 == 0 && (CFLAG:42 & 32)
+ELSEIF SELECTCOM == 193 && TEQUIP:35 == 0 && (CFLAG:특수장비 & 32)
     IF CFLAG:8816 < 1 || FLAG:11 == 2
         PRINTFORMW 피어스에서 전극을 떼어내고, 발기한 유두를 손가락으로 주물렀다.
         PRINTFORMW 「 아앗, 하, 아…앗♪」
@@ -4841,19 +4841,19 @@ ENDIF
 ;가슴 비비어
 IF SELECTCOM == 200
     PRINTFORM %조사처리(CALLNAME:MASTER,"는")% 모미지의
-    IF TALENT:113
+    IF TALENT:폭유
         PRINTFORMW 후우우우울륭한 모미지만두를 손바닥 전체를 사용해 모미모미했다.
-    ELSEIF TALENT:112
+    ELSEIF TALENT:거유
         PRINTFORMW 풍만한 유방을 덥석 잡고 모미모미했다.
     ELSE
         PRINTFORMW 가슴도 보고 전나무 했다.
     ENDIF
     ;연모
-    IF TALENT:150 && (CFLAG:9200 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:9200 < 3 || FLAG:11 == 2)
         PRINTFORMW 「 하앗, 좀더 모미모미해 주었으면 합니다…♪」
         CFLAG:9200 = 3
     ;굴복 각인 Lv2 이상
-    ELSEIF MARK:2 >= 2 && (CFLAG:9200 < 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 >= 2 && (CFLAG:9200 < 2 || FLAG:11 == 2)
         PRINTFORMW 「 하아, 응, 으음 …」
         CFLAG:9200 = 2
     ;그 이외
@@ -4869,11 +4869,11 @@ IF SELECTCOM == 626
     ;처음
     IF CFLAG:9626 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 분유반사를 유발하도록 모미지의 유방을 자극해 나간다.
             PRINTFORMW 「 아앗, 하아, 젖, 나오고 있습니다, 핫, 아앗, ……♪」
         ;굴복 각인 Lv2 이상
-        ELSEIF MARK:2 >= 2
+        ELSEIF MARK:굴복각인 >= 2
             PRINTFORMW 분유반사를 유발하도록 모미지의 유방을 자극해 나간다.
             PRINTFORMW 「 응, 하, 아앗, 아…읏」
         ;그 이외
@@ -4886,19 +4886,19 @@ IF SELECTCOM == 626
     ;2회째 이후
     ELSE
         PRINTFORM %조사처리(CALLNAME:MASTER,"는")% 모미지의
-        IF TALENT:113
+        IF TALENT:폭유
             PRINTFORMW 후우우우울륭한 모미지만두를 손바닥 전체를 사용해 짰다.
-        ELSEIF TALENT:112
+        ELSEIF TALENT:거유
             PRINTFORMW 풍만한 유방을 덥석 잡고 젖을 짰다.
         ELSE
             PRINTFORMW 젖을 짰다.
         ENDIF
         ;연모
-        IF TALENT:150 && (CFLAG:9626 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9626 <= 3 || FLAG:11 == 2)
             PRINTFORMW 「 하아, 으, 으응…읏♪」
             CFLAG:9626 = 4
         ;굴복 각인 Lv2 이상
-        ELSEIF MARK:2 >= 2 && (CFLAG:9626 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 >= 2 && (CFLAG:9626 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「 하아, 으, 아아…앗」
             CFLAG:9626 = 3
         ;그 이외
@@ -4914,7 +4914,7 @@ ENDIF
 ;유두 고문 CFLAG9201
 ;니프르피아스 한정
 ;-------------------------------------------------
-IF SELECTCOM == 201 && (CFLAG:42 & 32)
+IF SELECTCOM == 201 && (CFLAG:특수장비 & 32)
     ;처음
     IF CFLAG:9201 < 1 || FLAG:11 == 2
         PRINTFORMW 모미지의 유두를 장식하는 피어스를 잡아당겨 억지로 발기시킨다.
@@ -4935,9 +4935,9 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 204
     ;연모
-    IF TALENT:150 && (CFLAG:9204 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:9204 < 3 || FLAG:11 == 2)
         ;폭유
-        IF TALENT:113
+        IF TALENT:폭유
             PRINTFORMW 모미지의 풍만한 유방을 근원으로부터 잡아, 그 끝을 그녀의 입으로 향한다.
             PRINTFORMW 「 음란한 짓을 생각하네요 ……앙, 쭙, 하읍--」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지가 입에 넣은 모유를 혀를 휘감으며 빨아들였다.
@@ -4949,7 +4949,7 @@ IF SELECTCOM == 204
         ENDIF
         CFLAG:9204 = 3
     ;굴복 각인 Lv2 이상
-    ELSEIF MARK:2 >= 2 && (CFLAG:9204 < 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 >= 2 && (CFLAG:9204 < 2 || FLAG:11 == 2)
         PRINTFORMW 「 , 하아, …으음 ……」
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 유륜을 쿡쿡 찔려 배어 나온 모유를 혀 끝으로 핥는다.
         CFLAG:9204 = 2
@@ -4970,7 +4970,7 @@ IF SELECTCOM == 208
     ;처음
     IF CFLAG:9208 == 0
         ;폭유
-        IF TALENT:113
+        IF TALENT:폭유
             PRINTFORMW 모미지가 가슴을 움켜 쥐듯이 하자, 그것만으로 밑바닥이 없는 골짜기가 모습을 나타냈다.
             PRINTFORMW 「 그러니까, 이런 느낌으로 좋습니까?  그럼, 부디……」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 반사적으로, 추잡한 고기의 골짜기에 발딱 세워진 육봉을 삽입했다.
@@ -4987,7 +4987,7 @@ IF SELECTCOM == 208
     ;2회째 이후
     ELSEIF CFLAG:9208 <= 1 || FLAG:11 == 2
         ;폭유
-        IF TALENT:113
+        IF TALENT:폭유
             PRINTFORMW 「 아, 젖가슴으로 엣찌 하고 있다……」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 허리를 내밀 때마다, 모미지의 폭유가 눌러져 육봉을 압박한다.
             PRINTFORMW 압박시의 조임 상태는 충분히 명기라고 할 수 있을 정도다.
@@ -5016,7 +5016,7 @@ IF SELECTCOM == 209
         ;폭유
         ;가슴을 한껏 얼굴 쪽에 대어 사이에 두면 빠듯이 혀가 닿을 것. 폭유인걸
         ;그러나 구슬을 빠는 편이 현실적이고 야한일지도 모른다
-        IF TALENT:113
+        IF TALENT:폭유
             PRINTFORMW 「 그러니까, 한가지 말해도 괜찮겠습니까?  그……화내지 말아 주세요?」
             PRINTFORMW 「 조금, 입까지 닿지 않지 않을거라고 생각합니다만……」
             PRINTFORMW 맹점을 찔리고 잠깐 두 사람 모두 침묵한다.
@@ -5026,7 +5026,7 @@ IF SELECTCOM == 209
             PRINTFORMW 질문하면서도 가슴을 끌어안다시피 해서 팔장을 껴, 이미 의욕 만전인 것 같다.
             PRINTFORMW 물론 거절할 이유는 없다. %조사처리(CALLNAME:MASTER,"는")% 모미지의 얼굴 위에 걸치는 모습으로 골짜기로 삽입한다--
         ;거유
-        ELSEIF TALENT:112
+        ELSEIF TALENT:거유
             PRINTFORMW 「 욕망이 지나칩니다. 조금은 여기의 부담도 생각해 주세요」
             PRINTFORMW 모미지는 그렇게 말하면서도 풍만한 가슴을 대어 깊은 골짜기를 만들어 준다.
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 아래로부터 육봉을 꽂아 넣자 귀두만이 살짝 얼굴을 내밀었다.
@@ -5047,14 +5047,14 @@ IF SELECTCOM == 209
     ;2회째 이후
     ELSE
         ;폭유
-        IF TALENT:113 && (CFLAG:9209 <= 3 || FLAG:11 == 2)
+        IF TALENT:폭유 && (CFLAG:9209 <= 3 || FLAG:11 == 2)
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 얼굴 위에 걸쳐 가슴과 혀에 의한 봉사를 받는다.
             PRINTFORMW 「 츄릅, 쮸웁……에헤헤, 쿠퍼액으로 젖가슴 끈적끈적……」
             PRINTFORMW 때때로 골짜기로부터 빼내 입 쪽으로 향하자, 곧바로 의도를 헤아려 펠라 봉사로 응해 준다.
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 한층 더 정복감을 얻을 수 있도록 부드러운 가슴과 뜨거운 입안에 교대로 찔러 넣는다--
             CFLAG:9209 = 4
         ;거유
-        ELSEIF TALENT:112 && (CFLAG:9209 <= 2 || FLAG:11 == 2)
+        ELSEIF TALENT:거유 && (CFLAG:9209 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「 일단 입에 넣어 주세요……」
             PRINTFORMW 「 아암, 응∼~, 쪽, , 쯉, 쪽……푸하앗」
             PRINTFORMW 모미지의 타액 투성이가 된 육봉을 가슴의 골짜기에 삽입했다.
@@ -5076,20 +5076,20 @@ IF SELECTCOM == 209
 ENDIF
 
 ;-------------------------------------------------
-;어널 피스트 CFLAG9232 연속 실행이라면 결장 고문 CFLAG9709
+;애널 피스트 CFLAG9232 연속 실행이라면 결장 고문 CFLAG9709
 ;체력 소비가 대단한 거야로 A경험이 적은이었거나 소질 변경하고 있으면(자) 연속 실행으로 보통으로 죽을 수 있습니다
 ;그래서 확실히 피스트 하고 싶은 경우는 체력 강모미지를 ON로 하든가 여러 차례 걸어 꾸짖는 것을 추천 합니다
 ;A감각 Lv3 이상이라고 하는 분기 조건은 사실 장식입니다. 의도적으로 낮게 억제하면 이야기는 별도입니다만…
-;그리고 결장 괴롭힘에 붙어 오오타당의 영향을 받고 있는 것은 말할 필요도 없다. 어널리스트의 교서입니다
+;그리고 결장 괴롭힘에 붙어 오오타당의 영향을 받고 있는 것은 말할 필요도 없다. 애널리스트의 교서입니다
 ;-------------------------------------------------
 IF SELECTCOM == 232
-    ;전회의 커맨드가 주인에 의한 어널 피스트라면 돌진한 채로 결장을 꾸짖는다
-    ;다만 A감각 Lv4 미만이라면 개발할 경황은 아니기 때문에 통상의 어널 피스트인 채
-    IF PREVCOM == 232 && ASSIPLAY == 0 && TFLAG:133 == 0 && ABL:2 >= 4
+    ;전회의 커맨드가 주인에 의한 애널 피스트라면 돌진한 채로 결장을 꾸짖는다
+    ;다만 A감각 Lv4 미만이라면 개발할 경황은 아니기 때문에 통상의 애널 피스트인 채
+    IF PREVCOM == 232 && ASSIPLAY == 0 && TFLAG:133 == 0 && ABL:A감각 >= 4
         ;처음
         IF CFLAG:9709 == 0
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 항문인형화한 모미지의 결장에 손가락을 한 개 찔러 넣었다.
                 PRINTFORMW 「 히야읏!? 후에, 에, 이, 이거, 무슨, 짓을!」
                 PRINTFORMW 항문 안쪽의 제2의 항문을 만지작거리고 있는 것이라고 가르쳐 준다.
@@ -5113,7 +5113,7 @@ IF SELECTCOM == 232
         ;2회째 이후
         ELSE
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 ;아래로부터 차례로 결장 개발이 나갑니다
                 IF CFLAG:9709 == 4 || (CFLAG:9709 >= 5 && FLAG:11 == 2)
                     PRINTFORMW 충분히 개발된 결장을 3개의 손가락으로 켠다.
@@ -5151,13 +5151,13 @@ IF SELECTCOM == 232
             ENDIF
             RETURN 0
         ENDIF
-    ;통상의 어널 피스트
+    ;통상의 애널 피스트
     ELSE
         ;처음
         IF CFLAG:9232 == 0
             ;연모＋A감각 Lv3 이상
             ;목욕탕이든 야외겠지만 베개를 소환합니다
-            IF TALENT:150 && ABL:2 >= 3
+            IF TALENT:연모 && ABL:A감각 >= 3
                 PRINTFORMW 모미지를 위로 향해 눕히고 베개를 베고 엉덩이를 들어 올리게 한다.
                 PRINTFORMW 그리고 모미지에도 보이도록 항문에 손을 꽂아 들어간다.
                 PRINTFORMW 「 하앗, 읏, 아, 하아아앗--」
@@ -5178,7 +5178,7 @@ IF SELECTCOM == 232
         ELSE
             ;연모＋A감각 Lv3 이상
             ;연모라고 하는 것보다 망신이라든지 그근처 같다고 쓰고 나서 생각했다
-            IF TALENT:150 && ABL:2 >= 3 && (CFLAG:9232 <= 3 || FLAG:11 == 2)
+            IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9232 <= 3 || FLAG:11 == 2)
                 PRINTFORMW 모미지를 위로 향해 눕히고 항문에 손을 꽂아 들어갔다.
                 PRINTFORMW 「 하아, 후우, 으우, 아, 또, 인형이 되었습니다♪」
                 PRINTFORMW 항문 인형, 완구 모미지에게 자신의 항문이 어떤 것인지를 말하게 해 보았다.
@@ -5189,7 +5189,7 @@ IF SELECTCOM == 232
                 PRINTFORMW 「 히야아아아아앙 ♪ 하아으응아아아아아♪」
                 CFLAG:9232 = 4
             ;A감각 Lv3 이상
-            ELSEIF ABL:2 >= 3 && (CFLAG:9232 <= 2 || FLAG:11 == 2)
+            ELSEIF ABL:A감각 >= 3 && (CFLAG:9232 <= 2 || FLAG:11 == 2)
                 PRINTFORMW 「 하으앗, 응, 으읏」
                 PRINTFORMW 「 안, 돼, 엉덩이 닫히지 않게 되버려어어」
                 PRINTFORMW 모미지는 군침을 늘어뜨리면서 이성을 쥐어짜내 항의하고 있다.
@@ -5212,7 +5212,7 @@ IF SELECTCOM == 304
     ;처음
     IF CFLAG:9304 == 0
         ;기교 Lv3 이상
-        IF ABL:12 >= 3
+        IF ABL:기교 >= 3
             PRINTFORMW %CALLNAME:MASTER%과%조사처리(CALLNAME:ASSI,"는")% 무릎을 꿇은 모미지의 얼굴 앞에 페니스를 내민다.
             PRINTFORMW 「 그래서, 어느 쪽으로부터 시작할까요?」
             PRINTFORMW 결국%조사처리(CALLNAME:ASSI,"과")% 가위바위보를 해서 차례를 결정한다--
@@ -5226,7 +5226,7 @@ IF SELECTCOM == 304
     ;2회째 이후
     ELSE
         ;기교 Lv3 이상
-        IF ABL:12 >= 3 && (CFLAG:9304 <= 2 || FLAG:11 == 2)
+        IF ABL:기교 >= 3 && (CFLAG:9304 <= 2 || FLAG:11 == 2)
             PRINTFORMW 모미지는 양손에 불기둥을 잡고, 손을 강하게 훑으면서 교대로 입을 붙인다.
             PRINTFORMW 「 아앙, 으음, 쭙, 하앗 ……」
             PRINTFORMW 「 아암, 쪽, 응, 츄릅쯉--」
@@ -5248,13 +5248,13 @@ IF SELECTCOM == 327
     ;처음
     IF CFLAG:9327 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「 에헤헤. 참을 수 없게 되면 말해 주세요」
             PRINTFORMW 모미지는 쑥 내밀어진 검지와 중지 손가락을 핥고는, 머리를 앞뒤로 흔들며 입으로 봉사하기 시작했다.
             PRINTFORMW 「 우물, 쮸욱, 쯉, 쭙, 츄릅, 쯉」
             PRINTFORMW 그 상기된 모습과 때때로 이쪽을 눈을 치켜 뜨고 엿보는 모습이 정복감을 채워 준다--
         ;봉사 정신 Lv2 이상
-        ELSEIF ABL:13 >= 2
+        ELSEIF ABL:봉사정신 >= 2
             PRINTFORMW 「 아암……」
             PRINTFORMW 「 쮸웁, 쯉, 쭙, 으으음--」
             PRINTFORMW 모미지는 눈을 감으며 열심히 %CALLNAME:MASTER%의 손가락을 빨고 있다.
@@ -5269,8 +5269,8 @@ IF SELECTCOM == 327
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9327 <= 2 || FLAG:11 == 2)
-            ;전회의 커맨드가 주인에 의한 어널 애무(어널 바이브 없음)
+        IF TALENT:연모 && (CFLAG:9327 <= 2 || FLAG:11 == 2)
+            ;전회의 커맨드가 주인에 의한 애널 애무(애널 바이브 없음)
             IF PREVCOM == 2 && ASSIPLAY == 0 && TFLAG:133 == 0 && TEQUIP:25 == 0
                 PRINTFORMW 「 와아……엉덩이의 국물이 묻어있네. 여기까지 들어갔구나……」
                 PRINTFORMW 「 하암, 응∼, 쯉, 쪽, 츄릅, 쯉--」
@@ -5280,7 +5280,7 @@ IF SELECTCOM == 327
                 PRINTFORMW 「 하암, 응, 쪽, 쮸욱, 츄릅, 쯉」
                 PRINTFORMW 「 하앗 ……네, 자 다음은 그 옆의 손가락 내 주세요. 응, 할짝--」
                 ;서로 사랑함
-                IF TALENT:153
+                IF TALENT:상애
                     PRINTFORMW 손가락 마디를 깨물어 풀어지는 것만으로도 하반신까지 달콤한 쑤심이 전해졌다.
                 ELSE
                     PRINTFORMW 즐거운 듯이 손가락을 핥는 모미지를 보면 이것이 조교인 것을 잊게 것 같게 된다.
@@ -5289,12 +5289,12 @@ IF SELECTCOM == 327
             CFLAG:9327 = 3
         ;그 이외
         ELSEIF CFLAG:9327 <= 1 || FLAG:11 == 2
-            ;전회의 커맨드가 주인에 의한 어널 애무(어널 바이브 없음)
+            ;전회의 커맨드가 주인에 의한 애널 애무(애널 바이브 없음)
             IF PREVCOM == 2 && ASSIPLAY == 0 && TFLAG:133 == 0 && TEQUIP:25 == 0
                 PRINTFORMW 「 엉덩이를 만지작거린 손가락을 빨라니……우윽, 할짝, 쮸웁」
                 PRINTFORMW 모미지는 눈에 눈물을 모으면서 혀 끝으로 손가락을 청소했다.
             ;봉사 정신 Lv2 이상
-            ELSEIF ABL:13 >= 2
+            ELSEIF ABL:봉사정신 >= 2
                 PRINTFORMW 「 함암, 쯉, 츄릅, 응, 쪽」
                 PRINTFORMW 쾌감을 수반하지 않는 장난의 행위에도 상관없이, 모미지는 정중하게 봉사해 왔다.
             ;그 이외
@@ -5314,9 +5314,9 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 328
     ;처음으로＋낙인이 아니다
-    IF CFLAG:9328 == 0 && TALENT:161 == 0
+    IF CFLAG:9328 == 0 && TALENT:낙인 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「 히야앗!?」
             PRINTFORMW 모미지의 목덜미를 빨려고 하자 대단한 기세로 날아가듯이 물러났다.
             PRINTFORMW 「 아, 그게, 아니에요, 그런 의미가 아니, 에요……」
@@ -5324,7 +5324,7 @@ IF SELECTCOM == 328
             PRINTFORMW 「 본능적이라고 할지, 반사적인 경계라고 할까…그, 급소이고……」
             PRINTFORMW 미안한 듯 몸을 대어 오는 모미지에 사죄해, 다시 목덜미를 핥는다--
         ;순종 Lv3 이상
-        ELSEIF ABL:10 >= 3
+        ELSEIF ABL:순종 >= 3
             PRINTFORMW 「 이, 이상한 일, 하지 마세요……」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 귀 속을 어루만지며 목에 난 땀을 핥아간다.
             PRINTFORMW 「 응…아…읏」
@@ -5342,19 +5342,19 @@ IF SELECTCOM == 328
     ELSE
         ;낙인
         ;이미 이리관계 없음
-        IF TALENT:161 && (CFLAG:9328 <= 4 || FLAG:11 == 2)
+        IF TALENT:낙인 && (CFLAG:9328 <= 4 || FLAG:11 == 2)
             PRINTFORMW 물어뜯을듯이 모미지의 목울대를 빨았다.
             PRINTFORMW 「 으음∼…」
             PRINTFORMW 모미지는 콧구멍을 울리며 숨통에의 고문을 받아들이고 있다.
             CFLAG:9328 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9328 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9328 <= 3 || FLAG:11 == 2)
             PRINTFORMW 목덜미를 꾸짖는 신호 대신에 모미지의 귀의 구멍에 입김을 내뿜고 입술로 외이를 깨문다.
             PRINTFORMW 「 하앗 ……」
             PRINTFORMW 모미지 쪽도 달라붙듯이 해%CALLNAME:MASTER%의 어깻죽지에 안겨 왔다.
             CFLAG:9328 = 4
         ;순종 Lv3 이상
-        ELSEIF ABL:10 >= 3 && (CFLAG:9328 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:순종 >= 3 && (CFLAG:9328 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「 아…후아, 으……」
             CFLAG:9328 = 3
         ;그 이외
@@ -5389,7 +5389,7 @@ IF SELECTCOM == 402
         PRINTFORMW 정말로 내장 빠진 상태가 되어 버린 모미지를 잠깐 쉬게 한다--
         CFLAG:9402 = 1
         RETURN 0
-    ;2회째 이후(2회째부터는 어널 피스트와 할 것 변함없지요)
+    ;2회째 이후(2회째부터는 애널 피스트와 할 것 변함없지요)
     ELSEIF CFLAG:9402 <= 1 || FLAG:11 == 2
         PRINTFORMW 항문의 안쪽, 응어리가 제거되고 살짝 구덩이가 남은 그 장소를 어루만진다.
         PRINTFORMW 「 히야, 냐아, 아읏, 거기, 만지작거리면, 또 야한 국물 나와버려어어…♪」
@@ -5415,7 +5415,7 @@ SIF TEQUIP:42
 SIF TEQUIP:14 || TFLAG:899 > 0
     RETURN 0
 ;[정신 붕괴][꼭두각시]때에도 말을 스킵 한다(광기는 보통으로 말하거나 할 수 있으므로 보류)
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;--------------------------------------------------
 ;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, 41을 주인의 캐릭터 번호에 치환)
@@ -5438,7 +5438,7 @@ SIF TALENT:167 || TALENT:168
 ;-------------------------------------------------
 IF NOWEX:0 > 0 && CFLAG:8005 == 0
     ;굴복 각인 2이상
-    IF MARK:2 >= 2
+    IF MARK:굴복각인 >= 2
         PRINTFORMW 「 아…읏…으읏……!」
         PRINTFORMW 절정의 순간, 모미지의 발가락에 팟 하고 힘이 들어갔다.
     ;그 이외
@@ -5454,12 +5454,12 @@ ENDIF
 ;-------------------------------------------------
 IF NOWEX:1 > 0 && CFLAG:8006 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 「 히아아, 아앗, 가, 간다, 아, 아아아아!」
         PRINTFORMW 처음으로 절정에 이른 질이 꿈틀꿈틀하고 수축한다.
         PRINTFORMW 모미지는 축 늘어잔 채로 격렬한 쾌감의 여운을 맛보고 있다.
     ;굴복 각인 Lv3
-    ELSEIF MARK:2 == 3
+    ELSEIF MARK:굴복각인 == 3
         PRINTFORMW 「 히아아, 아앗,  아, 아아아아!!」
         PRINTFORMW (드디어, 보지로 가버렸다…)
         PRINTFORMW (여자로,  되어 버렸다……)
@@ -5476,7 +5476,7 @@ ENDIF
 ;-------------------------------------------------
 IF NOWEX:2 > 0 && CFLAG:8007 == 0
     ;굴복 각인 Lv3 또는 A감각 Lv3 이상
-    IF MARK:2 == 3 || ABL:2 >= 3
+    IF MARK:굴복각인 == 3 || ABL:A감각 >= 3
         PRINTFORMW 「 봐줘! 가버려, 저는, 모미지는 태어나서 처음으로 엉덩이로 갑니다아앗!!」
         PRINTFORMW 「 아앗, 온다, 와요, 기분 좋은 게 와버려여, 아앗,  아아아아♪」
         PRINTFORMW 처음으로 항문으로 절정한 모미지는 어깨로 숨을 쉬면서 여운을 맛보고 있다.
@@ -5495,13 +5495,13 @@ ENDIF
 ;-------------------------------------------------
 IF NOWEX:3 > 0 && CFLAG:8008 == 0
     ;거유 또는 폭유
-    IF TALENT:112 || TALENT:113
+    IF TALENT:거유 || TALENT:폭유
         PRINTFORMW 「 후에……에, 뭐, 뭐야 이건……으아, 아, 아아앗!!」
         PRINTFORMW 풍만한 유방을 흔들며, 모미지는 처음으로 가슴에서의 절정을 경험했다.
         PRINTFORMW 「 커진 젖가슴으로, 익……」
         PRINTFORMW 모미지는 절정시의 흥분감을 되새기듯이 풍만한 유방을 비비고 있다.
     ;굴복 각인 Lv2 이상
-    ELSEIF MARK:2 >= 2
+    ELSEIF MARK:굴복각인 >= 2
         PRINTFORMW 「 후에……에, 뭐, 뭐야 이건……으아, 아, 아아앗!!」
         PRINTFORMW 갑자기 모미지의 몸이 뛴다.
         PRINTFORMW 자신의 몸에 무엇이 일어났는지 이해하지 못하고 있는 모미지에게, 가슴으로 달했던 것이다라고 가르쳐 준다.
@@ -5519,9 +5519,9 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:0 > 0 && CFLAG:8009 == 0
     ;연모＋주인의 섹스에 의한 처녀 상실
-    IF TALENT:150 && TFLAG:2 > 0 && (SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || SELECTCOM == 24 || SELECTCOM == 27 || SELECTCOM == 28 || SELECTCOM == 614 || SELECTCOM == 615 || SELECTCOM == 616 || SELECTCOM == 617)
+    IF TALENT:연모 && TFLAG:2 > 0 && (SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || SELECTCOM == 24 || SELECTCOM == 27 || SELECTCOM == 28 || SELECTCOM == 614 || SELECTCOM == 615 || SELECTCOM == 616 || SELECTCOM == 617)
         ;V감각 Lv2 이상
-        IF ABL:1 >= 2
+        IF ABL:V감각 >= 2
             PRINTFORMW 「 으아, 읏, 하앗……♪」
             PRINTFORMW 둘이서 소중하게 개발한 그 장소로 마침내 교합했다.
             PRINTFORMW 「 이대로 마킹해 줘……자지의 냄새, 떨어지지 않게 될 때까지……」
@@ -5541,12 +5541,12 @@ IF TFLAG:0 > 0 && CFLAG:8009 == 0
     ;손가락 삽입인가 바이브로 처녀 상실(손가락 삽입는 반감이 꽤 적다)
     ELSEIF SELECTCOM == 4 || SELECTCOM == 12
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「 응∼, 상상하고 있던 것과 다릅니다. 틀림없이 처음은 자지로 하는 것이다와」
             PRINTFORMW 「  그렇지만 두렵지 않았으니까 좋았던 것일까……으응」
             PRINTFORMW 반응을 보는 한, 낙담과 안도가 반반이라고 하는 것 같다.
         ;굴복 각인 Lv3
-        ELSEIF MARK:2 == 3
+        ELSEIF MARK:굴복각인 == 3
             PRINTFORMW 「 …읏…! 큭, 하아…앗!」
             PRINTFORMW 모미지의 뺨에는 지나친 아픔으로 흘린 눈물의 자취가 줄기줄기 보인다.
         ;그 이외
@@ -5557,7 +5557,7 @@ IF TFLAG:0 > 0 && CFLAG:8009 == 0
     ;그 이외때에 처녀 상실(촉수로 상실하는 것은 연모 붙어도 쇼크 클 것 같다)
     ELSE
         ;굴복 각인 Lv3
-        IF MARK:2 == 3
+        IF MARK:굴복각인 == 3
             PRINTFORMW 「 …읏…! 큭, 하아…앗!」
             PRINTFORMW 모미지의 뺨에는 지나친 아픔으로 흘린 눈물의 자취가 줄기줄기 보인다.
         ;그 이외
@@ -5575,7 +5575,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:8 > 0
     ;봉사 정신 Lv2 이상
-    IF ABL:13 >= 2 && (CFLAG:9705 < 2 || FLAG:11 == 2)
+    IF ABL:봉사정신 >= 2 && (CFLAG:9705 < 2 || FLAG:11 == 2)
         IF RAND:2 == 0
             PRINTFORML 
             PRINTFORMW 모미지의 엉덩이의 골짜기로 향해 욕망을 털어 놓았다.
@@ -5605,14 +5605,14 @@ ENDIF
 ;섹스로 사정시킨 CFLAG8010 CFLAG8011
 ;-------------------------------------------------
 IF TFLAG:9 > 0 || TFLAG:10 > 0
-    ;어널 섹스
+    ;애널 섹스
     IF TFLAG:9 > 0
         ;연모
-        IF TALENT:150 && (CFLAG:8011 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:8011 <= 3 || FLAG:11 == 2)
             ;비디오 촬영중
             IF TEQUIP:50 == 1
                 ;인기
-                IF TALENT:94
+                IF TALENT:인기
                     PRINTFORML 
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 사정의 직전에 허리를 당겨, 얕은 곳에 정액을 토해냈다.
                     PRINTFORMW 모미지는 스스로 고육을 벌려서 넓히며, 닫히지 않는 구멍을 카메라에 드러낸다.
@@ -5645,7 +5645,7 @@ IF TFLAG:9 > 0 || TFLAG:10 > 0
                     PRINTFORML 
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 모미지의 장내에 사정했다.
                     PRINTFORML 정액과 장액으로 질퍽질퍽하게 된 구멍으로부터 물건을 빼내고
-                    PRINTFORMW 어널 섹스로 완전히 펼쳐진 모미지의 항문을 엄지로 벌려 장내를 관찰한다.
+                    PRINTFORMW 애널 섹스로 완전히 펼쳐진 모미지의 항문을 엄지로 벌려 장내를 관찰한다.
                     PRINTFORMW 「 아앗, 엉덩이 펼쳐져서, 지잉지잉 해요……」
                     PRINTFORML 항열의 여운에 잠겨 있던 모미지였지만
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"가")% 구멍안을 응시하고 있는 것을 깨닫자 당황해 손바닥으로 덮어 가렸다.
@@ -5663,7 +5663,7 @@ IF TFLAG:9 > 0 || TFLAG:10 > 0
             ENDIF
             CFLAG:8011 = 4
         ;굴복 각인 Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:8011 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:8011 <= 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 「 후아아……일순간 굵어져서, 그리고 퓨웃, 뜨거운 것이 왔습니다」
             PRINTFORMW 모미지는 펼쳐지고 있을 뿐의 항문을 드러낸 채 헛말과 같이 중얼거리고 있다.
@@ -5678,7 +5678,7 @@ IF TFLAG:9 > 0 || TFLAG:10 > 0
     ;통상의 섹스
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:8010 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:8010 <= 3 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 꿈틀 꿈틀과 떨리는 질에 짜 놓치도록(듯이) 욕망을 풀어 발했다.
             PRINTFORMW 「 정액, 정액, 아아아아♪」
@@ -5686,7 +5686,7 @@ IF TFLAG:9 > 0 || TFLAG:10 > 0
             PRINTFORMW 「 에헤헤, 안쪽까지 마킹 되어 버렸습니다……임신, 될까?」
             CFLAG:8010 = 4
         ;굴복 각인 Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:8010 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:8010 <= 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 「 사정될 때, 굵어지고, 퓨웃 해서, 머리, 녹아버려……」
             PRINTFORMW 모미지는 벌려진 채 있는 음순을 드러낸 채 헛말과 같이 중얼거리고 있다.
@@ -5709,7 +5709,7 @@ IF TFLAG:12 > 0
     ;자위 과시해 또는 조수주인자위공연
     IF SELECTCOM == 115 || SELECTCOM == 116
         ;연모
-        IF TALENT:150 && (CFLAG:9714 < 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9714 < 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 모미지의 얼굴에 정액을 털어 놓았다.
             PRINTFORMW 「 쯉……응∼」
@@ -5725,7 +5725,7 @@ IF TFLAG:12 > 0
     ;그 이외
     ELSE
         ;연모＋봉사 정신 Lv4 이상
-        IF TALENT:150 && ABL:13 >= 4 && (CFLAG:8012 < 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:봉사정신 >= 4 && (CFLAG:8012 < 4 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 모미지의 손 안에서 사정했다.
             PRINTFORMW 「 에헤헤, 많이 나왔어요」
@@ -5734,14 +5734,14 @@ IF TFLAG:12 > 0
             PRINTFORMW 사정 후의 여운을 방해 하지 않는 절묘한 손놀림이 매우 기분 좋다--
             CFLAG:8012 = 4
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:8012 < 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:8012 < 3 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 모미지의 손 안에서 사정했다.
             PRINTFORMW 「 이만큼 많이 나오면, 어쩐지 성취감이 있네요」
             PRINTFORMW 장대에 남은 잔재를 잡아당겨 짜내는 모미지는 매우 만족한 기분이었다.
             CFLAG:8012 = 3
         ;봉사 정신 Lv2 이상
-        ELSEIF ABL:13 >= 2 && (CFLAG:8012 < 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 2 && (CFLAG:8012 < 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 모미지의 손안에 사정했다.
             PRINTFORMW 「 응, 조금 패턴을 잡을 수 있는지도 모르겠네요」
@@ -5759,13 +5759,13 @@ ENDIF
 
 ;-------------------------------------------------
 ;쿠니로 사정시킨 CFLAG9724
-;어널 빨고 강제도 이것으로 분류되는 CFLAG9725
+;애널 빨고 강제도 이것으로 분류되는 CFLAG9725
 ;-------------------------------------------------
 IF TFLAG:13 > 0
     ;쿠니 강제
     IF SELECTCOM == 300
         ;봉사 정신 Lv2 이상
-        IF ABL:13 >= 2 && (CFLAG:9724 < 2 || FLAG:11 == 2)
+        IF ABL:봉사정신 >= 2 && (CFLAG:9724 < 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 음순을 계속 빠는 모미지의 머리에 정액이 뿌려졌다.
             PRINTFORMW 「 윽, 어째서 이런 곳에 내는 겁니까 ……」
@@ -5778,10 +5778,10 @@ IF TFLAG:13 > 0
             PRINTFORMW (우으으, 더러운 것이 머리 위에……)
             CFLAG:9724 = 1
         ENDIF
-    ;그 이외(어널 빨고 강제)
+    ;그 이외(애널 빨고 강제)
     ELSE
         ;연모＋순종 Lv5
-        IF TALENT:150 && ABL:10 >= 5 && (CFLAG:9725 < 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:순종 >= 5 && (CFLAG:9725 < 3 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 사정 직전에 모미지의 손바닥이 귀두를 감싸고, 그 속에 한계를 넘은 욕망이 토해내진다.
             PRINTFORMW 「 에헤헤, 엉덩이 실룩실룩 하고 있어요 」
@@ -5789,7 +5789,7 @@ IF TFLAG:13 > 0
             PRINTFORMW 끈기 있는 소리를 내며 주름의 한 개 한 개까지 정액이 듬뿍 발라져 간다--
             CFLAG:9725 = 3
         ;봉사 정신 Lv3 이상
-        ELSEIF ABL:13 >= 3 && (CFLAG:9725 < 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:9725 < 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 토해내진 욕망이 근처를 더럽혀 간다.
             PRINTFORMW 「 굉장해, 여기 만지작거리면 꽉 조이네……」
@@ -5814,14 +5814,14 @@ IF TFLAG:11 > 0 || TFLAG:29 > 0
     ;페라치오, 식스나인의 경우
     IF SELECTCOM == 41 || SELECTCOM == 602
         ;봉사 정신 Lv4 이상
-        IF ABL:13 >= 4 && (CFLAG:8013 < 3 || FLAG:11 == 2)
+        IF ABL:봉사정신 >= 4 && (CFLAG:8013 < 3 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 모미지의 입안에 사정했다.
             PRINTFORMW 「 으응!  응, 꿀꺽, 으응……가득 나왔어요」
             PRINTFORMW 눈을 치켜 뜨고 그렇게 속삭이는 모미지를 보며, %조사처리(CALLNAME:PLAYER,"는")% 하반신이 힘을 되찾는 것을 느꼈다.
             CFLAG:8013 = 3
         ;봉사 정신 Lv2 이상
-        ELSEIF ABL:13 >= 2 && (CFLAG:8013 < 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 2 && (CFLAG:8013 < 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 모미지의 입안에 사정했다.
             PRINTFORMW 「 응∼, 앙윽 아아에어」
@@ -5838,14 +5838,14 @@ IF TFLAG:11 > 0 || TFLAG:29 > 0
     ;이라마치오의 경우
     ELSEIF SELECTCOM == 230
         ;연모＋봉사 정신 Lv4 이상
-        IF TALENT:150 && ABL:13 >= 4 && (CFLAG:8230 < 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:봉사정신 >= 4 && (CFLAG:8230 < 3 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 모미지의 목구멍에 사정했다.
             PRINTFORMW 「 응, 으응!!」
             PRINTFORMW 「 으응, 응……하아, 맛있게 잘 먹었습니다♪」
             CFLAG:8230 = 3
         ;봉사 정신 Lv2 이상
-        ELSEIF ABL:13 >= 2 && (CFLAG:8230 < 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 2 && (CFLAG:8230 < 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW  %조사처리(CALLNAME:PLAYER,"는")% 모미지의 목구멍에 사정했다.
             PRINTFORMW 「 응, 으응!!」
@@ -5863,7 +5863,7 @@ IF TFLAG:11 > 0 || TFLAG:29 > 0
     ;파이즈리의 경우
     ELSEIF SELECTCOM == 42
         ;폭유
-        IF TALENT:113 && (CFLAG:8014 < 4 || FLAG:11 == 2)
+        IF TALENT:폭유 && (CFLAG:8014 < 4 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 장대부터 귀두까지 완전하게 가리는 모미지의 가슴 안에서 %조사처리(CALLNAME:PLAYER,"는")% 욕망을 풀어놓았다.
             PRINTFORML 사정된 대량의 정액은 한 방울도 골짜기를 빠지는 일 없이
@@ -5873,13 +5873,13 @@ IF TFLAG:11 > 0 || TFLAG:29 > 0
             PRINTFORMW 「 왓, 대단한 양……에헤헤」
             CFLAG:8014 = 4
         ;거유
-        ELSEIF TALENT:112 && (CFLAG:8014 < 3 || FLAG:11 == 2)
+        ELSEIF TALENT:거유 && (CFLAG:8014 < 3 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 골짜기로부터 귀두가 얼굴을 내민 순간, 그 끝에서 한계를 넘은 욕망이 토해내졌다.
             PRINTFORMW 「 아아, 퓨웃 했을 때, 맥박이, 대단했다……」
             CFLAG:8014 = 3
         ;봉사 정신 Lv2 이상
-        ELSEIF ABL:13 >= 2 && (CFLAG:8014 < 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 2 && (CFLAG:8014 < 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 「 아, 대단해……마찰한 곳이 빛나서, 음란한 느낌이」
             CFLAG:8014 = 2
@@ -5892,7 +5892,7 @@ IF TFLAG:11 > 0 || TFLAG:29 > 0
     ;세로 파이즈리의 경우
     ELSEIF SELECTCOM == 208
         ;폭유
-        IF TALENT:113 && (CFLAG:8208 < 2 || FLAG:11 == 2)
+        IF TALENT:폭유 && (CFLAG:8208 < 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 끝없는 깊이의 골짜기를 향해 한껏 허리를 내밀고, %조사처리(CALLNAME:PLAYER,"는")% 욕망을 내뿜었다.
             PRINTFORMW 「 아앗,  굉장해, 젖가슴 안에서 꿈틀꿈틀 해서, 아앗!」
@@ -5909,7 +5909,7 @@ IF TFLAG:11 > 0 || TFLAG:29 > 0
     ;파이즈리 페라의 경우
     ELSEIF SELECTCOM == 209
         ;폭유
-        IF TALENT:113 && (CFLAG:8209 < 3 || FLAG:11 == 2)
+        IF TALENT:폭유 && (CFLAG:8209 < 3 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 사정의 순간, 모미지의 폭유로 빨려들어가고 있던 육봉을 뽑아 냈다.
             PRINTFORMW 불기둥을 빨고 있던 혀에, 풍만한 유방에, 엷은 분홍색의 유두에 정액이 쏟아진다.
@@ -5918,7 +5918,7 @@ IF TFLAG:11 > 0 || TFLAG:29 > 0
             PRINTFORMW 모미지는 끈적끈적하게 된 가슴을 보면 만족한 기분이었다.
             CFLAG:8209 = 3
         ;거유
-        ELSEIF TALENT:112 && (CFLAG:8209 < 2 || FLAG:11 == 2)
+        ELSEIF TALENT:거유 && (CFLAG:8209 < 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 요도를 범하지 않고 요도구를 핥고 돌리는 분홍색의 혀를 향해 욕망을 털어 놓았다.
             PRINTFORMW 「 으응, 꿀꺽, 응……에헤헤, 젖가슴 어떻습니까?」
@@ -5940,7 +5940,7 @@ IF TFLAG:15 > 0
     ;봉사 정신 Lv2 이상
     ;※손은 더러워지지 않습니다. 단순한 연출입니다
     ;그리고 칭찬하는 것은 조수 조교에서도 주인
-    IF ABL:13 >= 2 && (CFLAG:9715 < 2 || FLAG:11 == 2)
+    IF ABL:봉사정신 >= 2 && (CFLAG:9715 < 2 || FLAG:11 == 2)
         PRINTFORML 
         PRINTFORMW %조사처리(CALLNAME:PLAYER,"가")% 토해낸 정액을 모미지가 오른손으로 받아 들인다.
         PRINTFORMW 「 능숙하게 할 수 있었는지요…?」
@@ -5961,7 +5961,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:19 > 0
     ;연모＋새디즘기분 Lv1 이상
-    IF TALENT:150 && ABL:20 >= 1 && (CFLAG:8019 <= 3 || FLAG:11 == 2)
+    IF TALENT:연모 && ABL:새드끼 >= 1 && (CFLAG:8019 <= 3 || FLAG:11 == 2)
         PRINTFORML 
         PRINTFORMW 하고 싶은 대로 발바닥으로 굴려진 %조사처리(CALLNAME:PLAYER,"는")% 어이없게 모미지의 다리에 사정했다.
         PRINTFORMW 「 이런 변태 자지라면 다리로도 낙승이군요, 에헤헤--」
@@ -5969,7 +5969,7 @@ IF TFLAG:19 > 0
         PRINTFORMW 평상시 모미지에게 요구하고 있는 것에 비교하면 별 것 아니라고 대답하자, 모미지의 뺨이 보는 동안에 붉어졌다.
         CFLAG:8019 = 4
     ;봉사 정신 Lv2 이상＋남자 또는 양성
-    ELSEIF ABL:13 >= 2 && (TALENT:120 || TALENT:121) && (CFLAG:8019 <= 2 || FLAG:11 == 2)
+    ELSEIF ABL:봉사정신 >= 2 && (TALENT:남자 || TALENT:후타나리) && (CFLAG:8019 <= 2 || FLAG:11 == 2)
         PRINTFORML 
         PRINTFORMW 「 히잇!?」
         PRINTFORMW 기세 좋게 토해내어 진 정액이 모미지의 페니스에 얽혀 붙었다.
@@ -5977,7 +5977,7 @@ IF TFLAG:19 > 0
         PRINTFORMW 모미지는 정액이 묻은 페니스를 부끄러운 듯이 보고 있었다.
         CFLAG:8019 = 3
     ;봉사 정신 Lv2 이상
-    ELSEIF ABL:13 >= 2 && (CFLAG:8019 <= 1 || FLAG:11 == 2)
+    ELSEIF ABL:봉사정신 >= 2 && (CFLAG:8019 <= 1 || FLAG:11 == 2)
         PRINTFORML 
         PRINTFORMW 「 히잇!?」
         PRINTFORMW 기세 좋게 토해내어 진 정액이 모미지의 비부에 쏟아졌다.
@@ -6001,14 +6001,14 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:22 > 0 && TFLAG:30 > 0
     ;연모
-    IF TALENT:150 && (CFLAG:8022 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8022 < 3 || FLAG:11 == 2)
         PRINTFORML 
         PRINTFORMW 동시에 토해내어 진 정액이 서로의 페니스를 더럽혀 간다.
         PRINTFORMW 「 하아, 함께 가 버렸군요……♪」
         PRINTFORMW 모미지는 페니스에 묻은 정액을 양손으로 발라 문지르고 있다.
         CFLAG:8022 = 3
     ;굴복 각인 Lv3 또는 사정 경험 5이상
-    ELSEIF (MARK:2 == 3 || EXP:3 >= 5) && (CFLAG:8022 < 2 || FLAG:11 == 2)
+    ELSEIF (MARK:굴복각인 == 3 || EXP:사정경험 >= 5) && (CFLAG:8022 < 2 || FLAG:11 == 2)
         PRINTFORML 
         PRINTFORMW 동시에 토해내어 진 정액이 서로의 페니스를 더럽혀 간다.
         PRINTFORMW 「 응, 아, 나온다……」
@@ -6026,9 +6026,9 @@ ENDIF
 ;요도로 사정시킨 CFLAG8023 CFLAG9720
 ;연모 또는 낙인 후만
 ;-------------------------------------------------
-IF TFLAG:23 > 0 && (TALENT:150 || TALENT:161)
+IF TFLAG:23 > 0 && (TALENT:연모 || TALENT:낙인)
     ;남자
-    IF TALENT:120
+    IF TALENT:남자
         IF CFLAG:8023 < 1 || FLAG:11 == 2
             ;모미지도 사정했다
             IF TFLAG:30 > 0
@@ -6070,7 +6070,7 @@ IF TFLAG:23 > 0 && (TALENT:150 || TALENT:161)
 ENDIF
 
 ;-------------------------------------------------
-;사정한(양성/남자만) CFLAG8015 질내사정 CFLAG9706 어널 질내사정 CFLAG9707 입안 방편 CFLAG9708
+;사정한(양성/남자만) CFLAG8015 질내사정 CFLAG9706 애널 질내사정 CFLAG9707 입안 방편 CFLAG9708
 ;CFLAG에 의한 기독관리를 던져 버리고 싶다…
 ;-------------------------------------------------
 IF TFLAG:30 > 0
@@ -6080,7 +6080,7 @@ SIF SELECTCOM == 52 || SELECTCOM == 146
     ;처음
     IF CFLAG:8015 == 0
         ;굴복 각인 Lv3
-        IF MARK:2 == 3
+        IF MARK:굴복각인 == 3
             PRINTFORML 
             PRINTFORMW 모미지의 페니스로부터 처음으로 정액이 방출 되었다.
             PRINTFORMW 「 아아앙, 자지 , 나와 , 나 남자가 되어 버려어어어엇!!」
@@ -6102,7 +6102,7 @@ SIF SELECTCOM == 52 || SELECTCOM == 146
             IF SELECTCOM == 25 || SELECTCOM == 307 || SELECTCOM == 323 || SELECTCOM == 324 || SELECTCOM == 325
                 ;서로 사랑함(즉 약속 후) 또한 주인에 의한 조교
                 ;실제의 곳주인은 임신하지 않는 것 같아서 분위기로 즐겨 주세요
-                IF TALENT:153 && ASSIPLAY == 0 && (CFLAG:9706 < 2 || FLAG:11 == 2)
+                IF TALENT:상애 && ASSIPLAY == 0 && (CFLAG:9706 < 2 || FLAG:11 == 2)
                     PRINTFORML 
                     PRINTFORMW 「 아, 아아, 간다앗, 가버려욧, 이대로 질내에에에!!」
                     PRINTFORMW 모미지의 허리가 떨리며, %CALLNAME:PLAYER%의 자궁을 목표로 정액이 나온다.
@@ -6120,10 +6120,10 @@ SIF SELECTCOM == 52 || SELECTCOM == 146
                     PRINTFORMW 질내에 낸 것 때문에 벌을 받을 것이라고 생각하고 있는 것일까.
                     CFLAG:9706 = 1
                 ENDIF
-            ;장내에서 사정했다(역어널 강간, 조수의 A를 범하게 하는, A 정상 위 시키는, A 후배위 시키는, A 기승위(여성상위) 한다)
+            ;장내에서 사정했다(역애널 강간, 조수의 A를 범하게 하는, A 정상 위 시키는, A 후배위 시키는, A 기승위(여성상위) 한다)
             ELSEIF SELECTCOM == 35 || SELECTCOM == 308 || SELECTCOM == 332 || SELECTCOM == 333 || SELECTCOM == 334
                 ;연모
-                IF TALENT:150 && (CFLAG:9707 < 2 || FLAG:11 == 2)
+                IF TALENT:연모 && (CFLAG:9707 < 2 || FLAG:11 == 2)
                     PRINTFORML 
                     PRINTFORMW 「 아, 아아, 간다앗, 가버려요옷, 이대로 엉덩이에에엣!!」
                     PRINTFORMW 모미지의 허리가 떨리며,%CALLNAME:PLAYER%의 직장에 정액이 쏟아진다.
@@ -6144,7 +6144,7 @@ SIF SELECTCOM == 52 || SELECTCOM == 146
         ;페라한다, 둘이서 페라하는, 파이즈리 페라하는 것으로 사정
         ELSEIF SELECTCOM == 5 || SELECTCOM == 331 || SELECTCOM == 335
             ;연모
-            IF TALENT:150 && (CFLAG:9708 < 2 || FLAG:11 == 2)
+            IF TALENT:연모 && (CFLAG:9708 < 2 || FLAG:11 == 2)
                 ;둘이서 페라
                 IF SELECTCOM == 331
                     PRINTFORML 
@@ -6165,7 +6165,7 @@ SIF SELECTCOM == 52 || SELECTCOM == 146
                 CFLAG:9708 = 1
             ENDIF
         ;연모＋스쿠미즈 사용중
-        ELSEIF TALENT:150 && TEQUIP:59 == 2 && (CFLAG:8015 <= 5 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && TEQUIP:59 == 2 && (CFLAG:8015 <= 5 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 모미지는 황홀한 표정으로 학교 수영복안에 사정했다.
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"가")% 계속해서 자극을 주자, 줄기에 남은 잔재가 분출해 얼룩을 넓혀 갔다.
@@ -6180,14 +6180,14 @@ SIF SELECTCOM == 52 || SELECTCOM == 146
             PRINTFORMW 모미지는 몹시 낭패하고 있다. 수영복을 더럽힌 것을 신경쓰고 있는 것일까.
             CFLAG:8015 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:8015 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:8015 <= 3 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 「 아앗,  아아앙, 자지 가버려어--응, 으응, 아앗, 나왔다……」
             PRINTFORMW 모미지는 일시적으로 축 늘어진 페니스를 애처로운 듯이 만지작거리고 있다.
             CFLAG:8015 = 4
         ;굴복 각인 Lv3 또는 사정 경험 5이상
         ;오나호 장착 그 중에서 표시되지만 관통형이나 반투명 뭐라(같다)고 생각하기로 해 도피한다
-        ELSEIF (MARK:2 == 3 || EXP:3 >= 5) && (CFLAG:8015 <= 2 || FLAG:11 == 2)
+        ELSEIF (MARK:굴복각인 == 3 || EXP:사정경험 >= 5) && (CFLAG:8015 <= 2 || FLAG:11 == 2)
             PRINTFORML 
             PRINTFORMW 「 응, 아, 나오고 있어……」
             PRINTFORMW 모미지는 부끄러운 듯이 자신의 사정을 관찰하고 있다.
@@ -6211,7 +6211,7 @@ IF TFLAG:31 > 0
     ;처음
     IF CFLAG:8016 == 0
         ;굴복 각인 Lv2 이상
-        IF MARK:2 >= 2
+        IF MARK:굴복각인 >= 2
             PRINTFORML 
             PRINTFORMW 「 아아, 뭔가, 온다, 우으으…읏!」
             PRINTFORMW 모미지의 유두로부터 기세 좋게 모유가 분출했다.
@@ -6229,11 +6229,11 @@ IF TFLAG:31 > 0
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:8016 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:8016 <= 3 || FLAG:11 == 2)
             ;주인에 의한 모유 마시는 것으로 분유
             IF SELECTCOM == 204 && ASSIPLAY == 0
                 ;폭유
-                IF TALENT:113
+                IF TALENT:폭유
                     PRINTFORML 
                     PRINTFORMW 충분히 분유반사가 안정된 것을 확인해 모미지가 유방을 내밀어 온다.
                     PRINTFORMW 「 예, 드세요」
@@ -6259,7 +6259,7 @@ IF TFLAG:31 > 0
             ENDIF
             CFLAG:8016 = 4
         ;굴복 각인 Lv2 이상
-        ELSEIF MARK:2 >= 2 && (CFLAG:8016 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 >= 2 && (CFLAG:8016 <= 2 || FLAG:11 == 2)
             ;주인에 의한 모유 마시는 것으로 분유
             IF SELECTCOM == 204 && ASSIPLAY == 0
                 PRINTFORML 
@@ -6295,7 +6295,7 @@ IF TFLAG:31 > 0
                 PRINTFORMW 「 가슴……나와버리면……안돼는데……」
                 PRINTFORMW 가슴으로부터 배꼽의 근처까지 모유가 얼룩을 만들고 있다.
             ;분유경험 5이상
-            ELSEIF EXP:5 >= 5
+            ELSEIF EXP:분유경험 >= 5
                 PRINTFORML 
                 PRINTFORMW 모유가 나온 순간 , 모미지는 당황해 손바닥으로 가슴을 숨겼다.
                 PRINTFORMW 「 으우우, 익숙해져도 부끄러운 것은 부끄럽습니다……」
@@ -6315,11 +6315,11 @@ ENDIF
 ;A감각 Lv5로 A절정 50이상 CFLAG8019
 ;체력 기력 강모미지나 촉수님 힘을 빌릴까 하지 않으면 꽤 조건에 닿지 않는 생각이 든다
 ;-------------------------------------------------
-IF ABL:2 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
+IF ABL:A감각 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
     ;처음
     IF CFLAG:8019 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「 엉덩이, 너무 가버려서엇, 무서워……아, 아, 또, 온다앗, 끄으으응…!」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 바라는 대로 개발된 항문으로, 모미지는 벌써 몇 번째인지도 모르는 절정을 맞이한다.
             PRINTFORMW 「 하아, 하아, 흣…응읏!  읏, 하아…하아…아…핫…」
@@ -6335,7 +6335,7 @@ IF ABL:2 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:8019 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:8019 <= 2 || FLAG:11 == 2)
             PRINTFORMW 「 엉덩이, 엉덩이 가버려, 응아아앗!!」
             PRINTFORMW 「 하앗, 갔다, 엉덩이 갔다아아……♪」
             PRINTFORMW 반쯤 감각이 없어지면서도 항열을 구하며, 솔직한 말을 계속 흘리고 있다.
@@ -6367,7 +6367,7 @@ SIF TEQUIP:42
 SIF TEQUIP:14 || TFLAG:899 > 0
     RETURN 0
 ;[정신 붕괴][꼭두각시]때에도 말을 스킵 한다(광기는 보통으로 말하거나 할 수 있으므로 보류)
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;--------------------------------------------------
 ;특정 조수, 주인시에 특수 조수 말을 호출한다(Y1를 특정 조수, 41을 주인의 캐릭터 번호에 치환)
@@ -6388,7 +6388,7 @@ SIF TALENT:167 || TALENT:168
 IF TFLAG:42 == 3 && CFLAG:8099 == 0
     ;연모
     ;이것도 보통으로 하고 있어 보는 것은 우선 없다(연모 앞에 굴복  3붙기 때문에)
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORML 
         PRINTFORMW 「 마음까지 단단히 묶인 느낌입니다」
         PRINTFORMW 「 떼어 놓지 말아 주세요. 좀더 좀더, 함께 하고 싶은 것이 많습니다」
@@ -6440,7 +6440,7 @@ IF TFLAG:200 == 140
     ELSE
         ;쓰면 쓸수록 모미지가 부서져 간다
         ;연모
-        IF TALENT:150 && (CFLAG:8140 < 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:8140 < 3 || FLAG:11 == 2)
             ;90%
             IF RAND:10 > 0
                 IF RAND:2 == 0
@@ -6457,7 +6457,7 @@ IF TFLAG:200 == 140
                 PRINTFORML 집중해서 빨고 있는 모미지를 밀쳐내고 화장실에 뛰어드는 것도 볼품이 사납겠지만
                 PRINTFORMW 그렇다고 해서 사정과 소변을 바꾸는 일 따위 할 수 도 없고…….
                 ;낙인
-                IF TALENT:161
+                IF TALENT:낙인
                     PRINTFORMW 「 으응……응…꿀꺽……」
                     PRINTFORMW 모미지는 목을 능숙하게 움직여, 흘러들어 오는 오줌을 흘리는 일 없이 삼켜 나간다.
                     PRINTFORMW 모두 삼키고 나서도 입을 떼어 놓지 않고, 혀를 움직이면서 눈을 치켜 뜨고 이쪽을 응시한다.
@@ -6488,7 +6488,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 141
     ;거유 또는 폭유
-    IF (TALENT:112 || TALENT:113) && (CFLAG:8141 < 2 || FLAG:11 == 2)
+    IF (TALENT:거유 || TALENT:폭유) && (CFLAG:8141 < 2 || FLAG:11 == 2)
         IF RAND:2 == 0
             PRINTFORMW 「 여기에 와서 제일 좋았던 것은, 이 젖가슴일지도 모르겠네∼」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 자신이 낳은 밑바닥 없는 골짜기에서 위안거리가 되었다--
@@ -6561,10 +6561,10 @@ IF TFLAG:200 == 145 && (CFLAG:8145 < 1 || FLAG:11 == 2)
         ELSE
             PRINTFORM 모미지는%조사처리(CALLNAME:MASTER,"를")% 알아차리자, 에이프런을 들어 올려
             ;양성
-            IF TALENT:121
+            IF TALENT:후타나리
                 PRINTFORMW 반 발기한 페니스를 향하여 온다.
             ;백보지
-            ELSEIF TALENT:65
+            ELSEIF TALENT:음모없음
                 PRINTFORMW 무모의 비부를 보여 온다.
             ;그 이외
             ELSE
@@ -6579,7 +6579,7 @@ IF TFLAG:200 == 145 && (CFLAG:8145 < 1 || FLAG:11 == 2)
     ELSE
         PRINTFORMW 「 앗, 안녕하세요-- 히얏, 응앗!?」
         ;거유 또는 폭유
-        IF TALENT:112 || TALENT:113
+        IF TALENT:거유 || TALENT:폭유
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 에이프런을 골짜기에 파묻고 넘쳐 흘러 나온 풍만한 젖을 주물렀다.
         ;보통젖이하
         ELSE
@@ -6590,7 +6590,7 @@ IF TFLAG:200 == 145 && (CFLAG:8145 < 1 || FLAG:11 == 2)
 ENDIF
 
 ;-------------------------------------------------
-;아침 기승위(여성상위) 어널 CFLAG8147
+;아침 기승위(여성상위) 애널 CFLAG8147
 ;전제：주인이 조리 아이 붙어, 대상이 남자로 욕망 봉사 정신 4이상 정액 중독 1이상 또한 A경험 있어
 ;또는 주인이 조리 아이 붙어, 대상이 여자로 욕망 봉사 정신 4이상 정액 중독 1이상 또한 A감각 3이상(그 밖에도 패턴 있지만 아마 이것이 제일 채우기 쉽다)
 ;-------------------------------------------------
@@ -6613,7 +6613,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 150
     ;연모 또는 V감각 Lv3 이상
-    IF (TALENT:150 || ABL:1 >= 3) && (CFLAG:8150 < 2 || FLAG:11 == 2)
+    IF (TALENT:연모 || ABL:V감각 >= 3) && (CFLAG:8150 < 2 || FLAG:11 == 2)
         PRINTFORMW 「 앗, 아핫, 좀 더, 각도 틀어서, 아앗,  거기, 거기에요오♪」
         CFLAG:8150 = 2
     ;그 이외
@@ -6628,12 +6628,12 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 151
     ;연모
-    IF TALENT:150 && (CFLAG:8151 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8151 < 3 || FLAG:11 == 2)
         PRINTFORMW 「 괴로워, 참을 수 없어……」
         PRINTFORMW %조사처리(CALLNAME:MASTER,"를")% 생각한 행위는 그녀가 완전히 지쳐 버릴 때까지 계속되었다.
         CFLAG:8151 = 3
     ;자위 중독 Lv1 이상
-    ELSEIF ABL:30 >= 1 && (CFLAG:8151 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:자위중독 >= 1 && (CFLAG:8151 < 2 || FLAG:11 == 2)
         PRINTFORMW 「 핫, 아아앙, 머리, 바, 보가, 아……후아아앗!」
         PRINTFORMW %CALLNAME:MASTER%의 귀에 막 들린 교성으로부터는, 평시의 조신함은 조금도 느껴지지 않는다.
         CFLAG:8151 = 2
@@ -6653,7 +6653,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 152
     ;연모＋A감각 Lv3 이상 또는 자위 중독 Lv1 이상
-    IF TALENT:150 && (ABL:2 >= 3 || ABL:30 >= 1) && (CFLAG:8152 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (ABL:A감각 >= 3 || ABL:자위중독 >= 1) && (CFLAG:8152 < 3 || FLAG:11 == 2)
         IF RAND:3 == 0
             PRINTFORMW 「 아앗,  엉덩이, 앗, 간다, 가버…려엇!」
             PRINTFORMW 모미지는 중지를 직장에 묻은 채로 몸을 진동시켰다.
@@ -6667,7 +6667,7 @@ IF TFLAG:200 == 152
         ENDIF
         CFLAG:8152 = 3
     ;A감각 Lv3 이상 또는 자위 중독 Lv1 이상
-    ELSEIF (ABL:2 >= 3 || ABL:30 >= 1) && (CFLAG:8152 < 2 || FLAG:11 == 2)
+    ELSEIF (ABL:A감각 >= 3 || ABL:자위중독 >= 1) && (CFLAG:8152 < 2 || FLAG:11 == 2)
         PRINTFORMW 「 엉덩이, 쿳, 으응…!」
         PRINTFORMW (아아, 엉덩이로 하는 게 버릇이 되어 버렸는지도……)
         CFLAG:8152 = 2
@@ -6715,13 +6715,13 @@ IF TFLAG:200 == 320
         ENDIF
     ELSEIF TFLAG:99 > 0
         ;절벽→작은 가슴
-        IF TALENT:111
+        IF TALENT:빈유
             PRINTFORML 
             PRINTFORMW 「 조금 더 컸던것 같은데……우으으, 나의 욕심일까…?」
             PRINTFORMW 옆에서 봐도 원래보다 작았지만 재미있기 때문에 입다물어 두자.
         ;거유→폭유
         ;나의 원더풀 보디를 맛봐라
-        ELSEIF TALENT:113
+        ELSEIF TALENT:폭유
             PRINTFORML 
             PRINTFORMW (미, 믿을 수 없어. 꿈에서까지 본 언더풀 보디가 팔 안에……)
             PRINTFORMW (……정말로 꿈이 아니겠지요? )
@@ -6729,7 +6729,7 @@ IF TFLAG:200 == 320
             PRINTFORMW 「 저기, 손대 볼까요?」
             PRINTFORMW 본인은 평정을 가장하고 있을 생각이지만, 그 뺨은 확실하게 느슨해지고 있었다.
         ;보통젖→거유
-        ELSEIF TALENT:112
+        ELSEIF TALENT:거유
             PRINTFORML 
             PRINTFORMW 「 이런, 꿈 같은 약이 존재하다니……」
             PRINTFORMW 모미지는 입체감이 늘어난 가슴을 확인하듯이 양손을 움직이고 있다.
@@ -6773,7 +6773,7 @@ IF TFLAG:200 == 104
     PRINTFORMW 「 응, 뭔가요 이것?」
     PRINTFORMW 모미지는%CALLNAME:MASTER%로부터 건네받은 잡지에 시선을 떨어뜨린다.
     PRINTFORMW 「 이건, 예전에 촬영한 비디오 아닙니까. 우와, 그 밖에도 실리고 있어…」
-    SIF TALENT:150
+    SIF TALENT:연모
     PRINTFORMW 「 왠지 수줍네요, 에헤헤……」
     PRINTFORML 
 ENDIF
@@ -6789,13 +6789,13 @@ IF TFLAG:200 == 110
     ;성공
     ELSEIF TFLAG:99 == 1
         ;니프르피아스
-        IF CFLAG:42 & 32
+        IF CFLAG:특수장비 & 32
             PRINTFORMW 무대에서 내려온 모미지가 방울 소리를 울리며%CALLNAME:MASTER%에게 달려 온다.
             PRINTFORMW 기세좋게 달라붙은 모미지의 유두는 옷감 너머로도 알 수 있을만큼 솟아 있었다.
             PRINTFORMW 「 댄스내내, 피어스가 스쳐서…근처의 손님에게 보여져 버렸을지도……」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 포상으로 모미지가 만족할 때까지 발기한 유두를 꾸욱하고 애무해 준다--
         ;인기 있어
-        ELSEIF TALENT:94
+        ELSEIF TALENT:인기
             PRINTFORMW 무대에서 내려온 모미지가%CALLNAME:MASTER%에게 달려 온다.
             PRINTFORMW 「 에헤헤, 완벽했어요」
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 수고의 말과 함께 모미지의 머리를 한껏 쓰다듬었다--
@@ -6819,25 +6819,25 @@ IF TFLAG:200 == 130
     ;개구리의 키는 쓰면(자) 헐의 이야기를 하고 싶어하는 사람의 얼굴이 조금씩 날린다. 헐의 이야기를 하자
     ;에덴즈보이의 애니메이션, 중반 gdgd였지만 생각보다는 즐겁게 보고 있었습니다
     ;속편의 노벨 2권이나 읽었어!  원작 읽지 못한데!
-    IF MARK:9 == 3
+    IF MARK:반발각인 == 3
         PRINTFORMW 「 ……듣는 바에 의하면 삼도천은 살아 있을때 하는 일에 따라 무한하게 넓어진다고 하네요」
         PRINTFORMW 「 당신이 받을껀 진흙배나, 뭐 개구리 정도겠지요」
         PRINTFORMW 「 당장 가라앉아, 영원히 물밑에 있는 편이 세상에도 이득이에요」
     ;음란
     ;우선 순위는 개발 난도가 높은 순서(U>A>V>B>C)
-    ELSEIF TALENT:170
+    ELSEIF TALENT:음란
         PRINTFORMW 매각이 정해진 모미지에게 선물로서 미약을 잔뜩 발라 준다.
         PRINTFORM 특히 성감 개발에 힘을 쏟았다
-        IF EXP:46 >= 50
+        IF EXP:요도개발경험 >= 50
             PRINTFORM 요도
-        ELSEIF ABL:2 >= 5
+        ELSEIF ABL:A감각 >= 5
             PRINTFORM 항문
-        ELSEIF ABL:1 >= 5 && TALENT:120 == 0
+        ELSEIF ABL:V감각 >= 5 && TALENT:남자 == 0
             PRINTFORM 보지
-        ELSEIF ABL:3 >= 5
+        ELSEIF ABL:B감각 >= 5
             PRINTFORM 유두
-        ELSEIF ABL:0 >= 5
-            IF TALENT:120 || TALENT:121
+        ELSEIF ABL:C감각 >= 5
+            IF TALENT:남자 || TALENT:후타나리
                 PRINTFORM 페니스
             ELSE
                 PRINTFORM 음핵
@@ -6850,14 +6850,14 @@ IF TFLAG:200 == 130
         PRINTFORML 
         PRINTFORMW 잠시 후, 모미지를 받으러 온 고객은 모미지를 보고 꿀꺽 침을 삼킨다.
         PRINTFORM 미약에 의해 나타난
-        SIF TALENT:120 == 0
+        SIF TALENT:남자 == 0
         PRINTFORM 암컷의
         PRINTFORMW 음란한 냄새와 총애를 요구하는 젖은 눈동자.
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 고객에게 여기서 맛을 보라고 말한 후 방을 뒤로 했다.
         PRINTFORMW 복도를 걷는%CALLNAME:MASTER%의 귀에 모미지의 희열의 목소리가 들린다--
     ;연모
     ;처음은 분명하게 모미지의 대사 쓰고 있었는데 퇴고 하고 있어 스스로 울어 아레나나뭇결상태가 되었으므로 멈추었다
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 한계였다. 이 이상 함께 생활을 한다면 정을 억제할 수 없게 되겠지.
         PRINTFORMW 나는 조교사고, 그녀는 노예다. 그것을 잊으면 안 된다.
         PRINTFORMW 지금은 이제 복도에도, 부엌에도, 화장실에도, 조교실에도, 집의 어디에도 그녀는 없다.
@@ -6936,7 +6936,7 @@ RETURN 0
 @SINGLE_ENDING_K41
 
 ;음고
-IF TALENT:173
+IF TALENT:음고
 PRINTFORML …………
 PRINTFORML ………
 PRINTFORMW ……
@@ -6982,14 +6982,14 @@ PRINTFORMW 욕정의 발단이 된 음란한 엉딩이로 물건을 사이에 �
 PRINTFORMW 「 심술, 쟁이……나도 참고 있었기 때문에, 갖고 싶은데……」
 PRINTFORMW 모미지는 안타까운 소리로 삽입을 간절히 원해 온다.
 PRINTFORML 더 이상 초조하게 할 만큼의 여유가 없어지고 있던%CALLNAME:MASTER%는
-IF TALENT:120
+IF TALENT:남자
     PRINTFORMW 붉어져 걸린 항문을 혀 끝으로 한껏 빨고 풀어 거기에 육봉을 꽂았다.
 ELSE
     PRINTFORMW 비부로부터 방울져 떨어지는 애액을 떠올려 취해 볼록하게 부풀어 오른 항문에 삽입했다.
 ENDIF
 PRINTFORML 「 응히아아아아! !  굉장해! ! 오래간만이라서 더 굉장해요오! !」
 PRINTFORMW 「 엉덩이 섹스! ! 엉덩이 섹스 좋아아아! !」
-SIF TALENT:120 == 0
+SIF TALENT:남자 == 0
 PRINTFORMW 「 밖에서 엉덩이 섹스 하고 있어 !  아이 만들기가 아닌 섹스 해에에 ! ! 」
 PRINTFORMW 고여 있던 곳에서 강렬한 억압으로, %조사처리(CALLNAME:MASTER,"는")% 견디지 못하고 첫 번째의 사정을 한다.
 PRINTFORMW 「 아아, 사정- 했다아……응아앗 ! ? 」
@@ -7014,8 +7014,8 @@ PRINTFORMW 「 아, 그래도, 제데로 밤 쪽의 일도 노력해요 ♪」
 PRINTFORMW ……기우였으면 했다.
 PRINTFORML 
 PRINTFORMW 　　　　　　　　―― Ending No. 1041 (모미지의 엉덩이를 좋아하는 사람 엔딩)
-;만약을 위해 어널 섹스 실행 판정용 CFLAG를 ON에
-;이 이후 어널 섹스계 첫회 말이 나오지 않게 될 것
+;만약을 위해 애널 섹스 실행 판정용 CFLAG를 ON에
+;이 이후 애널 섹스계 첫회 말이 나오지 않게 될 것
 CFLAG:9700 = 1
 
 ;그 이외
@@ -7075,7 +7075,7 @@ RETURN 0
 ;-------------------------------------------------
 @SLAVE_ENDING_K41
 ;폭유＋음유
-IF TALENT:113 && TALENT:174
+IF TALENT:폭유 && TALENT:음유
 PRINTFORML …………
 PRINTFORML ………
 PRINTFORMW ……
@@ -7111,7 +7111,7 @@ PRINTFORMW 　　　　　　　　―― Ending No. 1041 (모미지유혈 노�
 ELSE
     ;남자
     ;따로 들여다 보는 것 남자 아이 이라도 좋지 않을까라고 쓰고 나서 생각했다. 핫텐장, 요괴의 산에 어서 오세요
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORML …………
         PRINTFORML ………
         PRINTFORMW ……
@@ -7148,7 +7148,7 @@ ELSE
         PRINTFORMW 「 아하, 아…♪」
         PRINTFORMW 모미지는 %CALLNAME:MASTER%에게 등을 맡기면서 M자로 다리를 벌려 허리를 움직이기 시작했다.
         PRINTFORM 「 에헤헤,
-        SIF TALENT:MASTER:120
+        SIF TALENT:MASTER:남자
         PRINTFORM 남자끼리의
         PRINTFORMW 섹스 보며, 거길 만지작거리고 있다. 음란한 아이……」
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지에게 가는 얼굴도 보여 주라고 귓속말해, 허리를 찔러 올린다.
@@ -7162,7 +7162,7 @@ ELSE
         PRINTFORMW 또 한 사람 더 구입해서 3P를 하는 것도 즐거울 것 같다, 라고--
         PRINTFORML 
         PRINTFORMW 　　　　　　　　―― Ending No. 1041 (두근! 남자투성이의 야외 플레이 그쪽엔딩)
-        ;이 이후 어널 섹스계 첫회 말이 나오지 않게 된다
+        ;이 이후 애널 섹스계 첫회 말이 나오지 않게 된다
         CFLAG:9700 = 1
     ;그 이외
     ELSE
@@ -7189,7 +7189,7 @@ ELSE
         PRINTFORMW 「 자지 누르면서, 보고 있네……」
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지에게 방향을 묻고, 모미지의 다리를 안아서 그 쪽으로 허벅지를 열게 한다.
         ;처녀(재생에서도 가능)
-        IF TALENT:0
+        IF TALENT:처녀
             PRINTFORMW 모미지도 의도를 헤아렸는지, 자신의 손가락을 타액으로 적셔 자위를 시작했다.
         ELSE
             PRINTFORMW 모미지도 의도를 헤아렸는지, 자신의 손가락으로 음순을 벌려 노출 자위를 시작했다.
@@ -7203,7 +7203,7 @@ ELSE
         PRINTFORMW 이윽고 한계까지 부풀어 오른 육봉으로부터 입을 떼어 놓아, 모미지는 조금 전의 텐구의 모습을 엿본다.
         PRINTFORMW 「 에에, 또…에헤헷, 아직 보고있네요. 실전도 보여 줄까요?」
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지의 제안에 수긍해, 나무의 뿌리를 의자로 앉아 무릎 위로 모미지에게 손짓 했다.
-        IF TALENT:0
+        IF TALENT:처녀
             PRINTFORMW 여자 아이를 안듯이 하고 모미지가 앉아, 항문으로 육봉을 삼켜 간다.
         ELSE
             PRINTFORMW 여자 아이를 안듯이 하고 모미지가 앉아, 꿀 단지로 육봉을 삼켜 간다.
@@ -7215,7 +7215,7 @@ ELSE
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 모미지에게 가는 얼굴도 보여 주라고 귀띔해, 허리를 밀어 올린다.
         PRINTFORMW 「 네, 네에…가는 얼굴 보여 줄게요, 그 아이의 빈찬이 될게욧……」
         PRINTFORMW 모미지의 움직임이 격렬해져, 사정 욕구를 맹렬하게 자극한다.
-        IF TALENT:0
+        IF TALENT:처녀
             PRINTFORMW 「아아아아, 핫, 아, 갓！ 엉덩이로 가는거 보여지고 있어어어！！」
         ELSE
             PRINTFORMW 「아아아아, 핫, 아, 갓！ 보지로 가는거 보여지고 있어어어！！」
@@ -7233,8 +7233,8 @@ ELSE
         PRINTFORMW 밤엔 그걸 재료로 해 매도해 주자.아아, 내일이 기다려진다…….
         PRINTFORML 
         PRINTFORMW 　　　　　　　　―― Ending No. 1041 (산의 딸감 엔딩)
-        ;처녀의 경우 어널 섹스 첫회 플래그 세운다
-        IF TALENT:0
+        ;처녀의 경우 애널 섹스 첫회 플래그 세운다
+        IF TALENT:처녀
             CFLAG:9700 = 1
         ENDIF
     ENDIF

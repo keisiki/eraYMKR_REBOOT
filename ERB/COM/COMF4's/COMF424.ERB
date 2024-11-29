@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:424 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;조교자가 萃香または勇儀, 若しくは조교 대상이 萃香または勇儀でないとダメ
 IF NO:TARGET != 23 && NO:TARGET != 60
@@ -17,30 +17,30 @@ IF NO:TARGET != 23 && NO:TARGET != 60
         RETURN 0
 ENDIF
 ;性器が汚れているとMASTERの場合はできない(조교자가 汚れ無視か愛液, 母乳のよごれならＯＫ)
-SIF STAIN:3 >= 2 && (STAIN:3 != 16 && STAIN:3 != 17) && ASSIPLAY == 0 && TALENT:MASTER:64 == 0
+SIF STAIN:보지 >= 2 && (STAIN:보지 != 16 && STAIN:보지 != 17) && ASSIPLAY == 0 && TALENT:MASTER:불결무시 == 0
     RETURN 0
 ;性器が汚れており, 汚臭敏感で순종4미만의 ASSI일 경우はできない(조교자가 汚れ無視か愛液, 母乳のよごれならＯＫ)
-IF STAIN:3 >= 2 && (STAIN:3 != 16 && STAIN:3 != 17) && ASSIPLAY
-    SIF ABL:ASSI:10 <= 3 && TALENT:ASSI:62 && TALENT:ASSI:64 == 0
+IF STAIN:보지 >= 2 && (STAIN:보지 != 16 && STAIN:보지 != 17) && ASSIPLAY
+    SIF ABL:ASSI:순종 <= 3 && TALENT:ASSI:냄새민감 && TALENT:ASSI:불결무시 == 0
         RETURN 0
 ENDIF
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 조교자가 汚れ無視もしくは汚臭鈍感を持たないなら実行できない
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;[작은체형]の場合, 巨乳か爆乳じゃないとダメ
-SIF TALENT:128 && TALENT:111 == 0 && TALENT:112 == 0
+SIF TALENT:작은체형 && TALENT:빈유 == 0 && TALENT:거유 == 0
     RETURN 0
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;Ｖ계 장착구使用中のときは기교가 4이상 없으면 안 됨
-SIF TEQUIP:20 && ABL:PLAYER:12 < 4
+SIF TEQUIP:20 && ABL:PLAYER:기교 < 4
     RETURN 0
 ;쿠스코 채웠으면 불가
 SIF TEQUIP:21
     RETURN 0
 ;縄で緊縛中または대상의 순종이 3이상 없으면 안 됨
-SIF TEQUIP:40 && ABL:10 < 2
+SIF TEQUIP:40 && ABL:순종 < 2
     RETURN 0
 ;거미집에 걸려 있을 때는 불가
 SIF TEQUIP:40 == 7
@@ -88,15 +88,15 @@ TFLAG:201 = 0
 ;-------------------------------------------------
 ;소스의 계산
 ;-------------------------------------------------
-IF FLAG:14 & 8
+IF FLAG:조교모드 & 8
     PRINTL 어디를 사용할까?
-    SIF TALENT:112 || TALENT:113
+    SIF TALENT:거유 || TALENT:폭유
         PRINTL [0] - 가슴
     PRINTL [1] - 가랑이(정좌)
     PRINTL [2] - 가랑이
     $INPUT_LOOP
     INPUT
-    IF RESULT == 0 && (TALENT:112 || TALENT:113)
+    IF RESULT == 0 && (TALENT:거유 || TALENT:폭유)
         LOCAL:1 = 0
     ELSEIF RESULT == 1 || RESULT == 2
         LOCAL:1 = RESULT
@@ -111,7 +111,7 @@ TFLAG:201 = LOCAL:1
 CALL TRAIN_MESSAGE_COM424
 
 DOWNBASE:0 += 20
-DOWNBASE:1 += 60
+DOWNBASE:기력 += 60
 
 SOURCE:19 = 5000
 SOURCE:18 = 1000
@@ -124,48 +124,48 @@ IF LOCAL:1 == 1
     TIMES SOURCE:22 , 1.30
 ENDIF
 
-IF (TALENT:112 || TALENT:113) && LOCAL:1 == 0
+IF (TALENT:거유 || TALENT:폭유) && LOCAL:1 == 0
     ;ABL:B감각을 본다
-    IF ABL:3 == 0
+    IF ABL:B감각 == 0
         SOURCE:3 = 75
-    ELSEIF ABL:3 == 1
+    ELSEIF ABL:B감각 == 1
         SOURCE:3 = 150
-    ELSEIF ABL:3 == 2
+    ELSEIF ABL:B감각 == 2
         SOURCE:3 = 450
-    ELSEIF ABL:3 == 3
+    ELSEIF ABL:B감각 == 3
         SOURCE:3 = 900
-    ELSEIF ABL:3 == 4
+    ELSEIF ABL:B감각 == 4
         SOURCE:3 = 1700
     ELSE
         SOURCE:3 = 2600
     ENDIF
     
     ;B민감, 둔감을 본다
-    IF TALENT:106
+    IF TALENT:B민감
         TIMES SOURCE:3 , 1.50
-    ELSEIF TALENT:107
+    ELSEIF TALENT:B둔감
         TIMES SOURCE:3 , 0.60
     ENDIF
 ELSE
     ;ABL:C감각을 본다
-    IF ABL:0 == 0
+    IF ABL:C감각 == 0
         SOURCE:0 = 100
-    ELSEIF ABL:0 == 1
+    ELSEIF ABL:C감각 == 1
         SOURCE:0 = 250
-    ELSEIF ABL:0 == 2
+    ELSEIF ABL:C감각 == 2
         SOURCE:0 = 500
-    ELSEIF ABL:0 == 3
+    ELSEIF ABL:C감각 == 3
         SOURCE:0 = 1000
-    ELSEIF ABL:0 == 4
+    ELSEIF ABL:C감각 == 4
         SOURCE:0 = 1800
     ELSE
         SOURCE:0 = 2900
     ENDIF
     
     ;C민감, 둔감을 본다
-    IF TALENT:100
+    IF TALENT:C민감
         TIMES SOURCE:0 , 1.50
-    ELSEIF TALENT:101
+    ELSEIF TALENT:C둔감
         TIMES SOURCE:0 , 0.60
     ENDIF
 ENDIF
@@ -189,29 +189,29 @@ ELSE
 ENDIF
 
 ;프라이드 높다
-SIF TALENT:16
+SIF TALENT:프라이드가높음
     SOURCE:22 /= 2
 ;보수적
-SIF TALENT:24
+SIF TALENT:보수적
     SOURCE:22 /= 3
 ;약에 들어 있는 독 내성
-SIF TALENT:44
+SIF TALENT:약물내성
     SOURCE:18 /= 4
 
-IF (TALENT:112 == 0 && TALENT:113 == 0) || LOCAL:1 > 0
+IF (TALENT:거유 == 0 && TALENT:폭유 == 0) || LOCAL:1 > 0
     SIF PLAYER == MASTER
         TCVAR:41 += 1
     ;노예의 V⇔조교자의 입의 불결이 이동
-    STAIN:3 |= STAIN:PLAYER:0
-    STAIN:PLAYER:0 |= STAIN:3
+    STAIN:보지 |= STAIN:PLAYER:입
+    STAIN:PLAYER:입 |= STAIN:보지
 ENDIF
 
 ;취기가 돈다(피부 흡수……는 무리하게인가? )
 SOURCE:40 += 100
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -222,20 +222,20 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM424
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
-IF (TALENT:112 || TALENT:113) && TFLAG:201 == 0
+IF (TALENT:거유 || TALENT:폭유) && TFLAG:201 == 0
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 풍부한 가슴을
     PRINTFORML 껴안도록 명령하고, 가슴의 구덩이에 술을 부어 넣었다.
     PRINTFORMW 술의 자극인가 %CALLNAME:TARGET%의 얼굴은 은은한 다홍색을 띄고 있다….
     PRINTL
     PRINTL
     PRINTFORM 충분히 술이 차 올랐을 무렵, %조사선택(CALLNAME:PLAYER, "는")% 
-    IF TALENT:134 && EX:10 && PALAM:10 >= PALAMLV:5
+    IF TALENT:모유체질 && EX:10 && PALAM:10 >= PALAMLV:5
         PRINTFORML %CALLNAME:TARGET%의 타액과 모유가 섞인 술을
-    ELSEIF TALENT:134 && EX:10
+    ELSEIF TALENT:모유체질 && EX:10
         PRINTL 모유가 섞여, 부드러운 맛이 된 술을
     ELSEIF PALAM:10 >= PALAMLV:5
         PRINTFORML %CALLNAME:TARGET%의 타액이 충분히 섞인 술을

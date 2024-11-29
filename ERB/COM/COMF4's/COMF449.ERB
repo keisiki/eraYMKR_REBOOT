@@ -9,22 +9,22 @@
 SIF DITEMTYPE:999:449 > 0
     RETURN 0
 ;조교자奉仕 · ウフフ系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 2048) == 0
+SIF (FLAG:커맨드확장 & 2048) == 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;対象, または조교자가 衣玖さんでないとダメ
 SIF NO:TARGET != 51 && NO:PLAYER != 51
     RETURN 0
 ;조교자가 主人か[恋慕]か奉仕경험Lv3이상이 아니면 불가
-SIF ASSIPLAY && TALENT:PLAYER:150 == 0 && ABL:PLAYER:13 < 3
+SIF ASSIPLAY && TALENT:PLAYER:연모 == 0 && ABL:PLAYER:봉사정신 < 3
     RETURN 0
 ;조교자가 [精神崩壊], [傀儡]だとダメ
-SIF TALENT:PLAYER:167 || TALENT:PLAYER:168
+SIF TALENT:PLAYER:정신붕괴 || TALENT:PLAYER:괴뢰
     RETURN 0
 ;조교 대상이 [精神崩壊], [傀儡]だとダメ
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -57,7 +57,7 @@ CALL TRAIN_MESSAGE_COM449
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 5
-DOWNBASE:1 += 45
+DOWNBASE:기력 += 45
 
 IF TFLAG:143 > 10
     SOURCE:31 = (TFLAG:143 - 10) * 10
@@ -68,26 +68,26 @@ ENDIF
 ;역피버!
 IF NO:TARGET == 51
     ;ABL:노출벽을 본다
-    IF ABL:14 == 0
+    IF ABL:노출증 == 0
         SOURCE:12 = 500
         SOURCE:25 = 400
         SOURCE:31 += 100
         SOURCE:32 = 250
-    ELSEIF ABL:14 == 1
+    ELSEIF ABL:노출증 == 1
         SOURCE:12 = 250
         SOURCE:25 = 50
         SOURCE:31 += 50
         SOURCE:32 = 100
-    ELSEIF ABL:14 == 2
+    ELSEIF ABL:노출증 == 2
         SOURCE:12 = 150
         SOURCE:25 = 10
         SOURCE:31 += 25
         SOURCE:32 = 50
-    ELSEIF ABL:14 == 3
+    ELSEIF ABL:노출증 == 3
         SOURCE:12 = 75
         SOURCE:31 += 10
         SOURCE:32 = 25
-    ELSEIF ABL:14 == 4
+    ELSEIF ABL:노출증 == 4
         SOURCE:12 = 50
     ELSE
         SOURCE:12 = 250
@@ -95,19 +95,19 @@ IF NO:TARGET == 51
 ;것 폰의 피버!
 ELSEIF NO:PLAYER == 51
     ;ABL:봉사 정신을 본다
-    IF ABL:13 == 0
+    IF ABL:봉사정신 == 0
         SOURCE:11 = 10
         SOURCE:16 = 10
-    ELSEIF ABL:13 == 1
+    ELSEIF ABL:봉사정신 == 1
         SOURCE:11 = 25
         SOURCE:16 = 20
-    ELSEIF ABL:13 == 2
+    ELSEIF ABL:봉사정신 == 2
         SOURCE:11 = 50
         SOURCE:16 = 40
-    ELSEIF ABL:13 == 3
+    ELSEIF ABL:봉사정신 == 3
         SOURCE:11 = 75
         SOURCE:16 = 60
-    ELSEIF ABL:13 == 4
+    ELSEIF ABL:봉사정신 == 4
         SOURCE:11 = 100
         SOURCE:16 = 80
     ELSE
@@ -132,7 +132,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM449
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

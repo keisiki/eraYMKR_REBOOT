@@ -3,14 +3,14 @@
 ;=============================================================================
 @ABLUP12
 DRAWLINE
-SIF ABL:12 >= 5
+SIF ABL:기교 >= 5
     JUMP ABLUP_MAX
 
 PRINTFORM [0] - %PALAMNAME:11%의 구슬×{COST12(0)}……
 CALL SHOW_ISABLUP_COMMON, CAN12(0)
 
 ;サドっ気が3이상だと先導의 구슬でも上昇させることができる
-IF ABL:20 >= 3
+IF ABL:새드끼 >= 3
     PRINTFORM [1] - %PALAMNAME:11%의 구슬×{COST12(1)}, %PALAMNAME:32%의 구슬×{COST12(0)}……
     CALL SHOW_ISABLUP_COMMON, CAN12(1)
 ENDIF
@@ -32,8 +32,8 @@ ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-ABL:12 += 1
-PRINTFORMW %ABLNAME:12%의 레벨이 %조사처리(TOSTR(ABL:12),"가")% 되었습니다.
+ABL:기교 += 1
+PRINTFORMW %ABLNAME:12%의 레벨이 %조사처리(TOSTR(ABL:기교),"가")% 되었습니다.
 
 @AUTO_ABLUP12
 #LOCALSIZE 1
@@ -47,14 +47,14 @@ ELSE
     RETURN 0
 ENDIF
 
-ABL:12 += 1
+ABL:기교 += 1
 RETURN 1
 
 ;--------------------------------------------------
 ;レベルアップに必要な珠計算、レベルアップ予告処理
 ;--------------------------------------------------
 @ISABLUP12
-SIF ABL:12 >= 5
+SIF ABL:기교 >= 5
     RETURN 0
 
 CALLF CALC_COST12, "CALC"
@@ -73,29 +73,29 @@ SIF ARGS == "GET"
 ;必要な条件の算出
 VARSET LOCAL, 0
 
-IF ABL:12 == 0
+IF ABL:기교 == 0
     LOCAL:0 = 1
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     LOCAL:0 = 25
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     LOCAL:0 = 200
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     LOCAL:0 = 3000
     ;一線越えない
-    SIF TALENT:27
+    SIF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 2.00
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     LOCAL:0 = 20000
     ;一線越えない
-    SIF TALENT:27
+    SIF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 3.00
 ENDIF
 
 ;プライド高い
-SIF TALENT:16
+SIF TALENT:프라이드가높음
     TIMES LOCAL:0 , 1.50
 ;求聞持
-SIF TALENT:216
+SIF TALENT:구문지
     TIMES LOCAL:0 , 0.75
 
 LOCAL:1 = LOCAL:0 / 2
@@ -116,7 +116,7 @@ SIF JUEL:11 < COST12(0)
     LOCAL:0 |= 1
 
 ;サドっ気が3이상だと先導의 구슬でも上昇させることができる
-IF ABL:20 >= 3
+IF ABL:새드끼 >= 3
     ;習得의 구슬で上げる
     SIF JUEL:11 < COST12(1)
         LOCAL:1 |= 1

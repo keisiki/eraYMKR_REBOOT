@@ -9,31 +9,31 @@
 SIF DITEMTYPE:999:68 > 0
     RETURN 0
 ;약품계 확장 커맨드를 유효하게 하지 않으면 안 됨
-SIF (FLAG:15 & 32) == 0
+SIF (FLAG:커맨드확장 & 32) == 0
     RETURN 0
 ;V조교 필터가 오프가 되지 않으면 안 됨
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;아이템을 가지고 있는지, 아이템 없음 설정이 아니면 안 됨
 SIF ITEM:67 == 0 && NOITEM == 0
     RETURN 0
 ;약물내성의 경우 안 됨
-SIF TALENT:44
+SIF TALENT:약물내성
     RETURN 0
 ;조교자가 남자나 후타나리 나오지 않으면 안돼
 SIF EXIST_PENIS(PLAYER) == 0
     RETURN 0
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;대상이 [난생]이나[산란 체질]이 아니면 안돼
-SIF TALENT:135 == 0 && TALENT:136 == 0
+SIF TALENT:난생 == 0 && TALENT:산란체질 == 0
     RETURN 0
 ;임신중이라면 불가
-SIF TALENT:140
+SIF TALENT:임신
     RETURN 0
 ;회란 중에는 불가
-SIF TALENT:145
+SIF TALENT:회란
     RETURN 0
 ;벌써 사용중이라면 사용할 수 없다
 SIF TEQUIP:9
@@ -64,12 +64,12 @@ COM_NAME = 산란촉진제
 CALL TRAIN_MESSAGE_COM068
 
 ;조제 지식이 있으면 소비를 억제한다
-IF TALENT:MASTER:55 || (ASSI >= 0 && TALENT:ASSI:55)
+IF TALENT:MASTER:조합지식 || (ASSI >= 0 && TALENT:ASSI:조합지식)
     DOWNBASE:0 += 50
-    DOWNBASE:1 += 60
+    DOWNBASE:기력 += 60
 ELSE
     DOWNBASE:0 += 100
-    DOWNBASE:1 += 120
+    DOWNBASE:기력 += 120
 ENDIF
 
 SOURCE:18 = 250
@@ -78,12 +78,12 @@ SOURCE:26 = 1000
 SOURCE:31 = 1500
 
 ITEM:67 -= 1
-SIF FLAG:13 & 8 && MONEY:0 >= ITEMPRICE:67
+SIF FLAG:아이템확장 & 8 && MONEY:0 >= ITEMPRICE:67
     CALL FILL_PLURAL_ITEM, 67
 TEQUIP:9 = 1
 TFLAG:128 = 0
 
-SIF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+SIF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
 
 ;약물 경험
@@ -96,19 +96,19 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM068
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORML %CALLNAME:TARGET%에게 
-SIF ABL:PLAYER:12 >= 3
+SIF ABL:PLAYER:기교 >= 3
     PRINT 입으로 
-SIF ABL:10 == 0
+SIF ABL:순종 == 0
     PRINT 억지로 
 PRINTL 산란촉진제를 먹였다.
-IF TALENT:150 || TALENT:152 || TALENT:153
+IF TALENT:연모 || TALENT:친애 || TALENT:상애
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 의아한 표정으로 이쪽을 보고 있다….
-ELSEIF TALENT:160 || TALENT:161 || TALENT:170
+ELSEIF TALENT:복종 || TALENT:낙인 || TALENT:음란
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 이상한 표정을 지으면서 %CALLNAME:PLAYER%에게 범해지는 것을 기다리고 있다….
 ELSE
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 정체불명의 약을 먹은걸 두려워 하고 있다.
@@ -121,15 +121,15 @@ ENDIF
 ;LOCAL는 1회의 조교에서의 최대 산란 회수, LOCAL:1은 이번 산란 회수의 판정용
 @EQUIP_COM68
 ;EXP:산란 경험을 본다
-IF EXP:51 < EXPLV:1
+IF EXP:산란경험 < EXPLV:1
     LOCAL = 2
-ELSEIF EXP:51 < EXPLV:2
+ELSEIF EXP:산란경험 < EXPLV:2
     LOCAL = 4
-ELSEIF EXP:51 < EXPLV:3
+ELSEIF EXP:산란경험 < EXPLV:3
     LOCAL = 6
-ELSEIF EXP:51 < EXPLV:4
+ELSEIF EXP:산란경험 < EXPLV:4
     LOCAL = 10
-ELSEIF EXP:51 < EXPLV:5
+ELSEIF EXP:산란경험 < EXPLV:5
     LOCAL = 15
 ELSE
     LOCAL = 20
@@ -148,15 +148,15 @@ ELSE
 ENDIF
 
 ;중독 하기 쉽다
-SIF TALENT:84
+SIF TALENT:중독되기쉬움
     LOCAL += 1
 ;난생
-IF TALENT:135
+IF TALENT:난생
     TIMES LOCAL , 1.50
     TIMES LOCAL:1 , 1.20
 ENDIF
 ;음 단지
-IF TALENT:172
+IF TALENT:음호
     TIMES LOCAL , 1.20
     TIMES LOCAL:1 , 1.50
 ENDIF

@@ -4,7 +4,7 @@
 ;先導의 구슬でも上げられるように変更
 @ABLUP11
 DRAWLINE
-SIF ABL:11 >= 5
+SIF ABL:욕망 >= 5
     JUMP ABLUP_MAX
 
 ;ＬＶ４から５に上げるときは異常経験必要(素質：[快感に素直][淫乱]なら無視できる)
@@ -15,7 +15,7 @@ PRINTFORM [0] - %PALAMNAME:13%의 구슬×{COST11(0)}……
 CALL SHOW_ISABLUP_COMMON, CAN11(0)
 
 ;サドっ気が3이상だと先導의 구슬でも上昇させることができる
-IF ABL:20 >= 3
+IF ABL:새드끼 >= 3
     PRINTFORM [1] - %PALAMNAME:13%의 구슬×{COST11(1)}, %PALAMNAME:32%의 구슬×{COST11(0)}……
     CALL SHOW_ISABLUP_COMMON, CAN11(1)
 ENDIF
@@ -36,9 +36,9 @@ ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-ABL:11 += 1
-PRINTFORMW %ABLNAME:11%의 레벨이 %조사처리(TOSTR(ABL:11),"가")% 되었습니다.
-SIF ABL:11 >= 3 && (TALENT:32 || TALENT:34)
+ABL:욕망 += 1
+PRINTFORMW %ABLNAME:11%의 레벨이 %조사처리(TOSTR(ABL:욕망),"가")% 되었습니다.
+SIF ABL:욕망 >= 3 && (TALENT:억압 || TALENT:저항)
     CALL YOKUBO_UP_CHECK
 
 @AUTO_ABLUP11
@@ -53,14 +53,14 @@ ELSE
     RETURN 0
 ENDIF
 
-ABL:11 += 1
+ABL:욕망 += 1
 RETURN 1
 
 ;--------------------------------------------------
 ;レベルアップに必要な珠計算、レベルアップ予告処理
 ;--------------------------------------------------
 @ISABLUP11
-SIF ABL:11 >= 5
+SIF ABL:욕망 >= 5
     RETURN 0
 
 CALLF CALC_COST11, "CALC"
@@ -79,35 +79,35 @@ SIF ARGS == "GET"
 ;必要な条件の算出
 VARSET LOCAL, 0
 
-IF ABL:11 == 0
+IF ABL:욕망 == 0
     LOCAL:0 = 5
-ELSEIF ABL:11 == 1
+ELSEIF ABL:욕망 == 1
     LOCAL:0 = 50
-ELSEIF ABL:11 == 2
+ELSEIF ABL:욕망 == 2
     LOCAL:0 = 1000
-ELSEIF ABL:11 == 3
+ELSEIF ABL:욕망 == 3
     LOCAL:0 = 8000
     ;一線越えない
-    SIF TALENT:27
+    SIF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 2.00
-ELSEIF ABL:11 == 4
+ELSEIF ABL:욕망 == 4
     LOCAL:0 = 24000
     ;一線越えない
-    SIF TALENT:27
+    SIF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 3.00
 ENDIF
 
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL:0 , 0.80
 ;悪魔
-SIF TALENT:209
+SIF TALENT:악마
     TIMES LOCAL:0 , 0.80
 
 LOCAL:1 = LOCAL:0 / 2
 
 ;ＬＶ４から５に上げるときは異常経験必要(素質：[快感に素直][淫乱]なら無視できる)
-SIF ABL:11 == 4 && TALENT:70 == 0 && TALENT:170 == 0
+SIF ABL:욕망 == 4 && TALENT:쾌감에솔직 == 0 && TALENT:음란 == 0
     LOCAL:2 = 1
 
 RETURNF 0
@@ -122,7 +122,7 @@ SIF ARGS == "GET"
     RETURNF LOCAL:ARG
 VARSET LOCAL, 0
 ;異常経験が必要な場合
-IF EXP:50 < COST11(2)
+IF EXP:이상경험 < COST11(2)
     LOCAL:0 |= 2
     LOCAL:1 |= 2
 ENDIF
@@ -132,7 +132,7 @@ SIF JUEL:13 < COST11(0)
     LOCAL:0 |= 1
 
 ;サドっ気が3이상だと先導의 구슬でも上昇させることができる
-IF ABL:20 >= 3
+IF ABL:새드끼 >= 3
     ;欲情의 구슬で上げる
     SIF JUEL:13 < COST11(1)
         LOCAL:1 |= 1

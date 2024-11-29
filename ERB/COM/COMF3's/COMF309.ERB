@@ -15,17 +15,17 @@ SIF ASSI < 0
 SIF ASSIPLAY
     RETURN 0
 ;助手の口が汚れているとダメ(조교자가 汚れ無視か愛液, 母乳のよごれならＯＫ)
-SIF STAIN:ASSI:0 >= 2 && (STAIN:ASSI:0 != 16 && STAIN:ASSI:0 != 17) && TALENT:PLAYER:64 == 0
+SIF STAIN:ASSI:입 >= 2 && (STAIN:ASSI:입 != 16 && STAIN:ASSI:입 != 17) && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;주인이 猫舌だと猫フェラパッチ有効でないとダメ
-SIF TALENT:MASTER:54 && (FLAG:14 & 16) == 0
+SIF TALENT:MASTER:고양이혀 && (FLAG:조교모드 & 16) == 0
     RETURN 0
 ;조수가 猫舌だと猫フェラパッチ有効でないとダメ
-SIF TALENT:ASSI:54 && (FLAG:14 & 16) == 0
+SIF TALENT:ASSI:고양이혀 && (FLAG:조교모드 & 16) == 0
     RETURN 0
 ;助手か주인이 猫舌だと二人の기교가 足して7필요
-IF TALENT:MASTER:54 || TALENT:ASSI:54
-    SIF ABL:MASTER:12 + ABL:ASSI:12 < 7
+IF TALENT:MASTER:고양이혀 || TALENT:ASSI:고양이혀
+    SIF ABL:MASTER:기교 + ABL:ASSI:기교 < 7
         RETURN 0
 ENDIF
 ;수면 중에는 불가
@@ -67,15 +67,15 @@ CALL TRAIN_MESSAGE_COM309
 LOCAL = 0
 
 ;ABL:조수의 기교를 본다
-IF ABL:ASSI:12 == 0
+IF ABL:ASSI:기교 == 0
     LOCAL = 50
-ELSEIF ABL:ASSI:12 == 1
+ELSEIF ABL:ASSI:기교 == 1
     LOCAL = 200
-ELSEIF ABL:ASSI:12 == 2
+ELSEIF ABL:ASSI:기교 == 2
     LOCAL = 300
-ELSEIF ABL:ASSI:12 == 3
+ELSEIF ABL:ASSI:기교 == 3
     LOCAL = 400
-ELSEIF ABL:ASSI:12 == 4
+ELSEIF ABL:ASSI:기교 == 4
     LOCAL = 500
 ELSE
     LOCAL = 600
@@ -87,23 +87,23 @@ LOCAL = EJACULATIONCHECK_ABL_10_1(ASSI, LOCAL)
 LOCAL = EJACULATIONCHECK_ABL_13_1(ASSI, LOCAL)
 
 ;조수의 혀사용을 본다
-SIF TALENT:ASSI:52
+SIF TALENT:ASSI:혀놀림
     TIMES LOCAL , 2.00
 ;조수의 고양이혀을 본다
-SIF TALENT:ASSI:54
+SIF TALENT:ASSI:고양이혀
     TIMES LOCAL , 0.70
 
 ;조교자의 C감각을 본다
 LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
 
 SIF EXIST_PENIS(PLAYER)
-    BASE:PLAYER:2 += LOCAL
+    BASE:PLAYER:사정 += LOCAL
 
 ;-------------------------------------------------
 ;소스의 계산
 ;-------------------------------------------------
-DOWNBASE:1 += 10
-DOWNBASE:ASSI:1 += 20
+DOWNBASE:기력 += 10
+DOWNBASE:ASSI:기력 += 20
 
 SOURCE:22 = 60
 SOURCE:31 = 15
@@ -112,19 +112,19 @@ SOURCE:18 = 10
 SOURCE:11 = 150
 
 ;ABL:욕망을 본다
-IF ABL:11 == 0
+IF ABL:욕망 == 0
     SOURCE:19 = 10
     SOURCE:22 += 0
-ELSEIF ABL:11 == 1
+ELSEIF ABL:욕망 == 1
     SOURCE:19 = 20
     SOURCE:22 += 60
-ELSEIF ABL:11 == 2
+ELSEIF ABL:욕망 == 2
     SOURCE:19 = 35
     SOURCE:22 += 140
-ELSEIF ABL:11 == 3
+ELSEIF ABL:욕망 == 3
     SOURCE:19 = 60
     SOURCE:22 += 220
-ELSEIF ABL:11 == 4
+ELSEIF ABL:욕망 == 4
     SOURCE:19 = 85
     SOURCE:22 += 300
 ELSE
@@ -133,19 +133,19 @@ ELSE
 ENDIF
 
 ;ABL:봉사 정신을 본다
-IF ABL:13 == 0
+IF ABL:봉사정신 == 0
     TIMES SOURCE:11 , 0.10
     TIMES SOURCE:19 , 0.50
-ELSEIF ABL:13 == 1
+ELSEIF ABL:봉사정신 == 1
     TIMES SOURCE:11 , 0.40
     TIMES SOURCE:19 , 0.80
-ELSEIF ABL:13 == 2
+ELSEIF ABL:봉사정신 == 2
     TIMES SOURCE:11 , 0.70
     TIMES SOURCE:19 , 1.00
-ELSEIF ABL:13 == 3
+ELSEIF ABL:봉사정신 == 3
     TIMES SOURCE:11 , 1.00
     TIMES SOURCE:19 , 1.50
-ELSEIF ABL:13 == 4
+ELSEIF ABL:봉사정신 == 4
     TIMES SOURCE:11 , 1.60
     TIMES SOURCE:19 , 2.00
 ELSE
@@ -160,19 +160,19 @@ TFLAG:91 = SAMEN_CHECK(PLAYER)
 
 IF TFLAG:91
     ;ABL:정액 중독을 본다
-    IF ABL:31 == 0
+    IF ABL:정액중독 == 0
         TIMES SOURCE:22 , 2.00
         SOURCE:24 = 0
-    ELSEIF ABL:31 == 1
+    ELSEIF ABL:정액중독 == 1
         TIMES SOURCE:22 , 1.60
         SOURCE:24 = 100
-    ELSEIF ABL:31 == 2
+    ELSEIF ABL:정액중독 == 2
         TIMES SOURCE:22 , 1.00
         SOURCE:24 = 300
-    ELSEIF ABL:31 == 3
+    ELSEIF ABL:정액중독 == 3
         TIMES SOURCE:22 , 0.70
         SOURCE:24 = 700
-    ELSEIF ABL:31 == 4
+    ELSEIF ABL:정액중독 == 4
         TIMES SOURCE:22 , 0.40
         SOURCE:24 = 1500
     ELSE
@@ -189,37 +189,37 @@ IF TFLAG:91 == 2
     TCVAR:4 += 1
     PRINTL 대량 사정 
     ;정액 더러움
-    STAIN:PLAYER:2 |= 4
+    STAIN:PLAYER:자지 |= 4
 ;통상의 사정
 ELSEIF TFLAG:91 == 1
     TCVAR:PLAYER:3 += 1
     PRINTL 사정 
     ;정액 더러움
-    STAIN:PLAYER:2 |= 4
+    STAIN:PLAYER:자지 |= 4
 ENDIF
-BASE:PLAYER:2 = LIMIT(BASE:PLAYER:2 - EJAC*(TFLAG:91), 0, EJAC-1)
+BASE:PLAYER:사정 = LIMIT(BASE:PLAYER:사정 - EJAC*(TFLAG:91), 0, EJAC-1)
 
 ;키스로 사정시킨 플래그(주인이 조수에 사정한다)
 TFLAG:35 = TFLAG:91
 
 ;조수의 입⇔주인의 입의 불결이 이동
-STAIN:ASSI:0 |= STAIN:MASTER:0
-STAIN:MASTER:0 |= STAIN:ASSI:0
+STAIN:ASSI:입 |= STAIN:MASTER:입
+STAIN:MASTER:입 |= STAIN:ASSI:입
 
 ;LUNATIC 이상은 사정할 때마다 체력이 감소
 CALL EXHAUST_EJAC, PLAYER, TFLAG:91
 
 ;[괴뢰]와[정신 붕괴]와[괴조인격]을 가지지 않고,[친애]나[연모][망신]소유라면 조수에 애정 경험이 가산
-SIF ((TALENT:ASSI:150 && TALENT:ASSI:151) || TALENT:ASSI:152) && TALENT:ASSI:167 == 0 && TALENT:ASSI:168 == 0 && TALENT:ASSI:169 == 0
+SIF ((TALENT:ASSI:연모 && TALENT:ASSI:망신) || TALENT:ASSI:친애) && TALENT:ASSI:정신붕괴 == 0 && TALENT:ASSI:괴뢰 == 0 && TALENT:ASSI:괴조인격 == 0
     TCVAR:ASSI:21 += 1
 
 TCVAR:ASSI:23 += 1
 TCVAR:MASTER:23 += 1
-CFLAG:ASSI:172 += 1
+CFLAG:ASSI:주인과조교키스수 += 1
 
-IF TALENT:ASSI:120 == 0 && TALENT:MASTER:120 == 0
+IF TALENT:ASSI:남자 == 0 && TALENT:MASTER:남자 == 0
     TCVAR:12 += 3
-ELSEIF TALENT:ASSI:120 && TALENT:MASTER:120
+ELSEIF TALENT:ASSI:남자 && TALENT:MASTER:남자
     TCVAR:13 += 3
 ENDIF
 TCVAR:ASSI:98 += 1
@@ -231,7 +231,7 @@ RETURN 1
 ;--------------------------------------------------
 @DENIAL_MESSAGE_COM_309
 CALL KOJO_DENIAL_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -243,27 +243,27 @@ PRINTFORMW %CALLNAME:ASSI%에게는 아직도 예의 범절이 부족한 것 같
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM309
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORM %CALLNAME:TARGET%의 눈앞에서, %조사선택(CALLNAME:MASTER, "는")% 
 ;고양이혀(자신)
-IF TALENT:PLAYER:54
+IF TALENT:PLAYER:고양이혀
     PRINTFORM 아픔을 주지 않도록 주의하며, %CALLNAME:ASSI%의 입에 혀를 넣
-    IF ABL:ASSI:10 >= 2 && ((EXP:ASSI:12 >= 1000 && TALENT:PLAYER:120 == 0 && TALENT:ASSI:120 == 0) || (EXP:ASSI:13 >= 1000 && TALENT:PLAYER:120 && TALENT:ASSI:120))
+    IF ABL:ASSI:순종 >= 2 && ((EXP:ASSI:레즈경험 >= 1000 && TALENT:PLAYER:남자 == 0 && TALENT:ASSI:남자 == 0) || (EXP:ASSI:BL경험 >= 1000 && TALENT:PLAYER:남자 && TALENT:ASSI:남자))
         PRINTW 고, 혀끝을 서로 쿡쿡 찌르면서 타액을 교환했다….
-    ELSEIF ABL:ASSI:10 >= 2
+    ELSEIF ABL:ASSI:순종 >= 2
         PRINTFORMW 자 %조사선택(CALLNAME:ASSI, "는")% %CALLNAME:TARGET%의 혀 밑을 혀끝으로 찔러댔다….
     ELSE
         PRINTW 었다….
     ENDIF
 ;고양이혀(조수)
-ELSEIF TALENT:ASSI:54
+ELSEIF TALENT:ASSI:고양이혀
     PRINTFORM %CALLNAME:ASSI%의 입에 혀를 넣어 미끄러운 혀를 혀로 살그머니 압박 
-    IF ABL:ASSI:10 >= 2 && ((EXP:ASSI:12 >= 1000 && TALENT:PLAYER:120 == 0 && TALENT:ASSI:120 == 0) || (EXP:ASSI:13 >= 1000 && TALENT:PLAYER:120 && TALENT:ASSI:120))
+    IF ABL:ASSI:순종 >= 2 && ((EXP:ASSI:레즈경험 >= 1000 && TALENT:PLAYER:남자 == 0 && TALENT:ASSI:남자 == 0) || (EXP:ASSI:BL경험 >= 1000 && TALENT:PLAYER:남자 && TALENT:ASSI:남자))
         PRINTW 하고, 상냥하게 빨면서 타액을 교환했다….
-    ELSEIF ABL:ASSI:10 >= 2
+    ELSEIF ABL:ASSI:순종 >= 2
         PRINTFORMW 하자 %조사선택(CALLNAME:ASSI, "는")% 상처를 주지 않기 위해 혀의 힘을 뺐다….
     ELSE
         PRINTW 해 주었다…
@@ -271,9 +271,9 @@ ELSEIF TALENT:ASSI:54
 ;노멀
 ELSE
     PRINTFORM %CALLNAME:ASSI%의 구강을 구석구석까지 빨고 돌렸다. 
-    IF ABL:ASSI:10 >= 2 && ((EXP:ASSI:12 >= 1000 && TALENT:PLAYER:120 == 0 && TALENT:ASSI:120 == 0) || (EXP:ASSI:13 >= 1000 && TALENT:PLAYER:120 && TALENT:ASSI:120))
+    IF ABL:ASSI:순종 >= 2 && ((EXP:ASSI:레즈경험 >= 1000 && TALENT:PLAYER:남자 == 0 && TALENT:ASSI:남자 == 0) || (EXP:ASSI:BL경험 >= 1000 && TALENT:PLAYER:남자 && TALENT:ASSI:남자))
         PRINTW 그리고 끈적끈적하게 혀를 엮어가며 타액을 교환했다….
-    ELSEIF ABL:ASSI:10 >= 2
+    ELSEIF ABL:ASSI:순종 >= 2
         PRINTFORMW 그러니 %CALLNAME:ASSI%도 적극적으로 혀를 얽어왔다….
     ELSE
         PRINTW
@@ -286,27 +286,27 @@ ENDIF
 @COM_ORDER_309, ARG
 LOCAL:99 = ARG
 ;ABL:조수의 욕망
-IF ABL:ASSI:11
+IF ABL:ASSI:욕망
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:ASSI:11
+    LOCAL:99 = ABL:ASSI:욕망
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% 조수의 %ABLNAME:11%LV{LOCAL:99}({LOCAL:99})
 ENDIF
 ;ABL:조수의 봉사 정신
-IF ABL:ASSI:13
+IF ABL:ASSI:봉사정신
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:ASSI:13
+    LOCAL:99 = ABL:ASSI:봉사정신
     TFLAG:240 += LOCAL:99 * 4
     RESULTS = %RESULTS% 조수의 %ABLNAME:13%LV{LOCAL:99}({LOCAL:99 * 4})
 ENDIF
 
 ;조수의 쾌락 각인
-IF MARK:ASSI:1
+IF MARK:ASSI:쾌락각인
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = MARK:ASSI:1
+    LOCAL:99 = MARK:ASSI:쾌락각인
     TFLAG:240 += LOCAL:99 * 2
     RESULTS = %RESULTS% 조수의 %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 2})
 ENDIF
@@ -324,28 +324,28 @@ ENDIF
 ;ENDIF
 
 ;조수가 부끄러워해
-IF TALENT:ASSI:35
+IF TALENT:ASSI:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 1
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% 조수가 %TALENTNAME:35%({LOCAL:99})
 ENDIF
 ;조수가 악취 둔감
-IF TALENT:ASSI:61
+IF TALENT:ASSI:냄새둔감
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 1
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% 조수가 %TALENTNAME:61%({LOCAL:99})
 ;조수가 악취 민감
-ELSEIF TALENT:ASSI:62
+ELSEIF TALENT:ASSI:냄새민감
     RESULTS = %RESULTS% - 
     LOCAL:99 = 1
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% 조수가 %TALENTNAME:62%({LOCAL:99})
 ENDIF
 ;조수가 헌신적
-IF TALENT:ASSI:63
+IF TALENT:ASSI:헌신적
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 6
@@ -353,14 +353,14 @@ IF TALENT:ASSI:63
     RESULTS = %RESULTS% 조수가 %TALENTNAME:63%({LOCAL:99})
 ENDIF
 ;조수가 쾌감의 부정
-IF TALENT:ASSI:71
+IF TALENT:ASSI:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 1
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% 조수가 %TALENTNAME:71%({LOCAL:99})
 ENDIF
 ;조수가 연모
-IF TALENT:ASSI:150
+IF TALENT:ASSI:연모
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
@@ -368,7 +368,7 @@ IF TALENT:ASSI:150
     RESULTS = %RESULTS% 조수가 %TALENTNAME:150%({LOCAL:99})
 ENDIF
 ;조수가 키스마
-IF TALENT:ASSI:176
+IF TALENT:ASSI:키스마
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 10
@@ -390,9 +390,9 @@ IF TFLAG:242
     TFLAG:240 -= TFLAG:242
     RESULTS = %RESULTS% 서로 불결
     ;악취 둔감
-    IF TALENT:ASSI:61
+    IF TALENT:ASSI:냄새둔감
         RESULTS = %RESULTS%,%조사처리(CALLNAME:ASSI,"가")% %TALENTNAME:61%
-    ELSEIF TALENT:ASSI:62
+    ELSEIF TALENT:ASSI:냄새민감
         RESULTS = %RESULTS%,%조사처리(CALLNAME:ASSI,"가")% %TALENTNAME:62%
     ENDIF
     RESULTS = %RESULTS%({TFLAG:242})

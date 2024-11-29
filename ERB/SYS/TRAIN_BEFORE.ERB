@@ -8,7 +8,7 @@
 #PRI
 ;#ONLY
 ;대사 표시의 개별 설정 플래그가 미설정일 경우, 사용하는 대사 선택시킨다
-;SIF CFLAG:9 <= 0
+;SIF CFLAG:특수인계처리 <= 0
     ;CALL SELECT_TEXT_DISPLAY, TARGET
 
 ;助手が酔い潰れている場合, ここで離脱する処理を追加
@@ -18,22 +18,22 @@ COM_NAME =
 COM_TOOL_NAME = 
 COM_TOOL_CALLNAME = 
 
-IF ASSI >= 0 && BASE:ASSI:8 > MAXBASE:ASSI:8
+IF ASSI >= 0 && BASE:ASSI:취기 > MAXBASE:ASSI:취기
     PRINTFORML 술에 취해서인지 %CALLNAME:ASSI%의 얼굴이 시퍼렇다.
     PRINTFORMW 당분간 %조사처리(CALLNAME:ASSI,"를")% 쉬게 하기로 했다…….
     ASSI = -1
 ENDIF
 
 ;主人の射精ゲージを0に
-BASE:MASTER:2 = 0
+BASE:MASTER:사정 = 0
 ;いちおう調教対象と助手も
-BASE:2 = 0
+BASE:사정 = 0
 SIF ASSI >= 0
-    BASE:ASSI:2 = 0
+    BASE:ASSI:사정 = 0
 ;噴乳ゲージもリセット
-BASE:3 = 0
+BASE:모유 = 0
 ;尿意ゲージもリセット
-BASE:4 = 0
+BASE:뇨의 = 0
 
 ;睡眠プレイ開始
 SIF EQUIP:14
@@ -63,17 +63,17 @@ TFLAG:999 = 1
 
 ;そのキャラを調教するのが初めてだった場合“調教した事があるフラグ”を立てる
 ;그 캐릭터를 조교하는 것이 처음이었을 경우"조교받은 적이 있다 플래그"을 세운다
-SIF CFLAG:1610 == 0
-    CFLAG:1610 = 1
+SIF CFLAG:조교여부 == 0
+    CFLAG:조교여부 = 1
 
 ;調教された日数記録(ターンまでは無理)
-CFLAG:46 = DAY
+CFLAG:마지막조교일 = DAY
 
 ;最後に調教されたキャラを記録(IDで)
-FLAG:422 = CFLAG:3109
+FLAG:422 = CFLAG:CSV번호
 ;助手がおれば最後に助手をしたキャラを記録(IDで)
 SIF ASSI >= 0
-    FLAG:423 = CFLAG:ASSI:3109
+    FLAG:423 = CFLAG:ASSI:CSV번호
 
 ;펑션 측의 처리 호출
 CALL EVENTTRAIN_PANCTION
@@ -160,27 +160,27 @@ SIF CHARANUM < 1
     RETURN 0
 
 ;陰核肥大関連
-SIF BASE:7 > 0 && BASE:7 < 250
+SIF BASE:음핵 > 0 && BASE:음핵 < 250
     CALL CHECK_CLITORIS_GROWTH
 
 BASE:0 = MAX(BASE:0, 0)
 ;デバッグモードかつ自動レベルアップ機能オンの場合, 体力が500を切った時全快する
-IF TALENT:MASTER:998 && TALENT:998 && BASE:0 < 500
+IF TALENT:MASTER:Debug && TALENT:Debug && BASE:0 < 500
     ;元ネタ：言わずと知れたWIZ
     ;元ネタ：セ○クションきとうしのセリフより
     PRINTFORMW \@(BASE:0 <= 0) ? 속삭임　－　좋아해　－　사랑해！ # 「P · O · W · E · R · －！！」\@
     BASE:0 = MAXBASE:0
-    BASE:1 = MAXBASE:1
+    BASE:기력 = MAXBASE:기력
 ENDIF
 ;불사각인 처리(봉래인과 주정보다 먼저 처리한다)
-SIF MARK:10 && BASE:0 <= 0
+SIF MARK:불사각인 && BASE:0 <= 0
     CALL TENTACLIC_REVIVAL
 IF BASE:0 <= 0
     ;[봉래인]용
-    IF TALENT:49
+    IF TALENT:봉래인
         CALL IMMORTAL_REVIVAL, TARGET
     ;[주정]용
-    ELSEIF TALENT:48
+    ELSEIF TALENT:주정
         CALL ZOMBIE_REVIVAL, TARGET
     ENDIF
 
@@ -189,59 +189,59 @@ IF BASE:0 <= 0
         JUMP EVENT_CHARA_DIE, TARGET
 ENDIF
 ;助手がいる場合, 最初に死亡判定(助手を捕獲しているわけではないので不死刻印は効果を発揮しない)
-IF ASSI >= 0 && BASE:ASSI:0 <= 0
+IF ASSI >= 0 && BASE:ASSI:체력 <= 0
     ;[봉래인]용
-    IF TALENT:ASSI:49
+    IF TALENT:ASSI:봉래인
         CALL IMMORTAL_REVIVAL, ASSI
     ;[주정]용
-    ELSEIF TALENT:ASSI:48
+    ELSEIF TALENT:ASSI:주정
         CALL ZOMBIE_REVIVAL, ASSI
     ENDIF
-    SIF BASE:ASSI:0 <= 0
+    SIF BASE:ASSI:체력 <= 0
         JUMP EVENT_CHARA_DIE, ASSI
 ENDIF
 ;난이도 LUNATIC 이상일 경우, 주인이 사망하면 게임 오버
-IF FLAG:3 >= 4 && BASE:MASTER:0 <= 0
+IF FLAG:난이도 >= 4 && BASE:MASTER:체력 <= 0
     ;[봉래인]용
-    IF TALENT:MASTER:49
+    IF TALENT:MASTER:봉래인
         CALL IMMORTAL_REVIVAL, MASTER
     ;[주정]용
-    ELSEIF TALENT:MASTER:48
+    ELSEIF TALENT:MASTER:주정
         CALL ZOMBIE_REVIVAL, MASTER
     ENDIF
-    SIF BASE:MASTER:0 <= 0
+    SIF BASE:MASTER:체력 <= 0
         JUMP EVENT_CHARA_DIE, MASTER
-ELSEIF BASE:MASTER:0 <= 0
-    BASE:MASTER:0 = 1
+ELSEIF BASE:MASTER:체력 <= 0
+    BASE:MASTER:체력 = 1
 ENDIF
 ;奴隷の体力が切れ掛かっているので調教終了する処理へ
 SIF BASE:0 < 500
     CALL EVENT_LIFEOUT, TARGET
 ;助手の体力が切れ掛かっていると調教終了する処理へ
-SIF ASSI >= 0 && BASE:ASSI:0 < 500
+SIF ASSI >= 0 && BASE:ASSI:체력 < 500
     CALL EVENT_LIFEOUT, ASSI
 ;主人の体力が切れ掛かっているので調教終了する処理へ
-SIF BASE:MASTER:0 < 500
+SIF BASE:MASTER:체력 < 500
     CALL EVENT_LIFEOUT, MASTER
 ;以下どのようかな形で実装するか検討中
 ;奴隷の気力が切れているので調教終了する処理へ
-;SIF BASE:1 < 1
+;SIF BASE:기력 < 1
 ;    CALL EVENT_VITALOUT, TARGET
 ;助手の気力が切れていると調教終了する処理へ
-;SIF ASSI >= 0 && BASE:ASSI:1 < 1
+;SIF ASSI >= 0 && BASE:ASSI:기력 < 1
 ;    CALL EVENT_VITALOUT, ASSI
 ;主人の気力が切れているので調教終了する処理へ
-;SIF BASE:MASTER:1 < 1
+;SIF BASE:MASTER:기력 < 1
 ;    CALL EVENT_VITALOUT, MASTER
 ;奴隷の酔いをチェックする
-IF BASE:8 > MAXBASE:8 * 2
+IF BASE:취기 > MAXBASE:취기 * 2
     BASE:0 = 1
-    BASE:1 = 1
-    BASE:8 = MIN(BASE:8, MAXBASE:8 * 3)
+    BASE:기력 = 1
+    BASE:취기 = MIN(BASE:취기, MAXBASE:취기 * 3)
     ;酔いが回って調教終了するときの口上
     CALL SELF_KOJO, TARGET, 34
     ;지문 컷
-    SIF CFLAG:99 == 0
+    SIF CFLAG:지문소거판정 == 0
         PRINTFORML 취기가 돈 것인지 %조사처리(CALLNAME:TARGET,"는")% 속이 안 좋은 듯한 기색이다…….
     PRINTFORMW ( 몸 상태가 불량하여 %CALLNAME:TARGET%의 조교를 종료합니다 )
     BEGIN AFTERTRAIN
@@ -267,7 +267,7 @@ ELSEIF SELECTCOM == 252
 
 ;커맨드 실행 회수 일정수 넘음으로써 발생하는 시간 마감
 ;토리코모드. 난이도에 따라 제한시간이 달라짐.
-ELSEIF FLAG:5000 & 16
+ELSEIF FLAG:토리코모드 & 16
     CALL CHECK_TIMEOUT_TORIKOMODE
 ;기존모드
 ELSEIF TFLAG:107 > 100
@@ -302,17 +302,17 @@ BEGIN AFTERTRAIN
 @EVENTCOMEND
 
 ;[処女]（乙女でなくて)でＡ経験が0以上で快Ａのパラが0以上で貞操観念持ちで体力がある場合一度だけ「貞操を守れるなら～」イベント発生.
-IF TALENT:0 == 1 && EXP:1 > 0 && PALAM:2 > 0 && TALENT:30 && (CFLAG:20 & 1) == 0 && BASE:0 > 0
-    CFLAG:20 |= 1
+IF TALENT:처녀 == 1 && EXP:A경험 > 0 && PALAM:2 > 0 && TALENT:정조관념 && (CFLAG:첫시츄에이션 & 1) == 0 && BASE:0 > 0
+    CFLAG:첫시츄에이션 |= 1
     PRINTFORMW (정조를 지킬 수 있다면, 조금쯤은 뒤를 공략당해도 좋다고 생각하는 것 같다……)
     ;貞操を守れるなら後ろを攻められてもよいと思ったときの口上
     CALL SELF_KOJO, TARGET, 30
 ENDIF
 
 ;狂気の目発動のチェック(被調教時)
-IF TFLAG:152 < 1 && TALENT:125
+IF TFLAG:152 < 1 && TALENT:광기의눈
     ;相愛, 隷属, 精神崩壊, 傀儡, 괴조인격, 淫魔持ちの時は発動しない
-    IF TALENT:153 == 0 && TALENT:162 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0 && TALENT:180 == 0
+    IF TALENT:상애 == 0 && TALENT:예속 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0 && TALENT:음마 == 0
         ;失神中 · 睡眠中 · 催眠中 · 目隠し中は発動できない(調教側の狂気の目は防衛側の狂気の目発動を阻害しない)
         IF TFLAG:899 <= 0 && EQUIP:14 <= 0 && TEQUIP:92 <= 0 && TEQUIP:41 <= 0
             LOCAL = RAND:50 + 1
@@ -337,40 +337,40 @@ SIF TARGET < 0
     RETURN 0
 ;売却や助手化が可能になったか
 ;ＣＶＡＢの各感覚Lvがいずれも3未満なら帰る
-SIF ABL:0 < 3 && ABL:1 < 3 && ABL:2 < 3 && ABL:3 < 3
+SIF ABL:C감각 < 3 && ABL:V감각 < 3 && ABL:A감각 < 3 && ABL:B감각 < 3
     RETURN 0
 ;従順と欲望Lvを合計して6未満なら帰る
-SIF ABL:10 + ABL:11 < 6
+SIF ABL:순종 + ABL:욕망 < 6
     RETURN 0
 ;反抗的か気丈を持っているなら従順Lvが4未満でも帰る
-SIF ABL:10 < 4 && (TALENT:11 || TALENT:12)
+SIF ABL:순종 < 4 && (TALENT:반항적 || TALENT:꿋꿋함)
     RETURN 0
 ;自制心か抑圧か抵抗を持っているなら欲望Lvが4未満でも帰る
-SIF ABL:11 < 4 && (TALENT:20 || TALENT:32 || TALENT:34)
+SIF ABL:욕망 < 4 && (TALENT:자제심 || TALENT:억압 || TALENT:저항)
     RETURN 0
 ;既に助手可能なら帰る
-SIF CFLAG:1 == 2
+SIF CFLAG:매각가능 == 2
     RETURN 0
 
 LOCAL = 0
 ;売却可能になったかをチェック
-SIF (ABL:12 >= 3 && ABL:13 >= 3) || (ABL:14 >= 3 && ABL:30 >= 2) || ABL:21 >= 3 || (ABL:0 + ABL:1 + ABL:2 + ABL:3 >= 13) || ABL:10 >= 5 || ABL:11 >= 5
+SIF (ABL:기교 >= 3 && ABL:봉사정신 >= 3) || (ABL:노출증 >= 3 && ABL:자위중독 >= 2) || ABL:마조끼 >= 3 || (ABL:C감각 + ABL:V감각 + ABL:A감각 + ABL:B감각 >= 13) || ABL:순종 >= 5 || ABL:욕망 >= 5
     LOCAL |= 1
 ;助手可能になったかをチェック
-SIF (ABL:0 >= 3 && ABL:10 >= 3 && ABL:11 >= 3 && ABL:12 >= 3 && ABL:(22 + TALENT:120) >= 3) || (ABL:10 >= 5 && ABL:11 >= 4)
+SIF (ABL:C감각 >= 3 && ABL:순종 >= 3 && ABL:욕망 >= 3 && ABL:기교 >= 3 && ABL:(22 + TALENT:남자) >= 3) || (ABL:순종 >= 5 && ABL:욕망 >= 4)
     LOCAL |= 2
 ;売却可能か助手可能であると判定され, 今まで売却可能でなかった場合
-IF (LOCAL & 1 || LOCAL & 2) && CFLAG:1 < 1
+IF (LOCAL & 1 || LOCAL & 2) && CFLAG:매각가능 < 1
     ;売却可能になったイベント口上呼び出し
     CALL SELF_KOJO, TARGET, 122
     PRINTFORMW %조사처리(CALLNAME:TARGET,"가")% 매각 가능해졌습니다.
-    CFLAG:1 = 1
+    CFLAG:매각가능 = 1
 ;助手可能であると判定され, 今まで助手可能でなかった場合
-ELSEIF LOCAL & 2 && CFLAG:1 < 2
+ELSEIF LOCAL & 2 && CFLAG:매각가능 < 2
     ;助手可能になったイベント口上呼び出し
     CALL SELF_KOJO, TARGET, 123
     PRINTFORMW %조사처리(CALLNAME:TARGET,"가")% 조수 가능해졌습니다.
-    CFLAG:1 = 2    
+    CFLAG:매각가능 = 2    
 ELSE
     RETURN 0
 ENDIF
@@ -381,16 +381,16 @@ ENDIF
 @EVENTTURNEND
 #LATER
 ;助手が[妖狐]持ちで媚薬の在庫がなくアイテムなし設定でもなければ媚薬を入手できる
-IF ASSI >= 0 && TALENT:ASSI:211 && ITEM:61 == 0 && NOITEM == 0
+IF ASSI >= 0 && TALENT:ASSI:요호 && ITEM:61 == 0 && NOITEM == 0
     PRINTW [요호]의 효과로 미약을 손에 넣었습니다.
     ITEM:61 = 1
-    CFLAG:ASSI:20 |= 2048
+    CFLAG:ASSI:첫시츄에이션 |= 2048
     ;妖狐の効果で媚薬を入手できたときの口上
     CALL SELF_KOJO, ASSI, 32
-ELSEIF ASSI >= 0 && TALENT:ASSI:227 && ITEM:61 == 0 && NOITEM == 0
+ELSEIF ASSI >= 0 && TALENT:ASSI:둔갑너구리 && ITEM:61 == 0 && NOITEM == 0
     PRINTW [둔갑너구리]의 효과로 미약을 손에 넣었습니다.
     ITEM:61 = 1
-    CFLAG:ASSI:20 |= 2048
+    CFLAG:ASSI:첫시츄에이션 |= 2048
     ;둔갑너구리の効果で媚薬を入手できたときの口上
     CALL SELF_KOJO, ASSI, 32
 ENDIF
@@ -400,11 +400,11 @@ ENDIF
 ;--------------------------------------------------
 @YOUJI
 ;調教者が[幼稚], [幼児], [幼児退行]以外は弾かれる
-SIF TALENT:PLAYER:130 == 0 && TALENT:PLAYER:131 == 0 && TALENT:PLAYER:169 == 0
+SIF TALENT:PLAYER:유아 == 0 && TALENT:PLAYER:유치 == 0 && TALENT:PLAYER:괴조인격 == 0
     RETURN 0
 
 PRINTFORMW %조사처리(CALLNAME:PLAYER,"가")% 젖을 빨고 있다 보니 어느새 %조사처리(CALLNAME:TARGET,"는")% 모유가 나오게 되었다.
-TALENT:134 = 1
+TALENT:모유체질 = 1
 CALL CALC_GAUGE3_SLAVE, TARGET, 1
 ;母乳が出るようになったときの口上
 CALL SELF_KOJO, TARGET, 33
@@ -414,29 +414,29 @@ CALL SELF_KOJO, TARGET, 33
 ;--------------------------------------------------
 @ASSI_CHANGE
 ;[不思議な根]である
-IF TALENT:ASSI:120 == 0 && TALENT:ASSI:121 == 0 && TALENT:ASSI:122 && (CFLAG:ASSI:42 & 1) == 0
+IF TALENT:ASSI:남자 == 0 && TALENT:ASSI:후타나리 == 0 && TALENT:ASSI:수상한뿌리 && (CFLAG:ASSI:특수장비 & 1) == 0
     ;Ｃ感覚LV5, 精液中毒LV3以上
-    IF ABL:ASSI:0 == 5 && ABL:ASSI:31 >= 3 && (FLAG:14 & 128) == 0
+    IF ABL:ASSI:C감각 == 5 && ABL:ASSI:정액중독 >= 3 && (FLAG:조교모드 & 128) == 0
         DRAWLINE
         CALL SELF_KOJO, ASSI, 101
         PRINTFORML %조사처리(CALLNAME:ASSI,"는")% [후타나리]가 되었다.
         DRAWLINE
         WAIT
-        TALENT:ASSI:121 = 1
-        TALENT:ASSI:122 = 0
-        TALENT:ASSI:124 |= 1
+        TALENT:ASSI:후타나리 = 1
+        TALENT:ASSI:수상한뿌리 = 0
+        TALENT:ASSI:현계화 |= 1
     ENDIF
 ENDIF
 
 IF NO:ASSI == 401 && ISASSI:ASSI == 0
-    IF TALENT:MASTER:149 == 0
-        TALENT:MASTER:149 = 1
+    IF TALENT:MASTER:촉수사역술 == 0
+        TALENT:MASTER:촉수사역술 = 1
         SIF FLAG:571 > 0
-            ABL:MASTER:98 = FLAG:571
+            ABL:MASTER:촉수사역 = FLAG:571
         FLAG:570 |= 16
-    ELSEIF ABL:MASTER:98 < FLAG:571
-        FLAG:572 = ABL:MASTER:98
-        ABL:MASTER:98 = FLAG:571
+    ELSEIF ABL:MASTER:촉수사역 < FLAG:571
+        FLAG:572 = ABL:MASTER:촉수사역
+        ABL:MASTER:촉수사역 = FLAG:571
         FLAG:570 |= 32
     ENDIF
 ENDIF
@@ -445,7 +445,7 @@ IF NO:ASSI == 402 && FLAG:570 & 2
     FLAG:570 |= 4
     FLAG:570 &= 61
 ENDIF
-CFLAG:ASSI:3117 = (CFLAG:ASSI:3117 > 0) ? CFLAG:ASSI:3117 # DAY
+CFLAG:ASSI:첫조수피임명일 = (CFLAG:ASSI:첫조수피임명일 > 0) ? CFLAG:ASSI:첫조수피임명일 # DAY
 
 ISASSI:ASSI = 1
 RETURN 0
@@ -456,7 +456,7 @@ RETURN 0
 @IMMORTAL_REVIVAL, ARG
 PRINTW ＜리저렉션＞
 ;봉래인 리저렉션 회수 플래그
-CFLAG:ARG:163 += 1
+CFLAG:ARG:봉래력으로부활회수 += 1
 ;리저렉션 공통 처리
 CALL COMMON_REVIVAL, ARG
 
@@ -466,7 +466,7 @@ CALL COMMON_REVIVAL, ARG
 @ZOMBIE_REVIVAL, ARG
 PRINTW ＜그 자리 분위기 타서 부활!＞
 ;주정 리저렉션 회수 플래그
-CFLAG:ARG:164 += 1
+CFLAG:ARG:주정으로부활회수 += 1
 ;리저렉션 공통 처리
 CALL COMMON_REVIVAL, ARG
 ;체력 · 기력의 최대치가 1000보다 클 경우에는 50 내려간다(1000 미만은 되지 않음)
@@ -477,10 +477,10 @@ REPEAT 2
     ENDIF
 REND
 ;[연모] · [복종] · [괴조인격]이 없을 경우 반발각인 취득 이력이 1 내려간다(최저 0)
-SIF ARG != MASTER && MARK:ARG:97 > 0 && TALENT:ARG:150 == 0 && TALENT:ARG:160 == 0 && TALENT:ARG:169 == 0
+SIF ARG != MASTER && MARK:ARG:97 > 0 && TALENT:ARG:연모 == 0 && TALENT:ARG:복종 == 0 && TALENT:ARG:괴조인격 == 0
     MARK:ARG:97 -= 1
 
-BASE:ARG:1 = 0
+BASE:ARG:기력 = 0
 
 ;--------------------------------------------------
 ;리저렉션 공통 처리
@@ -493,19 +493,19 @@ ELSE
     TCVAR:ARG:50 += 1
 ENDIF
 ;[연모] · [복종] · [괴조인격]이 없을 경우에는 순종 Lv이 1 내려간다(최저 Lv0)
-IF ARG != MASTER && ABL:ARG:10 > 0 && TALENT:ARG:150 == 0 && TALENT:ARG:160 == 0 && TALENT:ARG:169 == 0
-    ABL:ARG:10 -= 1
-    PRINTFORMW %CALLNAME:ARG%의 %ABLNAME:10%가 {ABL:10}로 떨어졌다.
+IF ARG != MASTER && ABL:ARG:순종 > 0 && TALENT:ARG:연모 == 0 && TALENT:ARG:복종 == 0 && TALENT:ARG:괴조인격 == 0
+    ABL:ARG:순종 -= 1
+    PRINTFORMW %CALLNAME:ARG%의 %ABLNAME:10%가 {ABL:순종}로 떨어졌다.
 ENDIF
 ;[기생]한 촉수는 사라진다
-IF TALENT:ARG:146
-    TALENT:ARG:146 = 0
-    BASE:ARG:6 = 0
-    MAXBASE:ARG:6 = 0
+IF TALENT:ARG:기생
+    TALENT:ARG:기생 = 0
+    BASE:ARG:촉수 = 0
+    MAXBASE:ARG:촉수 = 0
     PRINTFORMW %CALLNAME:ARG%에게 기생하던 촉수는 소멸해버렸다.
 ENDIF
 EQUIP:2 = 0
-BASE:ARG:0 = 1
+BASE:ARG:체력 = 1
 
 ;--------------------------------------------------
 ;조교 중에 캐릭터가 사망했을 때의 처리
@@ -516,13 +516,13 @@ IF ARG != MASTER
     CALL SELF_KOJO, ARG, 98
 ENDIF
 ;지문 컷
-IF CFLAG:ARG:99 == 0
+IF CFLAG:ARG:지문소거판정 == 0
     PRINTW ………………
     PRINTW …………
     PRINTW ……
     PRINTFORMW ★★★%조사처리(CALLNAME:ARG,"는")% 사라졌습니다★★★
 ENDIF
-SETBIT CFLAG:ARG:4, 13
+SETBIT CFLAG:ARG:조교관외, 13
 CALL 대상_사망함(ARG)
 IF TARGET == -1
     TARGET = 0

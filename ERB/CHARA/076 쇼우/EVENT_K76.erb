@@ -18,8 +18,8 @@ RETURN 1
 
 @EVENTTRAIN
 #PRI
-SIF FLAG:11 == 0
-    FLAG:11 = 2
+SIF FLAG:캐릭터대사표시 == 0
+    FLAG:캐릭터대사표시 = 2
     
 @EVENTEND
 #LATER
@@ -28,7 +28,7 @@ SIF FLAG:11 == 0
 ;調教開始時のセリフ
 ;--------------------------------------------------
 @EVENTTRAIN
-SIF FLAG:11 <= 0
+SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 SIF NO != 76
     RETURN 0
@@ -59,7 +59,7 @@ IF CFLAG:5001 == 0
         ELSEIF RESULT == 1
             PRINTFORMW Ａ１：평범한 아이들 정도는 있어도 좋잖아…!
             PRINTFORMW (빈유가 사라집니다)
-            TALENT:111 = 0
+            TALENT:빈유 = 0
             CFLAG:5001 = 2
         ELSE
             GOTO INPUT_LOOP_TIGER1
@@ -77,7 +77,7 @@ IF CFLAG:5001 == 0
         ELSEIF RESULT == 1
             PRINTFORMW Ａ２：고양이 혀면 이것저것 못하는 게 있으니까요
             PRINTFORMW (고양이 혀가 사라집니다)
-            TALENT:54 = 0
+            TALENT:고양이혀 = 0
             CFLAG:5001 = 2
         ELSE
             GOTO INPUT_LOOP_TIGER2
@@ -90,7 +90,7 @@ IF CFLAG:5001 == 0
         ;ずっと毘沙門天の為に修行していました
         IF RESULT == 0
             PRINTFORMW Ａ３：크고 아름다움
-            talent:121 = 1
+            TALENT:후타나리 = 1
             CFLAG:5001 = 1
         ;ナズーリンが夜の上司です
         ELSEIF RESULT == 1
@@ -112,8 +112,8 @@ IF CFLAG:5001 == 0
         ELSEIF RESULT == 1
             PRINTFORMW Ａ4：나즈×쇼? 
             PRINTFORMW (레즈경험이 추가됩니다)
-            EXP:12 = 30
-            ABL:22 = 1
+            EXP:레즈경험 = 30
+            ABL:레즈끼 = 1
             CFLAG:5001 = 2
         ELSE
             GOTO INPUT_LOOP_TIGER4
@@ -185,7 +185,7 @@ ENDIF
 ;-------------------------------------------------
 @K76_KOJO2
 ;恋慕
-IF TALENT:150 == 1 && FLAG:11 == 2
+IF TALENT:연모 == 1 && FLAG:캐릭터대사표시 == 2
     ;CFLAG:5003＠恋慕取得後初フラグ
     IF CFLAG:5003 == 0
         PRINTFORMW 평소처럼 방에 들어간 %조사처리(CALLNAME:MASTER,"를")% 맞이한 건 정장을 갖춰 입은 쇼의 모습이었다. 
@@ -231,7 +231,7 @@ IF TALENT:150 == 1 && FLAG:11 == 2
 ;その他の場合
 ELSE
     ;服従
-    IF TALENT:160 == 1
+    IF TALENT:복종 == 1
         PRINTFORMW 실오라기 하나 걸치지 않은 모습으로 %조사처리(CALLNAME:MASTER,"를")% 맞은 쇼는, %CALLNAME:MASTER%의 일거일동을 바라보고 있다. 
         PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 조교 시작을 알리자, 조용히 미소를 지으며, 
         PRINTFORMW 「네」
@@ -239,16 +239,16 @@ ELSE
     ;その他の場合
     ELSE
         ;屈服刻印Lv3
-        IF MARK:2 == 3
+        IF MARK:굴복각인 == 3
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 방에 들어가자, %조사처리(CALLNAME:TARGET,"는")% 이미 실오라기 하나 걸치지 않는 모습이 되어 있었다. 
             PRINTFORMW 할 일은 알고 있으니까요, 라며 %조사처리(CALLNAME:TARGET,"는")% 작게 중얼거리며, 미혹적인 시선을 깔아내렸다. 
         ;屈服刻印Lv2
-        ELSEIF MARK:2 == 2
+        ELSEIF MARK:굴복각인 == 2
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"를")% 보지 않고, 조용히 옷을 벗기 시작했다. 
             PRINTFORMW 「이것도 수행…. 그렇게 생각하면, 아직은…」
             PRINTFORMW 아직도 굳세게 행동하는 %조사처리(CALLNAME:TARGET,"를")%, %조사처리(CALLNAME:MASTER,"는")% 난폭하게 벗기기 시작했다. 
         ;屈服刻印Lv1
-        ELSEIF MARK:2 == 1
+        ELSEIF MARK:굴복각인 == 1
             PRINTFORMW 「또, 입니까…」
             PRINTFORMW 「제게 무슨 짓을 하더라도 소용없습니다…. 그렇게 말했죠?」 
             PRINTFORMW 곤란한 얼굴로 %CALLNAME:TARGET%에게 %조사처리(CALLNAME:MASTER,"가")% 벗으라고 명령하자, 작게 한숨을 쉬며 명령에 따랐다. 
@@ -264,7 +264,7 @@ ENDIF
 ;調教終了時のセリフ
 ;-------------------------------------------------
 @EVENTEND
-SIF FLAG:11 == 0
+SIF FLAG:캐릭터대사표시 == 0
     RETURN 0
 SIF NO:TARGET != 76
     RETURN 0
@@ -284,9 +284,9 @@ SIF NO:TARGET != 76
 ;調教終了時のセリフ CFLAG 211～220を使用
 ;--------------------------------------------------
 ;反発刻印Lv3
-IF MARK:9 == 3
+IF MARK:반발각인 == 3
     ;恋慕+反発刻印Lv3
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「용무는 끝났죠? 빨리, 혼자 있게 해주세요…」
     ELSE
         PRINTFORMW 조교가 끝나자, 쇼는 중얼거리며 뭔가 외우고 있다. 
@@ -296,9 +296,9 @@ IF MARK:9 == 3
 ;その他の場合
 ELSE
     ;恋慕or服従
-    IF TALENT:150 == 1 || TALENT:160 == 1
+    IF TALENT:연모 == 1 || TALENT:복종 == 1
         ;まだ未経験
-        IF EXP:0 == 0
+        IF EXP:V경험 == 0
             PRINTFORMW 「앗… 벌써, 끝…?」 
             PRINTFORMW 쇼는 뭔가 말하고 싶은게 있어 보였지만, 입 밖으로 내기 직전에 멈추었다. 
         ;その他の場合
@@ -318,7 +318,7 @@ ELSE
     ;その他の場合
     ELSE
         ;屈服刻印Lv3
-        IF MARK:2 == 3
+        IF MARK:굴복각인 == 3
             ;体力500未満
             IF BASE:0 < 500
                 PRINTFORMW 「히잇… 앗… 하, 아아… 응……」
@@ -329,11 +329,11 @@ ELSE
                 PRINTFORMW 쇼는 뭔가 부족한 듯이 말했지만, 금방 자신의 음란한 생각을 깨닫고, 새빨간 얼굴로 전언을 철회했다. 
             ENDIF
         ;屈服刻印Lv2
-        ELSEIF MARK:2 == 2
+        ELSEIF MARK:굴복각인 == 2
             PRINTFORMW 「하아… 하앗…… 아, 네…. 끝내기로… 알겠습니다, 금방… 원래대로……」
             PRINTFORMW 그렇게 말하면서도, 쇼는 조교의 여운에서 좀처럼 회복할 수 없었다. 
         ;屈服刻印Lv1
-        ELSEIF MARK:2 == 1
+        ELSEIF MARK:굴복각인 == 1
             PRINTFORMW 「끝났나요…. 그럼 원래대로 정리할테니, %조사처리(CALLNAME:MASTER,"는")% 거기 계셔주세요」
         ;その他の場合
         ELSE
@@ -384,9 +384,9 @@ IF SELECTCOM == 0
     ;２回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5200 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 && (CFLAG:5200 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;快楽刻印Lv3
-            IF MARK:1 == 3
+            IF MARK:쾌락각인 == 3
                 PRINTFORMW 「후아아앗! 당, 당신이 만지는 것만으로, 저… 이렇게, 돼버리… 으앙!」 
             ;その他の場合
             ELSE
@@ -396,13 +396,13 @@ IF SELECTCOM == 0
         ;その他の場合
         ELSE
             ;快楽刻印Lv3
-            IF MARK:1 == 3
+            IF MARK:쾌락각인 == 3
                 PRINTFORMW 「앗…당신이 만지면, 찌릿찌릿하고… 전류가, 흐르는 것 같이…하앙! 앗, 아앗!」 
             ;快楽刻印Lv2
-            ELSEIF MARK:1 == 2
+            ELSEIF MARK:쾌락각인 == 2
                 PRINTFORMW 「응…아…앗, 큿, 아무것도 아닙니다……. 거, 거기는… 아아!」 
             ;快楽刻印Lv1
-            ELSEIF MARK:1 == 1
+            ELSEIF MARK:쾌락각인 == 1
                 PRINTFORMW 「앗… 거기는… 아뇨, 기분 좋을리가!」 
                 PRINTFORMW 「그, 그렇게 상냥히 만져주어서… 이상하게 된 것뿐, 이에요」
             ;その他の場合
@@ -429,9 +429,9 @@ IF SELECTCOM == 1
     ;２回目以降
     ELSE
         ;Ｃ感覚Lv5以上
-        IF ABL:0 >= 5 && (CFLAG:5201 <= 4|| FLAG:11 == 2)
+        IF ABL:C감각 >= 5 && (CFLAG:5201 <= 4|| FLAG:캐릭터대사표시 == 2)
             ;恋慕
-            IF TALENT:150 == 1
+            IF TALENT:연모 == 1
                 PRINTFORMW 「앗 %CALLNAME:MASTER%…!」 
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 목소리를 비명에 가깝게 높이며, 부풀어오른 클리토리스를 %CALLNAME:MASTER%에게 눌러왔다. 
                 PRINTFORMW 「기분, 좋아요…하앗, 응…!」 
@@ -443,14 +443,14 @@ IF SELECTCOM == 1
             ENDIF
             CFLAG:5201 = 5
         ;Ｃ感覚Lv4まで
-        ELSEIF ABL:0 == 3 || ABL:0 == 4 && (CFLAG:5201 <= 3|| FLAG:11 == 2)
+        ELSEIF ABL:C감각 == 3 || ABL:C감각 == 4 && (CFLAG:5201 <= 3|| FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「거기… 앗… 아뇨, 기분 좋은 건, 아니…」
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 끊임없이 변명 같은 말을 반복하고 있다. 
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 강하게 클리토리스을 빨았다. 
             PRINTFORMW 「크…읏…」
             CFLAG:5201 = 4
         ;Ｃ感覚Lv２まで
-        ELSEIF ABL:0 == 1 || ABL:0 == 2 && (CFLAG:5201 <= 2|| FLAG:11 == 2)
+        ELSEIF ABL:C감각 == 1 || ABL:C감각 == 2 && (CFLAG:5201 <= 2|| FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「응… 후읏…」
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 얼굴을 돌리고, 무딘 감각에 발을 움찔거리고 있다. 
             CFLAG:5201 = 3
@@ -472,9 +472,9 @@ IF SELECTCOM == 2
     ;初めて
     IF CFLAG:5202 == 0
         ;恋慕or服従
-        IF TALENT:150 == 1 || TALENT:160 == 1
+        IF TALENT:연모 == 1 || TALENT:복종 == 1
             ;Ａ経験なし
-            IF EXP:1 == 0
+            IF EXP:A경험 == 0
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% %CALLNAME:TARGET%의 애널에 손을 대자, %조사처리(CALLNAME:TARGET,"는")% 작게 튀어올랐다. 
                 PRINTFORMW 「꺄앗! 에, 엉덩이로…?」 
                 PRINTFORMW 「…남녀 사이의 일에는, 끝이 없군요…」
@@ -495,9 +495,9 @@ IF SELECTCOM == 2
     ;２回目以降
     ELSE
         ;Ａ感覚Lv5以上
-        IF ABL:2 >= 5 && (CFLAG:5202 <= 4|| FLAG:11 == 2)
+        IF ABL:A감각 >= 5 && (CFLAG:5202 <= 4|| FLAG:캐릭터대사표시 == 2)
             ;恋慕or服従
-            IF TALENT:150 == 1 || TALENT:160 == 1
+            IF TALENT:연모 == 1 || TALENT:복종 == 1
                 PRINTFORMW 「당신에 의해서 눈 뜬 엉덩이의 쾌감, 좀 더 즐기게 해주세요…」
                 PRINTFORMW 「앗! 그래, 좀 더 , 꾸물꾸물 해줘! 으응읏히아아아아아!!」 
             ;その他の場合
@@ -507,9 +507,9 @@ IF SELECTCOM == 2
             ENDIF
             CFLAG:5202 = 5
         ;Ａ感覚Lv3 or 4
-        ELSEIF ABL:2 == 3 || ABL:2 == 4 && (CFLAG:5202 <= 3|| FLAG:11 == 2)
+        ELSEIF ABL:A감각 == 3 || ABL:A감각 == 4 && (CFLAG:5202 <= 3|| FLAG:캐릭터대사표시 == 2)
             ;恋慕or服従
-            IF TALENT:150 == 1 || TALENT:160 == 1
+            IF TALENT:연모 == 1 || TALENT:복종 == 1
                 PRINTFORMW 「아핫…! 기뻐, 요…엉덩이!」 
             ;その他の場合
             ELSE
@@ -517,7 +517,7 @@ IF SELECTCOM == 2
             ENDIF
             CFLAG:5202 = 4
         ;Ａ感覚Lv1 or 2
-        ELSEIF ABL:2 == 1 || ABL:2 == 2 && (CFLAG:5202 <= 2|| FLAG:11 == 2)
+        ELSEIF ABL:A감각 == 1 || ABL:A감각 == 2 && (CFLAG:5202 <= 2|| FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「큿…더러, 운…응…싫……」」
             CFLAG:5202 = 3
         ;その他の場合
@@ -543,11 +543,11 @@ IF SELECTCOM == 3
     ;２回目以降
     ELSE
         ;Ｂ感覚Lv5以上
-        IF ABL:3 >= 5 && (CFLAG:5203 <= 4|| FLAG:11 == 2)
+        IF ABL:B감각 >= 5 && (CFLAG:5203 <= 4|| FLAG:캐릭터대사표시 == 2)
             ;恋慕or服従
-            IF TALENT:150 == 1 || TALENT:160 == 1
+            IF TALENT:연모 == 1 || TALENT:복종 == 1
                 ;貧乳である
-                IF TALENT:111 == 1
+                IF TALENT:빈유 == 1
                     PRINTFORMW 「당신에게 만져지면…응앗! 굉…굉장하다고…요?」 
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 딱딱하게 발기한 유두를 꼭 눌렀다. 
                     PRINTFORMW 「자, 그렇죠…? 그러니까, 좀 더…앗! 그래, 좀 더…해 줘!」 
@@ -562,11 +562,11 @@ IF SELECTCOM == 3
             ENDIF
             CFLAG:5203 = 5
         ;Ｂ感覚Lv3 or 4
-        ELSEIF ABL:3 == 3 | 4 && (CFLAG:5203 <= 3|| FLAG:11 == 2)
+        ELSEIF ABL:B감각 == 3 | 4 && (CFLAG:5203 <= 3|| FLAG:캐릭터대사표시 == 2)
             ;恋慕or服従
-            IF TALENT:150 == 1 || TALENT:160 == 1
+            IF TALENT:연모 == 1 || TALENT:복종 == 1
                 ;貧乳である
-                IF TALENT:111 == 1
+                IF TALENT:빈유 == 1
                     PRINTFORMW 「앗…항…제 가슴, 좋아하시나요…?」 
                     PRINTFORMW 「작은게 좋다…? 그, 그렇습니까…읏, 싫엇…!」 
                 ;その他の場合
@@ -581,7 +581,7 @@ IF SELECTCOM == 3
             ENDIF
             CFLAG:5203 = 4
         ;Ｂ感覚Lv1 or 2
-        ELSEIF ABL:3 == 1 | 2 && (CFLAG:5203 <= 2|| FLAG:11 == 2)
+        ELSEIF ABL:B감각 == 1 | 2 && (CFLAG:5203 <= 2|| FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「응, 크…우」
             PRINTFORMW 「앗…거긴, 유두는, 안 돼요…앗, 안된다니, 깐요…」
             CFLAG:5203 = 3
@@ -602,7 +602,7 @@ IF SELECTCOM == 4
     ;初めて
     IF CFLAG:5204 == 0
         ;処女
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 불안해보이는 %조사처리(CALLNAME:TARGET,"를")% 다른 더러움 없이, 
             PRINTFORMW 무구하고 깨끗한 음부에 손가락을 찔러넣었다. 
         ;その他の場合
@@ -615,9 +615,9 @@ IF SELECTCOM == 4
     ;２回目以降
     ELSE
         ;Ｖ感覚Lv5以上
-        IF ABL:1 >= 5 && (CFLAG:5204 <= 4|| FLAG:11 == 2)
+        IF ABL:V감각 >= 5 && (CFLAG:5204 <= 4|| FLAG:캐릭터대사표시 == 2)
             ;恋慕or服従
-            IF TALENT:150 == 1 || TALENT:160 == 1
+            IF TALENT:연모 == 1 || TALENT:복종 == 1
                 PRINTFORMW 「%조사처리(CALLNAME:MASTER,"를")% 원해서, 참을 수 없어요…」
                 PRINTFORMW 움찔움찔 괴로운듯 떨리는 균열에, %조사처리(CALLNAME:MASTER,"는")% 손가락을 찔러 격렬하게 사랑해주었다. 
                 PRINTFORMW 「앗, 아앗! %CALLNAME:MASTER%의, 손가락, 대단…해요!」 
@@ -630,9 +630,9 @@ IF SELECTCOM == 4
             ENDIF
             CFLAG:5204 = 5
         ;Ｖ感覚Lv3 or 4
-        ELSEIF ABL:1 == 3 || ABL:1 ==4 && (CFLAG:5204 <= 3|| FLAG:11 == 2)
+        ELSEIF ABL:V감각 == 3 || ABL:V감각 ==4 && (CFLAG:5204 <= 3|| FLAG:캐릭터대사표시 == 2)
             ;恋慕or服従
-            IF TALENT:150 == 1 || TALENT:160 == 1
+            IF TALENT:연모 == 1 || TALENT:복종 == 1
                 PRINTFORMW 「앗…거기, 좋앗…!」 
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"가")% 말하는 장소를 집중적으로 만지작거리자, %조사처리(CALLNAME:TARGET,"는")% 몸을 튕기며 응했다. 
                 PRINTFORMW 「거기, 에욧…! 앗, 으읏…하아…」
@@ -644,7 +644,7 @@ IF SELECTCOM == 4
             ENDIF
             CFLAG:5204 = 4
         ;Ｖ感覚Lv1 or 2
-        ELSEIF ABL:1 == 1 || ABL:1 == 2 && (CFLAG:5204 <= 2|| FLAG:11 == 2)
+        ELSEIF ABL:V감각 == 1 || ABL:V감각 == 2 && (CFLAG:5204 <= 2|| FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「읏…응, 이상한, 곳에 손대지…말아주세요…」
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 움찔움찔거리며 끊임없이 발을 움직이고 있다. 
             CFLAG:5204 = 3
@@ -688,9 +688,9 @@ IF SELECTCOM == 6
     ;２回目以降
     ELSE
         ;恋慕or服従
-        IF TALENT:150 == 1 || TALENT:160 == 1 && (CFLAG:5206 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 || TALENT:복종 == 1 && (CFLAG:5206 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;猫舌である
-            IF TALENT:54 == 1
+            IF TALENT:고양이혀 == 1
                 PRINTFORMW 「츄우…웁, 응…키스, 만으로, 이렇게 기분 좋다니…」
                 PRINTFORMW 온 몸으로 느끼며, 쇼는 꺼슬꺼슬한 혀를 얽히고 있다. 
             ;その他の場合
@@ -702,13 +702,13 @@ IF SELECTCOM == 6
         ;その他の場合
         ELSE
             ;屈服刻印Lv3
-            IF MARK:2 == 3
+            IF MARK:굴복각인 == 3
                 PRINTFORMW 「츕…키스, 는, 아름다…워요…하아…응」
             ;屈服刻印Lv2
-            ELSEIF MARK:2 == 2
+            ELSEIF MARK:굴복각인 == 2
                 PRINTFORMW 「응…츄, 핫…으응……」
             ;屈服刻印Lv1
-            ELSEIF MARK:2 == 1
+            ELSEIF MARK:굴복각인 == 1
                 PRINTFORMW 「아, 네…츄…응, 후아…」
             ;その他の場合
             ELSE
@@ -727,7 +727,7 @@ IF SELECTCOM == 7 && TEQUIP:50 == 0 && TEQUIP:52 == 0 && TEQUIP:54 == 0
     ;初めて
     IF CFLAG:5207 == 0
         ;恋慕or服従
-        IF TALENT:150 == 1 || TALENT:160 == 1
+        IF TALENT:연모 == 1 || TALENT:복종 == 1
             PRINTFORMW 「혼자서 가버리는게, 보고 싶습니까?」 
             PRINTFORMW %CALLNAME:MASTER%의 말에, 멍하니 놀라는 %CALLNAME:TARGET%. 
             PRINTFORMW 「사, 상관 없습니다만…%CALLNAME:MASTER%의 부탁이기도 하고…」
@@ -745,7 +745,7 @@ IF SELECTCOM == 7 && TEQUIP:50 == 0 && TEQUIP:52 == 0 && TEQUIP:54 == 0
     ;２回目以降
     ELSE
         ;恋慕or服従
-        IF TALENT:150 == 1 || TALENT:160 == 1 && (CFLAG:5207 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 || TALENT:복종 == 1 && (CFLAG:5207 <= 2|| FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아…네…」
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 벌려, 양손을 써 격렬하게 위로하기 시작했다. 
             PRINTFORMW 「응…후앗…앗 기분…좋아, 요……%CALLNAME:MASTER%…!」 
@@ -753,17 +753,17 @@ IF SELECTCOM == 7 && TEQUIP:50 == 0 && TEQUIP:52 == 0 && TEQUIP:54 == 0
         ;その他の場合
         ELSE
             ;屈服刻印Lv3
-            IF MARK:2 == 3
+            IF MARK:굴복각인 == 3
                 PRINTFORMW 「아…네…」
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 끄덕이고, %CALLNAME:MASTER%에게 보이듯이 다리를 벌렸다. 
                 PRINTFORMW 「읏…후앗…여기, 좋아해서……기분, 좋아, 요…!」 
             ;屈服刻印Lv2
-            ELSEIF MARK:2 == 2
+            ELSEIF MARK:굴복각인 == 2
                 PRINTFORMW 「보, 보는거지…요?」 
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 얼굴을 붉히며, 천천히 자신을 위로하고 있다. 
                 PRINTFORMW 「응…앗…네, 기분 좋아…요…」
             ;屈服刻印Lv1
-            ELSEIF MARK:2 == 1
+            ELSEIF MARK:굴복각인 == 1
                 PRINTFORMW 「또, 입니까…」
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 한숨을 쉬며, 어쩔 수 없다는듯 자신을 위로하기 시작했다. 
                 PRINTFORMW 「뭐……당하는 것보다는, 안심…읏……되긴, 하지만…」
@@ -802,7 +802,7 @@ IF SELECTCOM == 7 && TEQUIP:50 == 0 && TEQUIP:52 == 0 && TEQUIP:54 == 0 && TEQUI
     ;初めて
     IF CFLAG:5209 == 0
         ;恋慕
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             PRINTFORMW 「앗…당신이, 해주는게 아닌데…!」 
             PRINTFORMW 「안 돼, 당신이 아닌데, 기분 좋아져버려…!」 
         ;その他の場合
@@ -814,16 +814,16 @@ IF SELECTCOM == 7 && TEQUIP:50 == 0 && TEQUIP:52 == 0 && TEQUIP:54 == 0 && TEQUI
     ;２回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5209 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 && (CFLAG:5209 <= 2|| FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「앗! 당, 신 봐주세요…!」 
             PRINTFORMW 「이, 렇게, 들어가서! 으앗, 추잡해도! 기분 좋아!!」 」
             CFLAG:5209 = 3
         ;その他の場合
         ELSE
             ;屈服刻印Lv3
-            IF MARK:2 == 3
+            IF MARK:굴복각인 == 3
                 ;Ｖ感覚Lv2以上
-                IF ABL:1 >= 2
+                IF ABL:V감각 >= 2
                     PRINTFORMW 「핫 우웃…!」 
                     PRINTFORMW 「손가락이 닿지 않는 곳이, 쿡 쿡하고 밀려와서…기분, 좋앗…!」 
                 ;その他の場合
@@ -832,9 +832,9 @@ IF SELECTCOM == 7 && TEQUIP:50 == 0 && TEQUIP:52 == 0 && TEQUIP:54 == 0 && TEQUI
                     PRINTFORMW 「핫, 핫…고통이, 집중력을 올리는데 도움이 될 것 같아요…」
                 ENDIF
             ;屈服刻印Lv2
-            ELSEIF MARK:2 == 2
+            ELSEIF MARK:굴복각인 == 2
                 ;Ｖ感覚Lv2以上
-                IF ABL:1 >= 2
+                IF ABL:V감각 >= 2
                     PRINTFORMW 「하앗…꺄아…」
                     PRINTFORMW 「뭐, 뭡니까…기, 기분 좋아지라고 하는거죠?」 
                 ;その他の場合
@@ -842,7 +842,7 @@ IF SELECTCOM == 7 && TEQUIP:50 == 0 && TEQUIP:52 == 0 && TEQUIP:54 == 0 && TEQUI
                     PRINTFORMW 「크읏…이런 행위론, 타락 이외에는 아무 것도 없는 기분도…」
                 ENDIF
             ;屈服刻印Lv1
-            ELSEIF MARK:2 == 1
+            ELSEIF MARK:굴복각인 == 1
                 PRINTFORMW 「우우…이런 물건에게, 희롱당하고 있다니…」
             ;その他の場合
             ELSE
@@ -1015,14 +1015,14 @@ IF SELECTCOM == 7 &&  TEQUIP:52 && TEQUIP:20 == 1
 ENDIF
 [SKIPEND]
 ;-------------------------------------------------
-;野外アナルバイブオナニー    CFLAG:5220
+;野外アナルバイブオナニー    CFLAG:체위판정
 ;-------------------------------------------------
 [SKIPSTART]
 IF SELECTCOM == 7 &&  TEQUIP:52 && TEQUIP:25 == 1
     DRAWLINE
     ;初めて
-    IF CFLAG:5220 == 0
-        CFLAG:5220= 1
+    IF CFLAG:체위판정 == 0
+        CFLAG:체위판정= 1
         RETURN 0
     ;２回目以降
     ELSE
@@ -1076,9 +1076,9 @@ IF SELECTCOM == 9
     ;２回目以降
     ELSE
         ;屈服刻印Lv2以上
-        IF MARK:2 >= 2 && (CFLAG:5223 <= 3|| FLAG:11 == 2)
+        IF MARK:굴복각인 >= 2 && (CFLAG:5223 <= 3|| FLAG:캐릭터대사표시 == 2)
             ;恋慕or服従
-            IF TALENT:150 == 1 || TALENT:160 == 1
+            IF TALENT:연모 == 1 || TALENT:복종 == 1
                 PRINTFORMW 「휴식, 이네요…」
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%에게 등을 기대듯이 하고 몸을 침착히 가다듬었다. 
             ;その他の場合
@@ -1088,7 +1088,7 @@ IF SELECTCOM == 9
             ENDIF
             CFLAG:5223 = 4
         ;屈服刻印Lv1
-        ELSEIF MARK:2 == 1 && (CFLAG:5223 <= 2|| FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 1 && (CFLAG:5223 <= 2|| FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「응…휴식, 입니까」
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"과")% 조금 거리를 두고, 호흡을 안정시키고 있다. 
             CFLAG:5223 = 3
@@ -1117,9 +1117,9 @@ IF SELECTCOM == 10
     ;２回目以降
     ELSE
         ;恋慕or服従
-        IF TALENT:150 == 1 || TALENT:160 == 1 && (CFLAG:5224 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 || TALENT:복종 == 1 && (CFLAG:5224 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;Ｃ感覚Lv5以上
-            IF ABL:0 >= 5
+            IF ABL:C감각 >= 5
                 PRINTFORMW 「앗…네…읏!」 
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 로터의 진동에 허덕이며, 허리를 비꼬며 강하게 눌러왔다. 
                 PRINTFORMW 「핫, 아앗, 더…굉장히, 기분…좋아요…!」 
@@ -1132,14 +1132,14 @@ IF SELECTCOM == 10
         ;その他の場合
         ELSE
             ;Ｃ感覚Lv5
-            IF ABL:0 == 5
+            IF ABL:C감각 == 5
                 PRINTFORMW 「그, 그 자극은…읏, 하앗! 힛…잇…!」 
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 클리토리스의 자극에 목을 격하게 울리고 있다. 
             ;Ｃ感覚Lv3
-            ELSEIF ABL:0 == 3
+            ELSEIF ABL:C감각 == 3
                 PRINTFORMW 「앗…싫어, 힛…앗, 싫어…!」 
             ;Ｃ感覚Lv1
-            ELSEIF ABL:0 == 1
+            ELSEIF ABL:C감각 == 1
                 PRINTFORMW 「응…그런 곳, 만…하지 말아주세요…」
             ;その他の場合
             ELSE
@@ -1174,9 +1174,9 @@ IF SELECTCOM == 12
     ;初めて
     IF CFLAG:5226 == 0
         ;処女
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;恋慕
-            IF TALENT:150 == 1
+            IF TALENT:연모 == 1
                 PRINTFORMW 「에…그, 걸?」 
                 PRINTFORMW 쇼는 음란하게 꿈틀거리는 바이브를 바라보고 있다. 
                 PRINTFORMW 「그…저, 처음이니까…그러니까」
@@ -1191,7 +1191,7 @@ IF SELECTCOM == 12
         ;その他の場合
         ELSE
             ;恋慕
-            IF TALENT:150 == 1
+            IF TALENT:연모 == 1
                 PRINTFORMW 「그걸…저에게 넣는겁니까?」 
                 PRINTFORMW 쇼는 스스로 손을 뻗어, 진동하고 있는 그것을 받아들였다. 
                 PRINTFORMW 「아앗…! 부들부들, 떨려서…!」 
@@ -1206,9 +1206,9 @@ IF SELECTCOM == 12
     ;２回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5226 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 && (CFLAG:5226 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;Ｖ感覚Lv5以上
-            IF ABL:1 >= 5
+            IF ABL:V감각 >= 5
                 ;効果[バイブ]
                 IF TEQUIP:20 == 1
                     PRINTFORMW 「아아앙! 안에서 굉장하게…! 자궁이 삐걱삐걱하고!」 
@@ -1225,7 +1225,7 @@ IF SELECTCOM == 12
         ;その他の場合
         ELSE
             ;Ｖ感覚Lv5以上
-            IF ABL:1 >= 5
+            IF ABL:V감각 >= 5
                 ;効果[バイブ]
                 IF TEQUIP:20 == 1
                     PRINTFORMW 「우아아아아! 힛, 안쪽에서, 움직이지 말아줘…하앗 아우우…!」 
@@ -1234,10 +1234,10 @@ IF SELECTCOM == 12
                     PRINTFORMW 「그런, 한번에 뽑아버리면 안 돼…! 하앗우앗아아아아아!!」 
                 ENDIF
             ;Ｖ感覚Lv3
-            ELSEIF ABL:1 == 3 || ABL:1 == 4
+            ELSEIF ABL:V감각 == 3 || ABL:V감각 == 4
                 PRINTFORMW 「큿…후아…그런, 안까지…앗, 앙…」
             ;Ｖ感覚Lv1
-            ELSEIF ABL:1 == 1 || ABL:1 == 2
+            ELSEIF ABL:V감각 == 1 || ABL:V감각 == 2
                 PRINTFORMW 「그, 그렇게 깊게 넣지 말아주세요…안이, 아파와요」
             ;その他の場合
             ELSE
@@ -1256,9 +1256,9 @@ IF SELECTCOM == 13
     ;初めて
     IF CFLAG:5227 == 0
         ;恋慕
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             ;Ａ感覚Lv2
-            IF ABL:2 == 2
+            IF ABL:A감각 == 2
                 PRINTFORMW 「그, 그걸 엉덩이에…?」 
                 PRINTFORMW 는 구불구불하게 꾸물거리는 애널바이브를 머뭇머뭇거리며 보고 있다. 
                 PRINTFORMW 「그렇게 큰 물건이, 들어가는건가요…조금, 무섭네요」
@@ -1271,14 +1271,14 @@ IF SELECTCOM == 13
         ;その他の場合
         ELSE
             ;Ａ感覚Lv2
-            IF ABL:2 == 2
+            IF ABL:A감각 == 2
                 PRINTFORMW 「그, 그런걸 넣는다니…」
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 상관치 않고, 쇼의 국문을 열어재꼈다. 
                 PRINTFORMW 「히이이!? 에, 嘘…들어오고, 있어…응아아아아!」 
             ;その他の場合
             ELSE
                 ;処女
-                IF TALENT:0 == 1
+                IF TALENT:처녀 == 1
                     PRINTFORMW 「또 외설적인 형태의 물건을…그렇게 저를 더럽히고 싶습니까」
                     PRINTFORMW 「에, 달라? 엉덩이에…라니, 불필요하게 이상하잖습니까!」 
                 ;その他の場合
@@ -1293,9 +1293,9 @@ IF SELECTCOM == 13
     ;２回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5227 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 && (CFLAG:5227 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;Ａ感覚Lv5以上
-            IF ABL:2 >= 4
+            IF ABL:A감각 >= 4
                 ;効果[アナルバイブ装着]
                 IF TEQUIP:25 == 0
                     PRINTFORMW 「앗! 응! 앗, 기다…빼지 말아줘!」 
@@ -1310,7 +1310,7 @@ IF SELECTCOM == 13
             ;その他の場合
             ELSE
                 ;Ａ感覚Lv2以上
-                IF ABL:2 >= 2
+                IF ABL:A감각 >= 2
                     ;効果[アナルバイブ装着]
                     IF TEQUIP:25 == 1
                         PRINTFORMW 「우우웃…앗, 후아아…하아, 들어왔다아…!」 
@@ -1330,7 +1330,7 @@ IF SELECTCOM == 13
         ;その他の場合
         ELSE
             ;Ａ感覚Lv5以上
-            IF ABL:2 >= 5
+            IF ABL:A감각 >= 5
                 ;効果[アナルバイブ装着]
                 IF TEQUIP:25 == 1
                     PRINTFORMW 「우아아앗, 아아아! 괴, 굉장해…히야아아! 우아아아아앗!」 
@@ -1340,10 +1340,10 @@ IF SELECTCOM == 13
                     PRINTFORMW 「지금 빼버리면…히이!? 앗 우앗아아아아앙!!」 
                 ENDIF
             ;Ａ感覚Lv3
-            ELSEIF ABL:2 == 3 || ABL:2 == 4
+            ELSEIF ABL:A감각 == 3 || ABL:A감각 == 4
                 PRINTFORMW 「큿…후아, 아아아……기분, 좋아…!」 
             ;Ａ感覚Lv1
-            ELSEIF ABL:2 == 1 || ABL:2 == 2
+            ELSEIF ABL:A감각 == 1 || ABL:A감각 == 2
                 PRINTFORMW 「엉덩이를 단련하는 수행은 없었어요…크으으……」
             ;その他の場合
             ELSE
@@ -1410,9 +1410,9 @@ IF SELECTCOM == 20
     ;初めて
     IF CFLAG:5231 == 0
         ;恋慕or服従
-        IF TALENT:150 == 1 || TALENT:160 == 1
+        IF TALENT:연모 == 1 || TALENT:복종 == 1
             ;処女
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
                 PRINTFORMW 누워있는 %조사처리(CALLNAME:TARGET,"는")%, 긴장된 표정으로 %조사처리(CALLNAME:MASTER,"를")% 올려다보았다. 
                 PRINTFORMW 「드디어…당신에게, 저를 바치게 되는거, 군요」
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"를")% 껴앉았다. 
@@ -1427,9 +1427,9 @@ IF SELECTCOM == 20
         ;その他の場合
         ELSE
             ;屈服刻印Lv3
-            IF MARK:2 == 3
+            IF MARK:굴복각인 == 3
                 ;処女
-                IF TALENT:0 == 1
+                IF TALENT:처녀 == 1
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 지긋이 %조사처리(CALLNAME:MASTER,"를")% 올려다보고 있다. 
                     PRINTFORMW 「언젠간 온다고 알고 있었습니다…」
                     PRINTFORMW 「당신의 행위를 멈추는 일은 하지 못했습니다…. 단지」
@@ -1443,7 +1443,7 @@ IF SELECTCOM == 20
             ;その他の場合
             ELSE
                 ;処女
-                IF TALENT:0 == 1
+                IF TALENT:처녀 == 1
                     PRINTFORMW 「무, 무슨 짓을 하는겁니까!」 
                     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:TARGET,"는")% 누르고 덮쳐, 억지로 다리를 벌리게 했다. 
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 앞으로의 행위를 예상하고, 새파랗게 된다. 
@@ -1462,9 +1462,9 @@ IF SELECTCOM == 20
     ;２回目以降
     ELSE
         ;恋慕or服従
-        IF TALENT:150 == 1 || TALENT:160 == 1 && (CFLAG:5231 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 || TALENT:복종 == 1 && (CFLAG:5231 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;Ｖ感覚Lv5以上
-            IF ABL:1 >= 5
+            IF ABL:V감각 >= 5
                 PRINTFORMW 「앗! 당신의…! 깊게 와서, 정말로 기분이…좋, 아요!」 
                 PRINTFORMW 「좀 더 찔러줘…! 앗 아앗! 거, 기…에요…읏!」 
             ;その他の場合
@@ -1475,15 +1475,15 @@ IF SELECTCOM == 20
         ;その他の場合
         ELSE
             ;Ｖ感覚Lv5以上
-            IF ABL:1 >= 5
+            IF ABL:V감각 >= 5
                 PRINTFORMW 「힛, 앗아아아아…싫어어…!」 
                 PRINTFORMW 「아, 거기가, 기분 좋아서…좋, 아욧…!」 
             ;Ｖ感覚Lv3
-            ELSEIF ABL:1 == 3 || ABL:1 == 4
+            ELSEIF ABL:V감각 == 3 || ABL:V감각 == 4
                 PRINTFORMW 「앗…으앗, 핫, 싫어……읏!」 
                 PRINTFORMW 「기분 좋다거나 하는게 아니라고요…읏, 크웃…!」 
             ;Ｖ感覚Lv1
-            ELSEIF ABL:1 == 1 || ABL:1 == 2
+            ELSEIF ABL:V감각 == 1 || ABL:V감각 == 2
                 PRINTFORMW 「읏…훗……아」
                 PRINTFORMW 「뭡, 니까…아무것도, 아니라고요…앙……!?」 
             ;その他の場合
@@ -1504,9 +1504,9 @@ IF SELECTCOM == 21
     ;初めて
     IF CFLAG:5232 == 0
         ;恋慕
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             ;処女である
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
                 PRINTFORMW 「저, 저는 짐승이 아닙니다만」
                 PRINTFORMW 「아뇨, 당신이 싫다는 건… 아, 알겠다고요…」
                 PRINTFORMW 쇼가 엎드리자, %조사처리(CALLNAME:MASTER,"는")% 뒤에서부터 범하기 시작했다. 
@@ -1521,9 +1521,9 @@ IF SELECTCOM == 21
         ;その他の場合
         ELSE
             ;屈服刻印Lv3
-            IF MARK:2 == 3
+            IF MARK:굴복각인 == 3
                 ;処女
-                IF TALENT:0 == 1
+                IF TALENT:처녀 == 1
                     PRINTFORMW 「뒤, 뒤로 하는 겁니까?」 
                     PRINTFORMW 쇼는 놀라며, 기가 막혀하면서도 스스로 엎드려 엉덜이를 들어올렸다. 
                     PRINTFORMW 「행위가 행위니까 당연하지만… 마치, 짐승 같아요…」
@@ -1537,7 +1537,7 @@ IF SELECTCOM == 21
             ;その他の場合
             ELSE
                 ;処女
-                IF TALENT:0 == 1
+                IF TALENT:처녀 == 1
                     PRINTFORMW 「뭣… 무슨 짓을 하는 거죠!」 
                     PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 쇼를 앞으로 밀어 엎어뜨리더니, 말할 틈도 주지 않고 뒤에서 포개졌다.
                     PRINTFORMW 「지, 짐승! 사람으로서 외도라는 생각은 없는 건가요, 이와 같은, 이와 같은… 욱, 흐으…!」 
@@ -1555,9 +1555,9 @@ IF SELECTCOM == 21
     ;２回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5232 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 && (CFLAG:5232 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;Ｖ感覚Lv5以上
-            IF ABL:1 >= 5
+            IF ABL:V감각 >= 5
                 PRINTFORMW 「앗, 아앗! 당신에게, 범해지는것 같은데!」 
                 PRINTFORMW 쇼는 자신도 격렬히 허리를 흔들며, %CALLNAME:MASTER%의 페니스를 탐욕으로 삼켜온다. 
                 PRINTFORMW 「저, 저, 당신의 물건, 같아! 짐승, 같이…하아아앙!!」 
@@ -1570,14 +1570,14 @@ IF SELECTCOM == 21
         ;その他の場合
         ELSE
             ;Ｖ感覚Lv5以上
-            IF ABL:1 >= 5
+            IF ABL:V감각 >= 5
                 PRINTFORMW 「으크읏! 그, 렇게 격렬히 찌르지 말아…히아아아아!?」 
                 PRINTFORMW 「자궁이 삐걱삐걱해서…! 앗아앗, 안 돼, 부숴져버려어어!!」 
             ;Ｖ感覚Lv3
-            ELSEIF ABL:1 == 3 || ABL:1 == 4
+            ELSEIF ABL:V감각 == 3 || ABL:V감각 == 4
                 PRINTFORMW 「이, 런…읏, 짐승 같이 당하고 있는데…앗, 안은 뜨거워서 참을 수 없어…. 응아아아…!」 
             ;Ｖ感覚Lv1
-            ELSEIF ABL:1 == 1 || ABL:1 == 2
+            ELSEIF ABL:V감각 == 1 || ABL:V감각 == 2
                 PRINTFORMW 「…그, 렇게 찔러대서… 짐승 같이 범하는게, 정말로 좋으신가 보네요」
             ;その他の場合
             ELSE
@@ -1597,18 +1597,18 @@ IF SELECTCOM == 22
     ;初めて
     IF CFLAG:5233 == 0
         ;恋慕
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             ;処女
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
             ;その他の場合
             ELSE
             ENDIF
         ;その他の場合
         ELSE
             ;屈服刻印Lv3
-            IF MARK:2 == 3
+            IF MARK:굴복각인 == 3
                 ;処女
-                IF TALENT:0 == 1
+                IF TALENT:처녀 == 1
                 ;その他の場合
                 ELSE
                 ENDIF
@@ -1621,9 +1621,9 @@ IF SELECTCOM == 22
     ;２回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5233 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 && (CFLAG:5233 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;Ｖ感覚Lv5以上
-            IF ABL:1 >= 5
+            IF ABL:V감각 >= 5
             ;その他の場合
             ELSE
             ENDIF
@@ -1631,11 +1631,11 @@ IF SELECTCOM == 22
         ;その他の場合
         ELSE
             ;Ｖ感覚Lv5以上
-            IF ABL:1 >= 5
+            IF ABL:V감각 >= 5
             ;Ｖ感覚Lv3
-            ELSEIF ABL:1 == 3
+            ELSEIF ABL:V감각 == 3
             ;Ｖ感覚Lv1
-            ELSEIF ABL:1 == 1
+            ELSEIF ABL:V감각 == 1
             ;その他の場合
             ELSE
             ENDIF
@@ -1900,9 +1900,9 @@ IF SELECTCOM == 40
     ;２回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5249 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 && (CFLAG:5249 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;技巧Lv5以上
-            IF ABL:12 >= 5
+            IF ABL:기교 >= 5
                 PRINTFORMW 쇼는 절묘한 힘으로 잡고, 격하게 다루기 시작했다. 
                 PRINTFORMW 「후후, 이렇게 당하는게, 좋은거지요? 뭐든지 알고 있어요, 당신의 일은」
                 PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 격한 애무를 참을 수 있게 일부러 힘을 가감하며, 계속해서 즐거운듯이 마찰했다. 
@@ -1916,11 +1916,11 @@ IF SELECTCOM == 40
         ;その他の場合
         ELSE
             ;屈服刻印Lv3
-            IF MARK:2 == 3
+            IF MARK:굴복각인 == 3
                 PRINTFORMW 「이렇게…입니까」
                 PRINTFORMW 쇼는 손을 사용해, 기둥과 귀두 양쪽 모두 끊임없이 애무하고 있다. 
             ;屈服刻印Lv2
-            ELSEIF MARK:2 == 2
+            ELSEIF MARK:굴복각인 == 2
                 PRINTFORMW 「움찔 움찔 잘 움직이네요…. 손으로 하는게 그렇게 쾌락을 얻을 수 있는건가요」
             ;その他の場合
             ELSE
@@ -1939,7 +1939,7 @@ IF SELECTCOM == 41
     ;初めて
     IF CFLAG:5250 == 0
         ;恋慕
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             PRINTFORMW 「입으로…?」 
             PRINTFORMW 쇼는 주저없이 페니스를 물고, 냄새에 멍해지며 깊은 쪽까지 삼켰다. 
         ;その他の場合
@@ -1953,9 +1953,9 @@ IF SELECTCOM == 41
     ;２回目以降
     ELSE
         ;恋慕
-        IF TALENT:150 == 1 && (CFLAG:5250 <= 2|| FLAG:11 == 2)
+        IF TALENT:연모 == 1 && (CFLAG:5250 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;猫舌である
-            IF TALENT:54 == 1
+            IF TALENT:고양이혀 == 1
                 PRINTFORMW 「거칠거칠한 혀로 괴롭히는걸 좋아하시네요…」
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 일부러 귀두를 혀로 핥고 있다. 
                 PRINTFORMW 「자, 귀여운 목소리… 응, 츄 …맛있어…」
@@ -1969,12 +1969,12 @@ IF SELECTCOM == 41
         ;その他の場合
         ELSE
             ;猫舌である
-            IF TALENT:54 == 1
+            IF TALENT:고양이혀 == 1
                 ;屈服刻印Lv3
-                IF MARK:2 == 3
+                IF MARK:굴복각인 == 3
                     PRINTFORMW 「후후… 이 혀로, 낼름낼름… 당하는게, 좋으신거군요」
                 ;屈服刻印Lv2
-                ELSEIF MARK:2 == 2
+                ELSEIF MARK:굴복각인 == 2
                     PRINTFORMW 「츄…응, 부드럽게 핥는다는건, 어렵네요… 하암…」
                 ;その他の場合
                 ELSE
@@ -1983,10 +1983,10 @@ IF SELECTCOM == 41
             ;その他の場合
             ELSE
                 ;屈服刻印Lv3
-                IF MARK:2 == 3
+                IF MARK:굴복각인 == 3
                     PRINTFORMW 「입으로인가요, 네…. 사양마시고, 좋아하는대로 움직여주세요…믓, 으응」
                 ;屈服刻印Lv2
-                ELSEIF MARK:2 == 2
+                ELSEIF MARK:굴복각인 == 2
                     PRINTFORMW 「훗…제대로, 할테니까…. 츄…하, 압…」
                 ;その他の場合
                 ELSE
@@ -2236,9 +2236,9 @@ IF SELECTCOM == 60
     ;２回目以降
     ELSE
         ;効果[ビデオ撮影]
-        IF TEQUIP:50 == 1 && (CFLAG:5265 <= 2|| FLAG:11 == 2)
+        IF TEQUIP:50 == 1 && (CFLAG:5265 <= 2|| FLAG:캐릭터대사표시 == 2)
             ;恋慕
-            IF TALENT:150 == 1
+            IF TALENT:연모 == 1
                 PRINTFORMW 「아…응, 정말, 이렇게 되선」
                 PRINTFORMW 쇼는 웃으며, 비디오카메라를 의식하며 전신에 로션을 발라갔다. 
             ;その他の場合
@@ -2249,7 +2249,7 @@ IF SELECTCOM == 60
         ;その他の場合
         ELSE
             ;恋慕
-            IF TALENT:150 == 1
+            IF TALENT:연모 == 1
                 PRINTFORMW 「이런거, 필요합니까?」 
                 PRINTFORMW 「당신에게 조금 격렬하게 해줄 수 있다면, 저같은건 금방…」
             ;その他の場合
@@ -2391,7 +2391,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 66 && TFLAG:99 == 2
     ;연모
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「주인이 배란유도제 섭취」
     ;그 외의 경우
     ELSE
@@ -2433,7 +2433,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 67 && TFLAG:99 == 2
     ;연모
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「주인이 긴급피임약 섭취」
     ;그 외의 경우
     ELSE
@@ -6978,11 +6978,11 @@ ENDIF
 IF TFLAG:0 > 0
     DRAWLINE
     ;Ｖ経験 2以上…つまり再び処女喰いってわけですね
-    IF EXP:0 >= 2 && (CFLAG:8009 <= 2|| FLAG:11 == 2)
+    IF EXP:V경험 >= 2 && (CFLAG:8009 <= 2|| FLAG:캐릭터대사표시 == 2)
         ;助手が調教
         IF ASSIPLAY
             ;恋慕or服従
-            IF TALENT:150 == 1 || TALENT:160 == 1
+            IF TALENT:연모 == 1 || TALENT:복종 == 1
                 PRINTFORMW 「읏…! 크으으… 아, %CALLNAME:MASTER%도, 벌 받을 사람…이에요…」
                 PRINTFORMW 순결을 빼앗긴 흔적을 보며, %조사처리(CALLNAME:TARGET,"는")% 스러지듯 속삭였다. 
                 PRINTFORMW 「하지만… %조사처리(CALLNAME:MASTER,"가")%, 보고 싶다면… 읏… 그것도…」
@@ -6993,7 +6993,7 @@ IF TFLAG:0 > 0
                 PRINTFORMW 「너, 무해… 웃, 크…읏……」
             ENDIF
         ;恋慕or服従
-        ELSEIF TALENT:150 == 1 || TALENT:160 == 1
+        ELSEIF TALENT:연모 == 1 || TALENT:복종 == 1
             PRINTFORMW 「읏…! 크읏…또, %CALLNAME:MASTER%에게, 바칠 수 있었…네요」
             PRINTFORMW 눈물을 머금으며, %CALLNAME:MASTER%에게 바친 것을 %조사처리(CALLNAME:TARGET,"는")% 기뻐했다. 
         ;その他の場合
@@ -7008,7 +7008,7 @@ IF TFLAG:0 > 0
         ;助手が調教
         IF ASSIPLAY
             ;恋慕or服従
-            IF TALENT:150 == 1 || TALENT:160 == 1
+            IF TALENT:연모 == 1 || TALENT:복종 == 1
                 PRINTFORMW 「아…아앗……」
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"가")% 처녀 상실의 피를 흘리는 것을, %조사처리(CALLNAME:MASTER,"는")% 바라보고 있다. 
                 PRINTFORMW 「처음은, %CALLNAME:MASTER%에게 바치고 싶었, 는데…」
@@ -7021,14 +7021,14 @@ IF TFLAG:0 > 0
                 PRINTFORMW 「이, 런…이 세상에는, 여기까지의 수치가…, 있다니……」
             ENDIF
         ;恋慕or服従
-        ELSEIF TALENT:150 == 1 || TALENT:160 == 1
+        ELSEIF TALENT:연모 == 1 || TALENT:복종 == 1
             PRINTFORMW 「아…아앗……」
             PRINTFORMW 허벅지에 흘린 처녀 상실의 증거에, %조사처리(CALLNAME:TARGET,"는")% 떨며 미소를 지었다. 
             PRINTFORMW 「이걸, 로…저도, 여자네요…」
             PRINTFORMW 멈추지 않으며%CALLNAME:TARGET%의 눈동자에서 따뜻한 눈물이 흘러 떨어진다. 
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 부드럽게, 그 물방울을 닦아주었다. 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 「언젠가는 이렇게 되리라 생각했어요…」
             PRINTFORMW 떨리고 있는 목소리는 낮고, 모든 존재를 부정하듯 노기가 깃들어 있다. 
             PRINTFORMW 「불도를 거부하는 자에게…반드시, 벌을…!」 
@@ -7046,16 +7046,16 @@ ENDIF
 IF TFLAG:10 > 0 || TFLAG:9 > 0
     DRAWLINE
     ;アナル判定
-    IF TFLAG:9 > 0 && (CFLAG:8010 <= 2|| FLAG:11 == 2)
+    IF TFLAG:9 > 0 && (CFLAG:8010 <= 2|| FLAG:캐릭터대사표시 == 2)
         ;恋慕or服従
-        IF TALENT:150 == 1 || TALENT:160 == 1
+        IF TALENT:연모 == 1 || TALENT:복종 == 1
             PRINTFORMW 「배가…! 읏…굉장히, 잔뜩…!」 
             PRINTFORMW 엉덩이 구멍을 꾹하고 잡으며, %조사처리(CALLNAME:TARGET,"는")% 정액을 받아들였다. 
             PRINTFORMW 「배가, 뜨거워…잔뜩, 이네요…」
         ;その他の場合
         ELSE
             ;Ａ感覚Lv3以上
-            IF ABL:2 >= 3
+            IF ABL:A감각 >= 3
                 PRINTFORMW 「배에…! 아, 앗…!」 
                 PRINTFORMW 쏟아져 나오는 감각에, %조사처리(CALLNAME:TARGET,"는")% 괴로움에 허덕였다. 
                 PRINTFORMW 「괴로울…, 정도…로, 싸주셨…네요」
@@ -7070,9 +7070,9 @@ IF TFLAG:10 > 0 || TFLAG:9 > 0
     ;その他の場合
     ELSE
         ;恋慕or服従
-        IF TALENT:150 == 1 || TALENT:160 == 1
+        IF TALENT:연모 == 1 || TALENT:복종 == 1
             ;妊娠である
-            IF TALENT:140 == 1
+            IF TALENT:임신 == 1
                 PRINTFORMW 「앗…! 굉, 장해…. 양이…!」 
                 PRINTFORMW 「읏… 안 돼요, 아기가 놀라버려요…」
                 PRINTFORMW 그렇게 말하면서도, 자궁은 기뻐하며 정액을 삼켜왔다. 
@@ -7094,7 +7094,7 @@ IF TFLAG:10 > 0 || TFLAG:9 > 0
             ;その他の場合
             ELSE
                 ;屈服刻印Lv3
-                IF MARK:2 == 3
+                IF MARK:굴복각인 == 3
                     PRINTFORMW 「아앗! 다, 다시 안에…힛…하…!」 
                     PRINTFORMW 「이런, 범해지고 있는데… 몸은, 기뻐하고 있어…앗…」
                 ;その他の場合
@@ -7112,7 +7112,7 @@ ENDIF
 IF TFLAG:12 > 0
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:8011 <= 2|| FLAG:11 == 2)
+    IF TALENT:연모 == 1 && (CFLAG:8011 <= 2|| FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「앗, 움찔움찔해서… 사정하셨나요? 당신, 잔뜩, 뿌려주세요…!」 
 
         PRINTFORMW 몸에 뿌려진 정액을, 쇼는 열심히 핥아대고 있다. 
@@ -7121,10 +7121,10 @@ IF TFLAG:12 > 0
     ;その他の場合
     ELSE
         ;屈服刻印Lv3
-        IF MARK:2 == 3
+        IF MARK:굴복각인 == 3
             PRINTFORMW 「후후, 맥이 빨라지고 있어요…자아, 마음껏 싸주세요?」 
         ;屈服刻印Lv2
-        ELSEIF MARK:2 == 2
+        ELSEIF MARK:굴복각인 == 2
             PRINTFORMW 「읏… 쌀 것 같지요? 알겠습니다, 자아……」
         ;その他の場合
         ELSE
@@ -7138,9 +7138,9 @@ ENDIF
 IF TFLAG:11 > 0
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1 && (CFLAG:8012 <= 2|| FLAG:11 == 2)
+    IF TALENT:연모 == 1 && (CFLAG:8012 <= 2|| FLAG:캐릭터대사표시 == 2)
         ;猫舌である
-        IF TALENT:54 == 1
+        IF TALENT:고양이혀 == 1
             PRINTFORMW 「읏…! 꿀꺽…응…맛있어…혀에 주륵하고 늘어지고 있어……」
         ;その他の場合
         ELSE
@@ -7150,12 +7150,12 @@ IF TFLAG:11 > 0
     ;その他の場合
     ELSE
         ;猫舌である
-        IF TALENT:54 == 1
+        IF TALENT:고양이혀 == 1
             ;屈服刻印Lv3
-            IF MARK:2 == 3
+            IF MARK:굴복각인 == 3
                 PRINTFORMW 「읏긋…저, 제 입은, 그렇게 좋으신가요…」
             ;屈服刻印Lv2
-            ELSEIF MARK:2 == 2
+            ELSEIF MARK:굴복각인 == 2
                 PRINTFORMW 「우웃…! 읏…큿……마, 마셨습니다, 전부…」
             ;その他の場合
             ELSE
@@ -7164,10 +7164,10 @@ IF TFLAG:11 > 0
         ;その他の場合
         ELSE
             ;屈服刻印Lv3
-            IF MARK:2 == 3
+            IF MARK:굴복각인 == 3
                 PRINTFORMW 「읏긋…저, 제 입은, 그렇게 좋으신가요…」
             ;屈服刻印Lv2
-            ELSEIF MARK:2 == 2
+            ELSEIF MARK:굴복각인 == 2
                 PRINTFORMW 「우웃…! 읏…큿……마, 마셨습니다, 전부…」
             ;その他の場合
             ELSE
@@ -7182,7 +7182,7 @@ ENDIF
 IF TFLAG:30 > 0
     DRAWLINE
     ;CFLAG:5002＠初射精判定フラグ
-    IF CFLAG:5002 == 0 && (CFLAG:8013 <= 2|| FLAG:11 == 2)
+    IF CFLAG:5002 == 0 && (CFLAG:8013 <= 2|| FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「뭐, 뭔가 안에서 솟구쳐 나옵니다…!」 
         PRINTFORMW 「뭐야 이거…우아, 아앗, 아아아아아!?」 
         CFLAG:5002 = 1
@@ -7190,7 +7190,7 @@ IF TFLAG:30 > 0
     ;その他の場合
     ELSE
         ;恋慕
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             PRINTFORMW 「앗, 당신, 나와요…! 퓻퓻하고, 크으으아아아아앙!!」 」
         ;その他の場合
         ELSE
@@ -7204,9 +7204,9 @@ ENDIF
 IF TFLAG:31 > 0
     DRAWLINE
     ;おっぱいはじめて
-    IF CFLAG:5004 == 0 && (CFLAG:8014 <= 2|| FLAG:11 == 2)
+    IF CFLAG:5004 == 0 && (CFLAG:8014 <= 2|| FLAG:캐릭터대사표시 == 2)
         ;恋慕
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             PRINTFORMW 「꺗!?」 
             PRINTFORMW 쇼는 유두에서 나온 모유에 자신이 놀라고 있다. 
             PRINTFORMW 「와, 처음 봤습니다…아으으…하, 핥는겁니까…햣…」
@@ -7214,7 +7214,7 @@ IF TFLAG:31 > 0
         ;その他の場合
         ELSE
             ;妊娠である…って狂気つきですか
-            IF TALENT:140 == 1
+            IF TALENT:임신 == 1
                 PRINTFORMW 「읏…!?」 
                 PRINTFORMW 쇼는 임신의 증거인 모유를 보고 안색이 바뀌었다. 
                 PRINTFORMW 「기, 기다러…우아, 이런, 이런…!」 
@@ -7230,13 +7230,13 @@ IF TFLAG:31 > 0
     ;その他の場合
     ELSE
         ;恋慕
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             PRINTFORMW 「앗…또, 나왔다…」
             PRINTFORMW 「네…한 잔, 마셔주세요…햐앗…하웃…」
         ;その他の場合
         ELSE
             ;狂気つきにんっしんっ
-            IF TALENT:140 == 1
+            IF TALENT:임신 == 1
                 PRINTFORMW 「아앗…큿…!」 
                 PRINTFORMW 쇼는 %조사처리(CALLNAME:MASTER,"를")% 노려보며, 유두에서 모유를 흘려내고 있다. 
             ;その他の場合
@@ -7250,25 +7250,25 @@ ENDIF
 ;-------------------------------------------------
 ;Ｃ感覚Lv5でＣ절정50以上    CFLAG:8015
 ;-------------------------------------------------
-;IF ABL:0 >= 5 && EX:0 >= 50 && NOWEX:0 > 0
+;IF ABL:C감각 >= 5 && EX:0 >= 50 && NOWEX:0 > 0
 ;    DRAWLINE
 ;ENDIF
 ;-------------------------------------------------
 ;Ｖ感覚Lv5でＶ절정50以上    CFLAG:8016
 ;-------------------------------------------------
-;IF ABL:1 >= 5 && EX:1 >= 50 && NOWEX:1 > 0
+;IF ABL:V감각 >= 5 && EX:1 >= 50 && NOWEX:1 > 0
 ;    DRAWLINE
 ;ENDIF
 ;-------------------------------------------------
 ;Ａ感覚Lv5でＡ절정50以上    CFLAG:8017
 ;-------------------------------------------------
-;IF ABL:2 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
+;IF ABL:A감각 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
 ;    DRAWLINE
 ;ENDIF
 ;-------------------------------------------------
 ;Ｂ感覚Lv5でＢ절정50以上    CFLAG:8018
 ;-------------------------------------------------
-;IF ABL:3 >= 5 && EX:3 >= 50 && NOWEX:3 > 0
+;IF ABL:B감각 >= 5 && EX:3 >= 50 && NOWEX:3 > 0
 ;    DRAWLINE
 ;ENDIF
 ;-------------------------------------------------
@@ -7305,7 +7305,7 @@ SIF TEQUIP:42
 IF TFLAG:40 == 3 && CFLAG:8091 == 0
     DRAWLINE
     ;恋慕or服従
-    IF TALENT:150 == 1 || TALENT:160 == 1
+    IF TALENT:연모 == 1 || TALENT:복종 == 1
         PRINTFORMW %CALLNAME:MASTER%의 행위에, %조사처리(CALLNAME:TARGET,"는")% 믿을 수 없다는 듯 %조사처리(CALLNAME:MASTER,"를")% 바라보았다. 
         PRINTFORMW 「어, 어째서, 이런 일을…?」 
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 『이것도 사랑의 한 형태』라고 대답했다. 
@@ -7442,7 +7442,7 @@ ENDIF
 IF TFLAG:200 == 140
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「츄파…프츄, 하암……아, 좋은 아침입니다」
         PRINTFORMW 「후후, 오늘도 건강하네요…당신도, 이 곳도」
         RETURN 0
@@ -7458,14 +7458,14 @@ ENDIF
 IF TFLAG:200 == 141
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「후훗…안녕하십니까, 당신」
         PRINTFORMW 「굉장히 딱딱해져 있어서 괴로워보였으니까…사양하지 마시고, 가슴에 싸주세요?」 
         RETURN 0
     ;その他の場合
     ELSE
         ;屈服刻印Lv2
-        IF MARK:2 == 2
+        IF MARK:굴복각인 == 2
             PRINTFORMW 「…아, 일어나셨습니까?」 
             PRINTFORMW 「네, 괴로워보여서…이걸로 끼면, 좋을겁니까…」
         ;その他の場合
@@ -7481,9 +7481,9 @@ ENDIF
 IF TFLAG:200 == 142
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         ;Ｖ感覚Lv2以上
-        IF ABL:1 >= 2
+        IF ABL:V감각 >= 2
             PRINTFORMW 「앗후아앗앙! 앗, 히아앙…!」 
             PRINTFORMW 「앗, 안녕하세요, 당신…! 후후, 죄송합니다…그만…응앗!」 
         ;その他の場合
@@ -7495,7 +7495,7 @@ IF TFLAG:200 == 142
     ;その他の場合
     ELSE
         ;Ｖ感覚Lv2以上
-        IF ABL:1 >= 2
+        IF ABL:V감각 >= 2
             PRINTFORMW 「읏, 앗, 하앗…!」 
             PRINTFORMW 「아, 좋은 아침입니다……앙」
         ;その他の場合
@@ -7511,7 +7511,7 @@ ENDIF
 IF TFLAG:200 == 143
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「좋은 아침이에요, 당신」
         PRINTFORMW 「눈을 뜬 인사를… 츄… 후후」
         RETURN 0
@@ -7539,7 +7539,7 @@ ENDIF
 IF TFLAG:200 == 150
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「아, 당신… 그, 아직… 부족, 해요」
         PRINTFORMW 「좀 더… 좀 더 사랑해주세요! 당신을, 더욱 원해…!」 
         RETURN 0
@@ -7555,7 +7555,7 @@ ENDIF
 IF TFLAG:200 == 151
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「당신, 당신… 읏으으응…!」 
         PRINTFORMW 「읏…응… 전부, 채워지지 않아…. 당신……」
         RETURN 0
@@ -7606,7 +7606,7 @@ ENDIF
 IF TFLAG:200 == 158
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「당신… 깨어있나요?」 
         PRINTFORMW 「응… 아직, 부족해서… 자아, 또 이렇게 뜨거워졌어요…」
         PRINTFORMW 「그러니까…, 그러니까, 더 당신을, 주세요…!」 
@@ -7726,9 +7726,9 @@ ENDIF
 IF TFLAG:200 == 170
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         ;初めてのにんっしんっ
-        IF EXP:52 == 0
+        IF EXP:출산경험 == 0
             PRINTFORMW 조교가 끝난 뒤, 쇼는 혼자서 뒤처리를 하고 있다. 
             PRINTFORMW 「하아… 어서, %조사처리(CALLNAME:MASTER,"가")% 있는 곳에 가지 않으면…」
             PRINTFORMW 한시라도 빨리, 라며 서둘러 몸을 씻는다. 
@@ -7781,7 +7781,7 @@ IF TFLAG:200 == 170
     ;その他の場合
     ELSE
         ;愛がないのに孕ませるなんて…
-        IF EXP:52 == 0
+        IF EXP:출산경험 == 0
             PRINTFORMW 「우에에…! 우그…웃…우…!」 
             PRINTFORMW 쇼는 화장실에 앉아, 몇 번이고 헛구역질을 하고 있다. 
             PRINTFORMW 「하아… 하아…! 뭐, 뭐야, 이거…」
@@ -7817,7 +7817,7 @@ ENDIF
 IF TFLAG:200 == 130
     DRAWLINE
     ;恋慕
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「…에?」 
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:TARGET,"를")% 불러, 매각처가 정해졌단 것을 알렸다. 
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")%, 그대로 %CALLNAME:MASTER%의 얼굴을 바라보며, 입을 반쯤 연 채로, 오랫동안 망설이길 반복하고 있었다. 
@@ -7867,7 +7867,7 @@ IF TFLAG:200 == 130
     ;その他の場合
     ELSE
         ;反発刻印Lv3
-        IF MARK:9 == 3
+        IF MARK:반발각인 == 3
             PRINTFORMW 「팔린다…. 그렇, 습니까」
             PRINTFORMW 『팔린다』라는 말에, %조사처리(CALLNAME:TARGET,"는")% 해방은 아니라는 것을 눈치챘다. 
             PRINTFORMW 그래도, 쇠사슬에서 풀려난 짐승처럼, 자신의 양손을 물끄러니 응시하며 다음의 행동을 생각하고 있었다. 
@@ -7877,7 +7877,7 @@ IF TFLAG:200 == 130
         ;その他の場合
         ELSE
             ;屈服刻印Lv3
-            IF MARK:2 == 3
+            IF MARK:굴복각인 == 3
                 PRINTFORMW 「팔린다…?」 
                 PRINTFORMW 「…그렇네요, 당신은 그걸 위해…저를 여기까지 조교한거니까요」
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"를")% 바라보고 있다. 
@@ -7926,7 +7926,7 @@ PRINTFORMW 결국, %조사처리(CALLNAME:MASTER,"는")% 조교라는 어두운 
 PRINTFORMW 얄궃게도, 조교로 길러진 경험은「교육자」로서의 일면도 길러, %조사처리(CALLNAME:MASTER,"는")% 뛰어난 교사로서 작은 학교를 운영하고 있다. 
 
 ;出産経験 2以上
-IF EXP:52 >= 2
+IF EXP:출산경험 >= 2
     PRINTFORMW %CALLNAME:MASTER%의 아이들도, 거기서 교육을 받아, 무럭무럭 자라고 있었다. 
     PRINTFORMW 
     PRINTFORMW 밤. 
@@ -7957,7 +7957,7 @@ IF EXP:52 >= 2
     PRINTFORMW 쇼는 그렇게 말하고, 언제나 %CALLNAME:MASTER%에게 미소 짓고 있다. 
     PRINTFORMW 언제나, 언제까지고……. 
 ;出産経験 1
-ELSEIF EXP:52 == 1
+ELSEIF EXP:출산경험 == 1
     PRINTFORMW %CALLNAME:MASTER%의 아이도, 거기서 교육을 받아, 무럭무럭 자라고 있었다. 
     PRINTFORMW 
     PRINTFORMW 밤. 

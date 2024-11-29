@@ -12,10 +12,10 @@ SIF DITEMTYPE:999:62 > 0
 SIF ITEM:62 == 0 && NOITEM == 0 && TEQUIP:90 == 0
     RETURN 0
 ;약물내성의 경우, 직접 주입 이외 안 됨
-SIF TALENT:44 && TEQUIP:90 == 0
+SIF TALENT:약물내성 && TEQUIP:90 == 0
     RETURN 0
 ;기계라면 안 됨
-SIF TALENT:206
+SIF TALENT:기계
     RETURN 0
 ;알몸 앞치마 중에는 불가
 SIF TEQUIP:59 == 1
@@ -42,12 +42,12 @@ ENDIF
 CALL TRAIN_MESSAGE_COM062
 
 ;調合知識があれば消費を抑える
-IF TALENT:MASTER:55 || (ASSI >= 0 && TALENT:ASSI:55)
+IF TALENT:MASTER:조합지식 || (ASSI >= 0 && TALENT:ASSI:조합지식)
     DOWNBASE:0 += 50
-    DOWNBASE:1 += 50
+    DOWNBASE:기력 += 50
 ELSE
     DOWNBASE:0 += 120
-    DOWNBASE:1 += 120
+    DOWNBASE:기력 += 120
 ENDIF
 
 SOURCE:26 = 100
@@ -57,16 +57,16 @@ SOURCE:32 = 150
 
 IF TEQUIP:90 == 0 && NOITEM == 0
     ITEM:62 -= 1
-    SIF FLAG:13 & 8 && MONEY:0 >= ITEMPRICE:62
+    SIF FLAG:아이템확장 & 8 && MONEY:0 >= ITEMPRICE:62
         CALL FILL_PLURAL_ITEM, 62
 ENDIF
 TEQUIP:12 = 1
 
 CALL CALC_GAUGE4_SLAVE, TARGET, 1
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -80,7 +80,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM062
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -88,9 +88,9 @@ IF TEQUIP:90
     PRINTL 가는 촉수가 이뇨 작용이 있는 액체를 요도에 넣었다.
 ELSE
     PRINTFORM %CALLNAME:TARGET%에게 
-    SIF ABL:PLAYER:12 >= 3
+    SIF ABL:PLAYER:기교 >= 3
         PRINT 입으로 
-    SIF ABL:10 <= 2
+    SIF ABL:순종 <= 2
         PRINT 억지로 
     PRINTL 이뇨제를 먹였다.
 ENDIF

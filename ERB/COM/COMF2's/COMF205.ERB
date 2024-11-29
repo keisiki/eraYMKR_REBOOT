@@ -9,17 +9,17 @@
 SIF DITEMTYPE:999:205 > 0
     RETURN 0
 ;Ｂ계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 8) == 0
+SIF (FLAG:커맨드확장 & 8) == 0
     RETURN 0
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;公開自慰を行ったことがない場合のビデオ撮影中は, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && (CFLAG:21 & 1) == 0 && TEQUIP:50
+SIF FLAG:VA이상조교필터 & 4 && (CFLAG:첫특수커맨드 & 1) == 0 && TEQUIP:50
     RETURN 0
 ;순종4미만 · 레즈끼(BL끼) 4 미만의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(소악마か망신か복종ならＯＫ)
 IF ASSIPLAY
-    SIF (ABL:ASSI:10 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:22 < 4) || (TALENT:120 && TALENT:ASSI:120 && ABL:ASSI:23 < 4))) && TALENT:ASSI:93 == 0 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:남자 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
     RETURN 0
 ENDIF
 ;수면 중에는 불가
@@ -32,7 +32,7 @@ SIF TFLAG:899 > 0
 SIF TEQUIP:40
     RETURN 0
 ;ウェディングドレス · ゴスロリ着用中の場合기교4이상 필수
-SIF (TEQUIP:59 == 19 || TEQUIP:59 == 20) && ABL:12 < 4
+SIF (TEQUIP:59 == 19 || TEQUIP:59 == 20) && ABL:기교 < 4
     RETURN 0
 ;나체정식 중에는 불가
 SIF TEQUIP:60
@@ -44,7 +44,7 @@ SIF TEQUIP:71
 SIF TEQUIP:90
     RETURN 0
 ;시체는 안됨
-SIF TALENT:226 == 1
+SIF TALENT:강시 == 1
     RETURN 0
 RETURN 1
 
@@ -84,7 +84,7 @@ COM_NAME = %LOCALS%
 CALL TRAIN_MESSAGE_COM205
 
 DOWNBASE:0 += 5
-DOWNBASE:1 += 50
+DOWNBASE:기력 += 50
 
 SOURCE:31 = 400
 
@@ -95,23 +95,23 @@ IF TEQUIP:53
 ENDIF
 
 ;ABL:B감각을 본다
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     SOURCE:12 = 2000
     SOURCE:22 = 500
     SOURCE:3 = 30
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     SOURCE:12 = 2300
     SOURCE:22 = 800
     SOURCE:3 = 100
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     SOURCE:12 = 2600
     SOURCE:22 = 1200
     SOURCE:3 = 600
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     SOURCE:12 = 2900
     SOURCE:22 = 1900
     SOURCE:3 = 1400
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     SOURCE:12 = 3200
     SOURCE:22 = 2500
     SOURCE:3 = 2200
@@ -122,19 +122,19 @@ ELSE
 ENDIF
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     SOURCE:15 = 100
     TIMES SOURCE:3 , 0.30
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     SOURCE:15 = 160
     TIMES SOURCE:3 , 0.70
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     SOURCE:15 = 220
     TIMES SOURCE:3 , 1.00
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     SOURCE:15 = 280
     TIMES SOURCE:3 , 1.20
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     SOURCE:15 = 340
     TIMES SOURCE:3 , 1.40
 ELSE
@@ -143,19 +143,19 @@ ELSE
 ENDIF
 
 ;ABL:자위 중독을 본다
-IF ABL:30 == 0
+IF ABL:자위중독 == 0
     SOURCE:24 = 0
     TIMES SOURCE:3 , 1.00
-ELSEIF ABL:30 == 1
+ELSEIF ABL:자위중독 == 1
     SOURCE:24 = 100
     TIMES SOURCE:3 , 1.10
-ELSEIF ABL:30 == 2
+ELSEIF ABL:자위중독 == 2
     SOURCE:24 = 300
     TIMES SOURCE:3 , 1.20
-ELSEIF ABL:30 == 3
+ELSEIF ABL:자위중독 == 3
     SOURCE:24 = 800
     TIMES SOURCE:3 , 1.30
-ELSEIF ABL:30 == 4
+ELSEIF ABL:자위중독 == 4
     SOURCE:24 = 1500
     TIMES SOURCE:3 , 1.50
 ELSE
@@ -165,23 +165,23 @@ ENDIF
 
 ;공개 때는, ABL:노출벽을 본다
 IF TEQUIP:50
-    IF ABL:14 == 0
+    IF ABL:노출증 == 0
         SOURCE:24 += 0
         TIMES SOURCE:12, 1.00
         TIMES SOURCE:3 , 1.00
-    ELSEIF ABL:14 == 1
+    ELSEIF ABL:노출증 == 1
         SOURCE:24 += 100
         TIMES SOURCE:12, 1.20
         TIMES SOURCE:3 , 1.20
-    ELSEIF ABL:14 == 2
+    ELSEIF ABL:노출증 == 2
         SOURCE:24 += 300
         TIMES SOURCE:12, 1.40
         TIMES SOURCE:3 , 1.40
-    ELSEIF ABL:14 == 3
+    ELSEIF ABL:노출증 == 3
         SOURCE:24 += 800
         TIMES SOURCE:12, 1.60
         TIMES SOURCE:3 , 1.60
-    ELSEIF ABL:14 == 4
+    ELSEIF ABL:노출증 == 4
         SOURCE:24 += 1500
         TIMES SOURCE:12, 2.00
         TIMES SOURCE:3 , 1.80
@@ -192,21 +192,21 @@ IF TEQUIP:50
     ENDIF
 ENDIF
 
-IF TALENT:134
+IF TALENT:모유체질
     ;ABL:분유중독을 본다
-    IF ABL:34 == 0
+    IF ABL:분유중독 == 0
         TIMES SOURCE:3 , 1.00
         TIMES SOURCE:24 , 1.00
-    ELSEIF ABL:34 == 1
+    ELSEIF ABL:분유중독 == 1
         TIMES SOURCE:3 , 1.20
         TIMES SOURCE:24 , 1.00
-    ELSEIF ABL:34 == 2
+    ELSEIF ABL:분유중독 == 2
         TIMES SOURCE:3 , 1.20
         TIMES SOURCE:24 , 1.20
-    ELSEIF ABL:34 == 3
+    ELSEIF ABL:분유중독 == 3
         TIMES SOURCE:3 , 1.40
         TIMES SOURCE:24 , 1.20
-    ELSEIF ABL:34 == 4
+    ELSEIF ABL:분유중독 == 4
         TIMES SOURCE:3 , 1.40
         TIMES SOURCE:24 , 1.40
     ELSE
@@ -216,7 +216,7 @@ IF TALENT:134
 ENDIF
 
 ;음유
-IF TALENT:174
+IF TALENT:음유
     TIMES SOURCE:15 , 1.40
     TIMES SOURCE:24 , 1.40
     TIMES SOURCE:3 , 1.40
@@ -230,29 +230,29 @@ ELSE
     TCVAR:10 += 1
     TCVAR:11 += 1
 ENDIF
-IF TEQUIP:50 && (CFLAG:21 & 1) == 0
+IF TEQUIP:50 && (CFLAG:첫특수커맨드 & 1) == 0
     TCVAR:50 += 1
-    CFLAG:21 |= 1
+    CFLAG:첫특수커맨드 |= 1
 ENDIF
 
 ;노예의 손가락⇔노예의 B의 불결이 이동
-STAIN:1 |= STAIN:5
-STAIN:5 |= STAIN:1
+STAIN:손 |= STAIN:가슴
+STAIN:가슴 |= STAIN:손
 
 ;욕망 or자위 중독이 3이상 또한 빈유, 절벽, 고양이혀이 아니라고 입도 사용한다
-IF TALENT:54 == 0 && TALENT:110 == 0 && TALENT:111 == 0 && (ABL:11 >= 3 || ABL:30 >= 3 )
+IF TALENT:고양이혀 == 0 && TALENT:절벽 == 0 && TALENT:빈유 == 0 && (ABL:욕망 >= 3 || ABL:자위중독 >= 3 )
     TIMES SOURCE:3 , 1.10
     TIMES SOURCE:24 , 1.10
     ;대상의 TALENT:혀사용을 본다
-    SIF TALENT:52
+    SIF TALENT:혀놀림
         TIMES SOURCE:3 , 1.20
-    STAIN:0 |= STAIN:5
-    STAIN:5 |= STAIN:0
+    STAIN:입 |= STAIN:가슴
+    STAIN:가슴 |= STAIN:입
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 3
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 3
 ENDIF
 
@@ -268,7 +268,7 @@ RETURN 1
 ;--------------------------------------------------
 @DENIAL_MESSAGE_COM_205
 CALL KOJO_DENIAL_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -285,7 +285,7 @@ ENDIF
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM205
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -297,47 +297,47 @@ IF TEQUIP:68
 ENDIF
 IF TFLAG:699 > 0
     PRINTFORML %조사선택(CALLNAME:MASTER, "가")% 아무것도 명령하지 않았는데도 %조사선택(CALLNAME:TARGET, "는")%
-    SIF TALENT:170 || TEQUIP:11 == 1
+    SIF TALENT:음란 || TEQUIP:11 == 1
         PRINT 참을 수 없다고 말하는 듯한 표정으로 
-    SIF TALENT:81
+    SIF TALENT:새드
         PRINTFORM 유혹하는 듯한 시선을 %CALLNAME:MASTER%에게 보내며 
-    SIF TALENT:157
+    SIF TALENT:질투
         PRINT 질투심에 사로잡혀 
-    SIF TALENT:158 && TEQUIP:42 == 0
+    SIF TALENT:광기 && TEQUIP:42 == 0
         PRINT 제정신이 아닌 것 같은 웃음소리를 내며 
-    IF TALENT:110
+    IF TALENT:절벽
         PRINT 거의 없는 거나 다름없는 
-    ELSEIF TALENT:111
+    ELSEIF TALENT:빈유
         PRINT 빈약하기 그지없는 
-    ELSEIF TALENT:112
+    ELSEIF TALENT:거유
         PRINT 그 큰 
-    ELSEIF TALENT:113
+    ELSEIF TALENT:폭유
         PRINT 그 거대한 
     ENDIF
-    SIF TALENT:134
+    SIF TALENT:모유체질
         PRINT 모유가 방울져 떨어지는 
     PRINTW 가슴을 스스로의 손가락으로 만지작거리며 자위의 쾌감에 잠겨 있다….
 ELSE
     SIF EX:23
         PRINTFORM 기다리고 있는 %CALLNAME:TARGET%에게 자위를 허가하자, \@(TEQUIP:42) ? 추한 표정을 보이며 # 그저 입술을 질끈 씹으며\@ 
     PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-    IF TEQUIP:50 && ABL:14 > 3
+    IF TEQUIP:50 && ABL:노출증 > 3
         PRINTL 카메라를 향해
     ELSEIF TEQUIP:50
         PRINTL 카메라의 앞에서
-    ELSEIF ABL:14 > 3
+    ELSEIF ABL:노출증 > 3
         PRINTL 보여주듯이
     ENDIF
-    IF TALENT:110
+    IF TALENT:절벽
         PRINT 거의 없는 거나 다름없는 
-    ELSEIF TALENT:111
+    ELSEIF TALENT:빈유
         PRINT 빈약하기 그지없는 
-    ELSEIF TALENT:112
+    ELSEIF TALENT:거유
         PRINT 그 큰 
-    ELSEIF TALENT:113
+    ELSEIF TALENT:폭유
         PRINT 그 거대한 
     ENDIF
-    SIF TALENT:134
+    SIF TALENT:모유체질
         PRINT 모유가 방울져 떨어지는 
     PRINT 가슴을 스스로의 손가락으로 만지작거리며 
     PRINTW 쾌감을 맛보고 있다….
@@ -349,35 +349,35 @@ ENDIF
 @COM_ORDER_205, ARG
 LOCAL:99 = ARG
 ;ABL:욕망
-IF ABL:11
+IF ABL:욕망
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:11
+    LOCAL:99 = ABL:욕망
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 ;ABL:노출벽
-IF ABL:14
+IF ABL:노출증
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:14
+    LOCAL:99 = ABL:노출증
     TFLAG:240 += LOCAL:99 * 4
     RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 4})
 ENDIF
 ;ABL:자위 중독
-IF ABL:30
+IF ABL:자위중독
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:30
+    LOCAL:99 = ABL:자위중독
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:30%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 
 ;쾌락 각인
-IF MARK:1
+IF MARK:쾌락각인
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = MARK:1
+    LOCAL:99 = MARK:쾌락각인
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
@@ -394,20 +394,20 @@ IF LOCAL:2
 ENDIF
 
 ;자제심
-IF TALENT:20
+IF TALENT:자제심
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
 ENDIF
 ;부끄럼쟁이
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ;부끄럼없음
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 2
@@ -415,7 +415,7 @@ ELSEIF TALENT:36
     RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
 ENDIF
 ;자위하기 쉽다
-IF TALENT:60
+IF TALENT:자위하기쉬움
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
@@ -423,14 +423,14 @@ IF TALENT:60
     RESULTS = %RESULTS% %TALENTNAME:60%({LOCAL:99})
 ENDIF
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
 ;쾌감의 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99

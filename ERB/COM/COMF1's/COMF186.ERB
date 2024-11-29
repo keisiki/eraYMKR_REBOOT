@@ -9,10 +9,10 @@
 SIF DITEMTYPE:999:186 > 0
     RETURN 0
 ;Ａ계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 4) == 0
+SIF (FLAG:커맨드확장 & 4) == 0
     RETURN 0
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 조교자가 汚れ無視もしくは汚臭鈍感を持たないなら実行できない
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -30,7 +30,7 @@ SIF TEQUIP:55 && TEQUIP:55 != 12 && TEQUIP:55 != 15
 SIF TEQUIP:58
     RETURN 0
 ;훈도시 착용 중일 경우 조교자의 기교4이상 필수
-SIF TEQUIP:59 == 17 && ABL:PLAYER:12 < 4
+SIF TEQUIP:59 == 17 && ABL:PLAYER:기교 < 4
     RETURN 0
 ;나체정식 중에는 불가
 SIF TEQUIP:60
@@ -39,7 +39,7 @@ SIF TEQUIP:60
 SIF TEQUIP:71
     RETURN 0
 ;촉수 조교중일 시 주인의 촉수사역Lv2 이하는 안 됨
-SIF TEQUIP:90 && ABL:MASTER:98 <= 2
+SIF TEQUIP:90 && ABL:MASTER:촉수사역 <= 2
     RETURN 0
 RETURN 1
 
@@ -53,7 +53,7 @@ COM_NAME = 엉덩이 애무
 CALL TRAIN_MESSAGE_COM186
 
 DOWNBASE:0 += 15
-DOWNBASE:1 += 80
+DOWNBASE:기력 += 80
 
 SOURCE:12 = 700
 SOURCE:15 = 30
@@ -61,19 +61,19 @@ SOURCE:31 = 300
 SOURCE:10 = 300
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 10
     SOURCE:11 = 10
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 50
     SOURCE:11 = 20
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 200
     SOURCE:11 = 32
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 400
     SOURCE:11 = 40
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 650
     SOURCE:11 = 46
 ELSE
@@ -82,19 +82,19 @@ ELSE
 ENDIF
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 10
     SOURCE:22 = 200
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 50
     SOURCE:22 = 250
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 200
     SOURCE:22 = 300
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 400
     SOURCE:22 = 550
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 650
     SOURCE:22 = 900
 ELSE
@@ -123,11 +123,11 @@ ENDIF
 
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:22 , 0.60
     TIMES SOURCE:31 , 0.60
@@ -141,15 +141,15 @@ ENDIF
 
 
 ;처녀로 정조관념
-IF TALENT:0 == 1 && TALENT:30
+IF TALENT:처녀 == 1 && TALENT:정조관념
     SOURCE:22 /= 3
-ELSEIF TALENT:0 && TALENT:30
+ELSEIF TALENT:처녀 && TALENT:정조관념
     SOURCE:22 /= 2
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 5
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 5
 ENDIF
 RETURN 1
@@ -159,7 +159,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM186
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

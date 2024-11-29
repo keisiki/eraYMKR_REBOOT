@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:93 > 0
     RETURN 0
 ;수치 플레이계 확장 커맨드를 유효하게 하지 않으면 안 됨
-SIF (FLAG:15 & 512) == 0
+SIF (FLAG:커맨드확장 & 512) == 0
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
@@ -21,7 +21,7 @@ SIF TEQUIP:60 == 0 && TEQUIP:59 > 2
 SIF ITEM:47 == 0 && NOITEM == 0
     RETURN 0
 ;순종이 2이상 없으면 안 됨
-SIF ABL:10 < 2
+SIF ABL:순종 < 2
     RETURN 0
 ;수면중은 불가
 SIF EQUIP:14
@@ -180,7 +180,7 @@ CALL TRAIN_MESSAGE_COM093
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 0
-DOWNBASE:1 += 20
+DOWNBASE:기력 += 20
 
 ;소비 체력 수정
 IF LOCAL:3 == 5 || LOCAL:3 == 6 || LOCAL:3 == 8 || LOCAL:3 == 13 || LOCAL:3 == 14 || LOCAL:3 == 15 || LOCAL:3 == 17 || LOCAL:3 == 20 || LOCAL:3 == 22
@@ -190,11 +190,11 @@ ELSEIF LOCAL:3 == 4 || LOCAL:3 == 16 || LOCAL:3 == 18 || LOCAL:3 == 19
 ENDIF
 ;소비 기력 수정
 IF LOCAL:3 == 8
-    DOWNBASE:1 += 5
+    DOWNBASE:기력 += 5
 ELSEIF LOCAL:3 == 5 || LOCAL:3 == 6 || LOCAL:3 == 10 || LOCAL:3 == 18 || LOCAL:3 == 19 || LOCAL:3 == 20
-    DOWNBASE:1 += 10
+    DOWNBASE:기력 += 10
 ELSEIF LOCAL:3 == 11 || LOCAL:3 == 12 || LOCAL:3 == 13 || LOCAL:3 == 14 || LOCAL:3 == 15 || LOCAL:3 == 16 || LOCAL:3 == 17 || LOCAL:3 == 21
-    DOWNBASE:1 += 20
+    DOWNBASE:기력 += 20
 ENDIF
 
 LOCAL:1 =100
@@ -256,27 +256,27 @@ ENDIF
 ;모로의 노출
 IF LOCAL:3 == 11 || LOCAL:3 == 15 || LOCAL:3 ==17 || LOCAL:3 == 21
 ;ABL:노출벽을 본다
-    IF ABL:14 == 0
+    IF ABL:노출증 == 0
         SOURCE:12 = 100
         SOURCE:18 = 0
         SOURCE:31 = 100
         TIMES LOCAL:1, 0.60
-    ELSEIF ABL:14 == 1
+    ELSEIF ABL:노출증 == 1
         SOURCE:12 = 500
         SOURCE:18 = 50
         SOURCE:31 = 300
         TIMES LOCAL:1, 1.00
-    ELSEIF ABL:14 == 2
+    ELSEIF ABL:노출증 == 2
         SOURCE:12 = 100
         SOURCE:18 = 100
         SOURCE:31 = 50
         TIMES LOCAL:1, 1.60
-    ELSEIF ABL:14 == 3
+    ELSEIF ABL:노출증 == 3
         SOURCE:12 = 50
         SOURCE:18 = 150
         SOURCE:31 = 0
         TIMES LOCAL:1, 2.00
-    ELSEIF ABL:14 == 4
+    ELSEIF ABL:노출증 == 4
         SOURCE:12 = 0
         SOURCE:18 = 200
         SOURCE:31 = 0
@@ -290,23 +290,23 @@ IF LOCAL:3 == 11 || LOCAL:3 == 15 || LOCAL:3 ==17 || LOCAL:3 == 21
 ;모로는 아니지만 돋우는 노출
 ELSEIF LOCAL:3 == 6 || LOCAL:3 == 8 || LOCAL:3 == 10 || LOCAL:3 == 12 || LOCAL:3 == 13 || LOCAL:3 == 14
     ;ABL:노출벽을 본다
-    IF ABL:14 == 0
+    IF ABL:노출증 == 0
         SOURCE:24 += 0
         SOURCE:19 += 0
         TIMES LOCAL:1, 1.00
-    ELSEIF ABL:14 == 1
+    ELSEIF ABL:노출증 == 1
         SOURCE:24 += 50
         SOURCE:19 += 50
         TIMES LOCAL:1, 1.20
-    ELSEIF ABL:14 == 2
+    ELSEIF ABL:노출증 == 2
         SOURCE:24 += 100
         SOURCE:19 += 100
         TIMES LOCAL:1, 1.40
-    ELSEIF ABL:14 == 3
+    ELSEIF ABL:노출증 == 3
         SOURCE:24 += 200
         SOURCE:19 += 200
         TIMES LOCAL:1, 1.60
-    ELSEIF ABL:14 == 4
+    ELSEIF ABL:노출증 == 4
         SOURCE:24 += 400
         SOURCE:19 += 400
         TIMES LOCAL:1, 2.00
@@ -320,19 +320,19 @@ ENDIF
 ;원래 메이드라면 특별 수정
 IF LOCAL:3 == 5 && (NO:TARGET == 9 || NO:TARGET == 118 || NO:TARGET == 151)
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1, 0.80
         SOURCE:32 = 200
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1, 0.90
         SOURCE:32 = 50
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1, 1.00
         SOURCE:32 = 10
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1, 1.20
         SOURCE:32 = 0
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1, 1.50
         SOURCE:32 = 0
     ELSE
@@ -342,19 +342,19 @@ IF LOCAL:3 == 5 && (NO:TARGET == 9 || NO:TARGET == 118 || NO:TARGET == 151)
 ;온순함이 매우 요구되는 코스집
 ELSEIF LOCAL:3 == 4 || LOCAL:3 == 5 || LOCAL:3 == 7 || LOCAL:3 == 18
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1, 1.00
         SOURCE:32 = 500
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1, 1.20
         SOURCE:32 = 100
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1, 1.40
         SOURCE:32 = 50
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1, 1.50
         SOURCE:32 = 0
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1, 2.10
         SOURCE:32 = 0
     ELSE
@@ -364,19 +364,19 @@ ELSEIF LOCAL:3 == 4 || LOCAL:3 == 5 || LOCAL:3 == 7 || LOCAL:3 == 18
 ;온순함이 적당히 필요한 코스집
 ELSEIF LOCAL:3 == 3 || LOCAL:3 == 8 || LOCAL:3 == 9 || LOCAL:3 == 20 || LOCAL:3 == 22
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1, 0.80
         SOURCE:32 = 500
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1, 1.00
         SOURCE:32 = 100
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1, 1.20
         SOURCE:32 = 50
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1, 1.40
         SOURCE:32 = 0
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1, 1.50
         SOURCE:32 = 0
     ELSE
@@ -384,22 +384,22 @@ ELSEIF LOCAL:3 == 3 || LOCAL:3 == 8 || LOCAL:3 == 9 || LOCAL:3 == 20 || LOCAL:3 
         SOURCE:32 = 0
     ENDIF
 ;연모 첨부 웨딩 드레스는 소녀들의 꿈
-ELSEIF LOCAL:3 == 19 && TALENT:150
+ELSEIF LOCAL:3 == 19 && TALENT:연모
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1, 0.80
         SOURCE:32 = 1000
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1, 1.00
         SOURCE:32 = 500
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1, 1.20
         SOURCE:32 = 100
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1, 1.50
         SOURCE:32 = 0
         SOURCE:11 = 100
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1, 2.10
         SOURCE:32 = 0
         SOURCE:11 = 1000
@@ -415,15 +415,15 @@ ENDIF
 ;봉사 정신이 요구되는 코스집
 IF LOCAL:3 == 5 || LOCAL:3 == 7 || LOCAL:3 == 14 || LOCAL:3 == 22
     ;ABL:봉사 정신을 본다
-    IF ABL:13 == 0
+    IF ABL:봉사정신 == 0
         TIMES LOCAL:1, 1.00
-    ELSEIF ABL:13 == 1
+    ELSEIF ABL:봉사정신 == 1
         TIMES LOCAL:1, 1.20
-    ELSEIF ABL:13 == 2
+    ELSEIF ABL:봉사정신 == 2
         TIMES LOCAL:1, 1.40
-    ELSEIF ABL:13 == 3
+    ELSEIF ABL:봉사정신 == 3
         TIMES LOCAL:1, 1.60
-    ELSEIF ABL:13 == 4
+    ELSEIF ABL:봉사정신 == 4
         TIMES LOCAL:1, 1.80
     ELSE
         TIMES LOCAL:1, 2.00
@@ -433,15 +433,15 @@ ENDIF
 ;마조끼에 효과적인 코스집
 IF LOCAL:3 == 5 || LOCAL:3 == 6 || LOCAL:3 == 12
     ;ABL:마조끼를 본다
-    IF ABL:21 == 0
+    IF ABL:마조끼 == 0
         TIMES LOCAL:1, 0.80
-    ELSEIF ABL:21 == 1
+    ELSEIF ABL:마조끼 == 1
         TIMES LOCAL:1, 1.00
-    ELSEIF ABL:21 == 2
+    ELSEIF ABL:마조끼 == 2
         TIMES LOCAL:1, 1.30
-    ELSEIF ABL:21 == 3
+    ELSEIF ABL:마조끼 == 3
         TIMES LOCAL:1, 1.60
-    ELSEIF ABL:21 == 4
+    ELSEIF ABL:마조끼 == 4
         TIMES LOCAL:1, 2.00
     ELSE
         TIMES LOCAL:1, 3.00
@@ -451,19 +451,19 @@ ENDIF
 ;새드끼에 효과적인 코스집
 IF LOCAL:3 == 3 || LOCAL:3 == 15 || LOCAL:3 == 18
     ;ABL:새드끼를 본다
-    IF ABL:20 == 0
+    IF ABL:새드끼 == 0
         SOURCE:14 = 10
         TIMES SOURCE:24 , 0.80
-    ELSEIF ABL:20 == 1
+    ELSEIF ABL:새드끼 == 1
         SOURCE:14 = 100
         TIMES SOURCE:24 , 1.00
-    ELSEIF ABL:20 == 2
+    ELSEIF ABL:새드끼 == 2
         SOURCE:14 = 500
         TIMES SOURCE:24 , 1.30
-    ELSEIF ABL:20 == 3
+    ELSEIF ABL:새드끼 == 3
         SOURCE:14 = 800
         TIMES SOURCE:24 , 1.60
-    ELSEIF ABL:20 == 4
+    ELSEIF ABL:새드끼 == 4
         SOURCE:14 = 1500
         TIMES SOURCE:24 , 2.00
     ELSE
@@ -473,40 +473,40 @@ IF LOCAL:3 == 3 || LOCAL:3 == 15 || LOCAL:3 == 18
 ENDIF
 
 ;겁장이
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL:2 , 2.00
 ;튀고 싶어함
-SIF TALENT:28
+SIF TALENT:튀고싶어함
     TIMES LOCAL:1, 1.50
 ;해방
-SIF TALENT:33
+SIF TALENT:해방
     TIMES LOCAL:1, 1.50
 
 ;부끄럼쟁이에 효과적면인 코스
 IF LOCAL:3 == 6 ||LOCAL:3 == 10 || LOCAL:3 == 11 || LOCAL:3 == 12 || LOCAL:3 == 13 || LOCAL:3 == 15 || LOCAL:3 == 16
     ;부끄럼쟁이
-    SIF TALENT:35
+    SIF TALENT:부끄럼쟁이
         TIMES LOCAL:2 , 2.50
 ;그 이외의 코스
 ELSE
 ;부끄럼쟁이
-SIF TALENT:35
+SIF TALENT:부끄럼쟁이
     TIMES LOCAL:2 , 2.00
 ENDIF
 
 ;젖가슴 관련의 코스 수정 1
 IF LOCAL:3 == 6 || LOCAL:3 == 13 || LOCAL:3 == 16
     ;큰 가슴
-    IF TALENT:112
+    IF TALENT:거유
         SOURCE:20 = 500
     ;폭유
-    ELSEIF TALENT:113
+    ELSEIF TALENT:폭유
         SOURCE:20 = 800
     ENDIF
 ENDIF
 
 ;[작은체형]
-IF TALENT:128
+IF TALENT:작은체형
     TIMES LOCAL:1, 1.50
     TIMES LOCAL:2 , 1.50
 ENDIF
@@ -514,7 +514,7 @@ ENDIF
 ;유아 관련의 코스 수정 1
 IF LOCAL:3 == 6 || LOCAL:3 == 16 || LOCAL:3 == 20
     ;유아, 유치, 유아 퇴행
-    SIF TALENT:130 || TALENT:131 || TALENT:159
+    SIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
         TIMES LOCAL:2 , 0.50
 ENDIF
 
@@ -525,10 +525,10 @@ SOURCE:31 += LOCAL:2
 ;젖가슴 관련의 코스 수정 2
 IF LOCAL:3 == 6 || LOCAL:3 == 10 || LOCAL:3 == 11 || LOCAL:3 == 12 || LOCAL:3 == 13 || LOCAL:3 == 14 || LOCAL:3 == 15 || LOCAL:3 == 16 || LOCAL:3 == 17 || LOCAL:3 == 21
     ;절벽
-    IF TALENT:110
+    IF TALENT:절벽
         SOURCE:28 += LOCAL:1 /4
     ;빈유
-    ELSEIF TALENT:111
+    ELSEIF TALENT:빈유
         SOURCE:28 += LOCAL:1 /6
     ELSE
         SOURCE:28 += LOCAL:1 /8
@@ -538,12 +538,12 @@ ENDIF
 ;유아 관련이 아닌 것에는 부끄러운 코스 수정
 IF LOCAL:3 == 16 || LOCAL:3 == 20
     ;유아, 유치, 유아 퇴행 없다
-    IF TALENT:130 == 0 && TALENT:131 == 0 && TALENT:159 == 0
+    IF TALENT:유아 == 0 && TALENT:유치 == 0 && TALENT:유아퇴행 == 0
         ;부끄러워해 소유
-        IF TALENT:35
+        IF TALENT:부끄럼쟁이
             SOURCE:28 += LOCAL:1 /4
         ;수치 얇은을 가지지 않는다
-        ELSEIF TALENT:36 == 0
+        ELSEIF TALENT:부끄럼없음 == 0
             SOURCE:28 += LOCAL:1 /6
         ;수치 얇고 어떻게든 체면을 유지한다
         ELSE
@@ -555,7 +555,7 @@ ENDIF
 ;유아 관련의 코스 수정 2
 IF LOCAL:3 == 6 || LOCAL:3 == 16 || LOCAL:3 == 20
     ;유아, 유치, 유아 퇴행
-    SIF TALENT:130 || TALENT:131 || TALENT:159
+    SIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
         SOURCE:25 += LOCAL:2 /10
 ;유아 관련이 아닌 무리
 ELSE
@@ -568,7 +568,7 @@ IF TEQUIP:59 > 2
 ELSE
     TEQUIP:59 = LOCAL:3
     ;조교 대상의 코스프레 경험
-    CFLAG:50 += 1
+    CFLAG:코스프레실행회수 += 1
 ENDIF
 RETURN 1
 
@@ -583,12 +583,12 @@ PRINTFORML %LOCALS:LOCAL%
 
 ;조교 대상이 수면중이나 기절중이라면 소스는 들어가지 않지만 체력과 기력 소비 경감
 IF EQUIP:14 || TFLAG:899 > 0
-    DOWNBASE:1 += 5
+    DOWNBASE:기력 += 5
     GOTO PASSOUT_93
 ENDIF
 
 DOWNBASE:0 += 0
-DOWNBASE:1 += 10
+DOWNBASE:기력 += 10
 
 ;소비 체력 수정
 IF LOCAL == 4 || LOCAL == 16 || LOCAL == 18 || LOCAL == 19
@@ -596,9 +596,9 @@ IF LOCAL == 4 || LOCAL == 16 || LOCAL == 18 || LOCAL == 19
 ENDIF
 ;소비 기력 수정
 IF LOCAL == 5 || LOCAL == 6 || LOCAL == 10 || LOCAL == 18 || LOCAL == 19 || LOCAL == 20
-    DOWNBASE:1 += 5
+    DOWNBASE:기력 += 5
 ELSEIF LOCAL == 11 || LOCAL == 12 || LOCAL == 13 || LOCAL == 14 || LOCAL == 15 || LOCAL == 16 || LOCAL == 17 || LOCAL == 21
-    DOWNBASE:1 += 10
+    DOWNBASE:기력 += 10
 ENDIF
 
 LOCAL:1 =100
@@ -661,27 +661,27 @@ ENDIF
 ;모로의 노출
 IF LOCAL == 11 || LOCAL == 15 || LOCAL ==17 || LOCAL == 21
 ;ABL:노출벽을 본다
-    IF ABL:14 == 0
+    IF ABL:노출증 == 0
         SOURCE:12 += 100
         SOURCE:18 += 0
         SOURCE:31 += 100
         TIMES LOCAL:1, 0.60
-    ELSEIF ABL:14 == 1
+    ELSEIF ABL:노출증 == 1
         SOURCE:12 += 500
         SOURCE:18 += 50
         SOURCE:31 += 300
         TIMES LOCAL:1, 1.00
-    ELSEIF ABL:14 == 2
+    ELSEIF ABL:노출증 == 2
         SOURCE:12 += 100
         SOURCE:18 += 100
         SOURCE:31 += 50
         TIMES LOCAL:1, 1.60
-    ELSEIF ABL:14 == 3
+    ELSEIF ABL:노출증 == 3
         SOURCE:12 += 50
         SOURCE:18 += 150
         SOURCE:31 += 0
         TIMES LOCAL:1, 2.00
-    ELSEIF ABL:14 == 4
+    ELSEIF ABL:노출증 == 4
         SOURCE:12 += 0
         SOURCE:18 += 200
         SOURCE:31 += 0
@@ -695,23 +695,23 @@ IF LOCAL == 11 || LOCAL == 15 || LOCAL ==17 || LOCAL == 21
 ;모로는 아니지만 돋우는 노출
 ELSEIF LOCAL == 6 || LOCAL == 8 || LOCAL == 10 || LOCAL == 12 || LOCAL == 13 || LOCAL == 14
     ;ABL:노출벽을 본다
-    IF ABL:14 == 0
+    IF ABL:노출증 == 0
         SOURCE:24 += 0
         SOURCE:19 += 0
         TIMES LOCAL:1, 1.00
-    ELSEIF ABL:14 == 1
+    ELSEIF ABL:노출증 == 1
         SOURCE:24 += 50
         SOURCE:19 += 50
         TIMES LOCAL:1, 1.20
-    ELSEIF ABL:14 == 2
+    ELSEIF ABL:노출증 == 2
         SOURCE:24 += 100
         SOURCE:19 += 100
         TIMES LOCAL:1, 1.40
-    ELSEIF ABL:14 == 3
+    ELSEIF ABL:노출증 == 3
         SOURCE:24 += 200
         SOURCE:19 += 200
         TIMES LOCAL:1, 1.60
-    ELSEIF ABL:14 == 4
+    ELSEIF ABL:노출증 == 4
         SOURCE:24 += 400
         SOURCE:19 += 400
         TIMES LOCAL:1, 2.00
@@ -725,19 +725,19 @@ ENDIF
 ;원래 메이드라면 특별 수정
 IF LOCAL == 5 && (NO:TARGET == 9 || NO:TARGET == 118 || NO:TARGET == 151)
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1, 0.80
         SOURCE:32 += 200
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1, 0.90
         SOURCE:32 += 50
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1, 1.00
         SOURCE:32 += 10
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1, 1.20
         SOURCE:32 += 0
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1, 1.50
         SOURCE:32 += 0
     ELSE
@@ -747,19 +747,19 @@ IF LOCAL == 5 && (NO:TARGET == 9 || NO:TARGET == 118 || NO:TARGET == 151)
 ;온순함이 매우 요구되는 코스집
 ELSEIF LOCAL == 4 || LOCAL == 5 || LOCAL == 7 || LOCAL == 18
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1, 1.00
         SOURCE:32 += 500
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1, 1.20
         SOURCE:32 += 100
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1, 1.40
         SOURCE:32 += 50
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1, 1.50
         SOURCE:32 += 0
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1, 2.10
         SOURCE:32 += 0
     ELSE
@@ -769,19 +769,19 @@ ELSEIF LOCAL == 4 || LOCAL == 5 || LOCAL == 7 || LOCAL == 18
 ;온순함이 적당히 필요한 코스집
 ELSEIF LOCAL == 3 || LOCAL == 8 || LOCAL == 9 || LOCAL == 20 || LOCAL == 22
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1, 0.80
         SOURCE:32 += 500
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1, 1.00
         SOURCE:32 += 100
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1, 1.20
         SOURCE:32 += 50
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1, 1.40
         SOURCE:32 += 0
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1, 1.50
         SOURCE:32 += 0
     ELSE
@@ -789,22 +789,22 @@ ELSEIF LOCAL == 3 || LOCAL == 8 || LOCAL == 9 || LOCAL == 20 || LOCAL == 22
         SOURCE:32 += 0
     ENDIF
 ;연모 첨부 웨딩 드레스는 소녀들의 꿈
-ELSEIF LOCAL == 19 && TALENT:150
+ELSEIF LOCAL == 19 && TALENT:연모
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES LOCAL:1, 0.80
         SOURCE:32 += 1000
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES LOCAL:1, 1.00
         SOURCE:32 += 500
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES LOCAL:1, 1.20
         SOURCE:32 += 100
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES LOCAL:1, 1.50
         SOURCE:32 += 0
         SOURCE:11 += 100
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES LOCAL:1, 2.10
         SOURCE:32 += 0
         SOURCE:11 += 1000
@@ -820,15 +820,15 @@ ENDIF
 ;봉사 정신이 요구되는 코스집
 IF LOCAL == 5 || LOCAL == 7 || LOCAL == 14 || LOCAL == 22
     ;ABL:봉사 정신을 본다
-    IF ABL:13 == 0
+    IF ABL:봉사정신 == 0
         TIMES LOCAL:1, 1.00
-    ELSEIF ABL:13 == 1
+    ELSEIF ABL:봉사정신 == 1
         TIMES LOCAL:1, 1.20
-    ELSEIF ABL:13 == 2
+    ELSEIF ABL:봉사정신 == 2
         TIMES LOCAL:1, 1.40
-    ELSEIF ABL:13 == 3
+    ELSEIF ABL:봉사정신 == 3
         TIMES LOCAL:1, 1.60
-    ELSEIF ABL:13 == 4
+    ELSEIF ABL:봉사정신 == 4
         TIMES LOCAL:1, 1.80
     ELSE
         TIMES LOCAL:1, 2.00
@@ -838,15 +838,15 @@ ENDIF
 ;마조끼에 효과적인 코스집
 IF LOCAL == 5 || LOCAL == 6 || LOCAL == 12
     ;ABL:마조끼를 본다
-    IF ABL:21 == 0
+    IF ABL:마조끼 == 0
         TIMES LOCAL:1, 0.80
-    ELSEIF ABL:21 == 1
+    ELSEIF ABL:마조끼 == 1
         TIMES LOCAL:1, 1.00
-    ELSEIF ABL:21 == 2
+    ELSEIF ABL:마조끼 == 2
         TIMES LOCAL:1, 1.30
-    ELSEIF ABL:21 == 3
+    ELSEIF ABL:마조끼 == 3
         TIMES LOCAL:1, 1.60
-    ELSEIF ABL:21 == 4
+    ELSEIF ABL:마조끼 == 4
         TIMES LOCAL:1, 2.00
     ELSE
         TIMES LOCAL:1, 3.00
@@ -856,19 +856,19 @@ ENDIF
 ;새드끼에 효과적인 코스집
 IF LOCAL == 3 || LOCAL == 15 || LOCAL == 18
     ;ABL:새드끼를 본다
-    IF ABL:20 == 0
+    IF ABL:새드끼 == 0
         SOURCE:14 += 10
         TIMES SOURCE:24 , 0.80
-    ELSEIF ABL:20 == 1
+    ELSEIF ABL:새드끼 == 1
         SOURCE:14 += 100
         TIMES SOURCE:24 , 1.00
-    ELSEIF ABL:20 == 2
+    ELSEIF ABL:새드끼 == 2
         SOURCE:14 += 500
         TIMES SOURCE:24 , 1.30
-    ELSEIF ABL:20 == 3
+    ELSEIF ABL:새드끼 == 3
         SOURCE:14 += 800
         TIMES SOURCE:24 , 1.60
-    ELSEIF ABL:20 == 4
+    ELSEIF ABL:새드끼 == 4
         SOURCE:14 += 1500
         TIMES SOURCE:24 , 2.00
     ELSE
@@ -878,40 +878,40 @@ IF LOCAL == 3 || LOCAL == 15 || LOCAL == 18
 ENDIF
 
 ;겁장이
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL:2 , 2.00
 ;튀고 싶어함
-SIF TALENT:28
+SIF TALENT:튀고싶어함
     TIMES LOCAL:1, 1.50
 ;해방
-SIF TALENT:33
+SIF TALENT:해방
     TIMES LOCAL:1, 1.50
 
 ;부끄럼쟁이에 효과적면인 코스
 IF LOCAL == 6 ||LOCAL == 10 || LOCAL == 11 || LOCAL == 12 || LOCAL == 13 || LOCAL == 15 || LOCAL == 16
     ;부끄럼쟁이
-    SIF TALENT:35
+    SIF TALENT:부끄럼쟁이
         TIMES LOCAL:2 , 2.50
 ;그 이외의 코스
 ELSE
 ;부끄럼쟁이
-SIF TALENT:35
+SIF TALENT:부끄럼쟁이
     TIMES LOCAL:2 , 2.00
 ENDIF
 
 ;젖가슴 관련의 코스 수정 1
 IF LOCAL == 6 || LOCAL == 13 || LOCAL == 16
     ;큰 가슴
-    IF TALENT:112
+    IF TALENT:거유
         SOURCE:20 += 500
     ;폭유
-    ELSEIF TALENT:113
+    ELSEIF TALENT:폭유
         SOURCE:20 += 800
     ENDIF
 ENDIF
 
 ;[작은체형]
-IF TALENT:128
+IF TALENT:작은체형
     TIMES LOCAL:1, 1.50
     TIMES LOCAL:2 , 1.50
 ENDIF
@@ -919,7 +919,7 @@ ENDIF
 ;유아 관련의 코스 수정 1
 IF LOCAL == 6 || LOCAL == 16 || LOCAL == 20
     ;유아, 유치, 유아 퇴행
-    SIF TALENT:130 || TALENT:131 || TALENT:159
+    SIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
         TIMES LOCAL:2 , 0.50
 ENDIF
 
@@ -930,10 +930,10 @@ SOURCE:31 += LOCAL:2
 ;젖가슴 관련의 코스 수정 2
 IF LOCAL == 6 || LOCAL == 10 || LOCAL == 11 || LOCAL == 12 || LOCAL == 13 || LOCAL == 14 || LOCAL == 15 || LOCAL == 16 || LOCAL == 17 || LOCAL == 21
     ;절벽
-    IF TALENT:110
+    IF TALENT:절벽
         SOURCE:28 += LOCAL:1 /4
     ;빈유
-    ELSEIF TALENT:111
+    ELSEIF TALENT:빈유
         SOURCE:28 += LOCAL:1 /6
     ELSE
         SOURCE:28 += LOCAL:1 /8
@@ -943,12 +943,12 @@ ENDIF
 ;유아 관련이 아닌 것에는 부끄러운 코스 수정
 IF LOCAL == 16 || LOCAL == 20
     ;유아, 유치, 유아 퇴행 없다
-    IF TALENT:130 == 0 && TALENT:131 == 0 && TALENT:159 == 0
+    IF TALENT:유아 == 0 && TALENT:유치 == 0 && TALENT:유아퇴행 == 0
         ;부끄러워해 소유
-        IF TALENT:35
+        IF TALENT:부끄럼쟁이
             SOURCE:28 += LOCAL:1 /4
         ;수치 얇은을 가지지 않는다
-        ELSEIF TALENT:36 == 0
+        ELSEIF TALENT:부끄럼없음 == 0
             SOURCE:28 += LOCAL:1 /6
         ;수치 얇고 어떻게든 체면을 유지한다
         ELSE
@@ -960,16 +960,16 @@ ENDIF
 ;유아 관련의 코스 수정 2
 IF LOCAL == 6 || LOCAL == 16 || LOCAL == 20
     ;유아, 유치, 유아 퇴행
-    SIF TALENT:130 || TALENT:131 || TALENT:159
+    SIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
         SOURCE:25 += LOCAL:2 /10
 ;유아 관련이 아닌 무리
 ELSE
     SOURCE:25 += LOCAL:2 /5
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -978,7 +978,7 @@ TFLAG:100 |= 2
 
 $PASSOUT_93
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && ABL:14 >= 3
+SIF ASSIPLAY == 0 && ABL:노출증 >= 3
     TFLAG:50 += 1
 
 RETURN 1
@@ -988,7 +988,7 @@ RETURN 1
 ;--------------------------------------------------
 @DENIAL_MESSAGE_COM_93
 CALL KOJO_DENIAL_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -1005,7 +1005,7 @@ ENDIF
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM093
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -1014,23 +1014,23 @@ IF TEQUIP:59 > 2
 ELSE
     PRINTFORML %CALLNAME:TARGET%에게 %조사처리(COM_NAME,"를")% 하도록 명령했다.
     PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-    IF TALENT:35
+    IF TALENT:부끄럼쟁이
         PRINTFORMW 얼굴이 새빨개지면서 %CALLNAME:PLAYER%의 명령을 실행하고 있다….
     ELSEIF (TFLAG:146 == 5 && (NO:TARGET == 9 || NO:TARGET == 118 || NO:TARGET == 151)) || (TFLAG:146 == 8 && NO:TARGET ==6) || (TFLAG:146 == 22 && (NO:TARGET == 1 || NO:TARGET == 42))
         PRINTW 익숙해진 손놀림으로 갈아입고 있다….
-    ELSEIF TALENT:36 == 0 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0 && (TFLAG:146 == 11 || TFLAG:146 == 16 || TFLAG:146 == 17 || TFLAG:146 == 21)
+    ELSEIF TALENT:부끄럼없음 == 0 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0 && (TFLAG:146 == 11 || TFLAG:146 == 16 || TFLAG:146 == 17 || TFLAG:146 == 21)
         PRINTW 굉장히 얼굴을 새빨갛게 해 부끄러워하고 있었지만, 어쩔 수 없다고 생각했는지 어떻게든 갈아입었다….
-    ELSEIF (TALENT:152 || TALENT:153 || TALENT:160 || TALENT:151 || TALENT:161 || TALENT:162) && TFLAG:146 == 19
+    ELSEIF (TALENT:친애 || TALENT:상애 || TALENT:복종 || TALENT:망신 || TALENT:낙인 || TALENT:예속) && TFLAG:146 == 19
         PRINTW 몹시 기쁜 듯한 얼굴을 하면서 갈아입어 몇 번도 휙 주위면서 자신의 모습을 과시하고 있다….
-    ELSEIF (TFLAG:146 == 10 || TFLAG:146 == 11 || TFLAG:146 == 12 || TFLAG:146 == 13 || TFLAG:146 == 14 || TFLAG:146 == 15) &&(TALENT:110 || TALENT:111)
+    ELSEIF (TFLAG:146 == 10 || TFLAG:146 == 11 || TFLAG:146 == 12 || TFLAG:146 == 13 || TFLAG:146 == 14 || TFLAG:146 == 15) &&(TALENT:절벽 || TALENT:빈유)
         PRINTFORML %조사처리(COM_NAME,"를")% 입어서 좋기는 했지만,
         PRINTW 자신의 가슴의 궁상스러움을 의식하고 있는지 끊임없이 가슴을 숨기는 동작을 반복하고 있다….
-    ELSEIF (TFLAG:146 == 10 || TFLAG:146 == 11 || TFLAG:146 == 12 || TFLAG:146 == 13 || TFLAG:146 == 14 || TFLAG:146 == 15) &&(TALENT:112 || TALENT:113)
+    ELSEIF (TFLAG:146 == 10 || TFLAG:146 == 11 || TFLAG:146 == 12 || TFLAG:146 == 13 || TFLAG:146 == 14 || TFLAG:146 == 15) &&(TALENT:거유 || TALENT:폭유)
         PRINTFORMW %조사처리(COM_NAME,"를")% 입는 건 좋기는 했지만,
         PRINTW 가슴둘레가 거북하게 느끼는지 가슴 팍에 손을 뻗어 천을 이끄는 동작을 빈번하게 반복하고 있다….
-    ELSEIF TALENT:130 || TALENT:131
+    ELSEIF TALENT:유아 || TALENT:유치
         PRINTW %조사처리(COM_NAME,"를")% 대자 아이와 같이 까불며 떠들기 시작했다.
-    ELSEIF TALENT:80 || TALENT:170
+    ELSEIF TALENT:도착적 || TALENT:음란
         PRINTL 일순간 주저 하는 기색을 보였지만,
         PRINTW 이미 새로운 쾌감에 눈을 떴는지 허겁지겁 갈아입기 시작했다….
     ELSE
@@ -1044,35 +1044,35 @@ ENDIF
 @COM_ORDER_93, ARG
 LOCAL:99 = ARG
 ;ABL:욕망
-IF ABL:11
+IF ABL:욕망
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:11
+    LOCAL:99 = ABL:욕망
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 ;ABL:노출벽
-IF ABL:14
+IF ABL:노출증
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:14
+    LOCAL:99 = ABL:노출증
     TFLAG:240 += LOCAL:99 * 4
     RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 4})
 ENDIF
 ;ABL:자위 중독
-IF ABL:30
+IF ABL:자위중독
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:30
+    LOCAL:99 = ABL:자위중독
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:30%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 
 ;쾌락 각인
-IF MARK:1
+IF MARK:쾌락각인
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = MARK:1
+    LOCAL:99 = MARK:쾌락각인
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
@@ -1089,20 +1089,20 @@ IF LOCAL:2
 ENDIF
 
 ;자제심
-IF TALENT:20
+IF TALENT:자제심
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
 ENDIF
 ;부끄럼쟁이
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ;부끄럼없음
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 2
@@ -1110,7 +1110,7 @@ ELSEIF TALENT:36
     RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
 ENDIF
 ;자위하기 쉽다
-IF TALENT:60
+IF TALENT:자위하기쉬움
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
@@ -1118,14 +1118,14 @@ IF TALENT:60
     RESULTS = %RESULTS% %TALENTNAME:60%({LOCAL:99})
 ENDIF
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
 ;쾌감의 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99

@@ -9,17 +9,17 @@
 SIF DITEMTYPE:999:448 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;대상, 또는 조교자가 메이링이나 청아, 카센, 후토, 미코 혹은 기교 4 이상의 [선인]이 아니면 불가
-SIF (NO:TARGET != 6 && NO:PLAYER != 6) && (NO:TARGET != 80 && NO:PLAYER != 80) && (NO:TARGET != 83 && NO:PLAYER != 83) && (NO:TARGET != 85 && NO:PLAYER != 85) && (NO:TARGET != 86 && NO:PLAYER != 86) && ((TALENT:TARGET:225 == 0 && TALENT:PLAYER:225 == 0) || ABL:12 < 4)
+SIF (NO:TARGET != 6 && NO:PLAYER != 6) && (NO:TARGET != 80 && NO:PLAYER != 80) && (NO:TARGET != 83 && NO:PLAYER != 83) && (NO:TARGET != 85 && NO:PLAYER != 85) && (NO:TARGET != 86 && NO:PLAYER != 86) && ((TALENT:TARGET:선인 == 0 && TALENT:PLAYER:선인 == 0) || ABL:기교 < 4)
     RETURN 0
 ;조수 플레이 중에는 불가
 SIF ASSIPLAY
     RETURN 0
 ;메이링이나 청아, 카센, 후토, 미코가 대상일 경우에는 조수 가능 또는 연모 또는 봉사정신 ４ 이상 또는 순종 · 기교 · 봉사정신이 모두 3 이상
-IF NO:TARGET == 6 || NO:TARGET == 80 || NO:TARGET == 83 || NO:TARGET == 85 || NO:TARGET == 86 || TALENT:TARGET:225 == 1
-    SIF CFLAG:1 < 2 && TALENT:150 == 0 && ABL:13 < 4 && (ABL:10 < 3 || ABL:12 < 3 || ABL:13 < 3)
+IF NO:TARGET == 6 || NO:TARGET == 80 || NO:TARGET == 83 || NO:TARGET == 85 || NO:TARGET == 86 || TALENT:TARGET:선인 == 1
+    SIF CFLAG:매각가능 < 2 && TALENT:연모 == 0 && ABL:봉사정신 < 4 && (ABL:순종 < 3 || ABL:기교 < 3 || ABL:봉사정신 < 3)
         RETURN 0
 ENDIF
 ;수면 중에는 불가
@@ -69,10 +69,10 @@ CALL TRAIN_MESSAGE_COM448
 DOWNBASE:0 += 5
 
 IF TEQUIP:79 > 0
-    DOWNBASE:1 += 50
+    DOWNBASE:기력 += 50
     TEQUIP:79 = 0
 ELSE
-    DOWNBASE:1 += 70
+    DOWNBASE:기력 += 70
     TEQUIP:79 = 6
 ENDIF
 RETURN 1
@@ -86,14 +86,14 @@ PRINTFORML <방중술 발동 중>
 SOURCE:11 += 300
 IF (SELECTCOM >= 20 && SELECTCOM <= 39) || (SELECTCOM >= 323 && SELECTCOM <= 325) || (SELECTCOM >= 332 && SELECTCOM <= 334) || SELECTCOM == 430 || SELECTCOM == 431 || (SELECTCOM >= 612 && SELECTCOM <= 619) || SELECTCOM == 651 || SELECTCOM == 652 || SELECTCOM == 655 || SELECTCOM == 656
     PRINTFORMW 메이링의 기의 힘으로… 
-    TIMES DOWNBASE:1 , 0.80
+    TIMES DOWNBASE:기력 , 0.80
     TIMES SOURCE:20 , 0.80
     TIMES SOURCE:21 , 0.80
     TIMES SOURCE:30 , 0.80
     TIMES SOURCE:31 , 0.80
     TIMES SOURCE:32 , 0.80
 ELSE
-    TIMES DOWNBASE:1 , 1.20
+    TIMES DOWNBASE:기력 , 1.20
 ENDIF
 
 TEQUIP:79 -= 1
@@ -107,7 +107,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM448
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -115,7 +115,7 @@ IF TEQUIP:79 > 0
     IF NO:MASTER == 6
         PRINTFORMW %조사선택(CALLNAME:MASTER, "는")% 체내의 기를 흩트려 방중술의 효과를 중단했다….
     ;연모로 게다가 주인 조교
-    ELSEIF TALENT:150 && ASSIPLAY == 0
+    ELSEIF TALENT:연모 && ASSIPLAY == 0
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% %CALLNAME:MASTER%의 명령대로 기를 흩트려 방중술의 효과를 중단했다….
         PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 왠지 기분 아쉬운 듯이 보였다….
     ELSE
@@ -125,7 +125,7 @@ ELSE
     IF NO:MASTER == 6
         PRINTFORMW %조사선택(CALLNAME:MASTER, "는")% 체내의 기를 모아 방중술의 효과를 발동시켰다….
     ;연모로 게다가 주인 조교
-    ELSEIF TALENT:150 && ASSIPLAY == 0
+    ELSEIF TALENT:연모 && ASSIPLAY == 0
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% %CALLNAME:MASTER%의 명령대로 기를 모아 방중술의 효과를 발동시켰다.
         PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 지금부터 %CALLNAME:MASTER%에게 범해진다고 하는 기대감에 두근거림이 멈추지 않는 것 같다….
     ELSE

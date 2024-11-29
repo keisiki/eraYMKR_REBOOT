@@ -48,8 +48,8 @@ RETURN 1
 
 @EVENTTRAIN
 #PRI
-SIF FLAG:11 == 0
-    FLAG:11 = 2
+SIF FLAG:캐릭터대사표시 == 0
+    FLAG:캐릭터대사표시 = 2
 
 @EVENTEND
 #LATER
@@ -59,7 +59,7 @@ SIF FLAG:11 == 0
 ;調教開始時のセリフ CFLAG 201～219を使用
 ;-------------------------------------------------
 @EVENTTRAIN
-SIF FLAG:11 <= 0
+SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 SIF NO:TARGET != 58
     RETURN 0
@@ -73,17 +73,17 @@ CFLAG:5231 = 0
 
 ;※追加機能D1『抜かずにウフフ機能』
 ;抜かずにウフフ関連フラグのリセット
-SIF CFLAG:5220 > 1
-    CFLAG:5220 = 2
+SIF CFLAG:체위판정 > 1
+    CFLAG:체위판정 = 2
 SELECTCOM:1 = -1
 
 ;反発刻印別処理　CFLAG:5264
-IF CFLAG:5264 == 0 && MARK:9 >= 1
+IF CFLAG:5264 == 0 && MARK:반발각인 >= 1
 ;鬼畜判定＋10
 CFLAG:5205 += 10
 CFLAG:5264 = 1
 ENDIF
-IF CFLAG:5264 == 1 && MARK:9 >= 2
+IF CFLAG:5264 == 1 && MARK:반발각인 >= 2
 ;鬼畜判定＋10
 CFLAG:5205 += 10
 CFLAG:5264 = 2
@@ -130,7 +130,7 @@ ENDIF
 
 
 ;--------------------------------------------------
-;エキストラモード構文　CFLAG:5220を使用
+;エキストラモード構文　CFLAG:체위판정を使用
 ;はいを選択した時に初調教時に口上設定用の素質に変更できます
 ;--------------------------------------------------
 ;※追加機能D1『抜かずにウフフ機能』(上級者向け)
@@ -138,7 +138,7 @@ ENDIF
 ;デフォルト無効
 
 
-IF CFLAG:5220 == 0
+IF CFLAG:체위판정 == 0
     PRINTL 처녀 모드로 이행하겠습니까? (본 대사는 처녀 모드 미대응입니다)
     PRINTL [0] 예
     PRINTL [1] 아니오
@@ -146,9 +146,9 @@ IF CFLAG:5220 == 0
     INPUT
     IF RESULT == 0
         PRINTFORMW ―처녀 모드로 소질, 능력을 변경합니다―
-        TALENT:0 = 1
-        ABL:1 = 0
-        EXP:0 = 0
+        TALENT:처녀 = 1
+        ABL:V감각 = 0
+        EXP:V경험 = 0
     ELSEIF RESULT == 1
         PRINTFORMW ―통상 모드로 조교를 개시합니다―
     ELSE
@@ -163,10 +163,10 @@ IF CFLAG:5220 == 0
     INPUT
     IF RESULT == 0
         PRINTFORMW ―뽑지 않고 우후후 모드로 조교를 개시합니다―
-        CFLAG:5220 = 2
+        CFLAG:체위판정 = 2
     ELSEIF RESULT == 1
         PRINTFORMW ―일반 모드로 조교를 개시합니다―
-        CFLAG:5220 = 1
+        CFLAG:체위판정 = 1
     ELSE
         GOTO INPUT_LOOP
     ENDIF
@@ -202,7 +202,7 @@ IF CFLAG:5201 == 0
         A = 5800+ASSINO()
         ;初対面(面識管理変数CFLAG:5800～を参照)
         ;주인がオトコ
-        IF CFLAG:A == 0 && TALENT:MASTER:120
+        IF CFLAG:A == 0 && TALENT:MASTER:남자
             PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 방에 들어가자, 야마메는 복잡한 듯한 웃음으로 맞이했다. 
             PRINTFORMW 「초면부터 상큼한 여자들을 끼고 등장이라니 질투 나는걸, 오빠」
         ;それ以外
@@ -246,9 +246,9 @@ IF CFLAG:5201 == 0
 ;-------------------------------------------------
 ;주인 임신 후 첫 회의 개시 이벤트 CFLAG:5500 (친부가 야마메)
 ;-------------------------------------------------
-ELSEIF TALENT:MASTER:140 == 1 && CFLAG:MASTER:78 == NO:TARGET && CFLAG:5500 == 0
+ELSEIF TALENT:MASTER:임신 == 1 && CFLAG:MASTER:아이아버지 == NO:TARGET && CFLAG:5500 == 0
     ;연모
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「어...음.. 임신 축하해. %CALLNAME:MASTER%.」
         PRINTFORMW 야마메는 침대에 다소곳이 앉은 채 %CALLNAME:MASTER%의 볼록한 배를 바라보고 있었다.
         PRINTFORMW %조사처리(CALLNAME:MASTER, "이")% 그녀에게 가까이 다가가자, 야마메는 %조사처리(CALLNAME:MASTER, "이")% 다가온만큼 물러나며 %CALLNAME:MASTER%에게 말했다.
@@ -266,7 +266,7 @@ ELSEIF TALENT:MASTER:140 == 1 && CFLAG:MASTER:78 == NO:TARGET && CFLAG:5500 == 0
         PRINTFORMW 「..부드럽게 해줘야해?」
         PRINTFORMW %조사처리(CALLNAME:MASTER, "은")% 고개를 끄덕인 뒤, 야마메에게 다시 한번 더 키스하며 조교를 개시했다.
     ;반발각인 3
-    ELSEIF MARK:9 == 3
+    ELSEIF MARK:반발각인 == 3
         PRINTFORMW 야마메는 의미심장한 눈으로 %CALLNAME:MASTER%의 배를 잠깐 바라보고 있었다.
         PRINTFORMW 잠시 후. 야마메는 스스로 옷을 벗으며 %CALLNAME:MASTER%에게 말했다.
         PRINTFORMW 「오늘도 하려는거지? 자. 마음대로 하라고.」
@@ -325,7 +325,7 @@ ELSEIF ASSI > 0
         ENDIF
     ENDIF
     ;反発刻印3
-    IF MARK:9 == 3 && CFLAG:A != 1
+    IF MARK:반발각인 == 3 && CFLAG:A != 1
         ;初対面
         SIF CFLAG:A == 0
             PRINTFORMW 「조수? 그건 또 가엾은 애지 뭐야」
@@ -351,7 +351,7 @@ ELSEIF ASSI > 0
                 PRINTFORMW 「하-, 정말이지 우울하네. 그치?」
             ENDIF
     ;연모
-    ELSEIF TALENT:150 && CFLAG:A != 1
+    ELSEIF TALENT:연모 && CFLAG:A != 1
         ;初対面
         SIF CFLAG:A == 0
             PRINTFORMW 「어머, 초면이네. ……헤, 꽤 귀엽잖아」
@@ -383,7 +383,7 @@ ENDIF
 ;調教開始時(刻印別・一回のみ) CFLAG:5201
 ;-------------------------------------------------
 ;屈服刻印Lv1
-IF CFLAG:5201 < 2 && MARK:2 == 1
+IF CFLAG:5201 < 2 && MARK:굴복각인 == 1
     DRAWLINE
     PRINTFORML 「그러고 보면, 여기는 어디야?」
     PRINTFORML 「나같은 걸 지하에서 데려오면, 지상의 요괴들이 가만히 있지 않을 거야」
@@ -392,7 +392,7 @@ IF CFLAG:5201 < 2 && MARK:2 == 1
     RETURN 1
 
 ;屈服刻印Lv2
-ELSEIF CFLAG:5201 < 3 && MARK:2 == 2
+ELSEIF CFLAG:5201 < 3 && MARK:굴복각인 == 2
     DRAWLINE
     PRINTFORML 「단순한 의문이지만」
     PRINTFORML 「너, 나 같은 거에 상관해서 즐거워?」
@@ -401,7 +401,7 @@ ELSEIF CFLAG:5201 < 3 && MARK:2 == 2
     RETURN 1
 
 ;屈服刻印Lv3
-ELSEIF CFLAG:5201 < 4 && MARK:2 == 3 && TALENT:150 == 0
+ELSEIF CFLAG:5201 < 4 && MARK:굴복각인 == 3 && TALENT:연모 == 0
     DRAWLINE
     PRINTFORML 「나 같은 지하의 요괴들이 좋아하는 말이 있어」
     PRINTFORMW 「정들면 고향. 녀석들은 봉인해넣었단 생각이어도, 우리는 고향이라고 생각해」
@@ -411,7 +411,7 @@ ELSEIF CFLAG:5201 < 4 && MARK:2 == 3 && TALENT:150 == 0
     RETURN 1
 
 ;연모
-ELSEIF CFLAG:5201 < 5 && TALENT:150
+ELSEIF CFLAG:5201 < 5 && TALENT:연모
     DRAWLINE
     PRINTFORML 「오, 왔다. 어때? 내 아래쪽 상태」
     PRINTFORMW 「최근 이게 즐거워서 말이야…… 잔뜩 해줘」
@@ -439,7 +439,7 @@ IF CFLAG:5212 >= 1 && CFLAG:5213 == 10
     RETURN 1
 ;후타나리でペニスを使った
 ;処女喰い初体験
-ELSEIF CFLAG:5212 >= 3 && TALENT:121 && CFLAG:5213 == 1
+ELSEIF CFLAG:5212 >= 3 && TALENT:후타나리 && CFLAG:5213 == 1
     DRAWLINE
     PRINTFORML 「직접 겪어봐야만 알고 넘어갈 일이라는 건 분명 있지만」
     PRINTFORML 「응, 남자가 처녀를 좋아하는 이유는 알았어」
@@ -453,7 +453,7 @@ ELSEIF CFLAG:5212 >= 1 && CFLAG:5213 == 1
     DRAWLINE
     PRINTFORML 「왜 그런 일을 시킨 거야?」
     ;주인にペニスがある場合一行追加
-    SIF TALENT:MASTER:121 || TALENT:MASTER:120
+    SIF TALENT:MASTER:후타나리 || TALENT:MASTER:남자
         PRINTFORMW 「하다못해, 네가 자기 걸로 직접 뺏었으면 좋았을 걸」
     PRINTFORMW 「이런 잡동사니로는, 그 애의 소녀심도 체면이 안 선단 말야」
     CFLAG:5212 = 0
@@ -531,7 +531,7 @@ IF CFLAG:5217 != 0
             A = CFLAG:5217
             B = NO:A+5800    
             ;調教に参加している+연모
-            IF (CFLAG:5211 == 1 || CFLAG:5215 >= 3) && TALENT:150
+            IF (CFLAG:5211 == 1 || CFLAG:5215 >= 3) && TALENT:연모
                 DRAWLINE
                 PRINTFORML 「%조사처리(CALLNAME:A,"가")% 말한 대로, 그 아이 귀여웠어」
                 PRINTFORMW 「내 방에 데려가고 싶은걸. 안될 까나?」
@@ -567,7 +567,7 @@ ENDIF
 ;～～～～～～～～～～～～～～～～～～～～～～～～～～
 
 
-IF CFLAG:5217 == 0 && CFLAG:5219 > 0 && TALENT:150
+IF CFLAG:5217 == 0 && CFLAG:5219 > 0 && TALENT:연모
     B = CFLAG:5219
     IF ASSI > 0
         D = 0
@@ -638,7 +638,7 @@ ENDIF
 ;調教開始時(2回目以降, 78をキャラ番号に変更する)
 ;-------------------------------------------------
 ;反発刻印Lv3
-IF MARK:9 == 3
+IF MARK:반발각인 == 3
     DRAWLINE
     SIF ASSI <= 0
     PRINTFORML 「ＨＩＶ, 헤르페스, 매독, 칸디다, 임병……」
@@ -646,7 +646,7 @@ IF MARK:9 == 3
     PRINTFORMW 「뭔가의 계기로 능력이 돌아온다면……즐겨보자고?」
     RETURN 1
 ;屈服刻印Lv0
-ELSEIF MARK:2 == 0
+ELSEIF MARK:굴복각인 == 0
     DRAWLINE
     SIF ASSI <= 0
     PRINTFORML 「포식난의, 여기는 꽤 좋은 곳이네」
@@ -654,7 +654,7 @@ ELSEIF MARK:2 == 0
     PRINTFORMW 「내가 당한다고? 후후, 극진한 대접이란 녀석이구나?」
     RETURN 1
 ;屈服刻印Lv1
-ELSEIF MARK:2 == 1
+ELSEIF MARK:굴복각인 == 1
     DRAWLINE
     PRINTFORML 「살찐 것 같다고? 바보, 그런 거 아냐!」
     PRINTFORMW 「이건 옷의 디자인이야, 암거미는 배가 불룩한 순산형이 섹시하거든」
@@ -662,21 +662,21 @@ ELSEIF MARK:2 == 1
     PRINTFORMW 옷을 벗은 야마메는, %CALLNAME:MASTER%에게 새하얀 허리를 과시해온다……. 
     RETURN 1
 ;屈服刻印Lv2
-ELSEIF MARK:2 == 2
+ELSEIF MARK:굴복각인 == 2
     DRAWLINE
     PRINTFORML 「역시 엉덩이가 크다고? 크……ㅅ 너, 아무 것도 모르고 있구나」
     PRINTFORMW 「애초에, 엉덩이가 커서 뭐가 나빠. 여자로서 좋은 일이잖아」
     PRINTFORMW 「무시하지 마! 살찐 거랑은 다르다니까!!」
     PRINTFORMW 「……역시, 지상에서는 유행하지 않는 건가?」
 ;屈服刻印Lv3+オナ禁中
-ELSEIF MARK:2 == 3 && CFLAG:5208 >= 1
+ELSEIF MARK:굴복각인 == 3 && CFLAG:5208 >= 1
     DRAWLINE
     PRINTFORML 「금주, 금연은 자주 듣지만, 자위금지라니 들어본 적도 없었어」
     PRINTFORMW 「하지 말라는 건 더 하고 싶어진다는 말도 있지만……」
     PRINTFORMW 「……일단 금지하고 있는 이상은 너에게서 만족하는 수밖에 없네」
     RETURN 1
 ;屈服刻印Lv3+연모無し
-ELSEIF MARK:2 == 3 && TALENT:150 == 0
+ELSEIF MARK:굴복각인 == 3 && TALENT:연모 == 0
     DRAWLINE
     PRINTFORML 「나는 인간에게 병을 옮기지만, 거미는 꽤 깔끔한 생물이야」
     PRINTFORMW 「거미줄은 순수한 단백질이고, 입이나 다리는 소화액으로 언제나 살균하고 있는 거야」
@@ -684,7 +684,7 @@ ELSEIF MARK:2 == 3 && TALENT:150 == 0
     PRINTFORMW 「……왜냐고? 지옥에 떨어져버리면 곤란하잖아」
     RETURN 1
 ;연모
-ELSEIF TALENT:150
+ELSEIF TALENT:연모
     DRAWLINE
     PRINTFORML 「왔구나. 기다리고 있었어」
     PRINTFORMW 「자, 아기 만들기 하자. 나와 너 사이에서 생길지는 잘 모르겠지만」
@@ -708,7 +708,7 @@ CALL TARGETSAVE
 ;--------------------------------------------------
 ;口上表示関係
 ;--------------------------------------------------
-SIF FLAG:11 <= 0
+SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 SIF NO:TARGET != 58
     RETURN 0
@@ -730,21 +730,21 @@ SIF NO:TARGET != 58
 ;調教終了時のセリフ CFLAG 211～220を使用
 ;--------------------------------------------------
 ;反発刻印Lv3
-IF MARK:9 == 3
+IF MARK:반발각인 == 3
     DRAWLINE
     PRINTFORML 「너, 성병의 예방접종은 해놓은 거야?」
     PRINTFORMW 「기대하고 있으라고……」
     RETURN 1
 
 ;屈服刻印Lv1以下
-ELSEIF MARK:2 <= 1
+ELSEIF MARK:굴복각인 <= 1
     DRAWLINE
     PRINTFORML 「여기의 유지비는 여자를 팔아 나오는 거라며?」
     PRINTFORMW 「이런이런, 그렇다면 나도 동류라는 건가」
     RETURN 1
 
 ;屈服刻印Lv2
-ELSEIF MARK:2 == 2
+ELSEIF MARK:굴복각인 == 2
     DRAWLINE
     PRINTFORML 「괴롭지 않냐고? 너 꽤 뻔뻔하구나」
     PRINTFORMW 「사람들에게 꺼려지는 것에 비하면 어디라도 낙원이야」
@@ -753,7 +753,7 @@ ELSEIF MARK:2 == 2
 
 ;※追加機能※
 ;屈服刻印Lv3+オナ禁２日目以降
-ELSEIF MARK:2 == 3 && CFLAG:5208 > 1
+ELSEIF MARK:굴복각인 == 3 && CFLAG:5208 > 1
     DRAWLINE
     PRINTFORML 「하아……. 저기, 아주 조금만 더. 가게 해주면 안 될까?」
     PRINTFORMW 「이 뒤는 쭉 참고 있어야 하잖아. 이대로라면 자신 없어」
@@ -761,7 +761,7 @@ ELSEIF MARK:2 == 3 && CFLAG:5208 > 1
     RETURN 1
     
 ;屈服刻印Lv3
-ELSEIF MARK:2 == 3 && TALENT:150 == 0
+ELSEIF MARK:굴복각인 == 3 && TALENT:연모 == 0
     DRAWLINE
     PRINTFORML 「만족했어?」
     PRINTFORMW 「나는 식객이니까 말야, 사양 말고 즐겨줘」
@@ -769,7 +769,7 @@ ELSEIF MARK:2 == 3 && TALENT:150 == 0
     RETURN 1
 
 ;연모+体力500未満
-ELSEIF TALENT:150 && BASE:0 < 500
+ELSEIF TALENT:연모 && BASE:0 < 500
     DRAWLINE
     PRINTFORML 「응, 곤란하네……나, 기브업」
     PRINTFORMW 「이런 거 계속하면, 어떤 여자애라도 헤롱헤롱이겠네」
@@ -777,7 +777,7 @@ ELSEIF TALENT:150 && BASE:0 < 500
     RETURN 1
 
 ;연모
-ELSEIF TALENT:150
+ELSEIF TALENT:연모
     DRAWLINE
     PRINTFORML 「이걸로 괜찮아? 그렇구나……나한테 질린 건 아니고?」
     PRINTFORMW 「여기서 나가고 싶지 않은걸. 노력할 테니까, 무슨 말이든 해줘……?」
@@ -796,7 +796,7 @@ RETURN 0
 CALL ASSIDATA_2
 
 ;口上表示オフだと口上をスキップする
-SIF FLAG:11 != 2
+SIF FLAG:캐릭터대사표시 != 2
     RETURN 0
 
 ;※追加機能A2『装備品テキスト追加機能』
@@ -838,7 +838,7 @@ IF TEQUIP:42 == 1 && SELECTCOM != 226
     ;鬼畜＋1
     CFLAG:5205 += 1
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORML 야마메가 입에 문 볼에서, 산성이 조금 강한 침이 흘러나온다. 
         PRINTFORMW 젖은 눈동자로, 야마메는 %조사처리(CALLNAME:PLAYER,"와")%의 행위에 몸을 가늘게 떨었다……. 
     ELSE
@@ -873,7 +873,7 @@ ELSEIF (TEQUIP:40 && SELECTCOM != 224) || (TEQUIP:72 && SELECTCOM != 406) || (TE
     ;鬼畜＋1
     CFLAG:5205 += 1
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORML 「아으읏……묶여버리다니」
         PRINTFORMW 「나는 이미, 너한테 영혼까지 묶여있어……」
     ELSE
@@ -899,12 +899,12 @@ ENDIF
 ;-------------------------------------------------
 ;※追加機能D1『抜かずにウフフ機能』(上級者向け)
 ;※追加機能D2『サポートプレイ機能』(上級者向け)
-;エキストラモード構文で許可する(CFLAG:5220 > 0)必要があります
+;エキストラモード構文で許可する(CFLAG:체위판정 > 0)必要があります
 ;有効になっている場合, コンボ口上・サポート口上を呼びます. 
 ;ここを編集する必要はありませんが, コンボ口上・サポート口上はファイル末尾にあります. 別途記入願います
 
 ;サポートプレイ
-IF CFLAG:5220 >= 2000
+IF CFLAG:체위판정 >= 2000
     CALL COMBOASSI_58
     IF RESULT == 1
         ;コマンド初回判定を更新
@@ -920,13 +920,13 @@ IF CFLAG:5220 >= 2000
         RETURN 0
     ELSE
         SIF RESULT == 0
-            CFLAG:5220 -= 2000
+            CFLAG:체위판정 -= 2000
         ;コンボ＋１
         SIF RESULT == 2
             CFLAG:5203 += 1
     ENDIF
 ;コンボプレイ
-ELSEIF CFLAG:5220 > 0
+ELSEIF CFLAG:체위판정 > 0
     CALL COMBO_58
     IF RESULT == 1 || RESULT == 3
         ;コマンド初回判定を更新
@@ -944,7 +944,7 @@ ELSEIF CFLAG:5220 > 0
     ELSEIF RESULT == 2
         SELECTCOM = SELECTCOM:1
         CALL KOJO_MESSAGE_COM_58_3
-        SELECTCOM = CFLAG:5220
+        SELECTCOM = CFLAG:체위판정
         ;コンボ＋１
         CFLAG:5203 += 1
         RETURN 0
@@ -967,7 +967,7 @@ IF SELECTCOM == 0
     ;初めて
     IF CFLAG:5301 == 0
         ;屈服刻印Lv2以上
-        IF MARK:2 >= 2
+        IF MARK:굴복각인 >= 2
             PRINTFORML 「응……다른 사람이 만져주는 거, 좋아해」
             PRINTFORMW 「……내 능력은 신체에 해롭지만 말야」
         ;それ以外
@@ -980,19 +980,19 @@ IF SELECTCOM == 0
     ;助手がプレイ
     ELSEIF ASSIPLAY
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「봐……나는 더러운 몸이니까, 너의 손가락이 아니어도 젖고 있어」
             PRINTFORMW 「아앗, 그런 눈으로 보여지면, 더 젖어버려……」
         ;反発刻印Lv3+Ｃ感覚Lv3以上
-        ELSEIF MARK:9 == 3 && ABL:0 >= 3
+        ELSEIF MARK:반발각인 == 3 && ABL:C감각 >= 3
             PRINTFORML 「응……앗, 거기 기분 좋아, 후으우……응읏」
             PRINTFORMW 「너도 좋아하지……? 여자의 약점……」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「응……만약 내가 동료를 모아, 그 녀석을 쓰러뜨리면」
             PRINTFORMW 「어떡할래……? 너는 어느 쪽 편을 들 거야?」
         ;屈服刻印Lv3
-        ELSEIF MARK:2 == 3
+        ELSEIF MARK:굴복각인 == 3
             PRINTFORML 「조금만 더 강하게 해주지 않을래?」
             PRINTFORMW 「응읏, 그래……기분 좋아, 배 안쪽이 욱신거려서……」
         ;それ以外
@@ -1004,19 +1004,19 @@ IF SELECTCOM == 0
     ;주인がプレイ
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「응……이 손가락으로 만져주는 게, 참을 수 없을 정도로 좋아」
             PRINTFORMW 「엉덩이가 들려서 떨리는 게, 보이지……?」
         ;反発刻印Lv3+Ｃ感覚Lv3以上
-        ELSEIF MARK:9 == 3 && ABL:0 >= 3
+        ELSEIF MARK:반발각인 == 3 && ABL:C감각 >= 3
             PRINTFORML 「응……기분 좋아, 거기 좋아……」
             PRINTFORMW 「이상한 일 하지 말고, 보통으로만 해주면 좋을텐데……」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「상처받을 거 알고서 말하는 건데」
             PRINTFORMW 「너……엣찌 서툴러, 전혀 안 느껴져」
         ;屈服刻印Lv3
-        ELSEIF MARK:2 == 3
+        ELSEIF MARK:굴복각인 == 3
             PRINTFORML 「조금만 더 강하게 해주지 않을래?」
             PRINTFORMW 「응읏, 그래……기분 좋아, 배 안쪽이 욱신거려서……」
         ;それ以外
@@ -1047,22 +1047,22 @@ IF SELECTCOM == 1
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「큿아, 응……으응, 기분 좋아, 거미줄 뽑는 거 기분 좋아……」
             PRINTFORML 농후한 커닐링구스와 함께, 두 손가락으로 실뽑기를 계속한다. 
             PRINTFORMW 뽑아낸 실을 입에 넣어보니, 조금 쓴 맛이 났다……. 
         ;Ｃ感覚Lv3以上
-        ELSEIF ABL:0 >= 3
+        ELSEIF ABL:C감각 >= 3
             PRINTFORML 「하앗, 쿠응, 응으읏……그, 그만햇……!」
             PRINTFORML 성기를 할짝할짝 핥으면서, 그 아래의 실젖이 토해내는 실을 손가락에 감는다. 
             PRINTFORMW 동그란 실 덩어리가 됐을 즈음에는, 야마메는 녹초가 되어 있었다……. 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「끄으읏……그런 이상한 데 빨지 마……!」
             PRINTFORML 실젖을 계속해서 핥으니 실이 조금씩 뿜어져 나온다. 
             PRINTFORMW 방에 펼친 봉인 탓에, 실을 통한 공격은 할 수 없는 것 같다……. 
         ;屈服刻印Lv3
-        ELSEIF MARK:2 == 3
+        ELSEIF MARK:굴복각인 == 3
             PRINTFORML 「하아, 후……응으응」
             PRINTFORMW 집요하게 실젖을 빨아올리자, 새하얗고 강한 점성을 가진 액체가 배어나왔다……. 
         ;それ以外
@@ -1079,7 +1079,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 2
     ;Ａ経験なし
-    IF EXP:1 == 0
+    IF EXP:A경험 == 0
         PRINTFORML 「엉덩이……?」
         PRINTFORMW 거기에 컴플렉스가 있는 듯한 야마메는, 눈썹을 찌푸렸다. 
         RETURN 0
@@ -1089,16 +1089,16 @@ IF SELECTCOM == 2
             PRINTFORML 「잠깐, 젖어있지 않으니까 아팟……봐, 봐줘 좀」
             PRINTFORMW 「치질은 질병이라기보다는 상처니까, 전문 외라고……」
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 「아……으응, 빙글, 빙글 하고 손가락 굴리는 거, 좋아앗……」
         ;反発刻印Lv3+Ａ感覚Lv3以上
-        ELSEIF MARK:9 == 3 && ABL:2 >= 3
+        ELSEIF MARK:반발각인 == 3 && ABL:A감각 >= 3
             PRINTFORMW 「하아……휘젖지 마앗……」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 「너, 거긴 병원균 투성이야」
         ;Ａ感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORMW 「응읏……간질간질하고 뭔가, 솟아올라와」
         ;それ以外
         ELSE
@@ -1162,12 +1162,12 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0 && TEQUIP:50 == 0
     ;二回目以降
     ELSE
         ;연모+후타나리
-        IF TALENT:121 && TALENT:150
+        IF TALENT:후타나리 && TALENT:연모
             PRINTFORML 「정말이지……남자라는 녀석들은, 이런 걸 달고 잘도 태연하게 있을 수 있구나」
             PRINTFORML 「금새 발기해버려서, 어질어질해서, 다리가 후들거려서」
             PRINTFORMW 「이렇게 뽑아내지 않으면……머리가 병에 걸려버릴 것 같다고……」
         ;연모+助手が見ている
-        ELSEIF ASSI > 0 && TALENT:150
+        ELSEIF ASSI > 0 && TALENT:연모
             PRINTFORML 「두사람한테 보여지고 있는데도……허리가 간지러워서」
             PRINTFORML 「해도 돼……? 거미의 자위 같은 거, 봐도 기분 나쁠 뿐이야」
             PRINTFORML 「너희들이……나를 싫어하지 않는다면, 할게……」
@@ -1175,11 +1175,11 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0 && TEQUIP:50 == 0
             ;蜘蛛フラグ+1
             CFLAG:5202 += 1
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「이상한 일이네……이런 건 혼자서 하는 일인데」
             PRINTFORMW 「주인에게 보여진다고 생각하면, 혼자서 할 때랑은 전혀 다르게 느껴져……하응」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「스스로? 어째서 그런 일을 하지 않으면 안 되는 거야」
             PRINTFORMW 「억지로 하는 자위 따위, 봐도 하나도 재미없을 텐데……」
         ;それ以外
@@ -1203,23 +1203,23 @@ ELSEIF SELECTCOM == 7 && TEQUIP:54
     ;二回目以降
     ELSE
         ;연모+후타나리
-        IF TALENT:121 && TALENT:150
+        IF TALENT:후타나리 && TALENT:연모
             PRINTFORML 「씻기만 할 생각인데도, 여기가 멋대로 커다래져버려……」
             ;調教者が후타나리かオトコなら一行追加
-            SIF TALENT:PLAYER:121 || TALENT:PLAYER:120
+            SIF TALENT:PLAYER:후타나리 || TALENT:PLAYER:남자
                 PRINTFORML 「너는 어떻게 처리하고 있는 걸까나……」
             PRINTFORMW 리근을 샤워기로 희롱하면서, 야마메는 %CALLNAME:PLAYER%에게 요염한 시선을 던진다……. 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「아직이야, 아직 깨끗해지지 않았으니까……」
             PRINTFORMW 「안쪽에서 병원균이 솟아나는 게, 멈추질 않아……」
         ;反発刻印Lv3+Ｃ感覚Lv3以上
-        ELSEIF MARK:9 == 3 && ABL:0 >= 3
+        ELSEIF MARK:반발각인 == 3 && ABL:C감각 >= 3
             PRINTFORML 「너는……이걸로 느끼는 여자, 이상하다고 생각해?」
             PRINTFORML 「미리 말해두는데……내가 이상한 게 아니라, 여자는 모두 여기가 약한 거야」
             PRINTFORMW 「그러니까, 샤워기가 기분 좋은 난, 보통인 거얏……!」
         ;反発刻印Lv3+주인
-        ELSEIF MARK:9 == 3 && ASSIPLAY == 0
+        ELSEIF MARK:반발각인 == 3 && ASSIPLAY == 0
             PRINTFORML 「그렇구나, 나 같은 건 더러워서 손대고 싶지도 않은 거구나?」
             PRINTFORMW 「틀려? 흐응, 어차피 너의 손은 이쪽에서 먼저 거절이야」
         ;それ以外
@@ -1234,14 +1234,14 @@ ELSEIF SELECTCOM == 7 && TEQUIP:50
     ;鬼畜判定＋3
     CFLAG:5205 += 3
     ;初めて
-    IF CFLAG:21 == 0
+    IF CFLAG:첫특수커맨드 == 0
         PRINTFORML 「……진심이야? 너 의외로 의리 있구나」
         PRINTFORML 「눈치 채지 못하게 몰래 찍어놓으면 되잖아」
         PRINTFORMW 「알았어……그 정직함을 봐서, 내가 자위하는 모습 찍게 해줄게」
     ;二回目以降
     ELSE
         ;연모+후타나리
-        IF TALENT:121 && TALENT:150
+        IF TALENT:후타나리 && TALENT:연모
             PRINTFORML 「크응, 큿, 하응, 답답해, 괴로워엇」
             PRINTFORML 자기가 뽑은 실로 자지의 뿌리를 꽉 묶고, 야마메는 카메라 앞에서 자위에 빠지고 있다. 
             PRINTFORML 「크읏, 핫, 우읏, 기분, 좋앗, 대, 대단햇……!」
@@ -1249,7 +1249,7 @@ ELSEIF SELECTCOM == 7 && TEQUIP:50
             ;蜘蛛フラグ＋1
             CFLAG:5202 += 1
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「찍는다면 거미다리로 자위하는 쪽이 더 인기가 많을 거라고?」
             PRINTFORML 「잘 모르겠는데……알았어, 오늘은 다리 2개로 클리를 잡는 걸 보여줄게」
             PRINTFORML 거미다리를 꺼낸 야마메는, 민감한 보주를 키틴질의 다리로 희롱하기 시작했다……. 
@@ -1257,12 +1257,12 @@ ELSEIF SELECTCOM == 7 && TEQUIP:50
             ;蜘蛛フラグ＋1
             CFLAG:5202 += 1
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「……싫어, 라고 말하면?」
             PRINTFORML 「오늘 저녁은 넘기는 정도로 끝낸다고? 그건 그것대로 곤란한데」
             PRINTFORMW 「예이예이, 알았어. 거스르면 나만 손해라는 거지……」
         ;Ｃ感覚Lv3以上+비후타나리
-        ELSEIF ABL:0 >= 3 && TALENT:121 == 0
+        ELSEIF ABL:C감각 >= 3 && TALENT:후타나리 == 0
             PRINTFORML 「거미다리로 하는 자위가 찍고 싶다고? 그런 거 하나도 안 팔릴 걸」
             PRINTFORML 「잘 모르겠는데……알았어, 오늘은 다리 2개로 클리를 잡는 걸 보여줄게」
             PRINTFORML 거미다리를 꺼낸 야마메는, 민감한 보주를 키틴질의 다리로 희롱하기 시작했다……. 
@@ -1291,21 +1291,21 @@ IF SELECTCOM == 5
     ;二回目以降
     ELSE
         ;연모+調教者にペニスがある
-        IF TALENT:150 && (TALENT:PLAYER:121 || TALENT:PLAYER:120)
+        IF TALENT:연모 && (TALENT:PLAYER:후타나리 || TALENT:PLAYER:남자)
             PRINTFORML 「아앗, 자지 좋아아……허리가 녹아버릴 것 같아……」
             PRINTFORML 「끝나면 내가 똑같이 해줄게에……이거 대단해……」
             PRINTFORMW 야마메는 허리를 경련하면서, 남성기가 가져오는 쾌감을 견디고 있다……. 
         ;反発刻印Lv3+Ｃ感覚Lv4以上
-        ELSEIF MARK:9 == 3 && ABL:0 >= 4
+        ELSEIF MARK:반발각인 == 3 && ABL:C감각 >= 4
             PRINTFORML 「응……아, 안, 돼……이건……」
             PRINTFORML 「그만해……음란해져, 나 망가져버려……」
             PRINTFORMW 「기분 좋앗, 자지 빨아올려서……응, 거기야앙, 쌀 때까짓……!」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「뭣 때문에 이런 게 생겨났나 하고 생각해봤는데, 결국 이런 거네……」
             PRINTFORMW 「이거, 하지 마앗……욕망에 져 버릴 거 같아, 느껴버렷……」
         ;屈服刻印Lv3
-        ELSEIF MARK:2 == 3
+        ELSEIF MARK:굴복각인 == 3
             PRINTFORML 「처음 생겨났을 때는, 어떻게 돼 버린 줄 알았는데」
             PRINTFORML 「자지가 이렇게 좋은 거일 거라고는, 전혀 몰랐어……」
             PRINTFORMW 「……크우읏, 머리가 멍해져……」
@@ -1330,20 +1330,20 @@ IF SELECTCOM == 3
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「큿, 가슴, 응앗, 유두도, 만져져서, 주물러져서……」
             PRINTFORMW 「이거……행복해, 응, 여자로 태어나서, 다행이다……」
         ;反発刻印Lv3+Ｂ感覚Lv3以上
-        ELSEIF MARK:9 == 3 && ABL:3 >= 3
+        ELSEIF MARK:반발각인 == 3 && ABL:B감각 >= 3
             PRINTFORML 「……어째서, 나를 기분좋게 하는 거야……」
             PRINTFORML 「너 혼자 맘대로 가버린 다음 끝내면 되잖아」
             PRINTFORMW 「이런 거……쿠읏. 치사해……」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「중금속의 오염은, 모유에 섞여서, 모유를 마신 아기를 중병에 걸리게 만든다고 해」
             PRINTFORMW 「어머나, 빨려는 게 아니었던 걸까나?」
         ;Ｂ感覚Lv3以上
-        ELSEIF ABL:3 >= 3
+        ELSEIF ABL:B감각 >= 3
             PRINTFORML 「쿠응……유두 잡아서 그렇게 돌리면, 나……」
             PRINTFORMW 야마메는 가볍게 등을 젖히며, 가슴을 내밀고 있다……. 
         ;それ以外
@@ -1368,11 +1368,11 @@ IF SELECTCOM == 6
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「응, 하음, 츄릅……츗, 페츕……푸하」
             PRINTFORMW 「벌써 끝……? 여자는, 키스가 긴 편을 더 기뻐해」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「좋아, 마셔봐……내 타액」
             PRINTFORMW 「소화액, 독액, 병원체……쿠후훗, 불안한 걸까나?」
         ;それ以外
@@ -1417,7 +1417,7 @@ IF SELECTCOM == 9 && TEQUIP:55 == 0 && TEQUIP:41 == 0 && TEQUIP:70 == 0 && TEQUI
     ELSE
         ;オナ禁止命令の条件は自慰中毒Lv1以上と, 연모であるか反発刻印Lv2以下
         ;命令できない
-        IF TALENT:150 == 0 && MARK:9 == 3
+        IF TALENT:연모 == 0 && MARK:반발각인 == 3
             PRINTFORMW 「뭐야, 가만히 놔두면 오히려 더 기분 나빠……」
         ;オナ禁初日
         ELSEIF CFLAG:5208 == 1
@@ -1464,9 +1464,9 @@ IF SELECTCOM == 9 && TEQUIP:55 == 0 && TEQUIP:41 == 0 && TEQUIP:70 == 0 && TEQUI
                 PRINTFORMW %CALLNAME:MASTER%는, %조사처리(CALLNAME:ASSI,"과")% 서로를 애무했다. 
                 PRINTFORML 「무, 무슨 속셈이야……관람객?」
                 PRINTFORML %조사처리(CALLNAME:ASSI,"를")% 앉게 해 뒤에서 안고, 무릎을 구브리고 다리를 크게 벌리게 한다. 
-                SIF TALENT:ASSI:121 == 0
+                SIF TALENT:ASSI:후타나리 == 0
                     PRINTFORMW 그대로, %CALLNAME:ASSI%의 클리토리스를 드러내 보여주었다. 
-                SIF TALENT:ASSI:121
+                SIF TALENT:ASSI:후타나리
                     PRINTFORMW 그대로, %CALLNAME:ASSI%의 자지를 훑는 모습을 보게 했다. 
                 PRINTFORML 「……무슨 생각을 하는지 자알 알 것 같아, 정말로 악취미네」
                 PRINTFORML 야마메가 좋아하는 성감대를 자극하며 보여주고, %CALLNAME:ASSI%의 교성을 억지로 듣게 한다. 
@@ -1483,9 +1483,9 @@ IF SELECTCOM == 9 && TEQUIP:55 == 0 && TEQUIP:41 == 0 && TEQUIP:70 == 0 && TEQUI
                 PRINTFORMW %CALLNAME:MASTER%는, %조사처리(CALLNAME:ASSI,"과")% 서로를 애무했다. 
                 PRINTFORML 「무, 무슨 속셈이야……관람객?」
                 PRINTFORML %조사처리(CALLNAME:ASSI,"를")% 앉게 해 뒤에서 안고, 무릎을 구브리고 다리를 크게 벌리게 한다. 
-                SIF TALENT:ASSI:121 == 0
+                SIF TALENT:ASSI:후타나리 == 0
                     PRINTFORMW 그대로, %CALLNAME:ASSI%의 클리토리스를 드러내 보여주었다. 
-                SIF TALENT:ASSI:121
+                SIF TALENT:ASSI:후타나리
                     PRINTFORMW 그대로, %CALLNAME:ASSI%의 자지를 훑는 모습을 보게 했다. 
                 PRINTFORML 「……무슨 생각을 하는지 자알 알 것 같아, 정말로 악취미네」
                 PRINTFORML 야마메가 좋아하는 성감대를 자극하며 보여주고, %CALLNAME:ASSI%의 교성을 억지로 듣게 한다. 
@@ -1528,7 +1528,7 @@ IF SELECTCOM == 9 && TEQUIP:55 == 0 && TEQUIP:41 == 0 && TEQUIP:70 == 0 && TEQUI
                 CFLAG:5204 += 1
             ENDIF
         ;オナ禁初回
-        ELSEIF (TALENT:150 || MARK:9 < 3) && ABL:30 >= 1 && CFLAG:5307 == 1
+        ELSEIF (TALENT:연모 || MARK:반발각인 < 3) && ABL:자위중독 >= 1 && CFLAG:5307 == 1
             PRINTFORML 「응, 심심하네……」
             PRINTFORML 「그러면, 혼자서 즐겨도 돼?」
             PRINTFORMW 「너 탓에, 최근은 지루해지면 이게 하고싶어진단 말야……」
@@ -1557,7 +1557,7 @@ $INPUT_LOOP_58
             CALL SELFPLAY_4, 58, 4
             RETURN 0
         ;二回目以降
-        ELSEIF (TALENT:150 || MARK:9 < 3) && ABL:30 >= 1
+        ELSEIF (TALENT:연모 || MARK:반발각인 < 3) && ABL:자위중독 >= 1
             PRINTFORMW 「뭐야, 힐끔힐끔 쳐다보고는……」
             PRINTL [0] 허락해준다
             PRINTL [1] 자위엄금!
@@ -1576,16 +1576,16 @@ ENDIF
 ;Gスポット刺激
 ;-------------------------------------------------
 ;Gスポット刺激
-IF SELECTCOM == 600 || (SELECTCOM == 4 && PREVCOM == 4 && ABL:PLAYER:12 >= 3) || (SELECTCOM == 4 && TEQUIP:21)
+IF SELECTCOM == 600 || (SELECTCOM == 4 && PREVCOM == 4 && ABL:PLAYER:기교 >= 3) || (SELECTCOM == 4 && TEQUIP:21)
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 「히얏, 이거, 이거 무서, 무서워엇, 읏쿠으응!!」
     ;反発刻印3+Ｖ感覚Lv3以上
-    ELSEIF MARK:9 == 3 &&  ABL:1 >= 3
+    ELSEIF MARK:반발각인 == 3 &&  ABL:V감각 >= 3
         PRINTFORML 「잔인해, 이런 건……참을, 수가……흣……읏으응!!」
         PRINTFORMW %CALLNAME:PLAYER%의 손놀림은, 야마메의 신체만을 굴복시킨다……. 
     ;Ｖ感覚Lv3以上
-    ELSEIF ABL:1 >= 3
+    ELSEIF ABL:V감각 >= 3
         PRINTFORMW 「그만, 그만햇, 어딘지, 모르는 곳으로 가버렷……앗!」
     ;それ以外
     ELSE
@@ -1601,15 +1601,15 @@ ELSEIF SELECTCOM == 4
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「너의 손가락, 기분 좋아……」
             PRINTFORMW 「자, 헤집어줘……완전히 풀려버릴 때까지, 삽입해도 좋아……」
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「몸 안을 맘대로 헤집어져서……」
             PRINTFORMW 「……젖는 건 단순한 생리현상이야」
         ;Ｖ感覚Lv3以上
-        ELSEIF ABL:1 >= 3
+        ELSEIF ABL:V감각 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -1633,19 +1633,19 @@ IF SELECTCOM == 180
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「아아……이거, 마음이 편해져」
             PRINTFORML 「너는, 좋은 주인님이야……크후으응……」
             PRINTFORMW 굳어져 있는 신체를 이완시킨 야마메는, 푹 하고 침대에 천천히 가라앉았다……. 
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「너……그만둬, 이봐……응힛!」
             PRINTFORML 실을 뿜어내고 있는 야마메의 실젖을 세게 누르자, 안으로 역류한 듯하다. 
             PRINTFORMW 「쿠으읏……무, 무슨 짓을 하는 거야……」
             ;蜘蛛フラグ＋1
             CFLAG:5202 += 1
         ;Ａ感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORML 「쿠으으응……」
             PRINTFORMW 「몸에 힘이, 빠져나가는 기분……나쁘지, 않아」
         ;それ以外
@@ -1670,20 +1670,20 @@ IF SELECTCOM == 10
     ;二回目以降
     ELSE
         ;후타나리
-        IF TALENT:121
+        IF TALENT:후타나리
             PRINTFORML 「그, 그러니까아……이걸 만지는 건 반칙이야」
             PRINTFORML 「여기에서 나오는 하얀 그물로, 너을 더럽히는 것 밖에, 생각나지 않게 돼……」
             PRINTFORMW 「읏크, 그, 그만, 이봐……방금 뒤에 대놓은 건……으읏? !」
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「크우우웅……아아, 이, 이상해져」
             PRINTFORMW 「갖다대는 것만으로, 머릿속이 새하얘져서, 갓……가버, 렷……!」
         ;反発刻印Lv3+Ｃ感覚Lv3以上
-        ELSEIF MARK:9 == 3 && ABL:0 >= 3
+        ELSEIF MARK:반발각인 == 3 && ABL:C감각 >= 3
             PRINTFORML 「그만둬줘……제발, 아, 으앗아」
             PRINTFORMW 「너무 기분 좋아서, 뭐가 좋고 뭐가 싫은지도 잊어버릴 거 같아……흐앗」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「이 한심한 몸이 역겨워」
             PRINTFORMW 「이런 치욕스런 일을 당하고도, 기분 좋아져 버리다니……」
         ;それ以外
@@ -1712,20 +1712,20 @@ IF SELECTCOM == 12 && TEQUIP:20 == 1
         IF PALAM:10 < PALAMLV:2
             PRINTFORMW 「잠깐 기닷, 젖지도 않았……으긋……!」
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「하우웃……우웅 하고 떨려서, 기분 좋아……아, 이봣」
             PRINTFORMW 「때는 이때라는 것처럼 거미줄을 뽑는 건 무슨 심보야?」
             ;蜘蛛フラグ＋1
             CFLAG:5202 += 1
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「응큿……하하, 조금은 생각이란 걸 할 줄 알게 됐구나」
             PRINTFORML 「그래……이런 불결한 요괴를 만지는 건 유쾌하지는 않을 거야」
             PRINTFORMW 「하물며 점막에 자기 걸 박아 넣는 건, 어휴 더러워라」
             ;鬼畜＋1
             CFLAG:5205 += 1
         ;Ｖ感覚Lv3以上
-        ELSEIF ABL:1 >= 3
+        ELSEIF ABL:V감각 >= 3
             PRINTFORML 「우응, 응읏……아, 이거, 형태가 느껴져……」
             PRINTFORML 「엣찌한 데를 꾹꾹 문지르는, 야한 형태를 하고 있네……」
             PRINTFORMW 「좋아……움직이게 해줘. ……읏하앙」
@@ -1762,17 +1762,17 @@ IF SELECTCOM == 11
     ;二回目以降
     ELSE
         ;후타나리
-        IF TALENT:121
+        IF TALENT:후타나리
             PRINTFORML %조사처리(CALLNAME:PLAYER,"는")% 야마메의 자지에, 마사지기의 앞부분을 갖다대고
             PRINTFORML 그대로 아랫배 쪽까지 세게 내리눌렀다……. 
             PRINTFORMW 「히, 으깃, 앗, 앗아아아아앗……!!」
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「히굿, 아팟, 자극이, 너무 세섯」
             PRINTFORML 「앗아아아, 으굿, 아아아아아……っ!」
             PRINTFORMW 위아랫니를 부딪치면서, 야마메는 온몸을 부들부들 떨고 있다……. 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「안 돼, 그건 안됏, 다른 걸로……」
             PRINTFORMW 「크앗, 앗, 아, 아아아아아앗!!」
         ;それ以外
@@ -1802,16 +1802,16 @@ IF SELECTCOM == 13 && TEQUIP:25 == 1
         IF PALAM:10 < PALAMLV:2
             PRINTFORMW 「잠깐 기닷, 아직 젖지도 않……으극……!」
         ;연모+Ａ感覚Lv3以上
-        ELSEIF TALENT:150 && ABL:2 >= 3
+        ELSEIF TALENT:연모 && ABL:A감각 >= 3
             PRINTFORML 「아아……처음에는, 이게 이렇게 좋은 물건이라고는……」
             PRINTFORML 「윙윙 움직여서, 배 안에서 빙빙 돌아서……」
             PRINTFORMW 「……새삼 깨달았지만, 나 변태가 돼버렸구나. 기분 좋아앗……」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「……그쯤 해줘」
             PRINTFORMW 「내가 아무리 성격이 좋아도, 이건 꽤나 싫다고……」
         ;Ａ感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORML 「넣어도, 이젠 아프지도 않게 됐네……」
             PRINTFORMW 「우응……기분 좋아, 이거……조금뿐이지만」
         ;それ以外
@@ -1840,11 +1840,11 @@ IF SELECTCOM == 14 && TEQUIP:30 == 1
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「크후우……이거, 너무 자극이 세……」
             PRINTFORMW 「클리토리스가 벗겨져서, 부풀어올라……」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「편리하네, 이거……정말로」
             PRINTFORMW 「여길 붙여서 막아버리면, 거역할 수도 없게 되잖아……읏아아앗」
         ;それ以外
@@ -1877,12 +1877,12 @@ IF SELECTCOM == 15 && TEQUIP:35 == 1
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「유두 집혀서 윙윙 움직이면, 머릿속이 새하얘져」
             PRINTFORML 「바보 같이 원해버리게 되도 괜찮은 거야……?」
             PRINTFORMW 「아, 그거……그거어, 그대로, 아래로 잡아당겨줫……!」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「이거, 꼭 장난감처럼 생겼네」
             PRINTFORMW 「……아아, 처음부터 나는, 너의 장난감이었던 걸까」
         ;それ以外
@@ -1953,7 +1953,7 @@ IF (SELECTCOM == 172 && TEQUIP:25 == 5) || (SELECTCOM == 404 && TEQUIP:25 == 9)
     ;二回目以降
     ELSE
         ;연모+Ａ感覚Lv3以上
-        IF TALENT:150 && ABL:2 >= 3
+        IF TALENT:연모 && ABL:A감각 >= 3
             PRINTFORML 「전부……들어간 거야?」
             PRINTFORML 「안에서 서로 부딪치는 게……느껴져어」
             PRINTFORMW 「어때? 이대로 앞으로 해볼까……?」
@@ -1987,7 +1987,7 @@ IF SELECTCOM == 20
         IF PALAM:10 < PALAMLV:2
             PRINTFORMW 「잠깐 기닷, 젖지도 않았……읏그……!」
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「아앗, 좋아, 좋아앗……깊게 쑤셔져서, 안쪽까지 닿아……!」
             PRINTFORML 야마메에게 체중을 실은 채, 리듬감 있게 허리를 움직인다. 
             PRINTFORMW 즉시 애액의 찰박거리는 감촉에 휩싸여, 극상의 쾌감을 느낀다……. 
@@ -1996,15 +1996,15 @@ IF SELECTCOM == 20
             ;蜘蛛フラグ+1
             CFLAG:5202 += 1
         ;反発刻印Lv3+Ｖ感覚Lv3以上
-        ELSEIF MARK:9 == 3 && ABL:1 >= 3
+        ELSEIF MARK:반발각인 == 3 && ABL:V감각 >= 3
             PRINTFORML 「크웃, 응읏크, 싫어, 싫은데도……」
             PRINTFORMW 「교미 좋아……기분 좋아앙……흐읏」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「헤에……범하려고? 충분히 젖어있으니까, 자」
             PRINTFORMW 「괜찮아, 네 자지따윈 성병에 걸려도 아무래도 좋으니까」
         ;屈服刻印Lv3+Ｖ感覚Lv3以上
-        ELSEIF MARK:2 == 3 && ABL:1 >= 3
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3
             PRINTFORML 「아앗, 좋아, 좋아앗, 기분 좋아……」
             PRINTFORMW 「교미하는 거 좋아……좀더, 좀더 해줘엇……」
         ;それ以外
@@ -2032,7 +2032,7 @@ IF SELECTCOM == 21
         IF PALAM:10 < PALAMLV:2
             PRINTFORMW 「잠깐 기닷, 아직 젖지도 않았……읏그……!」
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「앙앗, 대단, 대단해, 너무 격렬햇, 교미 좋아앗!」
             PRINTFORML 야마메의 허리에서 나타난 까만 다리를 붙잡아, 난폭하게 자지를 꽂아 넣는다. 
             PRINTFORMW 점액질 실의 점성과 풍만한 엉덩이의 쿠션이, 깊은 황홀감을 연출한다……. 
@@ -2041,16 +2041,16 @@ IF SELECTCOM == 21
             ;蜘蛛フラグ＋1
             CFLAG:5202 += 1
         ;反発刻印Lv3+Ｖ感覚Lv3以上
-        ELSEIF MARK:9 == 3 && ABL:1 >= 3
+        ELSEIF MARK:반발각인 == 3 && ABL:V감각 >= 3
             PRINTFORML 「흐아앗, 안 돼, 안댓, 타락해버려, 너한테 떨어져버렷……!」
             PRINTFORML 풍만한 엉덩이를 붙잡고, 격렬한 스트로크로 야마메의 보지를 관철한다. 
             PRINTFORMW 한 번 찌를 때마다, 야마메의 단단했던 목소리가 녹아내린다……. 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「헤에……범하려고? 충분히 젖어있으니까, 자」
             PRINTFORMW 「괜찮아, 네 자지 따윈 성병에 걸려도 아무래도 좋으니까」
         ;屈服刻印Lv3+Ｖ感覚Lv3以上
-        ELSEIF MARK:2 == 3 && ABL:1 >= 3
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3
             PRINTFORML 「앗, 꾸욱, 꾸욱 하고 와……안쪽이 저려어……」
             PRINTFORMW 「교미 좋앗…… 너와 교미하는 거, 굉장햇……!」
         ;それ以外
@@ -2083,15 +2083,15 @@ IF SELECTCOM == 30 || SELECTCOM == 31 || SELECTCOM == 32 || SELECTCOM == 33 || S
         IF PALAM:10 < PALAMLV:2
             PRINTFORMW 「잠깐 기닷, 아직 젖지도 않았……읏그……!」
         ;연모+Ａ感覚Lv3以上
-        ELSEIF TALENT:150 && ABL:2 >= 3
+        ELSEIF TALENT:연모 && ABL:A감각 >= 3
             PRINTFORML 「앙읏, 대단햇, 엉덩이 타는 것 같아……!」
             PRINTFORMW 「쿠직쿠직 하고 굉장한 소리가 나서, 허리가 오싹해서 녹아버릴 것 같아……」
         ;反発刻印Lv3+Ａ感覚Lv3以上
-        ELSEIF MARK:9 == 3 && ABL:2 >= 3
+        ELSEIF MARK:반발각인 == 3 && ABL:A감각 >= 3
             PRINTFORML 「큿, 크응……기, 기분 좋아 보인다고?」
             PRINTFORMW 「아아, 기분좋아……똥이 나올 때 만큼이나 말이지……!」
         ;Ａ感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORML 「응읏크우우우……하아아앙……아, 아앗……」
             PRINTFORMW 「알 것 같아……이 오싹오싹하는 게, 엉덩이로 느낀다는 건가……?」
         ;それ以外
@@ -2114,7 +2114,7 @@ IF SELECTCOM == 25
         ;※追加機能B2『助手感想機能』用に処女喰い経験と面識変数を更新
         A = ASSINO()+5800
         ;助手が処女
-        IF TALENT:ASSI:0 == 1
+        IF TALENT:ASSI:처녀 == 1
             PRINTFORML 「……뭣, 그만둬!」
             PRINTFORMW 「소녀의 순정이라는 건, 그렇게 가볍게 뺏어도 되는 게 아냐……」
             ;処女喰いカウント
@@ -2154,7 +2154,7 @@ IF SELECTCOM == 22
         IF PALAM:10 < PALAMLV:2
             PRINTFORMW 「잠깐 기닷, 아직 젖지도 않았……읏그……!」
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 「아앗, 페로몬 나왓, 안으면서 교미하는 거, 기분 좋아앗!」
             PRINTFORMW 「이상해져…… 너도 이상해져, 함께 교미해서……」
             PRINTFORMW 야마메의 허리에서 펼쳐진 까만 다리가, %CALLNAME:PLAYER%의 등을 사랑스럽게 끌어안는다. 
@@ -2163,14 +2163,14 @@ IF SELECTCOM == 22
             ;蜘蛛フラグ＋1
             CFLAG:5202 += 1
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「너 같은 것도, 이러고 있으면 따뜻해」
             PRINTFORMW 「지금뿐이라면, 내가 안아줄게……」
             PRINTFORMW 「너도 결국, 이런 지저분한 일을 하고 싶지는 않을 텐데……괴로울 거야」
             ;鬼畜-1
             CFLAG:5205 -= 1
         ;Ｖ感覚Lv3以上
-        ELSEIF ABL:1 >= 3
+        ELSEIF ABL:V감각 >= 3
             PRINTFORML 「크흥, 응큿, 아앗 가슴 눌려져엇」
             PRINTFORMW 「조금, 기댈테니까……받쳐줘, 읏아, 좋아……」
             PRINTFORMW 야마메는 %CALLNAME:PLAYER%에게 상반신을 맡기고, 허리를 흔들며 쾌락을 탐한다……. 
@@ -2204,14 +2204,14 @@ IF SELECTCOM == 612 || (SELECTCOM == 23 && TEQUIP:56)
         IF PALAM:10 < PALAMLV:2
             PRINTFORMW 「잠깐 기닷, 아직 젖지도 않았……읏그……!」
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「보, 보지 말아줘, 야해……너무 야해 이거」
             PRINTFORML %CALLNAME:PLAYER%로부터 세 군데를 동시에 공격받아 쾌락의 눈물을 흘리면서, 야마메는 거울을 가리켰다. 
             PRINTFORMW 「자기가 교미하는 걸 보고 흥분하고 있어……변태다, 나 변태 같아……」
             PRINTFORML 확 하고 야마메의 체취가 농후해진 기분이 든다……. 
             PRINTFORMW 그 향기를 들이마신 %조사처리(CALLNAME:PLAYER,"는")%, 홀린 것처럼 야마메를 범하는 것이었다. 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「어쩐지, 아이가 된 것 같은 모습이네」
             PRINTFORML 「……앗, 흑……어머, 미안……섹스하는 중인데」
             PRINTFORML 「뭘까, 눈물이……미, 미안, 훌쩍……」
@@ -2219,7 +2219,7 @@ IF SELECTCOM == 612 || (SELECTCOM == 23 && TEQUIP:56)
             ;鬼畜-1
             CFLAG:5205 -= 1
         ;Ｖ感覚Lv3以上
-        ELSEIF ABL:1 >= 3
+        ELSEIF ABL:V감각 >= 3
             PRINTFORML 「앞쪽, 이렇게 잡고 훑어줄게……헤, 기분 좋지?」
             PRINTFORMW 쿠풋, 쿠풋, 하고 야마메의 질구가 %CALLNAME:PLAYER%의 귀두를 몇 번이나 문지른다. 
             PRINTFORMW 「칠칠치 못한 숨소리가 목덜미에 닿고 있는걸. 기분 좋으면, 클리에 보답해줘……」
@@ -2250,7 +2250,7 @@ ELSEIF SELECTCOM == 23
         IF PALAM:10 < PALAMLV:2
             PRINTFORMW 「잠깐 기닷, 아직 젖지도 않았……읏그……!」
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 「크후, 안쪽에, 안쪽까지 와줘, 빨리이이이잇……」
             PRINTFORMW 얕은 삽입에 애를 태우는 야마메를 진정시키기 위해, 탄력 있는 가슴과
             PRINTFORMW 날아가버릴 정도로 민감해진 클리토리스를 손끝으로 튕겼다. 
@@ -2258,7 +2258,7 @@ ELSEIF SELECTCOM == 23
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")%, 야마메의 귀여운 검은 색 리본에 코를 묻었다. 
             PRINTFORMW 숨이 막힐 것 같은, 발정한 암컷의 달콤한 페로몬이 비강을 채운다……. 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「어쩐지, 아이가 된 것 같은 모습이네」
             PRINTFORML 「……앗, 흑……어머, 미안……섹스하는 중인데」
             PRINTFORML 「뭘까, 눈물이……미, 미안, 훌쩍……」
@@ -2266,7 +2266,7 @@ ELSEIF SELECTCOM == 23
             ;鬼畜-1
             CFLAG:5205 -= 1
         ;Ｖ感覚Lv3以上
-        ELSEIF ABL:1 >= 3
+        ELSEIF ABL:V감각 >= 3
             PRINTFORML 「앞쪽, 이렇게 잡고 훑어줄게……헤, 기분 좋지?」
             PRINTFORMW 쿠풋, 쿠풋, 하고 야마메의 질구가 %CALLNAME:PLAYER%의 귀두를 몇 번이나 문지른다. 
             PRINTFORMW 「칠칠치 못한 숨소리가 목덜미에 닿고 있는걸. 기분 좋으면, 클리에 보답해줘……」
@@ -2296,7 +2296,7 @@ IF SELECTCOM == 40
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「이거 봐……감촉을 상상하는 것만으로도 딱딱해진 거야?」
             PRINTFORML 야마메는, 반고형의 점사의 구슬을 주물러 으깨면서, 넓게 펼쳐낸다. 
             PRINTFORML 츄륵, 하고 하얀 풀 같은 끈기가 거미줄을 당겼다……. 
@@ -2304,7 +2304,7 @@ IF SELECTCOM == 40
             ;蜘蛛フラグ＋２
             CFLAG:5202 += 2
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「이쪽은, 만져줘도 기분 좋아지지 않으니까」
             PRINTFORML 「그건 또 굉장하게 흥이 식어서, 반대로 진정돼버리는걸……」
             PRINTFORMW 훗, 하고 숨을 내쉬면서, 야마메는 담담하게 %CALLNAME:PLAYER%의 자지를 애무한다……. 
@@ -2329,12 +2329,12 @@ IF SELECTCOM == 41
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「응큿, 응……조금, 빠르게 움직인다」
             PRINTFORML 「응츗, 응, 츄읏, 으풋, 츄읍」
             PRINTFORMW 야마메의 얼굴이 앞뒤로 움직이자, 귀여운 검은 색 리본이 하늘하늘 흔들린다……. 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「……턱이랑 소화액으로 자극하면 기분 좋을지 시험해보지 않을래?」
             PRINTFORMW 「농담이야, 농담……그래, 말하자면 지하 조크」
         ;それ以外
@@ -2359,7 +2359,7 @@ IF SELECTCOM == 42
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「와줘……너을 위한 특제품이야」
             PRINTFORML 야마메의 푹신한 가슴 사이에 자지를 파묻는다. 
             PRINTFORMW 거기에는 그물로 거미줄이 만들어져 있어, 끈적거리며, 휘감겨온다……. 
@@ -2386,9 +2386,9 @@ IF SELECTCOM == 43
     IF CFLAG:5333 == 0
         PRINTFORML 「삽입하지 않는 건가, 이거」
         ;후타나리で一行入れ替え
-        SIF TALENT:121 == 0
+        SIF TALENT:후타나리 == 0
             PRINTFORML 「앗, 응큿……클리랑 실젖이 문질러져서, 이거……」
-        SIF TALENT:121
+        SIF TALENT:후타나리
             PRINTFORML 「아……자지가 두 개 나있는 것 같아……실젖도 문질러져서, 이거……」
         PRINTFORMW 「좋은 거지, 너의 자지, 질척질척하게 만들어버릴 거야……?」
         ;蜘蛛フラグ＋1
@@ -2397,18 +2397,18 @@ IF SELECTCOM == 43
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「읏아앗……싯, 싫엇, 실젖이 스쳐서」
             PRINTFORML 「끈적끈적해진 엣찌한 실이 나와앗……」
             ;후타나리で一行入れ替え
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 「그만둬줘……발기한 뿌리에 그렇게, 꾹꾹 하고……!」
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 두 개의 돌기를 문질러져 기뻐하는 야마메의 허리가 가늘게 떨리고 있다……. 
             ;蜘蛛フラグ＋1
             CFLAG:5202 += 1
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「이런 상냥함은 말이야, 숫처녀한테 보여주지 마」
             PRINTFORML 「어서……참지 않아도 돼. 얼른 넣어, 얼른 싸」
             PRINTFORMW 「그러고 나면, 얼른 돌아가」
@@ -2433,18 +2433,18 @@ IF SELECTCOM == 24
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「앗앙아앗……전부 먹어버렸어……」
             PRINTFORML 「무겁지는 않아……? 조금 화려하게 해버릴거니까, 말야」
             PRINTFORMW 야마메는 %CALLNAME:PLAYER%의 가슴을 손으로 누르며, 중량감 듬뿍의 엉덩이를 부딪치기 시작했다. 
             PRINTFORML 큥, 큥 하고 튀는 듯한 소리가 울리며, 둘의 의식은 혼란스럽게 섞여간다……. 
             PRINTFORMW 쾌감에 몽롱해진 %CALLNAME:PLAYER%의 눈에는, 둥근 복부를 격렬하게 흔드는 큰 거미의 환각이 보이고 있다. 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「너도 말야, 그렇게 입 다물고 자지 세우고 있으면 귀여운데」
             PRINTFORMW 「미안하지만, 너한테 당하는 것보다는 좋아, 이거……!」
         ;屈服刻印Lv3+奉仕精神Lv3以上+Ｖ感覚Lv3以上
-        ELSEIF MARK:2 == 3 && ABL:13 >= 3 && ABL:1 >= 3
+        ELSEIF MARK:굴복각인 == 3 && ABL:봉사정신 >= 3 && ABL:V감각 >= 3
             PRINTFORML 「아앗, 이거 좋아앗……허리 흔드는 거 기분 좋아……」
             PRINTFORML 「계속 교미만 하는, 여왕거미 같은 느낌? ……나쁘지 않네」
             PRINTFORMW 가슴을 안은 채 엉덩이를 위아래로 흔드는 야마메는, 몹시 음탕해보인다……. 
@@ -2490,18 +2490,18 @@ IF SELECTCOM == 220
     ;二回目以降
     ELSE
         ;연모+マゾっ気Lv3以上
-        IF TALENT:150 && ABL:21 >= 3
+        IF TALENT:연모 && ABL:마조끼 >= 3
             PRINTFORML 「크하앙……아, 아파아……조금 봐줘」
             PRINTFORML %조사처리(CALLNAME:PLAYER,"는")% 야마메의 엉덩이를 손바닥으로 때리면서, 그녀의 상태를 관찰한다
             PRINTFORMW 「쿠히잇……하아, 하앙……크후웃! ……하아아……」
             PRINTFORML 「하아……하아……어라? ……어, 어떻게 된 거야……」
             PRINTFORMW 야마메는 황홀한 얼굴인 채, 목소리에는 약간이나마 재촉의 빛이 보인다……. 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「크웃……왜, 이런 일 하는 거야……」
             PRINTFORMW 「겨우, 네가……웃, 흑……」
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「결국 손을 들게 됐나보네……」
             PRINTFORMW 「일이 생각대로 안 풀렸던 걸까? 최저다, 너 최저야……」
             ;鬼畜＋2
@@ -2531,17 +2531,17 @@ IF SELECTCOM == 221
     ;二回目以降
     ELSE
         ;연모+マゾっ気Lv3以上
-        IF TALENT:150 && ABL:21 >= 3
+        IF TALENT:연모 && ABL:마조끼 >= 3
             PRINTFORML 「아파……아파아, 여기, 이 상처」
             PRINTFORML 「쓰다듬어줘……핥아줘, 네가 낸 상처야……」
             PRINTFORMW 새빨간 상처에 혀를 대고, 야마메는 신음소리를 내며 괴로워했다……. 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「무, 무슨 생각이야……」
             PRINTFORML 「이 정도는 견뎌내지 않으면, 내다 팔 수 없다는 거야……?」
             PRINTFORMW 「싫어……아픔도 싫지만, 쫓겨나는 것도, 싫단 말야……」
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「저, 적당히 해, 그런 물건, 사용하면……」
             PRINTFORML %조사처리(CALLNAME:PLAYER,"는")% 채찍을 휘두르려 했으나, 그 팔을 야마메의 실에 묶여 결박당했다. 
             PRINTFORMW 플레이에 도움이 될까 하고 생각해, 그 정도의 능력은 풀어놨던 것이 실수였던 모양이다. 
@@ -2577,16 +2577,16 @@ IF SELECTCOM == 222
     ;二回目以降
     ELSE
         ;연모+マゾっ気Lv3以上
-        IF TALENT:150 && ABL:21 >= 3
+        IF TALENT:연모 && ABL:마조끼 >= 3
             PRINTFORML 「부탁이야……찌를 거라면 최대한 안 아프게 찔러줘……」
             PRINTFORML 「큿……유선이랑 클리에, 구멍 뚫려버려……읏!!」
             PRINTFORMW 격통을 느끼면서도, 야마메의 다리 사이는 애액으로 흥건하게 젖어있다……. 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「왜, 왜 그러는 거야……정말……흑」
             PRINTFORMW 「나, 미움받는 거야? 그래서 이런……아, 픈 일을……」
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「꺗……그만, 싫어, 찌르지마, 망가져버려어어엇!!」
             PRINTFORML %조사처리(CALLNAME:PLAYER,"는")% 야마메의 실젖에 바늘을 찔러, 체내를 도려내면서 침 끝에 실을 감는다. 
             PRINTFORMW 정갈한 홍백반(紅白斑)의 실이 뭉쳐졌을 즈음에는, 야마메는 눈을 하얗게 까뒤집고 있었다……. 
@@ -2703,16 +2703,16 @@ IF SELECTCOM == 174 && TEQUIP:25 == 7
     ;二回目以降
     ELSE
         ;연모+尻穴狂い
-        IF TALENT:150 && TALENT:173
+        IF TALENT:연모 && TALENT:음고
             PRINTFORML 「우으, 아앗……봐줘, 배가 불룩 하고 부풀어올랐어」
             PRINTFORMW 「뱃속이 엉망진창ボテ腹の中, 꾸륵꾸륵 하고 안에서 돌아가서, 머리가 새하얘질 정도로 기분 좋아핫……」
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「최저다……이런 짓으로 여자를 모욕하다니」
             PRINTFORML 「생각대로는 안 될걸……너 따위가 원하는 걸 들어줄까보냐……!」
             PRINTFORMW 이마에 진땀을 흘리면서, 야마메는 배설감을 견디고 있다……. 
         ;Ａ感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORML 「아아, 싫어……진짜로 싫다니까……」
             PRINTFORMW 「배가 피-피- 하고 소릴 내는 게 조금씩 좋아지는 내가 말이야」
         ;それ以外
@@ -2726,12 +2726,12 @@ IF SELECTCOM == 174 && TEQUIP:25 == 7
 ;排泄
 ELSEIF TEQUIP:25 == 0 && SELECTCOM == 174
     ;연모+尻穴狂い
-    IF TALENT:150 && TALENT:173
+    IF TALENT:연모 && TALENT:음고
         PRINTFORML 「아힛……아, 아, 앗아, 아하하……」
         PRINTFORML 야마메는 바보같은 얼굴로, 뇌를 태우는 쾌감과 동시에, 천박한 소리와 함께 배설했다. 
         PRINTFORMW 그녀가 자기혐오하는 불결함도 악취도 없는 깨끗이 소화된 배설물이었다……. 
     ;反発刻印3
-    ELSEIF MARK:9 == 3
+    ELSEIF MARK:반발각인 == 3
         PRINTFORML 「그만……보지 맛, 나, 더러워」
         PRINTFORML 「싫어……싫엇, 지하는 싫어, 싫어, 그런 눈으로 보지 마……!!」
         PRINTFORML 부자연스러울 정도로 겁내고 있는 야마메의 마개를 뽑자, 딱딱 이를 울리고 전율하면서, 
@@ -2739,7 +2739,7 @@ ELSEIF TEQUIP:25 == 0 && SELECTCOM == 174
         ;鬼畜＋2
         CFLAG:5205 += 2
     ;Ａ感覚Lv3以上+マゾっ気Lv3以上
-    ELSEIF ABL:2 >= 3
+    ELSEIF ABL:A감각 >= 3
         PRINTFORML 「나와……지금 뽑아버리면 무리, 다 쏟아버려……」
         PRINTFORML 「보여지는 거, 기분 좋아……계속 봐줘……!」
         PRINTFORML %CALLNAME:PLAYER%의 어깨에 손을 얹고, 최고로 부끄러운 얼굴을 보여지면서, 
@@ -2799,7 +2799,7 @@ IF SELECTCOM == 173 && TEQUIP:25 == 6
     ;二回目以降
     ELSE
         ;연모+尻穴狂い+Ａ拡張経験10以上
-        IF TALENT:150 && TALENT:173 && EXP:33 >= 10
+        IF TALENT:연모 && TALENT:음고 && EXP:A확장경험 >= 10
             PRINTFORML 「또 넓히는 거구나……우우, 아프기는커녕, 조금 기분 좋아……」
             PRINTFORMW 「애초에 넣는 구멍이 아니라고 말했던 것 같은데……」
         ;それ以外
@@ -2812,7 +2812,7 @@ IF SELECTCOM == 173 && TEQUIP:25 == 6
 ;解除時
 ELSEIF TEQUIP:25 == 0 && SELECTCOM == 173
     ;연모+尻穴狂い+Ａ拡張経験10以上
-    IF TALENT:150 && TALENT:173 && EXP:33 >= 10
+    IF TALENT:연모 && TALENT:음고 && EXP:A확장경험 >= 10
         PRINTFORML 「아하하……뭐랄까 이젠, 뭐라도 넣어질 것 같네……」
         PRINTFORMW 「이제……이런 벌어진 구멍이라도 귀여워해줄 수 있는 건, 너밖에……」
     ;それ以外
@@ -2843,15 +2843,15 @@ IF SELECTCOM == 171 && TEQUIP:25 == 4
     ;二回目以降
     ELSE
         ;연모+尻穴狂い
-        IF TALENT:150 && TALENT:173
+        IF TALENT:연모 && TALENT:음고
             PRINTFORML 「앗아, 아, 아, 아, 앙……아훗, 앙, 앗」
             PRINTFORMW 전압을 올리자, 백치 그 자체인 얼굴로 흠칫흠칫 경련하고 있다……. 
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「사신은 삶의 좋은 점을 설명해준다고 말하지만」
             PRINTFORMW 「세상에는, 죽는 게 더 나은 일도 제법 있는 거구나……」
         ;Ａ感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORML 「으굿……뜨거워, 엉덩이 뜨거웟……」
             PRINTFORMW 「이런 거, 계속하면, 몸이 이상해져버려어……읏!」
         ;それ以外
@@ -2864,13 +2864,13 @@ IF SELECTCOM == 171 && TEQUIP:25 == 4
 ;解除時
 ELSEIF TEQUIP:25 == 0 && SELECTCOM == 171
     ;연모+尻穴狂い
-    IF TALENT:150 && TALENT:173
+    IF TALENT:연모 && TALENT:음고
         PRINTFORMW 「저, 저려……머리속까지 찌릿찌릿하고, 새하얗게……」
     ;反発刻印3
-    ELSEIF MARK:9 == 3
+    ELSEIF MARK:반발각인 == 3
         PRINTFORMW 「차라리……전류로, 죽이면 좋을 것을……」
     ;Ａ感覚Lv3以上
-    ELSEIF ABL:2 >= 3
+    ELSEIF ABL:A감각 >= 3
         PRINTFORML 「크우우……하아, 하아……말한 적 없지만 말야……?」
         PRINTFORMW 「이거, 너무 오래 하면 몸에, 장애……생기는, 거 아냐……?」
     ;それ以外
@@ -2904,7 +2904,7 @@ IF SELECTCOM == 61
     ;触手媚薬
     IF TEQUIP:90
         ;연모
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -2913,10 +2913,10 @@ IF SELECTCOM == 61
     ;初めて
     ELSEIF CFLAG:5351 == 0
         ;연모
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             PRINTFORMW 
         ;口移し
-        ELSEIF ABL:PLAYER:12 >= 3
+        ELSEIF ABL:PLAYER:기교 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -2933,13 +2933,13 @@ IF SELECTCOM == 61
         ELSEIF CFLAG:5351 > 9
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;口移し
-        ELSEIF ABL:PLAYER:12 >= 3
+        ELSEIF ABL:PLAYER:기교 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -2959,16 +2959,16 @@ IF SELECTCOM == 62
         PRINTFORMW 「방광이 꽉 차서, 파열해버려……우웃……」
 [SKIPSTART]
     ;연모+おもらし癖
-    ELSEIF TALENT:150 && TALENT:45
+    ELSEIF TALENT:연모 && TALENT:오줌싸개버릇
         PRINTFORMW 
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 
     ;反発刻印3
-    ELSEIF MARK:9 == 3
+    ELSEIF MARK:반발각인 == 3
         PRINTFORMW 
     ;屈服刻印Lv3
-    ELSEIF MARK:2 == 3
+    ELSEIF MARK:굴복각인 == 3
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -3014,7 +3014,7 @@ IF SELECTCOM == 104 && TEQUIP:52
     ;二回目以降
     ELSE
         ;反発刻印Lv3
-        IF MARK:9 == 3
+        IF MARK:반발각인 == 3
             PRINTFORML 「밖인가……오랜만에 나비라도 붙잡아 먹을까나」
             PRINTFORMW 「……안 돼? ……쩨쩨하기는」
         ;それ以外
@@ -3039,7 +3039,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 26
     ;助手が処女
-    IF TALENT:ASSI:0 == 1
+    IF TALENT:ASSI:처녀 == 1
         ;鬼畜＋2
         CFLAG:5205 += 2
         ;키스메
@@ -3054,7 +3054,7 @@ IF SELECTCOM == 26
         PRINTFORML %조사처리(CALLNAME:ASSI,"는")%, 최후까지 야마메의 호소에는 대답하지 않았다. 
         PRINTFORMW 행위가 끝난 뒤, %조사처리(CALLNAME:ASSI,"는")% 서글픈 듯 야마메에게 웃음을 지었다……. 
     ;助手が연모
-    ELSEIF TALENT:ASSI:150
+    ELSEIF TALENT:ASSI:연모
         ;키스메
         SIF ASSINO() == 57
             PRINTFORMW 「키스메, 너, 너어……그렇게 그 녀석이 좋아……?」
@@ -3180,7 +3180,7 @@ IF SELECTCOM == 350 && TEQUIP:53
 ;終了時
 ELSEIF SELECTCOM == 350 && TEQUIP:53 == 0
         PRINTFORM 「……응, 산뜻해」
-        SIF TALENT:MASTER:120
+        SIF TALENT:MASTER:남자
             PRINTFORMW 「기분 탓인지 꽤 좋은 남자가 된 것 같네」
     RETURN 0
 ENDIF
@@ -3220,7 +3220,7 @@ IF SELECTCOM == 300
     ;初めて
     IF CFLAG:5361 == 0 && ASSIPLAY
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3230,10 +3230,10 @@ IF SELECTCOM == 300
     ;二回目以降
     ELSEIF ASSIPLAY
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3243,7 +3243,7 @@ IF SELECTCOM == 300
     ;初めて
     ELSEIF CFLAG:5361 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3253,10 +3253,10 @@ IF SELECTCOM == 300
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3276,7 +3276,7 @@ IF SELECTCOM == 301
     ;初めて
     IF CFLAG:5363 == 0 && ASSIPLAY
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3286,10 +3286,10 @@ IF SELECTCOM == 301
     ;二回目以降
     ELSEIF ASSIPLAY
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3299,7 +3299,7 @@ IF SELECTCOM == 301
     ;初めて
     ELSEIF CFLAG:5363 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3309,10 +3309,10 @@ IF SELECTCOM == 301
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3341,7 +3341,7 @@ IF SELECTCOM == 610
         IF PALAM:10 < PALAMLV:2
             PRINTFORMW 「야야야얏, 적어도 젖게 하고 나서, 죽어, 죽는다니까!!」
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORML 「아아, 읏, 이거, 좋아……교대로 오는 느낌이, 좋아앗」
             PRINTFORML 「아긋……안에서, 서로 비벼져서, 아앗, 이, 일부러 문지르지……하우웃!!」
             PRINTFORML %조사처리(CALLNAME:MASTER,"과")% %CALLNAME:ASSI%에게 질벽과 장벽 너머로 눌리고 있는, 
@@ -3349,15 +3349,15 @@ IF SELECTCOM == 610
             ;蜘蛛フラグ＋1
             CFLAG:5202 += 1
         ;反発刻印Lv3+Ｖ感覚Lv3以上+Ａ感覚Lv3以上
-        ELSEIF MARK:9 == 3 && ABL:1 >= 3 && ABL:2 >= 3
+        ELSEIF MARK:반발각인 == 3 && ABL:V감각 >= 3 && ABL:A감각 >= 3
             PRINTFORML 「하앗, 하앙, 기분, 좋을 리가, 이런 게……」
             PRINTFORMW 「아파, 괴로웟……응읏킁!!」
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「あ, 너……날, 정말로 죽일 생각인가 보네……」
             PRINTFORMW 「몸이, 찢어질 것 같아……!」
         ;屈服刻印Lv3+Ｖ感覚Lv3以上
-        ELSEIF MARK:2 == 3 && ABL:1 >= 3 && ABL:2 >= 3
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && ABL:A감각 >= 3
             PRINTFORML 「크웃, 하응, 난폭하게 하지 말아줘……」
             PRINTFORMW 「三人で交尾するのも, いいもんね……んっくぅう……」
         ;それ以外
@@ -3374,13 +3374,13 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 307
     ;후타나리
-    IF TALENT:121
+    IF TALENT:후타나리
         ;※追加機能B2『助手感想機能』用に処女喰い経験と面識変数を更新
         A = ASSINO()+5800
         ;助手が処女
-        IF TALENT:ASSI:0 == 1
+        IF TALENT:ASSI:처녀 == 1
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 
             ;処女喰い経験３以上
             ELSEIF CFLAG:5213 >= 3
@@ -3396,7 +3396,7 @@ IF SELECTCOM == 307
             SIF CFLAG:A == 5 || CFLAG:A == 3
                 CFLAG:A = 7
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3407,9 +3407,9 @@ IF SELECTCOM == 307
         ;※追加機能B2『助手感想機能』用に処女喰い経験と面識変数を更新
         A = ASSINO()+5800
         ;助手が処女
-        IF TALENT:ASSI:0 == 1
+        IF TALENT:ASSI:처녀 == 1
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 
             ;処女喰い経験３以上
             ELSEIF CFLAG:5213 >= 3
@@ -3425,7 +3425,7 @@ IF SELECTCOM == 307
             SIF CFLAG:A == 5 || CFLAG:A == 3
                 CFLAG:A = 7
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3443,7 +3443,7 @@ IF SELECTCOM == 304
     ;初めて
     IF CFLAG:5366 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3452,22 +3452,22 @@ IF SELECTCOM == 304
         CFLAG:5366 = 1
     ;二回目以降
         ;연모+二人とも射精
-        IF TALENT:150 && TFLAG:11 && TFLAG:36
+        IF TALENT:연모 && TFLAG:11 && TFLAG:36
             PRINTFORMW 
         ;연모+주인だけ射精
-        ELSEIF TALENT:150 && TFLAG:11
+        ELSEIF TALENT:연모 && TFLAG:11
             PRINTFORMW 
         ;연모+助手だけ射精
-        ELSEIF TALENT:150 && TFLAG:36
+        ELSEIF TALENT:연모 && TFLAG:36
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;奉仕精神Lv3以上
-        ELSEIF ABL:13 >= 3
+        ELSEIF ABL:봉사정신 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3486,7 +3486,7 @@ IF SELECTCOM == 302
     ;初めて
     IF CFLAG:5367 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3497,16 +3497,16 @@ IF SELECTCOM == 302
     ;助手がプレイ
     ELSEIF ASSIPLAY
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3+Ｃ感覚Lv4以上
-        ELSEIF MARK:9 == 3 && ABL:0 > 3
+        ELSEIF MARK:반발각인 == 3 && ABL:C감각 > 3
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;Ｃ感覚Lv3以上
-        ELSEIF ABL:0 > 2
+        ELSEIF ABL:C감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3515,16 +3515,16 @@ IF SELECTCOM == 302
     ;주인がプレイ
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3+Ｃ感覚Lv4以上
-        ELSEIF MARK:9 == 3 && ABL:0 > 3
+        ELSEIF MARK:반발각인 == 3 && ABL:C감각 > 3
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;Ｃ感覚Lv3以上
-        ELSEIF ABL:0 > 2
+        ELSEIF ABL:C감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3543,7 +3543,7 @@ IF SELECTCOM == 303
     ;初めて
     IF CFLAG:5366 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3552,16 +3552,16 @@ IF SELECTCOM == 303
         CFLAG:5366 = 1
     ;二回目以降
         ;연모+주인が射精
-        IF TALENT:150 && TFLAG:11
+        IF TALENT:연모 && TFLAG:11
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;奉仕精神Lv3以上
-        ELSEIF ABL:13 >= 3
+        ELSEIF ABL:봉사정신 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3584,11 +3584,11 @@ IF SELECTCOM == 602
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「하응, 읏크……기분 좋아, 핫, 그렇게 해 버리면……」
             PRINTFORMW 「응, 읏, 내가 집중할 수가 없게 돼 버리잖아……읏」
         ;反発刻印Lv3+주인によるプレイ
-        ELSEIF MARK:9 == 3 && ASSIPLAY == 0
+        ELSEIF MARK:반발각인 == 3 && ASSIPLAY == 0
             PRINTFORML 「하나 깨닳은 게 있어……너의 얼굴을 안 보고 하면, 꽤 기분 좋아」
             PRINTFORMW 「아얏! 씨, 씹지 마!!」
         ;それ以外
@@ -3630,14 +3630,14 @@ IF SELECTCOM == 227
             PRINTFORML 「당분간은 참을 수 있어」
             CALL SELFPLAY_4, 58, 0
         ;オナ禁命令初回
-        ELSEIF ABL:30 >= 1 && CFLAG:5370 == 1 && (TALENT:150 || MARK:9 < 3)
+        ELSEIF ABL:자위중독 >= 1 && CFLAG:5370 == 1 && (TALENT:연모 || MARK:반발각인 < 3)
             PRINTFORML 「자위광 자위광이라니 너 정말……」
             PRINTFORML 「알았어, 나도 여자다. 확실하게 끊어주겠어」
             CFLAG:5307 = 2
             CFLAG:5370 = 2
             CALL SELFPLAY_4, 58, 4
         ;二回目以降
-        ELSEIF ABL:30 >= 1 && (TALENT:150 || MARK:9 < 3)
+        ELSEIF ABL:자위중독 >= 1 && (TALENT:연모 || MARK:반발각인 < 3)
             PRINTFORML 「또 하는 거야……?」
             PRINTFORML 「우우, 생각했던 것보다 힘들어, 그거……」
             CALL SELFPLAY_4, 58, 4
@@ -3659,7 +3659,7 @@ IF SELECTCOM == 110
     ;精液いっぱい入ってる(精液量2以上)
     IF CFLAG:5231 > 1
         ;연모+精液中毒3以上
-        IF TALENT:150 && ABL:31 > 2
+        IF TALENT:연모 && ABL:정액중독 > 2
             PRINTFORML 「아, 앗……아깝게에……」
             PRINTFORMW 활짝 열린 비열로부터 주륵 하고 흘러나온 정액을, 야마메는 손가락으로 건져내 핥았다. 
             PRINTFORMW 「하우……머리가 마비될 것 같은 냄새, 맛……」
@@ -3675,7 +3675,7 @@ IF SELECTCOM == 110
     ;精液入ってる(精液量1)
     ELSEIF CFLAG:5231 == 1
         ;연모+精液中毒3以上
-        IF TALENT:150 && ABL:31 > 2
+        IF TALENT:연모 && ABL:정액중독 > 2
             PRINTFORML 「응, 읏……아, 나왔다……할짝, 츄릇」
             PRINTFORMW 야마메는 하복부에 힘을 주고, 흘러나온 정액을 건져 올려 핥았다. 
             PRINTFORMW 「뭐야 그 눈은……거미줄의 맛이랑 비슷하다고, 이거」
@@ -3702,7 +3702,7 @@ IF SELECTCOM == 194 && TEQUIP:36
     ;初めて
     IF CFLAG:5372 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3712,10 +3712,10 @@ IF SELECTCOM == 194 && TEQUIP:36
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3726,7 +3726,7 @@ IF SELECTCOM == 194 && TEQUIP:36
 ;終了時
 ELSEIF SELECTCOM == 194 && TEQUIP:36 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -3744,7 +3744,7 @@ IF SELECTCOM == 91 && TEQUIP:59 == 2
     ;初めて
     IF CFLAG:5373 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3754,10 +3754,10 @@ IF SELECTCOM == 91 && TEQUIP:59 == 2
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3768,7 +3768,7 @@ IF SELECTCOM == 91 && TEQUIP:59 == 2
 ;終了時
 ELSEIF SELECTCOM == 91 && TEQUIP:59 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -3786,21 +3786,21 @@ IF SELECTCOM == 105
     ;初めて
     IF CFLAG:5374 == 0
         ;연모+聴衆に犯された
-        IF TALENT:150 && SOURCE:0
+        IF TALENT:연모 && SOURCE:0
             ;処女で, かつＶを犯された(処女喪失)
-            IF TALENT:0 && TFLAG:1 == 1
+            IF TALENT:처녀 && TFLAG:1 == 1
                 PRINTFORMW 
             ;それ以外
             ELSE
                 PRINTFORMW 
             ENDIF
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;聴衆に犯された
         ELSEIF SOURCE:0
             ;処女で, かつＶを犯された(処女喪失)
-            IF TALENT:0 && TFLAG:1 == 1
+            IF TALENT:처녀 && TFLAG:1 == 1
                 PRINTFORMW 
             ;それ以外
             ELSE
@@ -3814,21 +3814,21 @@ IF SELECTCOM == 105
     ;二回目以降
     ELSE
         ;연모+聴衆に犯された
-        IF TALENT:150 && SOURCE:0
+        IF TALENT:연모 && SOURCE:0
             ;処女で, かつＶを犯された(処女喪失)
-            IF TALENT:0 && TFLAG:1 == 1
+            IF TALENT:처녀 && TFLAG:1 == 1
                 PRINTFORMW 
             ;それ以外
             ELSE
                 PRINTFORMW 
             ENDIF
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;聴衆に犯された
         ELSEIF SOURCE:0
             ;処女で, かつＶを犯された(処女喪失)
-            IF TALENT:0 && TFLAG:1 == 1
+            IF TALENT:처녀 && TFLAG:1 == 1
                 PRINTFORMW 
             ;それ以外
             ELSE
@@ -3851,7 +3851,7 @@ IF SELECTCOM == 101 && TEQUIP:51
     ;初めて
     IF CFLAG:5377 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3861,10 +3861,10 @@ IF SELECTCOM == 101 && TEQUIP:51
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -3875,7 +3875,7 @@ IF SELECTCOM == 101 && TEQUIP:51
 ;終了時
 ELSEIF SELECTCOM == 101 && TEQUIP:51 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -3955,15 +3955,15 @@ IF SELECTCOM == 231 || SELECTCOM == 232 || SELECTCOM == 233
     ;二回目以降
     ELSE
         ;연모+両穴拡張経験10以上
-        IF TALENT:150 && EXP:32 >= 10 && EXP:33 >= 10
+        IF TALENT:연모 && EXP:V확장경험 >= 10 && EXP:A확장경험 >= 10
             PRINTFORML 「……슬퍼서 견딜 수가 없는걸, 어쩐지」
             PRINTFORMW 「아픈 것보다, 아프지 않은 편이 더 절망스러워……」
         ;연모+Ｖ拡張経験10以上+フィストファック
-        ELSEIF TALENT:150 && EXP:32 >= 10 && SELECTCOM == 231
+        ELSEIF TALENT:연모 && EXP:V확장경험 >= 10 && SELECTCOM == 231
             PRINTFORML 「……슬퍼서 견딜 수가 없는걸, 어쩐지」
             PRINTFORMW 「아픈 것보다, 아프지 않은 편이 더 절망스러워……」
         ;연모+Ａ拡張経験10以上+アナルフィスト
-        ELSEIF TALENT:150 && EXP:33 >= 10 && SELECTCOM == 232
+        ELSEIF TALENT:연모 && EXP:A확장경험 >= 10 && SELECTCOM == 232
             PRINTFORML 「……슬퍼서 견딜 수가 없는걸, 어쩐지」
             PRINTFORMW 「아픈 것보다, 아프지 않은 편이 더 절망스러워……」
         ;それ以外
@@ -4040,12 +4040,12 @@ IF SELECTCOM == 44
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORML 「할짝……츕, 응, 읏킁, 츄릅……」
             PRINTFORML 「아하하, 한심한 얼굴 하고 있는걸……맘에 드네, 이거」
             PRINTFORMW 「너의 귀여운 얼굴, 좀 더 보고 싶어……」
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「예이예이……할게, 한다고」
             PRINTFORMW 「나는 불결하고 미움 받는 자니까 말이지, 주인님의 구멍을 빨아주는 것 정도는 아무 것도 아니라고」
             ;鬼畜＋2
@@ -4073,11 +4073,11 @@ IF SELECTCOM == 500 && TEQUIP:90
     ;二回目以降
     ELSE
         ;触手経験20以上(消費基本値が三分の一になる)
-        IF EXP:53 >= 20
+        IF EXP:촉수경험 >= 20
             PRINTFORML 「앗, 이봐이봐……너무 달라붙지 마」
             PRINTFORMW 「내 거미다리가 맘에 들어? 후후, 기쁜걸」
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORML 「솔직하게 말할게……너, 내가 이 녀석한테 잡아먹혀도」
             PRINTFORMW 「상관없다고 생각하는 거지……?」
             ;鬼畜＋2
@@ -4094,7 +4094,7 @@ IF SELECTCOM == 500 && TEQUIP:90
 ;終了時
 ELSEIF SELECTCOM == 500 && TEQUIP:90 == 0
     ;触手経験20以上(消費基本値が三分の一になる)
-    IF EXP:53 >= 20
+    IF EXP:촉수경험 >= 20
         PRINTFORML 「촉수님 잘 가―……휴우」
         PRINTFORMW 「뭐, 익숙해지면 제법 귀여운걸」
     ;それ以外
@@ -4113,9 +4113,9 @@ IF SELECTCOM == 501 && TEQUIP:20 == 1
     ;初めて
     IF CFLAG:5401 == 0
         ;処女
-        IF TALENT:0 && EXP:0 == 1
+        IF TALENT:처녀 && EXP:V경험 == 1
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 
             ;それ以外
             ELSE
@@ -4124,10 +4124,10 @@ IF SELECTCOM == 501 && TEQUIP:20 == 1
         ;非処女
         ELSE
             ;연모+触手経験20以上
-            IF TALENT:150 && EXP:53 >= 20
+            IF TALENT:연모 && EXP:촉수경험 >= 20
                 PRINTFORMW 
             ;연모
-            ELSEIF TALENT:150
+            ELSEIF TALENT:연모
                 PRINTFORMW 
             ;それ以外
             ELSE
@@ -4140,16 +4140,16 @@ IF SELECTCOM == 501 && TEQUIP:20 == 1
         ;潤滑2以下
         IF PALAM:10 < PALAMLV:2
         ;연모+触手経験20以上
-        ELSEIF TALENT:150 && EXP:53 >= 20
+        ELSEIF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;Ｖ感覚Lv3以上
-        ELSEIF ABL:1 >= 3
+        ELSEIF ABL:V감각 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4160,10 +4160,10 @@ IF SELECTCOM == 501 && TEQUIP:20 == 1
 ;解除時
 ELSEIF SELECTCOM == 501 && TEQUIP:20 == 0
     ;연모+触手経験20以上
-    IF TALENT:150 && EXP:53 >= 20
+    IF TALENT:연모 && EXP:촉수경험 >= 20
         PRINTFORMW 
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4181,10 +4181,10 @@ IF SELECTCOM == 502 && TEQUIP:25 == 1
     ;初めて
     IF CFLAG:5402 == 0
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4196,16 +4196,16 @@ IF SELECTCOM == 502 && TEQUIP:25 == 1
         ;潤滑2以下
         IF PALAM:10 < PALAMLV:2
         ;연모+触手経験20以上
-        ELSEIF TALENT:150 && EXP:53 >= 20
+        ELSEIF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;Ａ感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4216,10 +4216,10 @@ IF SELECTCOM == 502 && TEQUIP:25 == 1
 ;解除時
 ELSEIF SELECTCOM == 502 && TEQUIP:25 == 0
     ;연모+触手経験20以上
-    IF TALENT:150 && EXP:53 >= 20
+    IF TALENT:연모 && EXP:촉수경험 >= 20
         PRINTFORMW 
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4237,10 +4237,10 @@ IF SELECTCOM == 503 && TEQUIP:30 == 1
     ;初めて
     IF CFLAG:5403 == 0
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4250,16 +4250,16 @@ IF SELECTCOM == 503 && TEQUIP:30 == 1
     ;二回目以降
     ELSE
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;Ｃ感覚Lv3以上
-        ELSEIF ABL:0 >= 3
+        ELSEIF ABL:C감각 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4270,10 +4270,10 @@ IF SELECTCOM == 503 && TEQUIP:30 == 1
 ;解除時
 ELSEIF SELECTCOM == 503 && TEQUIP:30 == 0
     ;연모+触手経験20以上
-    IF TALENT:150 && EXP:53 >= 20
+    IF TALENT:연모 && EXP:촉수경험 >= 20
         PRINTFORMW 
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4291,10 +4291,10 @@ IF SELECTCOM == 504 && TEQUIP:35 == 1
     ;初めて
     IF CFLAG:5404 == 0
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4304,16 +4304,16 @@ IF SELECTCOM == 504 && TEQUIP:35 == 1
     ;二回目以降
     ELSE
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;Ｂ感覚Lv3以上
-        ELSEIF ABL:3 >= 3
+        ELSEIF ABL:B감각 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4324,10 +4324,10 @@ IF SELECTCOM == 504 && TEQUIP:35 == 1
 ;解除時
 ELSEIF SELECTCOM == 504 && TEQUIP:35 == 0
     ;연모+触手経験20以上
-    IF TALENT:150 && EXP:53 >= 20
+    IF TALENT:연모 && EXP:촉수경험 >= 20
         PRINTFORMW 
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4345,10 +4345,10 @@ IF SELECTCOM == 525 && TEQUIP:35 == 2
     ;初めて
     IF CFLAG:5405 == 0
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4358,16 +4358,16 @@ IF SELECTCOM == 525 && TEQUIP:35 == 2
     ;二回目以降
     ELSE
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;Ｂ感覚Lv3以上
-        ELSEIF ABL:3 >= 3
+        ELSEIF ABL:B감각 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4378,10 +4378,10 @@ IF SELECTCOM == 525 && TEQUIP:35 == 2
 ;解除時
 ELSEIF SELECTCOM == 525 && TEQUIP:35 == 0
     ;연모+触手経験20以上
-    IF TALENT:150 && EXP:53 >= 20
+    IF TALENT:연모 && EXP:촉수경험 >= 20
         PRINTFORMW 
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4399,10 +4399,10 @@ IF SELECTCOM == 507 && TEQUIP:40
     ;初めて
     IF CFLAG:5406 == 0
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4412,13 +4412,13 @@ IF SELECTCOM == 507 && TEQUIP:40
     ;二回目以降
     ELSE
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4429,10 +4429,10 @@ IF SELECTCOM == 507 && TEQUIP:40
 ;終了時
 ELSEIF SELECTCOM == 507 && TEQUIP:40 == 0
     ;연모+触手経験20以上
-    IF TALENT:150 && EXP:53 >= 20
+    IF TALENT:연모 && EXP:촉수경험 >= 20
         PRINTFORMW 
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4450,10 +4450,10 @@ IF SELECTCOM == 522 && TEQUIP:25 == 7
     ;初めて
     IF CFLAG:5407 == 0
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4463,16 +4463,16 @@ IF SELECTCOM == 522 && TEQUIP:25 == 7
     ;二回目以降
     ELSE
         ;연모+触手経験20以上+尻穴狂い
-        IF TALENT:150 && EXP:53 >= 20 && TALENT:173
+        IF TALENT:연모 && EXP:촉수경험 >= 20 && TALENT:음고
             PRINTFORMW 
         ;연모+尻穴狂い
-        ELSEIF TALENT:150 && TALENT:173
+        ELSEIF TALENT:연모 && TALENT:음고
             PRINTFORMW 
         ;反発刻印3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;Ａ感覚Lv3以上
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4483,19 +4483,19 @@ IF SELECTCOM == 522 && TEQUIP:25 == 7
 ;排泄
 ELSEIF TEQUIP:25 == 0 && SELECTCOM == 522
     ;연모+触手経験20以上+尻穴狂い
-    IF TALENT:150 && EXP:53 >= 20 && TALENT:173
+    IF TALENT:연모 && EXP:촉수경험 >= 20 && TALENT:음고
         PRINTFORMW 
     ;연모+尻穴狂い
-    ELSEIF TALENT:150 && TALENT:173
+    ELSEIF TALENT:연모 && TALENT:음고
         PRINTFORMW 
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 
     ;反発刻印3
-    ELSEIF MARK:9 == 3
+    ELSEIF MARK:반발각인 == 3
         PRINTFORMW 
     ;Ａ感覚Lv3以上+マゾっ気Lv3以上
-    ELSEIF ABL:2 >= 3
+    ELSEIF ABL:A감각 >= 3
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4513,10 +4513,10 @@ IF SELECTCOM == 506 && TEQUIP:42 == 2
     ;初めて
     IF CFLAG:5408 == 0
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4526,13 +4526,13 @@ IF SELECTCOM == 506 && TEQUIP:42 == 2
     ;二回目以降
     ELSE
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4543,10 +4543,10 @@ IF SELECTCOM == 506 && TEQUIP:42 == 2
 ;終了時
 ELSEIF SELECTCOM == 506 && TEQUIP:42 == 0
     ;연모+触手経験20以上
-    IF TALENT:150 && EXP:53 >= 20
+    IF TALENT:연모 && EXP:촉수경험 >= 20
         PRINTFORMW 
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4564,10 +4564,10 @@ IF SELECTCOM == 505 && TEQUIP:30 == 2
     ;初めて
     IF CFLAG:5409 == 0
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4577,16 +4577,16 @@ IF SELECTCOM == 505 && TEQUIP:30 == 2
     ;二回目以降
     ELSE
         ;연모+触手経験20以上
-        IF TALENT:150 && EXP:53 >= 20
+        IF TALENT:연모 && EXP:촉수경험 >= 20
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;Ｃ感覚Lv3以上
-        ELSEIF ABL:0 >= 3
+        ELSEIF ABL:C감각 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4597,10 +4597,10 @@ IF SELECTCOM == 505 && TEQUIP:30 == 2
 ;解除時
 ELSEIF SELECTCOM == 505 && TEQUIP:30 == 0
     ;연모+触手経験20以上
-    IF TALENT:150 && EXP:53 >= 20
+    IF TALENT:연모 && EXP:촉수경험 >= 20
         PRINTFORMW 
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4618,7 +4618,7 @@ IF SELECTCOM == 150 && TEQUIP:21
     ;初めて
     IF CFLAG:5410 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4628,10 +4628,10 @@ IF SELECTCOM == 150 && TEQUIP:21
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4642,7 +4642,7 @@ IF SELECTCOM == 150 && TEQUIP:21
 ;終了時
 ELSEIF SELECTCOM == 150 && TEQUIP:21 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4661,7 +4661,7 @@ IF SELECTCOM == 80 || SELECTCOM == 81 || SELECTCOM == 82 || SELECTCOM == 83
     ;初めて
     IF CFLAG:5411 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4679,7 +4679,7 @@ IF SELECTCOM == 80 || SELECTCOM == 81 || SELECTCOM == 82 || SELECTCOM == 83
         ELSEIF CFLAG:5411 > 9
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4698,7 +4698,7 @@ IF SELECTCOM == 92 && TEQUIP:57
     ;初めて
     IF CFLAG:5410 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4708,10 +4708,10 @@ IF SELECTCOM == 92 && TEQUIP:57
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4722,7 +4722,7 @@ IF SELECTCOM == 92 && TEQUIP:57
 ;終了時
 ELSEIF SELECTCOM == 92 && TEQUIP:57 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 
     ;それ以外
     ELSE
@@ -4773,7 +4773,7 @@ IF SELECTCOM == 102
     ;初めて
     IF CFLAG:5410 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4783,10 +4783,10 @@ IF SELECTCOM == 102
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4810,7 +4810,7 @@ IF SELECTCOM == 200
     ;初回
     IF CFLAG:5430 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4821,7 +4821,7 @@ IF SELECTCOM == 200
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4834,7 +4834,7 @@ ELSEIF SELECTCOM == 344
     ;初回
     IF CFLAG:5448 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4845,7 +4845,7 @@ ELSEIF SELECTCOM == 344
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4863,10 +4863,10 @@ IF SELECTCOM == 201
     ;初回
     IF CFLAG:5431 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4876,10 +4876,10 @@ IF SELECTCOM == 201
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4898,10 +4898,10 @@ IF SELECTCOM == 202
     ;初回
     IF CFLAG:5432 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4911,10 +4911,10 @@ IF SELECTCOM == 202
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4933,10 +4933,10 @@ IF SELECTCOM == 203
     ;初回
     IF CFLAG:5433 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4946,10 +4946,10 @@ IF SELECTCOM == 203
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4970,10 +4970,10 @@ IF SELECTCOM == 205
     ;初回
     IF CFLAG:5434 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -4983,13 +4983,13 @@ IF SELECTCOM == 205
     ;二回目以降
     ELSE
         ;연모+バイブ装備
-        IF TALENT:150 && TEQUIP:20 == 1
+        IF TALENT:연모 && TEQUIP:20 == 1
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5002,10 +5002,10 @@ ELSEIF SELECTCOM == 306
     ;初回
     IF CFLAG:5447 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5015,10 +5015,10 @@ ELSEIF SELECTCOM == 306
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5066,7 +5066,7 @@ IF SELECTCOM == 341
     ;初回
     IF CFLAG:5436 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5076,7 +5076,7 @@ IF SELECTCOM == 341
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5095,7 +5095,7 @@ IF SELECTCOM == 342
     ;初回
     IF CFLAG:5437 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5105,7 +5105,7 @@ IF SELECTCOM == 342
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5124,7 +5124,7 @@ IF SELECTCOM == 343
     ;初回
     IF CFLAG:5438 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5134,7 +5134,7 @@ IF SELECTCOM == 343
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5153,10 +5153,10 @@ IF SELECTCOM == 206
     ;初回
     IF CFLAG:5439 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5166,10 +5166,10 @@ IF SELECTCOM == 206
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5188,7 +5188,7 @@ IF SELECTCOM == 207
     ;初回
     IF CFLAG:5440 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5198,7 +5198,7 @@ IF SELECTCOM == 207
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5215,7 +5215,7 @@ ENDIF
 [SKIPSTART]
 IF SELECTCOM == 190
     ;成功
-    IF TALENT:134
+    IF TALENT:모유체질
         PRINTFORMW 
     ;失敗
     ELSE
@@ -5233,10 +5233,10 @@ IF SELECTCOM == 193
     ;初めて
     IF CFLAG:5442 == 0
         ;연모+助手によるプレイ
-        IF TALENT:150 && ASSIPLAY
+        IF TALENT:연모 && ASSIPLAY
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5246,22 +5246,22 @@ IF SELECTCOM == 193
     ;二回目以降
     ELSE
         ;연모+助手によるプレイ+調教者が射精
-        IF TALENT:150 && ASSIPLAY && TFLAG:11
+        IF TALENT:연모 && ASSIPLAY && TFLAG:11
             PRINTFORMW 
         ;연모+助手によるプレイ
-        ELSEIF TALENT:150 && ASSIPLAY
+        ELSEIF TALENT:연모 && ASSIPLAY
             PRINTFORMW 
         ;연모+調教者が射精
-        ELSEIF TALENT:150 && TFLAG:11
+        ELSEIF TALENT:연모 && TFLAG:11
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3+주인によるプレイ
-        ELSEIF MARK:9 == 3 && ASSIPLAY == 0
+        ELSEIF MARK:반발각인 == 3 && ASSIPLAY == 0
             PRINTFORMW 
         ;奉仕精神Lv3以上
-        ELSEIF ABL:13 >= 3
+        ELSEIF ABL:봉사정신 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5280,10 +5280,10 @@ IF SELECTCOM == 204
     ;初めて
     IF CFLAG:5443 == 0
         ;연모+助手によるプレイ
-        IF TALENT:150 && ASSIPLAY
+        IF TALENT:연모 && ASSIPLAY
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5293,22 +5293,22 @@ IF SELECTCOM == 204
     ;二回目以降
     ELSE
         ;연모+助手によるプレイ+調教者が射精
-        IF TALENT:150 && ASSIPLAY && TFLAG:11
+        IF TALENT:연모 && ASSIPLAY && TFLAG:11
             PRINTFORMW 
         ;연모+助手によるプレイ
-        ELSEIF TALENT:150 && ASSIPLAY
+        ELSEIF TALENT:연모 && ASSIPLAY
             PRINTFORMW 
         ;연모+調教者が射精
-        ELSEIF TALENT:150 && TFLAG:11
+        ELSEIF TALENT:연모 && TFLAG:11
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3+주인によるプレイ
-        ELSEIF MARK:9 == 3 && ASSIPLAY == 0
+        ELSEIF MARK:반발각인 == 3 && ASSIPLAY == 0
             PRINTFORMW 
         ;奉仕精神Lv3以上
-        ELSEIF ABL:13 >= 3
+        ELSEIF ABL:봉사정신 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5327,10 +5327,10 @@ IF SELECTCOM == 192
     ;初めて
     IF CFLAG:5444 == 0
         ;연모+助手によるプレイ
-        IF TALENT:150 && ASSIPLAY
+        IF TALENT:연모 && ASSIPLAY
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5340,22 +5340,22 @@ IF SELECTCOM == 192
     ;二回目以降
     ELSE
         ;연모+助手によるプレイ+調教者が射精
-        IF TALENT:150 && ASSIPLAY && TFLAG:11
+        IF TALENT:연모 && ASSIPLAY && TFLAG:11
             PRINTFORMW 
         ;연모+助手によるプレイ
-        ELSEIF TALENT:150 && ASSIPLAY
+        ELSEIF TALENT:연모 && ASSIPLAY
             PRINTFORMW 
         ;연모+調教者が射精
-        ELSEIF TALENT:150 && TFLAG:11
+        ELSEIF TALENT:연모 && TFLAG:11
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3+주인によるプレイ
-        ELSEIF MARK:9 == 3 && ASSIPLAY == 0
+        ELSEIF MARK:반발각인 == 3 && ASSIPLAY == 0
             PRINTFORMW 
         ;奉仕精神Lv3以上
-        ELSEIF ABL:13 >= 3
+        ELSEIF ABL:봉사정신 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5374,7 +5374,7 @@ IF SELECTCOM == 208
     ;初めて
     IF CFLAG:5445 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5384,16 +5384,16 @@ IF SELECTCOM == 208
     ;二回目以降
     ELSE
         ;연모+주인が射精
-        IF TALENT:150 && TFLAG:11
+        IF TALENT:연모 && TFLAG:11
             PRINTFORMW 
         ;연모
-        ELSEIF TALENT:150
+        ELSEIF TALENT:연모
             PRINTFORMW 
         ;反発刻印Lv3
-        ELSEIF MARK:9 == 3
+        ELSEIF MARK:반발각인 == 3
             PRINTFORMW 
         ;奉仕精神Lv3以上
-        ELSEIF ABL:13 >= 3
+        ELSEIF ABL:봉사정신 >= 3
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5412,10 +5412,10 @@ IF SELECTCOM == 209
     ;初回
     IF CFLAG:5446 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5425,10 +5425,10 @@ IF SELECTCOM == 209
     ;二回目以降
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;Ｂ感覚3以上
-        ELSEIF ABL:3 > 2
+        ELSEIF ABL:B감각 > 2
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5566,7 +5566,7 @@ IF TFLAG:0 > 0 && CFLAG:5229 == 0
     ;助手による処女喪失
     IF ASSIPLAY
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5575,7 +5575,7 @@ IF TFLAG:0 > 0 && CFLAG:5229 == 0
     ;연모かつ주인のセックスによる処女喪失
     ELSEIF TFLAG:2
         ;연모かつ反発刻印未取得
-        IF TALENT:150 == 1 && (A < 500 || TFLAG:105 == 1)
+        IF TALENT:연모 == 1 && (A < 500 || TFLAG:105 == 1)
             PRINTFORMW 
         ;연모かつ反発刻印取得
         ELSE
@@ -5584,7 +5584,7 @@ IF TFLAG:0 > 0 && CFLAG:5229 == 0
     ;指挿入れで処女喪失(反感がかなり少ない)
     ELSEIF SELECTCOM == 4
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5593,7 +5593,7 @@ IF TFLAG:0 > 0 && CFLAG:5229 == 0
     ;それ以外の時に処女喪失
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -5610,7 +5610,7 @@ ENDIF
 ;セックス(Ａ)で射精
 IF TFLAG:9 > 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 「아앗……배에, 잔뜩 들어와서, 따뜻해……」
     ;그외
     ELSE
@@ -5619,7 +5619,7 @@ IF TFLAG:9 > 0
 ;セックス(V)で射精
 ELSEIF TFLAG:10 > 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORML 「안에, 꿀럭꿀럭하고 따뜻한 게……응, 좋아」
         PRINTFORMW 「여자를 녹아내리게 하는, 마법의 감각이야……」
     ;그외
@@ -5702,11 +5702,11 @@ ENDIF
 ;-------------------------------------------------
 ;Ｖ感覚Lv5でＶ強절정or複合절정 CFLAG238
 ;-------------------------------------------------
-IF ABL:1 >= 5 && NOWEX:1 >= 2
+IF ABL:V감각 >= 5 && NOWEX:1 >= 2
     ;初めて
     IF CFLAG:5238 == 0
         ;연모＆指挿れ・Ｇスポット刺激以外
-        IF TALENT:150 && SELECTCOM != 4
+        IF TALENT:연모 && SELECTCOM != 4
             PRINTFORML 「크우웃, 깊엇, 자궁이 열려버려, 앗, 임신할 것 같아, 대단햇……!!」
             PRINTFORML 「……아……아, 앗……나. ……여자라서, 좋았어……」
             PRINTFORMW 자궁구를 찔려가며 달하는 절정이, 야마메의 몸에 깊이 새겨진다……. 
@@ -5720,7 +5720,7 @@ IF ABL:1 >= 5 && NOWEX:1 >= 2
     ;二回目以降
     ELSE
         ;연모＆指挿れ・Ｇスポット刺激以外
-        IF TALENT:150 && SELECTCOM != 4
+        IF TALENT:연모 && SELECTCOM != 4
             PRINTFORML 「아앗 온다……갈 준비 됐으니까, 안, 안쪽까지……」
             PRINTFORML 「읏아아……아, 정자로 안쪽까지, 퓻퓻 하고 두드려줘……」
             PRINTFORML 텅 빈 눈으로 침을 늘어뜨리며, 야마메는 극상의 절정에 이를 부딪쳤다……. 
@@ -5739,7 +5739,7 @@ ENDIF
 ;※追加機能※
 ;Ｃ感覚Lv5でＣ強절정or複合절정 CFLAG237
 ;-------------------------------------------------
-IF ABL:0 >= 5 && NOWEX:0 >= 2
+IF ABL:C감각 >= 5 && NOWEX:0 >= 2
     ;初めて
     IF CFLAG:5237 == 0
         PRINTFORML 「벗겨내서, 만지는 게……앗아, 무서워, 무, 무서웟」
@@ -5760,7 +5760,7 @@ ENDIF
 ;※追加機能※
 ;Ａ感覚Lv5でＡ強절정or複合절정 CFLAG239
 ;-------------------------------------------------
-IF ABL:2 >= 5 && NOWEX:2 >= 2
+IF ABL:A감각 >= 5 && NOWEX:2 >= 2
     ;初めて
     IF CFLAG:5239 == 0
         PRINTFORML 「으큿, 거, 거짓말이지……엉덩, 엉덩이, 엉덩이갓」
@@ -5781,7 +5781,7 @@ ENDIF
 ;※追加機能※
 ;Ｂ感覚Lv5でＢ強절정or複合절정 CFLAG240
 ;-------------------------------------------------
-IF ABL:3 >= 5 && NOWEX:3 >= 2
+IF ABL:B감각 >= 5 && NOWEX:3 >= 2
     ;初めて
     IF CFLAG:5240 == 0
         PRINTFORML 「아……가, 가슴……가슴 좋아……」
@@ -5829,7 +5829,7 @@ SIF TEQUIP:42 == 1 || TEQUIP:42 == 2
 IF BASE:0 <= 0
     DRAWLINE
     ;蓬莱人(通常のキャラは空欄でＯＫ)
-    IF TALENT:49
+    IF TALENT:봉래인
         PRINTFORMW 
         DRAWLINE
     ;それ以外
@@ -5912,7 +5912,7 @@ ELSEIF TFLAG:44 == 3
     PRINTFORML 「충분히 재검토했다고 생각했었는데……」
     PRINTFORMW 「너는 여자의 적, 어차피 환상이었다는 거네」
     ;オナ禁中で연모なしだと放棄します
-    IF CFLAG:5208 > 0 && TALENT:150 == 0
+    IF CFLAG:5208 > 0 && TALENT:연모 == 0
         CALL SELFPLAY_4, 58, 2
     ENDIF
     RETURN 0
@@ -5942,7 +5942,7 @@ IF TFLAG:200 == 151
             PRINTFORML 자위를 하면서, 충혈된 눈동자로 야마메는 절정을 참고 있다. 
             PRINTFORMW 베개는 눈물과 침으로 큰 얼룩이 번져 있다……. 
         ;オナ禁中　Ｖ感覚≧Ｂ感覚
-        ELSEIF CFLAG:5208 >= 2 && B > C && ABL:1 >= ABL:3
+        ELSEIF CFLAG:5208 >= 2 && B > C && ABL:V감각 >= ABL:B감각
             PRINTFORML 「옷 입은 채로……만질 뿐이야, 만질 뿐이니까아……응으웃」
             PRINTFORMW 「응읏으응, 응, 하앙, 하, 하고 싶어엇……」
         ;オナ禁中　Ｖ感覚＜Ｂ感覚
@@ -6039,7 +6039,7 @@ ENDIF
 IF TFLAG:200 == 130
     DRAWLINE
     ;연모+反発刻印Lv3未満
-    IF TALENT:150 && MARK:9 < 3
+    IF TALENT:연모 && MARK:반발각인 < 3
         PRINTFORMW 「……와버렸구나, 이 날」
         PRINTFORMW 주륵, 하고 야마메의 눈에서 눈물이 한 방울 떨어져내린다. 
         WAIT
@@ -6058,7 +6058,7 @@ IF TFLAG:200 == 130
         PRINTFORMW 「……흐에엥, 우, 우웃, 흑……」
         PRINTFORMW 도리어 불쌍해져, %조사처리(CALLNAME:MASTER,"는")% 한 마디도 입을 열지 않았다. 
     ;反発刻印Lv3
-    ELSEIF MARK:9 == 3
+    ELSEIF MARK:반발각인 == 3
         PRINTFORMW 「건강에 신경쓰기로 했어?」
         PRINTFORMW 「……뭐어, 현명한 판단이네. 슬슬 죽이고 싶어지던 참이었고」
         PRINTFORMW 「나? 네가 걱정할 필요는 없어」
@@ -6080,18 +6080,18 @@ ENDIF
 [SKIPSTART]
 IF TFLAG:200 == 179
     ;妊娠
-    IF TALENT:140
+    IF TALENT:임신
         ;V感覚Lv5以上
-        IF ABL:1 >= 5
+        IF ABL:V감각 >= 5
             PRINTFORMW 
         ;それ以外
         ELSE
             PRINTFORMW 
         ENDIF
     ;妊娠していない
-    ELSEIF TALENT:140 == 0
+    ELSEIF TALENT:임신 == 0
         ;V感覚Lv5以上
-        IF ABL:1 >= 5
+        IF ABL:V감각 >= 5
             PRINTFORMW 
         ;それ以外
         ELSE
@@ -6171,7 +6171,7 @@ $INPUT_LOOP_58_1
         ENDIF
     ELSEIF RESULT == 1
         ;コンボ50回以上+Ｖ感覚4以上か, 절정経験2000以上+精液経験500以上
-        IF (CFLAG:5203 >= 50 && ABL:1 >= 4) || (EXP:2 >= 2000 && EXP:4 >= 500)
+        IF (CFLAG:5203 >= 50 && ABL:V감각 >= 4) || (EXP:절정경험 >= 2000 && EXP:정액경험 >= 500)
             PRINTFORMW 「あ, 너 말야……아니 됐어, 솔직하게 말한 거니까」
             PRINTFORMW 「……그러네, 보통이라면 한 대 쳐야 할 상황이지만」
             PRINTFORMW 「너는 정말로, 빠져버릴 정도로 내 몸을 사랑해줬어……」
@@ -6191,7 +6191,7 @@ $INPUT_LOOP_58_1
         ENDIF
     ELSEIF RESULT == 2
         ;蜘蛛フラグ100以上
-        IF CFLAG:5202 >= 100 && ABL:12 >= 4
+        IF CFLAG:5202 >= 100 && ABL:기교 >= 4
             PRINTFORMW 「또 바보 같은 소리를……잘도 말하는걸」
             PRINTFORMW 「응, 그래도……너, 내 기분 나쁜 능력이나 신체를」
             PRINTFORMW 「상당히 사랑스러워하는 것 같았어……」
@@ -6212,7 +6212,7 @@ $INPUT_LOOP_58_1
     ELSEIF RESULT == 3
         ;オナ禁フラグ＋オナ禁記録*5＝100以上＆自慰中毒3以上
         CFLAG:5204 += 5*CFLAG:5207
-        IF CFLAG:5204 >= 100 && ABL:30 >= 3
+        IF CFLAG:5204 >= 100 && ABL:자위중독 >= 3
             PRINTFORMW 「아-……자위금지의 얘기일까?」
             PRINTFORMW 「뭐 이런 악취미인 주인님이 다 있냐고 생각했어……즐거웠지만」
             PRINTFORMW 「그래서, 왜 또 그런 걸　……귀여워?」
@@ -6367,7 +6367,7 @@ RETURN 0
 ;----------------------------------------------------------------
 [SKIPSTART]
 @SLAVE_ENDING_K58
-IF FLAG:1 != 9
+IF FLAG:SHOP밖로드 != 9
     ;特殊ハーレムエンド
     ;赤い首輪+烙印9人の特殊ハーレムエンド
     IF ITEM:86
@@ -6380,7 +6380,7 @@ IF FLAG:1 != 9
         WAIT
         PRINTFORMW 　　　　　　　　―― Ending No.1058j (야마메-×× 엔딩)
     ENDIF
-ELSEIF FLAG:9 == 9
+ELSEIF FLAG:엔딩도달 == 9
     ;エンゲージリング+烙印9人の特殊ハーレムエンド
     IF ITEM:85
         DRAWLINE
@@ -6423,17 +6423,17 @@ RETURN 0
 A = RAND:2
 M = 0
 R = 58
-SIF A == 0 || TALENT:U:150 == 0
+SIF A == 0 || TALENT:U:연모 == 0
     CALL MENSIKI
 ;후타나리
 ;주인+연모
-IF M <= 0 && TALENT:U:150 && TALENT:U:121
+IF M <= 0 && TALENT:U:연모 && TALENT:U:후타나리
     PRINTFORML 「응긋, 너……안 됏, 안 된다니깟……응으큿」
     PRINTFORMW 스커트를 입에 물고, 긴장한 귀두를 천 너머로 매만지는 야마메. 
     PRINTFORML 「그만……가버려, 네가 있는 곳에 가버려엇……!」
     PRINTFORMW 주인을 잃은 망상에 빠져, 슬픈 얼굴로 자위를 계속한다……. 
 ;原作で面識あり(選ばれたキャラに関わらず키스메か파르시)
-ELSEIF N == 1 && TALENT:U:121
+ELSEIF N == 1 && TALENT:U:후타나리
     A = RAND:2
     SIF CFLAG:U:5857 > 1
         A = 1
@@ -6461,26 +6461,26 @@ ELSEIF N == 1 && TALENT:U:121
         PRINTFORMW 혼자만의 밤, 꿈자리에 나타난 주인에게, 꿈을 꾸는 듯한 애무를 정성스럽게 받는다……. 
     ENDIF
 ;주인
-ELSEIF M < 0 && TALENT:U:121
+ELSEIF M < 0 && TALENT:U:후타나리
         PRINTFORML 「하우웃……꿈에 나오는 건, 비겁하다고오……」
         PRINTFORMW 스커트를 입에 물고, 민감한 돌기를 천 너머로 비비는 야마메. 
         PRINTFORML 「너의 손가락, 기분 좋아서, 흐아앙……천 너머로 가버려엇……」
         PRINTFORMW 혼자만의 밤, 꿈자리에 나타는 주인에게, 꿈을 꾸는 듯한 애무를 정성스럽게 받는다……. 
 ;相手を調教した経験あり
-ELSEIF (N >= 5 && TALENT:U:121) || (N == 3 && TALENT:U:121)
+ELSEIF (N >= 5 && TALENT:U:후타나리) || (N == 3 && TALENT:U:후타나리)
     PRINTFORML 「%CALLNAME:M%……힘을 빼, 자, 무섭지 않으니까……」
     PRINTFORMW 스커트를 입에 물고, 긴장한 귀두를 천 너머로 매만지는 야마메. 
     PRINTFORML 「그, 그래……그렇게, 문질러지면, 이젠, 참을 수 없어……」
     PRINTFORMW %CALLNAME:M%의 꿈을 꾸면서, 자기의 자지를 문지르며, 위로한다……. 
 ;調教された経験ありか, 奴隷として遭遇して, 調教を受けていない
-ELSEIF (N == 4 && TALENT:U:121) || (N == 2 && TALENT:U:121)
+ELSEIF (N == 4 && TALENT:U:후타나리) || (N == 2 && TALENT:U:후타나리)
     PRINTFORML 「%CALLNAME:M%……아, 거기, 읏크응……」
     PRINTFORMW 스커트를 입에 물고, 긴장한 귀두를 천 너머로 매만지는 야마메. 
     PRINTFORML 「클리는 약하니까……앗, 싫어, 적당히잇……!!」
     PRINTFORMW %CALLNAME:M%의 꿈을 꾸면서, 자기의 자지를 문지르며, 위로한다……. 
 ;비후타나리
 ;주인+연모
-ELSEIF M <= 0 && TALENT:U:150
+ELSEIF M <= 0 && TALENT:U:연모
     PRINTFORML 「응긋, 너……안됏, 안됀다니깟……응으큿」
     PRINTFORMW 스커트를 입에 물고, 민감한 돌기를 천 너머로 비비는 야마메. 
     PRINTFORML 「그만……가버려, 네가 있는 곳에 가버려엇……!」
@@ -6565,17 +6565,17 @@ RETURN 0
 A = RAND:2
 M = 0
 R = 58
-SIF A == 0 || TALENT:U:150 == 0
+SIF A == 0 || TALENT:U:연모 == 0
     CALL MENSIKI
 ;후타나리
 ;주인+연모
-IF M <= 0 && TALENT:U:150 && TALENT:U:121
+IF M <= 0 && TALENT:U:연모 && TALENT:U:후타나리
     PRINTFORML 「응긋, 너……안됏, 안됀다니깟……응으큿」
     PRINTFORMW 스커트를 입에 물고, 긴장한 귀두를 천 너머로 매만지는 야마메. 
     PRINTFORML 「그만……가버려, 네가 있는 곳에 가버려엇……!」
     PRINTFORMW 주인을 잃은 망상에 빠져, 슬픈 얼굴로 자위를 계속한다……. 
 ;原作で面識あり(選ばれたキャラに関わらず키스메か파르시)
-ELSEIF N == 1 && TALENT:U:121
+ELSEIF N == 1 && TALENT:U:후타나리
     A = RAND:2
     SIF CFLAG:U:5857 > 1
         A = 1
@@ -6604,19 +6604,19 @@ ELSEIF N == 1 && TALENT:U:121
         PRINTFORMW 혼자만의 밤, 꿈자리에 나타난 주인에게, 꿈을 꾸는 듯한 애무를 정성스럽게 받는다……. 
     ENDIF
 ;주인
-ELSEIF M < 0 && TALENT:U:121
+ELSEIF M < 0 && TALENT:U:후타나리
         PRINTFORML 「크우우……꿈에 나오는 건, 비겁하다고오……」
         PRINTFORMW 스커트를 입에 물고, 민감한 돌기를 천 너머로 비비는 야마메. 
         PRINTFORML 「너의 손가락, 기분 좋아서, 흐아앙……천 너머로 가버려엇……」
         PRINTFORMW 혼자만의 밤, 꿈자리에 나타난 주인에게, 꿈을 꾸는 듯한 애무를 정성스럽게 받는다……. 
 ;相手を調教した経験あり
-ELSEIF (N >= 5 && TALENT:U:121) || (N == 3 && TALENT:U:121)
+ELSEIF (N >= 5 && TALENT:U:후타나리) || (N == 3 && TALENT:U:후타나리)
     PRINTFORML 「%CALLNAME:M%……힘을 빼, 자, 무섭지 않으니까……」
     PRINTFORMW 스커트를 입에 물고, 민감한 돌기를 천 너머로 매만지는 야마메. 
     PRINTFORML 「그, 그래……그렇게, 문질러지면, 이젠, 참을 수 없어……」
     PRINTFORMW %CALLNAME:M%의 꿈을 꾸면서, 자기의 클리토리스를 문지르며, 위로한다……. 
 ;調教された経験ありか, 奴隷として遭遇して, 調教を受けていない
-ELSEIF (N == 4 && TALENT:U:121) || (N == 2 && TALENT:U:121)
+ELSEIF (N == 4 && TALENT:U:후타나리) || (N == 2 && TALENT:U:후타나리)
     PRINTFORML 「%CALLNAME:M%……아, 거기, 읏크응……」
     PRINTFORMW 스커트를 입에 물고, 민감한 돌기를 천 너머로 매만지는 야마메. 
     PRINTFORML 「클리는 약하니까……앗, 싫어, 적당히잇……!!」
@@ -6624,7 +6624,7 @@ ELSEIF (N == 4 && TALENT:U:121) || (N == 2 && TALENT:U:121)
 ENDIF
 ;비후타나리
 ;주인+연모
-IF M <= 0 && TALENT:U:150
+IF M <= 0 && TALENT:U:연모
     PRINTFORML 「응긋, 너……안됏, 안됀다니깟……응으큿」
     PRINTFORMW 스커트를 입에 물고, 민감한 돌기를 천 너머로 매만지는 야마메. 
     PRINTFORML 「그만……가버려, 네가 있는 곳에 가버려엇……!」
@@ -6854,11 +6854,11 @@ IF RESULT == 1 && CFLAG:ASSI:5208 >= 1
 ;        CALL SELFPLAY_58_2
 ;    SIF A == 2
 ;        CALL SELFPLAY_58_3
-;    SIF A == 3 && TALENT:ASSI:150
+;    SIF A == 3 && TALENT:ASSI:연모
 ;        CALL SELFPLAY_58_4
-;    SIF A == 4 && TALENT:ASSI:150
+;    SIF A == 4 && TALENT:ASSI:연모
 ;        CALL SELFPLAY_58_5
-;    SIF A == 5 && TALENT:ASSI:150
+;    SIF A == 5 && TALENT:ASSI:연모
 ;        CALL SELFPLAY_58_6
     DRAWLINE
 ENDIF
@@ -6920,7 +6920,7 @@ RETURN 0
 ;-------------------------------------------------
 ;コンボ口上テンプレ集
 ;特定の順序でコマンドを実行した場合に口上とプレイ結果を変化させます
-;エキストラモード構文で許可する(CFLAG:5220 > 0)必要があります
+;エキストラモード構文で許可する(CFLAG:체위판정 > 0)必要があります
 ;-------------------------------------------------
 ;※追加機能D1『抜かずにウフフ機能』(上級者向け)
 ;主にセックス系コマンドから愛撫系コマンドを同一の調教者で実行した場合, 特殊な口上を表示します
@@ -6934,9 +6934,9 @@ RETURN 0
 ;挿れっぱなしのプレイではA=1, 抜く場合はA=0に戻す
 A = 1
 ;Ｖ挿入系　デフォルト条件：연모＋Ｖ感覚Lv3以上
-IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
+IF TALENT:연모 && ABL:V감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
     ;正常位
-    IF CFLAG:5220 == 20
+    IF CFLAG:체위판정 == 20
         ;正常位→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -6944,9 +6944,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             PRINTFORML 정상위로 신체를 포갠 채로, %조사처리(CALLNAME:PLAYER,"는")% 야마메의 배꼽을 누른다. 
             PRINTFORML 「쿠으응, 그런, 이상한 곳……아아, 기분 좋아」
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 반대쪽 손으로 야마메의 클리토리스를 잡고, 옆으로 돌리며 꾹 누른다……. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 반대쪽 손으로 둘의 결합부 사이에 솟은 자지를 붙잡아, 문지르며 훑는다……. 
             PRINTFORML 「꺄흥, 자, 자극이 너무 강해, 배꼽 간질이는 것도 안 돼……읏아아앙」
             PRINTFORML 허리를 띄워 꽉 눌러오는 야마메에게, 무거운 스트로크로 응하자, 
@@ -6995,16 +6995,16 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             RETURN 1
         ENDIF
     ;後背位
-    ELSEIF CFLAG:5220 == 21
+    ELSEIF CFLAG:체위판정 == 21
         ;後背位→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
             PRINTFORML 「꺄흥, 좀 더, 좀 더 세게, 허리, 찔러줘엇」
             PRINTFORML 엎드려 있는 야마메를 범하면서, %조사처리(CALLNAME:PLAYER,"는")% 손을 앞으로 뻗는다. 
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 마침내 도착한 야마메의 진주에, 손가락으로 똑똑 하고 노크를 한다……. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 선액을 떨어뜨리는 야마메의 자지를 붙잡고, 그 시점에서 다시 허리를 흔든다……. 
             PRINTFORML 「읏아아, 아, 그, 그거 안 돼……날아갓, 날아, 가버렷……!」
             PRINTFORML 야마메는, 질벽을 굴리듯 누르는 것처럼, 엉덩이를 크게 좌우로 흔든다. 
@@ -7040,7 +7040,7 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             RETURN 1
         ENDIF
     ;対面座位
-    ELSEIF CFLAG:5220 == 22
+    ELSEIF CFLAG:체위판정 == 22
         ;対面座位→アナル愛撫
         IF SELECTCOM == 2
             CALL COMBOPLAY
@@ -7125,15 +7125,15 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             RETURN 1
         ENDIF
     ;乱れ牡丹
-    ELSEIF (CFLAG:5220 == 23 && TEQUIP:56) || CFLAG:5220 == 612
+    ELSEIF (CFLAG:체위판정 == 23 && TEQUIP:56) || CFLAG:체위판정 == 612
         ;乱れ牡丹→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
             PRINTFORML 「아……넣은 채로, 만지려는 거야……?」
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 배후로부터 야마메의 민감한 클리토리스를 잡고, 아래에서 위로 조금씩 마찰한다. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 배후로부터 카우퍼액 투성이의 야마메의 자지를 잡고, 손바닥 안에서 귀두를 문지른다. 
             PRINTFORML 거울 너머로 보아 정확하게 만지작거리자, 거울 속의 야마메는 궁지에 몰린 듯 애원하는 표정이다. 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 허리를 써서 자극을 더하면서, 약점에의 애무를 이어나갔다……. 
@@ -7143,9 +7143,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             CALL COMBOPLAY
             PRINTFORML 「이대로 자위? ……아아 알았어, 계속 찔러올려줘……」
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 야마메는 왼손으로 자신의 가슴을, 오른손 손가락으로 결합부의 위, 클리토리스를 애무한다. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 야마메는 왼손으로 가슴을 주무르며, 오른손으로 자신의 자지를 애무한다. 
             PRINTFORML 그 모습을 거울에 비춰, 음란하게 미소를 지으며 거울 안의 %조사처리(CALLNAME:PLAYER,"과")% 눈을 맞춘다. 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 야마메의 허리를 붙잡고 흔들어, 깊은 쾌락을 계속해서 주었다……. 
@@ -7184,9 +7184,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
         ELSEIF SELECTCOM == 10
             CALL COMBOPLAY
             PRINTFORMW 야마메와 연결된 채, %조사처리(CALLNAME:PLAYER,"는")% 로터를 꺼냈다. 
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 그대로, 야마메의 클리토리스에 로터를 세게 누른다……. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 그대로, 야마메의 자지 끝에 로터를 세게 누른다……. 
             PRINTFORML 「꺗, 무, 뭐야, 싫엇, 허, 허리가 빠져……!」
             PRINTFORMW 야마메가 도망치듯 허리를 비틀면, 질내가 스쳐서 쾌감이 넘쳐온다. 
@@ -7216,9 +7216,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             CALL COMBOPLAY
             PRINTFORML 「힛 빠졌다……! 시 싫엇, 뽑은 채로라니……」
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 「아아앙, 싫어어……클리가 너와 교미하고 있어엇……!」
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 「싫어어……뒤에서 당신 게 솟나 나와서 , 두 개가 돼버렸어……」
             PRINTFORML 얕은 삽입의 탓으로 빠져버렸지만, %조사처리(CALLNAME:PLAYER,"는")% 그대로
             PRINTFORMW 끈적거리는 애액을 이용해, 야마메의 허벅지를 계속해서 범했다……. 
@@ -7227,15 +7227,15 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             RETURN 1
         ENDIF
     ;背面座位
-    ELSEIF CFLAG:5220 == 23
+    ELSEIF CFLAG:체위판정 == 23
         ;背面座位→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
             PRINTFORML 「아……넣은 채로, 만지려는 거야……?」
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 배후로부터 야마메의 민감한 클리토리스를 잡고, 아래에서 위로 조금씩 마찰한다. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 배후로부터 카우퍼액 투성이의 야마메의 자지를 잡고, 손바닥 안에서 귀두를 문지른다. 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 허리를 써서 자극을 더하면서, 약점에의 애무를 이어나갔다……. 
             RETURN 1
@@ -7246,9 +7246,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             PRINTFORML 「애액 씻겨가버리지 않을까……? 읏후얏」
             PRINTFORMW 걱정이 되어 거기에 손을 뻗어보면, 아무 걱정할 필요 없을 정도로 젖어 있다. 
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORML 야마메는 샤워기에서 쏟아지는 물을, 자신의 민감한 진주에 집중시키고 있다……. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORML 야마메는 샤워기에서 쏟아지는 물을, 자신의 발기한 자지에 집중시키고 있다……. 
             PRINTFORML 「하읏, 이거 대단, 대단해엣, 머릿속까지 씻겨지는 거 같앗……!」
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"가")% 가볍게 허리를 흔드는 것만으로, 새된 교성이 욕탕에 울렸다……. 
@@ -7258,9 +7258,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             CALL COMBOPLAY
             PRINTFORML 「이대로 자위? ……아아 알았어, 계속 찔러올려줘……」
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 야마메는 왼손으로 자신의 가슴을, 오른손 손가락으로 결합부의 위, 클리토리스를 애무한다. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 야마메는 왼손으로 가슴을 주무르며, 오른손으로 자신의 자지를 애무한다. 
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 야마메의 허리를 붙잡고 흔들어, 깊은 쾌락을 계속해서 주었다……. 
             RETURN 1
@@ -7295,9 +7295,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
         ELSEIF SELECTCOM == 10
             CALL COMBOPLAY
             PRINTFORMW 야마메와 연결된 채, %조사처리(CALLNAME:PLAYER,"는")% 로터를 꺼냈다. 
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 그대로, 야마메의 클리토리스에 로터를 세게 누른다……. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 그대로, 야마메의 자지 끝에 로터를 세게 누른다……. 
             PRINTFORML 「꺗, 무, 뭐야, 싫엇, 허, 허리가 빠져……!」
             PRINTFORMW 야마메가 도망치듯 허리를 비틀면, 질내가 스쳐서 쾌감이 넘쳐온다. 
@@ -7326,9 +7326,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             CALL COMBOPLAY
             PRINTFORML 「힛 빠졌다……! 시 싫엇, 뽑은 채로라니……」
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW 「아아앙, 싫어어……클리가 너와 교미하고 있어엇……!」
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW 「싫어어……뒤에서 당신 게 솟나 나와서 , 두 개가 돼버렸어……」
             PRINTFORML 얕은 삽입의 탓으로 빠져버렸지만, %조사처리(CALLNAME:PLAYER,"는")% 그대로
             PRINTFORMW 끈적거리는 애액을 이용해, 야마메의 허벅지를 계속해서 범했다……. 
@@ -7337,7 +7337,7 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             RETURN 1
         ENDIF
     ;騎乗位
-    ELSEIF CFLAG:5220 == 24
+    ELSEIF CFLAG:체위판정 == 24
         ;騎乗位→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7355,9 +7355,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             CALL COMBOPLAY
             PRINTFORML 「이걸 쓰라고? 네가 들고 있어줘」
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 샤워기의 수류를 세밀하게 조절해, 아래로부터 야마메의 음핵에 부딪치게 한다……. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 수류를 세밀하게 조절해, 정면에서부터 야마메의 귀두에 부딪치게 한다……. 
             PRINTFORML 「핫, 쿠흥, 앗 싫, 물에 깎여나갓, 이거 안 돼엣……!」
             PRINTFORML 허리를 움직일 때마다 샤워기의 물이 맞는 각도가 바뀌어, 야마메를 더욱 흥분시킨다. 
@@ -7372,9 +7372,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             PRINTFORMW 허리의 리듬이 바뀌고, 몸을 비틀면서 음란하게 춤을 춘다……. 
             PRINTFORML 「아후우, 허리, 무의식적으로 움직이는 게 기분 좋아……본능으로 교미해버리자……」
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORML 새까만 다리는 유두, 유방, 음핵은 물론이고, 등 뒤로 돌아 실젖과 국혈까지 매만지고 있다. 
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORML 새까만 다리는 유두, 유방, 귀두는 물론이고, 요도구, 애널마저 매만지고 있다. 
             PRINTFORMW 「앗아, 온 몸이, 기분 좋, 몸 안이, 움찔움찔하고옷……」
             PRINTFORML 실젖으로부터 나온 농밀한 점액이 얽혀, 질척거리며 끈적끈적한 물소리가 울린다. 
@@ -7390,9 +7390,9 @@ IF TALENT:150 && ABL:1 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             PRINTFORML 허리 위에 올라타 교미하고 있던 야마메가, 양다리를 %CALLNAME:PLAYER%의 어깨에 걸었다. 
             PRINTFORMW 그대로 등을 침대에 눕혀, %CALLNAME:PLAYER%의 자지를 허벅지 사이에 끼고 문지른다……. 
             ;후타나리で一行入れ替え
-            SIF TALENT:121 == 0
+            SIF TALENT:후타나리 == 0
                 PRINTFORML 「아앗, 좋아 이거……너 자지가 허벅지 사시에서, 클리를 꽉 누르고 있어……」
-            SIF TALENT:121
+            SIF TALENT:후타나리
                 PRINTFORML 「……뭔가 이거, 자지 하나로 서로 찌르고 있는 것처럼 보이네」
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"는")% 야마메의 다리를 안고, 허리를 흔들어서 응했다……. 
             ;蜘蛛フラグ＋1
@@ -7412,9 +7412,9 @@ ENDIF
 
 ;Ａ挿入系はデフォルトの口上を表示します. 
 ;Ａ挿入系　デフォルト条件：연모＋Ａ感覚Lv3以上
-IF TALENT:150 && ABL:2 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
+IF TALENT:연모 && ABL:A감각 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
     ;正常位アナルorアナルセックス
-    IF CFLAG:5220 == 30 || CFLAG:5220 == 30
+    IF CFLAG:체위판정 == 30 || CFLAG:체위판정 == 30
         ;正常位Ａ→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7442,7 +7442,7 @@ IF TALENT:150 && ABL:2 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             RETURN 2
         ENDIF
     ;後背位アナル
-    ELSEIF CFLAG:5220 == 31
+    ELSEIF CFLAG:체위판정 == 31
         ;後背位Ａ→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7466,7 +7466,7 @@ IF TALENT:150 && ABL:2 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             RETURN 2
         ENDIF
     ;対面座位アナル
-    ELSEIF CFLAG:5220 == 32
+    ELSEIF CFLAG:체위판정 == 32
         ;対面座位Ａ→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7484,7 +7484,7 @@ IF TALENT:150 && ABL:2 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             RETURN 2
         ENDIF
     ;背面座位アナル
-    ELSEIF CFLAG:5220 == 33
+    ELSEIF CFLAG:체위판정 == 33
         ;背面座位Ａ→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7552,7 +7552,7 @@ IF TALENT:150 && ABL:2 > 2 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASS
             RETURN 2
         ENDIF
     ;騎乗位Ａ
-    ELSEIF CFLAG:5220 == 34
+    ELSEIF CFLAG:체위판정 == 34
         ;騎乗位Ａ→愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7589,9 +7589,9 @@ ENDIF
 
 ;非挿入系　デフォルト条件：연모
 A = 0
-IF TALENT:150 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
+IF TALENT:연모 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
     ;助手を犯す
-    IF CFLAG:5220 == 2026
+    IF CFLAG:체위판정 == 2026
         ;助手を犯すはA=1でよい
         A = 1
         ;助手セックス愛撫
@@ -7644,7 +7644,7 @@ IF TALENT:150 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
             RETURN 1
         ENDIF
     ;泡踊り
-    ELSEIF CFLAG:5220 == 352
+    ELSEIF CFLAG:체위판정 == 352
         ;泡踊り素股
         IF SELECTCOM == 43
         CALL COMBOPLAY
@@ -7656,7 +7656,7 @@ IF TALENT:150 && ((TFLAG:133 && ASSIPLAY) || (TFLAG:133 == 0 && ASSIPLAY == 0))
         RETURN 1
         ENDIF
     ;アナル舐め
-    ELSEIF CFLAG:5220 == 180
+    ELSEIF CFLAG:체위판정 == 180
         ;アナル舐めキス
         IF SELECTCOM == 6
         CALL COMBOPLAY
@@ -7676,7 +7676,7 @@ RETURN 0
 ;-------------------------------------------------
 ;サポート口上テンプレ集
 ;주인→奴隷の流れで特定の順序でコマンドを実行した場合に口上とプレイ結果を変化させます
-;エキストラモード構文で許可する(CFLAG:5220 > 0)必要があります
+;エキストラモード構文で許可する(CFLAG:체위판정 > 0)必要があります
 ;サポート口上有りのプレイを続けた場合, 続けてサポートプレイができます. 
 ;そのまま주인に交代した場合, 挿入れっぱなしでの再開になります. 
 ;-------------------------------------------------
@@ -7694,7 +7694,7 @@ RETURN 0
 
 @COMBOASSI_58
 ;주인にペニスがない場合処理しない
-SIF TALENT:MASTER:121 == 0 && TALENT:MASTER:120 == 0 && TALENT:MASTER:121 == 0
+SIF TALENT:MASTER:후타나리 == 0 && TALENT:MASTER:남자 == 0 && TALENT:MASTER:후타나리 == 0
     RETURN 0
 
 A = 1
@@ -7702,9 +7702,9 @@ A = 1
 ;주인正常位→助手後背位など, 物理的に無理な場合などがA=0
 
 ;Ｖ挿入系　デフォルト条件：연모＋Ｖ感覚Lv3以上
-IF TALENT:150 && ABL:1 > 2
+IF TALENT:연모 && ABL:V감각 > 2
     ;주인の正常位から
-    IF CFLAG:5220 == 2020
+    IF CFLAG:체위판정 == 2020
         ;正常位サポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7738,14 +7738,14 @@ IF TALENT:150 && ABL:1 > 2
             PRINTFORMW 「%조사처리(CALLNAME:ASSI,"는")% 뭘 보고 있는 거야……기분 좋아하는 게 마음에 안 들어?」
             RETURN 1
         ;正常位サポートローター후타나리不可
-        ELSEIF SELECTCOM == 10 && TALENT:121 == 0
+        ELSEIF SELECTCOM == 10 && TALENT:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORMW 「히잇……아, 싫엇, 뭘 대는……읏쿠으으으응!」
             PRINTFORMW 범해지고 있는, 야마메의 민감한 클리토리스에 로터를 가져다댄다. 
             PRINTFORMW 야마메의 질이 조이는 것을 느끼면서, %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:ASSI%의 행동을 칭찬했다……. 
             RETURN 1
         ;正常位サポート電マ후타나리不可
-        ELSEIF SELECTCOM == 11 && TALENT:121 == 0
+        ELSEIF SELECTCOM == 11 && TALENT:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORMW 「앗, 그건 안ㄷ……으구앗, 앗아아아아아아아앙!!」
             PRINTFORMW 장난기가 든 %CALLNAME:ASSI%에 의해 극도로 민감해진 돌기에 강렬한 진동을 부딪쳐져, 야마메는 등을 크게 젖히며 온 몸을 바들바들 떤다. 
@@ -7776,7 +7776,7 @@ IF TALENT:150 && ABL:1 > 2
             RETURN 1
         ENDIF
     ;後背位
-    ELSEIF CFLAG:5220 == 2021
+    ELSEIF CFLAG:체위판정 == 2021
         ;後背位サポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7810,14 +7810,14 @@ IF TALENT:150 && ABL:1 > 2
             PRINTFORMW 「%조사처리(CALLNAME:ASSI,"는")% 뭘 보고 있는 거야……기분 좋아하는 게 마음에 안 들어?」
             RETURN 1
         ;後背位サポートローター
-        ELSEIF SELECTCOM == 10 && TALENT:121 == 0
+        ELSEIF SELECTCOM == 10 && TALENT:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORMW 「히잇……아, 싫엇, 뭘 대는……읏쿠으으으응!」
             PRINTFORMW 범해지고 있는, 야마메의 민감한 클리토리스에 로터를 가져다댄다. 
             PRINTFORMW 야마메의 질이 조이는 것을 느끼면서, %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:ASSI%의 행동을 칭찬했다……. 
             RETURN 1
         ;後背位サポート電マ
-        ELSEIF SELECTCOM == 11 && TALENT:121 == 0
+        ELSEIF SELECTCOM == 11 && TALENT:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORMW 「앗, 그건 안ㄷ……으구앗, 앗아아아아아아아앙!!」
             PRINTFORMW 장난기가 든 %CALLNAME:ASSI%에 의해 극도로 민감해진 돌기에 강렬한 진동을 부딪쳐져, 야마메는 등을 크게 젖히며 온 몸을 바들바들 떤다. 
@@ -7845,7 +7845,7 @@ IF TALENT:150 && ABL:1 > 2
             RETURN 1
         ENDIF
     ;対面座位
-    ELSEIF CFLAG:5220 == 2022
+    ELSEIF CFLAG:체위판정 == 2022
         ;対面座位サポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7923,7 +7923,7 @@ IF TALENT:150 && ABL:1 > 2
             RETURN 1
         ENDIF
     ;背面座位+乱れ牡丹
-    ELSEIF CFLAG:5220 == 2023 || CFLAG:5220 == 2612
+    ELSEIF CFLAG:체위판정 == 2023 || CFLAG:체위판정 == 2612
         ;背面座位サポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -7972,14 +7972,14 @@ IF TALENT:150 && ABL:1 > 2
             PRINTFORMW 「%조사처리(CALLNAME:ASSI,"는")% 뭘 보고 있는 거야……기분 좋아하는 게 마음에 안 들어?」
             RETURN 1
         ;背面座位サポートローター후타나리不可
-        ELSEIF SELECTCOM == 10 && TALENT:121 == 0
+        ELSEIF SELECTCOM == 10 && TALENT:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORMW 「히잇……아, 싫엇, 뭘 대는……읏쿠으으으응!」
             PRINTFORMW 범해지고 있는, 야마메의 민감한 클리토리스에 로터를 가져다댄다. 
             PRINTFORMW 야마메의 질이 조이는 것을 느끼면서, %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:ASSI%의 행동을 칭찬했다……. 
             RETURN 1
         ;背面座位サポート電マ후타나리不可
-        ELSEIF SELECTCOM == 11 && TALENT:121 == 0
+        ELSEIF SELECTCOM == 11 && TALENT:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORMW 「앗, 그건 안ㄷ……으구앗, 앗아아아아아아아앙!!」
             PRINTFORMW 장난기가 든 %CALLNAME:ASSI%에 의해 극도로 민감해진 돌기에 강렬한 진동을 부딪쳐져, 
@@ -8004,7 +8004,7 @@ IF TALENT:150 && ABL:1 > 2
             PRINTFORMW 야마메는 로션으로 끈적끈적해진 자신의 남성기를, 손바닥으로 위로하고 있다……. 
             RETURN 1
         ;背面座位サポート貝合わせ(どちらかが후타나리だと不可)
-        ELSEIF SELECTCOM == 301 && TALENT:121 == 0 && TALENT:ASSI:121 == 0
+        ELSEIF SELECTCOM == 301 && TALENT:후타나리 == 0 && TALENT:ASSI:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORMW 「아, 이봐……달라붙지 마, 지금은 내 차례란 말이야……」
             PRINTFORML 음탕한 눈동자를 하고, %조사처리(CALLNAME:ASSI,"는")% 야마메의 정면에서 그녀를 끌어안아, 
@@ -8020,7 +8020,7 @@ IF TALENT:150 && ABL:1 > 2
             RETURN 1
         ENDIF
     ;騎乗位
-    ELSEIF CFLAG:5220 == 2024
+    ELSEIF CFLAG:체위판정 == 2024
         ;騎乗位サポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8054,14 +8054,14 @@ IF TALENT:150 && ABL:1 > 2
             PRINTFORMW 「봐봐, %CALLNAME:ASSI%의 부러워하는 얼굴……후후후」
             RETURN 1
         ;騎乗位サポートローター후타나리不可
-        ELSEIF SELECTCOM == 10 && TALENT:121 == 0
+        ELSEIF SELECTCOM == 10 && TALENT:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORML 「앗, 이봐, 방해하면……싫히얏, 응으으으웃!」
             PRINTFORML 허리를 흔들며 쾌감을 탐하는 야마메를 보며, %조사처리(CALLNAME:ASSI,"는")% 기분 나쁜 듯
             PRINTFORMW 그 음핵에 로터를 누르며 빙글빙글 돌렸다……. 
             RETURN 1
         ;騎乗位サポート電マ후타나리不可
-        ELSEIF SELECTCOM == 11 && TALENT:121 == 0
+        ELSEIF SELECTCOM == 11 && TALENT:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORMW 쾌감에 허덕이며 교미하는 야마메를 보며, %조사처리(CALLNAME:ASSI,"는")% 장난감을 꺼내든다. 
             PRINTFORML 「싫읏 무, 뭘 대는……앗, 잇, 싫읏크우우응!!」
@@ -8090,7 +8090,7 @@ IF TALENT:150 && ABL:1 > 2
             PRINTFORMW 「주인님에게 범해지면서 조수의 페니스를 핥습니다」
             RETURN 1
         ;騎乗位サポート貝合わせ(どちらかが후타나리だと不可)
-        ELSEIF SELECTCOM == 301 && TALENT:121 == 0 && TALENT:ASSI:121 == 0
+        ELSEIF SELECTCOM == 301 && TALENT:후타나리 == 0 && TALENT:ASSI:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORMW 「아, 이봐……달라붙지 마, 지금은 내 차례란 말이야……」
             PRINTFORML 음탕한 눈동자를 하고, %조사처리(CALLNAME:ASSI,"는")% 야마메의 정면에서 그녀를 끌어안아, 
@@ -8111,9 +8111,9 @@ ENDIF
 
 ;Ａ挿入系の大半はデフォルトの口上を表示します. (RETURN 2)
 ;Ａ挿入系　デフォルト条件：연모＋Ａ感覚Lv3以上
-IF TALENT:150 && ABL:2 > 2
+IF TALENT:연모 && ABL:A감각 > 2
     ;正常位アナルorアナルセックス
-    IF CFLAG:5220 == 2030 || CFLAG:5220 == 2030
+    IF CFLAG:체위판정 == 2030 || CFLAG:체위판정 == 2030
         ;正常位Ａサポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8162,7 +8162,7 @@ IF TALENT:150 && ABL:2 > 2
             RETURN 1
         ENDIF
     ;後背位アナル
-    ELSEIF CFLAG:5220 == 2031
+    ELSEIF CFLAG:체위판정 == 2031
         ;後背位Ａサポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8246,7 +8246,7 @@ IF TALENT:150 && ABL:2 > 2
             RETURN 1
         ENDIF
     ;対面座位アナル
-    ELSEIF CFLAG:5220 == 2032
+    ELSEIF CFLAG:체위판정 == 2032
         ;対面座位Ａサポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8274,7 +8274,7 @@ IF TALENT:150 && ABL:2 > 2
             PRINTFORMW %조사처리(CALLNAME:ASSI,"는")%, 주인에게 국혈을 범해지는 야마메에게 다가가, 행위를 돕는다……. 
             RETURN 2
         ;対面座位Ａサポート媚薬キス(技巧Lv3以上)
-        ELSEIF SELECTCOM == 61 && ABL:PLAYER:12 >= 3
+        ELSEIF SELECTCOM == 61 && ABL:PLAYER:기교 >= 3
             CALL COMBOPLAY
             PRINTFORMW %조사처리(CALLNAME:ASSI,"는")%, 주인에게 국혈을 범해지는 야마메에게 다가가, 행위를 돕는다……. 
             RETURN 2
@@ -8292,7 +8292,7 @@ IF TALENT:150 && ABL:2 > 2
             RETURN 1
         ENDIF
     ;背面座位アナル
-    ELSEIF CFLAG:5220 == 2033
+    ELSEIF CFLAG:체위판정 == 2033
         ;背面座位Ａサポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8353,7 +8353,7 @@ IF TALENT:150 && ABL:2 > 2
             PRINTFORMW %조사처리(CALLNAME:ASSI,"는")%, 주인에게 국혈을 범해지는 야마메에게 다가가, 행위를 돕는다……. 
             RETURN 2
         ;背面座位Ａサポート貝合わせ(どちらかが후타나리だと不可)
-        ELSEIF SELECTCOM == 301 && TALENT:121 == 0 && TALENT:ASSI:121 == 0
+        ELSEIF SELECTCOM == 301 && TALENT:후타나리 == 0 && TALENT:ASSI:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORML 「이, 이봣……그렇게 맞대지 맛, 싫, 문지르지 마앗……!」
             PRINTFORML 교태에 홀린%조사처리(CALLNAME:ASSI,"는")%, 물기를 띤 눈동자로 야마메에게 달려들듯 안겨, 
@@ -8393,7 +8393,7 @@ IF TALENT:150 && ABL:2 > 2
             RETURN 2
         ENDIF
     ;騎乗位Ａ
-    ELSEIF CFLAG:5220 == 2034
+    ELSEIF CFLAG:체위판정 == 2034
         ;騎乗位Ａサポート愛撫
         IF SELECTCOM == 0
             CALL COMBOPLAY
@@ -8459,7 +8459,7 @@ IF TALENT:150 && ABL:2 > 2
             PRINTFORMW %조사처리(CALLNAME:ASSI,"는")%, 주인에게 국혈을 범해지는 야마메에게 다가가, 행위를 돕는다……. 
             RETURN 2
         ;騎乗位Ａサポート貝合わせ(どちらかが후타나리だと不可)
-        ELSEIF SELECTCOM == 301 && TALENT:121 == 0 && TALENT:ASSI:121 == 0
+        ELSEIF SELECTCOM == 301 && TALENT:후타나리 == 0 && TALENT:ASSI:후타나리 == 0
             CALL COMBOPLAY
             PRINTFORML 「이, 이봣……그렇게 맞대지 맛, 싫, 문지르지 마앗……!」
             PRINTFORML 교태에 홀린%조사처리(CALLNAME:ASSI,"는")%, 물기를 띤 눈동자로 야마메에게 달려들듯 안겨, 
@@ -8494,9 +8494,9 @@ ENDIF
 
 ;非挿入系　デフォルト条件：연모
 A = 0
-IF TALENT:150
+IF TALENT:연모
     ;助手を犯す
-    IF CFLAG:5220 == 2026
+    IF CFLAG:체위판정 == 2026
         A = 1
         ;助手セックスサポートクンニ強制
         IF SELECTCOM == 300

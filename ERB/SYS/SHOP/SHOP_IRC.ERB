@@ -72,15 +72,15 @@ ENDIF
 ;共通処理(霊夢様処理のためにCHARA_STATE_BASICは利用できない)
 ADDCHARA LOCAL
 TARGET = CHARANUM-1
-CFLAG:3111 = DAY
-CFLAG:3109 = FLAG:998
+CFLAG:구입한날 = DAY
+CFLAG:CSV번호 = FLAG:998
 FLAG:998 += 1
-FLAG:39 += 1
+FLAG:구입총계 += 1
 CSTR:3 = 特殊な奴隷商人から購入した.
 ;霊夢様の特別処理
 IF RESULT == 0
     NO:TARGET = 1
-    CFLAG:0 = 2
+    CFLAG:SP캐릭터 = 2
     REPEAT 400
         SIF COUNT == 0 || COUNT == 1
             CONTINUE
@@ -88,26 +88,26 @@ IF RESULT == 0
     REND
 ;触手娘の特別処理
 ELSEIF RESULT == 1 && NO:MASTER == 400
-    TALENT:MASTER:149 = 0
-    IF ABL:MASTER:98 > 0
-        ABL:MASTER:98 = 0
-        FLAG:571 = ABL:MASTER:98
+    TALENT:MASTER:촉수사역술 = 0
+    IF ABL:MASTER:촉수사역 > 0
+        ABL:MASTER:촉수사역 = 0
+        FLAG:571 = ABL:MASTER:촉수사역
     ENDIF
 ;ドリアードの特別処理
 ELSEIF RESULT == 2 && NO:MASTER == 400
     FLAG:570 |= 2
 ENDIF
 ;射精ゲージ設定
-SIF (TALENT:120 || TALENT:121) && MAXBASE:2 <= 0
-    MAXBASE:2 = CALC_GAUGE2_COMMON(TARGET)
+SIF (TALENT:남자 || TALENT:후타나리) && MAXBASE:사정 <= 0
+    MAXBASE:사정 = CALC_GAUGE2_COMMON(TARGET)
 ;噴乳ゲージ設定
-SIF TALENT:134
+SIF TALENT:모유체질
     CALL CALC_GAUGE3_SLAVE, TARGET, 1
 ;尿意ゲージ設定
-SIF TALENT:45 || EXP:6
+SIF TALENT:오줌싸개버릇 || EXP:방뇨경험
     CALL CALC_GAUGE4_SLAVE, TARGET, 1
 ;触手ゲージ設定
-SIF TALENT:146
+SIF TALENT:기생
     CALL CALC_TENTACLE_GAUGE
 ;酔いゲージ設定
 CALL CALC_GAUGE8, TARGET, 0
@@ -124,7 +124,7 @@ IF TARGET >= 0
 ENDIF
 ;ドリアード不在による時間経過
 IF FLAG:570 & 2 || ((FLAG:570 & 6) == 0 && RESULT <= 3 && NO:MASTER == 400)
-    FLAG:0 = 1
+    FLAG:휴식 = 1
     BEGIN TURNEND
     RETURN 1
 ENDIF
@@ -152,11 +152,11 @@ LOCAL:1 = GET_LIST(RAND:LOCAL)
 ;キャラ追加及び初期設定の処理へ
 CALL CHARA_STATE_BASIC, LOCAL:1
 ;購入人数追加
-FLAG:39 += 1
+FLAG:구입총계 += 1
 ;入手方法の記録
 CSTR:3 = 主人パチュリーの付属品として奴隷商人から購入した.
 ;購入された日を記録
-CFLAG:3111 = DAY
+CFLAG:구입한날 = DAY
 
 ;追加購入メッセージ
 PRINTFORML ＜파츄리를 구입했기 때문에, %조사처리(NAME:TARGET,"를")% 구입했습니다＞

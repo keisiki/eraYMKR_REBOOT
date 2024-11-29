@@ -9,23 +9,23 @@
 SIF DITEMTYPE:999:5 > 0
     RETURN 0
 ;성기가 더러워져 있으면(자) MASTER의 경우 페라하고는 할 수 없다(조교자가 더러운 무시나 애액, P, 모유의 얼룩이라면 OK)
-SIF STAIN:2 >= 4 && (STAIN:2 != 18 && STAIN:2 != 19) && ASSIPLAY == 0 && TALENT:MASTER:64 == 0
+SIF STAIN:자지 >= 4 && (STAIN:자지 != 18 && STAIN:자지 != 19) && ASSIPLAY == 0 && TALENT:MASTER:불결무시 == 0
     RETURN 0
 ;성기가 더러워져 있어 악취 민감해 순종 4 미만의 ASSI의 경우 페라는 할 수 없다(조교자가 더러운 무시나 애액, P, 모유의 얼룩이라면 OK)
-IF STAIN:2 >= 4 && (STAIN:2 != 18 && STAIN:2 != 19) && ASSIPLAY
-    SIF ABL:ASSI:10 < 4 && TALENT:ASSI:62 && TALENT:ASSI:64 == 0
+IF STAIN:자지 >= 4 && (STAIN:자지 != 18 && STAIN:자지 != 19) && ASSIPLAY
+    SIF ABL:ASSI:순종 < 4 && TALENT:ASSI:냄새민감 && TALENT:ASSI:불결무시 == 0
         RETURN 0
 ENDIF
 ;순종 4 미만·레즈끼(BL끼) 4 미만의 ASSI의 경우, 조교 대상이 동성이라면 실행할 수 없다(망신이나 복종이 있다면 OK)
 IF ASSIPLAY
-    SIF (ABL:ASSI:10 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:22 < 4) || (TALENT:120 && TALENT:ASSI:120 && ABL:ASSI:23 < 4))) && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:남자 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;조교자가 고양이혀라면 고양이 페라 패치 유효하지 않으면 안 됨
-SIF TALENT:PLAYER:54 && (FLAG:14 & 16) == 0
+SIF TALENT:PLAYER:고양이혀 && (FLAG:조교모드 & 16) == 0
     RETURN 0
 ;조교자가 고양이혀라면 조교자에게 기교 4 필요
-SIF TALENT:PLAYER:54 && ABL:PLAYER:12 < 4
+SIF TALENT:PLAYER:고양이혀 && ABL:PLAYER:기교 < 4
     RETURN 0
 ;조교 대상으로 페니스가 없으면 안 됨
 SIF EXIST_BAR(TARGET) == 0
@@ -46,7 +46,7 @@ SIF TEQUIP:59 == 17
 SIF TEQUIP:58
     RETURN 0
 ;촉수 조교중일 시 주인의 촉수사역Lv2이하는 안 됨
-SIF TEQUIP:90 && ABL:MASTER:98 <= 2
+SIF TEQUIP:90 && ABL:MASTER:촉수사역 <= 2
     RETURN 0
 RETURN 1
 
@@ -70,44 +70,44 @@ COM_NAME = 펠라한다
 CALL TRAIN_MESSAGE_COM005
 
 DOWNBASE:0 += 5
-DOWNBASE:1 += 50
+DOWNBASE:기력 += 50
 
 SOURCE:12 = 220
 SOURCE:31 = 50
 
 ;ABL:Ｃ감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 800
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 1400
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 2000
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 2500
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 2900
 ELSE
     SOURCE:0 = 3200
 ENDIF
 
 ;조교자의 TALENT:혀놀림을 본다
-IF TALENT:PLAYER:52
+IF TALENT:PLAYER:혀놀림
     TIMES SOURCE:0 , 2.00
     SOURCE:17 += SOURCE:0 / 20
 ENDIF
 ;조교자의 고양이혀를 본다
-SIF TALENT:PLAYER:54
+SIF TALENT:PLAYER:고양이혀
     TIMES SOURCE:0 , 0.70
 
 ;노예의 P⇔조교자의 입의 불결이 이동
-STAIN:2 |= STAIN:PLAYER:0
-STAIN:PLAYER:0 |= STAIN:2
+STAIN:자지 |= STAIN:PLAYER:입
+STAIN:PLAYER:입 |= STAIN:자지
 
 TCVAR:PLAYER:22 += 1
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 3
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 3
 ENDIF
 
@@ -121,16 +121,16 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM005
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 ;고양이혀
-IF TALENT:PLAYER:54
+IF TALENT:PLAYER:고양이혀
     PRINTFORM %CALLNAME:TARGET%의 
     SIF PALAM:13 >= PALAMLV:3
         PRINT 딱딱하게 우뚝 솟은 
-    IF TALENT:1
+    IF TALENT:비대음핵
         PRINT 페니스 같은 클리토리스를 
     ELSE
         PRINT 페니스를 
@@ -139,7 +139,7 @@ IF TALENT:PLAYER:54
 ;애태우기
 ELSEIF TEQUIP:68
     PRINTFORM %CALLNAME:TARGET%의 
-    IF TALENT:1
+    IF TALENT:비대음핵
         PRINT 움찔거리며 작게 떨고 있는 클리토리스에 
     ELSE
         SIF EX:30
@@ -152,7 +152,7 @@ ELSE
     PRINTFORM %CALLNAME:TARGET%의 
     SIF PALAM:13 >= PALAMLV:3
         PRINT 딱딱하게 우뚝 솟은 
-    IF TALENT:1
+    IF TALENT:비대음핵
         PRINT 페니스 같은 클리토리스를 
     ELSE
         PRINT 페니스를 

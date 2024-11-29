@@ -10,25 +10,25 @@ RETURN 0
 
 @EXCOM_ABLE658
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 조교자가 汚れ無視もしくは汚臭鈍感を持たないなら実行できない
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;[처녀]のときは, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && TALENT:0
+SIF FLAG:VA이상조교필터 & 4 && TALENT:처녀
     RETURN 0
 ;조교자가 アリスでないとダメ
 SIF NO:PLAYER != 14
     RETURN 0
 ;조교자의 기교가 4無いとできない
-SIF ABL:PLAYER:12 < 4
+SIF ABL:PLAYER:기교 < 4
     RETURN 0
 ;대상에게 페니스가 있다면 불가
 SIF EXIST_BAR(TARGET)
@@ -81,7 +81,7 @@ RETURN 1
 ;커맨드 본체
 ;--------------------------------------------------
 ;별명 「고속요등」. 줄＋아이마스크＋볼 개그라고 하는 삼중 긴박 상태로
-;인형들이 바이브래이터와 어널 바이브래이터를 동시에 돌진해 피스톤 운동을 펼쳐 가는 커맨드
+;인형들이 바이브래이터와 애널 바이브래이터를 동시에 돌진해 피스톤 운동을 펼쳐 가는 커맨드
 ;……(와)과 마음대로 정의
 @COM658
 IF FLAG:1100 & 1
@@ -118,37 +118,37 @@ SELECTCOM = 658
 TFLAG:1 = 1
 
 DOWNBASE:0 += 90
-DOWNBASE:1 += 180
+DOWNBASE:기력 += 180
 
 ;ABL:V감각을 본다
-IF ABL:1 == 0
+IF ABL:V감각 == 0
     SOURCE:1 = 40
-ELSEIF ABL:1 == 1
+ELSEIF ABL:V감각 == 1
     SOURCE:1 = 120
-ELSEIF ABL:1 == 2
+ELSEIF ABL:V감각 == 2
     SOURCE:1 = 300
-ELSEIF ABL:1 == 3
+ELSEIF ABL:V감각 == 3
     SOURCE:1 = 500
-ELSEIF ABL:1 == 4
+ELSEIF ABL:V감각 == 4
     SOURCE:1 = 800
 ELSE
     SOURCE:1 = 1500
 ENDIF
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 40
     SOURCE:22 = 200
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 120
     SOURCE:22 = 600
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 300
     SOURCE:22 = 800
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 500
     SOURCE:22 = 1200
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 800
     SOURCE:22 = 1400
 ELSE
@@ -157,19 +157,19 @@ ELSE
 ENDIF
 
 ;EXP:V경험을 본다
-IF EXP:0 < EXPLV:1
+IF EXP:V경험 < EXPLV:1
     TIMES SOURCE:1 , 0.20
     SOURCE:20 = 5500
-ELSEIF EXP:0 < EXPLV:2
+ELSEIF EXP:V경험 < EXPLV:2
     TIMES SOURCE:1 , 0.60
     SOURCE:20 = 300
-ELSEIF EXP:0 < EXPLV:3
+ELSEIF EXP:V경험 < EXPLV:3
     TIMES SOURCE:1 , 1.00
     SOURCE:20 = 50
-ELSEIF EXP:0 < EXPLV:4
+ELSEIF EXP:V경험 < EXPLV:4
     TIMES SOURCE:1 , 1.20
     SOURCE:20 = 10
-ELSEIF EXP:0 < EXPLV:5
+ELSEIF EXP:V경험 < EXPLV:5
     TIMES SOURCE:1 , 1.40
     SOURCE:20 = 0
 ELSE
@@ -178,19 +178,19 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES SOURCE:2 , 0.50
     SOURCE:20 += 2000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES SOURCE:2 , 1.00
     SOURCE:20 += 300
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES SOURCE:2 , 1.10
     SOURCE:20 += 50
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES SOURCE:2 , 1.20
     SOURCE:20 += 10
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.40
     SOURCE:20 += 0
 ELSE
@@ -245,19 +245,19 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:1 , 0.80
     TIMES SOURCE:2 , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:1 , 0.90
     TIMES SOURCE:2 , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:1 , 1.00
     TIMES SOURCE:2 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:1 , 1.10
     TIMES SOURCE:2 , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.20
 ELSE
@@ -266,14 +266,14 @@ ELSE
 ENDIF
 
 ;[작은체형]
-IF TALENT:128
+IF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
 ;[소인]
-ELSEIF TALENT:127
+ELSEIF TALENT:소인
     TIMES SOURCE:20 , 3.50
 ENDIF
 ;새드이나 왕S
-IF TALENT:PLAYER:81 || TALENT:PLAYER:177
+IF TALENT:PLAYER:새드 || TALENT:PLAYER:초S
     TIMES SOURCE:1 , 2.50
     TIMES SOURCE:2 , 2.50
     TIMES SOURCE:20 , 1.50
@@ -301,14 +301,14 @@ TEQUIP:20 = 1
 TEQUIP:25 = 1
 TCVAR:0 += 2
 TCVAR:1 += 2
-IF TALENT:0 && (CFLAG:21 & 256) == 0
-    IF ASSIPLAY && TALENT:PLAYER:120 == 0
+IF TALENT:처녀 && (CFLAG:첫특수커맨드 & 256) == 0
+    IF ASSIPLAY && TALENT:PLAYER:남자 == 0
         LOCAL = 2
     ELSE
         LOCAL = 1
     ENDIF
     TCVAR:50 += LOCAL
-    CFLAG:21 |= 256
+    CFLAG:첫특수커맨드 |= 256
 ENDIF
 RETURN 1
 
@@ -317,7 +317,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM658
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -326,20 +326,20 @@ PRINTFORM 완전하게 구속되어 움직일 수 없는 %CALLNAME:TARGET%의
 SIF PALAM:10 >= PALAMLV:4
     PRINT 젖어 번들거리는 
 ;조교자가 새드이나 왕S소유라면
-IF TALENT:PLAYER:81 || TALENT:PLAYER:177
+IF TALENT:PLAYER:새드 || TALENT:PLAYER:초S
     PRINTFORML 성기와 항문에 사양 않고 %조사선택(COM_TOOL_CALLNAME, "를")% 꽂아 비벼댔다.
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% 인형들에게 명령을 내려,
     PRINTFORML %CALLNAME:TARGET%에게 꽂힌 %조사선택(TSTR:10, "를")% 가차 없이 앞뒤로 움직이게 했다.
     PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 이상한 자극에 견딜 수 없게 되어 왔는지, 때때로 경련하면서 몸을 흔들고 있다
     ;대상이 음란＋(음 단지 or음고or마조 or왕Mor즉빠짐) or음마
-    IF TALENT:180 || (TALENT:170 && (TALENT:172 || TALENT:173 || TALENT:82 || TALENT:178 || TALENT:179))
+    IF TALENT:음마 || (TALENT:음란 && (TALENT:음호 || TALENT:음고 || TALENT:마조 || TALENT:초M || TALENT:즉각함락))
         PRINTL .
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 인형들에게 괴롭혀지면서, 그 격렬한 자극에
         PRINT 깊은 쾌감을 느껴 추잡하게 허덕이며 몇 번이나 몇 번이나 비명 지르고 있다
     ENDIF
 ELSE
     ;대상이 음란＋(음 단지 or음고or마조 or왕Mor즉빠짐) or음마
-    IF TALENT:180 || (TALENT:170 && (TALENT:172 || TALENT:173 || TALENT:82 || TALENT:178 || TALENT:179))
+    IF TALENT:음마 || (TALENT:음란 && (TALENT:음호 || TALENT:음고 || TALENT:마조 || TALENT:초M || TALENT:즉각함락))
         PRINTFORML 성기와 항문에 사양 않고 %조사선택(COM_TOOL_CALLNAME, "를")% 꽂아 비벼댔다.
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 인형들에게 괴롭혀지면서, 그 격렬한 자극에
         PRINT 깊은 쾌감을 느껴 추잡하게 허덕이며 몇 번이나 몇 번이나 비명 지르고 있다

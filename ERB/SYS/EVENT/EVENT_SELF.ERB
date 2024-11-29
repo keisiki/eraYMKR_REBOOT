@@ -22,16 +22,16 @@ ELSEIF TEQUIP:90
     CALL SELF_CHECK10
     TFLAG:128 = 0
 ;[卵生]か[産卵体質]で[妊娠]及び[懐卵]ではない, かつ産卵判定もしくは中田氏があるときは卵を産む
-ELSEIF (TALENT:135 || TALENT:136) && TALENT:140 == 0 && TALENT:145 == 0 && (CFLAG:71 > 0 || TFLAG:128)
+ELSEIF (TALENT:난생 || TALENT:산란체질) && TALENT:임신 == 0 && TALENT:회란 == 0 && (CFLAG:마스터의질싸 > 0 || TFLAG:128)
     CALL EVENT_LAY_EGG
 ;それ以外のときはCONFIGで調教後行為を抑制するがＯＮでなければ押し倒しイベントを見る
-ELSEIF (FLAG:12 & 4096) == 0
+ELSEIF (FLAG:SHOP이벤트확장 & 4096) == 0
     CALL SELF_CHECK2
     TFLAG:128 = 0
     LOCAL = 1
 ENDIF
 ;調教終了時に眠っているまたは失神している場合, アイアンメイデン幽閉終了もしくは調教後行為を抑制している場合ここで処理を終わらせる
-SIF EQUIP:14 || TFLAG:899 > 0 || TFLAG:198 & 16 || FLAG:12 & 4096 || SELECTCOM == 252
+SIF EQUIP:14 || TFLAG:899 > 0 || TFLAG:198 & 16 || FLAG:SHOP이벤트확장 & 4096 || SELECTCOM == 252
     RETURN 0
 
 ;調教後自慰
@@ -45,13 +45,13 @@ TFLAG:220 = 0
 ;助手がいて時間に余裕がある場合
 IF ASSI >= 0 && TFLAG:107 <= 100
     ;調教対象も助手もオトコでなくてレズ中毒が共にある場合
-    IF TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:32 && ABL:ASSI:32
+    IF TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:레즈중독 && ABL:ASSI:레즈중독
         CALL SELF_CHECK5
         ;調教対象も助手もフタナリの場合
-        SIF TALENT:121 && TALENT:ASSI:121
+        SIF TALENT:후타나리 && TALENT:ASSI:후타나리
             CALL SELF_CHECK6
     ;調教対象も助手もオトコでありＢＬ中毒が共にある場合
-    ELSEIF TALENT:120 && TALENT:ASSI:120 && ABL:33 && ABL:ASSI:33
+    ELSEIF TALENT:남자 && TALENT:ASSI:남자 && ABL:BL중독 && ABL:ASSI:BL중독
         CALL SELF_CHECK7
     ENDIF
 ENDIF
@@ -59,7 +59,7 @@ ENDIF
 ;TFLAG:220 == 0 とすることでレズプレイとの排他
 IF TFLAG:220 == 0 && TFLAG:107 <= 100
     ;CONFIGで夜イベント拡張がＯＮでないなら調教後夜這い処理へ
-    SIF (FLAG:12 & 256) == 0
+    SIF (FLAG:SHOP이벤트확장 & 256) == 0
         CALL SELF_CHECK8
 ENDIF
 
@@ -75,7 +75,7 @@ ENDIF
 VARSET LOCAL, 0
 ;前提条件
 ;恋慕がないとダメ
-SIF TALENT:150 == 0
+SIF TALENT:연모 == 0
     RETURN 0
 ;体力必要
 SIF BASE:0 < 500
@@ -86,40 +86,40 @@ SIF TFLAG:107 > 100
 ;ここでタイプ分け
 IF EXIST_PENIS(MASTER)
     ;タイプ1
-    IF TALENT:120 == 0
+    IF TALENT:남자 == 0
         ;非処女じゃないとダメ
-        SIF TALENT:0 || EXP:0 <= 0
+        SIF TALENT:처녀 || EXP:V경험 <= 0
             RETURN 0
 
         ;Ｖ感覚
-        IF ABL:1 == 0
+        IF ABL:V감각 == 0
             LOCAL = 0
-        ELSEIF ABL:1 == 1
+        ELSEIF ABL:V감각 == 1
             LOCAL = 1
-        ELSEIF ABL:1 <= 3
+        ELSEIF ABL:V감각 <= 3
             LOCAL = 2
         ELSE
             LOCAL = 3
         ENDIF
 
         ;欲望と奉仕精神によるボーナス
-        IF ABL:13 >= 4 && PALAM:13 >= PALAMLV:4
-            IF ABL:11 >= 5
+        IF ABL:봉사정신 >= 4 && PALAM:13 >= PALAMLV:4
+            IF ABL:욕망 >= 5
                 LOCAL += 2
-            ELSEIF ABL:11 == 4
+            ELSEIF ABL:욕망 == 4
                 LOCAL += 1
-            ELSEIF ABL:11 == 3 && ABL:13 >= 5
+            ELSEIF ABL:욕망 == 3 && ABL:봉사정신 >= 5
                 LOCAL += 1
             ENDIF
         ENDIF
         ;快感に素直, 快感の否定
-        IF TALENT:70 && LOCAL
+        IF TALENT:쾌감에솔직 && LOCAL
             LOCAL += 1
-        ELSEIF TALENT:71 && LOCAL
+        ELSEIF TALENT:쾌감을부정 && LOCAL
             LOCAL -= 2
         ENDIF
         ;淫乱
-        SIF TALENT:170 && LOCAL
+        SIF TALENT:음란 && LOCAL
             LOCAL += 1
         ;ある程度時間が経過している
         IF TFLAG:107 > 50 && LOCAL
@@ -140,7 +140,7 @@ IF EXIST_PENIS(MASTER)
 
         DRAWLINE
         ;地の文章カット
-        IF CFLAG:99 == 0
+        IF CFLAG:지문소거판정 == 0
             PRINTFORM %조사처리(CALLNAME:MASTER,"과")% %조사처리(CALLNAME:TARGET,"는")% 아직 식지 않은 흥분을 억누르지 못하고, 
             PRINTFORML 다시 {TFLAG:226}번 침대 위에서 뒹굴었다….
         ENDIF
@@ -150,7 +150,7 @@ IF EXIST_PENIS(MASTER)
 
         ;Ｖ経験
         CALL COMMON_UP_EXP,TARGET, 0, TFLAG:226, 0
-        CFLAG:173 += TFLAG:226
+        CFLAG:주인에게V바친회수 += TFLAG:226
         ;Ｖ調律経験
         CALL COMMON_UP_EXP,TARGET, 42, TFLAG:226, 0
         ;快Ｖ의 구슬
@@ -160,45 +160,45 @@ IF EXIST_PENIS(MASTER)
         ;欲情의 구슬
         CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL*250), 1
         ;Ｖ感覚＋従順＋奉仕精神が大きい奴隷は名残を惜しむ描写を地の文章表示のときにはおこなう
-        IF (ABL:1 + ABL:10 + ABL:13) >= 13 && CFLAG:99 == 0
+        IF (ABL:V감각 + ABL:순종 + ABL:봉사정신) >= 13 && CFLAG:지문소거판정 == 0
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 아직 미련이 남은 듯 옷자락을 잡아끌었다.
             PRINTFORMW 하지만 %조사처리(CALLNAME:MASTER,"는")% 그 손을 뿌리치고, 방을 뒤로 했다….
         ENDIF
     ;タイプ2
     ELSE
         ;Ａ経験ないとダメ
-        SIF EXP:1 <= 0
+        SIF EXP:A경험 <= 0
             RETURN 0
 
         ;Ａ感覚
-        IF ABL:2 == 0
+        IF ABL:A감각 == 0
             LOCAL = 0
-        ELSEIF ABL:2 == 1
+        ELSEIF ABL:A감각 == 1
             LOCAL = 1
-        ELSEIF ABL:2 <= 3
+        ELSEIF ABL:A감각 <= 3
             LOCAL = 2
         ELSE
             LOCAL = 3
         ENDIF
 
         ;欲望と奉仕精神によるボーナス
-        IF ABL:13 >= 4 && PALAM:13 >= PALAMLV:4
-            IF ABL:11 >= 5
+        IF ABL:봉사정신 >= 4 && PALAM:13 >= PALAMLV:4
+            IF ABL:욕망 >= 5
                 LOCAL += 2
-            ELSEIF ABL:11 == 4
+            ELSEIF ABL:욕망 == 4
                 LOCAL += 1
-            ELSEIF ABL:11 == 3 && ABL:13 >= 5
+            ELSEIF ABL:욕망 == 3 && ABL:봉사정신 >= 5
                 LOCAL += 1
             ENDIF
         ENDIF
         ;快感に素直, 快感の否定
-        IF TALENT:70 && LOCAL
+        IF TALENT:쾌감에솔직 && LOCAL
             LOCAL += 1
-        ELSEIF TALENT:71 && LOCAL
+        ELSEIF TALENT:쾌감을부정 && LOCAL
             LOCAL -= 2
         ENDIF
         ;淫乱
-        SIF TALENT:170 && LOCAL
+        SIF TALENT:음란 && LOCAL
             LOCAL += 1
         ;ある程度時間が経過している
         IF TFLAG:107 > 50 && LOCAL
@@ -219,7 +219,7 @@ IF EXIST_PENIS(MASTER)
 
         DRAWLINE
         ;地の文章カット
-        IF CFLAG:99 == 0
+        IF CFLAG:지문소거판정 == 0
             PRINTFORM %조사처리(CALLNAME:MASTER,"과")% %조사처리(CALLNAME:TARGET,"는")% 아직 식지 않은 흥분을 억누르지 못하고, 
             PRINTFORML 다시 {TFLAG:226}번 침대 위에서 뒹굴었다….
         ENDIF
@@ -229,7 +229,7 @@ IF EXIST_PENIS(MASTER)
 
         ;Ａ経験
         CALL COMMON_UP_EXP,TARGET, 1, TFLAG:226, 0
-        CFLAG:174 += TFLAG:226
+        CFLAG:주인에게A바친회수 += TFLAG:226
         ;快Ａ의 구슬
         CALL COMMON_UP_JUEL, TARGET, 2, (LOCAL*200), 0
         ;恭順의 구슬
@@ -237,46 +237,46 @@ IF EXIST_PENIS(MASTER)
         ;欲情의 구슬
         CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL*250), 1
         ;Ａ感覚＋従順＋奉仕精神が大きい奴隷は名残を惜しむ描写を地の文章表示のときにはおこなう
-        IF (ABL:2 + ABL:10 + ABL:13) >= 13 && CFLAG:99 == 0
+        IF (ABL:A감각 + ABL:순종 + ABL:봉사정신) >= 13 && CFLAG:지문소거판정 == 0
             PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 아직 미련이 남은 듯 옷자락을 잡아끌었다.
             PRINTFORMW 하지만 %조사처리(CALLNAME:MASTER,"는")% 그 손을 뿌리치고, 방을 뒤로 했다….
         ENDIF
     ENDIF
 ;タイプ3
-ELSEIF TALENT:120 || TALENT:121
+ELSEIF TALENT:남자 || TALENT:후타나리
     ;主人が非処女じゃないとダメ
-    SIF TALENT:MASTER:0 || EXP:MASTER:0 <= 0
+    SIF TALENT:MASTER:처녀 || EXP:MASTER:V경험 <= 0
         RETURN 0
 
     ;Ｃ感覚
-    IF ABL:0 == 0
+    IF ABL:C감각 == 0
         LOCAL = 0
-    ELSEIF ABL:0 == 1
+    ELSEIF ABL:C감각 == 1
         LOCAL = 1
-    ELSEIF ABL:0 <= 3
+    ELSEIF ABL:C감각 <= 3
         LOCAL = 2
     ELSE
         LOCAL = 3
     ENDIF
 
     ;欲望と奉仕精神によるボーナス
-    IF ABL:13 >= 4 && PALAM:13 >= PALAMLV:4
-        IF ABL:11 >= 5
+    IF ABL:봉사정신 >= 4 && PALAM:13 >= PALAMLV:4
+        IF ABL:욕망 >= 5
             LOCAL += 2
-        ELSEIF ABL:11 == 4
+        ELSEIF ABL:욕망 == 4
             LOCAL += 1
-        ELSEIF ABL:11 == 3 && ABL:13 >= 5
+        ELSEIF ABL:욕망 == 3 && ABL:봉사정신 >= 5
             LOCAL += 1
         ENDIF
     ENDIF
     ;快感に素直, 快感の否定
-    IF TALENT:70 && LOCAL
+    IF TALENT:쾌감에솔직 && LOCAL
         LOCAL += 1
-    ELSEIF TALENT:71 && LOCAL
+    ELSEIF TALENT:쾌감을부정 && LOCAL
         LOCAL -= 2
     ENDIF
     ;淫乱
-    SIF TALENT:170 && LOCAL
+    SIF TALENT:음란 && LOCAL
         LOCAL += 1
     ;ある程度時間が経過している
     IF TFLAG:107 > 50 && LOCAL
@@ -297,7 +297,7 @@ ELSEIF TALENT:120 || TALENT:121
 
     DRAWLINE
     ;地の文章カット
-    IF CFLAG:99 == 0
+    IF CFLAG:지문소거판정 == 0
         PRINTFORM %조사처리(CALLNAME:MASTER,"과")% %조사처리(CALLNAME:TARGET,"는")% 아직 식지 않은 흥분을 억누르지 못하고, 
         PRINTFORML 다시 {TFLAG:226}번 침대 위에서 뒹굴었다….
     ENDIF
@@ -307,10 +307,10 @@ ELSEIF TALENT:120 || TALENT:121
 
     ;主人のＶ経験
     CALL COMMON_UP_EXP,MASTER, 0, TFLAG:226, 0
-    SIF TALENT:121 || TALENT:1
-        CFLAG:175 += TFLAG:226
+    SIF TALENT:후타나리 || TALENT:비대음핵
+        CFLAG:주인의V범한회수 += TFLAG:226
     ;レズ経験
-    SIF TALENT:121 || TALENT:1
+    SIF TALENT:후타나리 || TALENT:비대음핵
         CALL COMMON_UP_EXP,TARGET, 12, TFLAG:226, 0
     ;快Ｃ의 구슬
     CALL COMMON_UP_JUEL, TARGET, 0, (LOCAL*150), 0
@@ -319,36 +319,36 @@ ELSEIF TALENT:120 || TALENT:121
     ;欲情의 구슬
     CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL*250), 1
     ;Ｃ感覚＋従順＋奉仕精神が大きい奴隷は名残を惜しむ描写を地の文章表示のときにはおこなう
-    IF (ABL:0 + ABL:10 + ABL:13) >= 13 && CFLAG:99 == 0
+    IF (ABL:C감각 + ABL:순종 + ABL:봉사정신) >= 13 && CFLAG:지문소거판정 == 0
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 아직 미련이 남은 듯 옷자락을 잡아끌었다.
         PRINTFORMW 하지만 %조사처리(CALLNAME:MASTER,"는")% 그 손을 뿌리치고, 방을 뒤로 했다….
     ENDIF
 ;タイプ4
 ELSE
     ;レズっ気ないとダメ
-    SIF ABL:22 < 1
+    SIF ABL:레즈끼 < 1
         RETURN 0
 
     ;レズっ気
-    LOCAL = MIN(ABL:22, 5)
+    LOCAL = MIN(ABL:레즈끼, 5)
 
     ;レズ中毒によるボーナス
-    IF ABL:32 >= 5
+    IF ABL:레즈중독 >= 5
         LOCAL += 3
-    ELSEIF ABL:32 == 4
+    ELSEIF ABL:레즈중독 == 4
         LOCAL += 2
-    ELSEIF ABL:32 == 3
+    ELSEIF ABL:레즈중독 == 3
         LOCAL += 1
     ENDIF
 
     ;快感に素直, 快感の否定
-    IF TALENT:70 && LOCAL
+    IF TALENT:쾌감에솔직 && LOCAL
         LOCAL += 1
-    ELSEIF TALENT:71 && LOCAL
+    ELSEIF TALENT:쾌감을부정 && LOCAL
         LOCAL -= 2
     ENDIF
     ;淫乱
-    SIF TALENT:170 && LOCAL
+    SIF TALENT:음란 && LOCAL
         LOCAL += 1
     ;ある程度時間が経過している
     IF TFLAG:107 > 50 && LOCAL
@@ -369,7 +369,7 @@ ELSE
 
     DRAWLINE
     ;地の文章カット
-    IF CFLAG:99 == 0
+    IF CFLAG:지문소거판정 == 0
         PRINTFORM %조사처리(CALLNAME:MASTER,"과")% %조사처리(CALLNAME:TARGET,"는")% 아직 식지 않은 흥분을 억누르지 못하고, 
         PRINTFORML 다시 {TFLAG:226}번 침대 위에서 뒹굴었다….
     ENDIF
@@ -386,7 +386,7 @@ ELSE
     ;屈服의 구슬
     CALL COMMON_UP_JUEL, TARGET, 14, (LOCAL*150), 1
     ;Ｃ感覚＋従順＋奉仕精神が大きい奴隷は名残を惜しむ描写を地の文章表示のときにはおこなう
-    IF (ABL:0 + ABL:10 + ABL:13) >= 13 && CFLAG:99 == 0
+    IF (ABL:C감각 + ABL:순종 + ABL:봉사정신) >= 13 && CFLAG:지문소거판정 == 0
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 아직 미련이 남은 듯 옷자락을 잡아끌었다.
         PRINTFORMW 하지만 %조사처리(CALLNAME:MASTER,"는")% 그 손을 뿌리치고, 방을 뒤로 했다….
     ENDIF
@@ -410,57 +410,57 @@ TFLAG:676 = JUEL:14
 TFLAG:677 = JUEL:15
 
 ;経験変化量も記録
-TFLAG:680 = EXP:0
-TFLAG:681 = EXP:1
-TFLAG:682 = EXP:3
-TFLAG:683 = EXP:5
-TFLAG:684 = EXP:10
-TFLAG:685 = EXP:11
-TFLAG:686 = EXP:20
+TFLAG:680 = EXP:V경험
+TFLAG:681 = EXP:A경험
+TFLAG:682 = EXP:사정경험
+TFLAG:683 = EXP:분유경험
+TFLAG:684 = EXP:자위경험
+TFLAG:685 = EXP:조교자위경험
+TFLAG:686 = EXP:봉사쾌락경험
 
 ;自慰中毒を見る
-IF ABL:30 == 0
+IF ABL:자위중독 == 0
     LOCAL:1 = 0
-ELSEIF ABL:30 == 1
+ELSEIF ABL:자위중독 == 1
     LOCAL:1 = 1
-ELSEIF ABL:30 == 2
+ELSEIF ABL:자위중독 == 2
     LOCAL:1 = 2
-ELSEIF ABL:30 == 3
+ELSEIF ABL:자위중독 == 3
     LOCAL:1 = 4
-ELSEIF ABL:30 == 4
+ELSEIF ABL:자위중독 == 4
     LOCAL:1 = 6
 ELSE
     LOCAL:1 = 9
 ENDIF
 
 ;Ｃ感覚が4以上かつ欲望のパラメーターが10000を超えていた場合, 欲望が4以上なら追加
-IF ABL:0 >= 4 && PALAM:13 >= PALAMLV:4
-    IF ABL:11 == 4
+IF ABL:C감각 >= 4 && PALAM:13 >= PALAMLV:4
+    IF ABL:욕망 == 4
         LOCAL:1 += 1
-    ELSEIF ABL:11 == 5
+    ELSEIF ABL:욕망 == 5
         LOCAL:1 += 2
     ENDIF
 ENDIF
 
 ;自慰しやすい
-IF TALENT:60
+IF TALENT:자위하기쉬움
     LOCAL:1 *= 2
     ;欲望ＬＶ３でもAに+1する
-    SIF ABL:0 >= 3 && ABL:11 == 3 && PALAM:13 >= PALAMLV:3
+    SIF ABL:C감각 >= 3 && ABL:욕망 == 3 && PALAM:13 >= PALAMLV:3
         LOCAL:1 += 1
 ENDIF
 ;快感に素直, 快感の否定
-IF TALENT:70 && LOCAL:1
+IF TALENT:쾌감에솔직 && LOCAL:1
     LOCAL:1 += 1
-ELSEIF TALENT:71 && LOCAL:1
+ELSEIF TALENT:쾌감을부정 && LOCAL:1
     LOCAL:1 -= 2
 ENDIF
 ;淫乱
-SIF TALENT:170 && LOCAL:1
+SIF TALENT:음란 && LOCAL:1
     LOCAL:1 += 1
 
 ;助手が鼓舞
-SIF ASSI >= 0 && TALENT:ASSI:95 && LOCAL:1
+SIF ASSI >= 0 && TALENT:ASSI:고무 && LOCAL:1
     LOCAL:1 += 1
 
 ;残り体力が100未満
@@ -498,12 +498,12 @@ SIF LOCAL < 1
     RETURN 0
 
 ;Ａ系拡張コマンドＯＮのときにはアナニーをする可能性がある
-IF FLAG:15 & 4
+IF FLAG:커맨드확장 & 4
     ;自慰, アナニー判定.ポイントが同じ場合は自慰優先(Ｃ感覚が０の場合はアナニーのみ)
     ;Ａ感覚見る
-    LOCAL:2 = ABL:2
+    LOCAL:2 = ABL:A감각
     ;Ｃ感覚見る
-    LOCAL:3 = ABL:0
+    LOCAL:3 = ABL:C감각
 
     ;調教時にＡ快楽, Ｃ快楽をより稼いだほうに+1
     IF PALAM:2 > PALAM:0
@@ -514,9 +514,9 @@ IF FLAG:15 & 4
 
     ;尻穴狂いだとアナニーしやすい+
     ;淫核／淫茎だと通常の自慰しやすい+
-    IF TALENT:173
+    IF TALENT:음고
         LOCAL:2 += 1
-    ELSEIF TALENT:171
+    ELSEIF TALENT:음핵／음경
         LOCAL:3 += 1
     ENDIF
 ELSE
@@ -526,13 +526,13 @@ ELSE
 ENDIF
 
 ;貞操帯を装着している場合, 自慰できなくなって悶々とすることに
-IF CFLAG:42 & 2
+IF CFLAG:특수장비 & 2
     CALL SELF_CHECK9, LOCAL:1, ARG
     RETURN 0
 ENDIF
 
 ;自慰隠蔽発覚パッチＯＮのときの処理
-IF FLAG:1700 & 1
+IF FLAG:자위은폐발각패치 & 1
     LOCAL:4 = CHECK_BARE(LOCAL:1)
 
     IF LOCAL:4 > RAND:100
@@ -541,32 +541,32 @@ IF FLAG:1700 & 1
     ELSE
         ;ばれなかった場合
         ;自慰の報告　従順+露出+マゾ-反発刻印*2
-        LOCAL:4 = ABL:10 + ABL:14 + ABL:21 - ( MARK:9 * 2 )
+        LOCAL:4 = ABL:순종 + ABL:노출증 + ABL:마조끼 - ( MARK:반발각인 * 2 )
         ;確定値になってる場合は確率次第ということで1/2で
         SIF LOCAL:4 >= 10
             LOCAL:4 = RAND:11 + 5
         ;素直か幼稚だと言いやすい
-        SIF TALENT:13 || TALENT:131
+        SIF TALENT:솔직함 || TALENT:유치
             LOCAL:4 += 2
         ;服従系素質を持っていれば言いやすい
-        SIF CFLAG:15
+        SIF CFLAG:이벤트취득복종
             LOCAL:4 += 1
-        IF LOCAL:4 >= 10 && MARK:9 < 2 || TALENT:39
+        IF LOCAL:4 >= 10 && MARK:반발각인 < 2 || TALENT:약점
             ;TFLAG:13 = 0
             PRINTL 　
             ;調教後自慰(151)もしくは調教後アナニー(152)のイベント口上呼び出し
             LOCAL:4 = (LOCAL:2 > LOCAL:3) ? 152 # 151
             CALL SELF_KOJO, TARGET, LOCAL:4, LOCAL
             PRINTL 　
-            IF TALENT:39 && MARK:9 > 0
+            IF TALENT:약점 && MARK:반발각인 > 0
                 ;地の文カット
-                SIF CFLAG:99 == 0
+                SIF CFLAG:지문소거판정 == 0
                     PRINTL 자위를 하고 나면 보고하도록 단단히 일러 놓자, 
                 JUEL:15 += LOCAL*200
             ENDIF
             ;地の文カット
-            IF CFLAG:99 == 0
-                SIF TALENT:39 && MARK:9 > 0
+            IF CFLAG:지문소거판정 == 0
+                SIF TALENT:약점 && MARK:반발각인 > 0
                     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 부끄러움으로 얼굴이 빨갛게 된 채
                 PRINTFORML {LOCAL}회 \@(LOCAL:2 > LOCAL:3) ? 애널 자위 # 자위\@를 한 것을 %조사처리(CALLNAME:TARGET,"는")% 보고해 왔다.
             ENDIF
@@ -578,7 +578,7 @@ IF FLAG:1700 & 1
 ELSE
     DRAWLINE
     ;地の文章カット
-    IF CFLAG:99 == 0
+    IF CFLAG:지문소거판정 == 0
         IF ARG == 1
             PRINTFORM %조사처리(CALLNAME:MASTER,"가")% 나간 후, %CALLNAME:TARGET%는 
         ELSE
@@ -588,7 +588,7 @@ ELSE
 
     IF LOCAL:2 > LOCAL:3
         ;地の文カット
-        SIF CFLAG:99 == 0
+        SIF CFLAG:지문소거판정 == 0
             PRINTFORML {LOCAL}회 애널 자위를 한 것 같다.
 
         ;調教後アナニーのイベント口上呼び出し
@@ -606,7 +606,7 @@ ELSE
         CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL:1*250), 1
     ELSE
         ;地の文カット
-        SIF CFLAG:99 == 0
+        SIF CFLAG:지문소거판정 == 0
             PRINTFORML {LOCAL}번 자위를 한 것 같다.
 
         ;調教後自慰のイベント口上呼び出し
@@ -622,15 +622,15 @@ ELSE
         CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL:1*250), 1
     ENDIF
     ;対象奴隷の従順＋露出癖＋マゾっ気の合計が10以上でなおかつ昼のターンであれば主人に報告する
-    IF ABL:10 + ABL:14 + ABL:21 >= 10 && TIME == 0
+    IF ABL:순종 + ABL:노출증 + ABL:마조끼 >= 10 && TIME == 0
         ;地の文カット
-        SIF CFLAG:99 == 0
+        SIF CFLAG:지문소거판정 == 0
             PRINTFORML 그것을 %조사처리(CALLNAME:TARGET,"는")% 보고해 왔다.
         ;恥情의 구슬
         CALL COMMON_UP_JUEL, TARGET, 15, (LOCAL:1*200), 1
     ENDIF
     ;対象奴隷の従順と欲望のLvのいずれかが5であって地の文を表示のときには満たされぬ欲望を持て余す様子が描写される
-    SIF (ABL:10 == 5 || ABL:11 == 5) && CFLAG:99 == 0
+    SIF (ABL:순종 == 5 || ABL:욕망 == 5) && CFLAG:지문소거판정 == 0
         PRINTFORMW 하지만 몇 번 자위를 해봐도, %조사처리(CALLNAME:MASTER,"를")% 향한 욕망은 채워지지 않았다
 ENDIF
 
@@ -641,13 +641,13 @@ ENDIF
 VARSET LOCAL, 0
 ;噴乳中毒による搾乳チェック
 ;オトコだとダメ
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;母乳体質必要
-SIF TALENT:134 == 0
+SIF TALENT:모유체질 == 0
     RETURN 0
 ;Ｂ感覚及び欲望2以上, かつ技巧及び噴乳中毒1以上必要
-SIF ABL:3 < 2 || ABL:11 < 2 || ABL:12 == 0 || ABL:34 == 0
+SIF ABL:B감각 < 2 || ABL:욕망 < 2 || ABL:기교 == 0 || ABL:분유중독 == 0
     RETURN 0
 ;体力必要
 SIF BASE:0 < 500
@@ -656,37 +656,37 @@ SIF BASE:0 < 500
 SIF TFLAG:107 > 100
     RETURN 0
 ;噴乳中毒をみる
-LOCAL = (ABL:34 > 3) ? 1+ABL:34 # ABL:34
-LOCAL += (ABL:34 > 4) ? 1 # 0
+LOCAL = (ABL:분유중독 > 3) ? 1+ABL:분유중독 # ABL:분유중독
+LOCAL += (ABL:분유중독 > 4) ? 1 # 0
 ;Ｂ感覚が4以上かつ欲望のパラメーターが10000を超えていた場合, 欲望が4以上なら追加
-IF ABL:3 >= 4 && PALAM:13 >= PALAMLV:4
-    IF ABL:11 == 4
+IF ABL:B감각 >= 4 && PALAM:13 >= PALAMLV:4
+    IF ABL:욕망 == 4
         LOCAL += 1
-    ELSEIF ABL:11 == 5
+    ELSEIF ABL:욕망 == 5
         LOCAL += 2
     ENDIF
 ENDIF
 ;自慰しやすい
-IF TALENT:60
+IF TALENT:자위하기쉬움
     LOCAL += 2
     ;欲望ＬＶ３でもLOCALに+1する
-    SIF ABL:11 == 3 && ABL:3 >= 3 && PALAM:13 >= PALAMLV:3
+    SIF ABL:욕망 == 3 && ABL:B감각 >= 3 && PALAM:13 >= PALAMLV:3
         LOCAL += 1
 ENDIF
 ;快感に素直, 快感の否定
-IF TALENT:70 && LOCAL
+IF TALENT:쾌감에솔직 && LOCAL
     LOCAL += 1
-ELSEIF TALENT:71 && LOCAL
+ELSEIF TALENT:쾌감을부정 && LOCAL
     LOCAL -= 2
 ENDIF
 ;Ｂ敏感, Ｂ鈍感
-IF TALENT:106 && LOCAL
+IF TALENT:B민감 && LOCAL
     LOCAL += 1
-ELSEIF TALENT:107 && LOCAL
+ELSEIF TALENT:B둔감 && LOCAL
     LOCAL -= 1
 ENDIF
 ;淫乱
-SIF TALENT:170 && LOCAL
+SIF TALENT:음란 && LOCAL
     LOCAL += 1
 
 ;残り体力が100未満
@@ -723,7 +723,7 @@ TFLAG:227 = TABLE_CALC(TFLAG:227, 100, 5)
 TFLAG:227 = TABLE_CALC(TFLAG:227, 200, 10)
 TFLAG:227 = MIN(TFLAG:227, 300)
 ;地の文章カット
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINT 
     PRINTFORML 조교 종료 후에도 가슴의 팽팽함은 그대로라 {TFLAG:227}cc의 모유를 짜낸 것 같다.
 ENDIF
@@ -740,10 +740,10 @@ CALL COMMON_UP_JUEL, TARGET, 11, (LOCAL*20), 0
 ;欲情의 구슬
 CALL COMMON_UP_JUEL, TARGET, 13, (LOCAL*50), 1
 ;対象奴隷の従順＋露出癖＋マゾっ気の合計が10以上であるなら母乳を主人のもとに持ってくる
-IF ABL:10 + ABL:14 + ABL:21 >= 10
+IF ABL:순종 + ABL:노출증 + ABL:마조끼 >= 10
     PRINTFORML 그 모유를 %조사처리(CALLNAME:TARGET,"는")% 그릇에 담아 가지고 왔다.
     ;CONFIGで展示室がＯＮであり蓋付き瓶があるかアイテムなし設定のとき対象奴隷の母乳蒐集がまだなら蒐集する
-    IF (CFLAG:10 & 256) == 0 && (ITEM:81 > 0 || NOITEM) && FLAG:12 & 8
+    IF (CFLAG:수집품채취여부 & 256) == 0 && (ITEM:81 > 0 || NOITEM) && FLAG:SHOP이벤트확장 & 8
         CALL SWEET_POTATO_MILK_2, LOCAL
     ELSE
         PRINTFORML %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:TARGET,"가")% 가지고 온 모유를 모조리 마셨다.
@@ -758,21 +758,21 @@ WAIT
 ;-----------------------------------------------
 @SELF_CHECK5
 ;貞操帯装着時は不可能(前提で助手がいないときは弾いている)
-SIF CFLAG:42 & 2 || CFLAG:ASSI:42 & 2
+SIF CFLAG:특수장비 & 2 || CFLAG:ASSI:특수장비 & 2
     RETURN 0
 ;レズ中毒によるレズチェック
 ;Ｃ感覚3以上及び従順, 欲望, レズっ気全て2以上必要
-SIF ABL:0 < 3 || ABL:10 < 2 || ABL:11 < 2 || ABL:22 < 2
+SIF ABL:C감각 < 3 || ABL:순종 < 2 || ABL:욕망 < 2 || ABL:레즈끼 < 2
     RETURN 0
 ;体力必要
-SIF BASE:0 < 500 || BASE:ASSI:0 < 500
+SIF BASE:0 < 500 || BASE:ASSI:체력 < 500
     RETURN 0
 ;レズ中毒をみる
-TFLAG:220 = (ABL:32 > 3) ? 1+ABL:32 # ABL:32
-TFLAG:220 += (ABL:32 > 4) ? 1 # 0
+TFLAG:220 = (ABL:레즈중독 > 3) ? 1+ABL:레즈중독 # ABL:레즈중독
+TFLAG:220 += (ABL:레즈중독 > 4) ? 1 # 0
 ;助手のレズ中毒をみる
-TFLAG:220 += (ABL:ASSI:32 > 3) ? 1+ABL:ASSI:32 # ABL:ASSI:32
-TFLAG:220 += (ABL:ASSI:32 > 4) ? 1 # 0
+TFLAG:220 += (ABL:ASSI:레즈중독 > 3) ? 1+ABL:ASSI:레즈중독 # ABL:ASSI:레즈중독
+TFLAG:220 += (ABL:ASSI:레즈중독 > 4) ? 1 # 0
 ;ある程度時間が経過している
 IF TFLAG:107 > 50
     TIMES TFLAG:220 , 0.50
@@ -794,7 +794,7 @@ TFLAG:226 = TABLE_CALC(TFLAG:226, 10, 5)
 TFLAG:226 = MIN(TFLAG:226, 25)
 
 ;地の文章カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORML %조사처리(CALLNAME:ASSI,"과")% %조사처리(CALLNAME:TARGET,"는")% 조교후{TFLAG:226}번 레즈플레이를 했다
 
 ;調教後レズプレイのイベント口上呼び出し
@@ -804,16 +804,16 @@ CALL SELF_KOJO, TARGET, 154
 CALL COMMON_UP_EXP,TARGET, 12, TFLAG:226, 0
 CALL COMMON_UP_EXP,ASSI, 12, TFLAG:226, 2
 ;절정経験
-CALL COMMON_UP_EXP,TARGET, 2, ((TFLAG:220 * ABL:10) / 5), 0
-LOCAL = TFLAG:220*50*(ABL:12+ABL:13)
+CALL COMMON_UP_EXP,TARGET, 2, ((TFLAG:220 * ABL:순종) / 5), 0
+LOCAL = TFLAG:220*50*(ABL:기교+ABL:봉사정신)
 ;助手がふたなりならば対象奴隷に精液経験加算
-IF TALENT:ASSI:121
+IF TALENT:ASSI:후타나리
     ;精液経験
     CALL COMMON_UP_EXP,TARGET, 4, TFLAG:220, 0
     LOCAL *= 2
 ENDIF
 ;対象奴隷がふたなりならば射精経験加算
-IF TALENT:121
+IF TALENT:후타나리
     ;射精経験
     CALL COMMON_UP_EXP,TARGET, 3, TFLAG:220, 0
     ;LUNATIC以上は射精するたびに体力が減少
@@ -822,14 +822,14 @@ IF TALENT:121
     CALL COMMON_UP_JUEL, TARGET, 15, (TFLAG:220*100), 0
 ENDIF
 ;助手が[ドＳ]または[サド]かつサドっ気Lv5
-IF (ABL:ASSI:20 > 4 && TALENT:ASSI:81) || TALENT:ASSI:177
+IF (ABL:ASSI:새드끼 > 4 && TALENT:ASSI:새드) || TALENT:ASSI:초S
     ;苦痛快楽経験
     CALL COMMON_UP_EXP,TARGET, 30, TFLAG:220, 0
     ;苦痛의 구슬
-    CALL COMMON_UP_JUEL, TARGET, 16, (TFLAG:220*100*ABL:21), 0
+    CALL COMMON_UP_JUEL, TARGET, 16, (TFLAG:220*100*ABL:마조끼), 0
 ENDIF
 ;快Ｃ의 구슬
-CALL COMMON_UP_JUEL, TARGET, 0, (TFLAG:220*100*ABL:0), 0
+CALL COMMON_UP_JUEL, TARGET, 0, (TFLAG:220*100*ABL:C감각), 0
 ;習得의 구슬
 CALL COMMON_UP_JUEL, TARGET, 11, LOCAL, 0
 ;欲情의 구슬
@@ -843,17 +843,17 @@ WAIT
 ;-----------------------------------------------
 @SELF_CHECK6
 ;貞操帯装着時は不可能(前提で助手がいないときは弾いている)
-SIF CFLAG:42 & 2 || CFLAG:ASSI:42 & 2
+SIF CFLAG:특수장비 & 2 || CFLAG:ASSI:특수장비 & 2
     RETURN 0
 ;奉仕精神, 精液中毒がともに3以上ないとダメ
-SIF ABL:13 < 3 || ABL:31 < 3
+SIF ABL:봉사정신 < 3 || ABL:정액중독 < 3
     RETURN 0
 ;条件を満たさない場合は処理をここで終了させる(前のレズプレイで判断)
 SIF TFLAG:220 < 1
     RETURN 0
 
 ;地の文章カット
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINTFORML %조사처리(CALLNAME:ASSI,"과")% %조사처리(CALLNAME:TARGET,"는")% 그대로 
     PRINTFORML \@(TIME == 0) ? 날이 저물 때까지 # 밤이 새도록 \@ 서로의 페니스를 빨고 있었다.
 ENDIF
@@ -885,21 +885,21 @@ WAIT
 ;-----------------------------------------------
 @SELF_CHECK7
 ;貞操帯装着時は不可能(前提で助手がいないときは弾いている)
-SIF CFLAG:42 & 2 || CFLAG:ASSI:42 & 2
+SIF CFLAG:특수장비 & 2 || CFLAG:ASSI:특수장비 & 2
     RETURN 0
 ;ＢＬ中毒によるＢＬチェック
 ;Ｃ感覚3以上及び従順, 欲望, ＢＬっ気全て2以上必要
-SIF ABL:0 < 3 || ABL:10 < 2 || ABL:11 < 2 || ABL:23 < 2
+SIF ABL:C감각 < 3 || ABL:순종 < 2 || ABL:욕망 < 2 || ABL:BL끼 < 2
     RETURN 0
 ;体力必要
-SIF BASE:0 < 500 || BASE:ASSI:0 < 500
+SIF BASE:0 < 500 || BASE:ASSI:체력 < 500
     RETURN 0
 ;ＢＬ中毒をみる
-TFLAG:220 = (ABL:33 > 3) ? 1+ABL:33 # ABL:33
-TFLAG:220 += (ABL:33 > 4) ? 1 # 0
+TFLAG:220 = (ABL:BL중독 > 3) ? 1+ABL:BL중독 # ABL:BL중독
+TFLAG:220 += (ABL:BL중독 > 4) ? 1 # 0
 ;助手のＢＬ中毒を見る
-TFLAG:220 += (ABL:ASSI:33 > 3) ? 1+ABL:ASSI:33 # ABL:ASSI:33
-TFLAG:220 += (ABL:ASSI:33 > 4) ? 1 # 0
+TFLAG:220 += (ABL:ASSI:BL중독 > 3) ? 1+ABL:ASSI:BL중독 # ABL:ASSI:BL중독
+TFLAG:220 += (ABL:ASSI:BL중독 > 4) ? 1 # 0
 ;ある程度時間が経過している
 IF TFLAG:107 > 50
     TIMES TFLAG:220 , 0.50
@@ -921,14 +921,14 @@ TFLAG:226 = TABLE_CALC(TFLAG:226, 10, 5)
 TFLAG:226 = MIN(TFLAG:226, 25)
 
 ;地の文章カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORML %조사처리(CALLNAME:ASSI,"과")% %조사처리(CALLNAME:TARGET,"는")% 조교 후 {TFLAG:226}번 ＢＬ플레이를 한 것 같다.
 
 ;調教後ＢＬプレイのイベント口上呼び出し
 CALL SELF_KOJO, TARGET, 156
 
 ;절정経験
-CALL COMMON_UP_EXP,TARGET, 2, ((TFLAG:220 * ABL:10) / 5), 0
+CALL COMMON_UP_EXP,TARGET, 2, ((TFLAG:220 * ABL:순종) / 5), 0
 ;射精経験
 CALL COMMON_UP_EXP,TARGET, 3, TFLAG:220, 0
 ;精液経験
@@ -937,22 +937,22 @@ CALL COMMON_UP_EXP,TARGET, 4, TFLAG:220, 0
 CALL COMMON_UP_EXP,TARGET, 13, TFLAG:226, 0
 CALL COMMON_UP_EXP,ASSI, 13, TFLAG:226, 2
 ;快Ｃ의 구슬
-CALL COMMON_UP_JUEL, TARGET, 0, (TFLAG:220*100*ABL:0), 0
+CALL COMMON_UP_JUEL, TARGET, 0, (TFLAG:220*100*ABL:C감각), 0
 ;習得의 구슬
-CALL COMMON_UP_JUEL, TARGET, 11, (TFLAG:220*100*(ABL:12+ABL:13)), 0
+CALL COMMON_UP_JUEL, TARGET, 11, (TFLAG:220*100*(ABL:기교+ABL:봉사정신)), 0
 ;欲情의 구슬
 CALL COMMON_UP_JUEL, TARGET, 13, (TFLAG:220*200), 0
 ;屈服의 구슬
-CALL COMMON_UP_JUEL, TARGET, 14, (TFLAG:220*100*(ABL:12+ABL:13)), 0
+CALL COMMON_UP_JUEL, TARGET, 14, (TFLAG:220*100*(ABL:기교+ABL:봉사정신)), 0
 ;恥情의 구슬
 CALL COMMON_UP_JUEL, TARGET, 15, (TFLAG:220*100), 1
 
 ;助手がサドっ気Lv5＋サドかドＳ
-IF (ABL:ASSI:20 > 4 && TALENT:ASSI:81) || TALENT:ASSI:177
+IF (ABL:ASSI:새드끼 > 4 && TALENT:ASSI:새드) || TALENT:ASSI:초S
     ;苦痛快楽経験
     CALL COMMON_UP_EXP,TARGET, 30, TFLAG:220, 0
     ;苦痛의 구슬
-    CALL COMMON_UP_JUEL, TARGET, 16, (TFLAG:220*100*ABL:21), 0
+    CALL COMMON_UP_JUEL, TARGET, 16, (TFLAG:220*100*ABL:마조끼), 0
 ENDIF
 ;LUNATIC以上は射精するたびに体力が減少
 CALL EXHAUST_EJAC, TARGET, TFLAG:220
@@ -962,11 +962,11 @@ WAIT
 ;延長戦行ってみよーっ！
 ;-----------------------------------------------
 ;奉仕精神, 精液中毒がともに3以上ないとダメ
-SIF ABL:13 < 3 || ABL:31 < 3
+SIF ABL:봉사정신 < 3 || ABL:정액중독 < 3
     RETURN 0
 
 ;地の文章カット
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINTFORML %조사처리(CALLNAME:ASSI,"과")% %조사처리(CALLNAME:TARGET,"는")% 그대로 
     IF TIME == 0
         PRINTFORML 밤이 될 떄까지 서로의 페니스를 서로 빨았다.
@@ -1002,25 +1002,25 @@ WAIT
 ;-----------------------------------------------
 @SELF_CHECK8
 ;貞操帯装着時は不可能
-SIF CFLAG:42 & 2 || CFLAG:MASTER:42 & 2
+SIF CFLAG:특수장비 & 2 || CFLAG:MASTER:특수장비 & 2
     RETURN 0
 ;主人が女性で調教対象が男性のときは別処理へ
-SIF TALENT:MASTER:120 == 0 && TALENT:120
+SIF TALENT:MASTER:남자 == 0 && TALENT:남자
     JUMP SELF_CHECK8_2
 ;調教対象が男性もしくは調教者が女性だとダメ
-SIF TALENT:120 || TALENT:MASTER:120 == 0
+SIF TALENT:남자 || TALENT:MASTER:남자 == 0
     RETURN 0
 ;恋慕または淫乱でないとダメ
-SIF TALENT:150 == 0 && TALENT:170 == 0
+SIF TALENT:연모 == 0 && TALENT:음란 == 0
     RETURN 0
 ;非処女じゃないとダメ
-SIF TALENT:0 || EXP:0 <= 0
+SIF TALENT:처녀 || EXP:V경험 <= 0
     RETURN 0
 ;Ｖ感覚＋従順＋欲望＋奉仕精神の合計値が19以上じゃないとダメ
-SIF (ABL:1+ABL:10+ABL:11+ABL:13) < 19
+SIF (ABL:V감각+ABL:순종+ABL:욕망+ABL:봉사정신) < 19
     RETURN 0
 ;体力必要
-SIF BASE:0 < 500 || BASE:MASTER:0 < 500
+SIF BASE:0 < 500 || BASE:MASTER:체력 < 500
     RETURN 0
 ;時間も必要
 SIF TFLAG:107 > 100
@@ -1030,11 +1030,11 @@ SIF TIME == 0
     RETURN 0
 
 ;Ｖ感覚をみる
-IF ABL:1 <= 3
+IF ABL:V감각 <= 3
     TFLAG:226 = 0
-ELSEIF ABL:1 == 3
+ELSEIF ABL:V감각 == 3
     TFLAG:226 = 1
-ELSEIF ABL:1 == 4
+ELSEIF ABL:V감각 == 4
     TFLAG:226 = 2
 ELSE
     TFLAG:226 = 4
@@ -1053,7 +1053,7 @@ SIF TFLAG:226 < 1
 
 DRAWLINE
 ;地の文章カット
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINTFORMW 조교가 끝나고 %조사처리(CALLNAME:MASTER,"가")% 자리에 들려고 할 때, 갑자기 %조사처리(CALLNAME:TARGET,"가")% 방을 찾아왔다.
     PRINTFORMW 그대로 그녀는 %조사처리(CALLNAME:MASTER,"를")% 쓰러트리고, 꿀항아리로 페니스를 가득 물고는 격렬히 허리를 부딪치기 시작했다.
 ENDIF
@@ -1062,11 +1062,11 @@ ENDIF
 CALL SELF_KOJO, TARGET, 158, 1
 
 ;地の文カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORMW 굶주린 짐승의 입은 침을 흘리며 잔뜩 성난 물건을 탐하며, 자궁의 갈증을 달래고 있다….
 ;Ｖ経験
 CALL COMMON_UP_EXP,TARGET, 0, TFLAG:226, 0
-CFLAG:173 += TFLAG:226
+CFLAG:주인에게V바친회수 += TFLAG:226
 ;精液経験
 CALL COMMON_UP_EXP,TARGET, 4, (TFLAG:226/2), 0
 ;Ｖ調律経験
@@ -1078,7 +1078,7 @@ CALL COMMON_UP_JUEL, TARGET, 12, (TFLAG:226*250), 0
 ;欲情의 구슬
 CALL COMMON_UP_JUEL, TARGET, 13, (TFLAG:226*250), 1
 ;地の文カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORMW %CALLNAME:TARGET%의 {TFLAG:226}번째 절정 후, 성이 찬 두 사람은 연결된 채로 끌어안고 깊은 잠에 빠졌다.
 
 ;-----------------------------------------------
@@ -1087,16 +1087,16 @@ SIF CFLAG:99 == 0
 ;調教者が女性で調教対象が男性のときの専用処理
 @SELF_CHECK8_2
 ;恋慕または淫乱でないとダメ
-SIF TALENT:150 == 0 && TALENT:170 == 0
+SIF TALENT:연모 == 0 && TALENT:음란 == 0
     RETURN 0
 ;調教者が非処女じゃないとダメ
-SIF TALENT:MASTER:0 || EXP:MASTER:0 <= 0
+SIF TALENT:MASTER:처녀 || EXP:MASTER:V경험 <= 0
     RETURN 0
 ;Ｃ感覚＋従順＋欲望＋奉仕精神の合計値が19以上じゃないとダメ
-SIF (ABL:0+ABL:10+ABL:11+ABL:13) < 19
+SIF (ABL:C감각+ABL:순종+ABL:욕망+ABL:봉사정신) < 19
     RETURN 0
 ;体力必要
-SIF BASE:0 < 500 || BASE:MASTER:0 < 500
+SIF BASE:0 < 500 || BASE:MASTER:체력 < 500
     RETURN 0
 ;時間も必要
 SIF TFLAG:107 > 100
@@ -1106,11 +1106,11 @@ SIF TIME == 0
     RETURN 0
 
 ;Ｃ感覚をみる
-IF ABL:0 <= 3
+IF ABL:C감각 <= 3
     TFLAG:226 = 0
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     TFLAG:226 = 1
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     TFLAG:226 = 2
 ELSE
     TFLAG:226 = 4
@@ -1129,7 +1129,7 @@ SIF TFLAG:226 < 1
 
 DRAWLINE
 ;地の文章カット
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINTFORMW 조교가 끝나고 %조사처리(CALLNAME:MASTER,"가")% 자리에 들려고 할 때, 갑자기 %조사처리(CALLNAME:TARGET,"가")% 방을 찾아왔다.
     PRINTFORMW 그대로 그는 %조사처리(CALLNAME:MASTER,"를")% 쓰러트리고, 페니스로로 질을 가득 물고는 격렬히 허리를 부딪치기 시작했다.
 ENDIF
@@ -1138,11 +1138,11 @@ ENDIF
 CALL SELF_KOJO, TARGET, 158, 2
 
 ;地の文カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORMW %CALLNAME:TARGET%는%CALLNAME:MASTER%의 질을 마음껏 만끽하고 있다….
 ;主人のＶ経験
 CALL COMMON_UP_EXP,MASTER, 0, TFLAG:226, 0
-CFLAG:MASTER:173 += TFLAG:226
+CFLAG:MASTER:주인에게V바친회수 += TFLAG:226
 ;精液経験
 CALL COMMON_UP_EXP,MASTER, 4, (TFLAG:226/2), 0
 ;Ｃ調律経験
@@ -1154,7 +1154,7 @@ CALL COMMON_UP_JUEL, TARGET, 12, (TFLAG:226*250), 0
 ;欲情의 구슬
 CALL COMMON_UP_JUEL, TARGET, 13, (TFLAG:226*250), 1
 ;地の文カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORMW %CALLNAME:TARGET%의 {TFLAG:226}번째 절정 후, 성이 찬 두 사람은 연결된 채로 끌어안고 깊은 잠에 빠졌다.
 
 ;-----------------------------------------------
@@ -1163,28 +1163,28 @@ SIF CFLAG:99 == 0
 @SELF_CHECK9, ARG, ARG:1
 VARSET LOCAL, 0
 ;Ａ感覚を見る
-LOCAL:1 = ABL:2
+LOCAL:1 = ABL:A감각
 ;Ｃ感覚を見る
-LOCAL:2 = ABL:0
+LOCAL:2 = ABL:C감각
 ;Ｖ感覚を見る
-LOCAL:3 = ABL:1
+LOCAL:3 = ABL:V감각
 
 ;淫核／淫茎
-SIF TALENT:171
+SIF TALENT:음핵／음경
     LOCAL:2 += 1
 ;淫壷
-SIF TALENT:172
+SIF TALENT:음호
     LOCAL:3 += 1
 ;淫尻
-SIF TALENT:173
+SIF TALENT:음고
     LOCAL:1 += 1
 ;尿道狂
-SIF TALENT:175
+SIF TALENT:요도광
     LOCAL:2 += 1
 
 DRAWLINE
 ;地の文章カット
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     IF ARG:1 == 1
         PRINTFORM %조사처리(CALLNAME:MASTER,"가")% 나간 뒤, %조사처리(CALLNAME:TARGET,"는")% 
     ELSE
@@ -1202,7 +1202,7 @@ CALL SELF_KOJO, TARGET, 160
 
 PRINTL 
 ;対象奴隷がオトコでないならＶ経験追加
-SIF TALENT:120 ==0
+SIF TALENT:남자 ==0
     CALL COMMON_UP_EXP,TARGET, 0, LOCAL:3, 0
 ;Ａ経験
 CALL COMMON_UP_EXP,TARGET, 1, LOCAL:1, 0
@@ -1213,7 +1213,7 @@ CALL COMMON_UP_EXP,TARGET, 46, LOCAL:2, 0
 ;快Ｃ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 0, (LOCAL:2*250), 0
 ;対象奴隷がオトコでないなら快Ｖ의 구슬追加
-SIF TALENT:120 == 0
+SIF TALENT:남자 == 0
     CALL COMMON_UP_JUEL, TARGET, 1, (LOCAL:3*200), 0
 ;快Ａ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 2, (LOCAL:1*150), 0
@@ -1223,9 +1223,9 @@ CALL COMMON_UP_JUEL, TARGET, 13, (ARG*300), 0
 CALL COMMON_UP_JUEL, TARGET, 14, (ARG*500), 1
 
 ;対象奴隷の従順＋露出癖＋マゾっ気の合計が10以上で昼なら主人に自慰の許可を求めるべきか悩む
-IF ABL:10 + ABL:14 + ABL:21 >= 10 && TIME == 0
+IF ABL:순종 + ABL:노출증 + ABL:마조끼 >= 10 && TIME == 0
     ;地の文カット
-    SIF CFLAG:99 == 0
+    SIF CFLAG:지문소거판정 == 0
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%에게 자위 허가를 구해야 하는지 진지하게 생각하고 있는 것 같다…….
     ;恥情의 구슬
     CALL COMMON_UP_JUEL, TARGET, 15, (ARG*300), 1
@@ -1238,10 +1238,10 @@ ENDIF
 ;ローカル変数初期化
 VARSET LOCAL, 0
 ;触手使役を見る
-LOCAL = (ABL:MASTER:98 > 3) ? 1+ABL:MASTER:98 # ABL:MASTER:98
-LOCAL += (ABL:MASTER:98 > 4) ? 2 # 0
+LOCAL = (ABL:MASTER:촉수사역 > 3) ? 1+ABL:MASTER:촉수사역 # ABL:MASTER:촉수사역
+LOCAL += (ABL:MASTER:촉수사역 > 4) ? 2 # 0
 ;触手中毒を見る
-LOCAL += ABL:35 / 2
+LOCAL += ABL:촉수중독 / 2
 ;進化の秘法
 SIF ITEM:59
     LOCAL *= 2
@@ -1260,7 +1260,7 @@ SIF LOCAL < 1
     RETURN 0
 
 ;地の文章カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORML 조교 종료 후 {LOCAL}번 촉수에 덮쳐진 모양이다.
 
 ;調教後に触手に襲われるイベント口上呼び出し
@@ -1274,25 +1274,25 @@ LOCAL:5 = (LOCAL:1+LOCAL:2+LOCAL:3+LOCAL:4)/4
 LOCAL:5 = MAX(LOCAL:5, 1)
 
 ;対象奴隷の処女は失われる.入手苦痛と否定의 구슬がより増える
-IF TALENT:0
+IF TALENT:처녀
     CALL SETCOLOR_TORIKOMODE, "RED", 3
     PRINTFORML 【처녀 상실】
     RESETCOLOR
-    SIF CFLAG:500 == 0
-        CFLAG:500 = 1003
+    SIF CFLAG:첫경험상대의캐릭터번호 == 0
+        CFLAG:첫경험상대의캐릭터번호 = 1003
     LOCAL:7 = 50
     LOCAL:8 = 1
-    IF EXP:0 == 0
+    IF EXP:V경험 == 0
         LOCAL:7 += 100
         LOCAL:8 +=1
     ENDIF
 ENDIF
-TALENT:0 = 0
+TALENT:처녀 = 0
 
 ;触手経験
 CALL COMMON_UP_EXP,TARGET, 53, LOCAL, 0
 ;対象奴隷がオトコでないならＶ経験追加
-SIF TALENT:120 ==0
+SIF TALENT:남자 ==0
     CALL COMMON_UP_EXP,TARGET, 0, LOCAL:2, 0
 ;Ａ経験
 CALL COMMON_UP_EXP,TARGET, 1, LOCAL:3, 0
@@ -1301,7 +1301,7 @@ CALL COMMON_UP_EXP,TARGET, 22, LOCAL:2, 0
 ;快Ｃ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 0, (LOCAL:1*250), 0
 ;対象奴隷がオトコでないなら快Ｖ의 구슬追加
-SIF TALENT:120 == 0
+SIF TALENT:남자 == 0
     CALL COMMON_UP_JUEL, TARGET, 1, (LOCAL:2*120), 0
 ;快Ａ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 2, (LOCAL:2*100), 0
@@ -1316,22 +1316,22 @@ CALL COMMON_UP_JUEL, TARGET, 17, ((LOCAL:7)+(LOCAL:5*150)), 0
 ;侵蝕의 구슬
 CALL COMMON_UP_JUEL, TARGET, 31, (LOCAL*100), 0
 ;否定의 구슬
-LOCAL:6 = 5 - (ABL:10 + ABL:35) + MARK:9 * 3
+LOCAL:6 = 5 - (ABL:순종 + ABL:촉수중독) + MARK:반발각인 * 3
 CALL COMMON_UP_JUEL, TARGET, 100, (((LOCAL:7)/2)+(LOCAL:5*LOCAL:6*500)), 1
 
 ;対象奴隷の従順＋露出癖＋マゾっ気の合計が10以上であるなら主人に報告にいく
-IF ABL:10+ABL:14+ABL:21 >= 10
+IF ABL:순종+ABL:노출증+ABL:마조끼 >= 10
     ;地の文カット
-    SIF CFLAG:99 == 0
+    SIF CFLAG:지문소거판정 == 0
         PRINTFORML 그 상세를 %조사처리(CALLNAME:TARGET,"는")% 보고해왔다.
     ;恥情의 구슬
     CALL COMMON_UP_JUEL, TARGET, 15, (LOCAL:5*300), 1
 ENDIF
 
 ;触手寄生LV
-IF FLAG:15 & 4096 && TALENT:146
-    BASE:6 += LOCAL:5*50
-    BASE:6 = MIN(BASE:6, MAXBASE:6)
+IF FLAG:커맨드확장 & 4096 && TALENT:기생
+    BASE:촉수 += LOCAL:5*50
+    BASE:촉수 = MIN(BASE:촉수, MAXBASE:촉수)
 ENDIF
 ;体力減少処理
 BASE:0 -= (LOCAL + RAND:(LOCAL:5))*50
@@ -1345,10 +1345,10 @@ BASE:0 = MAX(BASE:0, 1)
 ;ローカル変数初期化
 VARSET LOCAL, 0
 ;触手使役を見る
-LOCAL = (ABL:MASTER:98 > 3) ? 1+ABL:MASTER:98 # ABL:MASTER:98
-LOCAL += (ABL:MASTER:98 > 4) ? 2 # 0
+LOCAL = (ABL:MASTER:촉수사역 > 3) ? 1+ABL:MASTER:촉수사역 # ABL:MASTER:촉수사역
+LOCAL += (ABL:MASTER:촉수사역 > 4) ? 2 # 0
 ;触手中毒を見る
-LOCAL += ABL:35 / 2
+LOCAL += ABL:촉수중독 / 2
 ;進化の秘法
 SIF ITEM:59
     LOCAL *= 2
@@ -1367,7 +1367,7 @@ SIF LOCAL < 1
     RETURN 0
 
 ;地の文章カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORML %조사처리(CALLNAME:TARGET,"가")% 기절했지만 촉수는 조교 종료 후 {LOCAL}번 정도 대상을 능욕한 것 같다.
 
 LOCAL:1 = LOCAL/2 + RAND:(1 + LOCAL/2)
@@ -1378,25 +1378,25 @@ LOCAL:5 = (LOCAL:1+LOCAL:2+LOCAL:3+LOCAL:4)/4
 LOCAL:5 = MAX(LOCAL:5, 1)
 
 ;対象奴隷の処女は失われる.入手苦痛と否定의 구슬がより増える
-IF TALENT:0
+IF TALENT:처녀
     CALL SETCOLOR_TORIKOMODE, "RED", 3
     PRINTFORML 【처녀 상실】
     RESETCOLOR
-    SIF CFLAG:500 == 0
-        CFLAG:500 = 1003
+    SIF CFLAG:첫경험상대의캐릭터번호 == 0
+        CFLAG:첫경험상대의캐릭터번호 = 1003
     LOCAL:7 = 75
     LOCAL:8 = 1
-    IF EXP:0 == 0
+    IF EXP:V경험 == 0
         LOCAL:7 += 150
         LOCAL:8 +=1
     ENDIF
 ENDIF
-TALENT:0 = 0
+TALENT:처녀 = 0
 
 ;触手経験
 CALL COMMON_UP_EXP,TARGET, 53, LOCAL, 0
 ;対象奴隷がオトコでないならＶ経験追加
-SIF TALENT:120 ==0
+SIF TALENT:남자 ==0
     CALL COMMON_UP_EXP,TARGET, 0, LOCAL:2, 0
 ;Ａ経験
 CALL COMMON_UP_EXP,TARGET, 1, LOCAL:3, 0
@@ -1405,7 +1405,7 @@ CALL COMMON_UP_EXP,TARGET, 22, LOCAL:2, 0
 ;快Ｃ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 0, (LOCAL:1*125), 0
 ;対象奴隷がオトコでないなら快Ｖ의 구슬追加
-SIF TALENT:120 == 0
+SIF TALENT:남자 == 0
     CALL COMMON_UP_JUEL, TARGET, 1, (LOCAL:2*60), 0
 ;快Ａ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 2, (LOCAL:2*50), 0
@@ -1420,13 +1420,13 @@ CALL COMMON_UP_JUEL, TARGET, 17, ((LOCAL:7)+(LOCAL:5*300)), 0
 ;侵蝕의 구슬
 CALL COMMON_UP_JUEL, TARGET, 31, (LOCAL*150), 0
 ;否定의 구슬
-LOCAL:6 = 5 - (ABL:10 + ABL:35) + MARK:9 * 3
+LOCAL:6 = 5 - (ABL:순종 + ABL:촉수중독) + MARK:반발각인 * 3
 CALL COMMON_UP_JUEL, TARGET, 100, (((LOCAL:7)/2)+(LOCAL:5*LOCAL:6*800)), 1
 
 ;触手寄生LV
-IF FLAG:15 & 4096 && TALENT:146
-    BASE:6 += LOCAL:5*50
-    BASE:6 = MIN(BASE:6, MAXBASE:6)
+IF FLAG:커맨드확장 & 4096 && TALENT:기생
+    BASE:촉수 += LOCAL:5*50
+    BASE:촉수 = MIN(BASE:촉수, MAXBASE:촉수)
 ENDIF
 ;体力減少処理
 BASE:0 -= (LOCAL + RAND:(LOCAL:5))*75
@@ -1445,7 +1445,7 @@ BASE:0 = MAX(BASE:0, 1)
 LOCAL = ARG
 
 ;助手が鼓舞だと我慢が効かなくなり発見されやすい
-IF ASSI >= 0 && TALENT:ASSI:95
+IF ASSI >= 0 && TALENT:ASSI:고무
     LOCAL += 5
 
     ;その状態で媚薬を盛られているとさらに発見されやすくなる
@@ -1454,40 +1454,40 @@ IF ASSI >= 0 && TALENT:ASSI:95
 ENDIF
 
 ;Ａ敏感もしくは淫尻でアナルバイブが刺さったままだと発見されやすくなる
-IF TEQUIP:25 == 1 && (TALENT:104 || TALENT:173)
+IF TEQUIP:25 == 1 && (TALENT:A민감 || TALENT:음고)
     LOCAL += 5
 
     ;両方だとさらに声が大きくなり, 周囲にも気付けなくなる
-    SIF TALENT:104 && TALENT:173
+    SIF TALENT:A민감 && TALENT:음고
         LOCAL += 5
 
     ;両方ささってて, Ｖ敏感もしくは淫壺だとさらに気付けません
-    SIF TEQUIP:20 == 1 && (TALENT:102 || TALENT:172)
+    SIF TEQUIP:20 == 1 && (TALENT:V민감 || TALENT:음호)
         LOCAL += 5
 ENDIF
 
 ;Ｖ敏感もしくは淫壺でバイブが刺さったままだと発見されやすくなる
-IF TEQUIP:20 == 1 && (TALENT:102 || TALENT:172)
+IF TEQUIP:20 == 1 && (TALENT:V민감 || TALENT:음호)
     LOCAL += 5
     
     ;両方だとさらに声が大きくなり, 周囲にも気付けなくなる
-    SIF TALENT:102 && TALENT:172
+    SIF TALENT:V민감 && TALENT:음호
         LOCAL += 5
 
     ;両方ささってて, Ａ敏感もしくは尻穴狂いだとさらに気付けません
-    SIF TEQUIP:25 == 1 && (TALENT:104 || TALENT:173)
+    SIF TEQUIP:25 == 1 && (TALENT:A민감 || TALENT:음고)
         LOCAL += 5
 ENDIF
     
 ;臆病だとばれることを怖がって声も物音も小さくなる
-SIF TALENT:10
+SIF TALENT:겁쟁이
     LOCAL -= 10
 
 ;露出癖とマゾッ気が見られたがり補正.それに自慰中毒と技巧がさらに補正
-LOCAL += (ABL:14 + ABL:21 + ABL:30 + ABL:12) / 2
+LOCAL += (ABL:노출증 + ABL:마조끼 + ABL:자위중독 + ABL:기교) / 2
 
 ;快感に素直, 解放だと素直に声を上げるので発見されやすい
-SIF TALENT:33 || TALENT:70
+SIF TALENT:해방 || TALENT:쾌감에솔직
     LOCAL += 5
 
 ;媚薬を使うと出やすくなる
@@ -1495,36 +1495,36 @@ SIF TEQUIP:11 == 1
     LOCAL += 15
 
 ;恥薄いと声が大きい為発見されやすい
-SIF TALENT:36
+SIF TALENT:부끄럼없음
     LOCAL += 5
 
 ;自制心, 抑圧, 抵抗, 快感の否定だと声を抑えようとするので発見されにくい
 ;ただし助手が鼓舞持ちだとあまり抵抗できない
-SIF ASSI < 0 && (TALENT:20 || TALENT:32 || TALENT:34 || TALENT:71)
+SIF ASSI < 0 && (TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:쾌감을부정)
     LOCAL /= 2
 
 IF ASSI >= 0
     ;助手が鼓舞を持っていない
-    IF TALENT:ASSI:95 == 0 
-        SIF TALENT:20 || TALENT:32 || TALENT:34 || TALENT:71
+    IF TALENT:ASSI:고무 == 0 
+        SIF TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:쾌감을부정
             LOCAL /= 2
     ELSE
         ;鼓舞
-        SIF TALENT:20 || TALENT:32 || TALENT:34 || TALENT:71
+        SIF TALENT:자제심 || TALENT:억압 || TALENT:저항 || TALENT:쾌감을부정
             LOCAL -= 5
     ENDIF
 ENDIF
 
 ;恥じらいだと声が小さい為発見されにくい
 ;ただし助手が鼓舞持ちだと(あくまでも)若干気がゆるむ.
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     LOCAL /= 2
-    SIF ASSI >= 0 && TALENT:ASSI:95
+    SIF ASSI >= 0 && TALENT:ASSI:고무
         LOCAL += 3
 ENDIF
 
 ;反発刻印の5倍(最大15)がマイナス補正
-LOCAL -= MARK:9 * 5
+LOCAL -= MARK:반발각인 * 5
 
 RETURNF LOCAL
 
@@ -1538,7 +1538,7 @@ PRINTFORMW …………
 PRINTFORM %CALLNAME:TARGET%의 방에서 
 
 ;好感度が高いと(もしくは恋慕か妄信か親愛)
-SIF TALENT:150 || TALENT:151 || TALENT:152 || CFLAG:2 > 1000
+SIF TALENT:연모 || TALENT:망신 || TALENT:친애 || CFLAG:호감도 > 1000
     PRINTFORM 절박하게 %조사처리(CALLNAME:MASTER,"를")% 부르는 
     PRINTW 신음소리가 들려온다….
     PRINTFORM 발소리를 죽이고 방에 들어가자, 거기에는 
@@ -1547,66 +1547,66 @@ IF TEQUIP:20 == 1 && TEQUIP:25 == 1
     PRINT 2개의 바이브를 양구멍에 끼우고 
 ELSEIF TEQUIP:20 == 1
     ;淫壺
-    SIF TALENT:172
+    SIF TALENT:음호
         PRINTL 입을 헤 하고 반쯤 벌린 채 
     PRINT 바기나에 극대 바이브를 쑤셔박은 
 ELSEIF TEQUIP:25 == 1
     ;淫尻
-    SIF TALENT:173
+    SIF TALENT:음고
         PRINTL 입을 헤 하고 반쯤 벌린 채 
     PRINT 애널바이브를 쑤셔넣은 
 ENDIF
 
 ;ふたなり
-SIF TALENT:121
+SIF TALENT:후타나리
     PRINT 잔뜩 성난 페니스를 미친듯 비비며 
 PRINTFORMW 혼자 쾌락에 젖어 있는 %CALLNAME:TARGET%의 모습이 있었다.
 PRINTFORMW ･･도취한 듯한 눈동자가 %CALLNAME:MASTER%의 모습을 포착했다.
 
 ;弱みを握る（恋慕系・服従系・淫乱系・崩壊系素質習得済みでなければ）
-IF TALENT:39 == 0 && CFLAG:14 == 0 && CFLAG:15 == 0 && CFLAG:16 == 0 && CFLAG:17 == 0
+IF TALENT:약점 == 0 && CFLAG:이벤트취득연모 == 0 && CFLAG:이벤트취득복종 == 0 && CFLAG:이벤트취득음란 == 0 && CFLAG:이벤트취득붕괴 == 0
     ;CALL SELF_KOJO, TARGET, 1
     PRINTFORMW 그야말로 커튼을 찢는 듯한 비명을 지르는 %조사처리(CALLNAME:TARGET,"를")% 흘끗 보고, %조사처리(CALLNAME:MASTER,"는")% 방을 뒤로했다.
     PRINTFORMW ･････････
     PRINTFORMW %CALLNAME:TARGET%의 [약점]을 잡았다.
-    TALENT:39 = 1
+    TALENT:약점 = 1
 
     ;反発刻印が2以上なら1つ下がる
-    IF MARK:9 > 1
-        PRINTFORM 반발각인이 Lv{MARK:9-1}이 되었다.
-        MARK:9 -= 1
+    IF MARK:반발각인 > 1
+        PRINTFORM 반발각인이 Lv{MARK:반발각인-1}이 되었다.
+        MARK:반발각인 -= 1
     ENDIF
 ELSE
     ;好感系
-    IF TALENT:150 || TALENT:151 || TALENT:152
+    IF TALENT:연모 || TALENT:망신 || TALENT:친애
         ;自慰よりも精液の方が好きなら求愛へ行きやすい
-        IF ABL:31 - ABL:30 + 6 > RAND:12
+        IF ABL:정액중독 - ABL:자위중독 + 6 > RAND:12
             ;自慰見つかり後分岐ランダム計画
             ;後ろ　ランダム0-9 + AのLV + A敏なら3 + A狂なら+3 ただしA経験が50未満なら問答無用で 0
             ;前　 　ランダム0-9 + VのLV + V敏なら3 + 淫壺なら+3　ただし処女かオトコなら 問答無用で 0
             ;精子ほしがる　ランダム0-9 + (精液中毒 + 奉仕) / 2
             ;それ以外　ランダム0-9 + CのLV +　自慰中毒 + C敏なら3
-            LOCAL = RAND:10 + ABL:2
-            SIF TALENT:173
+            LOCAL = RAND:10 + ABL:A감각
+            SIF TALENT:음고
                 LOCAL += 3
-            SIF TALENT:104
+            SIF TALENT:A민감
                 LOCAL += 3
-            SIF EXP:1 < 50
+            SIF EXP:A경험 < 50
                 LOCAL = 0
-            SIF (FLAG:15 & 4) == 0
+            SIF (FLAG:커맨드확장 & 4) == 0
                 LOCAL = 0
 
-            LOCAL:1 = RAND:10 + ABL:1
-            SIF TALENT:102
+            LOCAL:1 = RAND:10 + ABL:V감각
+            SIF TALENT:V민감
                 LOCAL:1 += 3
-            SIF TALENT:172
+            SIF TALENT:음호
                 LOCAL:1 += 3
-            SIF TALENT:0 || TALENT:120
+            SIF TALENT:처녀 || TALENT:남자
                 LOCAL:1 = 0
 
-            LOCAL:2 = RAND:10 + (ABL:31 + ABL:13) / 2
-            LOCAL:3 = RAND:10 + (ABL:0 + ABL:30) / 2
-            SIF TALENT:102
+            LOCAL:2 = RAND:10 + (ABL:정액중독 + ABL:봉사정신) / 2
+            LOCAL:3 = RAND:10 + (ABL:C감각 + ABL:자위중독) / 2
+            SIF TALENT:V민감
                 LOCAL:3 += 3
 
             IF TEQUIP:25 == 1 && TEQUIP:20 == 1
@@ -1616,8 +1616,8 @@ ELSE
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"를")% 구하며, 둔부를 들어올린 채 
                 PRINTFORMW 음탕하게 벌어진 전후의 구멍을 자신의 손가락으로 열고 있었다.
 
-                EXP:0 += ARG/3
-                EXP:1 += 5*ARG/3
+                EXP:V경험 += ARG/3
+                EXP:A경험 += 5*ARG/3
                 JUEL:1 += 400*ARG/2
                 JUEL:2 += 400*ARG/2
                 JUEL:3 += 150*ARG/2
@@ -1632,7 +1632,7 @@ ELSE
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"를")% 구하며, 둔부를 들어올린 채 
                 PRINTFORMW 기대에 움찔대는 항문을 자신의 손가락으로 크게 벌렸다.
 
-                EXP:1 += 5*ARG/2
+                EXP:A경험 += 5*ARG/2
                 JUEL:2 += 400*ARG/2
                 JUEL:3 += 150*ARG/2
                 JUEL:12 += 300*ARG/2
@@ -1646,19 +1646,19 @@ ELSE
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"를")% 구하며, 음탕하게도 다리를 크게 벌린 채 
                 PRINTFORMW 애액 천지의 질구를 자신의 손가락으로 벌렸다.
 
-                EXP:0 += ARG/2
+                EXP:V경험 += ARG/2
                 JUEL:1 += 400*ARG/2
                 JUEL:3 += 150*ARG/2
                 JUEL:12 += 300*ARG/2
                 JUEL:13 += 400*ARG/2
                 JUEL:14 += 300*ARG/2
                 JUEL:15 += 200*ARG/2
-            ELSEIF ABL:31 > 3 &&  ( LOCAL:2 >= LOCAL && LOCAL:2 >= LOCAL:1 && LOCAL:2 >= LOCAL:3)
+            ELSEIF ABL:정액중독 > 3 &&  ( LOCAL:2 >= LOCAL && LOCAL:2 >= LOCAL:1 && LOCAL:2 >= LOCAL:3)
                 ;それ以外で精液中毒4以上 で精の勝利(ここはあえて条件きついです.『してほしい』わけですから)
                 ;CALL SELF_KOJO, TARGET, 5
 
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 정액을 원하며 매달려오고 있다.
-                EXP:20 += 6*ARG/2
+                EXP:봉사쾌락경험 += 6*ARG/2
                 JUEL:0 += 500*ARG/2
                 JUEL:3 += 400*ARG/3
                 JUEL:12 += 400*ARG/2
@@ -1681,36 +1681,36 @@ ELSE
             ENDIF
 
             ;ふたなりだと射精経験も上昇
-            SIF TALENT:121
-                EXP:3  += ARG / 4
+            SIF TALENT:후타나리
+                EXP:사정경험  += ARG / 4
             ;母乳体質だと噴乳経験も上昇
-            SIF TALENT:134
-                EXP:5 += ARG / 4
+            SIF TALENT:모유체질
+                EXP:분유경험 += ARG / 4
 
             PRINTL 　
             PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 거기에 응해주기로 했다.
         ELSE
             ;自慰の方が好き
             ;( 欲望 + 露出 + マゾが11以上か 解放か快感に素直を持ち) かつはじらいをもっていない
-            IF (ABL:11 + ABL:14 + ABL:21 > 10 || TALENT:363 || TALENT:70) && TALENT:35 == 0
+            IF (ABL:욕망 + ABL:노출증 + ABL:마조끼 > 10 || TALENT:363 || TALENT:쾌감에솔직) && TALENT:부끄럼쟁이 == 0
                 ;CALL SELF_KOJO, TARGET, 7
 
                 CALL JINKAKU
                 ;人形の場合
-                IF TALENT:208 == 1
+                IF TALENT:인형 == 1
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보아달라는 시선을 보내며, 
                 ;이하 인격 마다
-                ELSEIF CFLAG:3005 == 3
+                ELSEIF CFLAG:성격타입 == 3
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보아달라고 속삭이며,  
-                ELSEIF CFLAG:3005 == 1
+                ELSEIF CFLAG:성격타입 == 1
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보고 있으라며 속삭이고는,  
-                ELSEIF CFLAG:3005 == 2
+                ELSEIF CFLAG:성격타입 == 2
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보아주지 않겠냐고 속삭이며,  
-                ELSEIF CFLAG:3005 == 6
+                ELSEIF CFLAG:성격타입 == 6
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보아 달라며 속사기고는
-                ELSEIF CFLAG:3005 == 4
+                ELSEIF CFLAG:성격타입 == 4
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보고 있으라고 속삭이며,  
-                ELSEIF CFLAG:3005 == 11 || CFLAG:3005 == 12
+                ELSEIF CFLAG:성격타입 == 11 || CFLAG:성격타입 == 12
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보아달라고 속삭이며,  
                 ELSE
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보아주세요 하고 속삭이며,  
@@ -1726,35 +1726,35 @@ ELSE
                 JUEL:14 += ARG*400/2
                 JUEL:15 += ARG*600/2
             ENDIF
-            EXP:10 += ARG/2
-            EXP:11 += ARG/2
+            EXP:자위경험 += ARG/2
+            EXP:조교자위경험 += ARG/2
             JUEL:0 += 500*ARG/2
             ;前につっこんでた
             IF TEQUIP:20 == 1
                 JUEL:1 += 400*ARG/2
-                EXP:0 +=  ARG
+                EXP:V경험 +=  ARG
             ENDIF
             ;後ろにつっこんでた
             IF TEQUIP:25 == 1
                 JUEL:2 += 400*ARG/2
-                EXP:1 += ARG 
+                EXP:A경험 += ARG 
             ENDIF
 
             JUEL:3 += ARG*300/2
             JUEL:12 += ARG*300/2
             JUEL:13 += ARG*250/2
             ;ふたなりだと射精経験も上昇
-            SIF TALENT:121
-                EXP:3  += ARG / 4
+            SIF TALENT:후타나리
+                EXP:사정경험  += ARG / 4
             ;母乳体質だと噴乳経験も上昇
-            SIF TALENT:134
-                EXP:5 += ARG / 4
+            SIF TALENT:모유체질
+                EXP:분유경험 += ARG / 4
         ENDIF
     ELSE
         ;屈服が3か反感が1以下
-        IF MARK:2 == 3 || MARK:9 < 2
+        IF MARK:굴복각인 == 3 || MARK:반발각인 < 2
             ;自慰よりも精液の方が好きなら求愛に行きやすい(まあ抱かないけど)
-            IF ABL:31 - ABL:30 + 6 > RAND:12
+            IF ABL:정액중독 - ABL:자위중독 + 6 > RAND:12
                 ;CALL SELF_KOJO, TARGET, 9
 
                 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:MASTER,"를")% 구하며, 붙었다기 보다는 거의 매달려 왔다.
@@ -1762,17 +1762,17 @@ ELSE
                 PRINTW 　
                 PRINTFORMW 휜히 열려진 방 안의 %CALLNAME:TARGET%에게서 다시 교성이 새어나오기 시작했다.
 
-                EXP:10 += ARG/2
+                EXP:자위경험 += ARG/2
                 JUEL:0 += 500*ARG/2
                 ;前につっこんでた
                 IF TEQUIP:20 == 1
                     JUEL:1 += 400*ARG/2
-                    EXP:0 += ARG
+                    EXP:V경험 += ARG
                 ENDIF
                 ;後ろにつっこんでた
                 IF TEQUIP:25 == 1
                     JUEL:2 += 400*ARG/2
-                    EXP:1 += ARG
+                    EXP:A경험 += ARG
                 ENDIF
 
                 JUEL:3 += ARG*300/2
@@ -1781,33 +1781,33 @@ ELSE
                 JUEL:14 += ARG*600/2
                 JUEL:15 += ARG*400/2
                 ;ふたなりだと射精経験も上昇
-                SIF TALENT:121
-                    EXP:3  += ARG/4
+                SIF TALENT:후타나리
+                    EXP:사정경험  += ARG/4
                 ;母乳体質だと噴乳経験も上昇
-                SIF TALENT:134
-                    EXP:5 += ARG/4
+                SIF TALENT:모유체질
+                    EXP:분유경험 += ARG/4
             ELSE
                 ;自慰の方が好き
                 ;( 欲望 + 露出 + マゾが11以上か 解放か快感に素直を持ち) かつはじらいをもっていない
-                IF (ABL:11 + ABL:14 + ABL:21 > 10 || TALENT:33 || TALENT:70) && TALENT:35 == 0
+                IF (ABL:욕망 + ABL:노출증 + ABL:마조끼 > 10 || TALENT:해방 || TALENT:쾌감에솔직) && TALENT:부끄럼쟁이 == 0
                     ;CALL SELF_KOJO, TARGET, 10
 
                     CALL JINKAKU
                     ;人形の場合
-                    IF TALENT:208 == 1
+                    IF TALENT:인형 == 1
                         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%게 보아달라는 시선을 보내며
                     ;以下人格ごとに
-                    ELSEIF CFLAG:3005 == 3
+                    ELSEIF CFLAG:성격타입 == 3
                         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보아달라고 속삭이며,  
-                    ELSEIF CFLAG:3005 == 1
+                    ELSEIF CFLAG:성격타입 == 1
                         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보고 있으라며 속삭이고는,  
-                    ELSEIF CFLAG:3005 == 2
+                    ELSEIF CFLAG:성격타입 == 2
                         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보아주지 않겠냐고 속삭이며,  
-                    ELSEIF CFLAG:3005 == 6
+                    ELSEIF CFLAG:성격타입 == 6
                         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보라며 속삭이고
-                    ELSEIF CFLAG:3005 == 4
+                    ELSEIF CFLAG:성격타입 == 4
                         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고 %CALLNAME:MASTER%에게 보고 있으라고 속삭이며
-                    ELSEIF CFLAG:3005 == 11 || CFLAG:3005 == 12
+                    ELSEIF CFLAG:성격타입 == 11 || CFLAG:성격타입 == 12
                         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고, %CALLNAME:MASTER%에게 보아달라고 속삭이며,  
                     ELSE
                         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 다리를 크게 벌리고, %CALLNAME:MASTER%에게 보아주세요 하고 속삭이며,  
@@ -1815,8 +1815,8 @@ ELSE
                     PRINTW 보다 큰 목소리로 혼자 신음하기 시작했다.
                     PRINTW 　
                     PRINTW 모처럼 저러니 성이 찰 때까지 하게 두기로 했다.
-                    EXP:10 += ARG/2
-                    EXP:11 += ARG/2
+                    EXP:자위경험 += ARG/2
+                    EXP:조교자위경험 += ARG/2
                     JUEL:14 += ARG*500/2
                     JUEL:15 += ARG*300/2
                 ELSE
@@ -1825,8 +1825,8 @@ ELSE
                     PRINTW 그대로 계속하라고 명령하니, 
                     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 주춤주춤 다리를 벌리더니, 수치로 새빨개진 얼굴을 하고서 
                     PRINTW 눈물을 흘리면서도 손가락을 움직이며 자그마한 소리로 신음을 계속했다.
-                    EXP:10 += ARG/2
-                    EXP:11 += ARG/2
+                    EXP:자위경험 += ARG/2
+                    EXP:조교자위경험 += ARG/2
                     JUEL:14 += ARG*600/2
                     JUEL:15 += ARG*600/2
                 ENDIF
@@ -1834,23 +1834,23 @@ ELSE
                 ;前につっこんでた
                 IF TEQUIP:20 == 1
                     JUEL:1 += 400*ARG/2
-                    EXP:0 += ARG*2/2
+                    EXP:V경험 += ARG*2/2
                 ENDIF
                 ;後ろにつっこんでた
                 IF TEQUIP:25 == 1
                     JUEL:2 += 400*ARG/2
-                    EXP:1 += ARG
+                    EXP:A경험 += ARG
                 ENDIF
 
                 JUEL:3 += ARG*300/2
                 JUEL:12 += ARG*300/2
                 JUEL:13 += ARG*250/2
                 ;ふたなりだと射精経験も上昇
-                SIF TALENT:121
-                    EXP:3  += ARG / 4
+                SIF TALENT:후타나리
+                    EXP:사정경험  += ARG / 4
                 ;母乳体質だと噴乳経験も上昇
-                SIF TALENT:134
-                    EXP:5 += ARG / 4
+                SIF TALENT:모유체질
+                    EXP:분유경험 += ARG / 4
             ENDIF
         ELSE
             ;CALL SELF_KOJO, TARGET, 14
@@ -1859,28 +1859,28 @@ ELSE
             PRINTW 그대로 계속하라고 명령했더니, 수치와 회한으로 얼굴을 일그러뜨리면서도 손가락을 움직이며 신음을 냈다.
             JUEL:14 += ARG*300/3
             JUEL:15 += ARG*300/3
-            EXP:10 += ARG/3
-            EXP:11 += ARG/3
+            EXP:자위경험 += ARG/3
+            EXP:조교자위경험 += ARG/3
             JUEL:0 += 500*ARG/3
             ;前につっこんでた
             IF TEQUIP:20 == 1
                 JUEL:1 += 400*ARG/3
-                EXP:0 += ARG
+                EXP:V경험 += ARG
             ENDIF
             ;後ろにつっこんでた
             IF TEQUIP:25 == 1
                 JUEL:2 += 400*ARG/3
-                EXP:1 += ARG
+                EXP:A경험 += ARG
             ENDIF
             JUEL:3 += ARG*300/3
             JUEL:12 += ARG*300/3
             JUEL:13 += ARG*250/3
             ;ふたなりだと射精経験も上昇
-            SIF TALENT:121
-                EXP:3  += ARG / 6
+            SIF TALENT:후타나리
+                EXP:사정경험  += ARG / 6
             ;母乳体質だと噴乳経験も上昇
-            SIF TALENT:134
-                EXP:5 += ARG / 6
+            SIF TALENT:모유체질
+                EXP:분유경험 += ARG / 6
         ENDIF
     ENDIF
     PRINTW 　
@@ -1891,26 +1891,26 @@ ENDIF
 ;-------------------------------------------------
 @PALAMCHANGE
 ;Ｖ経験
-SIF TFLAG:680 < EXP:0
-    PRINTFORML %EXPNAME:0%＋{EXP:0 - TFLAG:680}
+SIF TFLAG:680 < EXP:V경험
+    PRINTFORML %EXPNAME:0%＋{EXP:V경험 - TFLAG:680}
 ;Ａ経験
-SIF TFLAG:681 < EXP:1
-    PRINTFORML %EXPNAME:1%＋{EXP:1 - TFLAG:681}
+SIF TFLAG:681 < EXP:A경험
+    PRINTFORML %EXPNAME:1%＋{EXP:A경험 - TFLAG:681}
 ;射精経験
-SIF TFLAG:682 < EXP:3
-    PRINTFORML %EXPNAME:3%＋{EXP:3 - TFLAG:682}
+SIF TFLAG:682 < EXP:사정경험
+    PRINTFORML %EXPNAME:3%＋{EXP:사정경험 - TFLAG:682}
 ;噴乳経験
-SIF TFLAG:683 < EXP:5
-    PRINTFORML %EXPNAME:5%＋{EXP:5 - TFLAG:683}
+SIF TFLAG:683 < EXP:분유경험
+    PRINTFORML %EXPNAME:5%＋{EXP:분유경험 - TFLAG:683}
 ;自慰経験
-SIF TFLAG:684 < EXP:10
-    PRINTFORML %EXPNAME:10%＋{EXP:10 - TFLAG:684}
+SIF TFLAG:684 < EXP:자위경험
+    PRINTFORML %EXPNAME:10%＋{EXP:자위경험 - TFLAG:684}
 ;調教自慰経験
-SIF TFLAG:685 < EXP:11
-    PRINTFORML %EXPNAME:11%＋{EXP:11 - TFLAG:685}
+SIF TFLAG:685 < EXP:조교자위경험
+    PRINTFORML %EXPNAME:11%＋{EXP:조교자위경험 - TFLAG:685}
 ;奉仕快楽経験
-SIF TFLAG:686 < EXP:20
-    PRINTFORML %EXPNAME:20%＋{EXP:20 - TFLAG:686}
+SIF TFLAG:686 < EXP:봉사쾌락경험
+    PRINTFORML %EXPNAME:20%＋{EXP:봉사쾌락경험 - TFLAG:686}
 
 ;快Ｃ의 구슬
 SIF TFLAG:670 < JUEL:0

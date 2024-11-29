@@ -9,22 +9,22 @@
 SIF DITEMTYPE:999:385 > 0
     RETURN 0
 ;獣姦系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 8192) == 0
+SIF (FLAG:커맨드확장 & 8192) == 0
     RETURN 0
 ;初体験のときは이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF (FLAG:25 & 16) == 0 && FLAG:2 & 4
+SIF (FLAG:25 & 16) == 0 && FLAG:VA이상조교필터 & 4
     RETURN 0
 ;動物小屋と馬が필요
-SIF (FLAG:72 & 1) == 0 || (FLAG:72 & 8) == 0
+SIF (FLAG:보유한동물 & 1) == 0 || (FLAG:보유한동물 & 8) == 0
     RETURN 0
 ;主人じゃないとダメ
 SIF ASSIPLAY
     RETURN 0
 ;主人に금단의 지식か狂気がないとダメ
-SIF TALENT:MASTER:56 == 0 && TALENT:MASTER:158 == 0
+SIF TALENT:MASTER:금단의지식 == 0 && TALENT:MASTER:광기 == 0
     RETURN 0
 ;[소인]だとダメ
-SIF TALENT:127
+SIF TALENT:소인
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -33,10 +33,10 @@ SIF EQUIP:14
 SIF TFLAG:899 > 0
     RETURN 0
 ;対象が猫舌だと猫フェラパッチ有効でないとダメ
-SIF TALENT:54 && (FLAG:14 & 16) == 0
+SIF TALENT:고양이혀 && (FLAG:조교모드 & 16) == 0
     RETURN 0
 ;猫舌だと기교5 · 奉仕精神4 · 순종3が필요
-SIF TALENT:54 && (ABL:12 < 5 || ABL:13 < 4 || ABL:10 < 3)
+SIF TALENT:고양이혀 && (ABL:기교 < 5 || ABL:봉사정신 < 4 || ABL:순종 < 3)
     RETURN 0
 ;밧줄 사용 중에는 불가
 SIF TEQUIP:40
@@ -97,30 +97,30 @@ CALL TRAIN_MESSAGE_COM385
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 10
-DOWNBASE:1 += 150
+DOWNBASE:기력 += 150
 
 SOURCE:30 = 2500
 SOURCE:22 = 6500
 SOURCE:31 = 45000
 
 ;ABL:봉사정신을 본다
-IF ABL:13 == 0
+IF ABL:봉사정신 == 0
     SOURCE:15 = 420
     SOURCE:16 = 150
     TIMES SOURCE:30 , 4.00
-ELSEIF ABL:13 == 1
+ELSEIF ABL:봉사정신 == 1
     SOURCE:15 = 500
     SOURCE:16 = 300
     TIMES SOURCE:30 , 2.50
-ELSEIF ABL:13 == 2
+ELSEIF ABL:봉사정신 == 2
     SOURCE:15 = 580
     SOURCE:16 = 600
     TIMES SOURCE:30 , 1.50
-ELSEIF ABL:13 == 3
+ELSEIF ABL:봉사정신 == 3
     SOURCE:15 = 660
     SOURCE:16 = 900
     TIMES SOURCE:30 , 1.00
-ELSEIF ABL:13 == 4
+ELSEIF ABL:봉사정신 == 4
     SOURCE:15 = 740
     SOURCE:16 = 1500
     TIMES SOURCE:30 , 0.80
@@ -131,19 +131,19 @@ ELSE
 ENDIF
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     TIMES SOURCE:15 , 0.50
     TIMES SOURCE:16 , 0.50
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     TIMES SOURCE:15 , 0.80
     TIMES SOURCE:16 , 0.80
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     TIMES SOURCE:15 , 1.00
     TIMES SOURCE:16 , 1.00
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     TIMES SOURCE:15 , 1.20
     TIMES SOURCE:16 , 1.20
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     TIMES SOURCE:15 , 1.50
     TIMES SOURCE:16 , 1.50
 ELSE
@@ -152,23 +152,23 @@ ELSE
 ENDIF
 
 ;ABL:정액중독을 본다
-IF ABL:31 == 0
+IF ABL:정액중독 == 0
     SOURCE:24 = 0
     TIMES SOURCE:16 , 2.00
     TIMES SOURCE:22, 4.00
-ELSEIF ABL:31 == 1
+ELSEIF ABL:정액중독 == 1
     SOURCE:24 = 500
     TIMES SOURCE:16 , 3.00
     TIMES SOURCE:22, 3.00
-ELSEIF ABL:31 == 2
+ELSEIF ABL:정액중독 == 2
     SOURCE:24 = 1200
     TIMES SOURCE:16 , 4.00
     TIMES SOURCE:22, 2.50
-ELSEIF ABL:31 == 3
+ELSEIF ABL:정액중독 == 3
     SOURCE:24 = 3000
     TIMES SOURCE:16 , 6.00
     TIMES SOURCE:22, 2.00
-ELSEIF ABL:31 == 4
+ELSEIF ABL:정액중독 == 4
     SOURCE:24 = 6000
     TIMES SOURCE:16 , 9.00
     TIMES SOURCE:22, 1.50
@@ -179,16 +179,16 @@ ELSE
 ENDIF
 
 ;노예의 입と手にＰ汚れがつく、また口と手と胸と髪に精液汚れがつく
-STAIN:0 |= 2
-STAIN:1 |= 2
-STAIN:0 |= 4
-STAIN:1 |= 4
-STAIN:5 |= 4
-STAIN:7 |= 4
+STAIN:입 |= 2
+STAIN:손 |= 2
+STAIN:입 |= 4
+STAIN:손 |= 4
+STAIN:가슴 |= 4
+STAIN:발 |= 4
 
 TCVAR:22 += 1
-IF (CFLAG:25 & 16) == 0
-    CFLAG:25 |= 16
+IF (CFLAG:첫수간 & 16) == 0
+    CFLAG:첫수간 |= 16
     TCVAR:50 += 1
 ENDIF
 TCVAR:56 += 1
@@ -203,7 +203,7 @@ RETURN 1
 ;--------------------------------------------------
 @DENIAL_MESSAGE_COM_385
 CALL KOJO_DENIAL_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 ;--------------------------------------------------
@@ -211,16 +211,16 @@ SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM385
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-SIF TALENT:170
+SIF TALENT:음란
     PRINT 스스로 
 PRINT 숫말의 거대한 페니스를 
 ;고양이혀フェラ
-IF TALENT:54
+IF TALENT:고양이혀
     PRINTL 물고, 혀끝과 턱의 안쪽, 때로는 거친 표면을 이용해서 말을 자극했다….
 ;フェラチオ
 ELSE
@@ -234,36 +234,36 @@ PRINTFORMW %CALLNAME:TARGET%의 혀 놀림에 절정해버린 말은, %CALLNAME:
 @COM_ORDER_385, ARG
 LOCAL:99 = ARG
 ;ABL:욕망
-IF ABL:11
+IF ABL:욕망
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:11
+    LOCAL:99 = ABL:욕망
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99})
 ENDIF
 ;ABL:봉사정신
-IF ABL:13
+IF ABL:봉사정신
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:13
+    LOCAL:99 = ABL:봉사정신
     TFLAG:240 += LOCAL:99 * 4
     RESULTS = %RESULTS% %ABLNAME:13%LV{LOCAL:99}({LOCAL:99 * 4})
 ENDIF
 
 ;ABL:정액중독
-IF ABL:31
+IF ABL:정액중독
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:31
+    LOCAL:99 = ABL:정액중독
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:31%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 
 ;쾌락각인
-IF MARK:1
+IF MARK:쾌락각인
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = MARK:1
+    LOCAL:99 = MARK:쾌락각인
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99})
 ENDIF
@@ -280,7 +280,7 @@ IF LOCAL:2
 ENDIF
 
 ;부끄럼쟁이
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 1
     TFLAG:240 -= LOCAL:99
@@ -288,21 +288,21 @@ IF TALENT:35
 ENDIF
 
 ;냄새둔감
-IF TALENT:61
+IF TALENT:냄새둔감
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 1
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:61%({LOCAL:99})
 ;냄새민감
-ELSEIF TALENT:62
+ELSEIF TALENT:냄새민감
     RESULTS = %RESULTS% - 
     LOCAL:99 = 3
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:62%({LOCAL:99})
 ENDIF
 ;헌신적
-IF TALENT:63
+IF TALENT:헌신적
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 6
@@ -310,7 +310,7 @@ IF TALENT:63
     RESULTS = %RESULTS% %TALENTNAME:63%({LOCAL:99})
 ENDIF
 ;쾌감의 부정
-IF TALENT:71
+IF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 1
     TFLAG:240 -= LOCAL:99

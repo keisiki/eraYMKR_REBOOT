@@ -14,7 +14,7 @@
 
 ;통상의 리셋 처리 함수 @ASSI_STATE_TAKEOVER, ARG를 거의 복붙.
 ;ARG에는 괴조인격 및 즉각함락을 취득시켰는지가 비트 연산으로 들어가 있음.
-;■조수 인계에서는 TARGET이 아니라 ASSI를 사용하므로, 플래그 등을 참조할 경우에는 CFLAG:(TARGET, 생략 가능):0이 아니라 CFLAG:ASSI:0라고 쓸 것.
+;■조수 인계에서는 TARGET이 아니라 ASSI를 사용하므로, 플래그 등을 참조할 경우에는 CFLAG:(TARGET, 생략 가능):0이 아니라 CFLAG:ASSI:SP캐릭터라고 쓸 것.
 
 ;------여기서부터 처리 내용------
 
@@ -25,19 +25,19 @@
 ;조수를 경험한 사실을 표시함
 ISASSI:ASSI = 1
 ;인계한 캐릭터임을 판별하기 위한 플래그
-CFLAG:ASSI:18 = 1
+CFLAG:ASSI:계승여부 = 1
 ;칭호 리셋
 NICKNAME:ASSI = %CSVNICKNAME (NO:ASSI , 0)%
 ;저택에 있었을 때의 상황
 CSTR:ASSI:3 = 과거에 %CALLNAME:MASTER%의 조교를 받았다.
 
 ;임신 · 포란 중 · 유모가 아닌 육아 중일 때는 줄어 있는 체력을 되돌린다
-IF TALENT:ASSI:140 || TALENT:ASSI:143 || (TALENT:ASSI:141 && CFLAG:ASSI:79 == 0)
-    MAXBASE:ASSI:0 += 500
+IF TALENT:ASSI:임신 || TALENT:ASSI:포란중 || (TALENT:ASSI:육아중 && CFLAG:ASSI:유모여부 == 0)
+    MAXBASE:ASSI:체력 += 500
     CALL RESET_ASSI_PREGNANT, ASSI
 ;회란시의 체력 최대치 저하를 되돌리는 처리
-ELSEIF TALENT:ASSI:145
-    MAXBASE:ASSI:0 += 500
+ELSEIF TALENT:ASSI:회란
+    MAXBASE:ASSI:체력 += 500
 ENDIF
 
 ;특정 게이지를 리셋
@@ -46,12 +46,12 @@ REPEAT 4
     BASE:ASSI:(COUNT+4) = 0
 REND
 ;어디 있는지 장소 플래그 리셋
-CFLAG:ASSI:4 = 0
+CFLAG:ASSI:조교관외 = 0
 ;공포 · 반발각인 취득 완료 판정 리셋
 MARK:ASSI:96 = 0
 MARK:ASSI:97 = 0
 ;약물각인 1Lv분 감소
-MARK:ASSI:3 = MAX(MARK:ASSI:3 - 1, 0)
+MARK:ASSI:약물각인 = MAX(MARK:ASSI:약물각인 - 1, 0)
 
 ;특정 소질을 리셋
 FOR LOCAL, 140, 180
@@ -66,8 +66,8 @@ FOR LOCAL, 140, 180
         TALENT:ASSI:LOCAL = 0
     ENDIF
 NEXT
-TALENT:ASSI:65 = 0
-TALENT:ASSI:998 = 0
+TALENT:ASSI:음모없음 = 0
+TALENT:ASSI:Debug = 0
 
 ;CFLAG를 리셋
 FOR LOCAL, 0, 100
@@ -119,7 +119,7 @@ VARSET EQUIP:ASSI:0, 0, 0, 15
 ;호감도는 감소시킨 상태로 인계
 ;최저는 50(인계하는 시점에서 1000 이상은 있다고 어림잡고 있기 때문)
 ;소질이 변동하는 700, 1000, 2000, 5000을 경계로 인계율이 격감하게.
-LOCAL:1 = CFLAG:ASSI:2 / 20
+LOCAL:1 = CFLAG:ASSI:호감도 / 20
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 100, 90)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 250, 80)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 500, 75)
@@ -127,5 +127,5 @@ LOCAL:1 = TABLE_CALC2(LOCAL:1, 700, 66)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 1000, 50)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 2000, 33)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 5000, 25)
-CFLAG:ASSI:2 = LOCAL:1
+CFLAG:ASSI:호감도 = LOCAL:1
 

@@ -113,7 +113,7 @@ LOCAL:2 = 0
 ;전투결과 처리용
 LOCAL:3 = 0
 ;경비대장 추출.
-LOCAL:8 = FINDCHARA(CFLAG:4013, 2 )
+LOCAL:8 = FINDCHARA(CFLAG:경비대장, 2 )
 ;구출캐릭터 임시 추가
 ADDCHARA ARG
 ;타겟변경
@@ -389,7 +389,7 @@ IF LOCAL:0 == 1
         PRINTFORMW <%조사처리(CALLNAME:(ARG:1),"가")% 실종되었습니다!>
         RESETCOLOR
         ;실종된다.
-        CFLAG:(ARG:1):4 =1
+        CFLAG:(ARG:1):조교관외 =1
         ;실종포인트 계산, 저장
         CALL CALC_MISSINGPOWER_TORIKOMODE, (ARG:1)
     ELSE
@@ -420,7 +420,7 @@ PRINTL
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 어두운 조교관 속에서, 한참이나 %조사처리(CALLNAME:ARG,"를")% 찾아 헤맸다….
 PRINTFORMW ..................
 ;PHASE1. 발견할 것인가? . 기본확률 95%, 볼개그 장착시 85%
-IF RAND:100 > 5 +(CFLAG:ARG:4010 & 2)*10
+IF RAND:100 > 5 +(CFLAG:ARG:스케줄_구속상태 & 2)*10
     PRINTFORMW %조사처리(CALLNAME:ARG,"를")% 찾아냈다!
 ELSE
     CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 1
@@ -433,7 +433,7 @@ ENDIF
 
 ;PHASE2. 해후
 ;함락 상태이며 공간이 있으면, 확률적으로 노예가 배신. 구출자를 포획한다.
-IF LOCAL:0 == 1 && (TALENT:ARG:150 || TALENT:ARG:160 || TALENT:ARG:170) 
+IF LOCAL:0 == 1 && (TALENT:ARG:연모 || TALENT:ARG:복종 || TALENT:ARG:음란) 
     ;20% 확률로 배신한다. 
     IF  RAND:100 > 80 && CALC_SLAVE_CAPACITY() - CHARANUM > 0 
         CALL SETCOLOR_TORIKOMODE, "PINK", 1
@@ -501,7 +501,7 @@ ENDIF
 
 ;PHASE3. 구속해제
 ;철문해제
-IF (CFLAG:ARG:4010 & 1) &&LOCAL:0 == 1
+IF (CFLAG:ARG:스케줄_구속상태 & 1) &&LOCAL:0 == 1
     IF RAND:100 > 10
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 여러 번 시도한 끝에, 자물쇠를 열어냈다.
     ELSE
@@ -520,7 +520,7 @@ IF (CFLAG:ARG:4010 & 1) &&LOCAL:0 == 1
     ENDIF
 ENDIF
 ;밧줄해제
-IF (CFLAG:ARG:4010 & 2) &&LOCAL:0 == 1
+IF (CFLAG:ARG:스케줄_구속상태 & 2) &&LOCAL:0 == 1
     IF RAND:100 > 10
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %조사처리(CALLNAME:ARG,"를")% 묶고있는 밧줄의 느슨한 부분을 찾아 풀어냈다.
     ELSE
@@ -539,13 +539,13 @@ IF (CFLAG:ARG:4010 & 2) &&LOCAL:0 == 1
     ENDIF
 ENDIF
 ;알몸해제. 무조건 성공
-IF (CFLAG:ARG:4010 & 8) &&LOCAL:0 == 1
+IF (CFLAG:ARG:스케줄_구속상태 & 8) &&LOCAL:0 == 1
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 외투를 벗어 %CALLNAME:ARG%의 알몸을 감쌌다.
 ENDIF
 ;기타 구속구 해제
 SIF LOCAL:0 == 1
     PRINTFORMW 그리고 %CALLNAME:ARG%의 몸을 구속하던 것들을 전부 떼어냈다.
-CFLAG:ARG:4010 = 0
+CFLAG:ARG:스케줄_구속상태 = 0
 
 ;결과반환
 ;디버그
@@ -587,7 +587,7 @@ LOCAL:11 = 0
 ;침입자의 기력%상태
 LOCAL:12 = 0
 ;경비대장의 캐릭터 번호 저장
-LOCAL:13 = FINDCHARA(CFLAG:4013, 2)
+LOCAL:13 = FINDCHARA(CFLAG:경비대장, 2)
 ;침입자의 버프 상태
 LOCALS:0 = 
 ;침입자가 때릴 캐릭터의 대표명. 만약 경비대장이 있으면 경비대장명이, 아니면 그냥 '경비원' 이 된다.
@@ -612,26 +612,26 @@ CALL BATTLECRY_TORIKOMODE, (NO:ARG), 1, LOCALS:1
 ;....................................................................................
 ;2회 이상 싸울 때를 위한 처리. 이렇게 하지 않으면 싸울 때 마다 체력이 늘어나버림.
 ;현재의 체력, 기력 %를 저장한다. (여러번 싸우고 있을때를 위해)
-LOCAL:11 = BASE:ARG:0 *100 /MAXBASE:ARG:0
-LOCAL:12 = BASE:ARG:1 *100 /MAXBASE:ARG:1
+LOCAL:11 = BASE:ARG:체력 *100 /MAXBASE:ARG:체력
+LOCAL:12 = BASE:ARG:기력 *100 /MAXBASE:ARG:기력
 ;체력, 기력을 SCV로 맞춤.
 DELCHARA CHARANUM-1
 ADDCHARA (LOCAL:10)
 TARGET = CHARANUM-1
 ;체력, 기력 %를 적용한다.
-BASE:ARG:0 = BASE:ARG:0*LOCAL:11/100
-BASE:ARG:1 = BASE:ARG:1*LOCAL:12/100
+BASE:ARG:체력 = BASE:ARG:체력*LOCAL:11/100
+BASE:ARG:기력 = BASE:ARG:기력*LOCAL:12/100
 ;....................................................................................
 ;난이도 보정. 난이도 1당 1.3배씩 체력이 오른다. 이지에서는 변화없음.
 ;기력(공격력)은 난이도에 따른 보정은 없다.
-MAXBASE:ARG:0 += MAXBASE:ARG:0 *(FLAG:3 -1)*30/100
-BASE:ARG:0 += BASE:ARG:0 *(FLAG:3 -1)*30/100
+MAXBASE:ARG:체력 += MAXBASE:ARG:체력 *(FLAG:난이도 -1)*30/100
+BASE:ARG:체력 += BASE:ARG:체력 *(FLAG:난이도 -1)*30/100
 
 ;주차보정. 2회차부터 주차당 체력 기력이 5% 씩 세진다.
-MAXBASE:ARG:0 += MAXBASE:ARG:0 * (FLAG:6-1)*10/100
-BASE:ARG:0 += BASE:ARG:0 * (FLAG:6-1)*10/100
-MAXBASE:ARG:1 += MAXBASE:ARG:1 * (FLAG:6-1)*10/100
-BASE:ARG:1 += BASE:ARG:1 * (FLAG:6-1)*10/100
+MAXBASE:ARG:체력 += MAXBASE:ARG:체력 * (FLAG:주회수-1)*10/100
+BASE:ARG:체력 += BASE:ARG:체력 * (FLAG:주회수-1)*10/100
+MAXBASE:ARG:기력 += MAXBASE:ARG:기력 * (FLAG:주회수-1)*10/100
+BASE:ARG:기력 += BASE:ARG:기력 * (FLAG:주회수-1)*10/100
 
 ;상성보정. 만약 타겟 = 경비대장일 경우. 역보정이 걸린다.
 IF ARG:1 == LOCAL:13 
@@ -657,10 +657,10 @@ IF ARG:1 == LOCAL:13
         RESETCOLOR
     ENDIF
     ;능력치 변화. 상성에 따른 체력상승은 무효가 되고, 상성 100당 공격력이 33% 씩 깎여나간다.
-    ;MAXBASE:ARG:0 += MAXBASE:ARG:0 * (LOCAL:9-100) /100
-    ;BASE:ARG:0 += BASE:ARG:0 * (LOCAL:9-100) /100
-    MAXBASE:ARG:1 -= MAXBASE:ARG:1 * (LOCAL:9-100) /300
-    BASE:ARG:1 -= BASE:ARG:1 * (LOCAL:9-100) /300
+    ;MAXBASE:ARG:체력 += MAXBASE:ARG:체력 * (LOCAL:9-100) /100
+    ;BASE:ARG:체력 += BASE:ARG:체력 * (LOCAL:9-100) /100
+    MAXBASE:ARG:기력 -= MAXBASE:ARG:기력 * (LOCAL:9-100) /300
+    BASE:ARG:기력 -= BASE:ARG:기력 * (LOCAL:9-100) /300
 ;상성보정. 
 ELSEIF LOCAL:9 > 100
     IF LOCAL:9 >= 300
@@ -685,17 +685,17 @@ ELSEIF LOCAL:9 > 100
         RESETCOLOR
     ENDIF
     ;능력치 변화. 상성이 100을 넘으면, 상성200일때 체력은 2배. 공격력은 1.33배로 강해진다.
-    MAXBASE:ARG:0 += MAXBASE:ARG:0 * (LOCAL:9-100) /100
-    BASE:ARG:0 += BASE:ARG:0 * (LOCAL:9-100) /100
-    MAXBASE:ARG:1 += MAXBASE:ARG:1 * (LOCAL:9-100) /300
-    BASE:ARG:1 += BASE:ARG:1 * (LOCAL:9-100) /300
+    MAXBASE:ARG:체력 += MAXBASE:ARG:체력 * (LOCAL:9-100) /100
+    BASE:ARG:체력 += BASE:ARG:체력 * (LOCAL:9-100) /100
+    MAXBASE:ARG:기력 += MAXBASE:ARG:기력 * (LOCAL:9-100) /300
+    BASE:ARG:기력 += BASE:ARG:기력 * (LOCAL:9-100) /300
 ENDIF
 ;날짜보정. 침입한 날짜에 따라 점점 세짐. 1%씩 세진다. 최대 100일까지만 추가됨.
 IF DAY <= 100
-    MAXBASE:ARG:0 += MAXBASE:ARG:0 * DAY / 100
-    BASE:ARG:0 += BASE:ARG:0 * DAY / 100
-    MAXBASE:ARG:1 += MAXBASE:ARG:1 * DAY / 100
-    BASE:ARG:1 += BASE:ARG:1 * DAY / 100
+    MAXBASE:ARG:체력 += MAXBASE:ARG:체력 * DAY / 100
+    BASE:ARG:체력 += BASE:ARG:체력 * DAY / 100
+    MAXBASE:ARG:기력 += MAXBASE:ARG:기력 * DAY / 100
+    BASE:ARG:기력 += BASE:ARG:기력 * DAY / 100
 ENDIF
 
 ;...........................................................................................
@@ -703,7 +703,7 @@ ENDIF
 LOCAL:0 = 0
 DO
     ;경비대장 체크 (이 전 턴에 뻗었을 수도 있으니까)
-    LOCAL:13 = FINDCHARA(CFLAG:4013, 2)
+    LOCAL:13 = FINDCHARA(CFLAG:경비대장, 2)
     DRAWLINE
     ;턴 정보 표시
     PRINTFORML <{LOCAL:0+1}/5 턴>
@@ -735,15 +735,15 @@ DO
     ENDIF
     PRINTL 퍼센트>
     ;체력
-    PRINTFORM ♡체력:({BASE:ARG:0}/{MAXBASE:ARG:0})
-    CALL PRINT_COLORBAR(BASE:ARG:0, MAXBASE:ARG:0, MAXBASE:ARG:0/40, BARCOLORSET("黄"), BARCOLORSET("赤"))
+    PRINTFORM ♡체력:({BASE:ARG:체력}/{MAXBASE:ARG:체력})
+    CALL PRINT_COLORBAR(BASE:ARG:체력, MAXBASE:ARG:체력, MAXBASE:ARG:체력/40, BARCOLORSET("黄"), BARCOLORSET("赤"))
     PRINTL
     ;기력
-    ;PRINTFORM ☆기력:({BASE:ARG:1}/{MAXBASE:ARG:1})
-    ;CALL PRINT_COLORBAR(BASE:ARG:1, MAXBASE:ARG:1, MAXBASE:ARG:1/40, BARCOLORSET("黄"), BARCOLORSET("赤"))
+    ;PRINTFORM ☆기력:({BASE:ARG:기력}/{MAXBASE:ARG:기력})
+    ;CALL PRINT_COLORBAR(BASE:ARG:기력, MAXBASE:ARG:기력, MAXBASE:ARG:기력/40, BARCOLORSET("黄"), BARCOLORSET("赤"))
     ;PRINTL
     ;공격력계산
-    LOCAL:6 = (MAXBASE:ARG:1 * 10/100)
+    LOCAL:6 = (MAXBASE:ARG:기력 * 10/100)
     PRINTFORM ☆공격력:{LOCAL:6}
     PRINTL
 
@@ -929,7 +929,7 @@ DO
         ;경비대장을 친다면
         ELSEIF LOCAL:2 == 10
         ;두들겨 맞을 경비대장의 현재 체력을 받아온다.
-            LOCAL:5 = BASE:(LOCAL:13):0
+            LOCAL:5 = BASE:(LOCAL:13):체력
             ;침입자가 공격실행
             CALL ATTACK_SLAVE_TORIKOMODE, ARG, LOCAL:6, CALLNAME:(LOCAL:13)
             ;대미지를 저장.
@@ -942,10 +942,10 @@ DO
             PRINTFORMW 대미지!!
             RESETCOLOR
             ;경비대장 체력감소.
-            BASE:(LOCAL:13):0 -= LOCAL:3
-            BASE:(LOCAL:13):0 = MAX(BASE:(LOCAL:13):0, 50)
+            BASE:(LOCAL:13):체력 -= LOCAL:3
+            BASE:(LOCAL:13):체력 = MAX(BASE:(LOCAL:13):체력, 50)
             ;경비대장이 빈사
-            IF BASE:(LOCAL:13):0 == 50
+            IF BASE:(LOCAL:13):체력 == 50
                 ;경비대장 배틀크라이 출력.쓰러짐.
                 CALL BATTLECRY_GUARDSMAN_TORIKOMODE, TOSTR(NO:(LOCAL:13)), 6
                 ;쓰러지기
@@ -957,9 +957,9 @@ DO
                 PRINTFORMW (%조사처리(CALLNAME:(LOCAL:13),"는")% 퇴각했습니다)
                 ;경비대장 해임
                 PRINTFORMW (%조사처리(CALLNAME:(LOCAL:13),"는")% 경비대장에서 해임 되었습니다)
-                CFLAG:(LOCAL:13):4013 = 0
+                CFLAG:(LOCAL:13):경비대장 = 0
                 ;경비대장 정보 갱신.
-                LOCAL:13 = FINDCHARA(CFLAG:4013, 2)
+                LOCAL:13 = FINDCHARA(CFLAG:경비대장, 2)
             ;경비대장이 살았다.
             ELSE
                 ;경비대장 피격 배틀크라이. 100%확률로 발동함
@@ -1022,14 +1022,14 @@ DO
             SIF RAND:100 > 70
                 CALL BATTLECRY_TORIKOMODE, (NO:ARG), 3, LOCALS:1
             ;빈사 배틀크라이.
-            SIF BASE:ARG:0 < MAXBASE:ARG:0 *20/100
+            SIF BASE:ARG:체력 < MAXBASE:ARG:체력 *20/100
                 CALL BATTLECRY_TORIKOMODE, (NO:ARG), 5, LOCALS:1
             ;경비원 경험치 획득. 랜덤 1500 +2000을 획득한다.
             CALL GETEXP_GUARDSMAN_TORIKOMODE, 5051+LOCAL:99, (2000+RAND:1500)
             ;구출자 체력감소.
-            BASE:ARG:0 -= LOCAL:4
+            BASE:ARG:체력 -= LOCAL:4
             ;구출자가 쓰러졌다.
-            IF BASE:ARG:0 <= 2
+            IF BASE:ARG:체력 <= 2
                 CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 3
                 FONTBOLD
                 PRINTFORMW <%조사처리(CALLNAME:ARG,"가")% 쓰러졌다!>
@@ -1072,12 +1072,12 @@ DO
             SIF RAND:100 > 70
                 CALL BATTLECRY_TORIKOMODE, (NO:ARG), 3, CALLNAME:(LOCAL:13)
             ;빈사 배틀크라이.
-            SIF BASE:ARG:0 < MAXBASE:ARG:0 *20/100
+            SIF BASE:ARG:체력 < MAXBASE:ARG:체력 *20/100
                 CALL BATTLECRY_TORIKOMODE, (NO:ARG), 5, CALLNAME:(LOCAL:13)
             ;구출자 체력감소.
-            BASE:ARG:0 -= LOCAL:4
+            BASE:ARG:체력 -= LOCAL:4
             ;구출자가 쓰러졌다.
-            IF BASE:ARG:0 <= 2
+            IF BASE:ARG:체력 <= 2
                 CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 3
                 FONTBOLD
                 PRINTFORMW <%조사처리(CALLNAME:ARG,"가")% 쓰러졌다!>
@@ -1121,7 +1121,7 @@ LOCAL:1 = 0
 ;조수번호 대피
 LOCAL:2 = ASSI
 ;경비대장 추출.
-LOCAL:3 = FINDCHARA(CFLAG:4013, 2 )
+LOCAL:3 = FINDCHARA(CFLAG:경비대장, 2 )
 ;
 ;임시캐러 삭제
 DELCHARA CHARANUM-1
@@ -1137,7 +1137,7 @@ IF ARG:1 == 1
     PRINTL
     CALL SETCOLOR_TORIKOMODE, "RED", 2
     PRINTFORML 스트레스+50
-    CFLAG:65 += 50
+    CFLAG:스트레스 += 50
     RESETCOLOR
 ;때려잡음
 ELSEIF ARG:1 == 2
@@ -1145,15 +1145,15 @@ ELSEIF ARG:1 == 2
     PRINTFORMW 그리고 조교실에 처박혔다….
     CALL SETCOLOR_TORIKOMODE, "RED", 2
     PRINTFORML 고통각인 LV1 획득
-    MARK:0 = 0
+    MARK:고통각인 = 0
     PRINTFORML 반발각인 LV1를 획득
-    MARK:9 = 1
+    MARK:반발각인 = 1
     PRINTFORML 스트레스+200
-    CFLAG:65 += 200
+    CFLAG:스트레스 += 200
     RESETCOLOR
     ;체력기력캐스팅.
     BASE:0 = MAXBASE:0*60/100
-    BASE:1 = MAXBASE:1*60/100
+    BASE:기력 = MAXBASE:기력*60/100
 ;윤간으로 획득
 ELSEIF ARG:1 == 3
     ;주인 이름 대피용
@@ -1166,7 +1166,7 @@ ELSEIF ARG:1 == 3
     PRINTFORMW ..............................
     PRINTFORMW ................
     ;남캐면 윤간연출 X
-    IF TALENT:TARGET:120 == 1
+    IF TALENT:TARGET:남자 == 1
         ;
     ELSE
         PRINTFORMW %조사선택(CALLNAME:TARGET, "가")% 정신을 차린 것 같다.
@@ -1177,7 +1177,7 @@ ELSEIF ARG:1 == 3
         PRINTFORMW 경비원들은 불안한 표정을 띠고 있는 %조사선택(CALLNAME:TARGET, "를")% 둘러싸고,
         PRINTFORMW %CALLNAME:TARGET%의 허벅지를 움켜 쥐어 비부를 드러내도록 다리를 M자로 벌렸다. 
 
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;처녀받기 선택지 출력
             $SELECT_LIST
             PRINTFORML %CALLNAME:TARGET%의 처녀를 어떻게 할까?
@@ -1185,8 +1185,8 @@ ELSEIF ARG:1 == 3
             PRINTFORML [1] 그딴 것에 의미는 없다.
             ;경비대장이 있고, 후타나리거나 남자라면
             ;디버그
-            ;PRINTFORML LOCAL:3={LOCAL:3}, TALENT:(LOCAL:3):120={TALENT:(LOCAL:3):120}, TALENT:(LOCAL:3):121={TALENT:(LOCAL:3):121} %CALLNAME:(LOCAL:3)%
-            SIF LOCAL:3 > 0  && (TALENT:(LOCAL:3):120 ||TALENT:(LOCAL:3):121 )
+            ;PRINTFORML LOCAL:3={LOCAL:3}, TALENT:(LOCAL:3):남자={TALENT:(LOCAL:3):남자}, TALENT:(LOCAL:3):후타나리={TALENT:(LOCAL:3):후타나리} %CALLNAME:(LOCAL:3)%
+            SIF LOCAL:3 > 0  && (TALENT:(LOCAL:3):남자 ||TALENT:(LOCAL:3):후타나리 )
                 PRINTFORML [2] %CALLNAME:(LOCAL:3)%에게 준다.
             INPUT
             IF RESULT == 0
@@ -1195,7 +1195,7 @@ ELSEIF ARG:1 == 3
                 ;주인 이름을 경비원으로 고친다.
                 CALLNAME:MASTER = 경비원
                 LOCAL:1 = 1
-            ELSEIF RESULT == 2  && (TALENT:(LOCAL:3):120 ||TALENT:(LOCAL:3):121 )
+            ELSEIF RESULT == 2  && (TALENT:(LOCAL:3):남자 ||TALENT:(LOCAL:3):후타나리 )
                 ;조수등록
                 ASSI = LOCAL:3
                 ;조수플레이 켬
@@ -1208,10 +1208,10 @@ ELSEIF ARG:1 == 3
         ENDIF
         ;V삽입
         PRINTFORML %조사선택(CALLNAME:MASTER, "는")% 주저앉아 젖어있는 비부에 다가가, 
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             PRINTFORMW 애원하는 %조사선택(CALLNAME:TARGET, "를")% 무시하고 순결을 찢어내어, 
             PRINTFORMW 처음으로 이물질을 받아들인 피에 젖은 보지를 가차 없이 페니스로 유린했다. 
-            TALENT:0 = 0
+            TALENT:처녀 = 0
             CALL SETCOLOR_TORIKOMODE, "RED", 2
             PRINTFORMW <처녀상실>
             RESETCOLOR
@@ -1268,7 +1268,7 @@ ELSEIF ARG:1 == 3
         PRINTFORMW 다른 경비원은 %CALLNAME:TARGET%의 옆에서 약간 구부정하게 앉아, 한쪽의 유두를 입으로 빨고 
         PRINTFORMW 혀끝으로 튕기거나 살짝 물거나 하면서, 다른 한쪽의 유두를 손가락 끝으로 집고, 튕기고, 비틀었다. 
         SELECTCOM = 201
-        FLAG:11 = 2
+        FLAG:캐릭터대사표시 = 2
         CALL KOJO_JUSTSAY_TORIKOMODE, TARGET, 230
         SELECTCOM = 0
 
@@ -1306,44 +1306,44 @@ ELSEIF ARG:1 == 3
     ;반발각인1OR2
     IF RAND:100 > 50
         PRINTFORML 반발각인 LV2를 획득
-        MARK:9 = 2
+        MARK:반발각인 = 2
     ELSE
         PRINTFORML 반발각인 LV1을 획득
-        MARK:9 = 1
+        MARK:반발각인 = 1
     ENDIF
     IF RAND:100 > 50
         PRINTFORML 이상경험 +2
-        EXP:50 += 2
+        EXP:이상경험 += 2
     ELSE
         PRINTFORML 이상경험 +1
-        EXP:50 += 1
+        EXP:이상경험 += 1
     ENDIF
     PRINTFORML 스트레스 +500
-    CFLAG:65 += 500
+    CFLAG:스트레스 += 500
     PRINTL
     RESETCOLOR
 
     ;경험처리
     ;남캐는 V경험 없다.
-    IF TALENT:120 == 1
+    IF TALENT:남자 == 1
         ;
     ELSE
         PRINTFORML V경험 +10
-        EXP:0 += 10
+        EXP:V경험 += 10
     ENDIF
     PRINTFORML A경험 +10
-    EXP:1 += 10
+    EXP:A경험 += 10
     PRINTFORML 펠라경험 +10
-    EXP:22 += 10
+    EXP:펠라경험 += 10
     PRINTFORML 정액경험 +20
-    EXP:4 += 20
+    EXP:정액경험 += 20
     PRINTFORML 피윤간경험 +1
-    EXP:82 += 1
+    EXP:피윤간경험 += 1
     PRINTFORML 주인조교경험 +1
-    EXP:98 += 1
+    EXP:주인조교경험 += 1
     ;체력기력캐스팅.
     BASE:0 = MAXBASE:0*30/100
-    BASE:1 = MAXBASE:1*30/100
+    BASE:기력 = MAXBASE:기력*30/100
 ENDIF
 WAIT
 
@@ -1360,9 +1360,9 @@ WAIT
 ;증가시킬 돈
 LOCAL:0 = 0
 ;최대체력획득
-LOCAL:1 = MAXBASE:ARG:0
+LOCAL:1 = MAXBASE:ARG:체력
 ;최대기력획득
-LOCAL:2 = MAXBASE:ARG:1
+LOCAL:2 = MAXBASE:ARG:기력
 ;..........................................................
 ;돈 = (기력 + 체력) *5
 LOCAL:0 = (LOCAL:1+LOCAL:2) *5
@@ -1375,7 +1375,7 @@ ELSEIF ARG:1 == 5
     TIMES LOCAL:0, 0.5
 ENDIF
 ;난이도에 따른 보정. 난이도가 1오를 때 마다, 들어오는 돈은 분모분 줄어든다. 2/1, 2/2, 2/3, 2/4, 2/5....
-LOCAL:0 = LOCAL:0 *200/(FLAG:3*100)
+LOCAL:0 = LOCAL:0 *200/(FLAG:난이도*100)
 ;반환
 RESULT = LOCAL:0
 RETURN RESULT
@@ -1483,10 +1483,10 @@ FOR COUNT, 100, 600
     ITEMSALES:COUNT = ITEMPRICE:COUNT
 NEXT
 ;난이도가 LUNATIC 미만이면 헬코 컷
-SIF FLAG:3 < 4
+SIF FLAG:난이도 < 4
     ITEMSALES:597 = 0
 ;지옥의 훈장이 없다면 세이세이히메 컷
-SIF TALENT:MASTER:834 == 0
+SIF TALENT:MASTER:지옥의훈장 == 0
     ITEMSALES:598 = 0
 ;あなたと子供カット
 ITEMSALES:100 = 0
@@ -1503,7 +1503,7 @@ ITEMSALES:196 = 0
 ITEMSALES:197 = 0
 ITEMSALES:199 = 0
 ;ビビットを購入するには紳士的な触手のONと進化の秘法を所持することが必要である.
-SIF (FLAG:15 & 4096) == 0 || (ITEM:59 == 0 && NOITEM == 0)
+SIF (FLAG:커맨드확장 & 4096) == 0 || (ITEM:59 == 0 && NOITEM == 0)
     ITEMSALES:236 = 0
 
 ;アリスがいたら
@@ -1869,18 +1869,18 @@ RETURN RESULT:1
 ;캐릭터 추가 및 초기 설정의 처리로
 CALL CHARA_STATE_BASIC, ARG
 ;구입 인원수 추가
-FLAG:39 += 1
+FLAG:구입총계 += 1
 ;입수 방법의 기록
 CSTR:3  = %CALLNAME:MASTER%의 조교관에 침입했다가 붙잡혔다.
 ;구입된 날을 기록
-CFLAG:3111 = DAY
+CFLAG:구입한날 = DAY
 
 ;구입 가능한 노예의 인원수 산출
 LOCAL = CALC_SLAVE_CAPACITY() - CHARANUM
 IF ARG == 8 && FLAG:570 & 1 && LOCAL > 0
     CALL ROYALFLARE, LOCAL
     PRINTW  
-ELSEIF ARG == 8 && TALENT:MASTER:834
+ELSEIF ARG == 8 && TALENT:MASTER:지옥의훈장
     PRINTFORML ＜파츄리를 포획한 덕에, 파츄리의 Spell Card를 구입할 수 있게 되었습니다.＞
     PRINTFORMW ＜이후 파츄리의 Spell Card가 침입할지도 모릅니다.＞
 ELSEIF ARG == 14

@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:409 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;조교자가 ヤマメでないとダメ
 SIF NO:PLAYER != 58
@@ -44,28 +44,28 @@ COM_NAME = 팽이 돌리기
 CALL TRAIN_MESSAGE_COM409
 
 DOWNBASE:0 += 10
-DOWNBASE:1 += 10
+DOWNBASE:기력 += 10
 
 SOURCE:31 = 200
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     SOURCE:24 = 30
     TIMES SOURCE:31, 1.00
     LOCAL:1 = 200
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     SOURCE:24 = 60
     TIMES SOURCE:31, 0.90
     LOCAL:1 = 100
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     SOURCE:24 = 120
     TIMES SOURCE:31, 0.70
     LOCAL:1 = 75
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     SOURCE:24 = 180
     TIMES SOURCE:31, 0.50
     LOCAL:1 = 50
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     SOURCE:24 = 240
     TIMES SOURCE:31, 0.30
     LOCAL:1 = 25
@@ -86,9 +86,9 @@ FOR LOCAL, 0, 8
     STAIN:LOCAL |= 64
 NEXT
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 2
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 2
 ENDIF
 
@@ -99,14 +99,14 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM409
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 몸에 달라붙어있는 실을 잡고, 팽이를 돌리듯이 마구 돌려버렸다….
 PRINTL
 PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-SIF ABL:21 < 3
+SIF ABL:마조끼 < 3
     PRINT 완전히 
 PRINTL 빙글빙글 눈이 돌아가고 있다….
 PRINTL

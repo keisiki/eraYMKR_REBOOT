@@ -9,13 +9,13 @@
 SIF DITEMTYPE:999:405 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;조교자가 아키 자매가 아니면 불가
 SIF NO:PLAYER != 37 && NO:PLAYER != 38
     RETURN 0
 ;이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4
+SIF FLAG:VA이상조교필터 & 4
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
@@ -27,22 +27,22 @@ SIF TEQUIP:90
 SIF TEQUIP:32 == 9
     RETURN 1
 ;조교 대상이 [소인]일 경우에는 주인이 금단의 지식 보유자가 아니면 불가
-SIF TALENT:127 && TALENT:MASTER:56 == 0
+SIF TALENT:소인 && TALENT:MASTER:금단의지식 == 0
     RETURN 0
 ;체력이 1000미만으로는 장착 불가능
 SIF BASE:0 < 1000
     RETURN 0
 ;기력이 500미만일 때는 불가
-SIF BASE:1 < 500
+SIF BASE:기력 < 500
     RETURN 0
-;Ｕ확장경험 적으면 안 됨
-SIF EXP:34 < 5
+;U확장경험 적으면 안 됨
+SIF EXP:U확장경험 < 5
     RETURN 0
 ;쿠스코 사용 중에는 불가
 SIF TEQUIP:21
     RETURN 0
 ;조교 대상이 남자일 경우, Ｃ계 장착구 사용 중에는 불가
-SIF (TEQUIP:30 || TEQUIP:31) && TALENT:120
+SIF (TEQUIP:30 || TEQUIP:31) && TALENT:남자
     RETURN 0
 ;그밖의 Ｕ계 장착구 사용 중에는 불가
 SIF (TEQUIP:32 && TEQUIP:32 != 9) || TEQUIP:26
@@ -81,7 +81,7 @@ ENDIF
 CALL TRAIN_MESSAGE_COM405
 
 DOWNBASE:0 += 500
-DOWNBASE:1 += 600
+DOWNBASE:기력 += 600
 
 SOURCE:12 = 800
 SOURCE:17 = 600
@@ -90,35 +90,35 @@ SOURCE:22 = 1700
 SOURCE:31 = 2000
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 1000
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 1500
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 2000
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 2500
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 3000
 ELSE
     SOURCE:0 = 3500
 ENDIF
 
 ;EXP:요도 개발 경험을 본다
-IF EXP:46 < EXPLV:1
+IF EXP:요도개발경험 < EXPLV:1
     TIMES SOURCE:0 , 0.20
     SOURCE:20 = 8000
     TCVAR:50 += 1
-ELSEIF EXP:46 < EXPLV:2
+ELSEIF EXP:요도개발경험 < EXPLV:2
     TIMES SOURCE:0 , 0.60
     SOURCE:20 = 3600
-ELSEIF EXP:46 < EXPLV:3
+ELSEIF EXP:요도개발경험 < EXPLV:3
     TIMES SOURCE:0 , 1.00
     SOURCE:20 = 1200
-ELSEIF EXP:46 < EXPLV:4
+ELSEIF EXP:요도개발경험 < EXPLV:4
     TIMES SOURCE:0 , 1.20
     SOURCE:20 = 300
-ELSEIF EXP:46 < EXPLV:5
+ELSEIF EXP:요도개발경험 < EXPLV:5
     TIMES SOURCE:0 , 1.40
     SOURCE:20 = 30
 ELSE
@@ -160,25 +160,25 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:0 , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:0 , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:0 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:0 , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:0 , 1.20
 ELSE
     TIMES SOURCE:0 , 1.30
 ENDIF
 
 ;남자
-SIF TALENT:120
+SIF TALENT:남자
     TIMES SOURCE:20 , 4.50
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
 
 ;야채성활
@@ -217,18 +217,18 @@ ELSE
 ENDIF
 
 DOWNBASE:0 += 70
-DOWNBASE:1 += 100
+DOWNBASE:기력 += 100
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     LOCAL = 40
-ELSEIF ABL:01 == 1
+ELSEIF ABL:C감각 == 1
     LOCAL = 120
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     LOCAL = 360
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     LOCAL = 600
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     LOCAL = 900
 ELSE
     LOCAL = 1300
@@ -236,16 +236,16 @@ ENDIF
 
 ;EXP:요도 경험을 본다
 ;0(은)는 있을 수 없다
-IF EXP:46 < EXPLV:2
+IF EXP:요도개발경험 < EXPLV:2
     TIMES LOCAL , 0.60
     LOCAL:1 = 240
-ELSEIF EXP:46 < EXPLV:3
+ELSEIF EXP:요도개발경험 < EXPLV:3
     TIMES LOCAL , 1.00
     LOCAL:1 = 120
-ELSEIF EXP:46 < EXPLV:4
+ELSEIF EXP:요도개발경험 < EXPLV:4
     TIMES LOCAL , 1.20
     LOCAL:1 = 60
-ELSEIF EXP:46 < EXPLV:5
+ELSEIF EXP:요도개발경험 < EXPLV:5
     TIMES LOCAL , 1.40
     LOCAL:1 = 30
 ELSE
@@ -290,29 +290,29 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL , 1.20
 ELSE
     TIMES LOCAL , 1.30
 ENDIF
 
 ;남자
-SIF TALENT:120
+SIF TALENT:남자
     TIMES LOCAL:1 , 4.50
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES LOCAL:1 , 2.00
 
 ;정조관념(처녀는 있을 수 없다)
-SIF TALENT:30
+SIF TALENT:정조관념
     TIMES LOCAL:1, 3.00
 
 IF NO:TARGET == 12 || NO:TARGET == 15
@@ -328,9 +328,9 @@ TCVAR:34 += 1
 
 TFLAG:165 += 1
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 RETURN 1
@@ -340,22 +340,22 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM405
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 IF TEQUIP:32 == 9
     PRINTFORML %CALLNAME:TARGET%의 요도에 물려있는 아스파라거스를 천천히 뽑아 냈다.
     PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-    IF EXP:34 >= 100 && TALENT:170
+    IF EXP:U확장경험 >= 100 && TALENT:음란
         PRINT 잘 개발된 요도로 아스파라거스의 돌기로부터 쾌락을 탐내려는 듯이 얽고
-    ELSEIF TALENT:150 && TALENT:170
+    ELSEIF TALENT:연모 && TALENT:음란
         PRINT 아스파라거스의 돌기가 요도 벽을 비빌 때마다, 마치 경련하는 것 같이 사지를 떨고
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORM 거친 숨을 몰아 쉬면서도 %조사선택(CALLNAME:PLAYER, "와")% 시선이 마주치자 만족스런 표정을 짓고
-    ELSEIF TALENT:170
+    ELSEIF TALENT:음란
         PRINT 아스파라거스가 가져오는 쾌감에 야무지지 못하게도 혀를 늘어뜨리고 교성을 지르고
-    ELSEIF TALENT:40
+    ELSEIF TALENT:아픔에약함
         PRINT 요도로부터 거대한 물체가 빠져나가는 감각에 결국 참지 못하고, 듣기 싫을 정도의 교성을 지르고
     ELSE
         PRINT 뽑혀진 순간 안심한 표정을 지었지만, 요도내의 상실감이 주는 위화감에 곤혹스러워 하고
@@ -363,20 +363,20 @@ IF TEQUIP:32 == 9
     PRINTW  있다….
 ELSE
     PRINTFORM %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 
-    IF TALENT:120
+    IF TALENT:남자
         PRINT 음경의 끄트머리에 
     ELSE
         PRINT 살짝 벌름거리는 요도구에 
     ENDIF
     PRINTL 싱싱한 아스파라거스를 갖다 댔다….
     PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-    IF TALENT:150 && TALENT:170
+    IF TALENT:연모 && TALENT:음란
         PRINT 열기 가득한 시선으로 “그것”을 응시하며 스스로 요도구를 크게 펼치고
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         PRINTFORM 미소를 띠고는 있지만 당혹스러운 표정을 감추지 못한 채 %조사선택(CALLNAME:PLAYER, "를")% 보고
-    ELSEIF TALENT:170
+    ELSEIF TALENT:음란
         PRINT 삽입되는 쾌감을 한계까지 끌어내려 요도구를 자신의 손가락으로 휘젓고 쑤시고
-    ELSEIF TALENT:40
+    ELSEIF TALENT:아픔에약함
         PRINT 눈물을 흘리며 비명을 지르고, 요도에 기어들려 하는 물건을 뿌리치고
     ELSE
         PRINTFORM 건조한 웃음을 지으며 %CALLNAME:PLAYER%의 손안의 아스파라거스를 응시하고

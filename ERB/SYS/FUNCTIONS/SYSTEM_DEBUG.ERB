@@ -44,7 +44,7 @@ PRINTLC [ 10] - TFLAG 조작
 PRINTLC [ 11] - FLAG 조작
 PRINTLC [ 12] - TEQUIP 조작
 PRINTLC [ 13] - EQUIP 조작
-PRINTFORMLC [ 14] - 자동 능력 상승 %LOCALS:(TALENT:998)%
+PRINTFORMLC [ 14] - 자동 능력 상승 %LOCALS:(TALENT:Debug)%
 PRINTLC [ 15] - TSTR 조작
 PRINTLC [ 16] - 조교명령보정변경
 PRINTLC [ 99] - 퀵 로드
@@ -109,12 +109,12 @@ RESTART
 DRAWLINE
 PRINTL 「에―로 빠와아아―!!」
 BASE:0 = MAXBASE:0
-BASE:1 = MAXBASE:1
-BASE:MASTER:0 = MAXBASE:MASTER:0
-BASE:MASTER:1 = MAXBASE:MASTER:1
+BASE:기력 = MAXBASE:기력
+BASE:MASTER:체력 = MAXBASE:MASTER:체력
+BASE:MASTER:기력 = MAXBASE:MASTER:기력
 IF ASSI >= 0
-    BASE:ASSI:0 = MAXBASE:ASSI:0
-    BASE:ASSI:1 = MAXBASE:ASSI:1
+    BASE:ASSI:체력 = MAXBASE:ASSI:체력
+    BASE:ASSI:기력 = MAXBASE:ASSI:기력
 ENDIF
 
 ;--------------------------------------------------
@@ -145,14 +145,14 @@ PALAM:22 = 0
 ;현재 조교 중인 캐릭터의 호감도를 맘대로 바꿉니다. 연모 이벤트 같은 건 조교 종료시에 발동합니다. 너무 욕심내면 에러납니다.
 @EDIT_FAVORABILITY
 DRAWLINE
-PRINTFORML %CALLNAME:TARGET%의 호감도:{CFLAG:2}
+PRINTFORML %CALLNAME:TARGET%의 호감도:{CFLAG:호감도}
 PRINTL 원하시는 호감도 수치를 입력하세요(0-999999/무효값을 넣으면 취소)
 
 INPUT
 SIF RESULT < 0 || RESULT > 999999
     RETURN 0
-CFLAG:2 = RESULT
-PRINTFORML %CALLNAME:TARGET%의 호감도를 {CFLAG:2}로 바꿨습니다.
+CFLAG:호감도 = RESULT
+PRINTFORML %CALLNAME:TARGET%의 호감도를 {CFLAG:호감도}로 바꿨습니다.
 
 ;--------------------------------------------------
 ;ストレス変化処理
@@ -160,14 +160,14 @@ PRINTFORML %CALLNAME:TARGET%의 호감도를 {CFLAG:2}로 바꿨습니다.
 ;현재 조교 중인 캐릭터의 스트레스를 맘대로 바꿉니다. 유아 퇴행 같은 건 조교 종료시에 발동합니다. 물론 욕심내면 에러납니다.
 @EDIT_STRESS
 DRAWLINE
-PRINTFORML %CALLNAME:TARGET%의 스트레스:{CFLAG:65}
+PRINTFORML %CALLNAME:TARGET%의 스트레스:{CFLAG:스트레스}
 PRINTL 원하시는 스트레스 수치를 입력하세요(0-999999/무효값을 넣으면 취소)
 
 INPUT
 SIF RESULT < 0 || RESULT > 999999
     RETURN 0
-CFLAG:65 = RESULT
-PRINTFORML %CALLNAME:TARGET%의 스트레스를 {CFLAG:65}로 바꿨습니다.
+CFLAG:스트레스 = RESULT
+PRINTFORML %CALLNAME:TARGET%의 스트레스를 {CFLAG:스트레스}로 바꿨습니다.
 
 ;--------------------------------------------------
 ;淫乱系素質着脱処理
@@ -178,18 +178,18 @@ LOCALS:0 = 추가
 LOCALS:1 = 제거
 DRAWLINE
 PRINTFORML %CALLNAME:TARGET%에게 부가/삭제할 소질을 선택해주세요.
-PRINTFORML [0] [음란]을 %LOCALS:(TALENT:170)%합니다.
-PRINTFORML [1] [\@(TALENT:120 || TALENT:121) ? 음경 # 음핵\@]을 %LOCALS:(TALENT:171)%합니다
-SIF TALENT:120 == 0
-    PRINTFORML [2] [음호]를 %LOCALS:(TALENT:172)%합니다.
-PRINTFORML [3] [음고]를 %LOCALS:(TALENT:173)%합니다.
-PRINTFORML [4] [음유]를 %LOCALS:(TALENT:174)%합니다.
-PRINTFORML [5] [요도광]을 %LOCALS:(TALENT:175)%합니다.
-PRINTFORML [6] [키스마]를 %LOCALS:(TALENT:176)%합니다.
-PRINTFORML [7] [초Ｓ]를 %LOCALS:(TALENT:177)%합니다.
-PRINTFORML [8] [초Ｍ]을 %LOCALS:(TALENT:178)%합니다.
-PRINTFORML [9] [즉각함락]을 %LOCALS:(TALENT:179)%합니다.
-SIF CFLAG:14 < 15 || CFLAG:15 < 15 || CFLAG:16 < 1023
+PRINTFORML [0] [음란]을 %LOCALS:(TALENT:음란)%합니다.
+PRINTFORML [1] [\@(TALENT:남자 || TALENT:후타나리) ? 음경 # 음핵\@]을 %LOCALS:(TALENT:음핵／음경)%합니다
+SIF TALENT:남자 == 0
+    PRINTFORML [2] [음호]를 %LOCALS:(TALENT:음호)%합니다.
+PRINTFORML [3] [음고]를 %LOCALS:(TALENT:음고)%합니다.
+PRINTFORML [4] [음유]를 %LOCALS:(TALENT:음유)%합니다.
+PRINTFORML [5] [요도광]을 %LOCALS:(TALENT:요도광)%합니다.
+PRINTFORML [6] [키스마]를 %LOCALS:(TALENT:키스마)%합니다.
+PRINTFORML [7] [초S]를 %LOCALS:(TALENT:초S)%합니다.
+PRINTFORML [8] [초M]을 %LOCALS:(TALENT:초M)%합니다.
+PRINTFORML [9] [즉각함락]을 %LOCALS:(TALENT:즉각함락)%합니다.
+SIF CFLAG:이벤트취득연모 < 15 || CFLAG:이벤트취득복종 < 15 || CFLAG:이벤트취득음란 < 1023
     PRINTL [97] 모든 음란 소질을 취득한다.
 SIF (TFLAG:104 & 128) == 0
     PRINTL [98] 모든 음란 소질 추가 플래그
@@ -200,40 +200,40 @@ PRINTL [100] 그만둔다
 $INPUT_LOOP
 INPUT
 IF RESULT == 0
-    PRINTFORMW [음란]을 %LOCALS:(TALENT:170)%합니다.
-    TALENT:170 = (TALENT:170) ? 0 # 1
+    PRINTFORMW [음란]을 %LOCALS:(TALENT:음란)%합니다.
+    TALENT:음란 = (TALENT:음란) ? 0 # 1
 ELSEIF RESULT == 1
-    PRINTFORMW [\@(TALENT:120 || TALENT:121) ? 음경 # 음핵\@]을 %LOCALS:(TALENT:171)%합니다.
-    TALENT:171 = (TALENT:171) ? 0 # 1
-ELSEIF RESULT == 2 && TALENT:120 == 0
-    PRINTFORMW [음호]를 %LOCALS:(TALENT:172)%합니다.
-    TALENT:172 = (TALENT:172) ? 0 # 1
+    PRINTFORMW [\@(TALENT:남자 || TALENT:후타나리) ? 음경 # 음핵\@]을 %LOCALS:(TALENT:음핵／음경)%합니다.
+    TALENT:음핵／음경 = (TALENT:음핵／음경) ? 0 # 1
+ELSEIF RESULT == 2 && TALENT:남자 == 0
+    PRINTFORMW [음호]를 %LOCALS:(TALENT:음호)%합니다.
+    TALENT:음호 = (TALENT:음호) ? 0 # 1
 ELSEIF RESULT == 3
-    PRINTFORMW [음고]를 %LOCALS:(TALENT:173)%합니다.
-    TALENT:173 = (TALENT:173) ? 0 # 1
+    PRINTFORMW [음고]를 %LOCALS:(TALENT:음고)%합니다.
+    TALENT:음고 = (TALENT:음고) ? 0 # 1
 ELSEIF RESULT == 4
-    PRINTFORMW [음유]를 %LOCALS:(TALENT:174)%합니다.
-    TALENT:174 = (TALENT:174) ? 0 # 1
+    PRINTFORMW [음유]를 %LOCALS:(TALENT:음유)%합니다.
+    TALENT:음유 = (TALENT:음유) ? 0 # 1
 ELSEIF RESULT == 5
-    PRINTFORMW [요도광]을 %LOCALS:(TALENT:175)%합니다.
-    TALENT:175 = (TALENT:175) ? 0 # 1
+    PRINTFORMW [요도광]을 %LOCALS:(TALENT:요도광)%합니다.
+    TALENT:요도광 = (TALENT:요도광) ? 0 # 1
 ELSEIF RESULT == 6
-    PRINTFORMW [키스마]를 %LOCALS:(TALENT:176)%합니다.
-    TALENT:176 = (TALENT:176) ? 0 # 1
+    PRINTFORMW [키스마]를 %LOCALS:(TALENT:키스마)%합니다.
+    TALENT:키스마 = (TALENT:키스마) ? 0 # 1
 ELSEIF RESULT == 7
-    PRINTFORMW [초Ｓ]를 %LOCALS:(TALENT:177)%합니다.
-    TALENT:177 = (TALENT:177) ? 0 # 1
+    PRINTFORMW [초S]를 %LOCALS:(TALENT:초S)%합니다.
+    TALENT:초S = (TALENT:초S) ? 0 # 1
 ELSEIF RESULT == 8
-    PRINTFORMW [초Ｍ]을 %LOCALS:(TALENT:178)%합니다.
-    TALENT:178 = (TALENT:178) ? 0 # 1
+    PRINTFORMW [초M]을 %LOCALS:(TALENT:초M)%합니다.
+    TALENT:초M = (TALENT:초M) ? 0 # 1
 ELSEIF RESULT == 9
-    PRINTFORMW [즉각함락]을 %LOCALS:(TALENT:179)%합니다.
-    TALENT:179 = (TALENT:179) ? 0 # 1
-ELSEIF RESULT == 97 && (CFLAG:14 < 15 || CFLAG:15 < 15 || CFLAG:16 < 1023)
+    PRINTFORMW [즉각함락]을 %LOCALS:(TALENT:즉각함락)%합니다.
+    TALENT:즉각함락 = (TALENT:즉각함락) ? 0 # 1
+ELSEIF RESULT == 97 && (CFLAG:이벤트취득연모 < 15 || CFLAG:이벤트취득복종 < 15 || CFLAG:이벤트취득음란 < 1023)
     PRINTW 모든 음란 소질을 취득합니다.
-    CFLAG:14 = 15
-    CFLAG:15 = 15
-    CFLAG:16 = 1023
+    CFLAG:이벤트취득연모 = 15
+    CFLAG:이벤트취득복종 = 15
+    CFLAG:이벤트취득음란 = 1023
 ELSEIF RESULT == 98 && (TFLAG:104 & 256) == 0
     PRINTW 모든 음란 소질 추가 플래그를 켭니다.
     TFLAG:104 |= 256
@@ -254,37 +254,37 @@ RESTART
 @TRAIN_ASSIST_FLAG
 DRAWLINE
 PRINTFORM 현재 %조사처리(CALLNAME:TARGET,"는")% 
-IF CFLAG:1 == 0
+IF CFLAG:매각가능 == 0
     PRINT 매각 불가
-ELSEIF CFLAG:1 == 1
+ELSEIF CFLAG:매각가능 == 1
     PRINT 매각 가능
 ELSE
     PRINT 조수 가능
 ENDIF
 PRINTL  상태입니다.
 PRINTL 어떻게 하겠습니까?
-SIF CFLAG:1 != 0
+SIF CFLAG:매각가능 != 0
     PRINTL [0] 매각 불가로 한다
-SIF CFLAG:1 != 1
+SIF CFLAG:매각가능 != 1
     PRINTL [1] 매각 가능으로 한다
-SIF CFLAG:1 != 2
+SIF CFLAG:매각가능 != 2
     PRINTL [2] 조수 가능으로 한다
 PRINTL [100] 그만둔다
 
 $INPUT_LOOP
 INPUT
-IF RESULT == 0 && CFLAG:1 != 0
+IF RESULT == 0 && CFLAG:매각가능 != 0
     PRINTFORMW %CALLNAME:TARGET%의 매각이 불가능해졌습니다.
-ELSEIF RESULT == 1 && CFLAG:1 != 1
+ELSEIF RESULT == 1 && CFLAG:매각가능 != 1
     PRINTFORMW %CALLNAME:TARGET%의 매각이 가능해졌습니다.
-ELSEIF RESULT == 2 && CFLAG:1 != 2
+ELSEIF RESULT == 2 && CFLAG:매각가능 != 2
     PRINTFORMW %CALLNAME:TARGET%의 조수 사용이 가능해졌습니다.
 ELSEIF RESULT == 100
     RETURN 0
 ELSE
     GOTO INPUT_LOOP
 ENDIF
-CFLAG:1 = RESULT
+CFLAG:매각가능 = RESULT
 RESTART
 
 ;--------------------------------------------------
@@ -296,8 +296,8 @@ RESTART
 ;또한、체력 500이하가되면 자동으로 완쾌(0未満のとき同様)するようになる
 @TRAIN_DEBUG
 DRAWLINE
-TALENT:998 = (TALENT:998) ? 0 # 1
-PRINTFORMW %CALLNAME:TARGET%의 자동 능력 상승 기능을 \@(TALENT:998) ? 유효 # 무효\@로 했습니다.
+TALENT:Debug = (TALENT:Debug) ? 0 # 1
+PRINTFORMW %CALLNAME:TARGET%의 자동 능력 상승 기능을 \@(TALENT:Debug) ? 유효 # 무효\@로 했습니다.
 
 ;--------------------------------------------------
 ;조교의 명령 보정 변경 처리
@@ -353,19 +353,19 @@ PRINTLC [ 5] - ITEM 조작
 PRINTLC [ 6] - 캐릭터 카드 조작
 PRINTLC [ 7] - DITEMTYPE 조작
 PRINTLC [ 8] - 난이도 변경
-PRINTFORMLC [ 9] - \@(FLAG:5 & 1) ? 기한 있음 # 무기한\@으로 변경
+PRINTFORMLC [ 9] - \@(FLAG:엔드리스 & 1) ? 기한 있음 # 무기한\@으로 변경
 SIF MONEY:998
     PRINTLC [10] - 수입 RANK 리셋
-SIF FLAG:14 & 4
+SIF FLAG:조교모드 & 4
     PRINTLC [11] - 얀데레 리셋
 SIF TARGET >= 0
     PRINTLC [12] - 도시락 테스트
-SIF FLAG:15 & 4096
+SIF FLAG:커맨드확장 & 4096
     PRINTLC [13] - 촉수 관련 수치변경
-SIF FLAG:12 & 8
+SIF FLAG:SHOP이벤트확장 & 8
     PRINTLC [14] - 수집품 편집
 PRINTLC [15] - SAVESTR 조작
-SIF FLAG:5 == 0 && (FLAG:4 == 0 || FLAG:4 == 1 || FLAG:4 == 4)
+SIF FLAG:엔드리스 == 0 && (FLAG:게임모드 == 0 || FLAG:게임모드 == 1 || FLAG:게임모드 == 4)
     PRINTLC [16] - 목표 금액 변경
 PRINTLC [17] - 전원 연모·조수 가능
 PRINTLC [96] - 캐릭터 전부 회복
@@ -404,17 +404,17 @@ ELSEIF RESULT == 9
     CALL EDIT_ENDLESS_MODE
 ELSEIF RESULT == 10 && MONEY:998
     CALL EDIT_INCOME_RANKING
-ELSEIF RESULT == 11 && FLAG:14 & 4
+ELSEIF RESULT == 11 && FLAG:조교모드 & 4
     CALL EDIT_SANITY
 ELSEIF RESULT == 12 && TARGET >= 0
     CALL EDIT_LUNCH
-ELSEIF RESULT == 13 && FLAG:15 & 4096
+ELSEIF RESULT == 13 && FLAG:커맨드확장 & 4096
     CALL EDIT_TENTACLE
-ELSEIF RESULT == 14 && FLAG:12 & 8
+ELSEIF RESULT == 14 && FLAG:SHOP이벤트확장 & 8
     CALL EDIT_COLLECTION_MENU
 ELSEIF RESULT == 15
     CALL EDIT_SAVESTR
-ELSEIF RESULT == 16 && FLAG:5 == 0 && (FLAG:4 == 0 || FLAG:4 == 1 || FLAG:4 == 4)
+ELSEIF RESULT == 16 && FLAG:엔드리스 == 0 && (FLAG:게임모드 == 0 || FLAG:게임모드 == 1 || FLAG:게임모드 == 4)
     CALL EDIT_MONEYLIMIT
 ELSEIF RESULT == 17
     CALL EDIT_ENDINGTESTMODE
@@ -493,10 +493,10 @@ PRINTFORMW 현재 목표금액을 {MONEY:100}원으로 변경했습니다.
 @EDIT_GAME_MODE
 VARSET LOCALS,""
 SPLIT "미정의,EASY,NORMAL,HARD,LUNATIC,PHANTASM,PRO,ULTRA,UNDEFINED",",",LOCALS
-SIF FLAG:3 < 1 || FLAG:3 > 7
-    FLAG:3 = 0
+SIF FLAG:난이도 < 1 || FLAG:난이도 > 7
+    FLAG:난이도 = 0
 DRAWLINE
-PRINTFORML 현재 난이도는 "%LOCALS:(FLAG:3)%" 입니다.
+PRINTFORML 현재 난이도는 "%LOCALS:(FLAG:난이도)%" 입니다.
 PRINTL 변경하고 싶은 난이도를 선택해 주세요.
 DRAWLINE
 PRINTL [0] 이대로 좋은 건가
@@ -517,7 +517,7 @@ ELSEIF RESULT >= 1 && RESULT <= 7
 ELSE
     GOTO INPUT_LOOP
 ENDIF
-FLAG:3 = RESULT
+FLAG:난이도 = RESULT
 
 ;--------------------------------------------------
 ;엔드리스 모드 변경 처리
@@ -527,8 +527,8 @@ FLAG:3 = RESULT
 @EDIT_ENDLESS_MODE
 DRAWLINE
 PRINT 
-FLAG:5 ^= 1
-PRINTFORMW 엔드리스 에잇을 \@(FLAG:5 & 1) ? 작동 # 해제\@합니다.
+FLAG:엔드리스 ^= 1
+PRINTFORMW 엔드리스 에잇을 \@(FLAG:엔드리스 & 1) ? 작동 # 해제\@합니다.
 
 ;--------------------------------------------------
 ;수입 랭킹 초기화 처리
@@ -551,15 +551,15 @@ PRINTW 수입 랭킹을 초기화합니다.
 DRAWLINE
 LOCAL:1 = 0
 FOR LOCAL, 0, CHARANUM
-    IF CFLAG:LOCAL:30
-        CFLAG:LOCAL:30 = 0
-        IF TALENT:LOCAL:157 && CFLAG:LOCAL:12 & 4096
-            TALENT:LOCAL:157 = 0
-            CFLAG:LOCAL:12 -= 4096
+    IF CFLAG:LOCAL:질투포인트
+        CFLAG:LOCAL:질투포인트 = 0
+        IF TALENT:LOCAL:질투 && CFLAG:LOCAL:트라우마판정 & 4096
+            TALENT:LOCAL:질투 = 0
+            CFLAG:LOCAL:트라우마판정 -= 4096
         ENDIF
-        IF TALENT:LOCAL:158 && CFLAG:LOCAL:12 & 1
-            TALENT:LOCAL:158 = 0
-            CFLAG:LOCAL:12 -= 1
+        IF TALENT:LOCAL:광기 && CFLAG:LOCAL:트라우마판정 & 1
+            TALENT:LOCAL:광기 = 0
+            CFLAG:LOCAL:트라우마판정 -= 1
         ENDIF
         LOCAL:1 += 1
     ENDIF
@@ -578,11 +578,11 @@ ENDIF
 DRAWLINE
 LOCAL:1 = 0
 FOR LOCAL, 0, CHARANUM
-    IF CFLAG:LOCAL:1 != 2 || TALENT:LOCAL:150 == 0
-        CFLAG:LOCAL:1 = 2
-        IF TALENT:LOCAL:150 == 0
-            TALENT:LOCAL:150 = 1
-            CFLAG:LOCAL:14 |= 1
+    IF CFLAG:LOCAL:매각가능 != 2 || TALENT:LOCAL:연모 == 0
+        CFLAG:LOCAL:매각가능 = 2
+        IF TALENT:LOCAL:연모 == 0
+            TALENT:LOCAL:연모 = 1
+            CFLAG:LOCAL:이벤트취득연모 |= 1
         ENDIF
         LOCAL:1 += 1
     ENDIF
@@ -650,13 +650,13 @@ IF RESULT == 100
     RETURN 0
 ELSEIF RESULT == 0
     DRAWLINE
-    PRINTFORML 현재 촉수 에너지 ({BASE:MASTER:6}τ)
+    PRINTFORML 현재 촉수 에너지 ({BASE:MASTER:촉수}τ)
     PRINTL 원하는 수치를 입력하세요(마이너스 값이라면 변경하지 않습니다)
     INPUT
     SIF RESULT < 0
         RESTART
-    BASE:MASTER:6 = RESULT
-    PRINTFORMW 현재 촉수 에너지를 {BASE:MASTER:6}τ로 변경했습니다.
+    BASE:MASTER:촉수 = RESULT
+    PRINTFORMW 현재 촉수 에너지를 {BASE:MASTER:촉수}τ로 변경했습니다.
 ELSEIF RESULT == 1
     DRAWLINE
     PRINTFORML 현재 촉수의 구슬({JUEL:MASTER:198}개)
@@ -668,22 +668,22 @@ ELSEIF RESULT == 1
     PRINTFORMW 현재 촉수의 구슬을 {JUEL:MASTER:198}개로 변경했습니다.
 ELSEIF RESULT == 2
     DRAWLINE
-    PRINTFORML 현재 누계 촉수 산제물 수 ({FLAG:99}명)
+    PRINTFORML 현재 누계 촉수 산제물 수 ({FLAG:촉수산제물총계}명)
     PRINTL 원하는 수치를 입력하세요(0-999999)
     INPUT
     SIF RESULT < 0 || RESULT >= 1000000
         RESTART
-    FLAG:99 = RESULT
-    PRINTFORMW 현재 누계 촉수 산제물 수를 {FLAG:99}명으로 수정하였습니다.
+    FLAG:촉수산제물총계 = RESULT
+    PRINTFORMW 현재 누계 촉수 산제물 수를 {FLAG:촉수산제물총계}명으로 수정하였습니다.
 ELSEIF RESULT == 3
     DRAWLINE
-    PRINTFORML 현재 촉수 산제물 수 ({FLAG:33}명)
+    PRINTFORML 현재 촉수 산제물 수 ({FLAG:현산제물총계}명)
     PRINTL 원하는 수치를 입력하세요(0-999999)
     INPUT
     SIF RESULT < 0 || RESULT >= 1000000
         RESTART
-    FLAG:33 = RESULT
-    PRINTFORMW 현재 촉수 산제물 수를 {FLAG:33}명으로 수정하였습니다.
+    FLAG:현산제물총계 = RESULT
+    PRINTFORMW 현재 촉수 산제물 수를 {FLAG:현산제물총계}명으로 수정하였습니다.
 ELSE
     GOTO INPUT_LOOP
 ENDIF
@@ -694,9 +694,9 @@ RESTART
 ;--------------------------------------------------
 @EDIT_HEAL_ALL
 REPEAT CHARANUM
-    BASE:COUNT:0 = MAXBASE:COUNT:0
-    BASE:COUNT:1 = MAXBASE:COUNT:1
-    BASE:COUNT:8 = 0
+    BASE:COUNT:체력 = MAXBASE:COUNT:체력
+    BASE:COUNT:기력 = MAXBASE:COUNT:기력
+    BASE:COUNT:취기 = 0
 REND
 PRINTW 전원의 체력, 기력, 취기를 회복했습니다.
 
@@ -818,20 +818,20 @@ FOR LOCAL, 0, 100
     PRINTFORMLC [{LOCAL, 3}]%PALAMNAME:LOCAL% ({PALAM:LOCAL}) 
 NEXT
 PRINTFORMLC [100] 현재 체력 ({BASE:0}) 
-PRINTFORMLC [101] 현재 기력 ({BASE:1}) 
-SIF ( TALENT:120 || TALENT:121 )
-    PRINTFORMLC [102] 사정 게이지 ({BASE:2}) 
-SIF TALENT:134
-    PRINTFORMLC [103] 분유 게이지 ({BASE:3}) 
-SIF TALENT:45 && ((FLAG:15 & 4096 && FLAG:75 & 32768) == 0)
-    PRINTFORMLC [104] 요의 게이지 ({BASE:4}) 
-SIF TALENT:65 || CFLAG:36
-    PRINTFORMLC [105] 음모 ({BASE:5}) 
-SIF TALENT:146
-    PRINTFORMLC [106] 촉수기생 LV ({BASE:6})
-SIF TALENT:120 == 0 && TALENT:121 == 0
-    PRINTFORMLC [107] 음핵 성장 상태 ({BASE:7}) 
-PRINTFORMLC [108] 취기 게이지 ({BASE:8}) 
+PRINTFORMLC [101] 현재 기력 ({BASE:기력}) 
+SIF ( TALENT:남자 || TALENT:후타나리 )
+    PRINTFORMLC [102] 사정 게이지 ({BASE:사정}) 
+SIF TALENT:모유체질
+    PRINTFORMLC [103] 분유 게이지 ({BASE:모유}) 
+SIF TALENT:오줌싸개버릇 && ((FLAG:커맨드확장 & 4096 && FLAG:촉수능력 & 32768) == 0)
+    PRINTFORMLC [104] 요의 게이지 ({BASE:뇨의}) 
+SIF TALENT:음모없음 || CFLAG:털성장판정
+    PRINTFORMLC [105] 음모 ({BASE:음모}) 
+SIF TALENT:기생
+    PRINTFORMLC [106] 촉수기생 LV ({BASE:촉수})
+SIF TALENT:남자 == 0 && TALENT:후타나리 == 0
+    PRINTFORMLC [107] 음핵 성장 상태 ({BASE:음핵}) 
+PRINTFORMLC [108] 취기 게이지 ({BASE:취기}) 
 PRINTLC [199] 패러미터 리셋
 PRINTLC [200] 그만둔다
 
@@ -852,63 +852,63 @@ ELSEIF RESULT == 100
         BASE:0 = RESULT
 ELSEIF RESULT == 101
     DRAWLINE
-    PRINTFORML 기력 변경(현재 {BASE:1})
-    PRINTFORML 수치 입력[0-{MAXBASE:1}](무효값으로 취소)
+    PRINTFORML 기력 변경(현재 {BASE:기력})
+    PRINTFORML 수치 입력[0-{MAXBASE:기력}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:1
-        BASE:1 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:기력
+        BASE:기력 = RESULT
 ELSEIF RESULT == 102
     DRAWLINE
-    PRINTFORML 사정 게이지 변경(현재 {BASE:2})
-    PRINTFORML 수치 입력[0-{MAXBASE:2 - 1}](무효값으로 취소)
+    PRINTFORML 사정 게이지 변경(현재 {BASE:사정})
+    PRINTFORML 수치 입력[0-{MAXBASE:사정 - 1}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:2 - 1
-        BASE:2 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:사정 - 1
+        BASE:사정 = RESULT
 ELSEIF RESULT == 103
     DRAWLINE
-    PRINTFORML 분유 게이지 변경(현재 {BASE:3})
-    PRINTFORML 수치 입력[0-{MAXBASE:3 - 1}](무효값으로 취소)
+    PRINTFORML 분유 게이지 변경(현재 {BASE:모유})
+    PRINTFORML 수치 입력[0-{MAXBASE:모유 - 1}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:3 - 1
-        BASE:3 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:모유 - 1
+        BASE:모유 = RESULT
 ELSEIF RESULT == 104
     DRAWLINE
-    PRINTFORML 요의 게이지 변경(현재 {BASE:4})
-    PRINTFORML 수치 입력[0-{MAXBASE:4 - 1}](무효값으로 취소)
+    PRINTFORML 요의 게이지 변경(현재 {BASE:뇨의})
+    PRINTFORML 수치 입력[0-{MAXBASE:뇨의 - 1}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:4 - 1
-        BASE:4 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:뇨의 - 1
+        BASE:뇨의 = RESULT
 ELSEIF RESULT == 105
     DRAWLINE
-    PRINTFORML 음모 게이지 변경(현재 {BASE:5})
+    PRINTFORML 음모 게이지 변경(현재 {BASE:음모})
     PRINTFORML 제모 플레이용、0~50은 반들반들、51~250에서 나기 시작해서、251~1000부터 제모 가능.
     PRINTFORML 수치 입력[0-1000](무효값으로 취소)
     INPUT
     SIF RESULT >= 0 && RESULT <= 1000
-        BASE:5 = RESULT
+        BASE:음모 = RESULT
 ELSEIF RESULT == 106
     DRAWLINE
-    PRINTFORML 촉수기생 LV 변경(현재 {BASE:6})
-    PRINTFORML 수치 입력[0-{MAXBASE:6}](무효값으로 취소)
+    PRINTFORML 촉수기생 LV 변경(현재 {BASE:촉수})
+    PRINTFORML 수치 입력[0-{MAXBASE:촉수}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:6
-        BASE:6 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:촉수
+        BASE:촉수 = RESULT
 ELSEIF RESULT == 107
-    SIF TALENT:120 || TALENT:121
+    SIF TALENT:남자 || TALENT:후타나리
         GOTO INPUT_LOOP
     DRAWLINE
-    PRINTFORML 음핵 성장 상태 변경(현재 {BASE:7})
+    PRINTFORML 음핵 성장 상태 변경(현재 {BASE:음핵})
     PRINTL 수치 입력[0-250](무효값으로 취소)
     INPUT
     SIF RESULT >= 0 && RESULT <= 250
-        BASE:7 = RESULT
+        BASE:음핵 = RESULT
 ELSEIF RESULT == 108
     DRAWLINE
-    PRINTFORML 취기 게이지 변경(현재 {BASE:8})
-    PRINTFORML 수치 입력[0-{MAXBASE:8 * 3}](무효값으로 취소)
+    PRINTFORML 취기 게이지 변경(현재 {BASE:취기})
+    PRINTFORML 수치 입력[0-{MAXBASE:취기 * 3}](무효값으로 취소)
     INPUT
-    SIF RESULT >= 0 && RESULT <= MAXBASE:8 * 3
-        BASE:8 = RESULT
+    SIF RESULT >= 0 && RESULT <= MAXBASE:취기 * 3
+        BASE:취기 = RESULT
 ELSEIF RESULT < 0 || RESULT > 99
     GOTO INPUT_LOOP
 ELSE
@@ -942,16 +942,16 @@ FOR LOCAL, 0, 100
     PRINTFORMLC [{LOCAL, 3}]%ABLNAME:LOCAL% LV ({ABL:LOCAL})  
 NEXT
 PRINTFORMLC [100] 최대 체력 ({MAXBASE:0}) 
-PRINTFORMLC [101] 최대 기력 ({MAXBASE:1}) 
-SIF ( TALENT:120 || TALENT:121 )
-    PRINTFORMLC [102] 최대 사정 게이지 ({MAXBASE:2}) 
-SIF TALENT:134
-    PRINTFORMLC [103] 최대 분유 게이지 ({MAXBASE:3}) 
-SIF TALENT:45 && ((FLAG:15 & 4096 && FLAG:75 & 32768) == 0)
-    PRINTFORMLC [104] 최대 요의 게이지 ({MAXBASE:4}) 
-;PRINTFORML [105] 최대 음모 게이지 ({MAXBASE:5}) 
-SIF TALENT:146
-    PRINTFORMLC [106] 최대 촉수기생 LV ({MAXBASE:6})
+PRINTFORMLC [101] 최대 기력 ({MAXBASE:기력}) 
+SIF ( TALENT:남자 || TALENT:후타나리 )
+    PRINTFORMLC [102] 최대 사정 게이지 ({MAXBASE:사정}) 
+SIF TALENT:모유체질
+    PRINTFORMLC [103] 최대 분유 게이지 ({MAXBASE:모유}) 
+SIF TALENT:오줌싸개버릇 && ((FLAG:커맨드확장 & 4096 && FLAG:촉수능력 & 32768) == 0)
+    PRINTFORMLC [104] 최대 요의 게이지 ({MAXBASE:뇨의}) 
+;PRINTFORML [105] 최대 음모 게이지 ({MAXBASE:음모}) 
+SIF TALENT:기생
+    PRINTFORMLC [106] 최대 촉수기생 LV ({MAXBASE:촉수})
 PRINTLC [200] 그만둔다
 
 $INPUT_LOOP
@@ -972,61 +972,61 @@ IF RESULT == 100
     MAXBASE:0 = RESULT
 ELSEIF RESULT == 101
     DRAWLINE
-    PRINTFORML 최대 기력 변경(현재 {MAXBASE:1})
+    PRINTFORML 최대 기력 변경(현재 {MAXBASE:기력})
     PRINTFORML 수치 입력(마이너스 수치로 취소)
     INPUT
     SIF RESULT < 0
         RESTART
-    SIF RESULT < BASE:1
-        BASE:1 = RESULT
-    MAXBASE:1 = RESULT
+    SIF RESULT < BASE:기력
+        BASE:기력 = RESULT
+    MAXBASE:기력 = RESULT
 ELSEIF RESULT == 102
     DRAWLINE
-    PRINTFORML 최대 사정 게이지 변경(현재 {MAXBASE:2})
+    PRINTFORML 최대 사정 게이지 변경(현재 {MAXBASE:사정})
     PRINTFORML 수치 입력(마이너스 수치로 취소)
     INPUT
     SIF RESULT < 0
         RESTART
-    SIF RESULT < BASE:2
-        BASE:2 = RESULT - 1
-    MAXBASE:2 = RESULT
+    SIF RESULT < BASE:사정
+        BASE:사정 = RESULT - 1
+    MAXBASE:사정 = RESULT
 ELSEIF RESULT == 103
     DRAWLINE
-    PRINTFORML 최대 분유 게이지 변경(현재 {MAXBASE:3})
+    PRINTFORML 최대 분유 게이지 변경(현재 {MAXBASE:모유})
     PRINTFORML 수치 입력(마이너스 수치로 취소)
     INPUT
     SIF RESULT < 0
         RESTART
-    SIF RESULT < BASE:3
-        BASE:3 = RESULT - 1
-    MAXBASE:3 = RESULT
+    SIF RESULT < BASE:모유
+        BASE:모유 = RESULT - 1
+    MAXBASE:모유 = RESULT
 ELSEIF RESULT == 104
     DRAWLINE
-    PRINTFORML 최대 요의 게이지 변경(현재 {MAXBASE:4})
+    PRINTFORML 최대 요의 게이지 변경(현재 {MAXBASE:뇨의})
     PRINTFORML 수치 입력(마이너스 수치로 취소)
     INPUT
     SIF RESULT < 0
         RESTART
-    SIF RESULT < BASE:4
-        BASE:4 = RESULT - 1
-    MAXBASE:4 = RESULT
+    SIF RESULT < BASE:뇨의
+        BASE:뇨의 = RESULT - 1
+    MAXBASE:뇨의 = RESULT
 ;ELSEIF RESULT == 105
 ;    DRAWLINE
-;    PRINTFORML 최대 음모 게이지 변경(현재 {MAXBASE:5})
+;    PRINTFORML 최대 음모 게이지 변경(현재 {MAXBASE:음모})
 ;    PRINTFORML 수치 입력[0-1000](무효값으로 취소)
 ;    INPUT
 ;    SIF RESULT >= 0 && RESULT <= 1000
-;        MAXBASE:5 = RESULT
+;        MAXBASE:음모 = RESULT
 ELSEIF RESULT == 106
     DRAWLINE
-    PRINTFORML 최대 촉수기생 LV 변경(현재 {MAXBASE:6})
+    PRINTFORML 최대 촉수기생 LV 변경(현재 {MAXBASE:촉수})
     PRINTFORML 수치 입력(마이너스 수치로 취소)
     INPUT
     SIF RESULT < 0
         RESTART
-    SIF RESULT < BASE:6
-        BASE:6 = RESULT
-    MAXBASE:6 = RESULT
+    SIF RESULT < BASE:촉수
+        BASE:촉수 = RESULT
+    MAXBASE:촉수 = RESULT
 ELSE
     LOCAL = RESULT
     DRAWLINE
@@ -2516,7 +2516,7 @@ PRINTFORML %CALLNAME:TARGET% 팔고 로드하는 귀찮음을 덜어주는 모�
 PRINTL 어느 기준에 맞추겠습니까?
 PRINTL [0] 매각가능(순종, 욕망, 기교, 봉사정신, 노출벽, 전 감각 Lv3)
 PRINTL [1] 육성완료(순종, 욕망, 기교, 봉사정신, 노출벽, 전 감각 Lv5)
-SIF CFLAG:1 >= 1
+SIF CFLAG:매각가능 >= 1
     PRINTL [2] 현재 판매가 확인
 PRINTL [3] 비디오 판매가 보정 확인
 PRINTL [100] 그만둔다
@@ -2529,13 +2529,13 @@ ELSEIF RESULT == 0
     CALL EDIT_CHARASALE_ABILITY, 3
 ELSEIF RESULT == 1
     ;토리코모드
-    IF FLAG:5000 & 2
+    IF FLAG:토리코모드 & 2
         CALL EDIT_CHARASALE_ABILITY_TORIKOMODE, 5
     ;일반모드
     ELSE
         CALL EDIT_CHARASALE_ABILITY, 5
     ENDIF
-ELSEIF RESULT == 2 && CFLAG:1 >= 1
+ELSEIF RESULT == 2 && CFLAG:매각가능 >= 1
     CALL RESEARCH_CHARASALE_CALC
 ELSEIF RESULT == 3
     CALL RESEARCH_SELLVIDEO_CALC
@@ -2549,8 +2549,8 @@ RESTART
 ;………………………………………………
 @EDIT_CHARASALE_ABILITY, ARG
 ;매각 가능 플래그
-SIF CFLAG:1 < 1
-    CFLAG:1 = 1
+SIF CFLAG:매각가능 < 1
+    CFLAG:매각가능 = 1
 ;従順、欲望、技巧、奉仕精神、露出癖、全感覚 지정 레벨로
 REPEAT 15
     SIF COUNT >= 4 && COUNT < 10
@@ -2558,41 +2558,41 @@ REPEAT 15
     ABL:COUNT = ARG
 REND
 ;아다나 남자의 경우 V 경험 없ㅋ엉ㅋ
-SIF TALENT:0 || TALENT:120
-    ABL:1 = 0
+SIF TALENT:처녀 || TALENT:남자
+    ABL:V감각 = 0
 ;『매각가능』특수처리
 IF ARG == 3
     ;[해방]에 변화[억압]은 되돌린다. 또 [저항]이 소멸했을 경우, 부활.
-    IF CFLAG:13 & 1 && TALENT:32 == 0
-        TALENT:32 = 1
-        CFLAG:13 -= 1
-        IF CFLAG:12 & 65536 && TALENT:33
-            TALENT:33 = 0
-            CFLAG:12 -= 65536
+    IF CFLAG:소실이벤트 & 1 && TALENT:억압 == 0
+        TALENT:억압 = 1
+        CFLAG:소실이벤트 -= 1
+        IF CFLAG:트라우마판정 & 65536 && TALENT:해방
+            TALENT:해방 = 0
+            CFLAG:트라우마판정 -= 65536
         ENDIF
     ENDIF
-    IF CFLAG:13 & 2 && TALENT:34 == 0
-        TALENT:34 = 1
-        CFLAG:13 -= 2
+    IF CFLAG:소실이벤트 & 2 && TALENT:저항 == 0
+        TALENT:저항 = 1
+        CFLAG:소실이벤트 -= 2
     ENDIF
     ;매각에 순종이나 욕망이 레벨4 이상 필요한 경우 인상.
-    SIF TALENT:11 || TALENT:12
-        ABL:10 = 4
-    SIF TALENT:20 || TALENT:32 || TALENT:34
-        ABL:11 = 4
+    SIF TALENT:반항적 || TALENT:꿋꿋함
+        ABL:순종 = 4
+    SIF TALENT:자제심 || TALENT:억압 || TALENT:저항
+        ABL:욕망 = 4
     PRINTFORMW %조사처리(CALLNAME:TARGET,"를")% 『매각가능』 상태에 맞추었습니다.
 ;『육성완료』특수처리
 ELSE
     ;[억압]은 소멸하고[해방]에 변화, [저항]은 소멸했다고 가정.
-    IF TALENT:32
-        TALENT:32 = 0
-        TALENT:33 = 1
-        CFLAG:13 |= 1
-        CFLAG:12 |= 65536
+    IF TALENT:억압
+        TALENT:억압 = 0
+        TALENT:해방 = 1
+        CFLAG:소실이벤트 |= 1
+        CFLAG:트라우마판정 |= 65536
     ENDIF
-    IF TALENT:34
-        TALENT:34 = 0
-        CFLAG:13 |= 2
+    IF TALENT:저항
+        TALENT:저항 = 0
+        CFLAG:소실이벤트 |= 2
     ENDIF
     PRINTFORMW %조사처리(CALLNAME:TARGET,"를")% 『육성완료』 상태에 맞추었습니다.
 ENDIF
@@ -2603,14 +2603,14 @@ ENDIF
 @RESEARCH_CHARASALE_CALC
 
 ;토리코모드 옵션으로 분기.
-IF FLAG:5000 & 2
+IF FLAG:토리코모드 & 2
     CALL SALE_CHARA_TORIKOMODE, TARGET
 ELSE 
     CALL SALE_CHARA, TARGET
 ENDIF
 
 
-IF TALENT:158 && (TALENT:153 || ((TALENT:151 || TALENT:157) && TALENT:160 == 0 && TALENT:170 == 0 && ABL:10 < 5))
+IF TALENT:광기 && (TALENT:상애 || ((TALENT:망신 || TALENT:질투) && TALENT:복종 == 0 && TALENT:음란 == 0 && ABL:순종 < 5))
     TIMES RESULT , 0.10
     PRINTFORML 수송 중에 광기 폭주로 실종 ×0.10
 ENDIF
@@ -2618,7 +2618,7 @@ RESULT = MAX(RESULT, 0)
 PRINTFORML 지금 상태대로 %조사처리(CALLNAME:TARGET,"를")% 매각하면 {RESULT}원에 팔리게 됩니다. \@(RESULT < 1000000) ? 무다다 # 이거 한 방에 엔딩\@!
 
 ;토리코모드 옵션으로 분기
-IF FLAG:5000 & 2
+IF FLAG:토리코모드 & 2
     PRINTFORMW ※{RESULT:1}원(노예 판매가 기초치) × {(RESULT:2)/100}.{(RESULT:2)%100/10}(기초Buy율 보정) × α(그 외의 보정)
 ELSE 
     PRINTFORMW ※{RESULT:1}원(노예 판매가 기초치) × {(RESULT:2)/10000}\@((RESULT:2)%10000/10 < 100) ? .0 # .\@{((RESULT:2)%10000/10)}(기초Buy율 보정) × α(그 외의 보정)
@@ -2652,7 +2652,7 @@ STRLENS RESULTS
 LOCAL = RESULT
 PRINTL 칭호를 어떻게 합니까?
 PRINTL [0] 현재 칭호대로 한다.
-SIF LOCAL > 0 && CFLAG:0 == 0
+SIF LOCAL > 0 && CFLAG:SP캐릭터 == 0
     PRINTFORML [1] 본래 칭호(%RESULTS%)로 되돌린다.
 PRINTL [2] 칭호를 지운다.
 PRINTL [3] 칭호를 입력한다.
@@ -3095,37 +3095,37 @@ REPEAT 13
 REND
 REPEAT 500
     SIF DITEMTYPE:(COUNT+100):101
-        FLAG:501 += 1
+        FLAG:엉덩이구슬가짓수 += 1
     SIF DITEMTYPE:(COUNT+100):102
-        FLAG:502 += 1
+        FLAG:황금수가짓수 += 1
     SIF DITEMTYPE:(COUNT+100):103
-        FLAG:503 += 1
+        FLAG:애액가짓수 += 1
     SIF DITEMTYPE:(COUNT+100):104
-        FLAG:504 += 1
+        FLAG:혈액가짓수 += 1
     SIF DITEMTYPE:(COUNT+100):105
-        FLAG:505 += 1
+        FLAG:파과혈가짓수 += 1
     SIF DITEMTYPE:(COUNT+100):106
-        FLAG:506 += 1
+        FLAG:팬티가짓수 += 1
     SIF DITEMTYPE:(COUNT+100):107
-        FLAG:507 += 1
+        FLAG:사진가짓수 += 1
     SIF DITEMTYPE:(COUNT+100):108
-        FLAG:508 += 1
+        FLAG:비디오가짓수 += 1
     SIF DITEMTYPE:(COUNT+100):109
-        FLAG:509 += 1
+        FLAG:모유가짓수 += 1
     SIF DITEMTYPE:(COUNT+100):110
         FLAG:510 += 1
     SIF DITEMTYPE:(COUNT+100):111
-        FLAG:511 += 1
+        FLAG:촉수가짓수 += 1
     SIF DITEMTYPE:(COUNT+100):112
-        FLAG:512 += 1
+        FLAG:음모가짓수 += 1
 REND
 REPEAT 12
-    FLAG:500 += FLAG:(COUNT+501)
+    FLAG:전시품총계 += FLAG:(COUNT+501)
 REND
 
 ;=============================================================================
 ;퀵 로드용 설정
 ;=============================================================================
 @QUICKLOAD
-FLAG:1 = 1
+FLAG:SHOP밖로드 = 1
 BEGIN SHOP

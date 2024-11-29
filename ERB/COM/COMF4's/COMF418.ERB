@@ -9,14 +9,14 @@
 SIF DITEMTYPE:999:418 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;咲夜さん · 輝夜姫専用
 IF NO:PLAYER != 9 && NO:PLAYER != 30
     RETURN 0
 ENDIF
 ;実行者の기력이 100이하だと実行できない
-SIF BASE:PLAYER:1 <= 100
+SIF BASE:PLAYER:기력 <= 100
     RETURN 0
 ;해제는 언제든 가능
 SIF TEQUIP:71
@@ -56,7 +56,7 @@ IF TEQUIP:71
     TIMES TFLAG:299 , 1.20
 
     DOWNBASE:0 += TFLAG:298
-    DOWNBASE:1 += TFLAG:299
+    DOWNBASE:기력 += TFLAG:299
 
     FOR LOCAL, 0, 33
         LOCAL:1 = LOCAL + 250
@@ -66,7 +66,7 @@ IF TEQUIP:71
 ENDIF
 
 DOWNBASE:0 += 0
-DOWNBASE:1 += 0
+DOWNBASE:기력 += 0
 
 TEQUIP:71 = 1
 TFLAG:158 = PLAYER
@@ -86,13 +86,13 @@ ELSE
     PRINT <시간 정지 중>
 ENDIF
 DOWNBASE:0 += 15
-DOWNBASE:1 += 15
+DOWNBASE:기력 += 15
 
 TFLAG:298 += DOWNBASE:0
-TFLAG:299 += DOWNBASE:1
+TFLAG:299 += DOWNBASE:기력
 
 DOWNBASE:0 = 0
-DOWNBASE:1 = 0
+DOWNBASE:기력 = 0
 
 FOR LOCAL , 0 , 33
     LOCAL:1 = LOCAL + 250
@@ -101,9 +101,9 @@ FOR LOCAL , 0 , 33
 NEXT
 
 ;사용한 캐릭터의 기력을 저하시킨다.
-BASE:(TFLAG:158):1 = MAX(BASE:(TFLAG:158):1 - 100, 0)
+BASE:(TFLAG:158):기력 = MAX(BASE:(TFLAG:158):기력 - 100, 0)
 
-PRINTFORML 　실행자 나머지 기력：{BASE:(TFLAG:158):1}>
+PRINTFORML 　실행자 나머지 기력：{BASE:(TFLAG:158):기력}>
 
 RETURN 1
 
@@ -124,7 +124,7 @@ TIMES TFLAG:298 , 1.20
 TIMES TFLAG:299 , 1.20
 
 DOWNBASE:0 += TFLAG:298
-DOWNBASE:1 += TFLAG:299
+DOWNBASE:기력 += TFLAG:299
 
 FOR LOCAL, 0, 33
     LOCAL:1 = LOCAL + 250
@@ -138,7 +138,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM418
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

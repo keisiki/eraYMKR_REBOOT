@@ -5,7 +5,7 @@
 SIF (FLAG:89 & 1) == 0
     RETURN 0
 DRAWLINE
-SIF ABL:78 >= 5
+SIF ABL:수영기능 >= 5
     JUMP ABLUP_MAX
 
 PRINTFORM [0] - %PALAMNAME:11%의 구슬×{COST78(0)}, %EXPNAME:78%{COST78(1)} 이상……
@@ -25,8 +25,8 @@ ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-ABL:78 += 1
-PRINTFORMW %ABLNAME:78%의 레벨이 %조사처리(TOSTR(ABL:78),"가")% 되었습니다.
+ABL:수영기능 += 1
+PRINTFORMW %ABLNAME:78%의 레벨이 %조사처리(TOSTR(ABL:수영기능),"가")% 되었습니다.
 
 @AUTO_ABLUP78
 #LOCALSIZE 1
@@ -37,14 +37,14 @@ ELSE
     RETURN 0
 ENDIF
 
-ABL:78 += 1
+ABL:수영기능 += 1
 RETURN 1
 
 ;--------------------------------------------------
 ;レベルアップに必要な珠計算、レベルアップ予告処理
 ;--------------------------------------------------
 @ISABLUP78
-SIF ABL:78 >= 5
+SIF ABL:수영기능 >= 5
     RETURN 0
 
 CALLF CALC_COST78, "CALC"
@@ -63,49 +63,49 @@ SIF ARGS == "GET"
 ;必要な条件の算出
 VARSET LOCAL, 0
 
-IF ABL:78 == 0
+IF ABL:수영기능 == 0
     LOCAL:0 = 75
     LOCAL:1 = 10
-ELSEIF ABL:78 == 1
-    LOCAL:0 = (EXP:78 >= EXPLV:3) ? 250 # 500
+ELSEIF ABL:수영기능 == 1
+    LOCAL:0 = (EXP:수영경험 >= EXPLV:3) ? 250 # 500
     LOCAL:1 = 25
-ELSEIF ABL:78 == 2
-    LOCAL:0 = (EXP:78 >= EXPLV:4) ? 1500 # 3000
+ELSEIF ABL:수영기능 == 2
+    LOCAL:0 = (EXP:수영경험 >= EXPLV:4) ? 1500 # 3000
     LOCAL:1 = 50
-ELSEIF ABL:78 == 3
-    LOCAL:0 = (EXP:78 >= EXPLV:5) ? 4500 # 9000
+ELSEIF ABL:수영기능 == 3
+    LOCAL:0 = (EXP:수영경험 >= EXPLV:5) ? 4500 # 9000
     LOCAL:1 = 100
-ELSEIF ABL:78 == 4
-    LOCAL:0 = (EXP:78 >= EXPLV:5) ? 12000 # 24000
+ELSEIF ABL:수영기능 == 4
+    LOCAL:0 = (EXP:수영경험 >= EXPLV:5) ? 12000 # 24000
     LOCAL:1 = 250
 ENDIF
 
 ;習得早い
-IF TALENT:50
+IF TALENT:습득빠름
     TIMES LOCAL:0 , 0.80
     TIMES LOCAL:1 , 0.75
 ;習得遅い
-ELSEIF TALENT:51
+ELSEIF TALENT:습득느림
     TIMES LOCAL:0 , 1.20
     TIMES LOCAL:1 , 1.10
 ENDIF
 ;服従
-IF TALENT:160
+IF TALENT:복종
     TIMES LOCAL:0 , 0.80
     TIMES LOCAL:1 , 0.80
 ENDIF
 ;河童
-IF TALENT:210
+IF TALENT:캇파
     TIMES LOCAL:0 , 0.50
     TIMES LOCAL:1 , 0.50
 ENDIF
 ;吸血鬼
-IF TALENT:205
+IF TALENT:흡혈귀
     TIMES LOCAL:0 , 1.20
     TIMES LOCAL:1 , 1.20
 ENDIF
 ;動物耳
-IF TALENT:116
+IF TALENT:동물귀
     TIMES LOCAL:0 , 1.10
     TIMES LOCAL:1 , 1.10
 ENDIF
@@ -125,7 +125,7 @@ VARSET LOCAL, 0
 SIF JUEL:11 < COST78(0)
     LOCAL:0 |= 1
 ;水泳経験が必要
-SIF EXP:78 < COST78(1)
+SIF EXP:수영경험 < COST78(1)
     LOCAL:0 |= 2
 
 RETURNF (LOCAL:0 == 0)

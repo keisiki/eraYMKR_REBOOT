@@ -11,29 +11,29 @@
 @CALC_TENTACLE_GAUGE
 VARSET LOCAL, 0
 ;ABL:촉수중독을 본다(촉수기생 LV의 게이지)
-IF ABL:35 == 0
+IF ABL:촉수중독 == 0
     LOCAL = 10
-ELSEIF ABL:35 == 1
+ELSEIF ABL:촉수중독 == 1
     LOCAL = 50
-ELSEIF ABL:35 == 2
+ELSEIF ABL:촉수중독 == 2
     LOCAL = 100
-ELSEIF ABL:35 == 3
+ELSEIF ABL:촉수중독 == 3
     LOCAL = 250
-ELSEIF ABL:35 == 4
+ELSEIF ABL:촉수중독 == 4
     LOCAL = 500
 ELSE
     LOCAL = 1000
 ENDIF
 ;촉수 임플란트
-SIF CFLAG:41
+SIF CFLAG:촉수이식
     LOCAL = PARASITIC_TENTACLE_INPLANT(LOCAL)
-IF EXP:53 > 9999
+IF EXP:촉수경험 > 9999
     LOCAL *= 5
-ELSEIF EXP:53 > 7499
+ELSEIF EXP:촉수경험 > 7499
     LOCAL *= 2
 ENDIF
 LOCAL = MIN(LOCAL, 10000)
-MAXBASE:6 = LOCAL
+MAXBASE:촉수 = LOCAL
 
 ;-----------------------------------------------
 ;촉수성장 LV의 표시
@@ -41,16 +41,16 @@ MAXBASE:6 = LOCAL
 @SHOW_INFO_TENTACLE
 CALL SHOW_TENTACLE_ABL
 CALL NEW_DRAWLINE
-PRINTFORML 현재의 촉수 에너지({BASE:MASTER:6}τ)
-IF TALENT:146
+PRINTFORML 현재의 촉수 에너지({BASE:MASTER:촉수}τ)
+IF TALENT:기생
     PRINTFORM 기생촉수성장LV(%CALLNAME:TARGET%)
-    BAR BASE:6,MAXBASE:6,10
-    PRINTFORML ({BASE:6, 4}/{MAXBASE:6, 4})
+    BAR BASE:촉수,MAXBASE:촉수,10
+    PRINTFORML ({BASE:촉수, 4}/{MAXBASE:촉수, 4})
 ENDIF
-IF ASSI >= 0 && TALENT:ASSI:146
+IF ASSI >= 0 && TALENT:ASSI:기생
     PRINTFORM 기생촉수성장LV(%CALLNAME:ASSI%)
-    BAR BASE:ASSI:6,MAXBASE:ASSI:6,10
-    PRINTFORML ({BASE:ASSI:6, 4}/{MAXBASE:ASSI:6, 4})
+    BAR BASE:ASSI:촉수,MAXBASE:ASSI:촉수,10
+    PRINTFORML ({BASE:ASSI:촉수, 4}/{MAXBASE:ASSI:촉수, 4})
 ENDIF
 CALL NEW_DRAWLINE
 WAIT
@@ -63,7 +63,7 @@ WAIT
 ;その後, 촉수경험や촉수중독で補正をかけた値が成長値になる.
 ;また기생中は촉수調教の체력기력の消費が低下, それ以外のときは増加する処理もここで行う.
 @PARASITIC_TENTACLE_TARGET
-IF BASE:6 < MAXBASE:6
+IF BASE:촉수 < MAXBASE:촉수
     LOCAL = 1
     IF TEQUIP:90
         IF SELECTCOM >= 500 && SELECTCOM < 510
@@ -121,43 +121,43 @@ IF BASE:6 < MAXBASE:6
             LOCAL += 2
     ENDIF
     ;촉수경험(0은 있을 수 없음)
-    IF EXP:53 < EXPLV:2
+    IF EXP:촉수경험 < EXPLV:2
         TIMES LOCAL , 1.00
-    ELSEIF EXP:53 < EXPLV:3
+    ELSEIF EXP:촉수경험 < EXPLV:3
         TIMES LOCAL , 1.20
-    ELSEIF EXP:53 < EXPLV:4
+    ELSEIF EXP:촉수경험 < EXPLV:4
         TIMES LOCAL , 1.50
-    ELSEIF EXP:53 < EXPLV:5
+    ELSEIF EXP:촉수경험 < EXPLV:5
         TIMES LOCAL , 1.80
     ELSE
         TIMES LOCAL , 2.00
     ENDIF
     ;촉수중독
-    IF ABL:35 == 0
+    IF ABL:촉수중독 == 0
         TIMES LOCAL , 1.00
-    ELSEIF ABL:35 == 1
+    ELSEIF ABL:촉수중독 == 1
         TIMES LOCAL , 1.50
-    ELSEIF ABL:35 == 2
+    ELSEIF ABL:촉수중독 == 2
         TIMES LOCAL , 2.00
-    ELSEIF ABL:35 == 3
+    ELSEIF ABL:촉수중독 == 3
         TIMES LOCAL , 2.50
-    ELSEIF ABL:35 == 4
+    ELSEIF ABL:촉수중독 == 4
         TIMES LOCAL , 3.00
     ELSE
         TIMES LOCAL , 3.50
     ENDIF
-    BASE:6 += LOCAL
-    BASE:6 = MIN(BASE:6, MAXBASE:6)
+    BASE:촉수 += LOCAL
+    BASE:촉수 = MIN(BASE:촉수, MAXBASE:촉수)
 ENDIF
 
 ;촉수に対する抵抗感が薄れる効果(消費체력 · 기력軽減)
 ;(기생をスムーズにするため麻薬効果があるような変なホルモンを分泌しているってことで)
 IF TEQUIP:90
     TIMES DOWNBASE:0 , 0.80
-    TIMES DOWNBASE:1 , 0.60
+    TIMES DOWNBASE:기력 , 0.60
 ELSE
     TIMES DOWNBASE:0 , 1.20
-    TIMES DOWNBASE:1 , 1.10
+    TIMES DOWNBASE:기력 , 1.10
 ENDIF
 
 ;-----------------------------------------------
@@ -167,21 +167,21 @@ ENDIF
 ;その後촉수조교 중ならボーナス1点を追加.
 @PARASITIC_TENTACLE_ASSI
 LOCAL = 0
-IF BASE:ASSI:6 < MAXBASE:ASSI:6
+IF BASE:ASSI:촉수 < MAXBASE:ASSI:촉수
     ;촉수중독
-    IF ABL:ASSI:35 == 0
+    IF ABL:ASSI:촉수중독 == 0
         LOCAL = 1
-    ELSEIF ABL:ASSI:35 <= 2
+    ELSEIF ABL:ASSI:촉수중독 <= 2
         LOCAL = 2
-    ELSEIF ABL:ASSI:35 <= 4
+    ELSEIF ABL:ASSI:촉수중독 <= 4
         LOCAL = 3
     ELSE
         LOCAL = 4
     ENDIF
     SIF TEQUIP:90
         LOCAL += 1
-    BASE:ASSI:6 += LOCAL
-    BASE:ASSI:6 = MIN(BASE:ASSI:6, MAXBASE:ASSI:6)
+    BASE:ASSI:촉수 += LOCAL
+    BASE:ASSI:촉수 = MIN(BASE:ASSI:촉수, MAXBASE:ASSI:촉수)
 ENDIF
 
 ;-----------------------------------------------
@@ -191,48 +191,48 @@ ENDIF
 ;また, 촉수유폐時には取り込まれる危険も高くなる.
 @SOURCE_INPLANT
 ;クリトリス(快Ｃ追加)
-SIF CFLAG:41 & 1
+SIF CFLAG:촉수이식 & 1
     TIMES SOURCE:0 , 1.15
 ;子宮(快Ｖ · 液体追加増加)
-IF CFLAG:41 & 2
+IF CFLAG:촉수이식 & 2
     TIMES SOURCE:1 , 1.15
     TIMES SOURCE:19 , 1.20
 ENDIF
 ;直腸(快Ａ · 不潔増加)
-IF CFLAG:41 & 4
+IF CFLAG:촉수이식 & 4
     TIMES SOURCE:2 , 1.15
     TIMES SOURCE:30 , 1.50
 ENDIF
 ;乳房(快Ｂ増加)
-SIF CFLAG:41 & 8
+SIF CFLAG:촉수이식 & 8
     TIMES SOURCE:3 , 1.15
 ;ヘソ(露出 · 痒み増加)
-IF CFLAG:41 & 16
+IF CFLAG:촉수이식 & 16
     TIMES SOURCE:12 , 1.10
     TIMES SOURCE:21 , 1.25
 ENDIF
 ;舌根(情愛 · 욕정追加増加)
-IF CFLAG:41 & 32
+IF CFLAG:촉수이식 & 32
     TIMES SOURCE:11 , 1.15
     TIMES SOURCE:18 , 1.15
 ENDIF
 ;膀胱(중독充足 · 不潔増加)
-IF CFLAG:41 & 64
+IF CFLAG:촉수이식 & 64
     TIMES SOURCE:24 , 1.15
     TIMES SOURCE:30 , 1.50
 ENDIF
 ;心臓(性行動 · 支配増加)
-IF CFLAG:41 & 128
+IF CFLAG:촉수이식 & 128
     TIMES SOURCE:15 , 1.20
     TIMES SOURCE:23 , 1.25
 ENDIF
 ;脊椎(屈従増加 · 反感追加減少)
-IF CFLAG:41 & 256
+IF CFLAG:촉수이식 & 256
     TIMES SOURCE:22 , 1.25
     TIMES SOURCE:32 , 0.90
 ENDIF
 ;額(性行動 · 屈従増加)
-IF CFLAG:41 & 512
+IF CFLAG:촉수이식 & 512
     TIMES SOURCE:15 , 1.50
     TIMES SOURCE:22 , 1.25
 ENDIF
@@ -241,25 +241,25 @@ ENDIF
 ;촉수 임플란트에 따른 호감도 변동 처리
 ;-----------------------------------------------
 @TENTACLE_INPLANT
-SIF CFLAG:41 & 1
+SIF CFLAG:촉수이식 & 1
     TFLAG:97 -= 1
-SIF CFLAG:41 & 2
+SIF CFLAG:촉수이식 & 2
     TFLAG:97 -= 1
-SIF CFLAG:41 & 4
+SIF CFLAG:촉수이식 & 4
     TFLAG:97 -= 1
-SIF CFLAG:41 & 8
+SIF CFLAG:촉수이식 & 8
     TFLAG:97 -= 1
-SIF CFLAG:41 & 16
+SIF CFLAG:촉수이식 & 16
     TFLAG:97 -= 2
-SIF CFLAG:41 & 32
+SIF CFLAG:촉수이식 & 32
     TFLAG:97 -= 1
-SIF CFLAG:41 & 64
+SIF CFLAG:촉수이식 & 64
     TFLAG:97 -= 2
-SIF CFLAG:41 & 128
+SIF CFLAG:촉수이식 & 128
     TFLAG:97 -= 3
-SIF CFLAG:41 & 256
+SIF CFLAG:촉수이식 & 256
     TFLAG:97 -= 3
-SIF CFLAG:41 & 512
+SIF CFLAG:촉수이식 & 512
     TFLAG:97 -= 3
 
 ;-----------------------------------------------
@@ -268,25 +268,25 @@ SIF CFLAG:41 & 512
 ;最大で基礎値から1200増加される
 @PARASITIC_TENTACLE_INPLANT(ARG)
 #FUNCTION
-SIF CFLAG:41 & 1
+SIF CFLAG:촉수이식 & 1
     ARG += 100
-SIF CFLAG:41 & 2
+SIF CFLAG:촉수이식 & 2
     ARG += 100
-SIF CFLAG:41 & 4
+SIF CFLAG:촉수이식 & 4
     ARG += 100
-SIF CFLAG:41 & 8
+SIF CFLAG:촉수이식 & 8
     ARG += 100
-SIF CFLAG:41 & 16
+SIF CFLAG:촉수이식 & 16
     ARG += 125
-SIF CFLAG:41 & 32
+SIF CFLAG:촉수이식 & 32
     ARG += 100
-SIF CFLAG:41 & 64
+SIF CFLAG:촉수이식 & 64
     ARG += 125
-SIF CFLAG:41 & 128
+SIF CFLAG:촉수이식 & 128
     ARG += 150
-SIF CFLAG:41 & 256
+SIF CFLAG:촉수이식 & 256
     ARG += 150
-SIF CFLAG:41 & 512
+SIF CFLAG:촉수이식 & 512
     ARG += 150
 RETURNF ARG
 
@@ -294,81 +294,81 @@ RETURNF ARG
 ;촉수가 획득한 능력을 표시
 ;-----------------------------------------------
 @SHOW_TENTACLE_ABL
-IF FLAG:75 == 0 && FLAG:97 == 0 && FLAG:98 == 0
+IF FLAG:촉수능력 == 0 && FLAG:촉수특수산제물 == 0 && FLAG:촉수특수능력 == 0
     PRINTL ＊특수능력없음＊
     RETURN 0
 ENDIF
-SIF FLAG:75 & 1
+SIF FLAG:촉수능력 & 1
     PRINT [채찍촉수] 
-SIF FLAG:75 & 2
+SIF FLAG:촉수능력 & 2
     PRINT [바늘형촉수] 
-SIF FLAG:75 & 4
+SIF FLAG:촉수능력 & 4
     PRINT [방전촉수] 
-SIF FLAG:75 & 8
+SIF FLAG:촉수능력 & 8
     PRINT [최면촉수] 
-SIF FLAG:75 & 16
+SIF FLAG:촉수능력 & 16
     PRINT [극세촉수] 
-SIF FLAG:75 & 32
+SIF FLAG:촉수능력 & 32
     PRINT [양분주입촉수] 
-SIF FLAG:75 & 64
+SIF FLAG:촉수능력 & 64
     PRINT [항균촉수] 
-SIF FLAG:75 & 128
+SIF FLAG:촉수능력 & 128
     PRINT [고야형 촉수] 
-SIF FLAG:75 & 256
+SIF FLAG:촉수능력 & 256
     PRINT [말미잘형 촉수] 
-SIF FLAG:75 & 512
+SIF FLAG:촉수능력 & 512
     PRINT [원격정밀제어] 
-SIF FLAG:75 & 1024
+SIF FLAG:촉수능력 & 1024
     PRINT [특수호르몬분비] 
-SIF FLAG:75 & 2048
+SIF FLAG:촉수능력 & 2048
     PRINT [촉수 현자의 돌] 
-SIF FLAG:75 & 4096
+SIF FLAG:촉수능력 & 4096
     PRINT [노예징벌용 촉수의 방] 
-SIF FLAG:75 & 8192
+SIF FLAG:촉수능력 & 8192
     PRINT [체내적응력 강화] 
-SIF FLAG:75 & 16384
+SIF FLAG:촉수능력 & 16384
     PRINT [정액방출량 강화] 
-SIF FLAG:75 & 32768
+SIF FLAG:촉수능력 & 32768
     PRINT [정자와 촉수의 방] 
-SIF FLAG:75 & 65536
+SIF FLAG:촉수능력 & 65536
     PRINT [흡혈촉수] 
-SIF FLAG:75 & 131072
+SIF FLAG:촉수능력 & 131072
     PRINT [촉수보육시설] [촉수분만대] 
 SIF DITEMTYPE:59:999
     PRINT [현실화 촉수] 
-SIF FLAG:97 & 1 && FLAG:98 & 1
+SIF FLAG:촉수특수산제물 & 1 && FLAG:촉수특수능력 & 1
     PRINT [SATORI촉수] 
-SIF FLAG:97 & 2 && FLAG:98 & 2
+SIF FLAG:촉수특수산제물 & 2 && FLAG:촉수특수능력 & 2
     PRINT [NITORI촉수] 
-SIF FLAG:97 & 4 && FLAG:98 & 4
+SIF FLAG:촉수특수산제물 & 4 && FLAG:촉수특수능력 & 4
     PRINT [YUYUKO촉수] 
-SIF FLAG:97 & 8 && FLAG:98 & 8
+SIF FLAG:촉수특수산제물 & 8 && FLAG:촉수특수능력 & 8
     PRINT [SUIKA촉수] 
-SIF FLAG:97 & 16 && FLAG:98 & 16
+SIF FLAG:촉수특수산제물 & 16 && FLAG:촉수특수능력 & 16
     PRINT [ALICE촉수] 
-SIF FLAG:97 & 32 && FLAG:98 & 32
+SIF FLAG:촉수특수산제물 & 32 && FLAG:촉수특수능력 & 32
     PRINT [HINA촉수] 
-SIF FLAG:97 & 64 && FLAG:98 & 64
+SIF FLAG:촉수특수산제물 & 64 && FLAG:촉수특수능력 & 64
     PRINT [AYA촉수] 
-SIF FLAG:97 & 128 && FLAG:98 & 128
+SIF FLAG:촉수특수산제물 & 128 && FLAG:촉수특수능력 & 128
     PRINT [PARSEE촉수] 
-SIF FLAG:97 & 256 && FLAG:98 & 256
+SIF FLAG:촉수특수산제물 & 256 && FLAG:촉수특수능력 & 256
     PRINT [MEDICINE촉수] 
-SIF FLAG:97 & 512 && FLAG:98 & 512
+SIF FLAG:촉수특수산제물 & 512 && FLAG:촉수특수능력 & 512
     PRINT [PATCHOULI촉수] 
-SIF FLAG:97 & 1024 && FLAG:98 & 1024
+SIF FLAG:촉수특수산제물 & 1024 && FLAG:촉수특수능력 & 1024
     PRINT [HIGH-FAIRY촉수] 
-SIF FLAG:97 & 2048 && FLAG:98 & 2048
+SIF FLAG:촉수특수산제물 & 2048 && FLAG:촉수특수능력 & 2048
     PRINT [CIRNO촉수] 
-SIF FLAG:97 & 4096 && FLAG:98 & 4096
+SIF FLAG:촉수특수산제물 & 4096 && FLAG:촉수특수능력 & 4096
     PRINT [NAZRIN촉수] 
-SIF FLAG:97 & 8192 && FLAG:98 & 8192
+SIF FLAG:촉수특수산제물 & 8192 && FLAG:촉수특수능력 & 8192
     PRINT [EIKI촉수] 
-SIF FLAG:97 & 16384 && FLAG:98 & 16384
+SIF FLAG:촉수특수산제물 & 16384 && FLAG:촉수특수능력 & 16384
     PRINT [SHIZUHA촉수] 
-SIF FLAG:97 & 32768 && FLAG:98 & 32768
+SIF FLAG:촉수특수산제물 & 32768 && FLAG:촉수특수능력 & 32768
     PRINT [MINORIKO촉수] 
-SIF FLAG:97 & 65536 && FLAG:98 & 65536
+SIF FLAG:촉수특수산제물 & 65536 && FLAG:촉수특수능력 & 65536
     PRINT [SUWAKO촉수] 
 PRINTL 
 
@@ -382,95 +382,95 @@ PRINTL
 @CHARACHECK_TENTACLE_SACRIFICE
 LOCAL = 0
 ;산제물になったキャラがさとり([SATORI촉수]取得に必要)
-IF NO:TARGET == 61 && (FLAG:97 & 1) == 0
+IF NO:TARGET == 61 && (FLAG:촉수특수산제물 & 1) == 0
     LOCAL = 1
     LOCALS = SATORI
     LOCALS:1 = 촉수독심고문
 ;산제물になったキャラがにとり([NITORI촉수]取得に必要)
-ELSEIF NO:TARGET == 40 && (FLAG:97 & 2) == 0
+ELSEIF NO:TARGET == 40 && (FLAG:촉수특수산제물 & 2) == 0
     LOCAL = 2
     LOCALS = NITORI
     LOCALS:1 = 촉수10만볼트
 ;산제물になったキャラが幽々子([YUYUKO촉수]取得に必要)
-ELSEIF NO:TARGET == 20 && (FLAG:97 & 4) == 0
+ELSEIF NO:TARGET == 20 && (FLAG:촉수특수산제물 & 4) == 0
     LOCAL = 4
     LOCALS = YUYUKO
     LOCALS:1 = 촉수유령질경
 ;산제물になったキャラが萃香([SUIKA촉수]取得に必要)
-ELSEIF NO:TARGET == 23 && (FLAG:97 & 8) == 0
+ELSEIF NO:TARGET == 23 && (FLAG:촉수특수산제물 & 8) == 0
     LOCAL = 8
     LOCALS = SUIKA
     LOCALS:1 = 촉수강제음주
 ;산제물になったキャラがアリス([ALICE촉수]取得に必要)
-ELSEIF NO:TARGET == 14 && (FLAG:97 & 16) == 0
+ELSEIF NO:TARGET == 14 && (FLAG:촉수특수산제물 & 16) == 0
     LOCAL = 16
     LOCALS = ALICE
     LOCALS:1 = 촉수정신제어
 ;산제물になったキャラが雛([HINA촉수]取得に必要)
-ELSEIF NO:TARGET == 39 && (FLAG:97 & 32) == 0
+ELSEIF NO:TARGET == 39 && (FLAG:촉수특수산제물 & 32) == 0
     LOCAL = 32
     LOCALS = HINA촉수
     LOCALS:1 = 촉수액독뿜기
 ;산제물になったキャラが文([AYA촉수]取得に必要)
-ELSEIF NO:TARGET == 32 && (FLAG:97 & 64) == 0
+ELSEIF NO:TARGET == 32 && (FLAG:촉수특수산제물 & 64) == 0
     LOCAL = 64
     LOCALS = AYA
     LOCALS:1 = 촉수장내촬영
 ;산제물になったキャラがパルスィ([PARSEE촉수]取得に必要)
-ELSEIF NO:TARGET == 59 && (FLAG:97 & 128) == 0
+ELSEIF NO:TARGET == 59 && (FLAG:촉수특수산제물 & 128) == 0
     LOCAL = 128
     LOCALS = PARSEE
     LOCALS:1 = 촉수언어고문
 ;산제물になったキャラがメディスン([MEDICINE촉수]取得に必要)
-ELSEIF NO:TARGET == 33 && (FLAG:97 & 256) == 0
+ELSEIF NO:TARGET == 33 && (FLAG:촉수특수산제물 & 256) == 0
     LOCAL = 256
     LOCALS = MEDICINE
     LOCALS:1 = 촉수방울꽃미약
 ;산제물になったキャラがパチュリー([PATCHOULI촉수]取得に必要)
-ELSEIF NO:TARGET == 8 && (FLAG:97 & 512) == 0
+ELSEIF NO:TARGET == 8 && (FLAG:촉수특수산제물 & 512) == 0
     LOCAL = 512
     LOCALS = PATCHOULI
     LOCALS:1 = 촉수관능도서
 ;산제물になったキャラが大妖精([HIGH-FAIRY촉수]取得に必要)
-ELSEIF NO:TARGET == 4 && (FLAG:97 & 1024) == 0
+ELSEIF NO:TARGET == 4 && (FLAG:촉수특수산제물 & 1024) == 0
     LOCAL = 1024
     LOCALS = HIGH-FAIRY
     LOCALS:1 = 촉수요정안마
 ;산제물になったキャラがチルノ([CIRNO촉수]取得に必要)
-ELSEIF NO:TARGET == 5 && (FLAG:97 & 2048) == 0
+ELSEIF NO:TARGET == 5 && (FLAG:촉수특수산제물 & 2048) == 0
     LOCAL = 2048
     LOCALS = CIRNO
     LOCALS:1 = 촉수얼음수음
 ;산제물になったキャラがナズーリン([NAZRIN촉수]取得に必要)
-ELSEIF NO:TARGET == 71 && (FLAG:97 & 4096) == 0
+ELSEIF NO:TARGET == 71 && (FLAG:촉수특수산제물 & 4096) == 0
     LOCAL = 4096
     LOCALS = NAZRIN
     LOCALS:1 = 촉수음맥탐사
 ;산제물になったキャラが映姫様([EIKI촉수]取得に必要)
-ELSEIF NO:TARGET == 36 && (FLAG:97 & 8192) == 0
+ELSEIF NO:TARGET == 36 && (FLAG:촉수특수산제물 & 8192) == 0
     LOCAL = 8192
     LOCALS = EIKI
     LOCALS:1 = 촉수최종심판
 ;산제물になったキャラが静葉([SHIZUHA촉수]取得に必要)
-ELSEIF NO:TARGET == 37 && (FLAG:97 & 16384) == 0
+ELSEIF NO:TARGET == 37 && (FLAG:촉수특수산제물 & 16384) == 0
     LOCAL = 16384
     LOCALS = SHIZUHA
     LOCALS:1 = 촉수백렬단풍
 ;산제물になったキャラが穣子([MINORIKO촉수]取得に必要)
-ELSEIF NO:TARGET == 38 && (FLAG:97 & 32768) == 0
+ELSEIF NO:TARGET == 38 && (FLAG:촉수특수산제물 & 32768) == 0
     LOCAL = 32768
     LOCALS = MINORIKO
     LOCALS:1 = 촉수풍양음향
 ;산제물になったキャラが諏訪子([SUWAKO촉수]取得に必要)
-;ELSEIF NO:TARGET == 38 && (FLAG:97 & 65536) == 0
+;ELSEIF NO:TARGET == 38 && (FLAG:촉수특수산제물 & 65536) == 0
 ;    LOCAL = 32768
 ;    LOCALS = SUWAKO
 ;    LOCALS:1 = 촉수○○○○
 ENDIF
 PRINTL 
 IF LOCAL > 0
-    FLAG:97 |= LOCAL
-    IF FLAG:98 & LOCAL
+    FLAG:촉수특수산제물 |= LOCAL
+    IF FLAG:촉수특수능력 & LOCAL
         PRINTFORML %조사처리(CALLNAME:TARGET,"를")% 흡수한 촉수는 [%LOCALS% 촉수]를 얻었다.
         PRINTFORMW 커맨드 ＜%LOCALS:1%＞를 사용할 수 있게 되었습니다.
     ELSE
@@ -490,15 +490,15 @@ ENDIF
 #FUNCTION
 LOCAL:1 = 0
 LOCAL = NO:TARGET + 100
-IF MARK:10 == 2 && EXP:50 >= 20 && DITEMTYPE:LOCAL:111 >= 10 && MONEY >= 1000000 && ABL:MASTER:98 >= 5
+IF MARK:불사각인 == 2 && EXP:이상경험 >= 20 && DITEMTYPE:LOCAL:111 >= 10 && MONEY >= 1000000 && ABL:MASTER:촉수사역 >= 5
     ;불사각인 LV3にするには奴隷の불사각인がLV2で이상경험が20以上
     ;かつ主人の触手使役がLV5以上, かつ奴隷が産んだ触手10匹と所持金100萬圓が必要
     LOCAL:1 = 3
-ELSEIF MARK:10 == 1 && EXP:50 >= 10 && DITEMTYPE:LOCAL:111 >= 5 && MONEY >= 500000 && ABL:MASTER:98 >= 4
+ELSEIF MARK:불사각인 == 1 && EXP:이상경험 >= 10 && DITEMTYPE:LOCAL:111 >= 5 && MONEY >= 500000 && ABL:MASTER:촉수사역 >= 4
     ;불사각인 LV2にするには奴隷の불사각인がLV1かつで이상경험が10以上
     ;主人の触手使役がLV4以上, かつ奴隷が産んだ触手5匹と所持金50萬圓が必要
     LOCAL:1 = 2
-ELSEIF MARK:10 == 0 && DITEMTYPE:LOCAL:111 >= 1 && MONEY >= 100000 && ABL:MASTER:98 >= 3
+ELSEIF MARK:불사각인 == 0 && DITEMTYPE:LOCAL:111 >= 1 && MONEY >= 100000 && ABL:MASTER:촉수사역 >= 3
     ;불사각인 LV1にするには主人の触手使役がLV3以上, かつ奴隷が産んだ触手1匹と所持金10萬圓が必要
     LOCAL:1 = 1
 ENDIF
@@ -522,21 +522,21 @@ ELSE
 ENDIF
 DITEMTYPE:(NO:TARGET + 100):111 -= LOCAL
 ;지문 컷
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINTFORMW 이전에 %조사처리(CALLNAME:TARGET,"가")% 낳았던 {F}마리의 촉수는 체내 깊숙한 곳으로 파고들더니, 
     PRINTFORMW 체내에 기생하고 있던 촉수의 영양분을 사용해, %CALLNAME:TARGET%의 체질을 크게 변모시켰다.
 
 ENDIF
 CALL COMMON_MARK_UP, TARGET, 10, ARG, 0
-BASE:6 -= ARG:1
+BASE:촉수 -= ARG:1
 ;대사 호출,TFLAG:200의 270～272를 사용. 다른 각인 취득과 다른 이벤트 취급
 CALL SELF_KOJO, TARGET, 269+ARG, LOCAL
 ;불사각인 누계 카운트
-FLAG:409 += 1
-IF FLAG:409 >= 50 && FLAG:4 <= 1 && (FLAG:70 & 512) == 0
+FLAG:불사총계 += 1
+IF FLAG:불사총계 >= 50 && FLAG:게임모드 <= 1 && (FLAG:주인종족변경 & 512) == 0
     PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 불사화 지식의 심연을 깨달았다….
     PRINTFORMW ※강하게 뉴 게임 개시시에 %CALLNAME:MASTER%의 종족을 [주정]으로 선택할 수 있게 되었습니다.
-    FLAG:70 |= 512
+    FLAG:주인종족변경 |= 512
 ENDIF
 
 ;-----------------------------------------------
@@ -548,11 +548,11 @@ ENDIF
 ;불사각인 LV1～2では촉수エネルギーを消費してしまうが, LV3以上になるとエネルギーの『消費』は無くなる(使ったものが全て還元されるため)
 ;なお, 妊娠や懐卵による消費の低下(체력の最大値の低下によるもの)は仕様.強制的に消滅って手もありかも知れないが処理がややこしくなりそうなのでパス.
 @TENTACLIC_REVIVAL
-IF BASE:0 <= 0 && MARK:10 == 3 && BASE:MASTER:6 > 0
+IF BASE:0 <= 0 && MARK:불사각인 == 3 && BASE:MASTER:촉수 > 0
     LOCAL = 3
-ELSEIF BASE:0 <= 0 && MARK:10 == 2 && BASE:MASTER:6 >= MAXBASE:0 / 10
+ELSEIF BASE:0 <= 0 && MARK:불사각인 == 2 && BASE:MASTER:촉수 >= MAXBASE:0 / 10
     LOCAL = 2
-ELSEIF BASE:0 <= 0 && MARK:10 == 1 && BASE:MASTER:6 >= MAXBASE:0 / 5 && (TEQUIP:90 || TALENT:146 || TALENT:145)
+ELSEIF BASE:0 <= 0 && MARK:불사각인 == 1 && BASE:MASTER:촉수 >= MAXBASE:0 / 5 && (TEQUIP:90 || TALENT:기생 || TALENT:회란)
     LOCAL = 1
 ELSE
     RETURN 0
@@ -561,7 +561,7 @@ ENDIF
 PRINTW ＜리저렉션＞
 PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 불사각인의 힘에 의해 억지로 소생되었습니다.
 ;불사각인(촉수)リザレクション回数フラグ
-CFLAG:162 += 1
+CFLAG:촉수로부활회수 += 1
 
 ;불사각인 LV3
 IF LOCAL == 3
@@ -572,11 +572,11 @@ IF LOCAL == 3
     ENDIF
 ;불사각인 LV2
 ELSEIF LOCAL == 2
-    BASE:MASTER:6 -= MAXBASE:0 / 10
+    BASE:MASTER:촉수 -= MAXBASE:0 / 10
     TCVAR:50 += 1
-    IF ABL:10 > 0 && TALENT:150 == 0
-        ABL:10 -= 1
-        PRINTFORML %CALLNAME:TARGET%의 %ABLNAME:10%가 {ABL:10}로 떨어졌다.
+    IF ABL:순종 > 0 && TALENT:연모 == 0
+        ABL:순종 -= 1
+        PRINTFORML %CALLNAME:TARGET%의 %ABLNAME:10%가 {ABL:순종}로 떨어졌다.
     ENDIF
     IF MAXBASE:0 > 1000
         MAXBASE:0 -= 50
@@ -585,11 +585,11 @@ ELSEIF LOCAL == 2
     ENDIF
 ;불사각인 LV1
 ELSE
-    BASE:MASTER:6 -= MAXBASE:0 / 5
+    BASE:MASTER:촉수 -= MAXBASE:0 / 5
     TCVAR:50 += 1
-    IF ABL:10 > 0 && TALENT:150 == 0
-        ABL:10 -= 1
-        PRINTFORML %CALLNAME:TARGET%의 %ABLNAME:10%가 {ABL:10}로 떨어졌다.
+    IF ABL:순종 > 0 && TALENT:연모 == 0
+        ABL:순종 -= 1
+        PRINTFORML %CALLNAME:TARGET%의 %ABLNAME:10%가 {ABL:순종}로 떨어졌다.
     ENDIF
     IF MAXBASE:0 > 1000
         MAXBASE:0 -= 100
@@ -598,10 +598,10 @@ ELSE
     ENDIF
 ENDIF
 
-IF TALENT:146
-    TALENT:146 = 0
-    MAXBASE:6 = 0
-    BASE:6 = MAXBASE:6
+IF TALENT:기생
+    TALENT:기생 = 0
+    MAXBASE:촉수 = 0
+    BASE:촉수 = MAXBASE:촉수
     PRINTFORML %CALLNAME:TARGET%에게 기생하던 촉수는 소멸해버렸다.
 ENDIF
 BASE:0 = 1
@@ -611,26 +611,26 @@ BASE:0 = 1
 ;-----------------------------------------------
 @TENTACLE_HEAL
 ;촉수중독
-LOCAL = 1 + ABL:35
+LOCAL = 1 + ABL:촉수중독
 
 ;촉수경험
-IF EXP:53 < EXPLV:2
+IF EXP:촉수경험 < EXPLV:2
     LOCAL += 0
-ELSEIF EXP:53 < EXPLV:3
+ELSEIF EXP:촉수경험 < EXPLV:3
     LOCAL += 1
-ELSEIF EXP:53 < EXPLV:4
+ELSEIF EXP:촉수경험 < EXPLV:4
     LOCAL += 2
-ELSEIF EXP:53 < EXPLV:5
+ELSEIF EXP:촉수경험 < EXPLV:5
     LOCAL += 3
 ELSE
     LOCAL += 4
 ENDIF
 
-LOCAL *= BASE:6
+LOCAL *= BASE:촉수
 LOCAL /= 100
 BASE:0 += LOCAL
 BASE:0 = MIN(BASE:0, MAXBASE:0)
-BASE:6 = 0
+BASE:촉수 = 0
 PRINTFORMW %CALLNAME:TARGET%에게 기생하고 있던 촉수는 모든 영양분을 방출했다.
 
 ;=============================================================================
@@ -649,52 +649,52 @@ LOCAL:3 = 10
 LOCAL:4 = 10
 LOCAL:5 = 15
 LOCAL:6 = 10
-SIF ABL:ARG:1
-    LOCAL:1 += 2 * ABL:ARG:1
-SIF ABL:ARG:2
-    LOCAL:2 += 3 * ABL:ARG:2
-SIF ABL:ARG:13
-    LOCAL:3 += ABL:ARG:13
-SIF ABL:ARG:0
-    LOCAL:4 += 3 * ABL:ARG:0
-SIF ABL:ARG:3
-    LOCAL:5 += 2 * ABL:ARG:3
-SIF ABL:ARG:21
-    LOCAL:6 += ABL:ARG:21
+SIF ABL:ARG:V감각
+    LOCAL:1 += 2 * ABL:ARG:V감각
+SIF ABL:ARG:A감각
+    LOCAL:2 += 3 * ABL:ARG:A감각
+SIF ABL:ARG:봉사정신
+    LOCAL:3 += ABL:ARG:봉사정신
+SIF ABL:ARG:C감각
+    LOCAL:4 += 3 * ABL:ARG:C감각
+SIF ABL:ARG:B감각
+    LOCAL:5 += 2 * ABL:ARG:B감각
+SIF ABL:ARG:마조끼
+    LOCAL:6 += ABL:ARG:마조끼
 LOCAL:7 = LOCAL:6+(LOCAL:1+LOCAL:2)/5
 TFLAG:230 = LOCAL:1+LOCAL:2+LOCAL:3+LOCAL:4+LOCAL:5+LOCAL:6
-TFLAG:231 = 2 + MARK:ARG:3
+TFLAG:231 = 2 + MARK:ARG:약물각인
 TFLAG:232 = 5+TFLAG:231
-IF TALENT:ARG:0
+IF TALENT:ARG:처녀
     CALL SETCOLOR_TORIKOMODE, "RED", 3
     PRINTW 【처녀 상실】
     RESETCOLOR
-    IF CFLAG:ARG:500 == 0
-        CFLAG:ARG:500 = 1003
+    IF CFLAG:ARG:첫경험상대의캐릭터번호 == 0
+        CFLAG:ARG:첫경험상대의캐릭터번호 = 1003
         CSTR:ARG:5 = 촉수
     ENDIF
-    TALENT:ARG:0 = 0
+    TALENT:ARG:처녀 = 0
     LOCAL:7 += 50
     TFLAG:232 += 1
-    IF EXP:ARG:0 == 0
+    IF EXP:ARG:V경험 == 0
         LOCAL:7 += 100
         TFLAG:232 += 1
     ENDIF
 ENDIF
-CFLAG:ARG:11 = 6
-IF TALENT:ARG:120
-    ;Ａ경험
+CFLAG:ARG:VA이상경험변동 = 6
+IF TALENT:ARG:남자
+    ;A경험
     CALL COMMON_UP_EXP,ARG, 1, ((LOCAL:1)/2+LOCAL:2), 0
-    ;Ａ확장경험
+    ;A확장경험
     CALL COMMON_UP_EXP,ARG, 33, ((LOCAL:1+LOCAL:2)/8), 0
 ELSE
-    ;Ｖ경험
+    ;V경험
     CALL COMMON_UP_EXP,ARG, 0, LOCAL:1, 0
-    ;Ｖ확장경험
+    ;V확장경험
     CALL COMMON_UP_EXP,ARG, 32, ((LOCAL:1)/5), 0
-    ;Ａ경험
+    ;A경험
     CALL COMMON_UP_EXP,ARG, 1, LOCAL:2, 0
-    ;Ａ확장경험
+    ;A확장경험
     CALL COMMON_UP_EXP,ARG, 33, ((LOCAL:2)/5), 0
 ENDIF
 ;절정경험
@@ -714,12 +714,12 @@ CALL COMMON_UP_EXP,ARG, 46, ((LOCAL:4)/2), 0
 CALL COMMON_UP_EXP,ARG, 50, 20, 0
 ;촉수경험
 CALL COMMON_UP_EXP,ARG, 53, TFLAG:230, 0
-SIF TALENT:ARG:120 == 0
+SIF TALENT:ARG:남자 == 0
     TIMES LOCAL:4 , 0.80
 ;쾌Ｃ의 구슬
 CALL COMMON_UP_JUEL, ARG, 0, ((LOCAL:4)*100), 0
 ;쾌Ｖ의 구슬
-SIF TALENT:ARG:120 == 0
+SIF TALENT:ARG:남자 == 0
     CALL COMMON_UP_JUEL, ARG, 1, ((LOCAL:1)*100), 0
 ;쾌Ａ의 구슬
 CALL COMMON_UP_JUEL, ARG, 2, ((LOCAL:2)*80), 0
@@ -737,39 +737,39 @@ CALL COMMON_UP_JUEL, ARG, 16, ((LOCAL:7)*60), 0
 CALL COMMON_UP_JUEL, ARG, 17, ((TFLAG:230)*250), 0
 ;부정의 구슬
 CALL COMMON_UP_JUEL, ARG, 100, (TFLAG:230*(TFLAG:231)*50), 0
-IF MARK:ARG:0 < 2 && TALENT:ARG:41 == 0
+IF MARK:ARG:고통각인 < 2 && TALENT:ARG:아픔에강함 == 0
     TFLAG:232 += 1
-    SIF MARK:ARG:0 == 0
+    SIF MARK:ARG:고통각인 == 0
         TFLAG:232 += 1
-    CALL COMMON_MARK_UP, ARG, 0, MARK:ARG:0+1, 0
+    CALL COMMON_MARK_UP, ARG, 0, MARK:ARG:고통각인+1, 0
 ENDIF
-IF MARK:ARG:1 < 2 && TALENT:ARG:71 == 0
+IF MARK:ARG:쾌락각인 < 2 && TALENT:ARG:쾌감을부정 == 0
     TFLAG:232 += 1
-    SIF MARK:ARG:1 == 0
+    SIF MARK:ARG:쾌락각인 == 0
         TFLAG:232 += 1
-    CALL COMMON_MARK_UP, ARG, 1, MARK:ARG:1+1, 0
+    CALL COMMON_MARK_UP, ARG, 1, MARK:ARG:쾌락각인+1, 0
 ENDIF
-IF MARK:ARG:2 < 3 && TALENT:ARG:27 == 0 && TALENT:ARG:71 == 0
+IF MARK:ARG:굴복각인 < 3 && TALENT:ARG:일선을넘지않음 == 0 && TALENT:ARG:쾌감을부정 == 0
     TFLAG:232 += 1
-    IF MARK:ARG:0 == 0
+    IF MARK:ARG:고통각인 == 0
         TFLAG:232 += 2
-    ELSEIF MARK:ARG:0 == 1
+    ELSEIF MARK:ARG:고통각인 == 1
         TFLAG:232 += 1
     ENDIF
-    CALL COMMON_MARK_UP, ARG, 2, MARK:ARG:2+1, 0
+    CALL COMMON_MARK_UP, ARG, 2, MARK:ARG:굴복각인+1, 0
 
 ENDIF
 LOCAL:1 = 0
-IF MARK:ARG:8 > 2 && JUEL:ARG:14 > 75000
+IF MARK:ARG:공포각인 > 2 && JUEL:ARG:14 > 75000
     LOCAL:1 = 3
-ELSEIF MARK:ARG:8 > 1 && JUEL:ARG:14 > 15000
+ELSEIF MARK:ARG:공포각인 > 1 && JUEL:ARG:14 > 15000
     LOCAL:1 = 2
-ELSEIF MARK:ARG:8 > 0 && JUEL:ARG:14 > 7500
+ELSEIF MARK:ARG:공포각인 > 0 && JUEL:ARG:14 > 7500
     LOCAL:1 = 1
 ENDIF
-IF LOCAL:1 > 0 && MARK:ARG:96 > MARK:ARG:8
+IF LOCAL:1 > 0 && MARK:ARG:96 > MARK:ARG:공포각인
     TFLAG:232 += 1
-    CALL COMMON_MARK_UP, ARG, 8, MARK:ARG:8+1, 0
+    CALL COMMON_MARK_UP, ARG, 8, MARK:ARG:공포각인+1, 0
 ENDIF
 WAIT
 
@@ -782,14 +782,14 @@ WAIT
 ;LOCAL:4=부정의 구슬･이상경험용, LOCAL:6=소비체력기력 · 임플란트 관계, LOCAL:8=고통, LOCAL:10=정액, LOCAL:11=최면
 VARSET LOCAL,0
 FOR LOCAL, 0, 3
-    LOCAL:15 = (FLAG:75 & 8) ? RAND:10 # RAND:9
+    LOCAL:15 = (FLAG:촉수능력 & 8) ? RAND:10 # RAND:9
     IF LOCAL:15 == 0
         ;Ａ계 추가
         LOCAL:14 |= 1
         LOCAL:1 += 6 + RAND:5
     ELSEIF LOCAL:15 == 1
         ;対象がオトコの場合はＶ계でなくＡ계かＣ계が入るように
-        IF TALENT:ARG:120 == 0
+        IF TALENT:ARG:남자 == 0
             ;Ｖ계 추가
             LOCAL:14 |= 2
             LOCAL:13 += 6 + RAND:8
@@ -842,47 +842,47 @@ SIF LOCAL:13 + LOCAL:1 == 0
 
 ;Ａ감각
 IF LOCAL:1
-    LOCAL:1 *= 10 + ABL:ARG:2
+    LOCAL:1 *= 10 + ABL:ARG:A감각
     LOCAL:1 /= 10
 ENDIF
 ;Ｂ감각
 IF LOCAL:2
-    LOCAL:2 *= 10 + ABL:ARG:3
+    LOCAL:2 *= 10 + ABL:ARG:B감각
     LOCAL:2 /= 10
 ENDIF
 ;Ｃ감각
 IF LOCAL:3
-    LOCAL:3 *= 10 + ABL:ARG:0
+    LOCAL:3 *= 10 + ABL:ARG:C감각
     LOCAL:3 /= 10
 ENDIF
 ;Ｃ감각(요도계)
 IF LOCAL:12
-    LOCAL:12 *= 10 + ABL:ARG:0
+    LOCAL:12 *= 10 + ABL:ARG:C감각
     LOCAL:12 /= 10
 ENDIF
 ;Ｖ감각
 IF LOCAL:13
-    LOCAL:13 *= 10 + ABL:ARG:1
+    LOCAL:13 *= 10 + ABL:ARG:V감각
     LOCAL:13 /= 10
 ENDIF
 ;봉사정신(펠라계)
 IF LOCAL:7
-    LOCAL:7 *= 10 + ABL:ARG:13
+    LOCAL:7 *= 10 + ABL:ARG:봉사정신
     LOCAL:7 /= 10
 ENDIF
 ;봉사정신(최면계)
 IF LOCAL:11
-    LOCAL:11 += ABL:ARG:13
+    LOCAL:11 += ABL:ARG:봉사정신
     LOCAL:11 /= 2
 ENDIF
 ;마조끼(고통계)
 IF LOCAL:8
-    LOCAL:8 *= 10 + ABL:ARG:21
+    LOCAL:8 *= 10 + ABL:ARG:마조끼
     LOCAL:8 /= 10
 ENDIF
 ;마조끼(긴박계)
 IF LOCAL:9
-    LOCAL:9 *= 10 + ABL:ARG:21
+    LOCAL:9 *= 10 + ABL:ARG:마조끼
     LOCAL:9 /= 10
 ENDIF
 ;산란による고통 · 체력消費
@@ -894,12 +894,12 @@ ENDIF
 LOCAL:10 = (LOCAL:1+LOCAL:2+LOCAL:3+LOCAL:12+LOCAL:13)/10
 ;정액중독
 IF LOCAL:10
-    LOCAL:10 *= 10 + ABL:ARG:31
+    LOCAL:10 *= 10 + ABL:ARG:정액중독
     LOCAL:10 /= 10
 ENDIF
 
 ;지문 표시
-IF CFLAG:ARG:99 == 0
+IF CFLAG:ARG:지문소거판정 == 0
     PRINTFORM 촉수들은 %CALLNAME:ARG%의 
     SIF LOCAL:14 & 256
         PRINT 몸 안에 무수히 알을 까면서, 
@@ -946,30 +946,30 @@ IF CFLAG:ARG:99 == 0
     WAIT
 ENDIF
 IF LOCAL:13
-    IF TALENT:ARG:0
+    IF TALENT:ARG:처녀
         CALL SETCOLOR_TORIKOMODE, "RED", 3
         PRINTL 【처녀 상실】
         RESETCOLOR
-        IF CFLAG:ARG:500 == 0
-            CFLAG:ARG:500 = 1003
+        IF CFLAG:ARG:첫경험상대의캐릭터번호 == 0
+            CFLAG:ARG:첫경험상대의캐릭터번호 = 1003
             CSTR:ARG:5 = 촉수
         ENDIF
         LOCAL:8 += 50
         LOCAL:6 += 1
-        TALENT:ARG:0 = 0
-        IF EXP:ARG:0 == 0
+        TALENT:ARG:처녀 = 0
+        IF EXP:ARG:V경험 == 0
             LOCAL:8 += 100
             LOCAL:6 += 1
         ENDIF
     ENDIF
-    ;Ｖ경험
+    ;V경험
     CALL COMMON_UP_EXP,ARG, 0, LOCAL:13, 0
-    ;Ｖ확장경험
+    ;V확장경험
     CALL COMMON_UP_EXP,ARG, 32, ((LOCAL:13)/5), 0
 ENDIF
-;Ａ경험
+;A경험
 CALL COMMON_UP_EXP,ARG, 1, LOCAL:1, 0
-;Ａ확장경험
+;A확장경험
 CALL COMMON_UP_EXP,ARG, 33, ((LOCAL:1)/5), 0
 ;절정경험
 CALL COMMON_UP_EXP,ARG, 2, ((LOCAL:13+LOCAL:1+LOCAL:2+LOCAL:3)/2), 0
@@ -987,8 +987,8 @@ IF LOCAL:5
     ;산란경험
     CALL COMMON_UP_EXP,ARG, 51, LOCAL:5, 0
 ENDIF
-IF (CFLAG:ARG:24 & 4) == 0
-    CFLAG:ARG:24 |= 4
+IF (CFLAG:ARG:첫촉수커맨드 & 4) == 0
+    CFLAG:ARG:첫촉수커맨드 |= 4
     LOCAL:4 += 1
     ;이상경험
     CALL COMMON_UP_EXP,ARG, 50, LOCAL:4, 0
@@ -1000,19 +1000,19 @@ LOCAL:6 += (LOCAL:16)/2
 CALL COMMON_UP_EXP,ARG, 53, LOCAL:16, 0
 
 ;능력(촉수중독)
-IF ABL:ARG:35 == 0
+IF ABL:ARG:촉수중독 == 0
     TIMES LOCAL:16 , 0.80
     TIMES LOCAL:4 , 2.40
-ELSEIF ABL:ARG:35 == 1
+ELSEIF ABL:ARG:촉수중독 == 1
     TIMES LOCAL:16 , 1.00
     TIMES LOCAL:4 , 1.20
-ELSEIF ABL:ARG:35 == 2
+ELSEIF ABL:ARG:촉수중독 == 2
     TIMES LOCAL:16 , 1.20
     TIMES LOCAL:4 , 1.00
-ELSEIF ABL:ARG:35 == 3
+ELSEIF ABL:ARG:촉수중독 == 3
     TIMES LOCAL:16 , 1.50
     TIMES LOCAL:4 , 0.90
-ELSEIF ABL:ARG:35 == 4
+ELSEIF ABL:ARG:촉수중독 == 4
     TIMES LOCAL:16 , 1.80
     TIMES LOCAL:4 , 0.60
 ELSE
@@ -1020,24 +1020,24 @@ ELSE
     TIMES LOCAL:4 , 0.10
 ENDIF
 ;호감도 감소
-IF CFLAG:ARG:2 && LOCAL:16
-    CFLAG:ARG:2 -= LOCAL:16
-    CFLAG:ARG:2 = MAX(CFLAG:ARG:2, 0)
+IF CFLAG:ARG:호감도 && LOCAL:16
+    CFLAG:ARG:호감도 -= LOCAL:16
+    CFLAG:ARG:호감도 = MAX(CFLAG:ARG:호감도, 0)
 ENDIF
 ;능력(욕망)
-IF ABL:ARG:11 == 0
+IF ABL:ARG:욕망 == 0
     TIMES LOCAL:16 , 1.00
     TIMES LOCAL:4 , 2.50
-ELSEIF ABL:ARG:11 == 1
+ELSEIF ABL:ARG:욕망 == 1
     TIMES LOCAL:16 , 1.20
     TIMES LOCAL:4 , 1.80
-ELSEIF ABL:ARG:11 == 2
+ELSEIF ABL:ARG:욕망 == 2
     TIMES LOCAL:16 , 1.40
     TIMES LOCAL:4 , 1.50
-ELSEIF ABL:ARG:11 == 3
+ELSEIF ABL:ARG:욕망 == 3
     TIMES LOCAL:16 , 1.60
     TIMES LOCAL:4 , 1.00
-ELSEIF ABL:ARG:11 == 4
+ELSEIF ABL:ARG:욕망 == 4
     TIMES LOCAL:16 , 1.80
     TIMES LOCAL:4 , 0.80
 ELSE
@@ -1045,7 +1045,7 @@ ELSE
     TIMES LOCAL:4 , 0.50
 ENDIF
 ;촉수エネルギーが切れていると効果ダウン
-IF BASE:MASTER:6 <= 0
+IF BASE:MASTER:촉수 <= 0
     LOCAL:3 /= 2
     LOCAL:13 /= 2
     LOCAL:1 /= 2
@@ -1081,27 +1081,27 @@ ENDIF
 CALL COMMON_UP_JUEL, ARG, 17, ((LOCAL:16)*110), 0
 ;부정의 구슬 · 스트레스
 ;촉수경험
-IF EXP:ARG:53 < EXPLV:1
+IF EXP:ARG:촉수경험 < EXPLV:1
     TIMES LOCAL:4 , 3.00
-ELSEIF EXP:ARG:53 < EXPLV:2
+ELSEIF EXP:ARG:촉수경험 < EXPLV:2
     TIMES LOCAL:4 , 2.50
-ELSEIF EXP:ARG:53 < EXPLV:3
+ELSEIF EXP:ARG:촉수경험 < EXPLV:3
     TIMES LOCAL:4 , 2.00
-ELSEIF EXP:ARG:53 < EXPLV:4
+ELSEIF EXP:ARG:촉수경험 < EXPLV:4
     TIMES LOCAL:4 , 1.00
-ELSEIF EXP:ARG:53 < EXPLV:5
+ELSEIF EXP:ARG:촉수경험 < EXPLV:5
     TIMES LOCAL:4 , 0.80
 ELSE
     TIMES LOCAL:4 , 0.60
 ENDIF
 ;기생
-SIF TALENT:ARG:146
+SIF TALENT:ARG:기생
     LOCAL:4 -= 500
 ;복종계 · 붕괴계
-SIF TALENT:ARG:160 || TALENT:ARG:161 || TALENT:ARG:162 || TALENT:ARG:168 || TALENT:ARG:169
+SIF TALENT:ARG:복종 || TALENT:ARG:낙인 || TALENT:ARG:예속 || TALENT:ARG:괴뢰 || TALENT:ARG:괴조인격
     LOCAL:4 -= 100
 ;사역마
-SIF TALENT:ARG:164
+SIF TALENT:ARG:사역마
     LOCAL:4 -= 250
 IF LOCAL:11
     LOCAL:4 -= 100 * LOCAL:11
@@ -1111,30 +1111,30 @@ LOCAL:4 = MAX(LOCAL:4, 0)
 IF LOCAL:4 > 0
     ;부정의 구슬
     CALL COMMON_UP_JUEL, ARG, 100, LOCAL:4, 0
-    SIF TALENT:MASTER:998
+    SIF TALENT:MASTER:Debug
         PRINTFORML 스트레스＋{(LOCAL:4) / 5}
-    CFLAG:ARG:65 += (LOCAL:4) / 5
+    CFLAG:ARG:스트레스 += (LOCAL:4) / 5
     ;스트레스치는 100만 이상이 되진 않는다
-    CFLAG:ARG:65 = MIN(CFLAG:ARG:65 , 999999)
+    CFLAG:ARG:스트레스 = MIN(CFLAG:ARG:스트레스 , 999999)
 ENDIF
 ;기력 · 체력の消費
 IF LOCAL:6
-    IF BASE:ARG:0 > 1
-        BASE:ARG:0 = MAX(BASE:ARG:0 - LOCAL:6, 1)
-    ELSEIF BASE:ARG:0 <= 1 && MAXBASE:ARG:0 > 1000
-        BASE:ARG:0 = 1
-        MAXBASE:ARG:0 = MAX(MAXBASE:ARG:0 - (LOCAL:6)/5, 750)
+    IF BASE:ARG:체력 > 1
+        BASE:ARG:체력 = MAX(BASE:ARG:체력 - LOCAL:6, 1)
+    ELSEIF BASE:ARG:체력 <= 1 && MAXBASE:ARG:체력 > 1000
+        BASE:ARG:체력 = 1
+        MAXBASE:ARG:체력 = MAX(MAXBASE:ARG:체력 - (LOCAL:6)/5, 750)
     ENDIF
-    IF BASE:ARG:1 > 0
-        BASE:ARG:1 = MAX(BASE:ARG:1 - (LOCAL:6)/2, 0)
-    ELSEIF BASE:ARG:1 <= 0 && MAXBASE:ARG:1 > 750
-        BASE:ARG:1 = 0
-        MAXBASE:ARG:0 = MAX(MAXBASE:ARG:0 - (LOCAL:6)/10, 500)
+    IF BASE:ARG:기력 > 0
+        BASE:ARG:기력 = MAX(BASE:ARG:기력 - (LOCAL:6)/2, 0)
+    ELSEIF BASE:ARG:기력 <= 0 && MAXBASE:ARG:기력 > 750
+        BASE:ARG:기력 = 0
+        MAXBASE:ARG:체력 = MAX(MAXBASE:ARG:체력 - (LOCAL:6)/10, 500)
     ENDIF
 ENDIF
 ;촉수エネルギーの消費(1人につき-100～50ずつ.0未満にはならない)
-SIF BASE:MASTER:6
-    BASE:MASTER:6 = MAX(BASE:MASTER:6 - (100 - 50 * ABL:ARG:35), 0)
+SIF BASE:MASTER:촉수
+    BASE:MASTER:촉수 = MAX(BASE:MASTER:촉수 - (100 - 50 * ABL:ARG:촉수중독), 0)
 WAIT
 ;-----------------------------------------------
 ;촉수 임플란트 · 동화 플래그
@@ -1145,10 +1145,10 @@ WAIT
 ;ただし유폐する前に予め使い魔の契約を結んでいると촉수同化のイベントの回避は可能.
 ;また, 使い魔の契約を結んでいない場合でも유폐してから14日経つ前に開放することで回避することが可能.
 ;同化イベントに関するメッセージを追加.同時に期間が危険水域に達した場合のメッセージも表示.
-IF TALENT:ARG:164 == 0 && ((CFLAG:ARG:41 == 1023 && CFLAG:ARG:39 > 14) || CFLAG:ARG:39 > 30)
-    LOCAL:6 = MAX(RAND:11 - FLAG:33, 0)
+IF TALENT:ARG:사역마 == 0 && ((CFLAG:ARG:촉수이식 == 1023 && CFLAG:ARG:촉수유폐레벨 > 14) || CFLAG:ARG:촉수유폐레벨 > 30)
+    LOCAL:6 = MAX(RAND:11 - FLAG:현산제물총계, 0)
     IF LOCAL:6 == 0
-        CFLAG:ARG:41 |= 1024
+        CFLAG:ARG:촉수이식 |= 1024
         PRINTFORMW 촉수들은 %조사처리(CALLNAME:ARG,"가")% 완전히 마음에 들어버린 것 같다…….
     ELSE
         LOCAL:6 = RAND:3
@@ -1165,67 +1165,67 @@ ENDIF
 ;촉수により適応する効果を持つ『種』を植え付けられる.植え付けられた箇所に応じて調教時のPALAM:の伸びが良くなるが, 
 ;前述の通り同化フラグが発生する確率も上昇してしまう.
 ;v59.1より촉수기생と同様メディスン, 雛, 蓬莱人は[体内適応力強化]がないと임플란트が発生しないように.
-IF TALENT:ARG:146
+IF TALENT:ARG:기생
     LOCAL:6 = 8
 ELSE
     LOCAL:6 = 15
 ENDIF
 LOCAL:17 = 0
-IF CFLAG:ARG:41 < 1023 && TALENT:ARG:164 == 0 && CFLAG:ARG:39 > LOCAL:6 && ((TALENT:ARG:49 == 0 && NO:ARG != 33 && NO:ARG != 39) || FLAG:75 & 8192)
-    IF (CFLAG:ARG:41 & 1) == 0 && LOCAL:14 & 8 && TALENT:ARG:120 == 0 && TALENT:ARG:121 == 0
+IF CFLAG:ARG:촉수이식 < 1023 && TALENT:ARG:사역마 == 0 && CFLAG:ARG:촉수유폐레벨 > LOCAL:6 && ((TALENT:ARG:봉래인 == 0 && NO:ARG != 33 && NO:ARG != 39) || FLAG:촉수능력 & 8192)
+    IF (CFLAG:ARG:촉수이식 & 1) == 0 && LOCAL:14 & 8 && TALENT:ARG:남자 == 0 && TALENT:ARG:후타나리 == 0
         ;촉수 임플란트(クリトリス)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 클리토리스에 무언가 심어진 것 같다…….
-        CFLAG:ARG:41 |= 1
+        CFLAG:ARG:촉수이식 |= 1
         LOCAL:17 = 1
-    ELSEIF (CFLAG:ARG:41 & 2) == 0 && LOCAL:14 & 2 && TALENT:ARG:120 == 0
+    ELSEIF (CFLAG:ARG:촉수이식 & 2) == 0 && LOCAL:14 & 2 && TALENT:ARG:남자 == 0
         ;촉수 임플란트(子宮)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 자궁 깊숙한 곳에 무언가가 심어진 것 같다…….
-        CFLAG:ARG:41 |= 2
+        CFLAG:ARG:촉수이식 |= 2
         LOCAL:17 = 2
-    ELSEIF (CFLAG:ARG:41 & 4) == 0 && LOCAL:14 & 1
+    ELSEIF (CFLAG:ARG:촉수이식 & 4) == 0 && LOCAL:14 & 1
         ;촉수 임플란트(直腸)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 항문 속에 무언가가 심어진 것 같다…….
-        CFLAG:ARG:41 |= 4
+        CFLAG:ARG:촉수이식 |= 4
         LOCAL:17 = 3
-    ELSEIF (CFLAG:ARG:41 & 8) == 0 && LOCAL:14 & 4 && TALENT:ARG:120 == 0
+    ELSEIF (CFLAG:ARG:촉수이식 & 8) == 0 && LOCAL:14 & 4 && TALENT:ARG:남자 == 0
         ;촉수 임플란트(乳房)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 유선을 통해, 유방 깊숙히 무언가가 심어진 것 같다……….
-        CFLAG:ARG:41 |= 8
+        CFLAG:ARG:촉수이식 |= 8
         LOCAL:17 = 4
-    ELSEIF (CFLAG:ARG:41 & 16) == 0 && LOCAL:14 & 256
+    ELSEIF (CFLAG:ARG:촉수이식 & 16) == 0 && LOCAL:14 & 256
         ;촉수 임플란트(ヘソ)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 배꼽에 무언가가 심어진 것 같다…….
-        CFLAG:ARG:41 |= 16
+        CFLAG:ARG:촉수이식 |= 16
         LOCAL:17 = 5
-    ELSEIF (CFLAG:ARG:41 & 32) == 0 && LOCAL:14 & 16
+    ELSEIF (CFLAG:ARG:촉수이식 & 32) == 0 && LOCAL:14 & 16
         ;촉수 임플란트(舌根)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 혀 뿌리 끝에 무언가가 심어진 것 같다…….
-        CFLAG:ARG:41 |= 32
+        CFLAG:ARG:촉수이식 |= 32
         LOCAL:17 = 6
-    ELSEIF (CFLAG:ARG:41 & 64) == 0 && LOCAL:14 & 128
+    ELSEIF (CFLAG:ARG:촉수이식 & 64) == 0 && LOCAL:14 & 128
         ;촉수 임플란트(膀胱)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 방광벽에 무언가가 심어진 것 같다…….
-        CFLAG:ARG:41 |= 64
+        CFLAG:ARG:촉수이식 |= 64
         LOCAL:17 = 7
-    ELSEIF (CFLAG:ARG:41 & 128) == 0 && LOCAL:14 & 64
+    ELSEIF (CFLAG:ARG:촉수이식 & 128) == 0 && LOCAL:14 & 64
         ;촉수 임플란트(心臓)
         PRINTFORMW %CALLNAME:ARG%의 심장에 무언가가 심어진 것 같다……….
-        CFLAG:ARG:41 |= 128
+        CFLAG:ARG:촉수이식 |= 128
         LOCAL:17 = 8
-    ELSEIF (CFLAG:ARG:41 & 256) == 0 && LOCAL:14 & 32
+    ELSEIF (CFLAG:ARG:촉수이식 & 256) == 0 && LOCAL:14 & 32
         ;촉수 임플란트(脊椎)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 척추 안에 무언가가 심어진 것 같다…….
-        CFLAG:ARG:41 |= 256
+        CFLAG:ARG:촉수이식 |= 256
         LOCAL:17 = 9
-    ELSEIF (CFLAG:ARG:41 & 512) == 0 && LOCAL:14 & 512
+    ELSEIF (CFLAG:ARG:촉수이식 & 512) == 0 && LOCAL:14 & 512
         ;촉수 임플란트(額)
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 이마 중심에 무언가가 심어진 것 같다…….
-        CFLAG:ARG:41 |= 512
+        CFLAG:ARG:촉수이식 |= 512
         LOCAL:17 = 10
     ENDIF
 ENDIF
 
-CFLAG:ARG:39 += 1
+CFLAG:ARG:촉수유폐레벨 += 1
 ;촉수유폐 이벤트의 대사용.
 CALL SELF_KOJO, ARG, 255, LOCAL:17
 RETURN 0
@@ -1238,180 +1238,180 @@ TFLAG:233 = 0
 TFLAG:234 = 0
 ;체력 · 기력
     TFLAG:233 += MAXBASE:0 / 200
-    TFLAG:233 += MAXBASE:1 / 200
+    TFLAG:233 += MAXBASE:기력 / 200
 
 ;순종
-    TFLAG:233 += 120 * ABL:10
-    TFLAG:234 += 2 * ABL:10
+    TFLAG:233 += 120 * ABL:순종
+    TFLAG:234 += 2 * ABL:순종
 ;욕망
-    TFLAG:233 += 150 * ABL:11
-    TFLAG:234 += 3 * ABL:11
+    TFLAG:233 += 150 * ABL:욕망
+    TFLAG:234 += 3 * ABL:욕망
 ;기교
-    TFLAG:233 += 70 * ABL:12
-    TFLAG:234 += ABL:12
+    TFLAG:233 += 70 * ABL:기교
+    TFLAG:234 += ABL:기교
 
 ;自慰중독
-    TFLAG:233 += 100 * ABL:30
-    TFLAG:234 += 2 * ABL:30
+    TFLAG:233 += 100 * ABL:자위중독
+    TFLAG:234 += 2 * ABL:자위중독
 ;정액중독
-    TFLAG:233 += 180 * ABL:31
-    TFLAG:234 += 3 * ABL:31
+    TFLAG:233 += 180 * ABL:정액중독
+    TFLAG:234 += 3 * ABL:정액중독
 ;噴乳중독
-    TFLAG:233 += 120 * ABL:34
-    TFLAG:234 += 3 * ABL:34
+    TFLAG:233 += 120 * ABL:분유중독
+    TFLAG:234 += 3 * ABL:분유중독
 ;촉수중독
-    TFLAG:233 += 200 * ABL:35
-    TFLAG:234 += 5 * ABL:35
+    TFLAG:233 += 200 * ABL:촉수중독
+    TFLAG:234 += 5 * ABL:촉수중독
 
 ;Ｃ감각
-    TFLAG:233 += 130 * ABL:0
-    TFLAG:234 += 2 * ABL:0
+    TFLAG:233 += 130 * ABL:C감각
+    TFLAG:234 += 2 * ABL:C감각
 ;Ｖ감각
-    TFLAG:233 += 140 * ABL:1
-    TFLAG:234 += 2 * ABL:1
+    TFLAG:233 += 140 * ABL:V감각
+    TFLAG:234 += 2 * ABL:V감각
 ;Ａ감각
-    TFLAG:233 += 140 * ABL:2
-    TFLAG:234 += 2 * ABL:2
+    TFLAG:233 += 140 * ABL:A감각
+    TFLAG:234 += 2 * ABL:A감각
 ;Ｂ감각
-    TFLAG:233 += 130 * ABL:3
-    TFLAG:234 += 2 * ABL:3
+    TFLAG:233 += 130 * ABL:B감각
+    TFLAG:234 += 2 * ABL:B감각
 
 ;봉사정신
-    TFLAG:233 += 140 * ABL:13
-    TFLAG:234 += 3 * ABL:13
+    TFLAG:233 += 140 * ABL:봉사정신
+    TFLAG:234 += 3 * ABL:봉사정신
 ;노출벽
-    TFLAG:233 += 120 * ABL:14
-    TFLAG:234 += ABL:14
+    TFLAG:233 += 120 * ABL:노출증
+    TFLAG:234 += ABL:노출증
 ;새드끼
-    TFLAG:233 += 160 * ABL:20
-    TFLAG:234 += ABL:20
+    TFLAG:233 += 160 * ABL:새드끼
+    TFLAG:234 += ABL:새드끼
 ;마조끼
-    TFLAG:233 += 160 * ABL:21
-    TFLAG:234 += ABL:21
+    TFLAG:233 += 160 * ABL:마조끼
+    TFLAG:234 += ABL:마조끼
 ;レズっ気
-    TFLAG:233 += 110 * ABL:22
+    TFLAG:233 += 110 * ABL:레즈끼
 ;ＢＬっ気
-    TFLAG:233 += 110 * ABL:23
+    TFLAG:233 += 110 * ABL:BL끼
 
 ;料理技能
-    TFLAG:233 += 60 * ABL:70
+    TFLAG:233 += 60 * ABL:요리기능
 ;歌唱技能
-    TFLAG:233 += 60 * ABL:72
+    TFLAG:233 += 60 * ABL:가창기능
 
 ;촉수 임플란트(촉수成長LV最大値引き上げ処理を流用)
-IF CFLAG:41
+IF CFLAG:촉수이식
     LOCAL = PARASITIC_TENTACLE_INPLANT(0)
     TFLAG:233 += LOCAL / 2
     TFLAG:234 += LOCAL / 10
 ENDIF
 
 ;처녀
-SIF TALENT:0
+SIF TALENT:처녀
     TIMES TFLAG:233 , 2.50
 ;蓬莱人
-IF TALENT:49
+IF TALENT:봉래인
     TIMES TFLAG:233 , 4.00
 ;呪精
-ELSEIF TALENT:48
+ELSEIF TALENT:주정
     TIMES TFLAG:233 , 2.50
 ENDIF
 ;薬毒耐性
-SIF TALENT:44
+SIF TALENT:약물내성
     TIMES TFLAG:233 , 0.50
 ;献身的
-SIF TALENT:63
+SIF TALENT:헌신적
     TIMES TFLAG:233 , 1.20
 ;쾌감에 솔직함
-IF TALENT:70 && ABL:11 > 2
+IF TALENT:쾌감에솔직 && ABL:욕망 > 2
     TIMES TFLAG:233 , 1.20
 ;쾌감을 부정
-ELSEIF TALENT:71 && ABL:11 < 4
+ELSEIF TALENT:쾌감을부정 && ABL:욕망 < 4
     TIMES TFLAG:233 , 0.60
 ENDIF
 ;倒錯的
-SIF TALENT:80 && ABL:11 > 2
+SIF TALENT:도착적 && ABL:욕망 > 2
     TIMES TFLAG:233 , 1.20
 ;魅力
-SIF TALENT:90
+SIF TALENT:매력
     TIMES TFLAG:233 , 1.50
 ;魅惑
-SIF TALENT:91
+SIF TALENT:매혹
     TIMES TFLAG:233 , 1.50
 ;謎の魅力
-SIF TALENT:92
+SIF TALENT:수수께끼의매력
     TIMES TFLAG:233 , 2.00
 ;オトコ
-IF TALENT:120
+IF TALENT:남자
     TIMES TFLAG:233 , 0.75
 ;ふたなり
-ELSEIF TALENT:121
+ELSEIF TALENT:후타나리
     TIMES TFLAG:233 , 1.50
 ENDIF
 ;母乳体質
-SIF TALENT:134
+SIF TALENT:모유체질
     TIMES TFLAG:233 , 1.40
 ;回復早い
-IF TALENT:137
+IF TALENT:회복빠름
     TIMES TFLAG:233 , 1.20
 ;回復遅い
-ELSEIF TALENT:138
+ELSEIF TALENT:회복느림
     TIMES TFLAG:233 , 1.20
 ENDIF
 ;にんっしんっ
-IF TALENT:140
+IF TALENT:임신
     TIMES TFLAG:233 , 0.75
 ;懐卵
-ELSEIF TALENT:145
+ELSEIF TALENT:회란
     TIMES TFLAG:233 , 1.75
     TIMES TFLAG:234 , 1.75
 ENDIF
 ;기생
-IF TALENT:146
+IF TALENT:기생
     TFLAG:233 *= 2
     TFLAG:234 *= 2
 ENDIF
 ;狂気
-SIF TALENT:158
+SIF TALENT:광기
     TIMES TFLAG:233 , 1.10
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     TIMES TFLAG:233 , 1.20
 ;淫核／淫茎
-SIF TALENT:171
+SIF TALENT:음핵／음경
     TIMES TFLAG:233 , 1.10
 ;淫壷
-SIF TALENT:172
+SIF TALENT:음호
     TIMES TFLAG:233 , 1.10
 ;淫尻
-SIF TALENT:173
+SIF TALENT:음고
     TIMES TFLAG:233 , 1.10
 ;淫乳
-SIF TALENT:174
+SIF TALENT:음유
     TIMES TFLAG:233 , 1.10
 ;요도광
-SIF TALENT:175
+SIF TALENT:요도광
     TIMES TFLAG:233 , 1.10
 ;キス魔
-SIF TALENT:176
+SIF TALENT:키스마
     TIMES TFLAG:233 , 1.10
 ;ドＳ
-SIF TALENT:177
+SIF TALENT:초S
     TIMES TFLAG:233 , 1.10
 ;ドＭ
-SIF TALENT:178
+SIF TALENT:초M
     TIMES TFLAG:233 , 1.10
 ;神霊
-IF TALENT:222
+IF TALENT:신령
     TIMES TFLAG:233 , 1.50
     TIMES TFLAG:234 , 1.25
 ENDIF
 ;半神
-IF TALENT:223
+IF TALENT:반신
     TIMES TFLAG:233 , 1.25
     TIMES TFLAG:234 , 1.20
 ENDIF
 ;死神
-IF TALENT:224
+IF TALENT:사신
     TIMES TFLAG:233 , 1.50
     TIMES TFLAG:234 , 1.25
 ENDIF
@@ -1430,26 +1430,26 @@ LOCAL = 32000
 LOCAL:1 = 30
 
 ;ABL:Ｖ감각을 본다
-LOCAL:2 = 200 * (1+ABL:1)
+LOCAL:2 = 200 * (1+ABL:V감각)
 
-;EXP:Ｖ경험을 본다
-IF EXP:0 < EXPLV:1
+;EXP:V경험을 본다
+IF EXP:V경험 < EXPLV:1
     TIMES LOCAL:2 , 0.20
     TIMES LOCAL , 2.50
     LOCAL:3 = 3000
-ELSEIF EXP:0 < EXPLV:2
+ELSEIF EXP:V경험 < EXPLV:2
     TIMES LOCAL:2 , 0.60
     TIMES LOCAL , 1.60
     LOCAL:3 = 2000
-ELSEIF EXP:0 < EXPLV:3
+ELSEIF EXP:V경험 < EXPLV:3
     TIMES LOCAL:2 , 1.00
     TIMES LOCAL , 1.00
     LOCAL:3 = 1500
-ELSEIF EXP:0 < EXPLV:4
+ELSEIF EXP:V경험 < EXPLV:4
     TIMES LOCAL:2 , 1.20
     TIMES LOCAL , 0.90
     LOCAL:3 = 1000
-ELSEIF EXP:0 < EXPLV:5
+ELSEIF EXP:V경험 < EXPLV:5
     TIMES LOCAL:2 , 1.40
     TIMES LOCAL , 0.80
     LOCAL:3 = 500
@@ -1459,18 +1459,18 @@ ELSE
     LOCAL:3 = 100
 ENDIF
 
-;EXP:산란경험을 본다
-IF EXP:51 < EXPLV:2
+;EXP:출산경험을 본다
+IF EXP:산란경험 < EXPLV:2
     TIMES LOCAL:2 , 0.80
     TIMES LOCAL:3 , 1.50
     TIMES LOCAL , 1.80
     LOCAL:4 = 0
-ELSEIF EXP:51 < EXPLV:4
+ELSEIF EXP:산란경험 < EXPLV:4
     TIMES LOCAL:2 , 1.00
     TIMES LOCAL:3 , 1.00
     TIMES LOCAL , 1.20
     LOCAL:4 = 1
-ELSEIF EXP:51 < EXPLV:5
+ELSEIF EXP:산란경험 < EXPLV:5
     TIMES LOCAL:2 , 1.20
     TIMES LOCAL:3 , 0.80
     TIMES LOCAL , 1.00
@@ -1483,19 +1483,19 @@ ELSE
 ENDIF
 
 ;ABL:촉수중독을 본다
-IF ABL:35 == 0
+IF ABL:촉수중독 == 0
     TIMES LOCAL:2 , 0.50
     TIMES LOCAL , 1.00
-ELSEIF ABL:35 == 1
+ELSEIF ABL:촉수중독 == 1
     TIMES LOCAL:2 , 0.66
     TIMES LOCAL , 1.00
-ELSEIF ABL:35 == 2
+ELSEIF ABL:촉수중독 == 2
     TIMES LOCAL:2 , 0.80
     TIMES LOCAL , 0.70
-ELSEIF ABL:35 == 3
+ELSEIF ABL:촉수중독 == 3
     TIMES LOCAL:2 , 1.00
     TIMES LOCAL , 0.40
-ELSEIF ABL:35 == 4
+ELSEIF ABL:촉수중독 == 4
     TIMES LOCAL:2 , 1.20
     TIMES LOCAL , 0.10
 ELSE
@@ -1504,16 +1504,16 @@ ELSE
 ENDIF
 
 ;최면촉수
-SIF FLAG:75 & 8
+SIF FLAG:촉수능력 & 8
     TIMES LOCAL , 0.75
 ;극세촉수
-SIF FLAG:75 & 16
+SIF FLAG:촉수능력 & 16
     TIMES LOCAL:3 , 0.60
 ;정액방출량 강화
-IF FLAG:75 & 16384
-    IF TALENT:127
+IF FLAG:촉수능력 & 16384
+    IF TALENT:소인
         LOCAL:1 *= 2
-    ELSEIF TALENT:128
+    ELSEIF TALENT:작은체형
         LOCAL:1 *= 3
     ELSE
         LOCAL:1 *= 5
@@ -1524,62 +1524,62 @@ LOCAL:5 = LOCAL:2 + LOCAL:3 + (LOCAL/50)
 TIMES LOCAL:5 , 0.75
 
 ;순종
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL , 2.50
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL , 1.50
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL , 0.90
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL , 0.75
 ELSE
     TIMES LOCAL , 0.50
 ENDIF
 
 ;保守的
-SIF TALENT:24
+SIF TALENT:보수적
     TIMES LOCAL , 2.50
 ;恋慕
-SIF TALENT:150
+SIF TALENT:연모
     TIMES LOCAL , 0.90
 ;妄信
-SIF TALENT:151
+SIF TALENT:망신
     TIMES LOCAL , 0.20
 ;親愛
-SIF TALENT:152
+SIF TALENT:친애
     TIMES LOCAL , 0.80
 ;相愛
-SIF TALENT:153
+SIF TALENT:상애
     TIMES LOCAL , 0.80
 ;服従
-SIF TALENT:160
+SIF TALENT:복종
     TIMES LOCAL , 0.60
 ;烙印
-SIF TALENT:161
+SIF TALENT:낙인
     TIMES LOCAL , 0.30
 ;隷属
-SIF TALENT:162
+SIF TALENT:예속
     TIMES LOCAL , 0.50
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL , 0.80
 
 ;지문 표시
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
         PRINTFORMW 촉수들은 일제히 지하의 한 방에 끌려온 %CALLNAME:TARGET%에게 덮쳐들었다.
-    IF ABL:35 == 0
+    IF ABL:촉수중독 == 0
         PRINTFORML 필사적으로 저항하고 있는 %조사처리(CALLNAME:TARGET,"를")% 비웃듯이
         PRINTW 질내로 삽입된 촉수는 대량의 정액을 토해내기 시작했다….
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 정액을 듬뿍 주입당하는 감촉에
         PRINTW 공포에 질린 나머지 사정이 끝날 때까지 울부짖고 있었다…….
-    ELSEIF ABL:35 < 3
+    ELSEIF ABL:촉수중독 < 3
         PRINTFORML 돌연히 일어난 일에 굳어버린 %CALLNAME:TARGET%의 틈을 찔러, 
         PRINTW 촉수들은 저항할 틈도 주지 않고 음부에 자신들의 몸의 일부를 찔러넣었다.
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 정액으로 갈수록 부풀어 오르는 자신의 배 모습을
         PRINTW 완전히 공포에 질린 표정을 띤 채 보고 있다…….
-    ELSEIF ABL:35 < 5
+    ELSEIF ABL:촉수중독 < 5
         PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 곤혹스러워 하면서도, 특별히 저항하지 않고 촉수의 침입을 허락하고 있다….
         PRINTFORML 정액으로 가득해져가는 배를 보며 %조사처리(CALLNAME:TARGET,"는")% 서서히 열락을 느끼기 시작한 것인지, 
         PRINTW 섹시한 미소를 띄우고 있다…….
@@ -1605,16 +1605,16 @@ CALL COMMON_UP_JUEL, TARGET, 16, (LOCAL:3/3), 0
 CALL COMMON_UP_JUEL, TARGET, 17, LOCAL:5, 0
 ;부정의 구슬
 CALL COMMON_UP_JUEL, TARGET, 100, LOCAL, 0
-;Ｖ경험
+;V경험
 CALL COMMON_UP_EXP,TARGET, 0, 50, 0
-;Ｖ확장경험
+;V확장경험
 CALL COMMON_UP_EXP,TARGET, 32, 2, 0
 ;정액경험
 CALL COMMON_UP_EXP,TARGET, 4, LOCAL:1, 0
 ;긴박경험
 CALL COMMON_UP_EXP,TARGET, 31, 7, 0
-IF (CFLAG:24 & 16) == 0
-    CFLAG:24 |= 16
+IF (CFLAG:첫촉수커맨드 & 16) == 0
+    CFLAG:첫촉수커맨드 |= 16
     ;이상경험
     CALL COMMON_UP_EXP,TARGET, 50, 1, 0
 ENDIF
@@ -1622,12 +1622,12 @@ ENDIF
 CALL COMMON_UP_EXP,TARGET, 53, 10, 1
 PRINTL 
 ;지문 표시
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINTFORML %CALLNAME:TARGET%의 하복부가 약간 부풀어 있다….
     PRINTFORMW 자궁 내에 미친듯이 정액이 쏟아부어진 %조사처리(CALLNAME:TARGET,"는")% 뱃속에 촉수의 아이를 배게 되었다.
 ENDIF
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:145%]을 얻었다.
-TALENT:145 = 1
+TALENT:회란 = 1
 
 ;-----------------------------------------------
 ;촉수출산 처리
@@ -1637,22 +1637,22 @@ TALENT:145 = 1
 LOCAL = 35000
 
 ;ABL:Ｖ감각을 본다
-LOCAL:2 = 150 * (1+ABL:1)
+LOCAL:2 = 150 * (1+ABL:V감각)
 
-;EXP:Ｖ경험을 본다
-IF EXP:0 < EXPLV:2
+;EXP:V경험을 본다
+IF EXP:V경험 < EXPLV:2
     TIMES LOCAL:2 , 0.60
     TIMES LOCAL , 1.60
     LOCAL:3 = 3000
-ELSEIF EXP:0 < EXPLV:3
+ELSEIF EXP:V경험 < EXPLV:3
     TIMES LOCAL:2 , 1.00
     TIMES LOCAL , 1.00
     LOCAL:3 = 1500
-ELSEIF EXP:0 < EXPLV:4
+ELSEIF EXP:V경험 < EXPLV:4
     TIMES LOCAL:2 , 1.20
     TIMES LOCAL , 0.90
     LOCAL:3 = 1000
-ELSEIF EXP:0 < EXPLV:5
+ELSEIF EXP:V경험 < EXPLV:5
     TIMES LOCAL:2 , 1.40
     TIMES LOCAL , 0.80
     LOCAL:3 = 500
@@ -1662,18 +1662,18 @@ ELSE
     LOCAL:3 = 100
 ENDIF
 
-;EXP:산란경험을 본다
-IF EXP:51 < EXPLV:2
+;EXP:출산경험을 본다
+IF EXP:산란경험 < EXPLV:2
     TIMES LOCAL:2 , 0.80
     TIMES LOCAL:3 , 1.50
     TIMES LOCAL , 1.80
     LOCAL:4 = 0
-ELSEIF EXP:51 < EXPLV:4
+ELSEIF EXP:산란경험 < EXPLV:4
     TIMES LOCAL:2 , 1.00
     TIMES LOCAL:3 , 1.00
     TIMES LOCAL , 1.20
     LOCAL:4 = 1
-ELSEIF EXP:51 < EXPLV:5
+ELSEIF EXP:산란경험 < EXPLV:5
     TIMES LOCAL:2 , 1.20
     TIMES LOCAL:3 , 0.80
     TIMES LOCAL , 1.00
@@ -1686,19 +1686,19 @@ ELSE
 ENDIF
 
 ;ABL:촉수중독을 본다
-IF ABL:35 == 0
+IF ABL:촉수중독 == 0
     TIMES LOCAL:2 , 0.50
     TIMES LOCAL , 1.00
-ELSEIF ABL:35 == 1
+ELSEIF ABL:촉수중독 == 1
     TIMES LOCAL:2 , 0.66
     TIMES LOCAL , 1.00
-ELSEIF ABL:35 == 2
+ELSEIF ABL:촉수중독 == 2
     TIMES LOCAL:2 , 0.80
     TIMES LOCAL , 0.70
-ELSEIF ABL:35 == 3
+ELSEIF ABL:촉수중독 == 3
     TIMES LOCAL:2 , 1.00
     TIMES LOCAL , 0.40
-ELSEIF ABL:35 == 4
+ELSEIF ABL:촉수중독 == 4
     TIMES LOCAL:2 , 1.20
     TIMES LOCAL , 0.10
 ELSE
@@ -1707,57 +1707,57 @@ ELSE
 ENDIF
 
 ;최면촉수
-SIF FLAG:75 & 8
+SIF FLAG:촉수능력 & 8
     TIMES LOCAL , 0.75
 
 LOCAL:1 = LOCAL:2 + LOCAL:3 + (LOCAL/50)
 TIMES LOCAL:1 , 1.25
 
 ;순종
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL , 2.50
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL , 1.50
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL , 0.90
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL , 0.75
 ELSE
     TIMES LOCAL , 0.50
 ENDIF
 
 ;保守的
-SIF TALENT:24
+SIF TALENT:보수적
     TIMES LOCAL , 2.50
 ;恋慕
-SIF TALENT:150
+SIF TALENT:연모
     TIMES LOCAL , 0.90
 ;妄信
-SIF TALENT:151
+SIF TALENT:망신
     TIMES LOCAL , 0.20
 ;親愛
-SIF TALENT:152
+SIF TALENT:친애
     TIMES LOCAL , 0.80
 ;相愛
-SIF TALENT:153
+SIF TALENT:상애
     TIMES LOCAL , 0.80
 ;服従
-SIF TALENT:160
+SIF TALENT:복종
     TIMES LOCAL , 0.50
 ;烙印
-SIF TALENT:161
+SIF TALENT:낙인
     TIMES LOCAL , 0.20
 ;隷属
-SIF TALENT:162
+SIF TALENT:예속
     TIMES LOCAL , 0.30
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL , 0.80
 
 ;地の文章カット
-IF CFLAG:99 == 1
+IF CFLAG:지문소거판정 == 1
     ;촉수출산用の이벤트 대사
     CALL SELF_KOJO, TARGET, 260, LOCAL
     PRINTW  
@@ -1781,10 +1781,10 @@ ELSE
 ENDIF
 PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% [%TALENTNAME:145%]을 잃었다.
 PRINTL 
-TALENT:145 = 0
-SIF TALENT:MASTER:998
+TALENT:회란 = 0
+SIF TALENT:MASTER:Debug
     PRINTFORML 스트레스＋{LOCAL / 5}
-CFLAG:65 += LOCAL / 5
+CFLAG:스트레스 += LOCAL / 5
 
 ;쾌Ｖ의 구슬
 CALL COMMON_UP_JUEL, TARGET, 1, LOCAL:2, 0
@@ -1796,14 +1796,14 @@ CALL COMMON_UP_JUEL, TARGET, 16, LOCAL:3, 0
 CALL COMMON_UP_JUEL, TARGET, 17, LOCAL:1, 0
 ;부정의 구슬
 CALL COMMON_UP_JUEL, TARGET, 100, LOCAL, 0
-;Ｖ경험
+;V경험
 CALL COMMON_UP_EXP,TARGET, 0, 5, 0
-;Ｖ확장경험
+;V확장경험
 CALL COMMON_UP_EXP,TARGET, 32, 1, 0
 ;긴박경험
 CALL COMMON_UP_EXP,TARGET, 31, 5, 0
 ;이상경험
-SIF CFLAG:34 == 0
+SIF CFLAG:촉수출산수 == 0
     CALL COMMON_UP_EXP,TARGET, 50, 1, 0
 ;출산경험
 CALL COMMON_UP_EXP,TARGET, 52, 1, 0
@@ -1811,23 +1811,23 @@ CALL COMMON_UP_EXP,TARGET, 52, 1, 0
 CALL COMMON_UP_EXP,TARGET, 53, 7, 1
 
 ;스트레스치는 100만 이상이 되진 않는다
-CFLAG:65 = MIN(CFLAG:65, 999999)
+CFLAG:스트레스 = MIN(CFLAG:스트레스, 999999)
 PRINTL 
 ;출산한 촉수(유체)는 전시실로 운반됨
-SIF FLAG:12 & 8
+SIF FLAG:SHOP이벤트확장 & 8
     CALL GET_LARVA
 
 ;[烙印], [精神崩壊], [傀儡], [壊造人格]のいずれも取得していない状態で이상경험10未満かつ촉수중독3未満だと狂気が付く(判定は촉수출산する度に行う)
-IF (EXP:50 < 10 && ABL:35 < 3) && TALENT:158 == 0 && TALENT:161 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0
+IF (EXP:이상경험 < 10 && ABL:촉수중독 < 3) && TALENT:광기 == 0 && TALENT:낙인 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0
     PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% 발광하고 말았다.
-    TALENT:158 = 1
-    CFLAG:12 |= 1
-    CFLAG:17 |= 2
+    TALENT:광기 = 1
+    CFLAG:트라우마판정 |= 1
+    CFLAG:이벤트취득붕괴 |= 2
 ENDIF
 
 ;회란 일수 리셋 및 촉수 출산 회수 카운트 처리
-CFLAG:34 += 1
-CFLAG:35 = 0
+CFLAG:촉수출산수 += 1
+CFLAG:임신경과일수 = 0
 
 ;촉수 번식 이벤트로 줄은 체력의 최대치가 회복
 MAXBASE:0 += 500

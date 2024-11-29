@@ -2,14 +2,14 @@
 ;능력 업 가부 판정 범용 처리
 ;=============================================================================
 @SHOW_JUEL
-CALLFORM SHOW_JUEL_{(FLAG:12 & 2) / 2 + 1}
+CALLFORM SHOW_JUEL_{(FLAG:SHOP이벤트확장 & 2) / 2 + 1}
 
 @SHOW_ABLUP_SELECT
 ;매각 조건
 CALL SPOILER_PRINT_SELL
 ;함락 조건
 CALL SPOILER_PRINT_FALLTALENT
-CALLFORM SHOW_ABLUP_SELECT_{(FLAG:12 & 2) / 2 + 1}
+CALLFORM SHOW_ABLUP_SELECT_{(FLAG:SHOP이벤트확장 & 2) / 2 + 1}
 CALL SHOW_AUTO_ABLUP_BUTTON
 
 @USERABLUP
@@ -43,44 +43,44 @@ SELECTCASE ARG
         RETURNF COUNT + 11
     CASE 11
         ;レズっ気(22)、ＢＬっ気(23)
-        RETURNF 22 + TALENT:120
+        RETURNF 22 + TALENT:남자
     CASE 12, 13
         ;自慰中毒(30)、精液中毒(31)
         RETURNF COUNT + 18
     CASE 14
         ;レズ中毒(32)、ＢＬ中毒(33)
-        RETURNF 32 + TALENT:120
+        RETURNF 32 + TALENT:남자
     CASE 15
         ;噴乳中毒
-        SIF TALENT:120 == 0 && FLAG:15 & 8
+        SIF TALENT:남자 == 0 && FLAG:커맨드확장 & 8
             RETURNF 34
     CASE 16
         ;触手中毒
-        SIF FLAG:15 & 4096
+        SIF FLAG:커맨드확장 & 4096
             RETURNF 35
     CASE 17
         ;排泄中毒
-        SIF FLAG:15 & 4
+        SIF FLAG:커맨드확장 & 4
             RETURNF 36
     CASE 18
         ;射精中毒
-        SIF TALENT:120 || TALENT:121
+        SIF TALENT:남자 || TALENT:후타나리
             RETURNF 37
     CASE 19
         ;料理技能
-        SIF FLAG:12 & 16
+        SIF FLAG:SHOP이벤트확장 & 16
             RETURNF 70
     CASE 20
         ;撮影技能
-        SIF FLAG:15 & 128 && (ITEM:50 || ITEM:51 || NOITEM)
+        SIF FLAG:커맨드확장 & 128 && (ITEM:50 || ITEM:51 || NOITEM)
             RETURNF 71
     CASE 21
         ;歌唱技能
-        SIF FLAG:12 & 16 && (ITEM:52 || NOITEM)
+        SIF FLAG:SHOP이벤트확장 & 16 && (ITEM:52 || NOITEM)
             RETURNF 72
     CASE 22
         ;공작기능
-        SIF FLAG:12 & 16 && FLAG:1100 & 1
+        SIF FLAG:SHOP이벤트확장 & 16 && FLAG:1100 & 1
             RETURNF 73
     CASE 23
         ;수영기능
@@ -152,9 +152,9 @@ REPEAT 24
         PRINTFORMLC  [{LOCAL, 2}] %ABLNAME:LOCAL, 8, LEFT%-LV{ABL:LOCAL}　%LOCALS:RESULT%
     ENDIF
 REND
-IF MARK:3 < 3
+IF MARK:약물각인 < 3
     CALL ISABLUP93
-    PRINTFORMLC  [93] %MARKNAME:3%-LV{MARK:3}　%LOCALS:RESULT%
+    PRINTFORMLC  [93] %MARKNAME:3%-LV{MARK:약물각인}　%LOCALS:RESULT%
 ENDIF
 REPEAT 2
     IF MARK:(8 + COUNT)
@@ -195,9 +195,9 @@ REPEAT 24
         PRINT 　
     ENDIF
 REND
-IF MARK:3 < 3
+IF MARK:약물각인 < 3
     CALL ISABLUP93
-    PRINTFORM [93] %MARKNAME:3%:LV{MARK:3} 　%BARSTR(MARK:3, 3, 3)%　\@(RESULT == 1) ? ◇레벨업 가능◇ # ―레벨업 불가―\@
+    PRINTFORM [93] %MARKNAME:3%:LV{MARK:약물각인} 　%BARSTR(MARK:약물각인, 3, 3)%　\@(RESULT == 1) ? ◇레벨업 가능◇ # ―레벨업 불가―\@
     ;개행 판정
     LOCAL:1 += 1
     IF (LOCAL:1)%2 == 0
@@ -242,11 +242,11 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;失踪中などこの場にいないなら除外
-    ;SIF CFLAG:COUNT:4
+    ;SIF CFLAG:COUNT:조교관외
     ;    CONTINUE
     ;토리코모드 수정부분.
     ;실종중인 상태만 빼고 출력한다.
-    SIF CFLAG:COUNT:4 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE

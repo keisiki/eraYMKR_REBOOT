@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:15 > 0
     RETURN 0
 ;강력 아이템·커맨드 무효시는 안 됨
-SIF (FLAG:13 & 2) == 0
+SIF (FLAG:아이템확장 & 2) == 0
     RETURN 0
 ;한증과 암반 욕 이외의00목욕탕 입욕 중에는 불가
 SIF TEQUIP:55 && TEQUIP:55 != 12 && TEQUIP:55 != 15
@@ -24,11 +24,11 @@ SIF TEQUIP:35 == 1
 SIF ITEM:20 == 0 && NOITEM == 0
     RETURN 0
 ;조교 대상이 [소인]의 경우는 주인이 [금단의 지식] 소유가 아니면 안 됨
-SIF TALENT:127 && TALENT:MASTER:56 == 0
+SIF TALENT:소인 && TALENT:MASTER:금단의지식 == 0
     RETURN 0
 ;ASSI의 경우, 기교 3이상이 아니면 사용할 수 없다.
 IF ASSIPLAY
-    SIF ABL:ASSI:12 < 3
+    SIF ABL:ASSI:기교 < 3
         RETURN 0
 ENDIF
 ;다른 B계 장착도구 사용중은 불가
@@ -71,45 +71,45 @@ ENDIF
 CALL TRAIN_MESSAGE_COM15
 
 DOWNBASE:0 += 20
-DOWNBASE:1 += 70
+DOWNBASE:기력 += 70
 
 SOURCE:12 = 120
 SOURCE:31 = 70
 
 ;ABL:B감각을 본다
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     SOURCE:3 = 100
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     SOURCE:3 = 300
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     SOURCE:3 = 800
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     SOURCE:3 = 1500
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     SOURCE:3 = 2300
 ELSE
     SOURCE:3 = 2900
 ENDIF
 
 ;모유 체질 때는, 분유중독을 본다
-IF TALENT:134
-    IF ABL:34 == 0
+IF TALENT:모유체질
+    IF ABL:분유중독 == 0
         SOURCE:24 += 0
         TIMES SOURCE:3 , 1.00
         TIMES SOURCE:31 , 1.00
-    ELSEIF ABL:34 == 1
+    ELSEIF ABL:분유중독 == 1
         SOURCE:24 += 20
         TIMES SOURCE:3 , 1.05
         TIMES SOURCE:31 , 1.10
-    ELSEIF ABL:34 == 2
+    ELSEIF ABL:분유중독 == 2
         SOURCE:24 += 80
         TIMES SOURCE:3 , 1.10
         TIMES SOURCE:31 , 1.15
-    ELSEIF ABL:34 == 3
+    ELSEIF ABL:분유중독 == 3
         SOURCE:24 += 200
         TIMES SOURCE:3 , 1.15
         TIMES SOURCE:31 , 1.20
-    ELSEIF ABL:34 == 4
+    ELSEIF ABL:분유중독 == 4
         SOURCE:24 += 500
         TIMES SOURCE:3 , 1.20
         TIMES SOURCE:31 , 1.60
@@ -121,17 +121,17 @@ IF TALENT:134
 ENDIF
 
 ;B민감·B둔감
-IF TALENT:106
+IF TALENT:B민감
     TIMES SOURCE:3 , 1.50
-ELSEIF TALENT:107
+ELSEIF TALENT:B둔감
     TIMES SOURCE:3 , 0.60
 ENDIF
 ;큰 가슴·폭유
-IF TALENT:112 || TALENT:113
+IF TALENT:거유 || TALENT:폭유
     TIMES SOURCE:3 , 1.50
 ENDIF
 ;조교자가［유아］또는［유치］또는［유아 퇴행］
-SIF TALENT:PLAYER:130 || TALENT:PLAYER:131 || TALENT:PLAYER:159
+SIF TALENT:PLAYER:유아 || TALENT:PLAYER:유치 || TALENT:PLAYER:유아퇴행
     TIMES SOURCE:3 , 1.20
 
 IF (FLAG:1100 & 1) && TEQUIP:90 == 0
@@ -149,16 +149,16 @@ IF TEQUIP:35
     TEQUIP:35 = 0
 ELSE
     IF TEQUIP:90
-        STAIN:5 |= 2
-        STAIN:5 |= 4
-        STAIN:5 |= 64
+        STAIN:가슴 |= 2
+        STAIN:가슴 |= 4
+        STAIN:가슴 |= 64
     ENDIF
     TEQUIP:35 = 1
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -190,18 +190,18 @@ ELSE
 ENDIF
 
 DOWNBASE:0 += 5
-DOWNBASE:1 += 20
+DOWNBASE:기력 += 20
 
 ;ABL:B감각을 본다
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     LOCAL = 40
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     LOCAL = 120
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     LOCAL = 250
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     LOCAL = 450
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     LOCAL = 600
 ELSE
     LOCAL = 750
@@ -221,15 +221,15 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL , 1.20
 ELSE
     TIMES LOCAL , 1.30
@@ -259,7 +259,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM15
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 ;토리코 모드에서의 직접 호출 대비
@@ -278,20 +278,20 @@ ENDIF
 PRINTL
 IF TEQUIP:90
     IF TEQUIP:35
-        IF ABL:35 > 2
+        IF ABL:촉수중독 > 2
             PRINTFORML 촉수는 %CALLNAME:TARGET%의 유두를 놓았다.
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 조금 아쉬운 표정을 하고 있다.
-        ELSEIF MARK:9 > 1
+        ELSEIF MARK:반발각인 > 1
             PRINTFORML 촉수는 %CALLNAME:TARGET%의 유두에서 떨어졌다.
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 촉수로 엉망이 된 가슴을 보고 있다.
         ELSE
             PRINTFORMW 촉수는 %CALLNAME:TARGET%의 유두로부터 멀어졌다….
         ENDIF
     ELSE
-        IF ABL:35 > 2
+        IF ABL:촉수중독 > 2
             PRINTFORML 끈적끈적한 촉수를 %조사선택(CALLNAME:TARGET, "는")% 스스로 유두로 이끌었다.
             PRINTFORMW 촉수에 의한 리드미컬한 자극을 %조사선택(CALLNAME:TARGET, "는")% 마음껏 만끽하고 있다….
-        ELSEIF MARK:9 > 1
+        ELSEIF MARK:반발각인 > 1
             PRINTFORML 세세하게 나뉘어진 촉수가 %CALLNAME:TARGET%의 유두를 만지작거리기 시작했다.
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 어떻게든 촉수를 피하려고 몸을 배배 꼬고 있다.
         ELSE
@@ -300,21 +300,21 @@ IF TEQUIP:90
     ENDIF
 ELSE
     IF TEQUIP:35
-        IF MARK:9 > 1
+        IF MARK:반발각인 > 1
             PRINTFORMW %조사선택(CALLNAME:PLAYER, "가")% 손을 뻗기도 전에, %조사선택(CALLNAME:TARGET, "는")% %조사선택(COM_TOOL_NAME, "를")% 벗어 던졌다….
-        ELSEIF TALENT:153 && ASSIPLAY == 0
-            PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% \@(TALENT:106) ? 민감한  # \@%CALLNAME:TARGET%의 유두로부터 %조사선택(COM_TOOL_NAME, "를")% 떼어냈다.
+        ELSEIF TALENT:상애 && ASSIPLAY == 0
+            PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% \@(TALENT:B민감) ? 민감한  # \@%CALLNAME:TARGET%의 유두로부터 %조사선택(COM_TOOL_NAME, "를")% 떼어냈다.
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 다음에 어디를 괴롭혀줄지를 기대하면서 %조사선택(CALLNAME:PLAYER, "를")% 뜨거운 시선으로 보고 있다….
         ELSE
-            PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% \@(TALENT:106) ? 민감한  # \@%CALLNAME:TARGET%의 유두로부터 %조사선택(COM_TOOL_NAME, "를")% 떼어냈다….
+            PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% \@(TALENT:B민감) ? 민감한  # \@%CALLNAME:TARGET%의 유두로부터 %조사선택(COM_TOOL_NAME, "를")% 떼어냈다….
         ENDIF
     ELSE
-        IF MARK:9 > 1
+        IF MARK:반발각인 > 1
             PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% 싫어서 버둥대는 %조사선택(CALLNAME:TARGET, "를")% 억지로 눌렀다.
             PRINTFORMW 그리고, %CALLNAME:TARGET%의 유두에 %조사선택(COM_TOOL_CALLNAME, "를")% 붙였다….
         ELSE
             PRINTFORM %조사선택(CALLNAME:PLAYER,"는")% 
-            SIF TALENT:106
+            SIF TALENT:B민감
                 PRINT 민감한 
             PRINTFORMW %CALLNAME:TARGET%의 유두에 %조사선택(COM_TOOL_CALLNAME, "를")% 붙였다….
         ENDIF

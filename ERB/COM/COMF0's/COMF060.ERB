@@ -35,7 +35,7 @@ RETURN 1
 @COM60
 
 ;調教対象が[소인]かつ特定の条件を満たした場合ローションプレイに変化
-IF TALENT:127
+IF TALENT:소인
     CALL EXCOM_ABLE625
     SIF RESULT == 1
         JUMP COM625
@@ -48,12 +48,12 @@ CALL TRAIN_MESSAGE_COM060
 SOURCE:19 = 10000
 IF NOITEM == 0
     ITEM:60 -= 1
-    SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:60
+    SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:60
         CALL FILL_PLURAL_ITEM, 60
 ENDIF
 
 DOWNBASE:0 += 0
-DOWNBASE:1 += 0
+DOWNBASE:기력 += 0
 
 SOURCE:12 = 300
 
@@ -67,20 +67,20 @@ IF TEQUIP:10
     TIMES SOURCE:12 , 0.60
     TIMES SOURCE:19 , 0.75
     ;陥落してない奴隷は既に効果あるのに塗られると反感をおぼえる
-    SIF TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0
+    SIF TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0
         LOCAL:1 = 100
 ENDIF
 ;조교자의 手に汚れが付いている
-SIF STAIN:PLAYER:1
+SIF STAIN:PLAYER:손
     LOCAL:1 += 100
 ;반발각인持ち奴隷は反感をおぼえる
-LOCAL:1 += 50 * MARK:9
+LOCAL:1 += 50 * MARK:반발각인
 
 SOURCE:32 = LOCAL:1
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -92,7 +92,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM060
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

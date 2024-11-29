@@ -9,17 +9,17 @@
 SIF DITEMTYPE:999:662 > 0
     RETURN 0
 ;동물귀 이외 불가
-SIF TALENT:116 == 0
+SIF TALENT:동물귀 == 0
     RETURN 0
 ;A계 확장 커멘드를 유효하게 하지 않으면 안 됨
-SIF (FLAG:15 & 4) == 0
+SIF (FLAG:커맨드확장 & 4) == 0
     RETURN 0
 ;조수 조교 혹은 순애 모드가 무효의 경우는, A조교 필터가 오프가 되지 않으면 안 됨
-SIF FLAG:2 & 2 && ((FLAG:12 & 32) == 0 || ASSIPLAY)
+SIF FLAG:VA이상조교필터 & 2 && ((FLAG:SHOP이벤트확장 & 32) == 0 || ASSIPLAY)
     RETURN 0
 ;윤활 부족해, 순종 4 미만·레즈비언기분 4 미만의 ASSI의 경우, 조교 대상이 동성이라면 실행할 수 없다(새디즘이나 새디즘기분 Lv3 이상, 또는 망신이나 복종이 있다면 OK)
 IF PALAM:10 < PALAMLV:2 && ASSIPLAY
-    SIF (ABL:ASSI:10 < 4 || (TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:22 < 4)) && TALENT:ASSI:81 == 0 && ABL:ASSI:20 < 3 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || (TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4)) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;A계 장착도구 사용중은 불가
@@ -35,7 +35,7 @@ SIF TEQUIP:55 && TEQUIP:55 != 12 && TEQUIP:55 != 15
 SIF TEQUIP:58
     RETURN 0
 ;곤착용중의 경우 조교자의 기교 4이상 필수
-SIF TEQUIP:59 == 17 && ABL:PLAYER:12 < 4
+SIF TEQUIP:59 == 17 && ABL:PLAYER:기교 < 4
     RETURN 0
 ;촉수 조교중은 안 됨
 SIF TEQUIP:90
@@ -52,34 +52,34 @@ COM_NAME = 꼬리 애널 삽입
 CALL TRAIN_MESSAGE_COM662
 
 DOWNBASE:0 += 150
-DOWNBASE:1 += 200
+DOWNBASE:기력 += 200
 
 SOURCE:12 = 350
 SOURCE:15 = 100
 SOURCE:30 = 50
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 50
     SOURCE:22 = 175
     SOURCE:25 = 1200
     SOURCE:30 = 1000
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 100
     SOURCE:22 = 260
     SOURCE:25 = 600
     SOURCE:30 = 500
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 350
     SOURCE:22 = 450
     SOURCE:25 = 450
     SOURCE:30 = 300
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 700
     SOURCE:18 = 100
     SOURCE:22 = 900
     SOURCE:25 = 200
     SOURCE:30 = 150
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 1500
     SOURCE:18 = 500
     SOURCE:22 = 1000
@@ -93,35 +93,35 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES SOURCE:2 , 0.10
     TIMES SOURCE:18 , 0.00
     TIMES SOURCE:22 , 0.20
     TIMES SOURCE:25 , 4.00
     TIMES SOURCE:30 , 4.00
     SOURCE:20 = 30000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES SOURCE:2 , 0.50
     TIMES SOURCE:18 , 0.50
     TIMES SOURCE:22 , 0.50
     TIMES SOURCE:25 , 2.00
     TIMES SOURCE:30 , 2.00
     SOURCE:20 = 18000
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES SOURCE:2 , 1.00
     TIMES SOURCE:18 , 1.00
     TIMES SOURCE:22 , 0.80
     TIMES SOURCE:25 , 1.00
     TIMES SOURCE:30 , 1.00
     SOURCE:20 = 8000
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES SOURCE:2 , 1.40
     TIMES SOURCE:18 , 1.20
     TIMES SOURCE:22 , 1.00
     TIMES SOURCE:25 , 0.50
     TIMES SOURCE:30 , 0.50
     SOURCE:20 = 3000
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.80
     TIMES SOURCE:18 , 1.50
     TIMES SOURCE:22 , 1.10
@@ -183,10 +183,10 @@ ENDIF
 
 ;A민감, 둔감을 본다
 ;쾌V자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:22 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:22 , 0.60
 ENDIF
@@ -198,16 +198,16 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM662
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORM %CALLNAME:TARGET%의 
 SIF PALAM:10 >= PALAMLV:4
     PRINT 점액 투성이가 된 
-IF EXP:1 == 0
+IF EXP:A경험 == 0
     PRINT 미개발된 
-ELSEIF ABL:2 >= 3
+ELSEIF ABL:A감각 >= 3
     PRINT 충분히 개발된 
 ENDIF
 PRINTFORMW 애널에 %CALLNAME:TARGET%의 꼬리를 천천히 삽입했다….

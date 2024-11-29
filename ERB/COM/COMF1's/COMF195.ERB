@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:195 > 0
     RETURN 0
 ;Ｂ계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 8) == 0
+SIF (FLAG:커맨드확장 & 8) == 0
     RETURN 0
 ;아이템을 가지고 있거나, 아이템 없음 설정이 아니면 불가
 SIF ITEM:36 == 0 && NOITEM == 0
@@ -71,7 +71,7 @@ COM_NAME = 유두 클립
 CALL TRAIN_MESSAGE_COM195
 
 DOWNBASE:0 += 25
-DOWNBASE:1 += 10
+DOWNBASE:기력 += 10
 
 IF TEQUIP:35 == 5
     TEQUIP:35 = 0
@@ -79,15 +79,15 @@ IF TEQUIP:35 == 5
 ENDIF
 
 ;ABL:B감각
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     SOURCE:20 = 250
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     SOURCE:20 = 350
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     SOURCE:20 = 450
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     SOURCE:20 = 550
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     SOURCE:20 = 750
 ELSE
     SOURCE:20 = 900
@@ -96,13 +96,13 @@ SOURCE:31 = 600
 
 TEQUIP:35 = 5
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && ABL:21 >= 2
+SIF ASSIPLAY == 0 && ABL:마조끼 >= 2
     TFLAG:50 += 1
 
 ;커맨드 속성：도구(조교자)
@@ -116,33 +116,33 @@ RETURN 1
 PRINTL <빨래집게(유두)>
 
 DOWNBASE:0 += 40
-DOWNBASE:1 += 10
+DOWNBASE:기력 += 10
 
 ;ABL:B감각을 본다
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     LOCAL = 500
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     LOCAL = 700
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     LOCAL = 900
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     LOCAL = 1100
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     LOCAL = 1300
 ELSE
     LOCAL = 1800
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     LOCAL:1 = 0
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     LOCAL:1 = 140
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     LOCAL:1 = 280
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     LOCAL:1 = 560
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     LOCAL:1 = 1120
 ELSE
     LOCAL:1 = 2240
@@ -167,22 +167,22 @@ ELSE
 ENDIF
 
 ;도착적
-IF TALENT:80
+IF TALENT:도착적
     TIMES LOCAL , 0.80
     TIMES LOCAL:1 , 1.50
 ENDIF
 ;마조
-SIF TALENT:82
+SIF TALENT:마조
     TIMES LOCAL:1 , 1.20
 ;B민감
-IF TALENT:106
+IF TALENT:B민감
     TIMES LOCAL , 2.00
 ;B둔감
-ELSEIF TALENT:107
+ELSEIF TALENT:B둔감
     TIMES LOCAL , 0.75
 ENDIF
 ;왕M
-SIF TALENT:178
+SIF TALENT:초M
     TIMES LOCAL:1 , 1.50
 
 IF FLAG:1100 & 1
@@ -212,21 +212,21 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM195
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 IF TEQUIP:35 == 5
-    IF MARK:9 > 1
+    IF MARK:반발각인 > 1
         PRINTFORMW %조사선택(CALLNAME:PLAYER, "가")% 미처 손을 쓰기도 전에, %조사선택(CALLNAME:TARGET, "는")% 유두로부터 %조사선택(COM_TOOL_NAME, "를")% 벗어 던져버렸다….
     ELSE
         PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 유두로부터 %조사선택(COM_TOOL_NAME, "를")% 벗겼다….
     ENDIF
 ELSE
-    IF MARK:9 > 1
+    IF MARK:반발각인 > 1
         PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% 싫어서 버둥대는 %조사선택(CALLNAME:TARGET, "를")% 억눌렀다.
-        PRINTFORMW 그리고, %CALLNAME:TARGET%의 \@(TALENT:106) ? 민감한 # \@ 유두를 %조사선택(COM_TOOL_CALLNAME, "로")% 집었다….
+        PRINTFORMW 그리고, %CALLNAME:TARGET%의 \@(TALENT:B민감) ? 민감한 # \@ 유두를 %조사선택(COM_TOOL_CALLNAME, "로")% 집었다….
     ELSE
-        PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 \@(TALENT:106) ? 민감한 # \@ 유두를 %조사선택(COM_TOOL_CALLNAME, "로")% 집었다….
+        PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 \@(TALENT:B민감) ? 민감한 # \@ 유두를 %조사선택(COM_TOOL_CALLNAME, "로")% 집었다….
     ENDIF
 ENDIF

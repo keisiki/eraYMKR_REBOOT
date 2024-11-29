@@ -9,27 +9,27 @@
 SIF DITEMTYPE:999:30 > 0
     RETURN 0
 ;A조교 필터가 오프가 되지 않으면 안 됨
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;조교자에게 페니스가 없는, 한편(아이템 있음 설정이라면) 페니스 밴드도 없으면 안 됨
 SIF EXIST_BAR(PLAYER) == 0 && ITEM:2 == 0 && NOITEM == 0
     RETURN 0
 ;주인이 [금단의 지식] 소유가 아닐 때, 체격차이가 2 단계 이내나 조교자가 [금단의 지식] 소유가 아니면 안 됨
-SIF TALENT:MASTER:56 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
+SIF TALENT:MASTER:금단의지식 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
     RETURN 0
 ;윤활 부족해, 순종 4 미만·레즈끼(BL끼) 4 미만의 ASSI의 경우, 조교 대상이 동성이라면 실행할 수 없다(새드나 새드끼 Lv3 이상, 또는 망신이나 복종이 있다면 OK)
 IF PALAM:10 < PALAMLV:2 && ASSIPLAY
-    SIF (ABL:ASSI:10 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:22 < 4) || (TALENT:120 && TALENT:ASSI:120 && ABL:ASSI:23 < 4))) && TALENT:ASSI:81 == 0 && ABL:ASSI:20 < 3 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:남자 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;일정한 A경험이 필요
-SIF EXP:1 < EXPLV:3
+SIF EXP:A경험 < EXPLV:3
     RETURN 0
 ;그 조교중에 관장 플레이＋배설이 있었을 경우, 조교자가 더러운 무시 혹은 악취 둔감을 가지지 않으면 실행할 수 없다
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;V계 장착도구 사용중은 조교자의 기교 4이상 필수
-SIF (TEQUIP:20 || TEQUIP:21) && ABL:PLAYER:12 < 4
+SIF (TEQUIP:20 || TEQUIP:21) && ABL:PLAYER:기교 < 4
     RETURN 0
 ;A계 장착도구 사용중은 불가
 SIF TEQUIP:25 || TEQUIP:26
@@ -50,19 +50,19 @@ SIF TEQUIP:55 && TEQUIP:55 != 12 && TEQUIP:55 != 15
 SIF TEQUIP:58
     RETURN 0
 ;훈도시 착용중의 경우 조교자의 기교 4이상 필수
-SIF TEQUIP:59 == 17 && ABL:PLAYER:12 < 4
+SIF TEQUIP:59 == 17 && ABL:PLAYER:기교 < 4
     RETURN 0
 ;조수가 훈도시 착용중의 경우 기교 4이상 필수
-SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:59 == 17 && ABL:12 < 4
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:59 == 17 && ABL:기교 < 4
     RETURN 0
 ;나체정식 중에는 안 됨
 SIF TEQUIP:60
     RETURN 0
 ;촉수 조교중일 시 주인의 촉수사역Lv2 이하는 안 됨
-SIF TEQUIP:90 && ABL:MASTER:98 <= 2
+SIF TEQUIP:90 && ABL:MASTER:촉수사역 <= 2
     RETURN 0
 ;인어는 안됨
-SIF TALENT:229 == 1
+SIF TALENT:인어 == 1
     RETURN 0
 RETURN 1
 
@@ -99,15 +99,15 @@ CALL TRAIN_MESSAGE_COM030
 LOCAL = 0
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     LOCAL = 1500
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     LOCAL = 1600
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     LOCAL = 1800
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     LOCAL = 2000
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     LOCAL = 2400
 ELSE
     LOCAL = 3000
@@ -124,34 +124,34 @@ LOCAL = EJACULATIONCHECK_PALAM_10_1(TARGET, LOCAL)
 LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
 
 SIF EXIST_PENIS(PLAYER)
-    BASE:PLAYER:2 += LOCAL
+    BASE:PLAYER:사정 += LOCAL
 
 ;-------------------------------------------------
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 80
-DOWNBASE:1 += 120
+DOWNBASE:기력 += 120
 
 SOURCE:12 = 400
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 10
     SOURCE:11 = 10
     SOURCE:22 = 100
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 30
     SOURCE:11 = 30
     SOURCE:22 = 500
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 400
     SOURCE:11 = 150
     SOURCE:22 = 1200
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 900
     SOURCE:11 = 300
     SOURCE:22 = 2400
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 1600
     SOURCE:11 = 500
     SOURCE:22 = 3600
@@ -162,36 +162,36 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES SOURCE:2 , 0.10
     SOURCE:20 = 20000
     DOWNBASE:0 += 50
-    DOWNBASE:1 += 100
-ELSEIF EXP:1 < EXPLV:2
+    DOWNBASE:기력 += 100
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES SOURCE:2 , 0.30
     SOURCE:20 = 12000
     DOWNBASE:0 += 40
-    DOWNBASE:1 += 80
-ELSEIF EXP:1 < EXPLV:3
+    DOWNBASE:기력 += 80
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES SOURCE:2 , 0.50
     SOURCE:20 = 5000
     DOWNBASE:0 += 30
-    DOWNBASE:1 += 60
-ELSEIF EXP:1 < EXPLV:4
+    DOWNBASE:기력 += 60
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES SOURCE:2 , 1.00
     SOURCE:20 = 1800
     DOWNBASE:0 += 20
-    DOWNBASE:1 += 40
-ELSEIF EXP:1 < EXPLV:5
+    DOWNBASE:기력 += 40
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.40
     SOURCE:20 = 1000
     DOWNBASE:0 += 10
-    DOWNBASE:1 += 20
+    DOWNBASE:기력 += 20
 ELSE
     TIMES SOURCE:2 , 1.60
     SOURCE:20 = 600
     DOWNBASE:0 += 0
-    DOWNBASE:1 += 0
+    DOWNBASE:기력 += 0
 ENDIF
 
 ;PALAM:윤활을 본다
@@ -213,21 +213,21 @@ ELSE
 ENDIF
 
 ;조교자가[남자]
-IF TALENT:PLAYER:120
+IF TALENT:PLAYER:남자
     TIMES SOURCE:2 , 2.50
 ;조교자가[후타나리]
-ELSEIF TALENT:PLAYER:121
+ELSEIF TALENT:PLAYER:후타나리
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.60
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
 
 ;정조관념
-IF TALENT:30
-    IF EXP:1 == 0
+IF TALENT:정조관념
+    IF EXP:A경험 == 0
         TIMES SOURCE:11 , 1.20
         SOURCE:32 = 500
     ELSE
@@ -255,19 +255,19 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:11 , 0.60
     TIMES SOURCE:32 , 2.00
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:11 , 0.80
     TIMES SOURCE:32 , 1.50
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:11 , 1.00
     TIMES SOURCE:32 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:11 , 1.20
     TIMES SOURCE:32 , 0.80
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:11 , 1.40
     TIMES SOURCE:32 , 0.60
 ELSE
@@ -277,17 +277,17 @@ ENDIF
 
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:22 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:22 , 0.60
 ENDIF
 
 TCVAR:1 += 2
 SIF ASSIPLAY == 0 && EXIST_BAR(MASTER)
-    CFLAG:174 += 2
+    CFLAG:주인에게A바친회수 += 2
 
 ;-------------------------------------------------
 ;사정 체크
@@ -296,7 +296,7 @@ TFLAG:91 = SAMEN_CHECK(PLAYER)
 
 ;사정시의 처리
 IF TFLAG:91 >= 1
-    IF ABL:10 >= 3 && ABL:11 >= 3 && FLAG:10
+    IF ABL:순종 >= 3 && ABL:욕망 >= 3 && FLAG:조교시텍스트표시
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% %CALLNAME:PLAYER%의 허리에 다리를 감고 꽉 눌렀다….
         PRINTL
     ENDIF
@@ -313,17 +313,17 @@ ENDIF
 
 ;사정에 관계없이 행해지는 처리는 여기로부터
 ;노예의 A⇔조교자의 P의 불결이 이동
-STAIN:4 |= STAIN:PLAYER:2
-STAIN:PLAYER:2 |= STAIN:4
+STAIN:애널 |= STAIN:PLAYER:자지
+STAIN:PLAYER:자지 |= STAIN:애널
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 7
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 7
 ENDIF
 ;주인 경험 플래그
 SIF ASSIPLAY == 0
-    TFLAG:50 += (ABL:2 >= 3) ?  2 # 1
+    TFLAG:50 += (ABL:A감각 >= 3) ?  2 # 1
 
 ;처녀 상실의 후에 페니스를 뽑고 있을까
 TFLAG:101 = (TFLAG:101 == 2) ?  1 # 0
@@ -334,7 +334,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM030
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

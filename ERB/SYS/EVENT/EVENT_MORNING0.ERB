@@ -17,10 +17,10 @@
 ;-----------------------------------------------
 @MORNING_EVENT_JUDGMENT
 ;純愛モード無効時は朝フェラのみ発生
-IF (FLAG:12 & 32) == 0
+IF (FLAG:SHOP이벤트확장 & 32) == 0
     LOCAL = 0
 ;条件によってイベントの種類が増える
-ELSEIF TALENT:150
+ELSEIF TALENT:연모
     LOCAL = RAND:8
 ;それ以外(朝フェラしか発生しない)
 ELSE
@@ -54,20 +54,20 @@ TRYCALLFORM MORNING_EVENT_{LOCAL}
 @MORNING_EVENT_COMMON_JUDGMENT(ARG)
 #FUNCTION
 ;男ではない
-IF ARG == 1 && TALENT:MASTER:120 == 0
+IF ARG == 1 && TALENT:MASTER:남자 == 0
     RETURNF 0
 ;竿自体がない
-ELSEIF ARG == 2 && TALENT:MASTER:120 == 0 && TALENT:MASTER:121 == 0
+ELSEIF ARG == 2 && TALENT:MASTER:남자 == 0 && TALENT:MASTER:후타나리 == 0
     RETURNF 0
 ENDIF
 ;欲望が4未満、奉仕精神が4未満、精液中毒が1未満、反発刻印あり、いずれか一つを満たす場合は0を返す
-SIF ABL:11 < 4 || ABL:13 < 4 || ABL:31 == 0 || MARK:9 > 0
+SIF ABL:욕망 < 4 || ABL:봉사정신 < 4 || ABL:정액중독 == 0 || MARK:반발각인 > 0
     RETURNF 0
 ;育児室に居て出産前なら不可能
-SIF CFLAG:4 == 2 && (TALENT:140 == 1 || TALENT:143 == 1)
+SIF CFLAG:조교관외 == 2 && (TALENT:임신 == 1 || TALENT:포란중 == 1)
     RETURNF 0
 ;調教したことがないキャラは不可能
-SIF CFLAG:1610 == 0
+SIF CFLAG:조교여부 == 0
     RETURNF 0
 RETURNF 1
 
@@ -76,36 +76,36 @@ RETURNF 1
 ;-----------------------------------------------
 @MORNING_EVENT_MILK
 ;反発刻印があるとダメ
-SIF MARK:9 > 0
+SIF MARK:반발각인 > 0
     RETURN 0
 ;噴乳中毒
-IF ABL:34 == 1
+IF ABL:분유중독 == 1
     LOCAL = 1
-ELSEIF ABL:34 == 2
+ELSEIF ABL:분유중독 == 2
     LOCAL = 2
-ELSEIF ABL:34 == 3
+ELSEIF ABL:분유중독 == 3
     LOCAL = 3
-ELSEIF ABL:34 == 4
+ELSEIF ABL:분유중독 == 4
     LOCAL = 4
 ELSE
     LOCAL = 5
 ENDIF
 
 ;献身的
-SIF TALENT:63
+SIF TALENT:헌신적
     LOCAL += 1
 ;Ｂ敏感
-IF TALENT:106
+IF TALENT:B민감
     LOCAL += 1
 ;Ｂ鈍感
-ELSEIF TALENT:107
+ELSEIF TALENT:B둔감
     LOCAL -= 1
 ENDIF
 ;恋慕
-SIF TALENT:150
+SIF TALENT:연모
     LOCAL += 1
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     LOCAL += 1
 ;条件を満たしていない
 SIF LOCAL < 1
@@ -113,14 +113,14 @@ SIF LOCAL < 1
 
 DRAWLINE
 ;地の文章カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORML 아침에 일어나보니 %조사처리(CALLNAME:TARGET,"가")% 자신의 모유를 그릇에 짜내고 있다.
 
 ;口上の関数,TFLAG:200の144を使用
 CALL SELF_KOJO, TARGET, 144, LOCAL
 
 ;地の文章カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 짜낸 자신의 모유를 컵에 담아 주었다.
 
 ;噴乳経験

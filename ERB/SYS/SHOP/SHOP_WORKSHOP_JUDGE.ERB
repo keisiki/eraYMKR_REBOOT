@@ -82,7 +82,7 @@ SIF FLAG:1130 < 1
 DRAWLINE
 SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
     PRINTFORML ;;; 공방 작업 판정 개시
-SIF CFLAG:MASTER:4 != 3
+SIF CFLAG:MASTER:조교관외 != 3
     PRINTL 한편 공방에서는……
 ;ヤンデレ破滅判定をここに
 ;CALL JUDGE_WORKSHOP_BAD_STATE
@@ -93,12 +93,12 @@ SIF CFLAG:MASTER:4 != 3
 ;先に主人だけ確認
 CALL JUDGE_WORKSHOP_MOTIVATION_MASTER
 REPEAT CHARANUM
-    IF CFLAG:COUNT:4 == 0
+    IF CFLAG:COUNT:조교관외 == 0
         ;自室にいて今が夜ならついでに工房作業やる気フラグ類全オフ
         IF TIME
             CFLAG:COUNT:691 = 0
         ENDIF
-    ELSEIF CFLAG:COUNT:4 == 3
+    ELSEIF CFLAG:COUNT:조교관외 == 3
         ;各キャラの全判定の基本値をここで設定
         CALL JUDGE_WORKSHOP_STATE
         ;被誘惑フラグ・教育成功人数フラグも初期化
@@ -116,14 +116,14 @@ REND
 ;2. エロス判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:0 < 500
+    SIF CFLAG:COUNT:조교관외 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_EROTICISM
 REND
 ;3. 誘惑対象判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:0 < 500
+    SIF CFLAG:COUNT:조교관외 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_TEMPTATION_TARGET
     IF RESULT == 0
@@ -138,21 +138,21 @@ REND
 ;4. 誘惑実行判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:0 < 500
+    SIF CFLAG:COUNT:조교관외 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_TEMPTATION
 REND
 ;5. 便乗誘惑判定
 REPEAT CHARANUM
     ;工房に居ないかドクターストップ状態のキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3 || BASE:COUNT:0 < 500
+    SIF CFLAG:COUNT:조교관외 != 3 || BASE:COUNT:체력 < 500
         CONTINUE
     CALL JUDGE_WORKSHOP_PHORESIS
 REND
 ;6. 抵抗判定
 REPEAT CHARANUM
     ;工房に居ないキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3
+    SIF CFLAG:COUNT:조교관외 != 3
         CONTINUE
     CALL JUDGE_WORKSHOP_RESISTANCE
 REND
@@ -163,18 +163,18 @@ FLAG:1136 = 0
 FLAG:1137 = 0
 REPEAT CHARANUM
     ;工房に居ないキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3
+    SIF CFLAG:COUNT:조교관외 != 3
         CONTINUE
     CALL JUDGE_WORKSHOP_PARTY
 REND
 REPEAT CHARANUM
     ;工房に居ないキャラはスキップ
-    SIF CFLAG:COUNT:4 != 3
+    SIF CFLAG:COUNT:조교관외 != 3
         CONTINUE
     IF CFLAG:COUNT:792 != -1
         ;乱交仲間を設定する
         CALL JUDGE_WORKSHOP_PROMISCUITY_WITH
-    ELSEIF BASE:COUNT:0 > 499
+    ELSEIF BASE:COUNT:체력 > 499
         ;乱交状況に対して不関与であるか疎外されているキャラのうち、体力が残っている者は自慰判定
         CALL JUDGE_WORKSHOP_ONANISM
     ENDIF
@@ -218,7 +218,7 @@ RETURN 0
 ;=======================================;
 @JUDGE_WORKSHOP_MOTIVATION_MASTER
 ;主人が工房に居ないなら選択肢なし
-SIF CFLAG:MASTER:4 != 3
+SIF CFLAG:MASTER:조교관외 != 3
     RETURN 0
 ;主人一人で作業してるなら選択肢なし
 SIF FLAG:1130 == 1
@@ -286,7 +286,7 @@ GOTO INPUT_LOOP
 SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
     PRINTFORML ;;; %CALLNAME:COUNT%의 게으름 판정 개시 작업내용：{CFLAG:COUNT:690}
 ;体力が底をついていたら作業できない
-IF BASE:COUNT:0 < 500
+IF BASE:COUNT:체력 < 500
     SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
         PRINTFORML ;;; %CALLNAME:COUNT%의 게으름 판정 완료 (닥터 스톱)
     RETURN 0
@@ -298,20 +298,20 @@ IF COUNT != MASTER || FLAG:1138 == 3 || FLAG:1138 == 4
     SELECTCASE CFLAG:COUNT:690
         CASE 0
             ;マゾ分のやる気判定値は放置プレイ気分のため一旦再加算(その後半減されるため、元の値になる)
-            SIF TALENT:COUNT:178
+            SIF TALENT:COUNT:초M
                 LOCAL:0 += 5
-            SIF TALENT:COUNT:82
+            SIF TALENT:COUNT:마조
                 LOCAL:0 += 5
-            LOCAL:0 += ABL:COUNT:21
+            LOCAL:0 += ABL:COUNT:마조끼
             ;待機ならやる気半減
             CFLAG:COUNT:695 /= 2
         CASE 1
             ;教育者ノリノリです
-            SIF TALENT:COUNT:126
+            SIF TALENT:COUNT:교육자
                 CFLAG:COUNT:695 += 5
             ;生徒固定なら相性を確認
             IF CFLAG:COUNT:692 > -1
-                FINDCHARA CFLAG:3109, CFLAG:COUNT:692, 0
+                FINDCHARA CFLAG:CSV번호, CFLAG:COUNT:692, 0
                 LOCAL:0 = NO:RESULT
                 IF RELATION:COUNT:(LOCAL:0)
                     CFLAG:COUNT:695 *= RELATION:COUNT:(LOCAL:0)
@@ -320,7 +320,7 @@ IF COUNT != MASTER || FLAG:1138 == 3 || FLAG:1138 == 4
             ENDIF
         CASE 2
             ;先生との相性を確認
-            FINDCHARA CFLAG:3109, CFLAG:COUNT:692, 0
+            FINDCHARA CFLAG:CSV번호, CFLAG:COUNT:692, 0
             LOCAL:0 = NO:RESULT
             IF RELATION:COUNT:(LOCAL:0)
                 CFLAG:COUNT:695 *= RELATION:COUNT:(LOCAL:0)
@@ -328,23 +328,23 @@ IF COUNT != MASTER || FLAG:1138 == 3 || FLAG:1138 == 4
             ENDIF
         CASE 3, 4
             ;工作技能ノリノリです
-            CFLAG:COUNT:695 += ABL:COUNT:73 * 3
+            CFLAG:COUNT:695 += ABL:COUNT:공작기능 * 3
             ;工作名人ノリノリです
-            SIF TALENT:COUNT:195
+            SIF TALENT:COUNT:공작명인
                 CFLAG:COUNT:695 += 20
             ;十分な作業場所が無いと上手く作業できません
             SIF FLAG:1131 > FLAG:1130 / 2
                 TIMES CFLAG:COUNT:695 , 0.66
     ENDSELECT
-    IF BASE:COUNT:0 < (MAXBASE:COUNT:0 / 2)
+    IF BASE:COUNT:체력 < (MAXBASE:COUNT:체력 / 2)
         ;体力が半減しているならやる気半減
         CFLAG:COUNT:695 /= 2
     ENDIF
     ;主人の動向でやる気が変動
-    IF COUNT != MASTER && CFLAG:MASTER:4 == 3 && (CFLAG:MASTER:691 & 1p2) == 0
+    IF COUNT != MASTER && CFLAG:MASTER:조교관외 == 3 && (CFLAG:MASTER:691 & 1p2) == 0
         FLAG:1119 = CFLAG:COUNT:695
         ;主人が規律を正そうとしてたら一部の素質を持たない限りやる気増加
-        IF TALENT:COUNT:11 || TALENT:COUNT:34 || (MARK:COUNT:9 && TALENT:COUNT:150 == 0 && TALENT:COUNT:151 == 0 && TALENT:COUNT:152 == 0 && TALENT:COUNT:153 == 0 && TALENT:COUNT:160 == 0 && TALENT:COUNT:161 == 0 && TALENT:COUNT:162 == 0 && TALENT:COUNT:164 == 0 && TALENT:COUNT:169 == 0)
+        IF TALENT:COUNT:반항적 || TALENT:COUNT:저항 || (MARK:COUNT:반발각인 && TALENT:COUNT:연모 == 0 && TALENT:COUNT:망신 == 0 && TALENT:COUNT:친애 == 0 && TALENT:COUNT:상애 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:예속 == 0 && TALENT:COUNT:사역마 == 0 && TALENT:COUNT:괴조인격 == 0)
             ;反抗的・抵抗・陥落系無しの反発刻印持ちの場合はやる気半減
             FLAG:1119 /= 2
         ELSE
@@ -387,7 +387,7 @@ IF CFLAG:COUNT:690 == 0
 ELSEIF CFLAG:COUNT:690 == 1
     ;生徒固定なら相性を確認
     IF CFLAG:COUNT:692 > -1
-        FINDCHARA CFLAG:3109, CFLAG:COUNT:692
+        FINDCHARA CFLAG:CSV번호, CFLAG:COUNT:692
         LOCAL:0 = RESULT
         LOCAL:1 = NO:(LOCAL:0)
         ;自分と生徒の相性値を確認してエロス値に加算する
@@ -405,7 +405,7 @@ ELSEIF CFLAG:COUNT:690 == 1
     ENDIF
 ELSEIF CFLAG:COUNT:690 == 2
     ;先生との相性を確認
-    FINDCHARA CFLAG:3109, CFLAG:COUNT:692
+    FINDCHARA CFLAG:CSV번호, CFLAG:COUNT:692
     LOCAL:0 = RESULT
     LOCAL:1 = NO:(LOCAL:0)
     ;自分と先生の相性値を確認してエロス値に加算する
@@ -427,21 +427,21 @@ ELSEIF CFLAG:COUNT:690 == 3
     ;SM用品ならサド・マゾ・ドＳ・ドＭ・サドっ気・マゾっ気でエロス値さらに増
     IF LOCAL:2 & 4
         ;サド
-        SIF TALENT:COUNT:81
+        SIF TALENT:COUNT:새드
             CFLAG:COUNT:696 += 5
         ;マゾ
-        SIF TALENT:COUNT:82
+        SIF TALENT:COUNT:마조
             CFLAG:COUNT:696 += 5
         ;ドＳ
-        SIF TALENT:COUNT:177
+        SIF TALENT:COUNT:초S
             CFLAG:COUNT:696 += 5
         ;ドＭ
-        SIF TALENT:COUNT:178
+        SIF TALENT:COUNT:초M
             CFLAG:COUNT:696 += 5
         ;サドっ気
-        CFLAG:COUNT:696 += ABL:COUNT:20
+        CFLAG:COUNT:696 += ABL:COUNT:새드끼
         ;マゾっ気
-        CFLAG:COUNT:696 += ABL:COUNT:21
+        CFLAG:COUNT:696 += ABL:COUNT:마조끼
     ENDIF
 ;ELSEIF CFLAG:COUNT:690 == 4
 ;    ;製作物で変動するけど製作物が未定
@@ -452,11 +452,11 @@ SIF CFLAG:COUNT:691 & 1p2
 ;環境に合わせてエロス値が変動
 CALL JUDGE_WORKSHOP_ENVIRONMENT, COUNT, CFLAG:COUNT:696
 CFLAG:COUNT:696 = RESULT
-IF BASE:COUNT:0 < (MAXBASE:COUNT:0 / 2)
+IF BASE:COUNT:체력 < (MAXBASE:COUNT:체력 / 2)
     ;体力が半減しているならエロス値半減
     CFLAG:COUNT:696 /= 2
 ENDIF
-IF COUNT != MASTER && CFLAG:MASTER:4 == 3
+IF COUNT != MASTER && CFLAG:MASTER:조교관외 == 3
     ;マスター在中の時点でエロス値1.2倍
     TIMES CFLAG:COUNT:696 , 1.2
     SELECTCASE FLAG:1136
@@ -497,7 +497,7 @@ RETURN 0
 ; 0 授業時の対象(CFLAG:692)が示すキャラのCHARANUM番号
 ; 1 キャラのNO
 ; 2 対象として選んだキャラのCHARANUM番号
-; 3 LOCAL:2のキャラ固有番号(CFLAG:3109)
+; 3 LOCAL:2のキャラ固有番号(CFLAG:CSV번호)
 ;=======================================;
 @JUDGE_WORKSHOP_TEMPTATION_TARGET
 ;チェック対象：エロス暴走中のサボり　(エロス暴走しててもサボる気なワケではない人やサボってても自制保てた人は誘惑判定しない)
@@ -515,7 +515,7 @@ SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
 ;誘惑対象と対象との相性を確認
 IF CFLAG:COUNT:690 == 1 && CFLAG:COUNT:692 > -1
     ;生徒固定なら対象は生徒なので相性を確認
-    FINDCHARA CFLAG:3109, CFLAG:COUNT:692
+    FINDCHARA CFLAG:CSV번호, CFLAG:COUNT:692
     LOCAL:0 = RESULT
     LOCAL:1 = NO:(LOCAL:0)
     ;自分と生徒の相性値を確認して誘惑値に加算する
@@ -527,7 +527,7 @@ IF CFLAG:COUNT:690 == 1 && CFLAG:COUNT:692 > -1
         CFLAG:COUNT:697 /= 100
     ENDIF
     ;生徒の体力が無ければドクターストップ、悶々とした気持ちそのままに他に視線を移す (難易度HARD以上の場合生徒が再選択されることがある)
-    IF BASE:(LOCAL:0):0 > 499
+    IF BASE:(LOCAL:0):체력 > 499
         ;初回エロス判定中なら問答無用で、便乗エロス判定中なら生徒がエロス暴走中か生徒がサボりでない場合に限り、生徒をターゲットする
         IF (CFLAG:COUNT:691 & 1p5) == 0 || (CFLAG:COUNT:691 & 1p5 && ((CFLAG:(LOCAL:0):691 & 1p3) || (CFLAG:(LOCAL:0):691 & 1p2) == 0))
             LOCAL:2 = LOCAL:0
@@ -535,7 +535,7 @@ IF CFLAG:COUNT:690 == 1 && CFLAG:COUNT:692 > -1
     ENDIF
 ELSEIF CFLAG:COUNT:690 == 2 
     ;先生が誰かを確認
-    FINDCHARA CFLAG:3109, CFLAG:COUNT:692
+    FINDCHARA CFLAG:CSV번호, CFLAG:COUNT:692
     LOCAL:0 = RESULT
     LOCAL:1 = NO:(LOCAL:0)
     IF CFLAG:(LOCAL:0):692 > -1
@@ -549,7 +549,7 @@ ELSEIF CFLAG:COUNT:690 == 2
             CFLAG:COUNT:697 /= 100
         ENDIF
         ;先生の体力が無ければドクターストップ、悶々とした気持ちそのままに他に視線を移す (難易度HARD以上の場合先生が再選択されることがある)
-        IF BASE:(LOCAL:0):0 > 499
+        IF BASE:(LOCAL:0):체력 > 499
             ;初回エロス判定中なら問答無用で、便乗エロス判定中なら先生がエロス暴走中かサボりでない場合に限り、先生をターゲットする
             IF (CFLAG:COUNT:691 & 1p5) == 0 || (CFLAG:COUNT:691 & 1p5 && ((CFLAG:(LOCAL:0):691 & 1p3) || (CFLAG:(LOCAL:0):691 & 1p2) == 0))
                 LOCAL:2 = LOCAL:0
@@ -580,9 +580,9 @@ ENDIF
 ;便乗誘惑なら誘惑値倍
 SIF CFLAG:COUNT:691 & 1p6
     CFLAG:COUNT:697 *= 2
-CFLAG:COUNT:792 = CFLAG:(LOCAL:2):3109
+CFLAG:COUNT:792 = CFLAG:(LOCAL:2):CSV번호
 SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
-    PRINTFORML ;;; %CALLNAME:COUNT%의 유혹 대상 설정 완료  대상：%CALLNAME:(LOCAL:2)%(고유번호{CFLAG:(LOCAL:2):3109}) (유혹치：{CFLAG:COUNT:697}) 기억번호：{CFLAG:COUNT:792}
+    PRINTFORML ;;; %CALLNAME:COUNT%의 유혹 대상 설정 완료  대상：%CALLNAME:(LOCAL:2)%(고유번호{CFLAG:(LOCAL:2):CSV번호}) (유혹치：{CFLAG:COUNT:697}) 기억번호：{CFLAG:COUNT:792}
 RETURN 1
 
 ;=======================================;
@@ -608,14 +608,14 @@ SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
 LOCAL:0 = 0
 LOCAL:1 = 0
 ;主人がいる場合、主人を選ぶ率を変動する (HARD以下の難易度の場合は主人の体力不足の場合に選択肢から外す)
-IF CFLAG:MASTER:4 == 3 && (FLAG:1111) != MASTER && (FLAG:3 > 3 || BASE:MASTER:0 > 499)
+IF CFLAG:MASTER:조교관외 == 3 && (FLAG:1111) != MASTER && (FLAG:난이도 > 3 || BASE:MASTER:체력 > 499)
     ;自分と主人の相性値を確認して誘惑値に加算する(誘惑値50保障)
     CALL JUDGE_WORKSHOP_CONGENIAL, FLAG:1111, MASTER
     LOCAL:0 += RESULT + 50
     ;反感刻印と親愛・恋慕等を確認する
-    LOCAL:0 += ((TALENT:(FLAG:1111):150 > 0) + (TALENT:(FLAG:1111):151 > 0) + (TALENT:(FLAG:1111):152 > 0) + (TALENT:(FLAG:1111):153 > 0)) * 2
-    LOCAL:0 += ((TALENT:(FLAG:1111):160 > 0) + (TALENT:(FLAG:1111):161 > 0) + (TALENT:(FLAG:1111):162 > 0) + (TALENT:(FLAG:1111):164 > 0)) * 3
-    LOCAL:0 -= MARK:(FLAG:1111):9 * 5
+    LOCAL:0 += ((TALENT:(FLAG:1111):연모 > 0) + (TALENT:(FLAG:1111):망신 > 0) + (TALENT:(FLAG:1111):친애 > 0) + (TALENT:(FLAG:1111):상애 > 0)) * 2
+    LOCAL:0 += ((TALENT:(FLAG:1111):복종 > 0) + (TALENT:(FLAG:1111):낙인 > 0) + (TALENT:(FLAG:1111):예속 > 0) + (TALENT:(FLAG:1111):사역마 > 0)) * 3
+    LOCAL:0 -= MARK:(FLAG:1111):반발각인 * 5
     ;最後に自分の主人に対する相性で倍率計算する
     IF RELATION:(FLAG:1111):(NO:MASTER)
         LOCAL:0 *= RELATION:(FLAG:1111):(NO:MASTER)
@@ -632,13 +632,13 @@ FOR LOCAL:5, 0, CHARANUM
     SIF LOCAL:5 == FLAG:1111
         CONTINUE
     ;工房に居なければスキップ
-    SIF CFLAG:(LOCAL:5):4 != 3
+    SIF CFLAG:(LOCAL:5):조교관외 != 3
         CONTINUE
     ;HARD以下の難易度の場合は主人の体力不足の場合に選択肢から外す
-    SIF LOCAL:5 == MASTER && FLAG:3 < 4 && BASE:MASTER:0 < 500
+    SIF LOCAL:5 == MASTER && FLAG:난이도 < 4 && BASE:MASTER:체력 < 500
         CONTINUE
     ;NORMAL以下の難易度の場合は対象の体力不足の場合に対象を無視する
-    SIF FLAG:3 < 3 && BASE:(LOCAL:5):0 < 500
+    SIF FLAG:난이도 < 3 && BASE:(LOCAL:5):체력 < 500
         CONTINUE
     ;便乗エロス判定中の場合、エロス自制中かつサボりは相手にしない
     SIF (CFLAG:(FLAG:1111):691 & 1p6) && (CFLAG:(FLAG:1111):691 & 1p2) && (CFLAG:(LOCAL:5):691 & 1p3) == 0 && (CFLAG:(LOCAL:5):691 & 1p2)
@@ -647,7 +647,7 @@ FOR LOCAL:5, 0, CHARANUM
     SIF (FLAG:1111) == MASTER && (CFLAG:(FLAG:1111):691 & 1p6) && (CFLAG:(FLAG:1111):691 & 1p2) == 0 && (CFLAG:(LOCAL:5):691 & 1p3)
         CONTINUE
     ;前ターン遊んだ相手であればフラグを立て、そうでなければフラグを倒す
-    IF CFLAG:(LOCAL:5):3109 == CFLAG:(FLAG:1111):792 || CFLAG:(LOCAL:5):3109 == CFLAG:(FLAG:1111):793 || CFLAG:(LOCAL:5):3109 == CFLAG:(FLAG:1111):794 || CFLAG:(LOCAL:5):3109 == CFLAG:(FLAG:1111):795 || CFLAG:(LOCAL:5):3109 == CFLAG:(FLAG:1111):796
+    IF CFLAG:(LOCAL:5):CSV번호 == CFLAG:(FLAG:1111):792 || CFLAG:(LOCAL:5):CSV번호 == CFLAG:(FLAG:1111):793 || CFLAG:(LOCAL:5):CSV번호 == CFLAG:(FLAG:1111):794 || CFLAG:(LOCAL:5):CSV번호 == CFLAG:(FLAG:1111):795 || CFLAG:(LOCAL:5):CSV번호 == CFLAG:(FLAG:1111):796
         LOCAL:10 = 1
     ELSE
         LOCAL:10 = 0
@@ -723,14 +723,14 @@ SIF CFLAG:COUNT:792 < 0
     RETURN 0
 SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
     PRINTFORML ;;; %CALLNAME:COUNT%의 유혹 판정 개시  플래그：{CFLAG:COUNT:691}
-FINDCHARA CFLAG:3109, CFLAG:COUNT:792
+FINDCHARA CFLAG:CSV번호, CFLAG:COUNT:792
 LOCAL:0 = RESULT
 ;一旦フラグ解除
  CFLAG:COUNT:691 -= (CFLAG:COUNT:691 & 1p4)
 IF COUNT == MASTER && FLAG:1138 == 5
     ;主人の場合、行動指針が「遊びに来た」であれば必ず誘惑する
     RESULT = 0
-ELSEIF (CFLAG:COUNT:691 & 1p5) == 0 && (CFLAG:(LOCAL:0):691 & 1p3) && CFLAG:COUNT:3109 == CFLAG:(LOCAL:0):792
+ELSEIF (CFLAG:COUNT:691 & 1p5) == 0 && (CFLAG:(LOCAL:0):691 & 1p3) && CFLAG:COUNT:CSV번호 == CFLAG:(LOCAL:0):792
     ;便乗でない誘惑の場合は相互誘惑なら判定なし
     RESULT = 0
 ELSEIF (CFLAG:COUNT:691 & 1p5) && (CFLAG:(LOCAL:0):691 & 1p4)
@@ -770,7 +770,7 @@ SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
 ;素質チェック
 CALL JUDGE_WORKSHOP_STATE
 ;プライド高い、自制心、保守的、一線越えない、貞操観念、抵抗、恥じらいのいずれかがなければ抵抗値半減
-IF TALENT:COUNT:16 || TALENT:COUNT:20 || TALENT:COUNT:24 || TALENT:COUNT:27 || TALENT:COUNT:30 || TALENT:COUNT:34 || TALENT:COUNT:35
+IF TALENT:COUNT:프라이드가높음 || TALENT:COUNT:자제심 || TALENT:COUNT:보수적 || TALENT:COUNT:일선을넘지않음 || TALENT:COUNT:정조관념 || TALENT:COUNT:저항 || TALENT:COUNT:부끄럼쟁이
     FLAG:1119 = CFLAG:COUNT:698
 ELSE
     FLAG:1119 = CFLAG:COUNT:698 / 2
@@ -787,7 +787,7 @@ IF RESULT || (COUNT == MASTER && FLAG:1138 > 3)
     CFLAG:COUNT:691 |= 1p6
     FLAG:1111 = COUNT
     CALL JUDGE_WORKSHOP_TEMPTATION_TARGET_SELECT
-    CFLAG:COUNT:792 = CFLAG:(RESULT):3109
+    CFLAG:COUNT:792 = CFLAG:(RESULT):CSV번호
     CALL JUDGE_WORKSHOP_TEMPTATION
 ENDIF
 SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
@@ -826,12 +826,12 @@ IF RESULT || (COUNT == MASTER && FLAG:1138 > 3)
             LOCAL:0++
         LOCAL:2 = -1
         FOR LOCAL:1, 0, LOCAL:0
-            FINDCHARA CFLAG:792, CFLAG:COUNT:3109, LOCAL:2 + 1
+            FINDCHARA CFLAG:792, CFLAG:COUNT:CSV번호, LOCAL:2 + 1
             LOCAL:2 = RESULT
             SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 8)
                 PRINTFORML ;;; %CALLNAME:COUNT%의 저항 판정  주인의 반격 상대 검색 \@ LOCAL:2 != -1 ? %CALLNAME:(LOCAL:2)% # 대상 상실 \@
         NEXT
-        CFLAG:COUNT:792 = CFLAG:(LOCAL:2):3109
+        CFLAG:COUNT:792 = CFLAG:(LOCAL:2):CSV번호
         CALL JUDGE_WORKSHOP_TEMPTATION
     ENDIF
 ENDIF
@@ -851,7 +851,7 @@ SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
     PRINTFORML ;;; %CALLNAME:COUNT%의 난교 상황 확인 개시  유혹한 인원：{CFLAG:COUNT:797} 플래그：{CFLAG:COUNT:691}
 IF CFLAG:COUNT:691 & 1p4
     ;誘惑を実行している場合は誘惑相手をLOCAL:0に取得
-    FINDCHARA CFLAG:3109, CFLAG:COUNT:792
+    FINDCHARA CFLAG:CSV번호, CFLAG:COUNT:792
     LOCAL:0 = RESULT
     IF (CFLAG:COUNT:691 & 1p4) && ((CFLAG:(LOCAL:0):691 & 1p4) || (CFLAG:(LOCAL:0):691 & 1p6))
         ;誘惑した相手が誘惑しているか、誘惑への抵抗に失敗していれば乱交状態
@@ -924,9 +924,9 @@ SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 2)
     PRINTFORML ;;; %CALLNAME:COUNT%의 난교 상대의 일차 설정 개시
 IF CFLAG:COUNT:798 == 4
     ;誘惑相手がいる場合はその相手を確認
-    FINDCHARA CFLAG:3109, CFLAG:COUNT:792, 0
+    FINDCHARA CFLAG:CSV번호, CFLAG:COUNT:792, 0
     LOCAL:6 = RESULT
-    IF CFLAG:(LOCAL:6):798 == 4 && CFLAG:(LOCAL:6):792 == CFLAG:COUNT:3109
+    IF CFLAG:(LOCAL:6):798 == 4 && CFLAG:(LOCAL:6):792 == CFLAG:COUNT:CSV번호
         ;誘惑相手と相互誘惑状態なら乱交相手の設定人数は誘惑してきた人数-1
         LOCAL:0 = CFLAG:COUNT:797 - 1
         ;相互誘惑フラグを相互として設定
@@ -985,13 +985,13 @@ WHILE LOCAL:9 < LOCAL:0
     SIF (LOCAL:6 + 1) == CHARANUM
         BREAK
     ;自分を誘惑している対象を探す
-    FINDCHARA CFLAG:792, CFLAG:COUNT:3109, LOCAL:6 + 1
+    FINDCHARA CFLAG:792, CFLAG:COUNT:CSV번호, LOCAL:6 + 1
     LOCAL:6 = RESULT
     SIF TALENT:MASTER:Debug && (FLAG:1109 & 1) && (FLAG:1109 & 8)
         PRINTFORML ;;; 대상 설정：{LOCAL:9 + 1}명째：{LOCAL:6}
     IF LOCAL:6 > -1
         ;相互誘惑の対象であればスキップ
-        SIF LOCAL:10 == 2 && CFLAG:(LOCAL:6):3109 == CFLAG:COUNT:792
+        SIF LOCAL:10 == 2 && CFLAG:(LOCAL:6):CSV번호 == CFLAG:COUNT:792
             CONTINUE
         ;対象を発見したら反復子として人数をカウント
         LOCAL:8 += 1
@@ -1000,9 +1000,9 @@ WHILE LOCAL:9 < LOCAL:0
             IF LOCAL:8 == LOCAL:(LOCAL:7 + 1)
                 ;一致した場合、遊び相手フラグに対象のキャラ固有番号を設定する
                 IF LOCAL:10 > 0
-                    CFLAG:COUNT:(LOCAL:7 + 793) = CFLAG:(LOCAL:6):3109
+                    CFLAG:COUNT:(LOCAL:7 + 793) = CFLAG:(LOCAL:6):CSV번호
                 ELSE
-                    CFLAG:COUNT:(LOCAL:7 + 792) = CFLAG:(LOCAL:6):3109
+                    CFLAG:COUNT:(LOCAL:7 + 792) = CFLAG:(LOCAL:6):CSV번호
                 ENDIF
                 ;設定済み人数を加算
                 LOCAL:9 += 1
@@ -1040,10 +1040,10 @@ ELSEIF CFLAG:COUNT:691 & 1p2
 ENDIF
 ;前ターン自慰していたなら自慰値が自慰中毒に合わせて変動(自慰中毒なしで半減、Lv5でそのまま)
 IF CFLAG:COUNT:691 & 1p8
-    CFLAG:COUNT:699 *= (ABL:COUNT:30 + 5) * 10
+    CFLAG:COUNT:699 *= (ABL:COUNT:자위중독 + 5) * 10
     CFLAG:COUNT:699 /= 100
 ENDIF
-IF BASE:COUNT:0 < (MAXBASE:COUNT:0 / 2)
+IF BASE:COUNT:체력 < (MAXBASE:COUNT:체력 / 2)
     ;体力が半減しているなら自慰値半減
     CFLAG:COUNT:699 /= 2
 ENDIF
@@ -1055,7 +1055,7 @@ CFLAG:COUNT:691 -= (CFLAG:COUNT:691 & 1p8)
 FLAG:1119 = CFLAG:COUNT:699
 CALL JUDGE_WORKSHOP_ROLL_DISE
 ;RESULTが0で自慰決定
-IF RESULT == 0 && !(CFLAG:COUNT:42 & 2)
+IF RESULT == 0 && !(CFLAG:COUNT:특수장비 & 2)
     CFLAG:COUNT:691 |= 1p8
     ;自慰にふけった人数加算
     FLAG:1137 += 1

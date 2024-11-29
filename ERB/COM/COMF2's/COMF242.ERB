@@ -9,10 +9,10 @@
 SIF DITEMTYPE:999:242 > 0
     RETURN 0
 ;고문계, 정신조작계 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16) == 0
+SIF (FLAG:커맨드확장 & 16) == 0
     RETURN 0
 ;三角木馬を購入していないとダメ
-SIF (FLAG:73 & 2) == 0
+SIF (FLAG:지하실개조 & 2) == 0
     RETURN 0
 ;下馬はいつでも可能
 SIF TEQUIP:43
@@ -25,11 +25,11 @@ SIF BASE:0 < 1000
     RETURN 0
 ;윤활 부족이고, 순종4미만 · 레즈끼(BL)4이하 · 기교4이하의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(새드 · 狂気 · 망신 · 복종のどれかがあればＯＫ)
 IF PALAM:10 < PALAMLV:2 && ASSIPLAY
-    IF TALENT:ASSI:120 == 0 && TALENT:120 == 0 && TALENT:ASSI:81 == 0 && TALENT:ASSI:158 == 0 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
-        SIF (ABL:ASSI:10 < 5 || ABL:ASSI:12 < 4 || ABL:ASSI:22 < 5)
+    IF TALENT:ASSI:남자 == 0 && TALENT:남자 == 0 && TALENT:ASSI:새드 == 0 && TALENT:ASSI:광기 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
+        SIF (ABL:ASSI:순종 < 5 || ABL:ASSI:기교 < 4 || ABL:ASSI:레즈끼 < 5)
             RETURN 0
-    ELSEIF TALENT:ASSI:120 && TALENT:120 && TALENT:ASSI:81 == 0 && TALENT:ASSI:158 == 0 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
-        SIF (ABL:ASSI:10 < 5 || ABL:ASSI:12 < 4 || ABL:ASSI:23 < 5)
+    ELSEIF TALENT:ASSI:남자 && TALENT:남자 && TALENT:ASSI:새드 == 0 && TALENT:ASSI:광기 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
+        SIF (ABL:ASSI:순종 < 5 || ABL:ASSI:기교 < 4 || ABL:ASSI:BL끼 < 5)
             RETURN 0
     ENDIF
 ENDIF
@@ -37,7 +37,7 @@ ENDIF
 SIF TEQUIP:21
     RETURN 0
 ;浣腸中は原則不可
-SIF TEQUIP:25 == 7 && TALENT:PLAYER:158 == 0 && TALENT:PLAYER:168 == 0 && TALENT:PLAYER:169 == 0 && TALENT:PLAYER:177 == 0 && ABL:PLAYER:20 < 3
+SIF TEQUIP:25 == 7 && TALENT:PLAYER:광기 == 0 && TALENT:PLAYER:괴뢰 == 0 && TALENT:PLAYER:괴조인격 == 0 && TALENT:PLAYER:초S == 0 && ABL:PLAYER:새드끼 < 3
     RETURN 0
 ;氷柱삽입中は不可
 SIF TEQUIP:26
@@ -83,17 +83,17 @@ CALL TRAIN_MESSAGE_COM242
 
 IF TEQUIP:43
     DOWNBASE:0 += 50
-    DOWNBASE:1 += 80
+    DOWNBASE:기력 += 80
     TEQUIP:43 = 0
     RETURN 1
 ENDIF
 
 ;숫처녀라면 처녀를 잃는다
-SIF TALENT:0 == 1
+SIF TALENT:처녀 == 1
     TFLAG:1 = 1
 
 DOWNBASE:0 += 70
-DOWNBASE:1 += 100
+DOWNBASE:기력 += 100
 
 SOURCE:31 = 3000
 SOURCE:32 = 1000
@@ -102,19 +102,19 @@ LOCAL:1 = 200
 
 ;ABL:마조끼를 본다
 ;남자의 경우, 아픔 배증
-IF TALENT:120
-    IF ABL:21 == 0
+IF TALENT:남자
+    IF ABL:마조끼 == 0
         TIMES LOCAL:1 , 3.50
-    ELSEIF ABL:21 == 1
+    ELSEIF ABL:마조끼 == 1
         TIMES LOCAL:1 , 3.00
         SOURCE:24 = 50
-    ELSEIF ABL:21 == 2
+    ELSEIF ABL:마조끼 == 2
         TIMES LOCAL:1 , 2.50
         SOURCE:24 = 150
-    ELSEIF ABL:21 == 3
+    ELSEIF ABL:마조끼 == 3
         TIMES LOCAL:1 , 2.00
         SOURCE:24 = 300
-    ELSEIF ABL:21 == 4
+    ELSEIF ABL:마조끼 == 4
         TIMES LOCAL:1 , 1.00
         SOURCE:24 = 700
     ELSE
@@ -122,18 +122,18 @@ IF TALENT:120
         SOURCE:24 = 1400
     ENDIF
 ELSE
-    IF ABL:21 == 0
+    IF ABL:마조끼 == 0
         TIMES LOCAL:1 , 3.00
-    ELSEIF ABL:21 == 1
+    ELSEIF ABL:마조끼 == 1
         TIMES LOCAL:1 , 2.50
         SOURCE:24 = 25
-    ELSEIF ABL:21 == 2
+    ELSEIF ABL:마조끼 == 2
         TIMES LOCAL:1 , 2.00
         SOURCE:24 = 100
-    ELSEIF ABL:21 == 3
+    ELSEIF ABL:마조끼 == 3
         TIMES LOCAL:1 , 1.00
         SOURCE:24 = 200
-    ELSEIF ABL:21 == 4
+    ELSEIF ABL:마조끼 == 4
         TIMES LOCAL:1 , 0.80
         SOURCE:24 = 500
     ELSE
@@ -147,11 +147,11 @@ IF TFLAG:1
     TIMES LOCAL:1 , 2.00
 
     ;정조관념
-    IF TALENT:30
+    IF TALENT:정조관념
         TIMES SOURCE:31, 15.00
         SOURCE:32 += 10000
     ;정조무구애
-    ELSEIF TALENT:31
+    ELSEIF TALENT:정조관둔감
         TIMES SOURCE:31, 0.50
         SOURCE:32 += 300
     ELSE
@@ -160,14 +160,14 @@ IF TFLAG:1
 ENDIF
 
 ;겁쟁이(마조끼 Lv3 이상은 계산에 포함하지 않는다)
-IF TALENT:10 && ABL:21 < 3
+IF TALENT:겁쟁이 && ABL:마조끼 < 3
     TIMES LOCAL:1 , 2.00
     TIMES SOURCE:32, 0.50
 ENDIF
 
 ;아픔에 약하다
-IF TALENT:40
-    IF ABL:21 > 2
+IF TALENT:아픔에약함
+    IF ABL:마조끼 > 2
         TIMES LOCAL:1 , 1.20
         TIMES SOURCE:32, 0.30
     ELSE
@@ -175,13 +175,13 @@ IF TALENT:40
         TIMES SOURCE:32, 0.50
     ENDIF
 ;아픔에 강하다
-ELSEIF TALENT:41
+ELSEIF TALENT:아픔에강함
     TIMES LOCAL:1 , 0.60
 ENDIF
 
 SOURCE:20 += LOCAL:1 * 15
 
-IF TALENT:120
+IF TALENT:남자
     SOURCE:20 += 3000
     SOURCE:19 = LOCAL:1 * 10
     SOURCE:31 = LOCAL:1 * 10
@@ -205,9 +205,9 @@ ENDIF
 
 SOURCE:22 += LOCAL:1
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 ;SM교육 경험 플래그
@@ -229,24 +229,24 @@ RETURN 1
 @EQUIP_COM242
 PRINTL <목마 승마 중>
 DOWNBASE:0 += 50
-DOWNBASE:1 += 80
+DOWNBASE:기력 += 80
 
 LOCAL = 50
 ;ABL:마조끼를 본다
 ;남자의 경우, 아픔 배증
-IF TALENT:120
-    IF ABL:21 == 0
+IF TALENT:남자
+    IF ABL:마조끼 == 0
         TIMES LOCAL , 4.00
-    ELSEIF ABL:21 == 1
+    ELSEIF ABL:마조끼 == 1
         TIMES LOCAL , 3.00
         SOURCE:24 += 25
-    ELSEIF ABL:21 == 2
+    ELSEIF ABL:마조끼 == 2
         TIMES LOCAL , 2.50
         SOURCE:24 += 75
-    ELSEIF ABL:21 == 3
+    ELSEIF ABL:마조끼 == 3
         TIMES LOCAL , 2.00
         SOURCE:24 += 150
-    ELSEIF ABL:21 == 4
+    ELSEIF ABL:마조끼 == 4
         TIMES LOCAL , 1.00
         SOURCE:24 += 300
     ELSE
@@ -254,18 +254,18 @@ IF TALENT:120
         SOURCE:24 += 700
     ENDIF
 ELSE
-    IF ABL:21 == 0
+    IF ABL:마조끼 == 0
         TIMES LOCAL , 3.00
-    ELSEIF ABL:21 == 1
+    ELSEIF ABL:마조끼 == 1
         TIMES LOCAL , 2.50
         SOURCE:24 += 10
-    ELSEIF ABL:21 == 2
+    ELSEIF ABL:마조끼 == 2
         TIMES LOCAL , 2.00
         SOURCE:24 += 50
-    ELSEIF ABL:21 == 3
+    ELSEIF ABL:마조끼 == 3
         TIMES LOCAL , 1.00
         SOURCE:24 += 100
-    ELSEIF ABL:21 == 4
+    ELSEIF ABL:마조끼 == 4
         TIMES LOCAL , 0.80
         SOURCE:24 += 250
     ELSE
@@ -275,25 +275,25 @@ ELSE
 ENDIF
 
 ;겁쟁이
-SIF TALENT:10 && ABL:21 <= 2
+SIF TALENT:겁쟁이 && ABL:마조끼 <= 2
     TIMES LOCAL , 2.00
 
 ;아픔에 약하다
-IF TALENT:40 && ABL:21 >= 3
+IF TALENT:아픔에약함 && ABL:마조끼 >= 3
     TIMES LOCAL , 1.20
-ELSEIF TALENT:40
+ELSEIF TALENT:아픔에약함
     TIMES LOCAL , 2.00
 ;아픔에 강하다
-ELSEIF TALENT:41
+ELSEIF TALENT:아픔에강함
     TIMES LOCAL , 0.60
 ENDIF
 
 DOWNBASE:0 += LOCAL / 8
-DOWNBASE:1 += LOCAL / 2
+DOWNBASE:기력 += LOCAL / 2
 
 SOURCE:20 += LOCAL * 15
 
-IF TALENT:120
+IF TALENT:남자
     SOURCE:20 += 2000
     SOURCE:10 += 3000
     SOURCE:19 += LOCAL * 10
@@ -320,13 +320,13 @@ ENDIF
 SOURCE:22 += LOCAL
 
 TIMES SOURCE:0 , 2.00
-SIF TALENT:120 == 0
+SIF TALENT:남자 == 0
     TIMES SOURCE:1 , 2.00
 TIMES SOURCE:2 , 2.00
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -337,20 +337,20 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM242
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 IF TEQUIP:43
     PRINTFORM %조사선택(CALLNAME:TARGET, "를")% 목마로부터 내려 주자, 
-    IF ABL:21 >= 5 || TALENT:82 || TALENT:178
+    IF ABL:마조끼 >= 5 || TALENT:마조 || TALENT:초M
         PRINTW 조금 유감스러운 얼굴을 하고 있었다….
     ELSE
         PRINTW 안심한 것 같은 얼굴을 하고 있었다….
     ENDIF
 ELSE
     PRINTFORM %조사선택(CALLNAME:TARGET, "를")% 목마에 태우자, 
-    IF ABL:21 >= 5 || TALENT:82 || TALENT:178
+    IF ABL:마조끼 >= 5 || TALENT:마조 || TALENT:초M
         PRINTW 비명인지 교성인지 알 수 없는 소리를 지르고 있었다….
     ELSE
         PRINTW 격렬한 고통으로 들어본 적 없는 비명을 지르고 있었다….

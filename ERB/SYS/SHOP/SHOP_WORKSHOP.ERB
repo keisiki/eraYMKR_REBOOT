@@ -55,7 +55,7 @@ IF RESULT == 0
     MONEY -= LOCAL
     PRINTW 공방을 개설하였습니다.
     ;とりあえず工房に入る
-    CFLAG:MASTER:4 = 3
+    CFLAG:MASTER:조교관외 = 3
 ELSEIF RESULT != 1
     GOTO INPUT_LOOP
 ENDIF
@@ -130,7 +130,7 @@ ELSEIF RESULT == 100
 ;        IF FLAG:1135 < FLAG:1134
 ;            LOCAL:0 = RAND:(FLAG:1134) + 1
 ;            REPEAT CHARANUM
-;                IF CFLAG:COUNT:4 == 3 && MARK:COUNT:9 == 3 && TALENT:COUNT:150 == 0 && TALENT:COUNT:151 == 0 && TALENT:COUNT:152 == 0 && TALENT:COUNT:153 == 0 && TALENT:COUNT:160 == 0 && TALENT:COUNT:161 == 0 && TALENT:COUNT:162 == 0 && TALENT:COUNT:164 == 0
+;                IF CFLAG:COUNT:조교관외 == 3 && MARK:COUNT:반발각인 == 3 && TALENT:COUNT:연모 == 0 && TALENT:COUNT:망신 == 0 && TALENT:COUNT:친애 == 0 && TALENT:COUNT:상애 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:예속 == 0 && TALENT:COUNT:사역마 == 0
 ;                    IF LOCAL:0 == 0
 ;                        TARGET = COUNT
 ;                    ENDIF
@@ -151,7 +151,7 @@ ELSEIF RESULT == 100
 ;        CALL ORDER_CANCEL
         ;作業が無ければ工房を出る
         PRINTW 공방을 뒤로했다……
-        CFLAG:MASTER:4 = 0
+        CFLAG:MASTER:조교관외 = 0
     ENDIF
 ENDIF
 RETURN 0
@@ -238,18 +238,18 @@ REPEAT LOCAL:3
         BREAK
     ENDIF
     ;居場所が自室(0)で無ければスキップ
-    IF CFLAG:(LOCAL:1):4 != 0
+    IF CFLAG:(LOCAL:1):조교관외 != 0
         COUNT -= 1
         CONTINUE
     ENDIF
     ;教育者であればシンボルを表示
-    IF TALENT:(LOCAL:1):126
+    IF TALENT:(LOCAL:1):교육자
         PRINT 교
     ELSE
         PRINT 　
     ENDIF
     CALL ARRANGE_CHARALIST, LOCAL:1
-    PRINTFORML  공작기능Lv {ABL:(LOCAL:1):73},  공작경험 {EXP:(LOCAL:1):74},  교육 경험 {EXP:(LOCAL:1):75}
+    PRINTFORML  공작기능Lv {ABL:(LOCAL:1):공작기능},  공작경험 {EXP:(LOCAL:1):공작경험},  교육 경험 {EXP:(LOCAL:1):교육경험}
 REND
 PRINTL 　교：교육자를 나타냅니다
 PRINTFORMLC [1001] 이전 {FLAG:1103}명 표시　　　
@@ -260,10 +260,10 @@ $INPUT_LOOP
 INPUT
 IF RESULT > 0 && RESULT < CHARANUM
     LOCAL:2 = RESULT
-    IF CFLAG:(LOCAL:2):4 == 0
+    IF CFLAG:(LOCAL:2):조교관외 == 0
         ;対象が自室に居れば呼びつける
         PRINTFORMW %조사선택(CALLNAME:(LOCAL:2), "를")% 공방에 불렀습니다.
-        CFLAG:(LOCAL:2):4 = 3
+        CFLAG:(LOCAL:2):조교관외 = 3
         ;前ターンに工房に居なかった場合(すぐ呼び戻されたワケではない場合)は誘惑対象フラグを初期化
         IF CFLAG:(LOCAL:2):691 & 512
             CFLAG:(LOCAL:2):792 = -1
@@ -278,7 +278,7 @@ IF RESULT > 0 && RESULT < CHARANUM
         SIF (LOCAL:2) == ASSI
             ASSI = -1
         RETURN 1
-    ELSEIF CFLAG:(LOCAL:2):4 == 3
+    ELSEIF CFLAG:(LOCAL:2):조교관외 == 3
         ;対象はすでに工房にいる
         PRINTFORML %조사선택(CALLNAME:(LOCAL:2), "는")% 이미 공방에 있습니다.
     ELSE
@@ -294,7 +294,7 @@ ELSEIF RESULT == 1001
         IF LOCAL:0 < 1
             BREAK
         ENDIF
-        SIF CFLAG:(LOCAL:0):4 != 0
+        SIF CFLAG:(LOCAL:0):조교관외 != 0
             COUNT -= 1
     REND
     SIF LOCAL:0 < 0
@@ -330,12 +330,12 @@ PRINTL 누구에게 지시하겠습니까?
 LOCAL:0 = 0
 $ORDER_WORKSHOP_LOOP_1
 DRAWLINE
-IF TALENT:MASTER:126
+IF TALENT:MASTER:교육자
     PRINT 교
 ELSE
     PRINT Lv
 ENDIF
-PRINTFORM {ABL:MASTER:73}
+PRINTFORM {ABL:MASTER:공작기능}
 COUNT = 0
 CALL ARRANGE_CHARALIST, 0
 PRINTL (주인)
@@ -349,17 +349,17 @@ REPEAT LOCAL:5
         BREAK
     ENDIF
     ;居ないキャラは飛ばす
-    IF CFLAG:(LOCAL:1):4 != 3
+    IF CFLAG:(LOCAL:1):조교관외 != 3
         COUNT -= 1
         CONTINUE
     ENDIF
     ;教育者は表示を変える
-    IF TALENT:(LOCAL:1):126
+    IF TALENT:(LOCAL:1):교육자
         PRINT 교
     ELSE
         PRINT Lv
     ENDIF
-    PRINTFORM {ABL:(LOCAL:1):73}
+    PRINTFORM {ABL:(LOCAL:1):공작기능}
     CALL ARRANGE_CHARALIST, LOCAL:1
     LOCAL:3 = CFLAG:(LOCAL:1):690
     ;作業内容の表示
@@ -368,7 +368,7 @@ REPEAT LOCAL:5
     ELSEIF LOCAL:3 == 1
         PRINT [지도중] 대상：
         IF CFLAG:(LOCAL:1):692 > -1
-            FINDCHARA CFLAG:3109, CFLAG:(LOCAL:1):692
+            FINDCHARA CFLAG:CSV번호, CFLAG:(LOCAL:1):692
             LOCAL:4 = RESULT
             IF LOCAL:4 > -1
                 PRINTFORML %CALLNAME:(LOCAL:4)%
@@ -380,7 +380,7 @@ REPEAT LOCAL:5
         ENDIF
     ELSEIF LOCAL:3 == 2
         PRINT [공부중] 선생：
-        FINDCHARA CFLAG:3109, CFLAG:(LOCAL:1):692
+        FINDCHARA CFLAG:CSV번호, CFLAG:(LOCAL:1):692
         LOCAL:4 = RESULT
         IF LOCAL:4 > -1
             PRINTFORML %CALLNAME:(LOCAL:4)%
@@ -403,7 +403,7 @@ $INPUT_LOOP_1
 INPUT
 LOCAL:2 = RESULT
 IF LOCAL:2 < CHARANUM && LOCAL:2 > -1
-    IF CFLAG:(LOCAL:2):4 != 3
+    IF CFLAG:(LOCAL:2):조교관외 != 3
         PRINTFORMW %조사선택(CALLNAME:(LOCAL:2), "는")% 공방에 없습니다.
         GOTO INPUT_LOOP_1
     ENDIF
@@ -415,7 +415,7 @@ ELSEIF RESULT == 1001
         IF LOCAL:0 < 1
             BREAK
         ENDIF
-        SIF CFLAG:(LOCAL:0):21 != 0
+        SIF CFLAG:(LOCAL:0):첫특수커맨드 != 0
             COUNT -= 1
     REND
     SIF LOCAL:0 < 0
@@ -444,11 +444,11 @@ ELSE
     PRINTL [ 0] 방으로 돌려보낸다
     PRINTL [ 1] 대기
 ENDIF
-SIF ABL:(LOCAL:2):73 > 2
+SIF ABL:(LOCAL:2):공작기능 > 2
     PRINTL [ 2] 공작 기능 교육
-;SIF ABL:(LOCAL:2):73 > 3
+;SIF ABL:(LOCAL:2):공작기능 > 3
 ;    PRINTL [ 3] 조교 도구 제작
-;SIF ABL:(LOCAL:2):73 > 4
+;SIF ABL:(LOCAL:2):공작기능 > 4
 ;    PRINTL [  4] 특수 조교 장치 제작
 PRINTL [100] 돌아간다
 FLAG:1111 = LOCAL:2
@@ -465,11 +465,11 @@ ELSEIF RESULT == 1
     IF LOCAL:2 == MASTER
         CFLAG:MASTER:690 = 5
     ENDIF
-ELSEIF RESULT == 2 && ABL:(LOCAL:2):73 > 2
+ELSEIF RESULT == 2 && ABL:(LOCAL:2):공작기능 > 2
     CALL TEACH_HANDYCRAFT
-;ELSEIF RESULT == 3 && ABL:(LOCAL:2):73 > 3
+;ELSEIF RESULT == 3 && ABL:(LOCAL:2):공작기능 > 3
 ;    CALL ORDER_CRAFT_ITEM
-;ELSEIF RESULT == 4 && ABL:(LOCAL:2):73 > 4
+;ELSEIF RESULT == 4 && ABL:(LOCAL:2):공작기능 > 4
 ;    CALL ORDER_CRAFT_MACHINE
 ELSEIF RESULT != 100
     GOTO INPUT_LOOP_2
@@ -508,7 +508,7 @@ RETURN 0
 ;=======================================;
 @STAFFRETURN_WORKSHOP
 CALL ORDER_CANCEL
-CFLAG:(FLAG:1111):4 = 0
+CFLAG:(FLAG:1111):조교관외 = 0
 PRINTFORMW %조사선택(CALLNAME:(FLAG:1111), "를")% 방으로 돌려보냈습니다.
 RETURN 0
 
@@ -530,14 +530,14 @@ CFLAG:(FLAG:1111):692 = 0
 IF LOCAL:0 == 1
     ;教師役であれば生徒の工房作業番号と工房作業対象のフラグも消す
     IF (LOCAL:1) > -1
-        FINDCHARA CFLAG:3109, LOCAL:1
+        FINDCHARA CFLAG:CSV번호, LOCAL:1
         LOCAL:2 = RESULT
         CFLAG:(LOCAL:2):690 = 0
         CFLAG:(LOCAL:2):692 = 0
     ELSE
         ;複数を教えているならば生徒全員の工房作業番号と工房作業対象のフラグも消す
         REPEAT CHARANUM
-            IF CFLAG:COUNT:4 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109
+            IF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):CSV번호
                 CFLAG:COUNT:690 = 0
                 CFLAG:COUNT:692 = 0
             ENDIF
@@ -569,14 +569,14 @@ LOCAL:1 = 0
 LOCAL:2 = 0
 LOCAL:3 = 0
 REPEAT CHARANUM
-    SIF CFLAG:COUNT:4 == 3 && (CFLAG:COUNT:690 == 0 || (CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109)) && ABL:COUNT:73 == 0
+    SIF CFLAG:COUNT:조교관외 == 3 && (CFLAG:COUNT:690 == 0 || (CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):CSV번호)) && ABL:COUNT:공작기능 == 0
         LOCAL:3 += 1
 REND
 $TEACH_HANDYCRAFT_TOP
 DRAWLINE
 PRINTFORML 교사역：%CALLNAME:(FLAG:1111)%
 DRAWLINE
-IF ABL:MASTER:73 == 0
+IF ABL:MASTER:공작기능 == 0
     CALL ARRANGE_CHARALIST, MASTER
     PRINTFORML %CALLNAME:MASTER% (주인)
     DRAWLINE
@@ -594,7 +594,7 @@ REPEAT 30
     SIF LOCAL:1 == MASTER
         CONTINUE
     ;工房にいないか他の先生が付いてるか工作技能があるならスキップ
-    IF CFLAG:(LOCAL:1):4 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):3109) || ABL:(LOCAL:1):73 > 0
+    IF CFLAG:(LOCAL:1):조교관외 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):CSV번호) || ABL:(LOCAL:1):공작기능 > 0
         COUNT -= 1
         CONTINUE
     ENDIF
@@ -615,17 +615,17 @@ SIF LOCAL:3 > 1
 $INPUT_LOOP
 INPUT
 IF RESULT > -1 && RESULT < CHARANUM
-    IF CFLAG:RESULT:4 != 3
+    IF CFLAG:RESULT:조교관외 != 3
         PRINTFORML %조사선택(CALLNAME:RESULT, "는")% 공방에 없습니다.
-    ELSEIF ABL:RESULT:73 > 0
+    ELSEIF ABL:RESULT:공작기능 > 0
         PRINTFORML %조사선택(CALLNAME:RESULT, "는")% 이미 공작 기능을 습득했습니다.
     ELSE
         LOCAL:4 = RESULT
         CALL ORDER_CANCEL
         CFLAG:(FLAG:1111):690 = 1
-        CFLAG:(FLAG:1111):692 = CFLAG:(LOCAL:4):3109
+        CFLAG:(FLAG:1111):692 = CFLAG:(LOCAL:4):CSV번호
         CFLAG:(LOCAL:4):690 = 2
-        CFLAG:(LOCAL:4):692 = CFLAG:(FLAG:1111):3109
+        CFLAG:(LOCAL:4):692 = CFLAG:(FLAG:1111):CSV번호
         RETURN 1
     ENDIF
 ELSEIF RESULT == 1000
@@ -640,7 +640,7 @@ ELSEIF RESULT == 1001
         SIF LOCAL:1 == MASTER
             CONTINUE
         ;工房にいないか他の先生が付いてるか工作技能があるならスキップ
-        IF CFLAG:(LOCAL:1):4 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):3109) || ABL:(LOCAL:1):73 > 0
+        IF CFLAG:(LOCAL:1):조교관외 != 3 || (CFLAG:COUNT:690 == 2 && CFLAG:(LOCAL:1):692 != CFLAG:(FLAG:1111):CSV번호) || ABL:(LOCAL:1):공작기능 > 0
             COUNT -= 1
             CONTINUE
         ENDIF
@@ -658,17 +658,17 @@ ELSEIF RESULT == 1008 && (LOCAL:3) > 1
     REPEAT CHARANUM
         SIF COUNT == MASTER
             CONTINUE
-        IF CFLAG:COUNT:4 == 3 && CFLAG:COUNT:690 == 0 && ABL:COUNT:73 == 0
+        IF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 0 && ABL:COUNT:공작기능 == 0
             CFLAG:COUNT:690 = 2
-            CFLAG:COUNT:692 = CFLAG:(FLAG:1111):3109
+            CFLAG:COUNT:692 = CFLAG:(FLAG:1111):CSV번호
             CFLAG:(FLAG:1111):694 += 1
-        ELSEIF CFLAG:COUNT:4 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):3109 && ABL:COUNT:73 == 0
+        ELSEIF CFLAG:COUNT:조교관외 == 3 && CFLAG:COUNT:690 == 2 && CFLAG:COUNT:692 == CFLAG:(FLAG:1111):CSV번호 && ABL:COUNT:공작기능 == 0
             CFLAG:(FLAG:1111):694 += 1
         ENDIF
     REND
     CFLAG:(FLAG:1111):690 = 1
     CFLAG:(FLAG:1111):692 = -1
-    IF ABL:MASTER:73 == 0
+    IF ABL:MASTER:공작기능 == 0
         CALL TEACH_HANDYCRAFT_WITH_MASTER
     ENDIF
     RETURN 2
@@ -688,7 +688,7 @@ $INPUT_LOOP
 INPUT
 IF RESULT == 0
     CFLAG:MASTER:690 = 2
-    CFLAG:MASTER:692 = CFLAG:(FLAG:1111):3109
+    CFLAG:MASTER:692 = CFLAG:(FLAG:1111):CSV번호
     CFLAG:(FLAG:1111):694 += 1
     RETURN 1
 ELSEIF RESULT != 1
@@ -721,14 +721,14 @@ WHILE 1
         BREAK
     LOCAL:0 = 0
     FOR LOCAL:3, 0, CHARANUM
-        IF (CFLAG:(LOCAL:3):4 == 3) && (CFLAG:(LOCAL:3):690 == 2) && (CFLAG:(LOCAL:3):692 == CFLAG:(LOCAL:2):3109) && (ABL:(LOCAL:3):73 == 0)
+        IF (CFLAG:(LOCAL:3):조교관외 == 3) && (CFLAG:(LOCAL:3):690 == 2) && (CFLAG:(LOCAL:3):692 == CFLAG:(LOCAL:2):CSV번호) && (ABL:(LOCAL:3):공작기능 == 0)
             LOCAL:0 += 1
             LOCAL:1 = LOCAL:3
         ENDIF
     NEXT
     ;生徒数一人なら「対象全員」を「対象その生徒」に変更
     IF LOCAL:0 == 1
-        CFLAG:(LOCAL:2):692 = CFLAG:(LOCAL:1):3109
+        CFLAG:(LOCAL:2):692 = CFLAG:(LOCAL:1):CSV번호
     ;生徒数ゼロなら待機状態に変更
     ELSEIF LOCAL:0 < 1
         CFLAG:(LOCAL:2):690 = 0
@@ -815,21 +815,21 @@ GOTO INPUT_LOOP
 SIF FLAG:1120 < 0
     RETURN 0
 ;魔術品は(現状)工房では作成不能
-;SIF (FLAG:1120 & 256) && TALENT:(FLAG:1111):197
+;SIF (FLAG:1120 & 256) && TALENT:(FLAG:1111):마술기능
 SIF (FLAG:1120 & 256)
     RETURN 0
 ;医療用品は(現状)工房では作成不能
-;SIF (FLAG:1120 & 128) && TALENT:(FLAG:1111):55
+;SIF (FLAG:1120 & 128) && TALENT:(FLAG:1111):조합지식
 SIF (FLAG:1120 & 128)
     RETURN 0
 ;工作経験を記憶
 ;K = EXP:(FLAG:1111):94
 LOCAL:0 = 1
 ;電動品は工作技能Lv5必要
-SIF (FLAG:1120 & 2) && ABL:(FLAG:1111):73 < 5
+SIF (FLAG:1120 & 2) && ABL:(FLAG:1111):공작기능 < 5
     RETURN 0
 ;SM用品はSM系素養(ドＳ、ドＭ、サド、マゾ、サドっ気Lv1以上、マゾっ気Lv1以上のいずれか)が必要
-SIF (FLAG:1120 & 4) && (TALENT:(FLAG:1111):177 || TALENT:(FLAG:1111):178 || TALENT:(FLAG:1111):81 || TALENT:(FLAG:1111):82 || ABL:(FLAG:1111):20 || ABL:(FLAG:1111):21)
+SIF (FLAG:1120 & 4) && (TALENT:(FLAG:1111):초S || TALENT:(FLAG:1111):초M || TALENT:(FLAG:1111):새드 || TALENT:(FLAG:1111):마조 || ABL:(FLAG:1111):새드끼 || ABL:(FLAG:1111):마조끼)
     RETURN 0
 ;大道具は工作経験がある程度必要
 IF (FLAG:1120 & 8) 
@@ -852,10 +852,10 @@ IF (FLAG:1120 & 64)
     ENDIF
 ENDIF
 ;工作名人なら必要工作経験を半減
-SIF TALENT:(FLAG:1111):195
+SIF TALENT:(FLAG:1111):공작명인
     LOCAL:0 /= 2
 ;工作経験が必要工作経験に満たなければ作成不能
-SIF EXP:(FLAG:1111):74 < LOCAL:0
+SIF EXP:(FLAG:1111):공작경험 < LOCAL:0
     RETURN 0
 RETURN 1
 
@@ -900,7 +900,7 @@ FLAG:1145 = 0
 FLAG:1146 = 0
 
 REPEAT CHARANUM
-    IF CFLAG:COUNT:4 != 3
+    IF CFLAG:COUNT:조교관외 != 3
         ;対象キャラが工房に居なければスキップ
         CONTINUE
     ELSE
@@ -909,32 +909,32 @@ REPEAT CHARANUM
         ;エロス要素確認
         LOCAL:0 = 0
         ;サディストチェック (サドっ気Lv3以上かサドかドＳ)
-        IF ABL:COUNT:20 > 2 || TALENT:COUNT:81 || TALENT:COUNT:177
+        IF ABL:COUNT:새드끼 > 2 || TALENT:COUNT:새드 || TALENT:COUNT:초S
             FLAG:1140 += 1
             LOCAL:0 += 1
         ENDIF
         ;マゾヒストチェック (マゾっ気Lv3以上かマゾかドＭ)
-        IF ABL:COUNT:21 > 2 || TALENT:COUNT:82 || TALENT:COUNT:178
+        IF ABL:COUNT:마조끼 > 2 || TALENT:COUNT:마조 || TALENT:COUNT:초M
             FLAG:1141 += 1
             LOCAL:0 += 1
         ENDIF
         ;母乳チェック
-        IF TALENT:COUNT:134
+        IF TALENT:COUNT:모유체질
             FLAG:1142 += 1
             LOCAL:0 += 1
         ENDIF
         ;魅力度チェック（魅惑・謎の魅力・魅力・人気がある）
-        IF TALENT:COUNT:90 || TALENT:COUNT:91 || TALENT:COUNT:92 || TALENT:COUNT:94
+        IF TALENT:COUNT:매력 || TALENT:COUNT:매혹 || TALENT:COUNT:수수께끼의매력 || TALENT:COUNT:인기
             FLAG:1143 += 1
             LOCAL:0 += 1
         ENDIF
         ;淫乱チェック
-        IF TALENT:COUNT:170 || TALENT:COUNT:171 || TALENT:COUNT:172 || TALENT:COUNT:173 || TALENT:COUNT:174 || TALENT:COUNT:175 || TALENT:COUNT:176 || TALENT:COUNT:177 || TALENT:COUNT:178 || TALENT:COUNT:179 || TALENT:COUNT:180
+        IF TALENT:COUNT:음란 || TALENT:COUNT:음핵／음경 || TALENT:COUNT:음호 || TALENT:COUNT:음고 || TALENT:COUNT:음유 || TALENT:COUNT:요도광 || TALENT:COUNT:키스마 || TALENT:COUNT:초S || TALENT:COUNT:초M || TALENT:COUNT:즉각함락 || TALENT:COUNT:음마
             FLAG:1144 += 1
             LOCAL:0 += 1
         ENDIF
         ;大きな胸チェック
-        IF TALENT:COUNT:112 || TALENT:COUNT:113
+        IF TALENT:COUNT:거유 || TALENT:COUNT:폭유
             FLAG:1145 += 1
             LOCAL:0 += 1
         ENDIF
@@ -943,19 +943,19 @@ REPEAT CHARANUM
             FLAG:1133 += 1
         ENDIF
         ;レズっ気チェック
-        IF ABL:COUNT:22
+        IF ABL:COUNT:레즈끼
             FLAG:1146 += 1
         ENDIF
         ;ＢＬっ気チェック
-        IF ABL:COUNT:23
+        IF ABL:COUNT:BL끼
             FLAG:1147 += 1
         ENDIF
         ;ペニスチェック
-        IF TALENT:COUNT:121 || TALENT:COUNT:120
+        IF TALENT:COUNT:후타나리 || TALENT:COUNT:남자
             FLAG:1148 += 1
         ENDIF
         ;ヴァギナチェック
-        IF TALENT:COUNT:121 || TALENT:COUNT:120 == 0
+        IF TALENT:COUNT:후타나리 || TALENT:COUNT:남자 == 0
             FLAG:1149 += 1
         ENDIF
         ;あと作業内容チェック
@@ -963,10 +963,10 @@ REPEAT CHARANUM
             FLAG:1131 += 1
         ENDIF
         ;ところで反発刻印3で陥落していない人なんて呼んでないよね？
-        IF MARK:COUNT:9 == 3 && TALENT:COUNT:150 == 0 && TALENT:COUNT:151 == 0 && TALENT:COUNT:152 == 0 && TALENT:COUNT:153 == 0 && TALENT:COUNT:160 == 0 && TALENT:COUNT:161 == 0 && TALENT:COUNT:162 == 0 && TALENT:COUNT:164 == 0 && TALENT:COUNT:169 == 0
+        IF MARK:COUNT:반발각인 == 3 && TALENT:COUNT:연모 == 0 && TALENT:COUNT:망신 == 0 && TALENT:COUNT:친애 == 0 && TALENT:COUNT:상애 == 0 && TALENT:COUNT:복종 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:예속 == 0 && TALENT:COUNT:사역마 == 0 && TALENT:COUNT:괴조인격 == 0
             FLAG:1134 += 1
         ;陥落済みの信頼性のある人だよね？
-        ELSEIF MARK:COUNT:9 == 0 && (TALENT:COUNT:150 || TALENT:COUNT:151 || TALENT:COUNT:152 || TALENT:COUNT:153 || TALENT:COUNT:160 || TALENT:COUNT:161 || TALENT:COUNT:162 || TALENT:COUNT:164 || TALENT:COUNT:169)
+        ELSEIF MARK:COUNT:반발각인 == 0 && (TALENT:COUNT:연모 || TALENT:COUNT:망신 || TALENT:COUNT:친애 || TALENT:COUNT:상애 || TALENT:COUNT:복종 || TALENT:COUNT:낙인 || TALENT:COUNT:예속 || TALENT:COUNT:사역마 || TALENT:COUNT:괴조인격)
             FLAG:1135 += 1
         ENDIF
     ENDIF

@@ -12,7 +12,7 @@ SIF DITEMTYPE:999:453 > 0
 SIF TEQUIP:30 == 9
     RETURN 1
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;からかさお化け(混血可)がいて, かつ起きてないとダメ(拘束はＯＫ)
 SIF !COM_453_RACE(MASTER) && (!COM_453_RACE(TARGET) || EQUIP:14 || TFLAG:899) && !COM_453_RACE(ASSI)
@@ -92,7 +92,7 @@ ENDIF
 
 LOCAL = COM_453_UMBRELLA()
 
-PRINTFORML <\@ TEQUIP:50 && TARGET == LOCAL ? 공개 # \@\@ TEQUIP:52 && TARGET == LOCAL ? 야외 # \@\@ TEQUIP:74 && TARGET == LOCAL ? 독심 # \@우산\@ TALENT:120 || TALENT:121 ? 펠라 # 커닐링구스 \@\@ TARGET == LOCAL ? 자위 # \@>
+PRINTFORML <\@ TEQUIP:50 && TARGET == LOCAL ? 공개 # \@\@ TEQUIP:52 && TARGET == LOCAL ? 야외 # \@\@ TEQUIP:74 && TARGET == LOCAL ? 독심 # \@우산\@ TALENT:남자 || TALENT:후타나리 ? 펠라 # 커닐링구스 \@\@ TARGET == LOCAL ? 자위 # \@>
 
 ;-------------------------------------------------
 ;자위라면, 실행할 수 있을까의 판정
@@ -105,50 +105,50 @@ IF TARGET == LOCAL && !LOCAL:10
             RETURN 0
     ENDIF
 ENDIF
-COM_NAME = \@ TEQUIP:50 && TARGET == LOCAL ?  공개 # \@\@ TEQUIP:52 && TARGET == LOCAL ?  야외 # \@\@ TEQUIP:74 && TARGET == LOCAL ? 독심 # \@우산\@ TALENT:120 || TALENT:121 ? 펠라 # 커닐링구스 \@\@ TARGET == LOCAL ? 자위 # \@
+COM_NAME = \@ TEQUIP:50 && TARGET == LOCAL ?  공개 # \@\@ TEQUIP:52 && TARGET == LOCAL ?  야외 # \@\@ TEQUIP:74 && TARGET == LOCAL ? 독심 # \@우산\@ TALENT:남자 || TALENT:후타나리 ? 펠라 # 커닐링구스 \@\@ TARGET == LOCAL ? 자위 # \@
 
 CALL TRAIN_MESSAGE_COM453
 
 DOWNBASE:0 += 10
-DOWNBASE:1 += 80
+DOWNBASE:기력 += 80
 
 SOURCE:12 = 120
 SOURCE:31 = 70
 
 ;ABL:C감각을 본다
 ;여기는 클리캡과 같지만 혀사용의 탓으로 효과가 높아진다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 200
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 400
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 900
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 1600
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 2400
 ELSE
     SOURCE:0 = 3000
 ENDIF
 
 ;코가사의 기교를 본다
-IF ABL:LOCAL:12 == 0
+IF ABL:LOCAL:기교 == 0
     SIF LOCAL == TARGET
         SOURCE:15 = 100
     TIMES SOURCE:0 , 0.30
-ELSEIF ABL:LOCAL:12 == 1
+ELSEIF ABL:LOCAL:기교 == 1
     SIF LOCAL == TARGET
         SOURCE:15 = 160
     TIMES SOURCE:0 , 0.70
-ELSEIF ABL:LOCAL:12 == 2
+ELSEIF ABL:LOCAL:기교 == 2
     SIF LOCAL == TARGET
         SOURCE:15 = 220
     TIMES SOURCE:0 , 1.00
-ELSEIF ABL:LOCAL:12 == 3
+ELSEIF ABL:LOCAL:기교 == 3
     SIF LOCAL == TARGET
         SOURCE:15 = 280
     TIMES SOURCE:0 , 1.20
-ELSEIF ABL:LOCAL:12 == 4
+ELSEIF ABL:LOCAL:기교 == 4
     SIF LOCAL == TARGET
         SOURCE:15 = 340
     TIMES SOURCE:0 , 1.40
@@ -160,19 +160,19 @@ ENDIF
 
 ;자위라면, 자위 중독을 본다
 IF LOCAL == TARGET
-    IF ABL:30 == 0
+    IF ABL:자위중독 == 0
         SOURCE:24 = 0
         TIMES SOURCE:0 , 1.00
-    ELSEIF ABL:30 == 1
+    ELSEIF ABL:자위중독 == 1
         SOURCE:24 = 100
         TIMES SOURCE:0 , 1.10
-    ELSEIF ABL:30 == 2
+    ELSEIF ABL:자위중독 == 2
         SOURCE:24 = 300
         TIMES SOURCE:0 , 1.20
-    ELSEIF ABL:30 == 3
+    ELSEIF ABL:자위중독 == 3
         SOURCE:24 = 800
         TIMES SOURCE:0 , 1.30
-    ELSEIF ABL:30 == 4
+    ELSEIF ABL:자위중독 == 4
         SOURCE:24 = 1500
         TIMES SOURCE:0 , 1.50
     ELSE
@@ -181,8 +181,8 @@ IF LOCAL == TARGET
     ENDIF
 ENDIF
 
-;우산의 주의 TALENT:52를 본다
-IF TALENT:LOCAL:52
+;우산의 주의 TALENT:혀놀림를 본다
+IF TALENT:LOCAL:혀놀림
     TIMES SOURCE:0 , 2.00
     SOURCE:17 += SOURCE:0 / 20
 ENDIF
@@ -201,7 +201,7 @@ ELSE
     TFLAG:178 = LOCAL
 ENDIF
 
-SIF TALENT:120 || TALENT:121
+SIF TALENT:남자 || TALENT:후타나리
     TCVAR:LOCAL:22 += 1
 
 IF LOCAL == TARGET
@@ -209,9 +209,9 @@ IF LOCAL == TARGET
     TCVAR:LOCAL:11 += 1
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 SIF LOCAL == MASTER && TEQUIP:30 == 9
@@ -224,9 +224,9 @@ RETURN 1
 ;-------------------------------------------------
 @EQUIP_COM453
 LOCAL = TFLAG:178
-PRINTFORML <우산 \@ TALENT:120 || TALENT:121 ? 펠라 # 커닐링구스 \@ 중>
+PRINTFORML <우산 \@ TALENT:남자 || TALENT:후타나리 ? 펠라 # 커닐링구스 \@ 중>
 
-SIF TALENT:120 || TALENT:121
+SIF TALENT:남자 || TALENT:후타나리
     TCVAR:LOCAL:22 += 1
 
 IF LOCAL == TARGET
@@ -235,18 +235,18 @@ IF LOCAL == TARGET
 ENDIF
 
 DOWNBASE:0 += 5
-DOWNBASE:1 += 20
+DOWNBASE:기력 += 20
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     LOCAL:1 = 80
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     LOCAL:1 = 240
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     LOCAL:1 = 500
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     LOCAL:1 = 900
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     LOCAL:1 = 1200
 ELSE
     LOCAL:1 = 1500
@@ -266,15 +266,15 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL:1 , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL:1 , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL:1 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL:1 , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL:1 , 1.20
 ELSE
     TIMES LOCAL:1 , 1.30
@@ -292,15 +292,15 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM453
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 LOCAL = COM_453_UMBRELLA()
 PRINTL
 IF TEQUIP:30
-    PRINTFORML %CALLNAME:LOCAL%의 우산은 미끈미끈한 혀로 %CALLNAME%의 \@ TALENT:120 || TALENT:121 ? 페니스 # 클리토리스 \@를 한층 더 격렬하게 빨더니,
+    PRINTFORML %CALLNAME:LOCAL%의 우산은 미끈미끈한 혀로 %CALLNAME%의 \@ TALENT:남자 || TALENT:후타나리 ? 페니스 # 클리토리스 \@를 한층 더 격렬하게 빨더니,
     PRINTFORMW 만족했는지, 한 다리 뛰어 %조사처리(CALLNAME,"로")%부터 멀어졌다.
 ELSE
-    IF TALENT:120 || TALENT:121
+    IF TALENT:남자 || TALENT:후타나리
         PRINTFORML %CALLNAME:LOCAL%의 우산의 타액이 흐르는 거대한 혀가, %CALLNAME%의 페니스에 감겨
         PRINTW 추잡하게 아래위로 켜댔다….
     ELSE
@@ -315,35 +315,35 @@ ENDIF
 @COM_ORDER_453, ARG
 LOCAL:99 = ARG
 ;ABL:욕망
-IF ABL:11
+IF ABL:욕망
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:11
+    LOCAL:99 = ABL:욕망
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 ;ABL:노출벽
-IF ABL:14
+IF ABL:노출증
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:14
+    LOCAL:99 = ABL:노출증
     TFLAG:240 += LOCAL:99 * 4
     RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 4})
 ENDIF
 ;ABL:자위 중독
-IF ABL:30
+IF ABL:자위중독
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:30
+    LOCAL:99 = ABL:자위중독
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:30%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 
 ;쾌락 각인
-IF MARK:1
+IF MARK:쾌락각인
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = MARK:1
+    LOCAL:99 = MARK:쾌락각인
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
@@ -360,20 +360,20 @@ IF LOCAL:2
 ENDIF
 
 ;자제심
-IF TALENT:20
+IF TALENT:자제심
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
 ENDIF
 ;부끄럼쟁이
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ;부끄럼없음
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 2
@@ -381,7 +381,7 @@ ELSEIF TALENT:36
     RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
 ENDIF
 ;자위하기 쉽다
-IF TALENT:60
+IF TALENT:자위하기쉬움
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
@@ -389,14 +389,14 @@ IF TALENT:60
     RESULTS = %RESULTS% %TALENTNAME:60%({LOCAL:99})
 ENDIF
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
 ;쾌감의 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99

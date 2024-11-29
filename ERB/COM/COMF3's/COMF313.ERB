@@ -15,42 +15,42 @@ SIF ASSI < 0
 SIF ASSIPLAY
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;[작은체형]なら순종이 4이상かつ마조끼が4이상じゃないと実行できない
-IF TALENT:128
-    SIF ABL:10 < 4 || ABL:21 < 4
+IF TALENT:작은체형
+    SIF ABL:순종 < 4 || ABL:마조끼 < 4
         RETURN 0
 ENDIF
 ;助手も[작은체형]なら순종이 4이상かつ마조끼が4이상じゃないと実行できない
-IF TALENT:ASSI:128
-    SIF ABL:ASSI:10 < 4 || ABL:ASSI:21 < 4
+IF TALENT:ASSI:작은체형
+    SIF ABL:ASSI:순종 < 4 || ABL:ASSI:마조끼 < 4
         RETURN 0
 ENDIF
 ;조교 대상か조수가 [소인]일 경우에는 주인이 금단의 지식 보유자가 아니면 불가
-SIF (TALENT:127 || TALENT:ASSI:127) && TALENT:MASTER:56 == 0
+SIF (TALENT:소인 || TALENT:ASSI:소인) && TALENT:MASTER:금단의지식 == 0
     RETURN 0
 ;주인이 새드か狂気じゃないとできない。
-SIF TALENT:MASTER:81 == 0 && TALENT:MASTER:158 == 0
+SIF TALENT:MASTER:새드 == 0 && TALENT:MASTER:광기 == 0
     RETURN 0
-;일정의 Ａ경험이 필요([巨躯]の場合は軽減)
-IF TALENT:129
+;일정의 A경험이 필요([巨躯]の場合は軽減)
+IF TALENT:거구
     LOCAL = 75
 ELSE
     LOCAL = 150
 ENDIF
-SIF EXP:1 < LOCAL
+SIF EXP:A경험 < LOCAL
     RETURN 0
-;助手にも일정의 Ａ경험이 필요([巨躯]の場合は軽減)
-IF TALENT:ASSI:129
+;助手にも일정의 A경험이 필요([巨躯]の場合は軽減)
+IF TALENT:ASSI:거구
     LOCAL = 75
 ELSE
     LOCAL = 150
 ENDIF
-SIF EXP:ASSI:1 < LOCAL
+SIF EXP:ASSI:A경험 < LOCAL
     RETURN 0
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 조교자가 汚れ無視もしくは汚臭鈍感を持たないなら実行できない
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;쿠스코 채웠으면 불가
 SIF TEQUIP:21
@@ -88,7 +88,7 @@ RETURN 1
 ;커맨드 본체
 ;--------------------------------------------------
 @COM313
-IF (NO:PLAYER == 14 && CFLAG:PLAYER:0 == 0) || (TALENT:208 && TALENT:ASSI:208)
+IF (NO:PLAYER == 14 && CFLAG:PLAYER:SP캐릭터 == 0) || (TALENT:인형 && TALENT:ASSI:인형)
     COM_NAME = 퍼펫 머펫
 ELSE
     COM_NAME = 더블 A 피스트
@@ -100,9 +100,9 @@ CALL TRAIN_MESSAGE_COM313
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 550
-DOWNBASE:1 += 550
-DOWNBASE:ASSI:0 += 550
-DOWNBASE:ASSI:1 += 250
+DOWNBASE:기력 += 550
+DOWNBASE:ASSI:체력 += 550
+DOWNBASE:ASSI:기력 += 250
 
 SOURCE:20 = 1200
 SOURCE:12 = 1200
@@ -111,23 +111,23 @@ SOURCE:31 = 2000
 SOURCE:17 = 1200
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 10
     SOURCE:11 = 10
     SOURCE:22 += 100
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 30
     SOURCE:11 = 30
     SOURCE:22 += 700
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 500
     SOURCE:11 = 100
     SOURCE:22 += 1500
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 1000
     SOURCE:11 = 200
     SOURCE:22 += 3000
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 1700
     SOURCE:11 = 450
     SOURCE:22 += 5000
@@ -138,19 +138,19 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES SOURCE:2 , 0.10
     SOURCE:20 += 20000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES SOURCE:2 , 0.30
     SOURCE:20 += 12000
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES SOURCE:2 , 0.50
     SOURCE:20 += 5000
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES SOURCE:2 , 1.00
     SOURCE:20 += 1800
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.40
     SOURCE:20 += 1000
 ELSE
@@ -177,19 +177,19 @@ ELSE
 ENDIF
 
 ;ABL:욕망을 본다
-IF ABL:11 == 0
+IF ABL:욕망 == 0
     SOURCE:19 = 100
     SOURCE:22 += 3200
-ELSEIF ABL:11 == 1
+ELSEIF ABL:욕망 == 1
     SOURCE:19 = 200
     SOURCE:22 += 3800
-ELSEIF ABL:11 == 2
+ELSEIF ABL:욕망 == 2
     SOURCE:19 = 350
     SOURCE:22 += 4600
-ELSEIF ABL:11 == 3
+ELSEIF ABL:욕망 == 3
     SOURCE:19 = 600
     SOURCE:22 += 5400
-ELSEIF ABL:11 == 4
+ELSEIF ABL:욕망 == 4
     SOURCE:19 = 850
     SOURCE:22 += 6200
 ELSE
@@ -199,15 +199,15 @@ ENDIF
 
 
 ;ABL:봉사 정신을 본다
-IF ABL:13 == 0
+IF ABL:봉사정신 == 0
     TIMES SOURCE:19 , 0.50
-ELSEIF ABL:13 == 1
+ELSEIF ABL:봉사정신 == 1
     TIMES SOURCE:19 , 0.80
-ELSEIF ABL:13 == 2
+ELSEIF ABL:봉사정신 == 2
     TIMES SOURCE:19 , 1.00
-ELSEIF ABL:13 == 3
+ELSEIF ABL:봉사정신 == 3
     TIMES SOURCE:19 , 1.50
-ELSEIF ABL:13 == 4
+ELSEIF ABL:봉사정신 == 4
     TIMES SOURCE:19 , 2.00
 ELSE
     TIMES SOURCE:19 , 2.50
@@ -232,31 +232,31 @@ ELSE
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
 
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:22 , 0.60
     TIMES SOURCE:31 , 0.60
 ENDIF
 
 ;처녀로 정조관념
-SIF TALENT:0 == 1 && TALENT:30
+SIF TALENT:처녀 == 1 && TALENT:정조관념
     SOURCE:22 /= 3
 
-SIF EXP:33 == 0
+SIF EXP:A확장경험 == 0
     TCVAR:50 += 1
 TCVAR:1 += 25
 TCVAR:33 += 1
 
-SIF EXP:ASSI:33 == 0
+SIF EXP:ASSI:A확장경험 == 0
     TCVAR:ASSI:50 += 1
 TCVAR:ASSI:1 += 25
 TCVAR:ASSI:33 += 1
@@ -268,32 +268,32 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM313
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORML %CALLNAME:TARGET%의 항문과 %CALLNAME:ASSI%의 항문에,
 PRINTFORML %조사선택(CALLNAME:MASTER, "는")% 주먹을 넣어 휘저어 주었다.
 PRINTL
-IF ABL:2 <= 1
+IF ABL:A감각 <= 1
     PRINTFORML %CALLNAME:TARGET%의 항문은 경련하고 있는 것 같이 벌름거린다.
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     PRINTFORML %CALLNAME:TARGET%의 항문은 뻐끔 입을 열고 있다.
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     PRINTFORML %CALLNAME:TARGET%의 항문은 벌려진 채로 좀처럼 돌아오지 않는다.
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     PRINTFORML %CALLNAME:TARGET%의 항문에서는 살점이 밀려나와,
     PRINTFORML 장안이 훤히 들여다보인다.
 ELSE
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 자신의 항문을 손가락으로 벌리며 황홀해 하고 있다.
 ENDIF
-IF ABL:ASSI:2 <= 1
+IF ABL:ASSI:A감각 <= 1
     PRINTFORMW 한편, %CALLNAME:ASSI%의 항문은 경련하고 있는 것 같이 벌름거린다.
-ELSEIF ABL:ASSI:2 == 2
+ELSEIF ABL:ASSI:A감각 == 2
     PRINTFORMW 한편, %CALLNAME:ASSI%의 항문은 뻐끔 입을 열고 있다.
-ELSEIF ABL:ASSI:2 == 3
+ELSEIF ABL:ASSI:A감각 == 3
     PRINTFORMW 한편, %CALLNAME:ASSI%의 항문은 벌려진 채로 좀처럼 돌아오지 않는다.
-ELSEIF ABL:ASSI:2 == 4
+ELSEIF ABL:ASSI:A감각 == 4
     PRINTFORML 한편, %CALLNAME:ASSI%의 항문에서는 살점이 밀려나와,
     PRINTFORMW 장안이 훤히 들여다보인다.
 ELSE

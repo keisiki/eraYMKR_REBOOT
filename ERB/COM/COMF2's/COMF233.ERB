@@ -9,40 +9,40 @@
 SIF DITEMTYPE:999:233 > 0
     RETURN 0
 ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
-;조교 대상のＶ확장경험もしくはＡ확장경험이 ない場合には, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && (EXP:32 <= 1 || EXP:33 <= 1)
+;조교 대상のV확장경험もしくはA확장경험이 ない場合には, 이상계 조교 필터가 오프되어 있지 않으면 불가
+SIF FLAG:VA이상조교필터 & 4 && (EXP:V확장경험 <= 1 || EXP:A확장경험 <= 1)
     RETURN 0
-;Ｖ경험LVが1미만で, 조교자가 オトコではない場合
+;V경험LVが1미만で, 조교자가 オトコではない場合
 ;이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && EXP:0 < EXPLV:1 && TALENT:PLAYER:120 == 0
+SIF FLAG:VA이상조교필터 & 4 && EXP:V경험 < EXPLV:1 && TALENT:PLAYER:남자 == 0
     RETURN 0
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;[작은체형]なら순종이 4이상かつ마조끼が4이상かつ확장경험10이상じゃないと実行できない
-IF TALENT:128
-    SIF ABL:10 < 4 || ABL:21 < 4 || EXP:32 < 10 || EXP:33 < 10
+IF TALENT:작은체형
+    SIF ABL:순종 < 4 || ABL:마조끼 < 4 || EXP:V확장경험 < 10 || EXP:A확장경험 < 10
         RETURN 0
 ENDIF
 ;조교 대상이 [소인]일 경우에는 주인이 금단의 지식 보유자가 아니면 불가
-SIF TALENT:127 && TALENT:MASTER:56 == 0
+SIF TALENT:소인 && TALENT:MASTER:금단의지식 == 0
     RETURN 0
 ;ASSI일 경우, 순종4이상이거나 새드じゃないとできない。
 IF ASSIPLAY
-    SIF ABL:ASSI:10 < 4 && TALENT:ASSI:81 == 0
+    SIF ABL:ASSI:순종 < 4 && TALENT:ASSI:새드 == 0
         RETURN 0
 ENDIF
-;일정의 Ｖ · Ａ경험이 필요([巨躯]の場合は軽減)
-LOCAL = (TALENT:129) ? 150 # 300
-SIF EXP:0 < LOCAL || EXP:1 < LOCAL
+;일정의 Ｖ · A경험이 필요([巨躯]の場合は軽減)
+LOCAL = (TALENT:거구) ? 150 # 300
+SIF EXP:V경험 < LOCAL || EXP:A경험 < LOCAL
     RETURN 0
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 조교자가 汚れ無視もしくは汚臭鈍感を持たないなら実行できない
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;Ｖ계 장착구 사용 중에는 불가
 SIF TEQUIP:20 || TEQUIP:21
@@ -91,7 +91,7 @@ TFLAG:1 = 1
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 800
-DOWNBASE:1 += 500
+DOWNBASE:기력 += 500
 
 SOURCE:20 = 1800
 SOURCE:19 = 2800
@@ -102,19 +102,19 @@ SOURCE:31 = 2500
 SOURCE:17 = 2500
 
 ;ABL:V감각을 본다
-IF ABL:1 == 0
+IF ABL:V감각 == 0
     SOURCE:1 = 40
     SOURCE:11 = 50
-ELSEIF ABL:1 == 1
+ELSEIF ABL:V감각 == 1
     SOURCE:1 = 150
     SOURCE:11 = 150
-ELSEIF ABL:1 == 2
+ELSEIF ABL:V감각 == 2
     SOURCE:1 = 400
     SOURCE:11 = 250
-ELSEIF ABL:1 == 3
+ELSEIF ABL:V감각 == 3
     SOURCE:1 = 1000
     SOURCE:11 = 350
-ELSEIF ABL:1 == 4
+ELSEIF ABL:V감각 == 4
     SOURCE:1 = 1700
     SOURCE:11 = 600
 ELSE
@@ -123,23 +123,23 @@ ELSE
 ENDIF
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 10
     SOURCE:11 += 10
     SOURCE:22 += 100
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 30
     SOURCE:11 += 30
     SOURCE:22 += 700
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 500
     SOURCE:11 += 100
     SOURCE:22 += 1500
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 1000
     SOURCE:11 += 200
     SOURCE:22 += 3000
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 1700
     SOURCE:11 += 450
     SOURCE:22 += 5000
@@ -150,22 +150,22 @@ ELSE
 ENDIF
 
 ;EXP:V경험을 본다
-IF EXP:0 < EXPLV:1
+IF EXP:V경험 < EXPLV:1
     TIMES SOURCE:1 , 0.20
     SOURCE:20 += 20000
     SOURCE:18 += 2000
-    SIF TALENT:PLAYER:120 == 0
+    SIF TALENT:PLAYER:남자 == 0
         TCVAR:50 += 1
-ELSEIF EXP:0 < EXPLV:2
+ELSEIF EXP:V경험 < EXPLV:2
     TIMES SOURCE:1 , 0.60
     SOURCE:20 += 300
-ELSEIF EXP:0 < EXPLV:3
+ELSEIF EXP:V경험 < EXPLV:3
     TIMES SOURCE:1 , 1.00
     SOURCE:20 += 50
-ELSEIF EXP:0 < EXPLV:4
+ELSEIF EXP:V경험 < EXPLV:4
     TIMES SOURCE:1 , 1.20
     SOURCE:20 += 10
-ELSEIF EXP:0 < EXPLV:5
+ELSEIF EXP:V경험 < EXPLV:5
     TIMES SOURCE:1 , 1.40
     SOURCE:20 += 0
 ELSE
@@ -174,23 +174,23 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES SOURCE:2 , 0.10
     SOURCE:20 += 5000
     SOURCE:18 += 1000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES SOURCE:2 , 0.30
     SOURCE:20 += 2000
     SOURCE:18 += 1000
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES SOURCE:2 , 0.50
     SOURCE:20 += 2000
     SOURCE:18 += 1000
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES SOURCE:2 , 1.00
     SOURCE:20 += 2000
     SOURCE:18 += 1000
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.40
     SOURCE:20 += 1000
     SOURCE:18 += 200
@@ -254,27 +254,27 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:1 , 0.50
     TIMES SOURCE:2 , 0.70
     TIMES SOURCE:11 , 0.60
     TIMES SOURCE:18, 2.00
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:1 , 0.80
     TIMES SOURCE:2 , 0.90
     TIMES SOURCE:11 , 0.80
     TIMES SOURCE:18, 1.20
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:1 , 1.00
     TIMES SOURCE:2 , 1.00
     TIMES SOURCE:11 , 1.00
     TIMES SOURCE:18, 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.10
     TIMES SOURCE:11 , 1.20
     TIMES SOURCE:18, 0.60
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:1 , 1.40
     TIMES SOURCE:2 , 1.20
     TIMES SOURCE:11 , 1.40
@@ -287,17 +287,17 @@ ELSE
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:20 , 3.00
 
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:18 , 1.50
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:18 , 0.60
     TIMES SOURCE:22 , 0.60
@@ -305,8 +305,8 @@ ELSEIF TALENT:104
 ENDIF
 
 ;정조관념
-IF TALENT:30
-    IF TALENT:0 == 1
+IF TALENT:정조관념
+    IF TALENT:처녀 == 1
         TIMES SOURCE:11 , 0.60
         TIMES SOURCE:18, 5.00
     ELSE
@@ -314,17 +314,17 @@ IF TALENT:30
         TIMES SOURCE:18, 1.80
     ENDIF
 ;정조무구애
-ELSEIF TALENT:31
-    IF TALENT:0 == 1
+ELSEIF TALENT:정조관둔감
+    IF TALENT:처녀 == 1
         TIMES SOURCE:18, 0.50
     ELSE
         TIMES SOURCE:18, 0.30
     ENDIF
 ENDIF
 
-IF EXP:32 == 0 && EXP:33 == 0
+IF EXP:V확장경험 == 0 && EXP:A확장경험 == 0
     TCVAR:50 += 2
-ELSEIF EXP:32 == 0 || EXP:33 == 0
+ELSEIF EXP:V확장경험 == 0 || EXP:A확장경험 == 0
     TCVAR:50 += 1
 ENDIF
 TCVAR:0 += 25
@@ -339,7 +339,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM233
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -347,8 +347,8 @@ PRINTFORML %CALLNAME:TARGET%의 질과 항문은 %CALLNAME:PLAYER%의 주먹으�
 PRINTL
 ;LOCAL   = 대상의 V감각과 A감각의 비싼 (분)편
 ;LOCAL:1 = 대상의 V감각과 A감각의 합계 Lv
-LOCAL = MAX(ABL:1 , ABL:2)
-LOCAL:1 = ABL:1 + ABL:2
+LOCAL = MAX(ABL:V감각 , ABL:A감각)
+LOCAL:1 = ABL:V감각 + ABL:A감각
 IF LOCAL >= 5 && LOCAL:1 >= 10
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 2개의 주먹으로 몸 속을 유린당해, 격렬하게 느끼고 있다….
 ELSEIF LOCAL > 4
@@ -361,7 +361,7 @@ ENDIF
 IF LOCAL >= 5 && LOCAL:1 >= 10
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 완전히 벌려져 안을 훤히 보이고 있는, 질구와 항문의 주변을 양 손가락으로 어루만졌다….
 ELSE
-    SELECTCASE ABL:1
+    SELECTCASE ABL:V감각
         CASE 0, 1
             PRINTFORML %CALLNAME:TARGET%의 질은 경련하고 있는 것 같이 벌름거린다.
         CASE 2
@@ -375,18 +375,18 @@ ELSE
             PRINTFORML %CALLNAME:TARGET%의 질은 요염하게 열려 마치 %조사선택(CALLNAME:PLAYER, "를")% 빨아들일 것 같은 모양을 하고 있다….
     ENDSELECT
     PRINT 한편, 
-    SELECTCASE ABL:2
+    SELECTCASE ABL:A감각
         CASE 0, 1
-            PRINTFORMW 항문\@(ABL:1 > 1) ? 은 # 도\@ 경련하고 있는것 같이 벌름거린다….
+            PRINTFORMW 항문\@(ABL:V감각 > 1) ? 은 # 도\@ 경련하고 있는것 같이 벌름거린다….
         CASE 2
-            PRINTFORMW 항문\@(ABL:1 != 2) ? 은 # 도\@ 뻐끔 입을 열고 있다….
+            PRINTFORMW 항문\@(ABL:V감각 != 2) ? 은 # 도\@ 뻐끔 입을 열고 있다….
         CASE 3
-            PRINTFORMW 항문\@(ABL:1 != 3) ? 은 # 도\@ 벌려진 채로 좀처럼 돌아오지 않는다….
+            PRINTFORMW 항문\@(ABL:V감각 != 3) ? 은 # 도\@ 벌려진 채로 좀처럼 돌아오지 않는다….
         CASE 4
-            PRINTFORML 항문에서\@(ABL:1 != 4) ? 은 # 도\@ 살들이 밀려나와,
+            PRINTFORML 항문에서\@(ABL:V감각 != 4) ? 은 # 도\@ 살들이 밀려나와,
             PRINTW 장안이 훤히 들여다보이게 되어 있다….
         CASEELSE
-            PRINTFORML 항문\@(ABL:1 < 5) ? 은 # 도\@ 다 열려져 있어,
+            PRINTFORML 항문\@(ABL:V감각 < 5) ? 은 # 도\@ 다 열려져 있어,
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 손가락으로 거기를 어루만지고 돌리며 쾌감의 여운에 잠겨 있다….
     ENDSELECT
 ENDIF

@@ -12,7 +12,7 @@ SIF ARG == -1
 
 LOCAL = DRUG_HEAL_MENTAL_CALC(ARG)
 
-CFLAG:ARG:65 = MAX(CFLAG:ARG:65 - LOCAL, 0)
+CFLAG:ARG:스트레스 = MAX(CFLAG:ARG:스트레스 - LOCAL, 0)
 
 ;=============================================================================
 ;아이템：진정차의 스트레스 회복치 계산
@@ -27,24 +27,24 @@ SIF ARG < 0 || ARG >= CHARANUM
 
 LOCAL = 500
 ;[낙관적]
-IF TALENT:ARG:25
+IF TALENT:ARG:낙관적
     TIMES LOCAL , 1.25
 ;[비관적]
-ELSEIF TALENT:ARG:26
+ELSEIF TALENT:ARG:비관적
     TIMES LOCAL , 0.75
 ENDIF
 ;[억압]
-IF TALENT:ARG:32
+IF TALENT:ARG:억압
     TIMES LOCAL , 0.50
 ;[해방]
-ELSEIF TALENT:ARG:33
+ELSEIF TALENT:ARG:해방
     TIMES LOCAL , 1.50
 ENDIF
 ;[임신], [회란]
-SIF TALENT:ARG:140 || TALENT:ARG:145
+SIF TALENT:ARG:임신 || TALENT:ARG:회란
     TIMES LOCAL , 0.75
 ;[기생]
-SIF TALENT:ARG:146
+SIF TALENT:ARG:기생
     TIMES LOCAL , 0.75
 
 RETURNF LOCAL
@@ -59,8 +59,8 @@ SIF ARG == -1
 
 LOCAL = DRUG_HEAL_LIFE_CALC(ARG)
 
-BASE:ARG:0 = MIN(BASE:ARG:0 + LOCAL, MAXBASE:ARG:0)
-BASE:ARG:1 = ((TALENT:ARG:114 && TIME == 0) || (TALENT:ARG:115 && TIME == 1)) ? MAXBASE:ARG:1 # MIN(BASE:ARG:1 + LOCAL*2, MAXBASE:ARG:1)
+BASE:ARG:체력 = MIN(BASE:ARG:체력 + LOCAL, MAXBASE:ARG:체력)
+BASE:ARG:기력 = ((TALENT:ARG:일광욕 && TIME == 0) || (TALENT:ARG:월광욕 && TIME == 1)) ? MAXBASE:ARG:기력 # MIN(BASE:ARG:기력 + LOCAL*2, MAXBASE:ARG:기력)
 
 ;=============================================================================
 ;아이템：영양제의 체력 · 기력 회복치 계산
@@ -75,17 +75,17 @@ SIF ARG < 0 || ARG >= CHARANUM
 
 LOCAL = 300
 ;[약물내성]
-SIF TALENT:ARG:44
+SIF TALENT:ARG:약물내성
     TIMES LOCAL , 0.50
 ;[回復早い]
-IF TALENT:ARG:137
+IF TALENT:ARG:회복빠름
     TIMES LOCAL , 1.25
 ;[回復遅い]
-ELSEIF TALENT:ARG:138
+ELSEIF TALENT:ARG:회복느림
     TIMES LOCAL , 0.75
 ENDIF
 ;[흡혈귀]
-IF TALENT:ARG:205
+IF TALENT:ARG:흡혈귀
     IF TIME == 0
         TIMES LOCAL , 0.75
     ELSE
@@ -93,18 +93,18 @@ IF TALENT:ARG:205
     ENDIF
 ENDIF
 ;[日光浴], [月光浴]
-IF (TALENT:ARG:114 && TIME == 0) || (TALENT:ARG:115 && TIME == 1)
+IF (TALENT:ARG:일광욕 && TIME == 0) || (TALENT:ARG:월광욕 && TIME == 1)
     TIMES LOCAL , 1.25
 ENDIF
 
 ;[치료](주인)
-SIF TALENT:MASTER:59
+SIF TALENT:MASTER:치료
     TIMES LOCAL , 1.50
 ;[조합지식]＋[금단의 지식](주인)
-SIF TALENT:MASTER:55 && TALENT:MASTER:56
+SIF TALENT:MASTER:조합지식 && TALENT:MASTER:금단의지식
     TIMES LOCAL , 2.00
 ;[마술기능](주인)
-SIF TALENT:MASTER:197
+SIF TALENT:MASTER:마술기능
     TIMES LOCAL , 1.20
 
 RETURNF LOCAL
@@ -133,138 +133,138 @@ FOR LOCAL, 0, 230
     ;イベントで変化したものはフラグで判断(弄りようがないので口上で変化した分は除く)
     IF LOCAL == 150 || LOCAL == 160 || LOCAL == 170
         SIF TALENT:ARG:LOCAL
-            CFLAG:20 |= 32
+            CFLAG:첫시츄에이션 |= 32
     ELSEIF LOCAL > 150 && LOCAL < 180 && LOCAL != 157 && LOCAL != 158
         CONTINUE
     ELSEIF LOCAL == 10
-        IF CFLAG:ARG:12 & 4
+        IF CFLAG:ARG:트라우마판정 & 4
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 11
-        SIF CFLAG:ARG:13 & 8
+        SIF CFLAG:ARG:소실이벤트 & 8
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 13
-        IF CFLAG:ARG:12 & 2048
+        IF CFLAG:ARG:트라우마판정 & 2048
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 15
-        SIF CFLAG:ARG:13 & 16
+        SIF CFLAG:ARG:소실이벤트 & 16
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 21
-        SIF CFLAG:ARG:13 & 4
+        SIF CFLAG:ARG:소실이벤트 & 4
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 22
-        IF CFLAG:ARG:12 & 8
+        IF CFLAG:ARG:트라우마판정 & 8
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 25
-        IF CFLAG:ARG:12 & 32
+        IF CFLAG:ARG:트라우마판정 & 32
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 26
-        IF CFLAG:ARG:12 & 16
+        IF CFLAG:ARG:트라우마판정 & 16
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 27
-        SIF CFLAG:ARG:13 & 64
+        SIF CFLAG:ARG:소실이벤트 & 64
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 28
-        IF CFLAG:ARG:12 & 64
+        IF CFLAG:ARG:트라우마판정 & 64
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 30
-        SIF CFLAG:ARG:13 & 256
+        SIF CFLAG:ARG:소실이벤트 & 256
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 32
-        SIF CFLAG:ARG:13 & 1
+        SIF CFLAG:ARG:소실이벤트 & 1
             TALENT:LOCAL = 1
-        IF CFLAG:ARG:12 & 128
+        IF CFLAG:ARG:트라우마판정 & 128
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 33
-        SIF CFLAG:ARG:13 & 2048
+        SIF CFLAG:ARG:소실이벤트 & 2048
             TALENT:LOCAL = 1
-        IF CFLAG:ARG:12 & 65536
+        IF CFLAG:ARG:트라우마판정 & 65536
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 34
-        SIF CFLAG:ARG:13 & 2
+        SIF CFLAG:ARG:소실이벤트 & 2
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 37
-        SIF CFLAG:ARG:13 & 512
+        SIF CFLAG:ARG:소실이벤트 & 512
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 38
-        SIF CFLAG:ARG:13 & 1024
+        SIF CFLAG:ARG:소실이벤트 & 1024
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 39
-        IF CFLAG:ARG:12 & 1024
+        IF CFLAG:ARG:트라우마판정 & 1024
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 44
-        SIF CFLAG:ARG:13 & 4096
+        SIF CFLAG:ARG:소실이벤트 & 4096
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 46
-        IF CFLAG:ARG:12 & 16384
+        IF CFLAG:ARG:트라우마판정 & 16384
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 62
-        IF CFLAG:ARG:12 & 256
+        IF CFLAG:ARG:트라우마판정 & 256
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 61
-        IF CFLAG:ARG:12 & 512
+        IF CFLAG:ARG:트라우마판정 & 512
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 66
-        IF CFLAG:ARG:12 & 32768
+        IF CFLAG:ARG:트라우마판정 & 32768
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 71
-        SIF CFLAG:ARG:13 & 32
+        SIF CFLAG:ARG:소실이벤트 & 32
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 130
-        IF CFLAG:ARG:12 & 2
+        IF CFLAG:ARG:트라우마판정 & 2
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 131
-        SIF CFLAG:ARG:13 & 128
+        SIF CFLAG:ARG:소실이벤트 & 128
             TALENT:LOCAL = 1
     ELSEIF LOCAL == 157
-        IF CFLAG:ARG:12 & 4096
+        IF CFLAG:ARG:트라우마판정 & 4096
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
         ENDIF
     ELSEIF LOCAL == 158
-        IF CFLAG:ARG:12 & 1
+        IF CFLAG:ARG:트라우마판정 & 1
             CONTINUE
         ELSEIF TALENT:ARG:LOCAL
             TALENT:LOCAL = 1
@@ -286,48 +286,48 @@ FOR LOCAL, 0, 100
     ENDIF
 NEXT
 ;CSTR3을 계승
-CSTR:3  = \@(CFLAG:17 & 16) ? %CSTR:ARG:3% # 『%CSTR:ARG:3%』이라는 경위의 노예에게 기억소거약을 사용했다.\@
+CSTR:3  = \@(CFLAG:이벤트취득붕괴 & 16) ? %CSTR:ARG:3% # 『%CSTR:ARG:3%』이라는 경위의 노예에게 기억소거약을 사용했다.\@
 ;ＳＰ 캐릭터 플래그
-CFLAG:0 = CFLAG:ARG:0
+CFLAG:SP캐릭터 = CFLAG:ARG:SP캐릭터
 ;종족 변경 플래그
-CFLAG:5 = CFLAG:ARG:5
+CFLAG:종족변경 = CFLAG:ARG:종족변경
 ;체력 상승 누적의 판정
-CFLAG:6 = CFLAG:ARG:6
+CFLAG:체력상승 = CFLAG:ARG:체력상승
 ;기력 상승 누적의 판정
-CFLAG:7 = CFLAG:ARG:7
+CFLAG:기력상승 = CFLAG:ARG:기력상승
 ;수집품
-CFLAG:10 = CFLAG:ARG:10
+CFLAG:수집품채취여부 = CFLAG:ARG:수집품채취여부
 ;연모계 소질의 판정
-CFLAG:14 = CFLAG:ARG:14
+CFLAG:이벤트취득연모 = CFLAG:ARG:이벤트취득연모
 ;복종계 소질의 판정
-CFLAG:15 = CFLAG:ARG:15
+CFLAG:이벤트취득복종 = CFLAG:ARG:이벤트취득복종
 ;음란계 소질의 판정
-CFLAG:16 = CFLAG:ARG:16
+CFLAG:이벤트취득음란 = CFLAG:ARG:이벤트취득음란
 ;붕괴계 소질의 판정
-CFLAG:17 = CFLAG:ARG:17
+CFLAG:이벤트취득붕괴 = CFLAG:ARG:이벤트취득붕괴
 ;인계 캐릭터 판정
-CFLAG:18 = CFLAG:ARG:18
+CFLAG:계승여부 = CFLAG:ARG:계승여부
 ;放尿レベルも保存
-CFLAG:31 = CFLAG:ARG:31
+CFLAG:방뇨레벨 = CFLAG:ARG:방뇨레벨
 ;媚薬中毒日数カウント · 媚薬中毒レベルも保存
-CFLAG:32 = CFLAG:ARG:32
+CFLAG:미약중독레벨 = CFLAG:ARG:미약중독레벨
 ;鈴蘭の毒を使った回数も保存
-CFLAG:33 = CFLAG:ARG:33
+CFLAG:은방울꽃사용횟수 = CFLAG:ARG:은방울꽃사용횟수
 ;触手を使って卵を産んでいる場合はそ의 판정も保存
-CFLAG:34 = CFLAG:ARG:34
+CFLAG:촉수출산수 = CFLAG:ARG:촉수출산수
 ;임신, 회란日数カウントも保存
-CFLAG:35 = CFLAG:ARG:35
+CFLAG:임신경과일수 = CFLAG:ARG:임신경과일수
 ;陰毛を剃ったり抜いたりしている場合は継承
-CFLAG:36 = CFLAG:ARG:36
+CFLAG:털성장판정 = CFLAG:ARG:털성장판정
 ;陰核肥大関連
-SIF CFLAG:ARG:37 & 16
-    CFLAG:37 = 16
+SIF CFLAG:ARG:클리상태 & 16
+    CFLAG:클리상태 = 16
 ;尻尾の本数
-CFLAG:40 = CFLAG:ARG:40
+CFLAG:꼬리갯수 = CFLAG:ARG:꼬리갯수
 ;触手インプラント
-CFLAG:41 = CFLAG:ARG:41
+CFLAG:촉수이식 = CFLAG:ARG:촉수이식
 ;烙印キャラ用特殊装備フラグ
-CFLAG:42 = CFLAG:ARG:42
+CFLAG:특수장비 = CFLAG:ARG:특수장비
 ;コスプレ, 露出ライブ, 酒恥肉倫, 説教or薀蓄, パイズリ回数も保存
 FOR LOCAL, 50, 58
     CFLAG:LOCAL = CFLAG:ARG:LOCAL
@@ -337,7 +337,7 @@ FOR LOCAL, 80, 97
     CFLAG:LOCAL = CFLAG:ARG:LOCAL
 NEXT
 ;地の文消去判定も保存
-CFLAG:99 = CFLAG:ARG:99
+CFLAG:지문소거판정 = CFLAG:ARG:지문소거판정
 ;５ページ系経歴フラグに関しても保存
 FOR LOCAL, 150, 156
     CFLAG:LOCAL = CFLAG:ARG:LOCAL
@@ -349,7 +349,7 @@ FOR LOCAL, 170, 176
     CFLAG:LOCAL = CFLAG:ARG:LOCAL
 NEXT
 ;地下牢でされたことフラグも保存
-CFLAG:180 = CFLAG:ARG:180
+CFLAG:지하감옥플래그 = CFLAG:ARG:지하감옥플래그
 ;日常生活関連のフラグについては選択して保存
 CFLAG:1600 = CFLAG:ARG:1600
 CFLAG:1601 = CFLAG:ARG:1601
@@ -363,12 +363,12 @@ FOR LOCAL, 3100, 3112
     CFLAG:LOCAL = CFLAG:ARG:LOCAL
 NEXT
 ;記念日調査フラグは購入, 連行, 誕生日のビットのみ保存
-SIF CFLAG:ARG:3128 & 1
-    CFLAG:3128 |= 1
-SIF CFLAG:ARG:3128 & 2
-    CFLAG:3128 |= 2
-SIF CFLAG:ARG:3128 & 4
-    CFLAG:3128 |= 4
+SIF CFLAG:ARG:기념일플래그 & 1
+    CFLAG:기념일플래그 |= 1
+SIF CFLAG:ARG:기념일플래그 & 2
+    CFLAG:기념일플래그 |= 2
+SIF CFLAG:ARG:기념일플래그 & 4
+    CFLAG:기념일플래그 |= 4
 ;種族遺伝子保存
 FOR LOCAL, 3200, 3400
     CFLAG:LOCAL = CFLAG:ARG:LOCAL
@@ -380,68 +380,68 @@ NEXT
 
 ;条件を満たしている場合はなんらかの素質が追加
 ;技巧が5のときは習得スピードが1段階上昇
-IF ABL:ARG:12 >= 5 && TALENT:50 == 0
-    IF TALENT:51
-        TALENT:51 = 0
+IF ABL:ARG:기교 >= 5 && TALENT:습득빠름 == 0
+    IF TALENT:습득느림
+        TALENT:습득느림 = 0
     ELSE
-        TALENT:50 = 1
+        TALENT:습득빠름 = 1
     ENDIF
 ENDIF
 ;奉仕精神5で[献身的]取得
-SIF ABL:ARG:13 >= 5 && TALENT:63 == 0
-    TALENT:63 = 1
+SIF ABL:ARG:봉사정신 >= 5 && TALENT:헌신적 == 0
+    TALENT:헌신적 = 1
 ;露出癖5で[目立ちたがり]取得
-SIF ABL:ARG:14 >= 5 &&  TALENT:28 == 0
-    TALENT:28 = 1
+SIF ABL:ARG:노출증 >= 5 &&  TALENT:튀고싶어함 == 0
+    TALENT:튀고싶어함 = 1
 ;マゾっ気かサドっ気5かつレズっ気かＢＬっ気5で[倒錯的]取得
-SIF (ABL:ARG:20 >= 5 || ABL:ARG:21 >= 5) && (ABL:ARG:22 >= 5 || ABL:ARG:23 >= 5) && TALENT:80 == 0
-    TALENT:80 = 1
+SIF (ABL:ARG:새드끼 >= 5 || ABL:ARG:마조끼 >= 5) && (ABL:ARG:레즈끼 >= 5 || ABL:ARG:BL끼 >= 5) && TALENT:도착적 == 0
+    TALENT:도착적 = 1
 ;レズっ気5かつレズ中毒5で[男嫌い]取得
-SIF ABL:ARG:22 >= 5 && ABL:ARG:32 >= 5 && TALENT:37 == 0
-    TALENT:37 = 1
+SIF ABL:ARG:레즈끼 >= 5 && ABL:ARG:레즈중독 >= 5 && TALENT:남성혐오 == 0
+    TALENT:남성혐오 = 1
 ;ＢＬっ気5かつＢＬ中毒5で[女嫌い]取得
-SIF ABL:ARG:23 >= 5 && ABL:ARG:33 >= 5 && TALENT:38 == 0
-    TALENT:38 = 1
+SIF ABL:ARG:BL끼 >= 5 && ABL:ARG:BL중독 >= 5 && TALENT:여성혐오 == 0
+    TALENT:여성혐오 = 1
 ;自慰, 精液, レズ(またはＢＬ), 噴乳, 触手中毒が全て5なら[中毒しやすい]取得
-SIF ABL:ARG:30 >= 5 && ABL:ARG:31 >= 5 && (ABL:ARG:32 >= 5 || ABL:ARG:33 >= 5) && ABL:ARG:34 >= 5 && ABL:ARG:35 >= 5 && TALENT:84 == 0
-    TALENT:84 = 1
+SIF ABL:ARG:자위중독 >= 5 && ABL:ARG:정액중독 >= 5 && (ABL:ARG:레즈중독 >= 5 || ABL:ARG:BL중독 >= 5) && ABL:ARG:분유중독 >= 5 && ABL:ARG:촉수중독 >= 5 && TALENT:중독되기쉬움 == 0
+    TALENT:중독되기쉬움 = 1
 ;[복종]を持っていた場合, 従順が1上昇
 ;[妄信]を持っていた場合, 従順が2上昇
-IF TALENT:ARG:151 || TALENT:ARG:160
-    ABL:10 = MIN(ABL:10 + 1, 5)
-    SIF TALENT:ARG:151
-        ABL:10 = MIN(ABL:10 + 1, 5)
+IF TALENT:ARG:망신 || TALENT:ARG:복종
+    ABL:순종 = MIN(ABL:순종 + 1, 5)
+    SIF TALENT:ARG:망신
+        ABL:순종 = MIN(ABL:순종 + 1, 5)
 ENDIF
 ;[サド]を持っていた場合, 欲望とサドっ気が1上昇
-IF TALENT:ARG:81
-    ABL:11 = MIN(ABL:11 + 1, 5)
-    ABL:20 = MIN(ABL:20 + 1, 5)
+IF TALENT:ARG:새드
+    ABL:욕망 = MIN(ABL:욕망 + 1, 5)
+    ABL:새드끼 = MIN(ABL:새드끼 + 1, 5)
 ENDIF
 ;[マゾ]を持っていた場合, 露出癖とマゾっ気が1上昇
-IF TALENT:ARG:82
-    ABL:14 = MIN(ABL:14 + 1, 5)
-    ABL:21 = MIN(ABL:21 + 1, 5)
+IF TALENT:ARG:마조
+    ABL:노출증 = MIN(ABL:노출증 + 1, 5)
+    ABL:마조끼 = MIN(ABL:마조끼 + 1, 5)
 ENDIF
 ;[烙印]→[傷物]変換
-SIF TALENT:ARG:161
-    TALENT:163 = 1
+SIF TALENT:ARG:낙인
+    TALENT:흠집 = 1
 ;[精神붕괴]→[感情乏しい]変換
-SIF TALENT:ARG:167
-    TALENT:22 = 1
+SIF TALENT:ARG:정신붕괴
+    TALENT:감정결여 = 1
 ;[傀儡]→[精神붕괴]変換
-IF TALENT:ARG:168
-    TALENT:167 = 1
-    CFLAG:17 |= 4
+IF TALENT:ARG:괴뢰
+    TALENT:정신붕괴 = 1
+    CFLAG:이벤트취득붕괴 |= 4
 ENDIF
 ;[壊造人格]→[狂気]変換
-IF TALENT:ARG:169
-    TALENT:158 = 1
-    CFLAG:12 |= 1
-    CFLAG:17 |= 2
+IF TALENT:ARG:괴조인격
+    TALENT:광기 = 1
+    CFLAG:트라우마판정 |= 1
+    CFLAG:이벤트취득붕괴 |= 2
 ENDIF
 
 ;記憶消去薬を一度使ったかどうか의 판정
-CFLAG:17 |= 16
+CFLAG:이벤트취득붕괴 |= 16
 ;記憶を消すので性格反転状態は保存
 MARK:80 = MARK:ARG:80
 MARK:81 = MARK:ARG:81
@@ -455,10 +455,10 @@ IF NO:TARGET == 402 && FLAG:570 & 4 && NO:MASTER == 400
 ENDIF
 IF NO:TARGET == 401
     IF FLAG:570 & 16
-        TALENT:MASTER:149 = 0
-        ABL:MASTER:98 = 0
+        TALENT:MASTER:촉수사역술 = 0
+        ABL:MASTER:촉수사역 = 0
     ELSEIF FLAG:570 & 32
-        ABL:MASTER:98 = FLAG:572
+        ABL:MASTER:촉수사역 = FLAG:572
     ENDIF
     FLAG:570 &= 15
 ENDIF
@@ -469,14 +469,14 @@ PRINTW
 PRINTFORML %조사처리(CALLNAME:ARG,"는")% 실이 끊어진 듯이 그 자리에서 쓰러져 자기 시작했다……
 PRINTW  
 PRINTFORML 다음에 %조사처리(CALLNAME:ARG,"가")% 눈을 떴을 때는 이제까지의 일을 전부 다 잊은 상태일 것이다…….
-PRINTFORML %조사처리(CALLNAME:MASTER,"는")% \@(TALENT:ARG:153) ? 그 사실에 쓸쓸함을 느끼면서도 그대로 # 그런 생각들을 하며 \@ 방을 뒤로했다…….
+PRINTFORML %조사처리(CALLNAME:MASTER,"는")% \@(TALENT:ARG:상애) ? 그 사실에 쓸쓸함을 느끼면서도 그대로 # 그런 생각들을 하며 \@ 방을 뒤로했다…….
 PRINTW  
 PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% 조교 기억을 잃었다＞
 ;[使い魔]になっていた場合はメッセージが出る
-IF TALENT:ARG:164
+IF TALENT:ARG:사역마
     PRINTFORMW ＜%조사처리(CALLNAME:ARG,"과")% 맺었던 맹약이 파기되어버렸다＞
-    SIF CFLAG:ARG:15 & 8
-        CFLAG:15 -= 8
+    SIF CFLAG:ARG:이벤트취득복종 & 8
+        CFLAG:이벤트취득복종 -= 8
 ENDIF
 ;妖精化した後に使った場合専用分岐
 IF MARK:ARG:87 > 0
@@ -502,26 +502,26 @@ PRINTFORML ＜%조사처리(CALLNAME:ARG,"는")% 인간이 되었다＞
 PRINTFORML %조사처리(CALLNAME:ARG,"는")%[음치]가 되었다
 
 ;恋慕か服従がなければ反発刻印3を得て、従順が0になる
-IF TALENT:ARG:150 == 0 && TALENT:ARG:160 == 0
+IF TALENT:ARG:연모 == 0 && TALENT:ARG:복종 == 0
     PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% 충격을 받았다＞
-    SIF MARK:ARG:9 < 3
+    SIF MARK:ARG:반발각인 < 3
         CALL COMMON_MARK_UP, ARG, 9, 3, 0
-    SIF ABL:ARG:10 > 0
+    SIF ABL:ARG:순종 > 0
         PRINTW 그리고 순종이 LV0이 되었다
-    ABL:ARG:10 = 0
+    ABL:ARG:순종 = 0
 ENDIF
 
 ;素質[卵生][人魚]消滅
-TALENT:ARG:135 = 0
-TALENT:ARG:229 = 0
+TALENT:ARG:난생 = 0
+TALENT:ARG:인어 = 0
 ;素質[音痴]追加。[音感]があれば消滅
-IF TALENT:ARG:191
- TALENT:ARG:191 = 0
+IF TALENT:ARG:음감
+ TALENT:ARG:음감 = 0
 ENDIF
-TALENT:ARG:190 = 1
+TALENT:ARG:음치 = 1
 
-;CFLAG:5 = 何らかの方法で種族を変えられたフラグ。12を仮に人間とする
-CFLAG:ARG:5 = 12
+;CFLAG:종족변경 = 何らかの方法で種族を変えられたフラグ。12を仮に人間とする
+CFLAG:ARG:종족변경 = 12
 ;種族遺伝子変化(一旦既存の遺伝子を半減させ、後で減少させた分の数値を人間の遺伝子に上積み)
 LOCAL:3 = 0
 FOR LOCAL , 3200 , 3400
@@ -537,10 +537,10 @@ MARK:ARG:85 = 1
 ;薬物経験
 CALL COMMON_UP_EXP, ARG, 40, 1, 1, 1
 ;初体験時は異常経験が入る
-;CFLAG:29 = 種族改造初体験判定。128を仮に人間とする
-IF (CFLAG:ARG:29 & 128) == 0
+;CFLAG:첫종족개조 = 種族改造初体験判定。128を仮に人間とする
+IF (CFLAG:ARG:첫종족개조 & 128) == 0
     CALL COMMON_UP_EXP, ARG, 50, 1, 0
-    CFLAG:ARG:29 |= 1
+    CFLAG:ARG:첫종족개조 |= 1
 ENDIF
 
 ;=============================================================================
@@ -572,10 +572,10 @@ IF ARG == MASTER
         PRINTFORML 귀여워보이는 요정 소녀가 된 %CALLNAME:MASTER%의 모습이 비치고 있었다…….
     ENDIF
 ELSE
-    PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 요정화 사탕을 %CALLNAME:ARG%에게 \@(ABL:ARG:10 < 3) ? 억지로  # \@먹였다…….
+    PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 요정화 사탕을 %CALLNAME:ARG%에게 \@(ABL:ARG:순종 < 3) ? 억지로  # \@먹였다…….
     PRINTW  
     PRINTFORMW 잠시 있자 사탕의 효과인지 %조사처리(CALLNAME:ARG,"는")% 괴로운 듯이 그 자리에 웅크렸다…….
-    IF TALENT:ARG:127 == 0 && TALENT:ARG:128 == 0
+    IF TALENT:ARG:소인 == 0 && TALENT:ARG:작은체형 == 0
         PRINTFORML %조사처리(CALLNAME:ARG,"는")% 괴로움 때문에 신음하는 듯한 소리를 냈지만, 그 몸은 점점 더 작아져서는 결국에는 \@(LOCAL:1 < 2) ? 손바닥 위에 올릴 수 있을 만큼까지 작아지고 말았다……. # 작은 어린아이 정도의 크기가 되었다…….\@
         PRINT 나아가, 
     ELSE
@@ -588,17 +588,17 @@ PRINTFORML ＜%조사처리(CALLNAME:ARG,"는")% 요정이 되었다＞
 ;AQN 대 쇼크!
 IF NO:ARG == 48
     PRINTFORML ＜%조사처리(CALLNAME:ARG,"는")% 커다란 쇼크를 받았다＞
-    SIF MARK:ARG:9 < 3
+    SIF MARK:ARG:반발각인 < 3
         CALL COMMON_MARK_UP, ARG, 9, 3, 0
-    SIF ABL:ARG:10 > 0
+    SIF ABL:ARG:순종 > 0
         PRINTL 그리고 순종이 LV0으로 떨어졌다.
-    ABL:ARG:10 = 0
+    ABL:ARG:순종 = 0
 ENDIF
 PRINTW  
 
 ;素質[妖精]追加
-TALENT:ARG:200 = 1
-CFLAG:ARG:5 = 1
+TALENT:ARG:요정 = 1
+CFLAG:ARG:종족변경 = 1
 ;種族遺伝子変化(一旦既存の遺伝子を半減させ, 後で減少させた分の数値を妖精の遺伝子に上積み)
 LOCAL:3 = 0
 FOR LOCAL , 3200 , 3400
@@ -615,64 +615,64 @@ SIF ARG != MASTER
 MARK:ARG:87 = 1
 
 ;男の場合, 消去.ホモでなければレズっ気上昇
-IF TALENT:ARG:120
-    TALENT:ARG:120 = 0
-    TALENT:ARG:0 = 1
-    LOCAL:2 = ABL:ARG:22 + 3
-    IF ABL:ARG:23 <= LOCAL:2
-        LOCAL:2 = ABL:ARG:23
-        ABL:ARG:22 += 3
-        ABL:ARG:22 -= LOCAL:2
+IF TALENT:ARG:남자
+    TALENT:ARG:남자 = 0
+    TALENT:ARG:처녀 = 1
+    LOCAL:2 = ABL:ARG:레즈끼 + 3
+    IF ABL:ARG:BL끼 <= LOCAL:2
+        LOCAL:2 = ABL:ARG:BL끼
+        ABL:ARG:레즈끼 += 3
+        ABL:ARG:레즈끼 -= LOCAL:2
     ELSE
-        ABL:ARG:22 = 0
+        ABL:ARG:레즈끼 = 0
     ENDIF
-    ABL:ARG:23 = 0
+    ABL:ARG:BL끼 = 0
 ENDIF
 
 ;回復早く.もともと遅いと打ち消して普通.
-IF TALENT:ARG:138
-    TALENT:ARG:138 = 0
+IF TALENT:ARG:회복느림
+    TALENT:ARG:회복느림 = 0
 ELSE
-    TALENT:ARG:137 = 1
+    TALENT:ARG:회복빠름 = 1
 ENDIF
 
 ;[작은체형]に.低確率で[소인]に.もともと小柄, [소인]でなければ胸も１ランク減少
-IF TALENT:ARG:127 == 0 && TALENT:ARG:128 == 0
+IF TALENT:ARG:소인 == 0 && TALENT:ARG:작은체형 == 0
     CALL BUSTSIZE_DOWN(ARG, 1, 0)
-    SIF TALENT:ARG:129
-        TALENT:ARG:129 = 0
+    SIF TALENT:ARG:거구
+        TALENT:ARG:거구 = 0
     IF LOCAL:1 < 2
-        TALENT:ARG:127 = 1
+        TALENT:ARG:소인 = 1
     ELSE
-        TALENT:ARG:128 = 1
+        TALENT:ARG:작은체형 = 1
     ENDIF
 ENDIF
 
 ;건방짐 추가
-SIF TALENT:ARG:15 == 0
-    TALENT:ARG:15 = 1
+SIF TALENT:ARG:건방짐 == 0
+    TALENT:ARG:건방짐 = 1
 ;자제심 소멸
-SIF TALENT:ARG:20
-    TALENT:ARG:20 = 0
+SIF TALENT:ARG:자제심
+    TALENT:ARG:자제심 = 0
 ;無関心と好奇心まわりの変動
-IF TALENT:ARG:21
-    TALENT:ARG:21 = 0
-ELSEIF TALENT:ARG:23 == 0
-    TALENT:ARG:23 = 1
+IF TALENT:ARG:무관심
+    TALENT:ARG:무관심 = 0
+ELSEIF TALENT:ARG:호기심 == 0
+    TALENT:ARG:호기심 = 1
 ENDIF
 ;감정결여 소멸
-SIF TALENT:ARG:22
-    TALENT:ARG:22 = 0
+SIF TALENT:ARG:감정결여
+    TALENT:ARG:감정결여 = 0
 
 ;AQN와의 상성을 나쁘게 한다
 SIF RELATION:ARG:48 > 70 || RELATION:ARG:48 == 0
     RELATION:ARG:48 = 70
 
 ;범용 대사용 플래그
-CFLAG:ARG:43 = 0
+CFLAG:ARG:범용대사용인격 = 0
 
 ;약의 영향으로 체력이 감소
-BASE:ARG:0 = 499
+BASE:ARG:체력 = 499
 PRINTFORM %조사처리(CALLNAME:ARG,"는")% 체력을 굉장히 소모
 IF ARG == MASTER
     PRINTL 하여, 일어서자마자 바로 쓰러질 뻔했다.
@@ -683,33 +683,33 @@ ELSE
 ENDIF
 PRINTW  
 
-IF TALENT:ARG:45 == 0 && RAND:100 == 0
+IF TALENT:ARG:오줌싸개버릇 == 0 && RAND:100 == 0
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 돌연히 몸을 움찔거리기 시작했다…….
     PRINTL 보아하니 다리 사이에서 액체가 흐르기 시작했다
     PRINTL 아무래도, 몸의 급격한 변동 영향으로 [오줌싸개 버릇]이 붙어버린 것 같다…….
-    TALENT:ARG:45 = 1
+    TALENT:ARG:오줌싸개버릇 = 1
     CALL CALC_GAUGE4_SLAVE, ARG, 1
-ELSEIF TALENT:ARG:116 == 0 && RAND:100 == 0
+ELSEIF TALENT:ARG:동물귀 == 0 && RAND:100 == 0
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 머리 근처를 신경쓰고 있는 것 같다…….
     PRINTL 그러고 있다 보니 갑자기 머리카락 사이로 귀여운 귀가 솟구쳐 나왔다.
     PRINTL 약의 부작용으로 [동물귀]가 생긴 것 같다…….
-    TALENT:ARG:116 = 1
+    TALENT:ARG:동물귀 = 1
 ENDIF
 
 ;약물경험
 CALL COMMON_UP_EXP, ARG, 40, 1, 1, 1
 ;첫체험시에는 이상경험이 들어간다
-IF (CFLAG:ARG:29 & 1) == 0
+IF (CFLAG:ARG:첫종족개조 & 1) == 0
     ;AQN만 2 들어감
     IF NO:ARG == 48
         CALL COMMON_UP_EXP, ARG, 50, 2, 0
     ELSE
         CALL COMMON_UP_EXP, ARG, 50, 1, 0
     ENDIF
-    CFLAG:ARG:29 |= 1
+    CFLAG:ARG:첫종족개조 |= 1
 ENDIF
 ;신체측정 플래그를 재운다(다음 번 신체측정을 실행하기 때문)
-CFLAG:ARG:8 = 0
+CFLAG:ARG:신체측정예약 = 0
 RETURN 1
 
 ;=============================================================================
@@ -733,7 +733,7 @@ SIF TFLAG:225 != 1
     CALL SELF_KOJO, TARGET, 335, 0
 
 ;ＳＰ 캐릭터 플래그
-CFLAG:0 = 1
+CFLAG:SP캐릭터 = 1
 
 IF NO:TARGET == 1
     ;레이무 님
@@ -750,7 +750,7 @@ ELSEIF NO:TARGET == 4
 ELSEIF NO:TARGET == 5
     ;치르노
     ;음란, 淫核, 淫壷, 淫尻, 淫乳, 尿道狂, キス魔, ドＳ, ドＭのいずれかを取得している場合は倍チルノに
-    IF TALENT:170 || TALENT:171 || TALENT:172 || TALENT:173 || TALENT:174 || TALENT:175 || TALENT:176 || TALENT:177 || TALENT:178
+    IF TALENT:음란 || TALENT:음핵／음경 || TALENT:음호 || TALENT:음고 || TALENT:음유 || TALENT:요도광 || TALENT:키스마 || TALENT:초S || TALENT:초M
         CALL EX_CHARA05_2
     ELSE
         CALL EX_CHARA05_1
@@ -758,10 +758,10 @@ ELSEIF NO:TARGET == 5
 ELSEIF NO:TARGET == 7
     ;소악마
     ;即落ちを取得している場合はラヴォスこぁに
-    IF TALENT:179
+    IF TALENT:즉각함락
         CALL EX_CHARA07_1
     ;Ｃ感覚と触手中毒が共にLv3以上だとクリスタルこぁに
-    ELSEIF ABL:0 >= 3 && ABL:35 >= 3
+    ELSEIF ABL:C감각 >= 3 && ABL:촉수중독 >= 3
         CALL EX_CHARA07_3
     ELSE
         CALL EX_CHARA07_2
@@ -793,7 +793,7 @@ ELSEIF NO:TARGET == 73
 ELSEIF NO:TARGET == 82
     ;인간 요시카
     ;음란이나 음란계 부위소질 혹은 광기가 있으면 카시와데노미노이라츠메로
-    IF TALENT:158 || TALENT:170 || TALENT:171 || TALENT:172 || TALENT:173 || TALENT:174 || TALENT:175 || TALENT:176 || TALENT:177 || TALENT:178
+    IF TALENT:광기 || TALENT:음란 || TALENT:음핵／음경 || TALENT:음호 || TALENT:음고 || TALENT:음유 || TALENT:요도광 || TALENT:키스마 || TALENT:초S || TALENT:초M
         CALL EX_CHARA82_2
     ELSE
   ;그외에는 그냥 인간 요시카
@@ -812,7 +812,7 @@ ENDIF
 
 ;기력 · 체력 회복
 BASE:0 = MAXBASE:0
-BASE:1 = MAXBASE:1
+BASE:기력 = MAXBASE:기력
 
 ;SHOP 화면から来た場合には以下の処理は行わない（すなわち이상경험＋１にならない）
 SIF TFLAG:225 == 1
@@ -820,13 +820,13 @@ SIF TFLAG:225 == 1
 
 ;ＥＸ화の共通イベント.従順と奉仕精神は低下, パラメータ半減, 反発以外の刻印はリセット
 IF TARGET != MASTER
-    IF ABL:10 > 0
-        ABL:10 = (ABL:10 <= 2) ? 0 # ABL:10 - 2
-        PRINTFORML ＜%CALLNAME:TARGET%의 %조사처리(ABLNAME:10,"는")% %조사처리(TOSTR(ABL:10),"가")% 되었다＞
+    IF ABL:순종 > 0
+        ABL:순종 = (ABL:순종 <= 2) ? 0 # ABL:순종 - 2
+        PRINTFORML ＜%CALLNAME:TARGET%의 %조사처리(ABLNAME:10,"는")% %조사처리(TOSTR(ABL:순종),"가")% 되었다＞
     ENDIF
-    IF ABL:13 > 0
-        ABL:13 = (ABL:13 <= 2) ? 0 # ABL:13 - 2
-        PRINTFORML ＜%CALLNAME:TARGET%의 %조사처리(ABLNAME:13,"는")% %조사처리(TOSTR(ABL:13),"가")% 되었다＞
+    IF ABL:봉사정신 > 0
+        ABL:봉사정신 = (ABL:봉사정신 <= 2) ? 0 # ABL:봉사정신 - 2
+        PRINTFORML ＜%CALLNAME:TARGET%의 %조사처리(ABLNAME:13,"는")% %조사처리(TOSTR(ABL:봉사정신),"가")% 되었다＞
     ENDIF
     FOR LOCAL:1, 0, 20
         JUEL:(LOCAL:1) /= 2
@@ -840,9 +840,9 @@ IF TARGET != MASTER
     NEXT
 ENDIF
 ;범용 대사용 플래그
-CFLAG:43 = 0
+CFLAG:범용대사용인격 = 0
 ;신체측정 플래그를 재운다(다음 번 신체측정을 실행하기 때문)
-CFLAG:8 = 0
+CFLAG:신체측정예약 = 0
 ;이상경험
 CALL COMMON_UP_EXP, TARGET, 50, 1, 0, 1
 ;약물경험
@@ -920,42 +920,42 @@ RETURNF 0
 LOCAL = TARGET
 CALL SELF_KOJO, ARG, 336, 0
 
-PRINTFORML 흰색과 검은색이 뒤섞인 모양으로 만들어진 사탕을 %CALLNAME:ARG%에게 \@(ABL:ARG:10 < 3) ? 억지로  # \@먹였다…….
+PRINTFORML 흰색과 검은색이 뒤섞인 모양으로 만들어진 사탕을 %CALLNAME:ARG%에게 \@(ABL:ARG:순종 < 3) ? 억지로  # \@먹였다…….
 PRINTW  
 PRINTFORML %CALLNAME:ARG%의 눈매가 조금 변한 것 같이 보였다…….
 PRINTW  
 PRINTFORMW ＜%조사처리(CALLNAME:ARG,"는")% 성격이 역전했다＞
 ;反転処理
 ;臆病と気丈
-SWAP TALENT:ARG:10, TALENT:ARG:12
+SWAP TALENT:ARG:겁쟁이, TALENT:ARG:꿋꿋함
 ;反抗的と大人しい
-SWAP TALENT:ARG:11, TALENT:ARG:14
+SWAP TALENT:ARG:반항적, TALENT:ARG:얌전함
 ;건방짐と素直
-SWAP TALENT:ARG:13, TALENT:ARG:15
+SWAP TALENT:ARG:솔직함, TALENT:ARG:건방짐
 ;プライド高いと低い
-SWAP TALENT:ARG:16, TALENT:ARG:17
+SWAP TALENT:ARG:프라이드가높음, TALENT:ARG:프라이드가낮음
 ;자제심と해방
-SWAP TALENT:ARG:20, TALENT:ARG:33
+SWAP TALENT:ARG:자제심, TALENT:ARG:해방
 ;無関心と好奇心
-SWAP TALENT:ARG:21, TALENT:ARG:23
+SWAP TALENT:ARG:무관심, TALENT:ARG:호기심
 ;낙관적と비관적
-SWAP TALENT:ARG:25, TALENT:ARG:26
+SWAP TALENT:ARG:낙관적, TALENT:ARG:비관적
 ;貞操観念と貞操無頓着
-SWAP TALENT:ARG:30, TALENT:ARG:31
+SWAP TALENT:ARG:정조관념, TALENT:ARG:정조관둔감
 ;恥じらいと恥薄い
-SWAP TALENT:ARG:35, TALENT:ARG:36
+SWAP TALENT:ARG:부끄럼쟁이, TALENT:ARG:부끄럼없음
 ;痛みに強いと弱い
-SWAP TALENT:ARG:40, TALENT:ARG:41
+SWAP TALENT:ARG:아픔에약함, TALENT:ARG:아픔에강함
 ;習得早いと遅い
-SWAP TALENT:ARG:50, TALENT:ARG:51
+SWAP TALENT:ARG:습득빠름, TALENT:ARG:습득느림
 ;快感に素直と否定
-SWAP TALENT:ARG:70, TALENT:ARG:71
+SWAP TALENT:ARG:쾌감에솔직, TALENT:ARG:쾌감을부정
 ;サドとマゾ
-SWAP TALENT:ARG:81, TALENT:ARG:82
+SWAP TALENT:ARG:새드, TALENT:ARG:마조
 ;幼稚と母性
-SWAP TALENT:ARG:131, TALENT:ARG:142
+SWAP TALENT:ARG:유치, TALENT:ARG:모성
 ;범용 대사용 플래그
-CFLAG:ARG:43 = 0
+CFLAG:ARG:범용대사용인격 = 0
 
 CALL SELF_KOJO, ARG, 336, 1
 
@@ -965,7 +965,7 @@ FOR LOCAL:1, 0, 2
     BASE:ARG:(LOCAL:1) = MIN(BASE:ARG:(LOCAL:1), MAXBASE:ARG:(LOCAL:1))
 NEXT
 ;신체측정 플래그를 재운다(다음 번 신체측정을 실행하기 때문)
-CFLAG:ARG:8 = 0
+CFLAG:ARG:신체측정예약 = 0
 
 ;이상경험
 SIF MARK:ARG:80 == 0
@@ -1021,10 +1021,10 @@ ELSE
     MONEY -= 2000 * RESULT
     LOCAL = RESULT * 1000
     ;気丈
-    SIF TALENT:12
+    SIF TALENT:꿋꿋함
         TIMES LOCAL, 0.5
     ;약물내성
-    SIF TALENT:44
+    SIF TALENT:약물내성
         TIMES LOCAL, 0.1
     CALL SELF_KOJO, TARGET, 315, LOCAL
     EQUIP:14 += LOCAL
@@ -1081,5 +1081,5 @@ ELSEIF EQUIP:14 < 9000
 ELSE
     PRINTL ＜혼면＞
 ENDIF
-SIF TALENT:MASTER:998
+SIF TALENT:MASTER:Debug
     PRINTFORML 수면도:{EQUIP:14}

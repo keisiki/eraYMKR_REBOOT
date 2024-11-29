@@ -9,19 +9,19 @@
 SIF DITEMTYPE:999:416 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;조교자가 心の目を閉ざしている[覚]だとダメ
-SIF TALENT:PLAYER:213 == 2
+SIF TALENT:PLAYER:사토리 == 2
     RETURN 0
 ;조교 대상이 心の目を閉ざしていない[覚]でないとダメ
-SIF TALENT:213 != 1
+SIF TALENT:사토리 != 1
     RETURN 0
 ;기력이 0일 때는 불가
-SIF BASE:1 <= 0
+SIF BASE:기력 <= 0
     RETURN 0
 ;조교 대상이 [精神崩壊]または[傀儡]だとダメ
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 RETURN 1
 
@@ -39,7 +39,7 @@ COM_NAME = 사간
 CALL TRAIN_MESSAGE_COM416
 
 DOWNBASE:0 += 0
-DOWNBASE:1 += 50
+DOWNBASE:기력 += 50
 
 SOURCE:15 = 50
 SOURCE:19 = 5000
@@ -49,23 +49,23 @@ SOURCE:31 = 200
 SOURCE:32 = 200
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:12 , 6.00
     TIMES SOURCE:31 , 6.00
     TIMES SOURCE:32 , 6.00
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:12 , 5.00
     TIMES SOURCE:31 , 5.00
     TIMES SOURCE:32 , 5.00
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:12 , 4.00
     TIMES SOURCE:31 , 4.00
     TIMES SOURCE:32 , 4.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:12 , 1.00
     TIMES SOURCE:31 , 1.00
     TIMES SOURCE:32 , 1.00
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:12 , 1.00
     TIMES SOURCE:31 , 1.00
     TIMES SOURCE:32 , 1.00
@@ -82,21 +82,21 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM416
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% 마음 속에서 %조사선택(CALLNAME:TARGET, "를")% 범하고 있다.
 PRINTFORML %CALLNAME:PLAYER%의 마음을 읽은 %조사선택(CALLNAME:TARGET, "는")%
-IF TALENT:169
+IF TALENT:괴조인격
     PRINTFORMW 상상한 것을 실제로 했으면 좋겠다는 표정으로 %조사선택(CALLNAME:PLAYER, "를")% 보고 있다….
-ELSEIF TALENT:170
+ELSEIF TALENT:음란
     PRINTW 무엇인가를 기대하는 것 같은 눈으로 여기를 보고 있다….
-ELSEIF TALENT:152 || TALENT:153
+ELSEIF TALENT:친애 || TALENT:상애
     PRINTFORMW 얼굴을 새빨갛게 하면서도, 어딘지 모르게 기대를 담아 %조사선택(CALLNAME:PLAYER, "를")% 보고 있다….
-ELSEIF TALENT:150 || TALENT:160
+ELSEIF TALENT:연모 || TALENT:복종
     PRINTW 얼굴을 새빨갛게 하고 고개를 돌려버렸다….
-ELSEIF MARK:9 > 1
+ELSEIF MARK:반발각인 > 1
     PRINTFORMW 지금까지 업신여겨왔던 %조사선택(CALLNAME:PLAYER, "를")%, 이젠 조금 무서워 하는 눈으로 보고 있다….
 ELSE
     PRINTFORMW 공포심에 흔들리는 눈으로 %조사선택(CALLNAME:PLAYER, "를")% 보고 있다….

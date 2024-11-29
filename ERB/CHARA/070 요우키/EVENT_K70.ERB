@@ -11,15 +11,15 @@ RETURN 1
 
 @EVENTTRAIN
 #PRI
-SIF FLAG:11 == 0
-FLAG:11 = 2
+SIF FLAG:캐릭터대사표시 == 0
+FLAG:캐릭터대사표시 = 2
 
 ;--------------------------------------------------
 ;EVENTTRAIN 관계
 ;조교 개시시의 대사 CFLAG:5001～5019를 사용
 ;-------------------------------------------------
 @EVENTTRAIN
-SIF FLAG:11 == 0
+SIF FLAG:캐릭터대사표시 == 0
     RETURN 0
 SIF NO:TARGET != 70
     RETURN 0
@@ -36,9 +36,9 @@ SIF NO:TARGET != 70
 ;    INPUT
 ;    IF RESULT == 0
 ;        PRINTFORMW ―처녀 모드로 소질, 능력을 변경합니다―
-;        TALENT:0 = 1
-;        ABL:1 = 0
-;        EXP:0 = 0
+;        TALENT:처녀 = 1
+;        ABL:V감각 = 0
+;        EXP:V경험 = 0
 ;    ELSEIF RESULT == 1
 ;        PRINTFORMW ―통상 모드로 조교를 개시합니다―
 ;    ELSE
@@ -77,9 +77,9 @@ IF CFLAG:5001 == 0
     PRINTFORMW 「계집아이들의 실종…… 네가 그 원흉이렸다!」
     PRINTFORMW 얼굴에 깊은 주름을 아로새긴 노인이 매서운 눈으로 %조사처리(CALLNAME:MASTER,"를")% 쏘아보았다.
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         ;남자 주인
-        IF TALENT:MASTER:120
+        IF TALENT:MASTER:남자
             PRINTFORMW 남자, 게다가 노인이라면 아무래도 전문 분야에서 벗어난다.
             PRINTFORMW 자, 이 노검사를 어떻게 다뤄야 할까…….
         ;여주인
@@ -91,7 +91,7 @@ IF CFLAG:5001 == 0
     ;요우키가 여자(통상은 남자이니 이 경우엔 성전환)
     ELSE
         ;남자 주인
-        IF TALENT:MASTER:120
+        IF TALENT:MASTER:남자
             PRINTFORMW 남자……였을 터지만 지금은 여자 그것도 어째선지 젊어졌다.
             PRINTFORMW 얼핏 보기엔 여전히 완강하고 굳세 보이지만 당황한 기색을 완전히 숨기진 못한 듯하다.
             PRINTFORMW 여자가 된 남자…. 조교에 어떤 재미를 줄지 기대된다.
@@ -111,10 +111,10 @@ IF CFLAG:5001 == 0
 ;-------------------------------------------------
 
 ;굴복각인Lv1
-ELSEIF CFLAG:5001 < 2 && MARK:2 == 1
+ELSEIF CFLAG:5001 < 2 && MARK:굴복각인 == 1
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 「네놈이 무슨 짓을 한들 난 굴하지 않을게야…」
         PRINTFORMW 매서운 눈빛은 여전했으나 노검사의 말은 묘하게 자신이 없는 듯했다.
     ;요우키가 여자
@@ -127,10 +127,10 @@ ELSEIF CFLAG:5001 < 2 && MARK:2 == 1
     RETURN 1
 
 ;굴복각인Lv2
-ELSEIF CFLAG:5001 < 3 && MARK:2 == 2
+ELSEIF CFLAG:5001 < 3 && MARK:굴복각인 == 2
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 「그래…. 또 온 것이냐」
         PRINTFORMW 그리고 요우키는 말없이 옷을 벗었다.
     ;요우키가 여자
@@ -142,10 +142,10 @@ ELSEIF CFLAG:5001 < 3 && MARK:2 == 2
     RETURN 1
 
 ;굴복각인Lv3
-ELSEIF CFLAG:5001 < 4 && MARK:2 == 3 && TALENT:150 == 0
+ELSEIF CFLAG:5001 < 4 && MARK:굴복각인 == 3 && TALENT:연모 == 0
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORML 「…사이교우지를 모시는 콘파쿠의 검사라는」
         PRINTFORMW 「나의 긍지는 완전히 무너진 듯 하다…」
         PRINTFORMW 「이젠 네 맘대로 해라…」
@@ -159,27 +159,27 @@ ELSEIF CFLAG:5001 < 4 && MARK:2 == 3 && TALENT:150 == 0
         PRINTFORMW 지금의 요우키는 그저 성노예일 뿐이다.
         PRINTFORMW 마음껏 조교하도록 하자.
     ENDIF
-    IF TALENT:34 == 1
+    IF TALENT:저항 == 1
         PRINTFORMW ―요우키는 [저항]을 잃었다―
-        TALENT:34 = 0
+        TALENT:저항 = 0
     ENDIF
     CFLAG:5001 = 4
     RETURN 1
 
 ;연모
-ELSEIF CFLAG:5001 < 5 && TALENT:150
+ELSEIF CFLAG:5001 < 5 && TALENT:연모
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         ;남자 주인
-        IF TALENT:MASTER:120
+        IF TALENT:MASTER:남자
             PRINTFORMW 「이런 기분은 난생 처음 느껴보는군…」
             PRINTFORMW 「설마 내가 남자와의 성교로 욕정하게 될 줄이야…」
             PRINTFORMW 「그러니까… %CALLNAME:MASTER%여…」
             PRINTFORMW 「하지 않겠는가?(ヤラナイカ？)」
-            IF TALENT:27 == 1
+            IF TALENT:일선을넘지않음 == 1
                 PRINTFORMW ―요우키는 [일선을 넘지않음]을 잃었다―
-                TALENT:27 = 0
+                TALENT:일선을넘지않음 = 0
             ENDIF
         ;여주인
         ELSE
@@ -199,9 +199,9 @@ ELSEIF CFLAG:5001 < 5 && TALENT:150
         PRINTFORMW 「당신을 사랑합니다…. 날 당신 마음대로 해주세요…」
         PRINTFORMW %CALLNAME:MASTER%의 앞에 있는 것은 이제 한명의 여인일 뿐이었다
     ENDIF
-    IF TALENT:11 == 1
+    IF TALENT:반항적 == 1
         PRINTFORMW ―요우키는 [반항적]을 잃었다―
-        TALENT:11 = 0
+        TALENT:반항적 = 0
     ENDIF
     CFLAG:5001 = 5
     RETURN 1
@@ -220,11 +220,11 @@ ELSEIF NO:ASSI == 19
     ;처음
     IF CFLAG:5002 == 0
         ;요우무가 연모 또는 복종
-        IF TALENT:ASSI:150 || TALENT:ASSI:160
+        IF TALENT:ASSI:연모 || TALENT:ASSI:복종
             ;요우키가 연모(함락이벤트 완료)
             IF CFLAG:5001 == 5
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW …절묘한 타이밍에 들어온 듯하다
                     PRINTFORMW 요우키는 자위를 하고 있었다. 그것도 거의 절정에 치닫기 직전인 듯하다
                     PRINTFORMW 요우키는 자위를 들킨 것에 한번, %CALLNAME:MASTER%의 옆에 요우무가 있는 것에 또 한번 놀랐다
@@ -264,7 +264,7 @@ ELSEIF NO:ASSI == 19
             ;요우키가 함락전
             ELSE
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW 「요우무 설마 네가 공범이었을 줄이야…」
                     PRINTFORMW 『공범이라뇨, 전 조수일 뿐이에요』
                     PRINTFORMW 「무고한 계집아이들을 납치하고 손대다니, 수치스러운 줄 알아라!」
@@ -309,7 +309,7 @@ ELSEIF NO:ASSI == 19
             ;요우키가 연모(함락이벤트 완료)
             IF CFLAG:5001 == 5
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW 「음? 요우무! 네가 여긴 어인 일이냐?」
                     PRINTFORMW 『무슨 소릴 하시는……꺄악! 뭐하시는 겁니까!?』
                     PRINTFORMW 「뭐긴 뭐야, 수행이지」
@@ -344,7 +344,7 @@ ELSEIF NO:ASSI == 19
             ;요우키가 함락전
             ELSE
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW 「네가 설마 저딴 녀석한테 잡혀있었을 줄이야…」
                     PRINTFORMW 『죄송합니다……제가 부족한 바람에…』
                     PRINTFORMW 「아니, 사과할 필요 없다」
@@ -377,11 +377,11 @@ ELSEIF NO:ASSI == 19
     ;2회째 이후
     ELSE
         ;요우무가 연모 또는 복종
-        IF TALENT:ASSI:150 || TALENT:ASSI:160
+        IF TALENT:ASSI:연모 || TALENT:ASSI:복종
             ;요우키가 연모(함락이벤트 완료)
             IF CFLAG:5001 == 5
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORML 「으음!! 요우무의 보지는 최고로구나!!」
                     PRINTFORMW 『아앙♡ 할아버지의 자지도 최고!!』
                     PRINTFORML 눈에 불을 켜고 누워서 요우무의 다리 사이로 들어간 요우키
@@ -397,7 +397,7 @@ ELSEIF NO:ASSI == 19
             ;요우키가 함락전
             ELSE
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORML 「이, 이런 수치스러운 짓 말아라, 요우무!」
                     PRINTFORMW 『이젠 그 수치스러움도 기분 좋아서 말이죠』
                     PRINTFORML 요우무는 요우키의 음경을 펠라로 달궈주고 있었다
@@ -415,7 +415,7 @@ ELSEIF NO:ASSI == 19
             ;요우키가 연모(함락이벤트 완료)
             IF CFLAG:5001 == 5
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW 「요우무, 내 누관검을 봐줘. 이녀석을 어떻게 생각해?」
                     PRINTFORMW 『크고 아름답…무, 무슨 질문을 하시는 겁니까!』
                 ;요우키가 여자
@@ -426,7 +426,7 @@ ELSEIF NO:ASSI == 19
             ;요우키가 함락전
             ELSE
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW 『아직까지도 뾰족한 수가 없네요』
                     PRINTFORMW 「유유코 님이 걱정이구나…」
                 ;요우키가 여자
@@ -445,11 +445,11 @@ ELSEIF NO:ASSI == 20
     ;처음
     IF CFLAG:5003 == 0
         ;유유코가 연모
-        IF TALENT:ASSI:150
+        IF TALENT:ASSI:연모
             ;요우키가 연모(함락이벤트 완료)
             IF CFLAG:5001 == 5
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW 『예전부터 요우키랑 해보고 싶단 생각은 해봤는데 말이야』
                     PRINTFORMW 『설마 %CALLNAME:MASTER%덕분에 정말 할 수 있게 될 줄은 몰랐네』
                     PRINTFORMW 「실은 저도 유유코 님을 원한 적이 있었으나…」
@@ -481,7 +481,7 @@ ELSEIF NO:ASSI == 20
             ;요우키가 함락전
             ELSE
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW 「어째서 네놈이 유유코 님이랑 같이 있는 거냐!」
                     PRINTFORML 요우키는 벌써부터 %조사처리(CALLNAME:MASTER,"를")% 째려보고 있었다
                     PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 데려온 조수가 유유코였기 때문이겠지…
@@ -521,7 +521,7 @@ ELSEIF NO:ASSI == 20
             ;요우키가 연모(함락이벤트 완료)
             IF CFLAG:5001 == 5
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW 유유코를 곁에 두고 문을 열자, 신명나게 자위하던 요우키가 있었다
                     PRINTFORMW %CALLNAME:MASTER% 혼자에게 들킨 거라면 문제없었겠지만
                     PRINTFORMW 이번엔 유유코에게까지 그 모습을 보이고 말았다
@@ -556,7 +556,7 @@ ELSEIF NO:ASSI == 20
             ;요우키가 함락전
             ELSE
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW 「어째서 네놈이 유유코 님이랑 같이 있는 거냐!」
                     PRINTFORML 요우키는 벌써부터 %조사처리(CALLNAME:MASTER,"를")% 째려보고 있었다
                     PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 데려온 조수가 유유코였기 때문이겠지…
@@ -579,9 +579,9 @@ ELSEIF NO:ASSI == 20
                     PRINTFORMW 「언젠가 유유코 님이 네놈에게서 벗어나고자 하신다면」
                     PRINTFORMW 「난 네놈이 아닌 유유코 님을 도울 것이다!」
                     PRINTFORMW 그것이 그 노검사가 보여준 마지막 긍지였다
-                        IF TALENT:34 == 1
+                        IF TALENT:저항 == 1
                             PRINTFORMW -요우키는 [저항]을 잃었다-
-                        TALENT:34 = 0
+                        TALENT:저항 = 0
                         ENDIF
                 ;요우키가 여자
                 ELSE
@@ -606,11 +606,11 @@ ELSEIF NO:ASSI == 20
     ;2회째 이후
     ELSE
         ;유유코가 연모
-        IF TALENT:ASSI:150
+        IF TALENT:ASSI:연모
             ;요우키가 연모(함락이벤트 완료)
             IF CFLAG:5001 == 5
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORMW 『요우키의 여긴 오늘도 건강하네♪』
                     PRINTFORMW 「유유코 님의 혀놀림…실로 굉장합니다…!」
                 ;요우키가 여자
@@ -621,7 +621,7 @@ ELSEIF NO:ASSI == 20
             ;요우키가 함락전
             ELSE
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORML 『요우키…쾌감엔 솔직해지는 거야』
                     PRINTFORMW 『왜 아직도 거부하고 그럴까?』
                 ;요우키가 여자
@@ -636,7 +636,7 @@ ELSEIF NO:ASSI == 20
             ;요우키가 연모(함락이벤트 완료)
             IF CFLAG:5001 == 5
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORML 『이…이러면 기분 좋아?』
                     PRINTFORML 「아아…좋습니다, 유유코 님」
                     PRINTFORMW 『…그렇다니 다행이네』
@@ -648,7 +648,7 @@ ELSEIF NO:ASSI == 20
             ;요우키가 함락전
             ELSE
                 ;요우키가 남자
-                IF TALENT:120
+                IF TALENT:남자
                     PRINTFORML 「이런 일을 당하시게 만들어 죄송합니다, 유유코 님…」
                     PRINTFORML 『이제와서 사과같은 건 필요없어…』
                     PRINTFORMW 『그보다 이렇게 하면 기분 좋으려나?
@@ -667,7 +667,7 @@ ELSEIF NO:ASSI == 20
     ;처음
 ;    IF CFLAG:5004 == 0
         ;연모＋연모시 첫 대사(함락 이벤트)가 발생 완료
-;        IF TALENT:150 && CFLAG:201 >= 5
+;        IF TALENT:연모 && CFLAG:201 >= 5
 ;            PRINTFORMW 
         ;그 외
 ;        ELSE
@@ -676,9 +676,9 @@ ELSEIF NO:ASSI == 20
 ;            CFLAG:5004 = 1
 ;            RETURN 1
     ;2회째 이후
-;    ELSE CFLAG:5004 == 1 && FLAG:11 ==2
+;    ELSE CFLAG:5004 == 1 && FLAG:캐릭터대사표시 ==2
         ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
         ;그 외
 ;        ELSE
@@ -697,10 +697,10 @@ ENDIF
 ;-------------------------------------------------
 @K70_KOJO2
 ;반발각인Lv3
-IF MARK:9 == 3 && FLAG:11 == 2
+IF MARK:반발각인 == 3 && FLAG:캐릭터대사표시 == 2
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 「내 필히 네 목을 따리라…」
         PRINTFORMW 「그 목 깨끗이 씻고 기다려라…!」
         PRINTFORMW 요우키의 눈빛은 소름돋을 정도로 살기로 넘쳤다
@@ -713,10 +713,10 @@ IF MARK:9 == 3 && FLAG:11 == 2
     RETURN 1
 
 ;굴복각인Lv0
-ELSEIF MARK:2 == 0 && FLAG:11 == 2
+ELSEIF MARK:굴복각인 == 0 && FLAG:캐릭터대사표시 == 2
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORML 「네놈은 실로 무의미하고 헛된 삶을 사는구나」
         PRINTFORMW 요우키는 %조사처리(CSTR:90,"를")% 굉장히 한심하단 눈으로 바라보았다
     ;요우키가 여자
@@ -730,10 +730,10 @@ ELSEIF MARK:2 == 0 && FLAG:11 == 2
     RETURN 1
 
 ;굴복각인Lv1
-ELSEIF MARK:2 == 1 && FLAG:11 == 2
+ELSEIF MARK:굴복각인 == 1 && FLAG:캐릭터대사표시 == 2
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 「이제 이런 짓은 그만두고 좀 더 유익한 일을 하는 게 어떠냐?」
         PRINTFORMW 요우키는 이젠 %조사처리(CALLNAME:MASTER,"가")% 스스로 포기하게끔 회유하고 있다
     ;요우키가 여자
@@ -745,10 +745,10 @@ ELSEIF MARK:2 == 1 && FLAG:11 == 2
     RETURN 1
 
 ;굴복각인Lv2
-ELSEIF MARK:2 == 2 && FLAG:11 == 2
+ELSEIF MARK:굴복각인 == 2 && FLAG:캐릭터대사표시 == 2
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 「이, 이딴 짓 한다고 해서 난……」
         PRINTFORMW 요우키는 더 말을 잇지 못했다
     ;요우키가 여자
@@ -759,10 +759,10 @@ ELSEIF MARK:2 == 2 && FLAG:11 == 2
     RETURN 1
 
 ;굴복각인Lv3＋연모 없음
-ELSEIF MARK:2 == 3 && TALENT:150 == 0 && FLAG:11 == 2
+ELSEIF MARK:굴복각인 == 3 && TALENT:연모 == 0 && FLAG:캐릭터대사표시 == 2
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 요우키는 말없이 옷을 벗었다
         PRINTFORMW 노검사의 탄탄한 근육질의 몸이 그대로 드러났다
     ;요우키가 여자
@@ -774,12 +774,12 @@ ELSEIF MARK:2 == 3 && TALENT:150 == 0 && FLAG:11 == 2
     RETURN 1
 
 ;연모
-ELSEIF TALENT:150 && FLAG:11 == 2
+ELSEIF TALENT:연모 && FLAG:캐릭터대사표시 == 2
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         ;남자 주인
-        IF TALENT:MASTER:120
+        IF TALENT:MASTER:남자
             PRINTFORMW 「우홋♪ 오늘도 자넨 좋은 몸을 하고 있군」
             PRINTFORMW 「자, 오늘도 하자꾸나♂」
         ;여주인
@@ -804,7 +804,7 @@ RETURN 0
 ;조교 종료시 대사
 ;-------------------------------------------------
 @EVENTEND
-SIF FLAG:11 == 0
+SIF FLAG:캐릭터대사표시 == 0
     RETURN 0
 SIF NO:TARGET != 70
     RETURN 0
@@ -824,7 +824,7 @@ SIF NO:TARGET != 70
 ;조교 종료시 대사
 ;--------------------------------------------------
 ;반발각인Lv3
-IF MARK:9 == 3
+IF MARK:반발각인 == 3
     DRAWLINE
     PRINTFORMW 문을 나서려는데 등 뒤가 따갑다
     PRINTFORMW 뒤를 돌아보니 요우키가 날카롭게 째려보고 있었다
@@ -832,10 +832,10 @@ IF MARK:9 == 3
     RETURN 1
 
 ;굴복각인Lv1이하
-ELSEIF MARK:2 <= 1
+ELSEIF MARK:굴복각인 <= 1
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 요우키는 아무 일 없다는 듯 몸단장을 하고 옷을 입고 있었다
         PRINTFORMW 하지만 그 손은 부들부들 떨고 있었다
         PRINTFORMW 치가 떨린 건지, 두려움에 떠는 건지, 아니면…
@@ -847,10 +847,10 @@ ELSEIF MARK:2 <= 1
     RETURN 1
 
 ;굴복각인Lv2
-ELSEIF MARK:2 == 2
+ELSEIF MARK:굴복각인 == 2
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 요우키는 고개를 숙인 채 아무 말이 없었다
         PRINTFORMW 아무런 반응이 없어 %조사처리(CALLNAME:MASTER,"는")% 그냥 나왔다
     ;요우키가 여자
@@ -862,10 +862,10 @@ ELSEIF MARK:2 == 2
     RETURN 1
 
 ;굴복각인Lv3
-ELSEIF MARK:2 == 3 && TALENT:150 == 0
+ELSEIF MARK:굴복각인 == 3 && TALENT:연모 == 0
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORML 자신의 무력함을 뼈저리게 느낀 건지
         PRINTFORMW 요우키는 공허한 눈으로 천장만 바라보았다
     ;요우키가 여자
@@ -876,12 +876,12 @@ ELSEIF MARK:2 == 3 && TALENT:150 == 0
     RETURN 1
 
 ;연모＋체력 500 미만
-ELSEIF TALENT:150 && BASE:0 < 500
+ELSEIF TALENT:연모 && BASE:0 < 500
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         ;남자 주인
-        IF TALENT:MASTER:120
+        IF TALENT:MASTER:남자
             PRINTFORMW 「자네 체력 하나만큼은 끝내주는군」
             PRINTFORMW 「자네가 검사를 했다면 꽤 소질 있었을 텐데 말이야」
             PRINTFORMW 「물론 자넨 이게 더 소질 있지만 말이야♂」
@@ -899,12 +899,12 @@ ELSEIF TALENT:150 && BASE:0 < 500
     RETURN 1
 
 ;연모
-ELSEIF TALENT:150
+ELSEIF TALENT:연모
     DRAWLINE
     ;요우키가 남자
-    IF TALENT:120
+    IF TALENT:남자
         ;남자 주인
-        IF TALENT:MASTER:120
+        IF TALENT:MASTER:남자
             PRINTFORML 「음? 뭐야, 벌써 끝이야?」
             PRINTFORML 「난 아직 더 할 수 있다고?」
             PRINTFORMW 그러면서 요우키는 미묘하게 소름돋는 음란한 눈으로 바라봤다
@@ -964,11 +964,11 @@ IF SELECTCOM == 0
     ;처음
     IF CFLAG:9000 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「아아…기분 좋군요…」
                 ;여주인
                 ELSE
@@ -979,11 +979,11 @@ IF SELECTCOM == 0
                 PRINTFORMW 「하아아…잔뜩 만져주세요…」
             ENDIF
         ;굴복각인Lv2이상
-        ELSEIF MARK:2 >= 2
+        ELSEIF MARK:굴복각인 >= 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「…남자한테 만져지는 건 불쾌하군」
                 ;여주인
                 ELSE
@@ -996,9 +996,9 @@ IF SELECTCOM == 0
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「손대지마라, 이놈! 남자놈이 하니 더 불쾌하군!」
                 ;여주인
                 ELSE
@@ -1014,9 +1014,9 @@ IF SELECTCOM == 0
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9000 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9000 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「오오오…아아…」
                 PRINTFORMW 요우키는 자신의 감정에 아무런 여과없이 쾌락의 기쁨을 그대로 표출하고 있었다.
             ;요우키가 여자
@@ -1025,11 +1025,11 @@ IF SELECTCOM == 0
             ENDIF
             CFLAG:9000 = 5
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9000 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9000 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 요우키는 말없이 고개만 돌렸다
                     PRINTFORMW 더이상 저항하진 않지만 강한 수치심이 아직도 몰려오는 모양이다
                 ;여주인
@@ -1043,11 +1043,11 @@ IF SELECTCOM == 0
             ENDIF
             CFLAG:9000 = 4
         ;굴복각인Lv2
-        ELSEIF MARK:2 == 2 && (CFLAG:9000 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 2 && (CFLAG:9000 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「네놈의 성벽이 추잡하다는 건 아느냐?」
                     PRINTFORMW 요우키는 이를 갈며 노려보고 있었다
                 ;여주인
@@ -1063,9 +1063,9 @@ IF SELECTCOM == 0
             ENDIF
             CFLAG:9000 = 3
         ;그 외
-        ELSEIF MARK:2 <= 1 && (CFLAG:9000 <= 1 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 <= 1 && (CFLAG:9000 <= 1 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「이, 이놈이 아직도!」
                 PRINTFORMW 어떻게든 애무하긴 했지만 요우키의 저항은 아직도 격렬했다
             ;요우키가 여자
@@ -1087,7 +1087,7 @@ IF SELECTCOM == 1 && TEQUIP:56 == 0
     ;처음
     IF CFLAG:9001 == 0
         ;굴복각인Lv2이상
-        IF MARK:2 >= 2
+        IF MARK:굴복각인 >= 2
             PRINTFORMW 「젊을 적 아내의 것을 핥아본 적은 있었지만…」
             PRINTFORMW 「보지를 핥아진다는 건 이런 기분이구나…」
         ;그 외
@@ -1099,15 +1099,15 @@ IF SELECTCOM == 1 && TEQUIP:56 == 0
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9001 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9001 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「원하시는 만큼 마음껏 핥아주세요」
             CFLAG:9001 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9001 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9001 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「부정하고 싶지만…능숙하시군요…」
             CFLAG:9001 = 3
         ;그 외
-        ELSEIF CFLAG:9001 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9001 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「…꼭 개같구나」
             CFLAG:9001 = 2
         ENDIF
@@ -1118,23 +1118,23 @@ ENDIF
 [SKIPSTART]
 IF SELECTCOM == 611
     ;연모+노출벽 Lv3이상+C감각Lv3이상
-    IF TALENT:150 && ABL:14 >= 3 && ABL:0 >= 3 && (CFLAG:9611 <= 5 || FLAG:11 == 2)
+    IF TALENT:연모 && ABL:노출증 >= 3 && ABL:C감각 >= 3 && (CFLAG:9611 <= 5 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9611 = 6
     ;연모
-    ELSEIF TALENT:150 && (CFLAG:9611 <= 4 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && (CFLAG:9611 <= 4 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9611 = 5
     ;굴복각인Lv3+노출벽Lv3이상+C감각Lv3이상
-    ELSEIF MARK:2 == 3 && ABL:0 >= 3 && ABL:14 >= 3 && (CFLAG:9611 <= 3 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && ABL:C감각 >= 3 && ABL:노출증 >= 3 && (CFLAG:9611 <= 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9611 = 4
     ;굴복각인Lv3
-    ELSEIF MARK:2 == 3 && (CFLAG:9611 <= 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && (CFLAG:9611 <= 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9611 = 3
     ;그 외
-    ELSEIF CFLAG:9611 <= 1 || FLAG:11 == 2
+    ELSEIF CFLAG:9611 <= 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:9611 = 2
     ENDIF
@@ -1149,9 +1149,9 @@ IF SELECTCOM == 2
     ;처음
     IF CFLAG:9002 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「하긴 입을 빼면 집어넣을 구멍이라곤 거기밖에 없지」
                 PRINTFORMW 「부디 만족하시는 형태가 되도록 개발해 주시길 바랍니다♂」
             ;요우키가 여자
@@ -1162,7 +1162,7 @@ IF SELECTCOM == 2
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「무…무슨 짓을 하는게냐, 네놈!」
                 PRINTFORMW 「그런 데까지 손을 대다니 진정 미쳤구나!」
             ;요우키가 여자
@@ -1179,9 +1179,9 @@ IF SELECTCOM == 2
     ELSE
         LOCAL = PALAM:10 + UP:10
         ;연모+윤활Lv2이상
-        IF TALENT:150 && LOCAL >= PALAMLV:2 && (CFLAG:9002 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && LOCAL >= PALAMLV:2 && (CFLAG:9002 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「후후…그래, 거기…좀 더 안쪽에…」
             ;요우키가 여자
             ELSE
@@ -1190,14 +1190,14 @@ IF SELECTCOM == 2
             ENDIF
             CFLAG:9002 = 5
         ;연모+윤활Lv2미만
-        ELSEIF TALENT:150 && LOCAL < PALAMLV:2 && (CFLAG:9002 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && LOCAL < PALAMLV:2 && (CFLAG:9002 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아, 아직은 뻑뻑합니다만…」
             PRINTFORMW 「그래도 원하신다면…」
             CFLAG:9002 = 4
         ;윤활Lv2이상＋A감각Lv3이상
-        ELSEIF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9002 <= 2 || FLAG:11 == 2)
+        ELSEIF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9002 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「느…느끼고 있다니 이게 웬 일이란 말이냐…」
             ;요우키가 여자
             ELSE
@@ -1205,9 +1205,9 @@ IF SELECTCOM == 2
             ENDIF
             CFLAG:9002 = 3
         ;그 외
-        ELSEIF CFLAG:9002 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9002 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「치욕이군…!」
             ;요우키가 여자
             ELSE
@@ -1226,9 +1226,9 @@ IF SELECTCOM == 3
     ;처음
     IF CFLAG:9003 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「근육이 탄탄해서 멋지다니, 허허 쑥쓰럽군요」
                 PRINTFORMW 「마음껏 만지셔도 됩니다」
             ;요우키가 여자
@@ -1238,7 +1238,7 @@ IF SELECTCOM == 3
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「남자의 가슴따위 만져서 뭐가 좋다는겐지…」
             ;요우키가 여자
             ELSE
@@ -1251,9 +1251,9 @@ IF SELECTCOM == 3
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9003 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9003 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「당신만을 위한 가슴근육입니다 마음껏 갖고노세요」
             ;요우키가 여자
             ELSE
@@ -1262,9 +1262,9 @@ IF SELECTCOM == 3
             ENDIF
             CFLAG:9003 = 4
         ;B감각Lv3이상
-        ELSEIF ABL:3 >= 3 && (CFLAG:9003 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:B감각 >= 3 && (CFLAG:9003 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW (여자도 아닌데 가슴을 만져진 걸로 기분좋다니…)
                 PRINTFORMW (내 몸에 대체 무슨 일이 일어난건가…)
             ;요우키가 여자
@@ -1273,9 +1273,9 @@ IF SELECTCOM == 3
             ENDIF
             CFLAG:9003 = 3
         ;그 외
-        ELSEIF CFLAG:9003 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9003 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「도대체가 이렇게 어이없는 짓은 처음 보는군」
             ;요우키가 여자
             ELSE
@@ -1297,9 +1297,9 @@ IF SELECTCOM == 4
     ;처음
     IF CFLAG:9004 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「저의 여인으로써의 순결…」
                 PRINTFORMW 「이제 그 손으로 가져가주세요…」
                 PRINTFORMW 「그러시다면 요우키는 기쁩니다…♡」
@@ -1313,11 +1313,11 @@ IF SELECTCOM == 4
         ;비처녀
         ELSE
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「손가락 따뜻하네요…」
                 PRINTFORMW 「이렇게 만져지는 것도 기분 좋아요」
             ;V감각Lv3이상
-            ELSEIF ABL:1 >= 3
+            ELSEIF ABL:V감각 >= 3
                 PRINTFORMW 「오히려 여태까지 손을 댄 적 없다는 것이 놀라울 따름이군」
                 PRINTFORMW 「왜? 이젠 직접 손대기가 겁나지 않은거냐하윽!」
                 PRINTFORMW 「으으…기습은 너무하잖아…」
@@ -1333,16 +1333,16 @@ IF SELECTCOM == 4
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9004 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9004 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아… 손가락이 안을 휘저어서…기분 좋아……」
             CFLAG:9004 = 4
         ;V감각Lv3이상
-        ELSEIF ABL:1 >= 3 && (CFLAG:9004 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:V감각 >= 3 && (CFLAG:9004 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「하읏! 느, 느끼거나 한 적 없스하악!」
             PRINTFORMW 「아, 아앙! 하읏! 하아아……젠장…」
             CFLAG:9004 = 3
         ;그 외
-        ELSEIF CFLAG:9004 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9004 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「그 손, 씻기는 하는거냐?」
             PRINTFORMW 「적어도 여인의 소중한 곳을 만지려면 청결정도는 유지해야 할 것 아니냐」
             PRINTFORMW 「그게 성관계에서의 남자로써의 예의인 것이다…만, 듣고 있나?」
@@ -1354,15 +1354,15 @@ ENDIF
 ;G스팟 자극
 IF SELECTCOM == 600
     ;연모
-    IF TALENT:150 && (CFLAG:9600 <= 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:9600 <= 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「아앙~ 거기 굉장해요! 더…더 만져주세요…!!」
         CFLAG:9600 = 4
     ;V감각Lv3이상
-    ELSEIF ABL:1 >= 3 && (CFLAG:9600 <= 2 || FLAG:11 == 2)
+    ELSEIF ABL:V감각 >= 3 && (CFLAG:9600 <= 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「아, 안돼…! 거긴 위험해…! 머리가 새하얘져버려……!!」
         CFLAG:9600 = 3
     ;그 외
-    ELSEIF CFLAG:9600 <= 1 || FLAG:11 == 2
+    ELSEIF CFLAG:9600 <= 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 「!? 뭐, 뭐야 지금건!? 대체 무슨 짓으으윽!?」
         PRINTFORMW G스팟의 감각이 낯선지 만져줄 때마다 흠칫 놀라고 있다
         CFLAG:9600 = 2
@@ -1377,9 +1377,9 @@ IF SELECTCOM == 5
     ;처음
     IF CFLAG:9005 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「이, 입으로 해주시다니…이렇게 영광스러울수가!」
             ;요우키가 여자(즉 후타나리)
             ELSE
@@ -1388,7 +1388,7 @@ IF SELECTCOM == 5
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「그 더러운 입 대지 마라!」
             ;요우키가 여자(즉 후타나리)
             ELSE
@@ -1401,9 +1401,9 @@ IF SELECTCOM == 5
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9005 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9005 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자
             ELSE
@@ -1413,9 +1413,9 @@ IF SELECTCOM == 5
             ENDIF
             CFLAG:9005 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9005 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9005 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자
             ELSE
@@ -1425,9 +1425,9 @@ IF SELECTCOM == 5
             ENDIF
             CFLAG:9005 = 3
         ;그 외
-        ELSEIF CFLAG:9005 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9005 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자
             ELSE
@@ -1447,11 +1447,11 @@ IF SELECTCOM == 6
     ;처음
     IF CFLAG:9006 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「이 늙은이의 입술로 만족한단 말인가? 그렇다면 그대 마음대로…」
                 ;여주인
                 ELSE
@@ -1466,9 +1466,9 @@ IF SELECTCOM == 6
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 키스하겠다고 했는데 키스라는 단어를 모르는 듯해 의미를 알려줬다
                     PRINTFORMW 「입맞춤이라니! 남자끼리 입을 맞추겠다는 건가! 외도스러운 것도 정도가 있어야지!」
                     PRINTFORMW 「네놈의 그 추한 욕정은 정말 질이 떨어지는…우웁!?」
@@ -1491,11 +1491,11 @@ IF SELECTCOM == 6
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9006 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9006 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「남자끼리의 입맞춤도 나쁘지 않군…아니, 오히려 좋아」
                 ;여주인
                 ELSE
@@ -1508,11 +1508,11 @@ IF SELECTCOM == 6
             ENDIF
             CFLAG:9006 = 4
         ;순종Lv2이상
-        ELSEIF ABL:10 >=2 && (CFLAG:9006 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:순종 >=2 && (CFLAG:9006 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「…네 취향은 정말 이해할 수 없군」
                 ;여주인
                 ELSE
@@ -1528,11 +1528,11 @@ IF SELECTCOM == 6
             ENDIF
             CFLAG:9006 = 3
         ;그 외
-        ELSEIF CFLAG:9006 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9006 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「그만둬라! 이런 짓은 도리에 맞지 않는다!」
                 ;여주인
                 ELSE
@@ -1557,11 +1557,11 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0
     ;처음
     IF CFLAG:9007 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「소년이여, 잘 봐라! 이것이 남자의 자위다!」
                     PRINTFORMW 그리고 요우키는 크고 아름다운 육봉을 매우 멋지고 빠른 피스톤 운동으로 위로하고 있다
                 ;여주인
@@ -1578,9 +1578,9 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「자위라니! 어찌 그런 걸 남에게 보이면서 한단 말인가! 그것도 남자에게!」
                     PRINTFORMW 「……알았네 하면 될 거 아닌가」
                 ;여주인
@@ -1600,11 +1600,11 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0
     ;2회째 이후
     ELSE
         ;연모＋자위중독Lv3이상
-        IF TALENT:150 && ABL:30 >= 3 && (CFLAG:9007 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:자위중독 >= 3 && (CFLAG:9007 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「으음! 간다, 간다, 간다, 간다!!」
                     PRINTFORMW 「내 자지의 사정쇼를 잔뜩 즐겨주게!」
                 ;여주인
@@ -1619,11 +1619,11 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0
             ENDIF
             CFLAG:9007 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9007 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9007 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「내 손만으론 만족할 수 없어…」
                 ;여주인
                 ELSE
@@ -1636,11 +1636,11 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0
             ENDIF
             CFLAG:9007 = 4
         ;자위중독Lv3이상
-        ELSEIF ABL:30 >= 3 && (CFLAG:9007 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:자위중독 >= 3 && (CFLAG:9007 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「으윽…왜 네놈 눈을 의식하면서 느끼는 거냐, 난…」
                 ;여주인
                 ELSE
@@ -1652,11 +1652,11 @@ IF SELECTCOM == 7 && TEQUIP:54 == 0
             ENDIF
             CFLAG:9007 = 3
         ;그 외
-        ELSEIF CFLAG:9007 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9007 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「차라리 여탕이나 훔쳐보는 것이 나을 거라 보는데?」
                 ;여주인
                 ELSE
@@ -1681,19 +1681,19 @@ ELSEIF SELECTCOM == 7 && TEQUIP:54
     ;2회째 이후
     ELSE
         ;연모＋자위중독Lv3이상
-        IF TALENT:150 && ABL:30 >= 3 && (CFLAG:8801 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:자위중독 >= 3 && (CFLAG:8801 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:8801 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:8801 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:8801 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:8801 = 4
         ;자위중독Lv3이상
-        ELSEIF ABL:30 >= 3 && (CFLAG:8801 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:자위중독 >= 3 && (CFLAG:8801 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:8801 = 3
         ;그 외
-        ELSEIF CFLAG:8801 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:8801 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:8801 = 2
         ENDIF
@@ -1708,9 +1708,9 @@ IF SELECTCOM == 9
     ;처음
     IF CFLAG:9009 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW …
                 PRINTFORMW 「제가 실수한 것이 있다면 달게 벌을 받겠습니다」
                 PRINTFORMW ……
@@ -1727,7 +1727,7 @@ IF SELECTCOM == 9
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「무슨 꿍꿍이냐? 소용없는 짓이다」
             ;요우키가 여자
             ELSE
@@ -1739,9 +1739,9 @@ IF SELECTCOM == 9
     ;2회째 이후
     ELSE
         ;연모＋욕정Lv3이상
-        IF TALENT:150 && PALAM:13 >= PALAMLV:3 && (CFLAG:9009 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && PALAM:13 >= PALAMLV:3 && (CFLAG:9009 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「마음껏 쉬십시오. 제 몸은 언제든 준비되어 있으니까」
             ;요우키가 여자
             ELSE
@@ -1749,9 +1749,9 @@ IF SELECTCOM == 9
             ENDIF
             CFLAG:9009 = 4
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9009 <= 2 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9009 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「잠시 쉬는 겁니까? 편한대로 하십시오」
             ;요우키가 여자
             ELSE
@@ -1759,9 +1759,9 @@ IF SELECTCOM == 9
             ENDIF
             CFLAG:9009 = 3
         ;그 외
-        ELSEIF CFLAG:9009 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9009 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「무슨 꿍꿍이냐? 소용없는 짓이다」
             ;요우키가 여자
             ELSE
@@ -1780,7 +1780,7 @@ IF SELECTCOM == 10
     ;처음
     IF CFLAG:9010 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 요우키는 분홍색의 로터를 신기하게 쳐다봤다
             PRINTFORML 「우와! 이런 건 처음봐요! 무엇에 쓰는 건가요?」
             PRINTFORMW 「에? 여기에요? 진동으로?」
@@ -1797,16 +1797,16 @@ IF SELECTCOM == 10
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9010 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9010 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「핑크 로터! 왠지 기분좋은 이름이죠」
             PRINTFORMW 「빨리 해주세요 망설이지 않아도 돼요♪」
             CFLAG:9010 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9010 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9010 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「…또 그겁니까?」
             CFLAG:9010 = 3
         ;그 외
-        ELSEIF CFLAG:9010 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9010 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「도구 없인 아무것도 못하는 겁니까?」
             PRINTFORMW 「그야 저도 검이라는 도구를 주로 쓰지만……」
             CFLAG:9010 = 2
@@ -1822,7 +1822,7 @@ IF SELECTCOM == 11
     ;처음
     IF CFLAG:9011 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「안마기요? 헤에~요즘은 이런 걸로 안마하는구나~」
             PRINTFORMW 「에? 근데 왜 그걸 보지쪽으로…아!」
             PRINTFORMW 「여길 안마하는 거구나? 우후후♪ 이 안마 무지 좋을 것 같네요」
@@ -1837,16 +1837,16 @@ IF SELECTCOM == 11
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9011 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9011 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「와아! 안마 시간이구나!」
             PRINTFORMW 「오늘도 신나게 가버릴게요」
             CFLAG:9011 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9011 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9011 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「저…그건 좀 봐주실 수 없나요? 자꾸 가버려서…」
             CFLAG:9011 = 3
         ;그 외
-        ELSEIF CFLAG:9011 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9011 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「히익! 그, 그거 들이대지 마세요! 너무 강하다고요!」
             CFLAG:9011 = 2
         ENDIF
@@ -1862,9 +1862,9 @@ IF SELECTCOM == 12 && TEQUIP:20
     ;처음
     IF CFLAG:9012 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「이왕이면 주인님의 자지로 처녀를 드리고 싶었지만…」
                 PRINTFORMW 「그래도 주인님께 처녀를 드릴 수 있다면 기뻐요…」
             ;그 외
@@ -1877,7 +1877,7 @@ IF SELECTCOM == 12 && TEQUIP:20
         ;비처녀
         ELSE
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「꼭 자지처럼 생긴 물건이네요? 게다가 진동하고 있어…」
                 PRINTFORMW 「무슨 기분일까요? 이런 멋있는 걸 넣는다는 건…」
             ;그 외
@@ -1891,17 +1891,17 @@ IF SELECTCOM == 12 && TEQUIP:20
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9012 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9012 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「제 보지…벌써 넣고 싶어서 이렇게 잔뜩 벌어졌어요…」
             PRINTFORMW 「거칠게 넣어주세요?」
             CFLAG:9012 = 4
         ;V감각Lv3이상
-        ELSEIF ABL:1 >= 3 && (CFLAG:9012 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:V감각 >= 3 && (CFLAG:9012 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「…마음대로 하세요」
             PRINTFORMW (왜…왜 설레는 거지? 저런 추잡한 도구 따위에…)
             CFLAG:9012 = 3
         ;그 외
-        ELSEIF CFLAG:9012 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9012 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「또 그런 물건을…! 저리 치우세요!」
             CFLAG:9012 = 2
         ENDIF
@@ -1910,12 +1910,12 @@ IF SELECTCOM == 12 && TEQUIP:20
 ;탈착시
 ELSEIF SELECTCOM == 12 && TEQUIP:20 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8811 < 2 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8811 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「하우우…좀 더 느끼고 싶었는데…」
         PRINTFORMW 「이번엔 좀 더 좋은 걸 넣어주실 건가요?」
         CFLAG:8811 = 2
     ;그 외
-    ELSEIF CFLAG:8811 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8811 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 「우우…최악이야…이거…」
         CFLAG:8811 = 1
     ENDIF
@@ -1930,9 +1930,9 @@ IF SELECTCOM == 13 && TEQUIP:25
     ;처음
     IF CFLAG:9013 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「과연…엉덩이에 넣는 용도인건가? 이거 참 기대되는군」
             ;요우키가 여자
             ELSE
@@ -1941,7 +1941,7 @@ IF SELECTCOM == 13 && TEQUIP:25
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「무…무슨 짓을 하려는 게냐! 그만둬라! 거긴 그런 걸 집어넣는 곳이 아니…으윽!?」
             ;요우키가 여자
             ELSE
@@ -1953,9 +1953,9 @@ IF SELECTCOM == 13 && TEQUIP:25
     ;2회째 이후
     ELSE
         ;연모＋A감각Lv3이상
-        IF TALENT:150 && ABL:2 >= 3 && (CFLAG:9013 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && (CFLAG:9013 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자
             ELSE
@@ -1964,9 +1964,9 @@ IF SELECTCOM == 13 && TEQUIP:25
             ENDIF
             CFLAG:9013 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9013 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9013 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자
             ELSE
@@ -1974,9 +1974,9 @@ IF SELECTCOM == 13 && TEQUIP:25
             ENDIF
             CFLAG:9013 = 4
         ;A감각Lv3이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9013 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9013 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자
             ELSE
@@ -1984,9 +1984,9 @@ IF SELECTCOM == 13 && TEQUIP:25
             ENDIF
             CFLAG:9013 = 3
         ;그 외
-        ELSEIF CFLAG:9013 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9013 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자
             ELSE
@@ -1999,9 +1999,9 @@ IF SELECTCOM == 13 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 13 && TEQUIP:25 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8812 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8812 < 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자
             ELSE
@@ -2010,9 +2010,9 @@ ELSEIF SELECTCOM == 13 && TEQUIP:25 == 0
             ENDIF
         CFLAG:8812 = 3
     ;A감각Lv3이상
-    ELSEIF ABL:2 >= 3 && (CFLAG:8812 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && (CFLAG:8812 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자
             ELSE
@@ -2020,9 +2020,9 @@ ELSEIF SELECTCOM == 13 && TEQUIP:25 == 0
             ENDIF
         CFLAG:8812 = 2
     ;그 외
-    ELSEIF CFLAG:8812 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8812 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자
             ELSE
@@ -2042,7 +2042,7 @@ IF SELECTCOM == 14 && TEQUIP:30
     ;처음
     IF CFLAG:9014 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「이건…끼우는 거네요?」
             PRINTFORMW 「네…어서 끼워주세요…」
         ;그 외
@@ -2055,12 +2055,12 @@ IF SELECTCOM == 14 && TEQUIP:30
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9014 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9014 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「절정으로 치닫는 몸부림의 춤, 보여드릴게요」
             PRINTFORMW 그 말대로 요우키는 클리토리스에 전해지는 자극으로 절정하며 춤을 추듯 우아하게 몸부림치고 있었다
             CFLAG:9014 = 3
         ;그 외
-        ELSEIF CFLAG:9014 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9014 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「으으으…또 그겁니까?」
             CFLAG:9014 = 2
         ENDIF
@@ -2069,11 +2069,11 @@ IF SELECTCOM == 14 && TEQUIP:30
 ;탈착시
 ELSEIF SELECTCOM == 14 && TEQUIP:30 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8813 < 2 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8813 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「제 춤…어떠셨나요?」
         CFLAG:8813 = 2
     ;그 외
-    ELSEIF CFLAG:8813 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8813 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 「사…살았다…」
         CFLAG:8813 = 1
     ENDIF
@@ -2088,7 +2088,7 @@ IF SELECTCOM == 15 && TEQUIP:35
     ;처음
     IF CFLAG:9015 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「저…… 명하신대로 유두를 내밀었습니다만, 대체 무엇을 하시려고……」
             PRINTFORMW 「부, 불만인 게 아니라, 그저 궁금해서 그렇습니다……」
             PRINTFORML 요우키는 명령대로 순순히 가슴을 쥐어 유두가 잘 돌출되게 하였다
@@ -2111,13 +2111,13 @@ IF SELECTCOM == 15 && TEQUIP:35
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9015 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9015 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「자, 요우키는 이미 준비되었습니다」
             PRINTFORMW 유두캡을 꺼내자마자 요우키는 눈치있게 자신의 유두를 최대한으로 꺼내보였다
             PRINTFORMW 그 선홍빛 유두의 뿌리까지 찝어주자 요우키는 기쁘게 전원이 켜지길 기다렸다
             CFLAG:9015 = 3
         ;그 외
-        ELSEIF CFLAG:9015 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9015 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「시, 싫다! 그거 힘들고 아프단 말이다!」
             PRINTFORMW 노예의 불평따위 들어줄 가치도 없으니까 무시하고 억지로 장착시켜줬다
             PRINTFORMW 「끄…끄으으……」
@@ -2128,12 +2128,12 @@ IF SELECTCOM == 15 && TEQUIP:35
 ;탈착시
 ELSEIF SELECTCOM == 15 && TEQUIP:35 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8814 < 2 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8814 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「후앗… 벌써 끝인가요?」
         PRINTFORMW 「그럼, 이번엔 더욱 격렬한 것으로 해주세요♪」
         CFLAG:8814 = 2
     ;그 외
-    ELSEIF CFLAG:8814 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8814 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 「이제야 끝인가……」
         PRINTFORMW 「설마 또 하진 않겠지……?」
         CFLAG:8814 = 1
@@ -2149,9 +2149,9 @@ IF SELECTCOM == 16 && TEQUIP:30
     ;처음
     IF CFLAG:9016 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「여성기를 본딴 도구라……」
                 PRINTFORMW 「이 촉감, 사람의 구멍에 넣는 것과는 또 다른 경험과 쾌감을 느낄 수 있겠군」
             ;요우키가 여자
@@ -2162,7 +2162,7 @@ IF SELECTCOM == 16 && TEQUIP:30
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「여성기를 본딴 도구라……」
                 PRINTFORMW 「누가 만들었는진 몰라도 자네처럼 추잡한 생각만 하는 자가 틀림없겠군」
             ;요우키가 여자
@@ -2175,9 +2175,9 @@ IF SELECTCOM == 16 && TEQUIP:30
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9016 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9016 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「혈기만 왕성한 젊은 시절 곤약으로 자위한 적 있었지」
                 PRINTFORMW 「그때 이게 있었으면 곤약따위 안썼을거야」
             ;요우키가 여자
@@ -2187,9 +2187,9 @@ IF SELECTCOM == 16 && TEQUIP:30
             ENDIF
             CFLAG:9016 = 3
         ;그 외
-        ELSEIF CFLAG:9016 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9016 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「도대체 누가 이딴 걸 만든거야!」
                 PRINTFORMW 요우키는 기분이 심히 나쁜지 역정을 내고 있다
             ;요우키가 여자
@@ -2203,9 +2203,9 @@ IF SELECTCOM == 16 && TEQUIP:30
 ;종료시
 ELSEIF SELECTCOM == 16 && TEQUIP:30 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8014 < 2 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8014 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「감기는 맛이 끝내주던데, 하나 갖고 싶구나」
                 PRINTFORMW 허나 안되는 건 안되는 것이기에 완강히 거절했다
             ;요우키가 여자
@@ -2215,9 +2215,9 @@ ELSEIF SELECTCOM == 16 && TEQUIP:30 == 0
             ENDIF
         CFLAG:8815 = 2
     ;그 외
-    ELSEIF CFLAG:8014 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8014 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「꼴도 보기 싫다, 그딴 물건!」
                 PRINTFORMW 오나홀을 벗을 것을 허락하자마자 요우키는 오나홀을 내던지고 고개를 돌렸다
             ;요우키가 여자
@@ -2237,9 +2237,9 @@ IF SELECTCOM == 20
     ;처음
     IF CFLAG:9020 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「드디어…제 처녀를 가져가시는 거군요」
                 PRINTFORMW 「가져가세요…제 전부를 다…절 소유해주세요…」
             ;그 외
@@ -2250,7 +2250,7 @@ IF SELECTCOM == 20
         ;비처녀
         ELSE
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「얼마든지 넣어주세요…준비는 다 되었답니다☆」
             ;그 외
             ELSE
@@ -2262,23 +2262,23 @@ IF SELECTCOM == 20
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9020 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9020 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「칼을 칼집에 넣는 것처럼, 주인님의 물건은 제 보지에 보관해주세요」
             CFLAG:9020 = 5
         ;굴복각인Lv3＋V감각Lv3이상
-        ELSEIF MARK:2 == 3 && ABL:1 >= 3 && (CFLAG:9020 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:9020 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORML 요우키가 얼굴을 가리고 있길래 억지로 손을 치워봤더니,
             PRINTFORMW 잔뜩 상기한 얼굴로 쾌감을 즐기는 걸 참고 있었다
             PRINTFORMW 「뭐, 뭘 보는거야! 하던 일이나 계속 하라고!」
             PRINTFORMW 다시 부끄러운 듯이 얼굴을 가린 요우키였지만, 확실하게 느끼고 있는 것 같다
             CFLAG:9020 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9020 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9020 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORML 요우키는 아무 말도 하지 않고 그저 %조사처리(CALLNAME:MASTER,"과")% 눈 마주치는 걸 피하기 위해
             PRINTFORMW 고개를 돌리고 무감각하게 허공을 바라보고 있었다
             CFLAG:9020 = 3
         ;그 외
-        ELSEIF CFLAG:9020 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9020 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORML 「오지마! 넣지마! 당신같은 사람하고 하기 싫어!」
             PRINTFORMW 「그보다 난 남자야! 날 여자처럼 대하지 마!」
             PRINTFORMW 요우키의 완강한 저항을 뿌리치고 겨우겨우 넣을 수 있었다
@@ -2295,9 +2295,9 @@ IF SELECTCOM == 21
     ;처음
     IF CFLAG:9021 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「제 음란한 엉덩이 잘 보이나요?」
                 PRINTFORMW 「주인님의 암캐의 순결…강간해주세요…♪」
             ;그 외
@@ -2311,7 +2311,7 @@ IF SELECTCOM == 21
         ;비처녀
         ELSE
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「이런 자세…꼭 교미하는 것 같네요」
                 PRINTFORMW 「전 주인님의 암캐니까…제게 어울리는 자세네요」
             ;그 외
@@ -2326,19 +2326,19 @@ IF SELECTCOM == 21
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9021 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9021 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아앙! 행복해요! 암캐 요우키는 행복해요!」
             CFLAG:9021 = 5
         ;굴복각인Lv3＋V감각Lv3이상
-        ELSEIF MARK:2 == 3 && ABL:1 >= 3 && (CFLAG:9021 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:9021 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「이런 자세로도 좋아하고 있어…나도 이제 갈때까지 간건가…」
             CFLAG:9021 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9021 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9021 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「…당신 얼굴이 안보이는 건 편하네요」
             CFLAG:9021 = 3
         ;그 외
-        ELSEIF CFLAG:9021 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9021 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「또 이 자세…! 싫어! 적어도 사람다운 자세로 해줘!」
             CFLAG:9021 = 2
         ENDIF
@@ -2353,7 +2353,7 @@ IF SELECTCOM == 22
     ;처음
     IF CFLAG:9022 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「주인님의 얼굴이 이렇게나 가까이 있어…키스…해주세요…」
             PRINTFORMW 「아아…기뻐요…츄릅…」
             PRINTFORMW 「주인님의 품, 무지 따뜻하네요」
@@ -2367,21 +2367,21 @@ IF SELECTCOM == 22
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9022 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9022 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「츄릅…츕…후아아…」
             PRINTFORMW 키스하며, 안기며, 요우키는 연인들이 정을 나누듯 행복하게 즐기고 있었다
             CFLAG:9022 = 5
         ;굴복각인Lv3＋V감각Lv3이상
-        ELSEIF MARK:2 == 3 && ABL:1 >= 3 && (CFLAG:9022 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:9022 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 요우키가 안겨왔다. 얼굴은 여전히 쾌감을 참으며 부정하려는 얼굴이지만
             PRINTFORMW 계속 느껴버리는 건 혼자선 참을 수 없었는지 %CALLNAME:MASTER%에게 꼬옥 안기고 있었다
             CFLAG:9022 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9022 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9022 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 요우키는 의지를 상실해선 아무것도 하지 않고 그저 %CALLNAME:MASTER%에게 몸을 맡기고 있었다
             CFLAG:9022 = 3
         ;그 외
-        ELSEIF CFLAG:9022 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9022 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「당신 이제보니 바보같네. 왜 난 이런 당신을 못죽인걸까?」
             CFLAG:9022 = 2
         ENDIF
@@ -2398,7 +2398,7 @@ IF SELECTCOM == 23
     ;처음
     IF CFLAG:9023 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「뒤에서 안아주시는 건가요?」
             PRINTFORMW 「아…주인님 포근해요…」
         ;그 외
@@ -2410,22 +2410,22 @@ IF SELECTCOM == 23
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9023 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9023 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「껴안아주세요…따뜻해요…」
             CFLAG:9023 = 5
         ;굴복각인Lv3＋V감각Lv3이상
-        ELSEIF MARK:2 == 3 && ABL:1 >= 3 && (CFLAG:9023 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:V감각 >= 3 && (CFLAG:9023 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORML 요우키는 %조사처리(CALLNAME:MASTER,"가")% 얼굴을 볼 수 없다는 점 때문인지
             PRINTFORMW %CALLNAME:MASTER% 몰래 쾌감을 만끽하고 있었다
             PRINTFORMW 신음소리는 들린다는 걸 잊어버린 모양이다
             CFLAG:9023 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9023 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9023 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 저항하기를 포기한 요우키는 텅 빈듯한 눈으로 허공을 쳐다보고 있었다
             PRINTFORMW 몸에 힘을 전혀 주지 않는건지 위아래로 피스톤운동을 할때마다 고개가 흔들리고 있다
             CFLAG:9023 = 3
         ;그 외
-        ELSEIF CFLAG:9023 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9023 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「당신 얼굴은 안보이는데 당신 숨결이 닿는다는 걸 깜빡했네…기분나빠」
             CFLAG:9023 = 2
         ENDIF
@@ -2437,7 +2437,7 @@ IF SELECTCOM == 612
     ;처음
     IF CFLAG:9612 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「와아… 주인님이랑 연결된 곳, 거울에 그대로 비쳐서 보여……」
             PRINTFORMW 거울을 통해 직접 보게 된 자신의 음란한 모습에 요우키는 신기해 했다.
             PRINTFORMW 「아아… 제 보지, 이렇게 적극적으로 주인님의 것을……」
@@ -2454,7 +2454,7 @@ IF SELECTCOM == 612
     ;2회째 이후
     ELSE
         ;연모+노출벽Lv3이상+V감각Lv3이상
-        IF TALENT:150 && ABL:14 >= 3 && ABL:1 >= 3 && (CFLAG:9612 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:노출증 >= 3 && ABL:V감각 >= 3 && (CFLAG:9612 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 시작하기 전부터 요우키는 양손으로 보지를 크게 벌리고 있었다
             PRINTFORMW 행복한 얼굴로 선홍색의 질내를 거울에 새기고 있었다
             PRINTFORMW 「주인님, 언제든지 넣을 수 있게 준비했습니다」
@@ -2462,28 +2462,28 @@ IF SELECTCOM == 612
             PRINTFORMW 거울엔 %CALLNAME:MASTER%의 물건을 요우키가 자신의 보지로 감싸는 광경이 기록되었다
             CFLAG:9612 = 6
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9612 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9612 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「아앙~ 주인님, 좀 더 거칠게 해주세요…!」
             PRINTFORMW 요우키는 음란한 즙을 흘리며 %CALLNAME:MASTER%의 육봉에 보지를 적극적으로 쑤셔대고 있었다
             PRINTFORMW 「아아… 거울에 비친 제 모습, 정말로 주인님께 사랑받는 모습이네요」
             PRINTFORMW 「좀 더 즐겨주세요… 제가 봉사하는 모습…」
             CFLAG:9612 = 5
         ;굴복각인Lv3+노출벽Lv3이상+V감각Lv3이상
-        ELSEIF MARK:2 == 3 && ABL:14 >= 3 && ABL:1 >= 3 && (CFLAG:9612 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:노출증 >= 3 && ABL:V감각 >= 3 && (CFLAG:9612 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORML 요우키는 꽤나 적극적으로 허리를 움직이고 있다
             PRINTFORMW 고개는 돌리고 있지만 눈동자는 힐끔힐끔 거울 쪽을 보고 있었다
             PRINTFORMW 「하아…… 하아……」
             PRINTFORMW 말은 없지만 가느다란 신음소리가 그녀가 타락해가고 있음을 알려주었다
             CFLAG:9612 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9612 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9612 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORML 「……」
             PRINTFORML 요우키는 입을 다물고 시킨대로 허리를 움직이고 있었다
             PRINTFORML 하지만 거울에 비친 자신의 수치스러운 모습은 보기 싫었는지
             PRINTFORMW 고개를 돌려 거울에서 시선을 피했다
             CFLAG:9612 = 3
         ;그 외
-        ELSEIF CFLAG:9612 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9612 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORML 「또 거울 앞에서 이런 짓을……!」
             PRINTFORML 요우키는 지난번에 겪은 수치를 반복하고 싶어하지 않았다
             PRINTFORMW 하지만 그 저항은 받아들여지지 않은 채 %조사처리(CALLNAME:MASTER,"는")% 담담히 요우키의 음부에 삽입했다
@@ -2500,9 +2500,9 @@ IF SELECTCOM == 24
     ;처음
     IF CFLAG:9024 == 0
         ;처녀
-        IF TALENT:0 == 1
+        IF TALENT:처녀 == 1
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「이거, 제가 직접 처녀를 드리는 거라니 더 기쁘네요…」
                 PRINTFORMW 「주인님의 노예 콘파쿠 요우키…지금 주인님께 처녀를 바칩니다!」
                 PRINTFORMW 마치 뛰어내리듯, 요우키는 순식간에 몸을 내려 질구 전체를 관통시켜 스스로 처녀를 상실했다
@@ -2515,7 +2515,7 @@ IF SELECTCOM == 24
         ;비처녀
         ELSE
             ;연모
-            IF TALENT:150
+            IF TALENT:연모
                 PRINTFORMW 「제가 주인님께 올라타면 실례가 아닌지…」
                 PRINTFORMW 「거절하는 쪽이 더 실례겠죠? 그럼 사양않고…아!」
                 PRINTFORMW 「이거면 제가 스스로 야하게 느끼는 모습 보여드릴 수 있겠네요? 에헤헤」
@@ -2531,20 +2531,20 @@ IF SELECTCOM == 24
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9024 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9024 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「허리…움직일 때마다…깊숙하게 들어와…! 이거…좋아…!」
             CFLAG:9024 = 5
         ;굴복각인Lv3+봉사정신Lv3이상＋V감각Lv3이상
-        ELSEIF MARK:2 == 3 && ABL:13 >= 3 && ABL:1 >= 3 && (CFLAG:9024 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:봉사정신 >= 3 && ABL:V감각 >= 3 && (CFLAG:9024 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「내가 움직이면 움직이는 만큼 가버려…멈추고 싶어…」
             PRINTFORMW 「근데 몸이 멋대로…하으윽…」
             CFLAG:9024 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9024 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9024 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「이런 말이라면 타고 싶지 않네…」
             CFLAG:9024 = 3
         ;그 외
-        ELSEIF CFLAG:9024 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9024 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「왜 내가 스스로 해야 하는건데…왜…」
             PRINTFORMW 요우키는 아직 성교로써 스스로 봉사하는 것에 대해 납득하지 못한 듯하다
             CFLAG:9024 = 2
@@ -2561,9 +2561,9 @@ IF SELECTCOM == 25
     ;처음
     IF CFLAG:9025 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자 즉, 후타나리
             ELSE
@@ -2573,7 +2573,7 @@ IF SELECTCOM == 25
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자 즉, 후타나리
             ELSE
@@ -2586,9 +2586,9 @@ IF SELECTCOM == 25
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9025 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9025 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자 즉, 후타나리
             ELSE
@@ -2596,9 +2596,9 @@ IF SELECTCOM == 25
             ENDIF 
             CFLAG:9025 = 3
         ;그 외
-        ELSEIF CFLAG:9025 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9025 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 
             ;요우키가 여자 즉, 후타나리
             ELSE
@@ -2618,7 +2618,7 @@ IF SELECTCOM == 26
     ;처음
     IF CFLAG:9026 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 외
         ELSE
@@ -2629,11 +2629,11 @@ IF SELECTCOM == 26
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9026 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9026 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9026 = 3
         ;그 외
-        ELSEIF CFLAG:9026 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9026 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:9026 = 2
         ENDIF
@@ -2649,11 +2649,11 @@ IF SELECTCOM == 30
     ;처음
     IF CFLAG:9030 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「남자끼리의 교제…설레는구나」
                     PRINTFORMW 「자, 어서 넣도록 하렴」
                 ;여주인
@@ -2668,9 +2668,9 @@ IF SELECTCOM == 30
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「네놈이 이런 도리에 맞지 않는 짓을 하고도 무사할 것 같으냐?」
                     PRINTFORMW 「으끄으윽…! 이, 이런다고 난…」
                 ;여주인
@@ -2689,11 +2689,11 @@ IF SELECTCOM == 30
     ELSE
         LOCAL = PALAM:10 + UP:10
         ;연모+윤활Lv2이상
-        IF TALENT:150 && LOCAL >= PALAMLV:2 && (CFLAG:9030 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && LOCAL >= PALAMLV:2 && (CFLAG:9030 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「기분좋군…부드럽게 들어오고 있어」
                 ;여주인
                 ELSE
@@ -2705,11 +2705,11 @@ IF SELECTCOM == 30
             ENDIF
             CFLAG:9030 = 5
         ;연모+윤활Lv2미만
-        ELSEIF TALENT:150 && LOCAL < PALAMLV:2 && (CFLAG:9030 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && LOCAL < PALAMLV:2 && (CFLAG:9030 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「으극, 서두르지 않아도 되니까…」
                 ;여주인
                 ELSE
@@ -2722,9 +2722,9 @@ IF SELECTCOM == 30
             ENDIF
             CFLAG:9030 = 4
         ;윤활Lv2이상＋A감각Lv3이상
-        ELSEIF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9030 <= 2 || FLAG:11 == 2)
+        ELSEIF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9030 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「뭐…뭐지? 왜 이런 걸로 기분이 고양되고 있는거냐…」
             ;요우키가 여자
             ELSE
@@ -2732,9 +2732,9 @@ IF SELECTCOM == 30
             ENDIF
             CFLAG:9030 = 3
         ;그 외
-        ELSEIF CFLAG:9030 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9030 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「최악이다…최악이야…」
             ;요우키가 여자
             ELSE
@@ -2753,11 +2753,11 @@ IF SELECTCOM == 31
     ;처음
     IF CFLAG:9031 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「잘 보이나? 이렇게 넓혀주면 더 넣기 좋겠지」
                     PRINTFORMW 「그래…기대되는구나」
                 ;여주인
@@ -2773,9 +2773,9 @@ IF SELECTCOM == 31
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「내가, 이런 동물들이나 하는 체위로, 남자에게 후장을 범해져야 하는 이유를 대봐」
                     PRINTFORMW 노예니까. 라는 한마디로 일축해줬다
                     PRINTFORMW 예상대로 요우키는 매우 격렬하게 저항했지만, 겨우겨우 진압하고 후장을 따줬다
@@ -2796,11 +2796,11 @@ IF SELECTCOM == 31
     ELSE
         LOCAL = PALAM:10 + UP:10
         ;연모+윤활Lv2이상
-        IF TALENT:150 && LOCAL >= PALAMLV:2 && (CFLAG:9031 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && LOCAL >= PALAMLV:2 && (CFLAG:9031 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「확실하게 뚫고 들어오고 있어…좋구나」
                 ;여주인
                 ELSE
@@ -2814,11 +2814,11 @@ IF SELECTCOM == 31
             ENDIF
             CFLAG:9031 = 5
         ;연모+윤활Lv2미만
-        ELSEIF TALENT:150 && LOCAL < PALAMLV:2 && (CFLAG:9031 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && LOCAL < PALAMLV:2 && (CFLAG:9031 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「서두를 것 없다, 내가 젖지 않으면 네 자지가 아프지 않느냐」
                 ;여주인
                 ELSE
@@ -2831,9 +2831,9 @@ IF SELECTCOM == 31
             ENDIF
             CFLAG:9031 = 4
         ;윤활Lv2이상＋A감각Lv3이상
-        ELSEIF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9031 <= 2 || FLAG:11 == 2)
+        ELSEIF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9031 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「내가…이 요우키가…! 어찌 이런 꼴을……」
             ;요우키가 여자
             ELSE
@@ -2842,9 +2842,9 @@ IF SELECTCOM == 31
             ENDIF
             CFLAG:9031 = 3
         ;그 외
-        ELSEIF CFLAG:9031 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9031 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「최저의 취급이군…네놈은 악귀더냐?」
             ;요우키가 여자
             ELSE
@@ -2863,11 +2863,11 @@ IF SELECTCOM == 32
     ;처음
     IF CFLAG:9032 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「이거, 나이를 생각하면 내가 올려태워야 하는건데…」
                     PRINTFORMW 「뭐 이건 이거대로 좋지…그럼 기분좋게 즐기도록 할까?」
                     PRINTFORMW 요우키는 마치 손자에게 안마받는 할아버지의 태도로 애널섹스를 즐기고 있다
@@ -2888,9 +2888,9 @@ IF SELECTCOM == 32
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「정말이지 토가 나올 정도로 역겹군」
                     PRINTFORMW 「지금 자네의 얼굴은 정말 축생 이하야」
                 ;여주인
@@ -2911,11 +2911,11 @@ IF SELECTCOM == 32
     ELSE
         LOCAL = PALAM:10 + UP:10
         ;연모+윤활Lv2이상
-        IF TALENT:150 && LOCAL >= PALAMLV:2 && (CFLAG:9032 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && LOCAL >= PALAMLV:2 && (CFLAG:9032 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「내가 무겁거나 하진 않나? 뭐, 그대가 좋다면야 나야 좋지만」
                 ;여주인
                 ELSE
@@ -2927,11 +2927,11 @@ IF SELECTCOM == 32
             ENDIF
             CFLAG:9032 = 5
         ;연모+윤활Lv2미만
-        ELSEIF TALENT:150 && LOCAL < PALAMLV:2 && (CFLAG:9032 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && LOCAL < PALAMLV:2 && (CFLAG:9032 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「허허…이 늙고 무거운 몸을 무리해서 들려고 할 필요 없네만…」
                 ;여주인
                 ELSE
@@ -2945,11 +2945,11 @@ IF SELECTCOM == 32
             ENDIF
             CFLAG:9032 = 4
         ;윤활Lv2이상＋A감각Lv3이상
-        ELSEIF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9032 <= 2 || FLAG:11 == 2)
+        ELSEIF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9032 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -2961,11 +2961,11 @@ IF SELECTCOM == 32
             ENDIF
             CFLAG:9032 = 3
         ;그 외
-        ELSEIF CFLAG:9032 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9032 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「인간적으로 수치다…」
                 ;여주인
                 ELSE
@@ -2988,11 +2988,11 @@ IF SELECTCOM == 33
     ;처음
     IF CFLAG:9033 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 요우키를 위아래로 흔들때마다 요우키의 페니스가 회전하고 있다
                     PRINTFORMW 「이거 절경이로군! 자네에게 넣어지는 반동으로 내 음경이 흔들리고 있어!」
                     ;수치플레이 중(미다레보탄처럼)
@@ -3014,9 +3014,9 @@ IF SELECTCOM == 33
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「평소에 괄약근을 단련하지 않은게 후회되는군」
                     PRINTFORMW 「왜냐고? 이대로 조여서 뭉개버리면 이 이상의 자네의 추태를 막을 수 있지 않나」
                 ;여주인
@@ -3034,11 +3034,11 @@ IF SELECTCOM == 33
     ELSE
         LOCAL = PALAM:10 + UP:10
         ;연모+윤활Lv2이상
-        IF TALENT:150 && LOCAL >= PALAMLV:2 && (CFLAG:9033 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && LOCAL >= PALAMLV:2 && (CFLAG:9033 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 드, 들어왔어요!
                     PRINTFORMW 「아아, 좋은 조임이다」
                 ;여주인
@@ -3051,11 +3051,11 @@ IF SELECTCOM == 33
             ENDIF
             CFLAG:9033 = 5
         ;연모+윤활Lv2미만
-        ELSEIF TALENT:150 && LOCAL < PALAMLV:2 && (CFLAG:9033 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && LOCAL < PALAMLV:2 && (CFLAG:9033 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「그렇게 성급하게 굴면 나중에 다른 사람을 조교할때 힘들다고?」
                 ;여주인
                 ELSE
@@ -3067,11 +3067,11 @@ IF SELECTCOM == 33
             ENDIF
             CFLAG:9033 = 4
         ;윤활Lv2이상＋A감각Lv3이상
-        ELSEIF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9033 <= 2 || FLAG:11 == 2)
+        ELSEIF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9033 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「어쩌다가 이렇게 된건가…엉덩이로 느낀다니…」
                 ;여주인
                 ELSE
@@ -3083,11 +3083,11 @@ IF SELECTCOM == 33
             ENDIF
             CFLAG:9033 = 3
         ;그 외
-        ELSEIF CFLAG:9033 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9033 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「네놈은 이런게 좋으냐? 난 하나도 안좋다」
                 ;여주인
                 ELSE
@@ -3110,11 +3110,11 @@ IF SELECTCOM == 34
     ;처음
     IF CFLAG:9034 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「잘 보게, 자네와 내가 이렇게 연결되어 있어」
                     PRINTFORMW 「기분좋게 해서 잔뜩 짜줄테니 마음껏 싸게」
                 ;여주인
@@ -3131,7 +3131,7 @@ IF SELECTCOM == 34
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「웃기지 마라! 내가 왜 그딴 짓을 해줘야 하느냔 말이다!」
                 PRINTFORMW 상당히 완강하게 거부하고 있어서 억지로 앉혀 애널에 삽입했다
                 PRINTFORMW 「크으으…두고 보자…」
@@ -3148,11 +3148,11 @@ IF SELECTCOM == 34
     ELSE
         LOCAL = PALAM:10 + UP:10
         ;연모+윤활Lv2이상
-        IF TALENT:150 && LOCAL >= PALAMLV:2 && (CFLAG:9034 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && LOCAL >= PALAMLV:2 && (CFLAG:9034 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「보이는가? 이 늙은이의 구멍이 유린되는 장면이?」
                 ;여주인
                 ELSE
@@ -3166,11 +3166,11 @@ IF SELECTCOM == 34
             ENDIF
             CFLAG:9034 = 5
         ;연모+윤활Lv2미만
-        ELSEIF TALENT:150 && LOCAL < PALAMLV:2 && (CFLAG:9034 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && LOCAL < PALAMLV:2 && (CFLAG:9034 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「좀 더 축축하게 되어야 들어갈 것 같군」
                 ;여주인
                 ELSE
@@ -3182,11 +3182,11 @@ IF SELECTCOM == 34
             ENDIF
             CFLAG:9034 = 4
         ;윤활Lv2이상＋A감각Lv3이상
-        ELSEIF LOCAL >= PALAMLV:2 && ABL:2 >= 3 && (CFLAG:9034 <= 2 || FLAG:11 == 2)
+        ELSEIF LOCAL >= PALAMLV:2 && ABL:A감각 >= 3 && (CFLAG:9034 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「내가 왜 남자놈과 더러운 구멍으로 성교하고 있지?」
                     PRINTFORMW 「게다가 난 왜 몸을 움직이고 있지…?」
                 ;여주인
@@ -3199,9 +3199,9 @@ IF SELECTCOM == 34
             ENDIF
             CFLAG:9034 = 3
         ;그 외
-        ELSEIF CFLAG:9034 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9034 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「결코 내가 스스로 움직이는 일은 없을게야! 모두 네놈이 움직인거다!」
                 PRINTFORMW 요우키는 스스로 움직이지 않을 거라고 선언하고 있다
             ;요우키가 여자
@@ -3221,9 +3221,9 @@ IF SELECTCOM == 40
     ;처음
     IF CFLAG:9040 == 0
         ;봉사정신Lv3이상
-        IF ABL:13 >= 3
+        IF ABL:봉사정신 >= 3
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「대리자위 같은건가…」
             ;요우키가 여자
             ELSE
@@ -3233,7 +3233,7 @@ IF SELECTCOM == 40
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「이대로 분질러 버리고 싶군…생각보다 단단해서 무리일 것 같지만」
                 PRINTFORMW 「이런 거 하나는 제대로 단련한 모양이군」
             ;요우키가 여자
@@ -3247,11 +3247,11 @@ IF SELECTCOM == 40
     ;2회째 이후
     ELSE
         ;연모＋봉사정신Lv5
-        IF TALENT:150 && ABL:13 >= 5 && (CFLAG:9040 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:봉사정신 >= 5 && (CFLAG:9040 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「후후후♂ 언제봐도 좋은 물건을 가지고 있군」
                 ;여주인
                 ELSE
@@ -3263,11 +3263,11 @@ IF SELECTCOM == 40
             ENDIF
             CFLAG:9040 = 4
         ;봉사정신Lv3이상
-        ELSEIF ABL:13 >= 3 && (CFLAG:9040 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:9040 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「…적응되어 간다는 게 마음에 안들어」
                 ;여주인
                 ELSE
@@ -3279,11 +3279,11 @@ IF SELECTCOM == 40
             ENDIF
             CFLAG:9040 = 3
         ;그 외
-        ELSEIF CFLAG:9040 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9040 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「차라리 스스로 해라 남자에게 봉사받아 기분좋을 리 없잖느냐」
                 ;여주인
                 ELSE
@@ -3306,9 +3306,9 @@ IF SELECTCOM == 41
     ;처음
     IF CFLAG:9041 == 0
         ;봉사정신Lv3이상
-        IF ABL:13 >= 3
+        IF ABL:봉사정신 >= 3
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「입으로 하면 되는 건가…」
             ;요우키가 여자
             ELSE
@@ -3318,7 +3318,7 @@ IF SELECTCOM == 41
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 PRINTFORMW 「젊었을 적 한 여인에게 받아본 적 있었지…그땐 신세계를 경험했었는데」
                 PRINTFORMW 「이것도 신세계로군…겪고 싶지 않은 더러운 신세계…」
             ;요우키가 여자
@@ -3332,11 +3332,11 @@ IF SELECTCOM == 41
     ;2회째 이후
     ELSE
         ;연모＋봉사정신Lv5
-        IF TALENT:150 && ABL:13 >= 5 && (CFLAG:9041 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:봉사정신 >= 5 && (CFLAG:9041 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「맛있군 훌륭한 맛이야」
                 ;여주인
                 ELSE
@@ -3349,11 +3349,11 @@ IF SELECTCOM == 41
             ENDIF
             CFLAG:9041 = 4
         ;봉사정신Lv3이상
-        ELSEIF ABL:13 >= 3 && (CFLAG:9041 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:9041 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「왜지…요즘 남근을 빠는 것에 거부감이 들지 않는단 말야…」
                 ;여주인
                 ELSE
@@ -3365,11 +3365,11 @@ IF SELECTCOM == 41
             ENDIF
             CFLAG:9041 = 3
         ;그 외
-        ELSEIF CFLAG:9041 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9041 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 「내가 이딴 더러운 물건을 입에 물고 있어야 하다니…」
                 ;여주인
                 ELSE
@@ -3392,7 +3392,7 @@ IF SELECTCOM == 42
     ;처음
     IF CFLAG:9042 == 0
         ;봉사정신Lv3이상
-        IF ABL:13 >= 3
+        IF ABL:봉사정신 >= 3
             PRINTFORMW 「가능하긴 합니다만…여자의 가슴같은 것 가져본 적 없기에 서투를지도 모릅니다…」
             PRINTFORMW 「그래도 괜찮으시다면…시작하겠습니다」
         ;그 외
@@ -3405,15 +3405,15 @@ IF SELECTCOM == 42
     ;2회째 이후
     ELSE
         ;연모＋봉사정신Lv5
-        IF TALENT:150 && ABL:13 >= 5 && (CFLAG:9042 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:봉사정신 >= 5 && (CFLAG:9042 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「이젠 파이즈리도 능숙하고…저 완전히 여자 다 됐죠?」
             CFLAG:9042 = 4
         ;봉사정신Lv3이상
-        ELSEIF ABL:13 >= 3 && (CFLAG:9042 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:9042 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「또…입니까? 알겠습니다…」
             CFLAG:9042 = 3
         ;그 외
-        ELSEIF CFLAG:9042 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9042 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「이걸 하고 있으면 점점 내가 남자인 걸 잊게되는 것 같아…」
             CFLAG:9042 = 2
         ENDIF
@@ -3428,7 +3428,7 @@ IF SELECTCOM == 43
     ;처음
     IF CFLAG:9043 == 0
         ;연모 있음
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「비비는 걸로 괜찮나요? 넣으셔도 되는데…」
             PRINTFORMW 「그래도 이것도 기분좋을 것 같아요」
         ;그 외
@@ -3440,11 +3440,11 @@ IF SELECTCOM == 43
     ;2회째 이후
     ELSE
         ;연모 있음
-        IF TALENT:150 && (CFLAG:9043 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9043 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「잔뜩 비벼져서 기분 좋아요…다음엔 넣어주실 거죠?」
             CFLAG:9043 = 3
         ;그 외
-        ELSEIF CFLAG:9043 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9043 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「참자…참아라, 요우키…넣지 않으니까 그나마 다행이잖아?」
             CFLAG:9043 = 2
         ENDIF
@@ -3460,7 +3460,7 @@ IF SELECTCOM == 44
     ;처음
     IF CFLAG:9044 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 외
         ELSE
@@ -3471,19 +3471,19 @@ IF SELECTCOM == 44
     ;2회째 이후
     ELSE
         ;연모+순종Lv5이상
-        IF TALENT:150 && ABL:10 >= 5 && (CFLAG:9044 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:순종 >= 5 && (CFLAG:9044 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9044 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9044 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9044 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9044 = 4
         ;봉사정신Lv3이상
-        ELSEIF ABL:13 >= 3 && (CFLAG:9044 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:9044 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9044 = 3
         ;그 외
-        ELSEIF CFLAG:9044 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9044 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:9044 = 2
         ENDIF
@@ -3499,11 +3499,11 @@ IF SELECTCOM == 60
     ;처음
     IF CFLAG:9060 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3521,9 +3521,9 @@ IF SELECTCOM == 60
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3543,11 +3543,11 @@ IF SELECTCOM == 60
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9060 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9060 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3560,11 +3560,11 @@ IF SELECTCOM == 60
             ENDIF
             CFLAG:9060 = 3
         ;그 외
-        ELSEIF CFLAG:9060 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9060 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3588,11 +3588,11 @@ IF SELECTCOM == 61
     ;처음
     IF CFLAG:9061 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3607,9 +3607,9 @@ IF SELECTCOM == 61
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3627,11 +3627,11 @@ IF SELECTCOM == 61
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9061 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9061 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3644,11 +3644,11 @@ IF SELECTCOM == 61
             ENDIF
             CFLAG:9061 = 3
         ;그 외
-        ELSEIF CFLAG:9061 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9061 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3671,19 +3671,19 @@ ENDIF
 [SKIPSTART]
 IF SELECTCOM == 62
     ;연모+오줌싸개
-    IF TALENT:150 && TALENT:45 && (CFLAG:9062 < 4 || FLAG:11 == 2)
+    IF TALENT:연모 && TALENT:오줌싸개버릇 && (CFLAG:9062 < 4 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9062 = 4
     ;연모
-    ELSEIF TALENT:150 && (CFLAG:9062 < 3 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && (CFLAG:9062 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9062 = 3
     ;굴복각인Lv3
-    ELSEIF MARK:2 == 3 && (CFLAG:9062 < 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && (CFLAG:9062 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9062 = 2
     ;그 외
-    ELSEIF CFLAG:9062 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:9062 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:9062 = 1
     ENDIF
@@ -3699,7 +3699,7 @@ IF SELECTCOM == 90 && TEQUIP:59
     ;처음
     IF CFLAG:9090 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 외
         ELSE
@@ -3710,11 +3710,11 @@ IF SELECTCOM == 90 && TEQUIP:59
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9090 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9090 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9090 = 3
         ;그 외
-        ELSEIF CFLAG:9090 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9090 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:9090 = 2
         ENDIF
@@ -3725,7 +3725,7 @@ ELSEIF SELECTCOM == 90 && TEQUIP:59 == 0
     ;처음
     IF CFLAG:8823 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 외
         ELSE
@@ -3736,11 +3736,11 @@ ELSEIF SELECTCOM == 90 && TEQUIP:59 == 0
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:8823 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:8823 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:8823 = 3
         ;그 외
-        ELSEIF CFLAG:8022 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:8022 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:8823 = 2
         ENDIF
@@ -3756,11 +3756,11 @@ IF SELECTCOM == 100 && TEQUIP:50
     ;처음
     IF CFLAG:9100 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3776,9 +3776,9 @@ IF SELECTCOM == 100 && TEQUIP:50
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3798,11 +3798,11 @@ IF SELECTCOM == 100 && TEQUIP:50
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9100 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9100 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3816,11 +3816,11 @@ IF SELECTCOM == 100 && TEQUIP:50
             ENDIF
             CFLAG:9100 = 3
         ;그 외
-        ELSEIF CFLAG:9100 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9100 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3845,11 +3845,11 @@ IF SELECTCOM == 103 && TEQUIP:56
     ;처음
     IF CFLAG:9103 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3863,11 +3863,11 @@ IF SELECTCOM == 103 && TEQUIP:56
                 PRINTFORMW 「어떤 모습일까요? 여인으로써 느끼고 가버리는 제 모습…」
             ENDIF
         ;노출벽Lv3이상
-        ELSEIF ABL:14 >= 3
+        ELSEIF ABL:노출증 >= 3
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3888,9 +3888,9 @@ IF SELECTCOM == 103 && TEQUIP:56
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3911,11 +3911,11 @@ IF SELECTCOM == 103 && TEQUIP:56
     ;2회째 이후
     ELSE
         ;연모+노출벽Lv3이상
-        IF TALENT:150 && ABL:14 >= 3 && (CFLAG:9103 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:노출증 >= 3 && (CFLAG:9103 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3932,11 +3932,11 @@ IF SELECTCOM == 103 && TEQUIP:56
             ENDIF
             CFLAG:9103 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9103 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9103 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3953,11 +3953,11 @@ IF SELECTCOM == 103 && TEQUIP:56
             ENDIF
             CFLAG:9103 = 4
         ;노출벽Lv3이상
-        ELSEIF ABL:14 >= 3
+        ELSEIF ABL:노출증 >= 3
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3972,11 +3972,11 @@ IF SELECTCOM == 103 && TEQUIP:56
             ENDIF
             CFLAG:9103 = 3
         ;그 외
-        ELSEIF CFLAG:9103 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9103 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -3997,11 +3997,11 @@ ELSEIF SELECTCOM == 103 && TEQUIP:56 == 0
     ;처음
     IF CFLAG:8822 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4018,9 +4018,9 @@ ELSEIF SELECTCOM == 103 && TEQUIP:56 == 0
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4038,11 +4038,11 @@ ELSEIF SELECTCOM == 103 && TEQUIP:56 == 0
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:8822 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:8822 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4055,11 +4055,11 @@ ELSEIF SELECTCOM == 103 && TEQUIP:56 == 0
             ENDIF
             CFLAG:8822 = 3
         ;그 외
-        ELSEIF CFLAG:8822 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:8822 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4083,11 +4083,11 @@ IF SELECTCOM == 104 && TEQUIP:52
     ;처음
     IF CFLAG:9104 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4105,9 +4105,9 @@ IF SELECTCOM == 104 && TEQUIP:52
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4129,11 +4129,11 @@ IF SELECTCOM == 104 && TEQUIP:52
     ;2회째 이후
     ELSE
         ;연모＋노출벽Lv3이상
-        IF TALENT:150 && ABL:14 >= 3 && (CFLAG:9104 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:노출증 >= 3 && (CFLAG:9104 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4147,11 +4147,11 @@ IF SELECTCOM == 104 && TEQUIP:52
             ENDIF
             CFLAG:9104 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9104 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9104 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4166,11 +4166,11 @@ IF SELECTCOM == 104 && TEQUIP:52
             ENDIF
             CFLAG:9104 = 4
         ;노출벽Lv3이상
-        ELSEIF ABL:14 >= 3 && (CFLAG:9104 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:노출증 >= 3 && (CFLAG:9104 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4185,11 +4185,11 @@ IF SELECTCOM == 104 && TEQUIP:52
             ENDIF
             CFLAG:9104 = 3
         ;그 외
-        ELSEIF CFLAG:9104 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9104 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4208,11 +4208,11 @@ IF SELECTCOM == 104 && TEQUIP:52
 ;종료시
 ELSEIF SELECTCOM == 104 && TEQUIP:52 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8821 < 2 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8821 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4227,11 +4227,11 @@ ELSEIF SELECTCOM == 104 && TEQUIP:52 == 0
             ENDIF
         CFLAG:8821 = 2
     ;그 외
-    ELSEIF CFLAG:8821 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8821 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4257,23 +4257,23 @@ ENDIF
 ;방뇨
 IF SELECTCOM == 111
     ;연모+오줌싸개+야외 플레이
-    IF TALENT:150 && TALENT:45 && TEQUIP:52 && (CFLAG:9111 < 5 || FLAG:11 == 2)
+    IF TALENT:연모 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:9111 < 5 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9111 = 5
     ;연모+오줌싸개
-    ELSEIF TALENT:150 && TALENT:45 && (CFLAG:9111 < 4 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && TALENT:오줌싸개버릇 && (CFLAG:9111 < 4 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9111 = 4
     ;노출벽Lv5
-    ELSEIF ABL:14 >= 5 && (CFLAG:9111 < 3 || FLAG:11 == 2)
+    ELSEIF ABL:노출증 >= 5 && (CFLAG:9111 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9111 = 3
     ;굴복각인Lv3
-    ELSEIF MARK:2 == 3 && (CFLAG:9111 < 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && (CFLAG:9111 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9111 = 2
     ;그 외
-    ELSEIF CFLAG:9111 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:9111 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:9111 = 1
     ENDIF
@@ -4284,23 +4284,23 @@ ENDIF
 [SKIPSTART]
 IF SELECTCOM == 620
     ;연모+오줌싸개+야외 플레이
-    IF TALENT:150 && TALENT:45 && TEQUIP:52 && (CFLAG:9620 < 5 || FLAG:11 == 2)
+    IF TALENT:연모 && TALENT:오줌싸개버릇 && TEQUIP:52 && (CFLAG:9620 < 5 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9620 = 5
     ;연모+오줌싸개
-    ELSEIF TALENT:150 && TALENT:45 && (CFLAG:9620 < 4 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && TALENT:오줌싸개버릇 && (CFLAG:9620 < 4 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9620 = 4
     ;노출벽Lv5
-    ELSEIF ABL:14 >= 5 && (CFLAG:9620 < 3 || FLAG:11 == 2)
+    ELSEIF ABL:노출증 >= 5 && (CFLAG:9620 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9620 = 3
     ;굴복각인Lv3
-    ELSEIF MARK:2 == 3 && (CFLAG:9620 < 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && (CFLAG:9620 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:9620 = 2
     ;그 외
-    ELSEIF CFLAG:9620 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:9620 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:9620 = 1
     ENDIF
@@ -4317,11 +4317,11 @@ IF SELECTCOM == 171 && TEQUIP:25
     ;처음
     IF CFLAG:9171 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4334,9 +4334,9 @@ IF SELECTCOM == 171 && TEQUIP:25
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4352,11 +4352,11 @@ IF SELECTCOM == 171 && TEQUIP:25
     ;2회째 이후
     ELSE
         ;연모＋A감각Lv3이상＋마조끼Lv3이상
-        IF TALENT:150 && ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9171 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9171 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4368,11 +4368,11 @@ IF SELECTCOM == 171 && TEQUIP:25
             ENDIF
             CFLAG:9171 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9171 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9171 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4384,11 +4384,11 @@ IF SELECTCOM == 171 && TEQUIP:25
             ENDIF
             CFLAG:9171 = 4
         ;A감각Lv3이상＋마조끼Lv3이상
-        ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9171 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9171 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4400,11 +4400,11 @@ IF SELECTCOM == 171 && TEQUIP:25
             ENDIF
             CFLAG:9171 = 3
         ;그 외
-        ELSEIF CFLAG:9171 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9171 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4421,11 +4421,11 @@ IF SELECTCOM == 171 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 171 && TEQUIP:25 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8851 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8851 < 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4437,11 +4437,11 @@ ELSEIF SELECTCOM == 171 && TEQUIP:25 == 0
             ENDIF
         CFLAG:8851 = 3
     ;A감각Lv3이상＋마조끼Lv3이상
-    ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:8851 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:8851 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4453,11 +4453,11 @@ ELSEIF SELECTCOM == 171 && TEQUIP:25 == 0
             ENDIF
         CFLAG:8851 = 2
     ;그 외
-    ELSEIF CFLAG:8851 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8851 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4481,11 +4481,11 @@ IF SELECTCOM == 172 && TEQUIP:25
     ;처음
     IF CFLAG:9172 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4503,9 +4503,9 @@ IF SELECTCOM == 172 && TEQUIP:25
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4527,11 +4527,11 @@ IF SELECTCOM == 172 && TEQUIP:25
     ;2회째 이후
     ELSE
         ;연모＋A감각Lv3이상＋마조끼Lv3이상
-        IF TALENT:150 && ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9172 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9172 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4544,11 +4544,11 @@ IF SELECTCOM == 172 && TEQUIP:25
             ENDIF
             CFLAG:9172 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9172 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9172 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4561,11 +4561,11 @@ IF SELECTCOM == 172 && TEQUIP:25
             ENDIF
             CFLAG:9172 = 4
         ;A감각Lv3이상＋마조끼Lv3이상
-        ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9172 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9172 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4579,11 +4579,11 @@ IF SELECTCOM == 172 && TEQUIP:25
             ENDIF
             CFLAG:9172 = 3
         ;그 외
-        ELSEIF CFLAG:9172 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9172 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4604,11 +4604,11 @@ IF SELECTCOM == 172 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 172 && TEQUIP:25 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8852 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8852 < 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4623,11 +4623,11 @@ ELSEIF SELECTCOM == 172 && TEQUIP:25 == 0
             ENDIF
         CFLAG:8852 = 3
     ;A감각Lv3이상＋마조끼Lv3이상
-    ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:8852 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:8852 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4649,11 +4649,11 @@ ELSEIF SELECTCOM == 172 && TEQUIP:25 == 0
             ENDIF
         CFLAG:8852 = 2
     ;그 외
-    ELSEIF CFLAG:8852 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8852 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4678,11 +4678,11 @@ IF SELECTCOM == 173 && TEQUIP:25
     ;처음
     IF CFLAG:9173 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4708,9 +4708,9 @@ IF SELECTCOM == 173 && TEQUIP:25
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4744,11 +4744,11 @@ IF SELECTCOM == 173 && TEQUIP:25
     ;2회째 이후
     ELSE
         ;연모＋A감각Lv3이상＋마조끼Lv3이상
-        IF TALENT:150 && ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9173 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9173 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4762,11 +4762,11 @@ IF SELECTCOM == 173 && TEQUIP:25
             ENDIF
             CFLAG:9173 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9173 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9173 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4781,11 +4781,11 @@ IF SELECTCOM == 173 && TEQUIP:25
             ENDIF
             CFLAG:9173 = 4
         ;A감각Lv3이상＋마조끼Lv3이상
-        ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9173 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9173 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4801,11 +4801,11 @@ IF SELECTCOM == 173 && TEQUIP:25
             ENDIF
             CFLAG:9173 = 3
         ;그 외
-        ELSEIF CFLAG:9173 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9173 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4826,11 +4826,11 @@ IF SELECTCOM == 173 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 173 && TEQUIP:25 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8853 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8853 < 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4849,11 +4849,11 @@ ELSEIF SELECTCOM == 173 && TEQUIP:25 == 0
             ENDIF
         CFLAG:8853 = 3
     ;A감각Lv3이상＋마조끼Lv3이상
-    ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:8853 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:8853 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4869,11 +4869,11 @@ ELSEIF SELECTCOM == 173 && TEQUIP:25 == 0
                 ENDIF
         CFLAG:8853 = 2
     ;그 외
-    ELSEIF CFLAG:8853 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8853 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4903,11 +4903,11 @@ IF SELECTCOM == 174 && TEQUIP:25
     ;처음
     IF CFLAG:9174 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4920,9 +4920,9 @@ IF SELECTCOM == 174 && TEQUIP:25
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4938,11 +4938,11 @@ IF SELECTCOM == 174 && TEQUIP:25
     ;2회째 이후
     ELSE
         ;연모＋A감각Lv3이상＋마조끼Lv3이상
-        IF TALENT:150 && ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9174 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9174 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4954,11 +4954,11 @@ IF SELECTCOM == 174 && TEQUIP:25
             ENDIF
             CFLAG:9174 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9174 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9174 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4970,11 +4970,11 @@ IF SELECTCOM == 174 && TEQUIP:25
             ENDIF
             CFLAG:9174 = 4
         ;A감각Lv3이상＋마조끼Lv3이상
-        ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9174 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9174 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -4986,11 +4986,11 @@ IF SELECTCOM == 174 && TEQUIP:25
             ENDIF
             CFLAG:9174 = 3
         ;그 외
-        ELSEIF CFLAG:9174 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9174 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5015,11 +5015,11 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
     ;처음
     IF CFLAG:8854 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5032,9 +5032,9 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5050,11 +5050,11 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
     ;2회째 이후
     ELSE
         ;연모＋A감각Lv3이상＋마조끼Lv3이상
-        IF TALENT:150 && ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:8854 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:8854 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5066,11 +5066,11 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
             ENDIF
             CFLAG:8854 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:8854 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:8854 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5082,11 +5082,11 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
             ENDIF
             CFLAG:8854 = 4
         ;A감각Lv3이상＋마조끼Lv3이상
-        ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:8854 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:8854 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5098,11 +5098,11 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
             ENDIF
             CFLAG:8854 = 3
         ;그 외
-        ELSEIF CFLAG:8854 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:8854 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5128,11 +5128,11 @@ IF SELECTCOM == 175 && TEQUIP:25
     ;처음
     IF CFLAG:9175 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5145,9 +5145,9 @@ IF SELECTCOM == 175 && TEQUIP:25
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5163,11 +5163,11 @@ IF SELECTCOM == 175 && TEQUIP:25
     ;2회째 이후
     ELSE
         ;연모＋A감각Lv3이상＋마조끼Lv3이상
-        IF TALENT:150 && ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9175 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9175 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5179,11 +5179,11 @@ IF SELECTCOM == 175 && TEQUIP:25
             ENDIF
             CFLAG:9175 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9175 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9175 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5195,11 +5195,11 @@ IF SELECTCOM == 175 && TEQUIP:25
             ENDIF
             CFLAG:9175 = 4
         ;A감각Lv3이상＋마조끼Lv3이상
-        ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:9175 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:9175 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5211,11 +5211,11 @@ IF SELECTCOM == 175 && TEQUIP:25
             ENDIF
             CFLAG:9175 = 3
         ;그 외
-        ELSEIF CFLAG:9175 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9175 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5232,11 +5232,11 @@ IF SELECTCOM == 175 && TEQUIP:25
 ;탈착시
 ELSEIF SELECTCOM == 175 && TEQUIP:25 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8855 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8855 < 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5248,11 +5248,11 @@ ELSEIF SELECTCOM == 175 && TEQUIP:25 == 0
             ENDIF
         CFLAG:8855 = 3
     ;A감각Lv3이상＋마조끼Lv3이상
-    ELSEIF ABL:2 >= 3 && ABL:21 >= 3 && (CFLAG:8855 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:A감각 >= 3 && ABL:마조끼 >= 3 && (CFLAG:8855 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5264,11 +5264,11 @@ ELSEIF SELECTCOM == 175 && TEQUIP:25 == 0
             ENDIF
         CFLAG:8855 = 2
     ;그 외
-    ELSEIF CFLAG:8855 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8855 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5291,11 +5291,11 @@ IF SELECTCOM == 180
     ;처음
     IF CFLAG:9180 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5310,9 +5310,9 @@ IF SELECTCOM == 180
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5329,11 +5329,11 @@ IF SELECTCOM == 180
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9180 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9180 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5346,11 +5346,11 @@ IF SELECTCOM == 180
             ENDIF
             CFLAG:9180 = 4
         ;A감각Lv3이상
-        ELSEIF ABL:2 >= 3 && (CFLAG:9180 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:A감각 >= 3 && (CFLAG:9180 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5364,11 +5364,11 @@ IF SELECTCOM == 180
             ENDIF
             CFLAG:9180 = 3
         ;그 외
-        ELSEIF CFLAG:9180 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9180 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5393,7 +5393,7 @@ IF SELECTCOM == 191 && TEQUIP:35
     ;처음
     IF CFLAG:9191 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「헤에~ 젖을 짜는 기계군요?」
             PRINTFORMW 「이왕이면 직접 드셔줬으면 하지만… 원하시다면 얼마든지…」
             PRINTFORMW 착유기로 요우키의 우유를 짜기 시작하자 기분좋은 신음을 내며
@@ -5411,26 +5411,26 @@ IF SELECTCOM == 191 && TEQUIP:35
     ;2회째 이후
     ELSE
         ;연모, 음유
-        IF TALENT:150 && TALENT:174 && (CFLAG:9191 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && TALENT:음유 && (CFLAG:9191 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 요우키에게 착유기를 보여주자 바로 스스로에게 장착시켰다
             PRINTFORMW 이젠 시키지 않아도 알아서 젖을 모아주고 있다
             PRINTFORMW 「하아앙… 기분 좋아요」
             PRINTFORMW 「멈추지 않았으면 좋겠어요, 계속해서 짜주세요」
             CFLAG:9191 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9191 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9191 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「어머, 오늘도 그걸 쓰는 건가요?」
             PRINTFORMW 요우키의 가슴에 착유기를 달아주자 자신의 가슴을 주무르면서
             PRINTFORMW 「후훗, 주인님을 위해서 이번에도 잔뜩 짜낼게요」
             PRINTFORMW 라는 말로 %조사처리(CALLNAME:MASTER,"를")% 유혹했다
             CFLAG:9191 = 4
         ;그 외(3회째 이후)
-        ELSEIF CFLAG:9191 <= 2 || FLAG:11 == 2
+        ELSEIF CFLAG:9191 <= 2 || FLAG:캐릭터대사표시 == 2
             PRINTFORML 「정말이지 가축처럼 취급되는군」
             PRINTFORMW 요우키는 한숨을 쉬었다
             CFLAG:9191 = 3
         ;그 외(2회째)
-        ELSEIF CFLAG:9191 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9191 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「…판다고 들었다」
             PRINTFORMW 「그…… 내 모유 말이다」
             PRINTFORMW 「어차피 싫다고 해도 강제될 거, 차라리 좋은 일에 써주길 바란다」
@@ -5443,12 +5443,12 @@ IF SELECTCOM == 191 && TEQUIP:35
 ;탈착시
 ELSEIF SELECTCOM == 191 && TEQUIP:35 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8861 < 2 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8861 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「여기서 끝인가요? 뭔가 좀 아쉽네요」
         PRINTFORMW 「다음에 또 할 수 있겠죠?」
         CFLAG:8861 = 2
     ;그 외
-    ELSEIF CFLAG:8861 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8861 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 착유기를 빼자 유두에서 하얗게 반짝이는 모유가 가슴을 타고 흘러내렸다
         PRINTFORMW 「뭐, 뭘 보는거냐! 네 할일은 다 하지 않았더냐! 보지마라!」
         PRINTFORML 남은 모유가 멈추지 않고 흘러내리는게 부끄러운 모양인데
@@ -5466,11 +5466,11 @@ IF SELECTCOM == 220
     ;처음
     IF CFLAG:9220 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5483,9 +5483,9 @@ IF SELECTCOM == 220
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5501,11 +5501,11 @@ IF SELECTCOM == 220
     ;2회째 이후
     ELSE
         ;연모＋마조끼Lv5이상
-        IF TALENT:150 && ABL:21 >= 5 && (CFLAG:9220 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:마조끼 >= 5 && (CFLAG:9220 <= 5 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5517,11 +5517,11 @@ IF SELECTCOM == 220
             ENDIF
             CFLAG:9220 = 6
         ;연모＋마조끼Lv3이상
-        ELSEIF TALENT:150 && ABL:21 >= 3 && (CFLAG:9220 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:마조끼 >= 3 && (CFLAG:9220 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5533,11 +5533,11 @@ IF SELECTCOM == 220
             ENDIF
             CFLAG:9220 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9220 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9220 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5549,11 +5549,11 @@ IF SELECTCOM == 220
             ENDIF
             CFLAG:9220 = 4
         ;마조끼Lv3이상
-        ELSEIF ABL:21 >= 3 && (CFLAG:9220 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:9220 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5565,11 +5565,11 @@ IF SELECTCOM == 220
             ENDIF
             CFLAG:9220 = 3
         ;그 외
-        ELSEIF CFLAG:9220 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9220 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5594,11 +5594,11 @@ IF SELECTCOM == 221
     ;처음
     IF CFLAG:9221 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5611,9 +5611,9 @@ IF SELECTCOM == 221
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5629,11 +5629,11 @@ IF SELECTCOM == 221
     ;2회째 이후
     ELSE
         ;연모＋마조끼Lv5이상
-        IF TALENT:150 && ABL:21 >= 5 && (CFLAG:9221 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:마조끼 >= 5 && (CFLAG:9221 <= 5 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5645,11 +5645,11 @@ IF SELECTCOM == 221
             ENDIF
             CFLAG:9221 = 6
         ;연모＋마조끼Lv3이상
-        ELSEIF TALENT:150 && ABL:21 >= 3 && (CFLAG:9221 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:마조끼 >= 3 && (CFLAG:9221 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5661,11 +5661,11 @@ IF SELECTCOM == 221
             ENDIF
             CFLAG:9221 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9221 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9221 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5677,11 +5677,11 @@ IF SELECTCOM == 221
             ENDIF
             CFLAG:9221 = 4
         ;마조끼Lv3이상
-        ELSEIF ABL:21 >= 3 && (CFLAG:9221 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:9221 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5693,11 +5693,11 @@ IF SELECTCOM == 221
             ENDIF
             CFLAG:9221 = 3
         ;그 외
-        ELSEIF CFLAG:9221 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9221 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5722,11 +5722,11 @@ IF SELECTCOM == 222
     ;처음
     IF CFLAG:9222 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5739,9 +5739,9 @@ IF SELECTCOM == 222
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5757,11 +5757,11 @@ IF SELECTCOM == 222
     ;2회째 이후
     ELSE
         ;연모＋마조끼Lv5이상
-        IF TALENT:150 && ABL:21 >= 5 && (CFLAG:9222 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:마조끼 >= 5 && (CFLAG:9222 <= 5 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5773,11 +5773,11 @@ IF SELECTCOM == 222
             ENDIF
             CFLAG:9222 = 6
         ;연모＋마조끼Lv3이상
-        ELSEIF TALENT:150 && ABL:21 >= 3 && (CFLAG:9222 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:마조끼 >= 3 && (CFLAG:9222 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5789,11 +5789,11 @@ IF SELECTCOM == 222
             ENDIF
             CFLAG:9222 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9222 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9222 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5805,11 +5805,11 @@ IF SELECTCOM == 222
             ENDIF
             CFLAG:9222 = 4
         ;마조끼Lv3이상
-        ELSEIF ABL:21 >= 3 && (CFLAG:9222 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:9222 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5821,11 +5821,11 @@ IF SELECTCOM == 222
             ENDIF
             CFLAG:9222 = 3
         ;그 외
-        ELSEIF CFLAG:9222 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9222 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5851,11 +5851,11 @@ IF SELECTCOM == 224 && TEQUIP:40
     ;처음
     IF CFLAG:9224 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5868,9 +5868,9 @@ IF SELECTCOM == 224 && TEQUIP:40
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5886,11 +5886,11 @@ IF SELECTCOM == 224 && TEQUIP:40
     ;2회째 이후
     ELSE
         ;연모＋마조끼Lv5이상
-        IF TALENT:150 && ABL:21 >= 5 && (CFLAG:9224 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:마조끼 >= 5 && (CFLAG:9224 <= 5 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5902,11 +5902,11 @@ IF SELECTCOM == 224 && TEQUIP:40
             ENDIF
             CFLAG:9224 = 6
         ;연모＋마조끼Lv3이상
-        ELSEIF TALENT:150 && ABL:21 >= 3 && (CFLAG:9224 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:마조끼 >= 3 && (CFLAG:9224 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5918,11 +5918,11 @@ IF SELECTCOM == 224 && TEQUIP:40
             ENDIF
             CFLAG:9224 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9224 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9224 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5934,11 +5934,11 @@ IF SELECTCOM == 224 && TEQUIP:40
             ENDIF
             CFLAG:9224 = 4
         ;마조끼Lv3이상
-        ELSEIF ABL:21 >= 3 && (CFLAG:9224 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:9224 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5950,11 +5950,11 @@ IF SELECTCOM == 224 && TEQUIP:40
             ENDIF
             CFLAG:9224 = 3
         ;그 외
-        ELSEIF CFLAG:9224 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9224 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5971,11 +5971,11 @@ IF SELECTCOM == 224 && TEQUIP:40
 ;종료시
 ELSEIF SELECTCOM == 224 && TEQUIP:40 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8872 < 2 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8872 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -5987,11 +5987,11 @@ ELSEIF SELECTCOM == 224 && TEQUIP:40 == 0
             ENDIF
         CFLAG:8872 = 2
     ;그 외
-    ELSEIF CFLAG:8872 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8872 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6016,11 +6016,11 @@ IF SELECTCOM == 225 && TEQUIP:41
     ;처음
     IF CFLAG:9225 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6033,9 +6033,9 @@ IF SELECTCOM == 225 && TEQUIP:41
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6051,11 +6051,11 @@ IF SELECTCOM == 225 && TEQUIP:41
     ;2회째 이후
     ELSE
         ;연모＋마조끼Lv5이상
-        IF TALENT:150 && ABL:21 >= 5 && (CFLAG:9225 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:마조끼 >= 5 && (CFLAG:9225 <= 5 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6067,11 +6067,11 @@ IF SELECTCOM == 225 && TEQUIP:41
             ENDIF
             CFLAG:9225 = 6
         ;연모＋마조끼Lv3이상
-        ELSEIF TALENT:150 && ABL:21 >= 3 && (CFLAG:9225 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:마조끼 >= 3 && (CFLAG:9225 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6083,11 +6083,11 @@ IF SELECTCOM == 225 && TEQUIP:41
             ENDIF
             CFLAG:9225 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9225 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9225 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6099,11 +6099,11 @@ IF SELECTCOM == 225 && TEQUIP:41
             ENDIF
             CFLAG:9225 = 4
         ;마조끼Lv3이상
-        ELSEIF ABL:21 >= 3 && (CFLAG:9225 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:9225 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6115,11 +6115,11 @@ IF SELECTCOM == 225 && TEQUIP:41
             ENDIF
             CFLAG:9225 = 3
         ;그 외
-        ELSEIF CFLAG:9225 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9225 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6136,11 +6136,11 @@ IF SELECTCOM == 225 && TEQUIP:41
 ;종료시
 ELSEIF SELECTCOM == 225 && TEQUIP:41 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8871 < 2 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8871 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6152,11 +6152,11 @@ ELSEIF SELECTCOM == 225 && TEQUIP:41 == 0
             ENDIF
         CFLAG:8871 = 2
     ;그 외
-    ELSEIF CFLAG:8871 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8871 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6181,11 +6181,11 @@ IF SELECTCOM == 226 && TEQUIP:42
     ;처음
     IF CFLAG:9226 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6198,9 +6198,9 @@ IF SELECTCOM == 226 && TEQUIP:42
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6216,11 +6216,11 @@ IF SELECTCOM == 226 && TEQUIP:42
     ;2회째 이후
     ELSE
         ;연모＋마조끼Lv5이상
-        IF TALENT:150 && ABL:21 >= 5 && (CFLAG:9226 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:마조끼 >= 5 && (CFLAG:9226 <= 5 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6232,11 +6232,11 @@ IF SELECTCOM == 226 && TEQUIP:42
             ENDIF 
             CFLAG:9226 = 6
         ;연모＋마조끼Lv3이상
-        ELSEIF TALENT:150 && ABL:21 >= 3 && (CFLAG:9226 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:마조끼 >= 3 && (CFLAG:9226 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6248,11 +6248,11 @@ IF SELECTCOM == 226 && TEQUIP:42
             ENDIF
             CFLAG:9226 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9226 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9226 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6264,11 +6264,11 @@ IF SELECTCOM == 226 && TEQUIP:42
             ENDIF
             CFLAG:9226 = 4
         ;마조끼Lv3이상
-        ELSEIF ABL:21 >= 3 && (CFLAG:9226 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:9226 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6280,11 +6280,11 @@ IF SELECTCOM == 226 && TEQUIP:42
             ENDIF
             CFLAG:9226 = 3
         ;그 외
-        ELSEIF CFLAG:9226 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9226 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6301,11 +6301,11 @@ IF SELECTCOM == 226 && TEQUIP:42
 ;종료시
 ELSEIF SELECTCOM == 226 && TEQUIP:42 == 0
     ;연모
-    IF TALENT:150 && (CFLAG:8872 < 2 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8872 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6317,11 +6317,11 @@ ELSEIF SELECTCOM == 226 && TEQUIP:42 == 0
             ENDIF
         CFLAG:8872 = 2
     ;그 외
-    ELSEIF CFLAG:8873 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8873 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6345,11 +6345,11 @@ IF SELECTCOM == 230
     ;처음
     IF CFLAG:9230 == 0
         ;봉사정신Lv3이상
-        IF ABL:13 >= 3
+        IF ABL:봉사정신 >= 3
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6362,9 +6362,9 @@ IF SELECTCOM == 230
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6380,11 +6380,11 @@ IF SELECTCOM == 230
     ;2회째 이후
     ELSE
         ;연모＋봉사정신Lv5
-        IF TALENT:150 && ABL:13 >= 5 && (CFLAG:9230 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:봉사정신 >= 5 && (CFLAG:9230 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6396,11 +6396,11 @@ IF SELECTCOM == 230
             ENDIF
             CFLAG:9230 = 4
         ;봉사정신Lv3이상
-        ELSEIF ABL:13 >= 3 && (CFLAG:9230 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:9230 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6412,11 +6412,11 @@ IF SELECTCOM == 230
             ENDIF
             CFLAG:9230 = 3
         ;그 외
-        ELSEIF CFLAG:9230 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9230 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6441,7 +6441,7 @@ IF SELECTCOM == 231
     ;처음
     IF CFLAG:9231 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 외
         ELSE
@@ -6452,23 +6452,23 @@ IF SELECTCOM == 231
     ;2회째 이후
     ELSE
         ;연모＋마조끼Lv5이상
-        IF TALENT:150 && ABL:21 >= 5 && (CFLAG:9231 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:마조끼 >= 5 && (CFLAG:9231 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9231 = 6
         ;연모＋마조끼Lv3이상
-        ELSEIF TALENT:150 && ABL:21 >= 3 && (CFLAG:9231 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:마조끼 >= 3 && (CFLAG:9231 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9231 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9231 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9231 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9231 = 4
         ;마조끼Lv3이상
-        ELSEIF ABL:21 >= 3 && (CFLAG:9231 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:9231 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9231 = 3
         ;그 외
-        ELSEIF CFLAG:9231 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9231 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:9231 = 2
         ENDIF
@@ -6485,11 +6485,11 @@ IF SELECTCOM == 232
     ;처음
     IF CFLAG:9232 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6502,9 +6502,9 @@ IF SELECTCOM == 232
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6520,11 +6520,11 @@ IF SELECTCOM == 232
     ;2회째 이후
     ELSE
         ;연모＋마조끼Lv5이상
-        IF TALENT:150 && ABL:21 >= 5 && (CFLAG:9232 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:마조끼 >= 5 && (CFLAG:9232 <= 5 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6536,11 +6536,11 @@ IF SELECTCOM == 232
             ENDIF
             CFLAG:9232 = 6
         ;연모＋마조끼Lv3이상
-        ELSEIF TALENT:150 && ABL:21 >= 3 && (CFLAG:9232 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:마조끼 >= 3 && (CFLAG:9232 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6552,11 +6552,11 @@ IF SELECTCOM == 232
             ENDIF
             CFLAG:9232 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9232 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9232 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6568,11 +6568,11 @@ IF SELECTCOM == 232
             ENDIF
             CFLAG:9232 = 4
         ;마조끼Lv3이상
-        ELSEIF ABL:21 >= 3 && (CFLAG:9232 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:9232 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6584,11 +6584,11 @@ IF SELECTCOM == 232
             ENDIF
             CFLAG:9232 = 3
         ;그 외
-        ELSEIF CFLAG:9232 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9232 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6613,7 +6613,7 @@ IF SELECTCOM == 233
     ;처음
     IF CFLAG:9233 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 외
         ELSE
@@ -6624,23 +6624,23 @@ IF SELECTCOM == 233
     ;2회째 이후
     ELSE
         ;연모＋마조끼Lv5이상
-        IF TALENT:150 && ABL:21 >= 5 && (CFLAG:9233 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:마조끼 >= 5 && (CFLAG:9233 <= 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9233 = 6
         ;연모＋마조끼Lv3이상
-        ELSEIF TALENT:150 && ABL:21 >= 3 && (CFLAG:9233 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && ABL:마조끼 >= 3 && (CFLAG:9233 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9233 = 5
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9233 <= 3 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9233 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9233 = 4
         ;마조끼Lv3이상
-        ELSEIF ABL:21 >= 3 && (CFLAG:9233 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:마조끼 >= 3 && (CFLAG:9233 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9233 = 3
         ;그 외
-        ELSEIF CFLAG:9231 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9231 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:9233 = 2
         ENDIF
@@ -6657,11 +6657,11 @@ IF SELECTCOM == 350 && TEQUIP:53
     ;처음
     IF CFLAG:9350 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6674,9 +6674,9 @@ IF SELECTCOM == 350 && TEQUIP:53
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6692,11 +6692,11 @@ IF SELECTCOM == 350 && TEQUIP:53
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9350 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9350 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6708,11 +6708,11 @@ IF SELECTCOM == 350 && TEQUIP:53
             ENDIF
             CFLAG:9350 = 3
         ;그 외
-        ELSEIF CFLAG:9350 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9350 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6731,11 +6731,11 @@ ELSEIF SELECTCOM == 350 && TEQUIP:53 == 0
     ;처음
     IF CFLAG:8824 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6748,9 +6748,9 @@ ELSEIF SELECTCOM == 350 && TEQUIP:53 == 0
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6766,11 +6766,11 @@ ELSEIF SELECTCOM == 350 && TEQUIP:53 == 0
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:8824 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:8824 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6782,11 +6782,11 @@ ELSEIF SELECTCOM == 350 && TEQUIP:53 == 0
             ENDIF
             CFLAG:8824 = 3
         ;그 외
-        ELSEIF CFLAG:8824 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:8824 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6811,11 +6811,11 @@ IF SELECTCOM == 351 && TEQUIP:54
     ;처음
     IF CFLAG:9351 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6828,9 +6828,9 @@ IF SELECTCOM == 351 && TEQUIP:54
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6846,11 +6846,11 @@ IF SELECTCOM == 351 && TEQUIP:54
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9351 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9351 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6862,11 +6862,11 @@ IF SELECTCOM == 351 && TEQUIP:54
             ENDIF
             CFLAG:9351 = 3
         ;그 외
-        ELSEIF CFLAG:9351 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9351 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6891,7 +6891,7 @@ IF SELECTCOM == 352
     ;처음
     IF CFLAG:9352 == 0
         ;봉사정신Lv3이상
-        IF ABL:13 >= 3
+        IF ABL:봉사정신 >= 3
             PRINTFORMW 
         ;그 외
         ELSE
@@ -6902,15 +6902,15 @@ IF SELECTCOM == 352
     ;2회째 이후
     ELSE
         ;연모＋봉사정신Lv5
-        IF TALENT:150 && ABL:13 >= 5 && (CFLAG:9352 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:봉사정신 >= 5 && (CFLAG:9352 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9352 = 4
         ;봉사정신Lv3이상
-        ELSEIF ABL:13 >= 3 && (CFLAG:9352 <= 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:9352 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9352 = 3
         ;그 외
-        ELSEIF CFLAG:9352 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9352 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:9352 = 2
         ENDIF
@@ -6928,11 +6928,11 @@ IF SELECTCOM == 500 && TEQUIP:90
     ;처음
     IF CFLAG:9500 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6945,9 +6945,9 @@ IF SELECTCOM == 500 && TEQUIP:90
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6963,11 +6963,11 @@ IF SELECTCOM == 500 && TEQUIP:90
     ;2회째 이후
     ELSE
         ;연모+촉수경험 20 이상(소비 기본치가 3분의 1이 됨)
-        IF TALENT:150 && EXP:53 >= 20 && (CFLAG:9500 <= 3 || FLAG:11 == 2)
+        IF TALENT:연모 && EXP:촉수경험 >= 20 && (CFLAG:9500 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6979,11 +6979,11 @@ IF SELECTCOM == 500 && TEQUIP:90
             ENDIF
             CFLAG:9500 = 4
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9500 <= 2 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9500 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -6995,11 +6995,11 @@ IF SELECTCOM == 500 && TEQUIP:90
             ENDIF
             CFLAG:9500 = 3
         ;그 외
-        ELSEIF CFLAG:9500 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9500 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7016,11 +7016,11 @@ IF SELECTCOM == 500 && TEQUIP:90
 ;종료시
 ELSEIF SELECTCOM == 500 && TEQUIP:90 == 0
     ;연모+촉수경험 20 이상(소비 기본치가 3분의 1이 됨)
-    IF TALENT:150 && EXP:53 >= 20 && (CFLAG:8901 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && EXP:촉수경험 >= 20 && (CFLAG:8901 < 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7032,11 +7032,11 @@ ELSEIF SELECTCOM == 500 && TEQUIP:90 == 0
             ENDIF
         CFLAG:8901 = 3
     ;연모
-    ELSEIF TALENT:150 && (CFLAG:8901 < 2 || FLAG:11 == 2)
+    ELSEIF TALENT:연모 && (CFLAG:8901 < 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7048,11 +7048,11 @@ ELSEIF SELECTCOM == 500 && TEQUIP:90 == 0
             ENDIF
         CFLAG:8901 = 2
     ;그 외
-    ELSEIF CFLAG:8901 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8901 < 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7076,11 +7076,11 @@ IF SELECTCOM == 602
     ;처음
     IF CFLAG:9602 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7093,9 +7093,9 @@ IF SELECTCOM == 602
         ;그 외
         ELSE
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7110,11 +7110,11 @@ IF SELECTCOM == 602
         RETURN 0
     ELSE
         ;연모+봉사정신Lv3이상+C감각Lv3이상
-        IF TALENT:150 && ABL:13 >= 3 && ABL:0 >= 3 && (CFLAG:9602 <= 5 || FLAG:11 == 2)
+        IF TALENT:연모 && ABL:봉사정신 >= 3 && ABL:C감각 >= 3 && (CFLAG:9602 <= 5 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7126,11 +7126,11 @@ IF SELECTCOM == 602
             ENDIF
             CFLAG:9602 = 6
         ;연모
-        ELSEIF TALENT:150 && (CFLAG:9602 <= 4 || FLAG:11 == 2)
+        ELSEIF TALENT:연모 && (CFLAG:9602 <= 4 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7142,11 +7142,11 @@ IF SELECTCOM == 602
             ENDIF
             CFLAG:9602 = 5
         ;굴복각인Lv3+봉사정신Lv3이상+C감각Lv3이상
-        ELSEIF MARK:2 == 3 && ABL:13 >= 3 && ABL:0 >= 3 && (CFLAG:9602 <= 3 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && ABL:봉사정신 >= 3 && ABL:C감각 >= 3 && (CFLAG:9602 <= 3 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7158,11 +7158,11 @@ IF SELECTCOM == 602
             ENDIF
             CFLAG:9602 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9602 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9602 <= 2 || FLAG:캐릭터대사표시 == 2)
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7174,11 +7174,11 @@ IF SELECTCOM == 602
             ENDIF
             CFLAG:9602 = 3
         ;그 외
-        ELSEIF CFLAG:9602 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9602 <= 1 || FLAG:캐릭터대사표시 == 2
             ;요우키가 남자
-            IF TALENT:120
+            IF TALENT:남자
                 ;남자 주인
-                IF TALENT:MASTER:120
+                IF TALENT:MASTER:남자
                     PRINTFORMW 
                 ;여주인
                 ELSE
@@ -7203,7 +7203,7 @@ IF SELECTCOM == 610
     ;처음
     IF CFLAG:9610 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 외
         ELSE
@@ -7214,19 +7214,19 @@ IF SELECTCOM == 610
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:9610 <= 4 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:9610 <= 4 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9610 = 5
         ;V감각Lv3이상＋A감각Lv3이상
-        ELSEIF ABL:1 >= 3 && ABL:2 >= 3 && (CFLAG:9610 <= 3 || FLAG:11 == 2)
+        ELSEIF ABL:V감각 >= 3 && ABL:A감각 >= 3 && (CFLAG:9610 <= 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9610 = 4
         ;굴복각인Lv3
-        ELSEIF MARK:2 == 3 && (CFLAG:9610 <= 2 || FLAG:11 == 2)
+        ELSEIF MARK:굴복각인 == 3 && (CFLAG:9610 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:9610 = 3
         ;그 외
-        ELSEIF CFLAG:9610 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:9610 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:9610 = 2
         ENDIF
@@ -7273,11 +7273,11 @@ SIF EQUIP:14 || TFLAG:899 > 0
 LOCAL = PALAM:10 + UP:10
 IF LOCAL > PALAMLV:2 && CFLAG:8001 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         ;로션을 사용했을 경우
         IF SELECTCOM == 60
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「이건 실로 유용한 물건이로군요」
         ;요우키가 여자
         ELSE
@@ -7286,7 +7286,7 @@ IF LOCAL > PALAMLV:2 && CFLAG:8001 == 0
         ;그 외
         ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「이제 마음껏 하셔도 될 것 같군요」
         ;요우키가 여자
         ELSE
@@ -7298,7 +7298,7 @@ IF LOCAL > PALAMLV:2 && CFLAG:8001 == 0
         ;로션을 사용했을 경우
         IF SELECTCOM == 60
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「정말 한심한 짓을 하는군…」
         ;요우키가 여자
         ELSE
@@ -7307,7 +7307,7 @@ IF LOCAL > PALAMLV:2 && CFLAG:8001 == 0
         ;그 외
         ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「저, 젖었다니? 헛소리 마라 이놈!」
         ;요우키가 여자
         ELSE
@@ -7324,11 +7324,11 @@ ENDIF
 LOCAL = PALAM:13 + UP:13
 IF LOCAL > PALAMLV:2 && CFLAG:8002 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         ;미약을 사용했을 경우
         IF SELECTCOM == 61
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「술하고는 또 다르게 기분을 고양시키는군」
         ;요우키가 여자
         ELSE
@@ -7337,7 +7337,7 @@ IF LOCAL > PALAMLV:2 && CFLAG:8002 == 0
         ;그 외
         ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「그래! 이런 걸 바랬었어! 좀 더 격렬하게!」
         ;요우키가 여자
         ELSE
@@ -7349,7 +7349,7 @@ IF LOCAL > PALAMLV:2 && CFLAG:8002 == 0
         ;미약을 사용했을 경우
         IF SELECTCOM == 61
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「이딴 약으로 흥분시켜봐야…」
         ;요우키가 여자
         ELSE
@@ -7358,7 +7358,7 @@ IF LOCAL > PALAMLV:2 && CFLAG:8002 == 0
         ;그 외
         ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW (이…이러면 안되는데 몸이 점점…)
         ;요우키가 여자
         ELSE
@@ -7375,9 +7375,9 @@ ENDIF
 LOCAL = PALAM:15 + UP:15
 IF LOCAL > PALAMLV:2 && CFLAG:8003 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「나이는 먹었지만 이래봬도 자랑할 만한 몸이라고요」
         ;요우키가 여자
         ELSE
@@ -7386,7 +7386,7 @@ IF LOCAL > PALAMLV:2 && CFLAG:8003 == 0
     ;그 외
     ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「모욕도 이런 모욕이 따로 없군…」
         ;요우키가 여자
         ELSE
@@ -7402,9 +7402,9 @@ ENDIF
 LOCAL = PALAM:17 + UP:17
 IF LOCAL > PALAMLV:2 && CFLAG:8004 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「왠지 소름이 돋는군. 허나 그럴수록 더욱 짜릿하군!」
         ;요우키가 여자
         ELSE
@@ -7413,7 +7413,7 @@ IF LOCAL > PALAMLV:2 && CFLAG:8004 == 0
     ;그 외
     ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「두렵…다고? 내가 이딴 녀석한테…?」
         ;요우키가 여자
         ELSE
@@ -7428,9 +7428,9 @@ ENDIF
 ;-------------------------------------------------
 IF NOWEX:0 > 0 && CFLAG:8005 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「이제야 손놀림이 좋아진 모양이군…」
         ;요우키가 여자
         ELSE
@@ -7440,7 +7440,7 @@ IF NOWEX:0 > 0 && CFLAG:8005 == 0
     ;그 외
     ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「내…내가 네놈따위한테…」
         ;요우키가 여자
         ELSE
@@ -7456,7 +7456,7 @@ ENDIF
 ;-------------------------------------------------
 IF NOWEX:1 > 0 && CFLAG:8006 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 「아아아아! 가버려효오오…」
         PRINTFORMW 「이…이게 여자로써의 간다는 기분이구나…」
     ;그 외
@@ -7472,9 +7472,9 @@ ENDIF
 ;-------------------------------------------------
 IF NOWEX:2 > 0 && CFLAG:8007 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「아아…극락이로구나…」
         ;요우키가 여자
         ELSE
@@ -7483,7 +7483,7 @@ IF NOWEX:2 > 0 && CFLAG:8007 == 0
     ;그 외
     ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW (내가…내가 이딴 놈한테 이런 더러운 구멍으로…!)
         ;요우키가 여자
         ELSE
@@ -7499,9 +7499,9 @@ ENDIF
 ;-------------------------------------------------
 IF NOWEX:3 > 0 && CFLAG:8008 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「이, 이건 또 새로운 쾌감이군!」
         ;요우키가 여자
         ELSE
@@ -7510,7 +7510,7 @@ IF NOWEX:3 > 0 && CFLAG:8008 == 0
     ;그 외
     ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「말도 안돼…남자의 몸인데 이런 데로 간다니…」
         ;요우키가 여자
         ELSE
@@ -7527,9 +7527,9 @@ ENDIF
 LOCAL = UP:20 + UP:21
 IF TFLAG:0 > 0 && CFLAG:8009 == 0
     ;연모에다 주인의 섹스로 처녀상실
-    IF TALENT:150 && TFLAG:2
+    IF TALENT:연모 && TFLAG:2
         ;연모에다 반발각인 미취득
-        IF TALENT:150 && LOCAL < 500
+        IF TALENT:연모 && LOCAL < 500
             PRINTFORMW 
         ;연모에다 반발각인 취득
         ELSE
@@ -7538,7 +7538,7 @@ IF TFLAG:0 > 0 && CFLAG:8009 == 0
     ;손가락 삽입으로 처녀상실(반감이 꽤 적음)
     ELSEIF SELECTCOM == 4
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 외
         ELSE
@@ -7547,7 +7547,7 @@ IF TFLAG:0 > 0 && CFLAG:8009 == 0
     ;그 외 상황에서 처녀상실
     ELSE
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 
         ;그 외
         ELSE
@@ -7565,15 +7565,15 @@ ENDIF
 IF TFLAG:9 > 0
 [SKIPSTART]
     ;연모
-    IF TALENT:150 && (CFLAG:8011 <= 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8011 <= 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:8011 = 4
     ;굴복각인Lv3
-    ELSEIF MARK:2 == 3 && (CFLAG:8011 <= 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && (CFLAG:8011 <= 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:8011 = 3
     ;그 외
-    ELSEIF CFLAG:8011 <= 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8011 <= 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:8011 = 2
     ENDIF
@@ -7581,16 +7581,16 @@ IF TFLAG:9 > 0
 ;그 외(질내사정)
 ELSEIF TFLAG:10 > 0
     ;연모
-    IF TALENT:150 && (CFLAG:8010 <= 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8010 <= 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORML 「내 보지에…주인님의 정액이 가득…」
         PRINTFORMW 「아기 생길 수 있을까나?」
         CFLAG:8010 = 4
     ;굴복각인Lv3
-    ELSEIF MARK:2 == 3 && (CFLAG:8010 <= 2 || FLAG:11 == 2)
+    ELSEIF MARK:굴복각인 == 3 && (CFLAG:8010 <= 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「생기지만 않았으면 좋겠어…」
         CFLAG:8010 = 3
     ;그 외
-    ELSEIF CFLAG:8010 <= 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8010 <= 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 「잠깐! 누구 맘대로 안에다 싸는거야!」
         CFLAG:8010 = 2
     ENDIF
@@ -7602,15 +7602,15 @@ ENDIF
 [SKIPSTART]
 IF TFLAG:12 > 0
     ;봉사정신Lv5
-    IF ABL:13 >= 5 && (CFLAG:8012 <= 2 || FLAG:11 == 2)
+    IF ABL:봉사정신 >= 5 && (CFLAG:8012 <= 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:8012 = 3
     ;봉사정신Lv3
-    ELSEIF ABL:13 >= 3 && (CFLAG:8012 <= 1 || FLAG:11 == 2)
+    ELSEIF ABL:봉사정신 >= 3 && (CFLAG:8012 <= 1 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:8012 = 2
     ;그 외
-    ELSEIF CFLAG:8012 <= 0 || FLAG:11 == 2
+    ELSEIF CFLAG:8012 <= 0 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:8012 = 1
     ENDIF
@@ -7625,34 +7625,34 @@ IF TFLAG:11 > 0 || TFLAG:29 > 0
     ;펠라, 이라마치오인 경우
     IF SELECTCOM == 41 || SELECTCOM == 230 || SELECTCOM == 602
         ;정액중독Lv5
-        IF ABL:31 >= 5 && (CFLAG:8013 < 5 || FLAG:11 == 2)
+        IF ABL:정액중독 >= 5 && (CFLAG:8013 < 5 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:8013 = 5
         ;정액중독Lv3
-        ELSEIF ABL:31 >= 3 && (CFLAG:8013 < 3 || FLAG:11 == 2)
+        ELSEIF ABL:정액중독 >= 3 && (CFLAG:8013 < 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:8013 = 3
         ;봉사정신Lv3이상
-        ELSEIF ABL:13 >= 3 && (CFLAG:8013 < 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:8013 < 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:8013 = 2
         ;그 외
-        ELSEIF CFLAG:8013 < 1 || FLAG:11 == 2
+        ELSEIF CFLAG:8013 < 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:8013 = 1
         ENDIF
     ;파이즈리인 경우
     ELSEIF SELECTCOM == 42 || SELECTCOM == 208 || SELECTCOM == 209
         ;봉사정신Lv5
-        IF ABL:13 >= 5 && (CFLAG:8014 < 3 || FLAG:11 == 2)
+        IF ABL:봉사정신 >= 5 && (CFLAG:8014 < 3 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:8014 = 3
         ;봉사정신Lv3이상
-        ELSEIF ABL:13 >= 3 && (CFLAG:8014 < 2 || FLAG:11 == 2)
+        ELSEIF ABL:봉사정신 >= 3 && (CFLAG:8014 < 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:8014 = 2
         ;그 외
-        ELSEIF CFLAG:8014 < 1 || FLAG:11 == 2
+        ELSEIF CFLAG:8014 < 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 
             CFLAG:8014 = 1
         ENDIF
@@ -7667,7 +7667,7 @@ IF TFLAG:30 > 0
     ;처음
     IF CFLAG:8015 == 0
         ;연모
-        IF TALENT:150
+        IF TALENT:연모
             PRINTFORMW 「후우…상쾌해졌다」
         ;그 외
         ELSE
@@ -7678,11 +7678,11 @@ IF TFLAG:30 > 0
     ;2회째 이후
     ELSE
         ;연모
-        IF TALENT:150 && (CFLAG:8015 <= 2 || FLAG:11 == 2)
+        IF TALENT:연모 && (CFLAG:8015 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 
             CFLAG:8015 = 3
         ;그 외
-        ELSEIF CFLAG:8015 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:8015 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「끄으으…참으려 했는데……」
             CFLAG:8015 = 2
         ENDIF
@@ -7697,7 +7697,7 @@ IF TFLAG:31 > 0
     ;처음
     IF CFLAG:8016 == 0
         ;순종Lv4이상
-        IF ABL:10 >= 4
+        IF ABL:순종 >= 4
             PRINTFORMW 「하우우…! 가슴이 찌릿해…」
             PRINTFORMW 「나 젖이 나오네…근데 꼭 사정하는 것 같아…」
         ;그 외
@@ -7710,11 +7710,11 @@ IF TFLAG:31 > 0
     ;2회째 이후
     ELSE
         ;순종Lv4이상
-        IF ABL:10 >= 4 && (CFLAG:8016 <= 2 || FLAG:11 == 2)
+        IF ABL:순종 >= 4 && (CFLAG:8016 <= 2 || FLAG:캐릭터대사표시 == 2)
             PRINTFORMW 「젖나오는 거 기분좋아…」
             CFLAG:8016 = 3
         ;그 외
-        ELSEIF CFLAG:8016 <= 1 || FLAG:11 == 2
+        ELSEIF CFLAG:8016 <= 1 || FLAG:캐릭터대사표시 == 2
             PRINTFORMW 「젖이라니…시, 싫어! 당신의 아기같은 거 싫어!」
             CFLAG:8016 = 2
         ENDIF
@@ -7725,11 +7725,11 @@ ENDIF
 ;-------------------------------------------------
 ;C감각Lv5로 Ｃ절정50이상 CFLAG:8017
 ;-------------------------------------------------
-;IF ABL:0 >= 5 && EX:0 >= 50 && NOWEX:0 > 0
+;IF ABL:C감각 >= 5 && EX:0 >= 50 && NOWEX:0 > 0
     ;처음
 ;    IF CFLAG:8017 == 0
         ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
         ;그 외
 ;        ELSE
@@ -7740,11 +7740,11 @@ ENDIF
     ;2회째 이후
 ;    ELSE
         ;연모
-;        IF TALENT:150 && (CFLAG:8017 <= 2 || FLAG:11 == 2)
+;        IF TALENT:연모 && (CFLAG:8017 <= 2 || FLAG:캐릭터대사표시 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:8017 = 3
         ;그 외
-;        ELSEIF CFLAG:8017 <= 1 || FLAG:11 == 2
+;        ELSEIF CFLAG:8017 <= 1 || FLAG:캐릭터대사표시 == 2
 ;            PRINTFORMW 
 ;            CFLAG:8017 = 2
 ;        ENDIF
@@ -7755,11 +7755,11 @@ ENDIF
 ;-------------------------------------------------
 ;V감각Lv5로 Ｖ절정50이상 CFLAG:8018
 ;-------------------------------------------------
-;IF ABL:1 >= 5 && EX:1 >= 50 && NOWEX:1 > 0
+;IF ABL:V감각 >= 5 && EX:1 >= 50 && NOWEX:1 > 0
     ;처음
 ;    IF CFLAG:8018 == 0
         ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
         ;그 외
 ;        ELSE
@@ -7770,11 +7770,11 @@ ENDIF
     ;2회째 이후
 ;    ELSE
         ;연모
-;        IF TALENT:150 && (CFLAG:8018 <= 2 || FLAG:11 == 2)
+;        IF TALENT:연모 && (CFLAG:8018 <= 2 || FLAG:캐릭터대사표시 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:8018 = 3
         ;그 외
-;        ELSEIF CFLAG:8018 <= 1 || FLAG:11 == 2
+;        ELSEIF CFLAG:8018 <= 1 || FLAG:캐릭터대사표시 == 2
 ;            PRINTFORMW 
 ;            CFLAG:8018 = 2
 ;        ENDIF
@@ -7785,11 +7785,11 @@ ENDIF
 ;-------------------------------------------------
 ;A감각Lv5로 Ａ절정50이상 CFLAG:8019
 ;-------------------------------------------------
-;IF ABL:2 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
+;IF ABL:A감각 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
     ;처음
 ;    IF CFLAG:8019 == 0
         ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
         ;그 외
 ;        ELSE
@@ -7800,11 +7800,11 @@ ENDIF
     ;2회째 이후
 ;    ELSE
         ;연모
-;        IF TALENT:150 && (CFLAG:8019 <= 2 || FLAG:11 == 2)
+;        IF TALENT:연모 && (CFLAG:8019 <= 2 || FLAG:캐릭터대사표시 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:8019 = 3
         ;그 외
-;        ELSEIF CFLAG:8019 <= 1 || FLAG:11 == 2
+;        ELSEIF CFLAG:8019 <= 1 || FLAG:캐릭터대사표시 == 2
 ;            PRINTFORMW 
 ;            CFLAG:8019 = 2
 ;        ENDIF
@@ -7815,11 +7815,11 @@ ENDIF
 ;-------------------------------------------------
 ;B감각Lv5로 Ｂ절정50이상 CFLAG:8020
 ;-------------------------------------------------
-;IF ABL:3 >= 5 && EX:3 >= 50 && NOWEX:3 > 0
+;IF ABL:B감각 >= 5 && EX:3 >= 50 && NOWEX:3 > 0
     ;처음
 ;    IF CFLAG:8020 == 0
         ;연모
-;        IF TALENT:150
+;        IF TALENT:연모
 ;            PRINTFORMW 
         ;그 외
 ;        ELSE
@@ -7830,11 +7830,11 @@ ENDIF
     ;2회째 이후
 ;    ELSE
         ;연모
-;        IF TALENT:150 && (CFLAG:8020 <= 2 || FLAG:11 == 2)
+;        IF TALENT:연모 && (CFLAG:8020 <= 2 || FLAG:캐릭터대사표시 == 2)
 ;            PRINTFORMW 
 ;            CFLAG:8020 = 3
         ;그 외
-;        ELSEIF CFLAG:8020 <= 1 || FLAG:11 == 2
+;        ELSEIF CFLAG:8020 <= 1 || FLAG:캐릭터대사표시 == 2
 ;            PRINTFORMW 
 ;            CFLAG:8020 = 2
 ;        ENDIF
@@ -7875,7 +7875,7 @@ SIF EQUIP:14 || TFLAG:899 > 0
 ;-------------------------------------------------
 IF TFLAG:40 == 3 && CFLAG:8096 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 「크윽!」
         PRINTFORMW 「죄, 죄송합니다만…지금 건 꽤 아픕니다…」
     ELSE
@@ -7891,9 +7891,9 @@ ENDIF
 ;-------------------------------------------------
 ;여자 한정 쾌락각인Lv1 취득 CFLAG:8098
 ;-------------------------------------------------
-IF TFLAG:41 == 3 && CFLAG:8097 == 0 && TALENT:120 == 0
+IF TFLAG:41 == 3 && CFLAG:8097 == 0 && TALENT:남자 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 「아으응~ 기분좋아~」
     ELSE
         PRINTFORMW 「이, 이게 뭐야? 이게 뭐냐고!」
@@ -7904,9 +7904,9 @@ ENDIF
 ;-------------------------------------------------
 ;여자 한정 쾌락각인Lv2 취득 CFLAG:8098
 ;-------------------------------------------------
-IF TFLAG:41 == 3 && CFLAG:8097 < 2 && TALENT:120 == 0
+IF TFLAG:41 == 3 && CFLAG:8097 < 2 && TALENT:남자 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 「앗, 아, 아앙, 좀 더, 좀 더어!!」
     ELSE
         PRINTFORMW 「이…이런 거 알고 싶지 않아…!」
@@ -7919,9 +7919,9 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:41 == 3 && CFLAG:8097 < 3
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「응호호! 가버려엉!!」
         ;요우키가 여자
         ELSE
@@ -7930,7 +7930,7 @@ IF TFLAG:41 == 3 && CFLAG:8097 < 3
         ENDIF
     ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW (내가 고작 쾌락 따위에 빠지다니…하지만 좋아…)
         ;요우키가 여자
         ELSE
@@ -7947,11 +7947,11 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:42 == 3 && CFLAG:8098 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         PRINTFORMW 「역시 당신은 절대적이군요…」
     ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW (내가 이 자를 잘못 봤구나…)
             PRINTFORMW (이 자는 거역할 수 없는 자로다…)
         ;요우키가 여자
@@ -7967,9 +7967,9 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:44 == 3 && CFLAG:8099 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW (좋아하지만 싫어합니다…애증이란 걸까요…)
         ;요우키가 여자
         ELSE
@@ -7977,7 +7977,7 @@ IF TFLAG:44 == 3 && CFLAG:8099 == 0
         ENDIF
     ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「빨리 그 목을 베어주고 싶구나…」
         ;요우키가 여자
         ELSE
@@ -7993,9 +7993,9 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:46 == 3 && CFLAG:8100 == 0
     ;연모
-    IF TALENT:150
+    IF TALENT:연모
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「…이젠 필요없는 자존심이다」
             PRINTFORMW 「차라리 철저히 망가뜨려다오」
         ;요우키가 여자
@@ -8005,7 +8005,7 @@ IF TFLAG:46 == 3 && CFLAG:8100 == 0
         ENDIF
     ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW (아아… 이렇게까지 망신당하다니…)
             PRINTFORMW (선조님들 뵐 면목이 없구나…)
         ;요우키가 여자
@@ -8026,11 +8026,11 @@ ENDIF
 [SKIPSTART]
 IF TFLAG:200 == 130
     ;연모+반발각인Lv3미만
-    IF TALENT:150 && MARK:9 < 3
+    IF TALENT:연모 && MARK:반발각인 < 3
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             ;남자 주인
-            IF TALENT:MASTER:120
+            IF TALENT:MASTER:남자
                 PRINTFORMW 
             ;여주인
             ELSE
@@ -8041,11 +8041,11 @@ IF TFLAG:200 == 130
             PRINTFORMW 
         ENDIF
     ;반발각인Lv3
-    ELSEIF MARK:9 == 3
+    ELSEIF MARK:반발각인 == 3
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             ;남자 주인
-            IF TALENT:MASTER:120
+            IF TALENT:MASTER:남자
                 PRINTFORMW 
             ;여주인
             ELSE
@@ -8056,11 +8056,11 @@ IF TFLAG:200 == 130
             PRINTFORMW 
         ENDIF
     ;음란
-    ELSEIF TALENT:170
+    ELSEIF TALENT:음란
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             ;남자 주인
-            IF TALENT:MASTER:120
+            IF TALENT:MASTER:남자
                 PRINTFORMW 
             ;여주인
             ELSE
@@ -8073,9 +8073,9 @@ IF TFLAG:200 == 130
     ;그 외
     ELSE
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             ;남자 주인
-            IF TALENT:MASTER:120
+            IF TALENT:MASTER:남자
                 PRINTFORMW 
             ;여주인
             ELSE
@@ -8094,9 +8094,9 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 140
     ;연모
-    IF TALENT:150 && (CFLAG:8240 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8240 < 3 || FLAG:캐릭터대사표시 == 2)
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「으음, 그대의 자지는 오늘도 맛있구려」
         ;요우키가 여자
         ELSE
@@ -8104,9 +8104,9 @@ IF TFLAG:200 == 140
         ENDIF
         CFLAG:8240 = 3
     ;봉사정신Lv5이상
-    ELSEIF ABL:13 >= 5 && (CFLAG:8240 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:봉사정신 >= 5 && (CFLAG:8240 < 2 || FLAG:캐릭터대사표시 == 2)
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「…이런 건 보는 게 아니다 사생활 침해다」
         ;요우키가 여자
         ELSE
@@ -8114,9 +8114,9 @@ IF TFLAG:200 == 140
         ENDIF
         CFLAG:8240 = 2
     ;그 외
-    ELSEIF CFLAG:8240 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8240 < 1 || FLAG:캐릭터대사표시 == 2
         ;요우키가 남자
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「뭐…뭘 보는게냐! 잠이나 더 자라!」
             PRINTFORMW 요우키는 창피해 하면서도 끝까지 입을 떼지는 않았다
         ;요우키가 여자
@@ -8134,11 +8134,11 @@ ENDIF
 [SKIPSTART]
 IF TFLAG:200 == 150
     ;V감각Lv4이상
-    IF ABL:1 >= 4 && (CFLAG:8250 < 2 || FLAG:11 == 2)
+    IF ABL:V감각 >= 4 && (CFLAG:8250 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:8250 = 2
     ;그 외
-    ELSEIF CFLAG:8250 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8250 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:8250 = 1
     ENDIF
@@ -8150,15 +8150,15 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 151
     ;연모
-    IF TALENT:150 && (CFLAG:8251 < 3 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8251 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「아아…오늘도 당신을 기다립니다…」
         CFLAG:8251 = 3
     ;자위중독Lv3이상
-    ELSEIF ABL:30 >= 3 && (CFLAG:8251 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:자위중독 >= 3 && (CFLAG:8251 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 「으으…몸이 멋대로 욕정해버려서…」
         CFLAG:8251 = 2
     ;그 외
-    ELSEIF CFLAG:8251 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8251 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 「나 대체 뭘 하고 있는거지…」
         CFLAG:8251 = 1
     ENDIF
@@ -8170,19 +8170,19 @@ ENDIF
 [SKIPSTART]
 IF TFLAG:200 == 154
     ;연모
-    IF TALENT:150 && (CFLAG:8254 < 4 || FLAG:11 == 2)
+    IF TALENT:연모 && (CFLAG:8254 < 4 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:8254 = 4
     ;레즈중독Lv3이상
-    ELSEIF ABL:32 >= 3 && (CFLAG:8254 < 3 || FLAG:11 == 2)
+    ELSEIF ABL:레즈중독 >= 3 && (CFLAG:8254 < 3 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:8254 = 3
     ;레즈끼 Lv3이상
-    ELSEIF ABL:22 >= 3 && (CFLAG:8254 < 2 || FLAG:11 == 2)
+    ELSEIF ABL:레즈끼 >= 3 && (CFLAG:8254 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:8254 = 2
     ;그 외
-    ELSEIF CFLAG:8254 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8254 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:8254 = 1
     ENDIF
@@ -8195,11 +8195,11 @@ ENDIF
 [SKIPSTART]
 IF TFLAG:200 == 158
     ;V감각Lv5이상
-    IF ABL:1 >= 5 && (CFLAG:8258 < 2 || FLAG:11 == 2)
+    IF ABL:V감각 >= 5 && (CFLAG:8258 < 2 || FLAG:캐릭터대사표시 == 2)
         PRINTFORMW 
         CFLAG:8258 = 2
     ;그 외
-    ELSEIF CFLAG:8258 < 1 || FLAG:11 == 2
+    ELSEIF CFLAG:8258 < 1 || FLAG:캐릭터대사표시 == 2
         PRINTFORMW 
         CFLAG:8258 = 1
     ENDIF
@@ -8225,7 +8225,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 339
     ;남자→여자
-    IF TALENT:120 == 0
+    IF TALENT:남자 == 0
         ;첫조교하기 전
         IF CFLAG:5001 == 0
             PRINTFORML 의식이 없는 노검사에게 성별 전환의 비약을 먹인 결과.
@@ -8274,9 +8274,9 @@ PRINTFORMW ………
 PRINTFORMW ……
 PRINTFORMW 
 ;요우키가 남자
-IF TALENT:120
+IF TALENT:남자
     ;남자 주인
-    IF TALENT:MASTER:120
+    IF TALENT:MASTER:남자
         PRINTFORMW 남자가 남자를 사랑한다…말도 안되는 얘기다
         PRINTFORMW 적어도 요우키는 %조사처리(CALLNAME:MASTER,"를")% 만나기 전까진 그렇게 생각했다
         PRINTFORMW 하지만 %조사처리(CALLNAME:MASTER,"를")% 만나고 나서 요우키는 많은 것이 변했다
@@ -8304,10 +8304,10 @@ IF TALENT:120
         PRINTFORMW 「음? 날 원한다니?」
         PRINTFORMW 「허허~ 돌아오자마자 그런 말을 하다니, 정말 색욕이 왕성하시구려」
         ;새드끼Lv3 이상
-        IF ABL:20 >= 3
+        IF ABL:새드끼 >= 3
             PRINTFORMW 「그럼 음란한 아내를 한껏 안아주도록 할까…」
         ;마조끼Lv3 이상
-        ELSEIF ABL:21 >= 3
+        ELSEIF ABL:마조끼 >= 3
             PRINTFORMW 「그럼 오늘도 이 늙은이를 안아주시구려…」
         ;그 외
         ELSE
@@ -8356,9 +8356,9 @@ PRINTFORMW ………
 PRINTFORMW ……
 PRINTFORMW  
 ;요우키가 남자
-IF TALENT:120
+IF TALENT:남자
     ;남자 주인
-    IF TALENT:MASTER:120
+    IF TALENT:MASTER:남자
         PRINTFORMW 콘파쿠 요우키라는 노예는 생각보다 매력적이었다
         PRINTFORMW 남자로써 남자에게 봉사받는 것에 대한 건 생각해본 적도 없었다
         PRINTFORMW 처음 그를 샀을 땐 별 이유가 없었던 듯 했지만 지금 생각해보면 그건 운명이었다

@@ -9,54 +9,54 @@
 SIF DITEMTYPE:999:235 > 0
     RETURN 0
 ;고문계, 정신조작계 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16) == 0
+SIF (FLAG:커맨드확장 & 16) == 0
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;조교자가 [소인]であることが前提
-SIF TALENT:PLAYER:127 == 0
+SIF TALENT:PLAYER:소인 == 0
     RETURN 0
 ;조교 대상이 [소인]일 경우에는 ダメ
-SIF TALENT:127
+SIF TALENT:소인
     RETURN 0
 ;기계면 불가
-SIF TALENT:206
+SIF TALENT:기계
     RETURN 0
 ;主人調教の場合, 순종이 3미만かつ屈服刻印が1미만이면 불가
-SIF PLAYER == MASTER && ABL:10 < 3 && MARK:3 < 1
+SIF PLAYER == MASTER && ABL:순종 < 3 && MARK:약물각인 < 1
     RETURN 0
 ;ASSI일 경우, 순종4이상または새드かつ조교 대상も순종4이상じゃないとできない。
 IF ASSIPLAY
-    SIF ABL:ASSI:10 < 4 && (TALENT:ASSI:81 == 0 && ABL:10 < 4)
+    SIF ABL:ASSI:순종 < 4 && (TALENT:ASSI:새드 == 0 && ABL:순종 < 4)
     RETURN 0
 ENDIF
 ;[작은체형]なら순종이 4이상かつ마조끼が4이상じゃないと実行できない
-IF TALENT:128
-    SIF ABL:10 < 4 || ABL:21 < 4
+IF TALENT:작은체형
+    SIF ABL:순종 < 4 || ABL:마조끼 < 4
         RETURN 0
 ENDIF
 ;조교 대상の체력이 1500미만または기력이 500미만이면 불가
-SIF BASE:0 < 1500 || BASE:1 < 500
+SIF BASE:0 < 1500 || BASE:기력 < 500
     RETURN 0
 ;조교자의 체력이 500미만または기력이 250미만이면 불가
-SIF BASE:PLAYER:0 < 500 || BASE:PLAYER:1 < 500
+SIF BASE:PLAYER:체력 < 500 || BASE:PLAYER:기력 < 500
     RETURN 0
 ;妊娠中のときはダイビング系は連続で使えない
-SIF TALENT:140 && (PREVCOM == 234 || PREVCOM == 235)
+SIF TALENT:임신 && (PREVCOM == 234 || PREVCOM == 235)
     RETURN 0
-;일정의 Ａ경험とＡ확장경험이 필요([巨躯]の場合は軽減)
-IF TALENT:129
+;일정의 A경험とA확장경험이 필요([巨躯]の場合は軽減)
+IF TALENT:거구
     LOCAL = 75
     LOCAL:1 = 10
 ELSE
     LOCAL = 150
     LOCAL:1 = 20
 ENDIF
-SIF EXP:1 < LOCAL || EXP:33 < LOCAL:1
+SIF EXP:A경험 < LOCAL || EXP:A확장경험 < LOCAL:1
     RETURN 0
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 조교자가 汚れ無視もしくは汚臭鈍感を持たないなら実行できない
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;潤滑不足の場合は不可能
 SIF PALAM:10 < PALAMLV:5
@@ -120,10 +120,10 @@ CALL TRAIN_MESSAGE_COM235
 ;-------------------------------------------------
 IF PREVCOM == 235
     DOWNBASE:0 += 800
-    DOWNBASE:1 += 400
+    DOWNBASE:기력 += 400
 ELSE
     DOWNBASE:0 += 600
-    DOWNBASE:1 += 300
+    DOWNBASE:기력 += 300
 ENDIF
 
 SOURCE:12 = 1000
@@ -133,19 +133,19 @@ SOURCE:22 = 1200
 SOURCE:31 = 14000
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 200
     SOURCE:22 += 100
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 700
     SOURCE:22 += 500
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 1300
     SOURCE:22 += 700
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 1900
     SOURCE:22 += 1500
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 2200
     SOURCE:22 += 2300
 ELSE
@@ -154,7 +154,7 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:5
+IF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.40
     SOURCE:20 += 500
 ELSE
@@ -164,30 +164,30 @@ ENDIF
 
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:22 , 0.60
     TIMES SOURCE:31 , 0.60
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
 ;연속으로 사용했을 경우
 IF PREVCOM == 235
     DOWNBASE:0 += 200
-    DOWNBASE:1 += 100
+    DOWNBASE:기력 += 100
     TIMES SOURCE:2 , 1.30
     TIMES SOURCE:20 , 2.00
     TIMES SOURCE:22 , 2.00
@@ -195,26 +195,26 @@ IF PREVCOM == 235
 ENDIF
 
 ;처녀로 정조관념
-SIF TALENT:0 == 1 && TALENT:30
+SIF TALENT:처녀 == 1 && TALENT:정조관념
     SOURCE:22 /= 3
 
 TCVAR:1 += 25
 TCVAR:33 += 3
 
 SIF PREVCOM == 235 && TFLAG:135 == NO:PLAYER
-    BASE:1 /= 2
+    BASE:기력 /= 2
 
 TFLAG:135 = NO:PLAYER
-BASE:PLAYER:0 -= 500
-BASE:PLAYER:1 -= 300
+BASE:PLAYER:체력 -= 500
+BASE:PLAYER:기력 -= 300
 
 ;노예의 A⇔조교자의 몸의 불결이 이동
-STAIN:PLAYER:0 |= STAIN:4
-STAIN:PLAYER:1 |= STAIN:4
-STAIN:PLAYER:5 |= STAIN:4
-STAIN:4 |= STAIN:PLAYER:0
-STAIN:4 |= STAIN:PLAYER:1
-STAIN:4 |= STAIN:PLAYER:5
+STAIN:PLAYER:입 |= STAIN:애널
+STAIN:PLAYER:손 |= STAIN:애널
+STAIN:PLAYER:가슴 |= STAIN:애널
+STAIN:애널 |= STAIN:PLAYER:입
+STAIN:애널 |= STAIN:PLAYER:손
+STAIN:애널 |= STAIN:PLAYER:가슴
 
 RETURN 1
 
@@ -223,7 +223,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM235
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

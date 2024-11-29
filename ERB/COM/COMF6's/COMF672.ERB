@@ -13,11 +13,11 @@
 SIF DITEMTYPE:999:672 > 0
     RETURN 0
 ;조교자 봉사·우후후계 커멘드를 유효하게 하지 않으면 안 됨
-SIF (FLAG:15 & 2048) == 0
+SIF (FLAG:커맨드확장 & 2048) == 0
     RETURN 0
 ;순종 4 미만·레즈비언기분(BL기분) 3 미만의 ASSI의 경우, 조교 대상이 동성이라면 실행할 수 없다(망신이나 복종이라면 OK)
 IF ASSIPLAY
-    SIF (ABL:ASSI:10 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:22 < 3) || (TALENT:120 && TALENT:ASSI:120 && ABL:ASSI:23 < 3))) && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 3) || (TALENT:남자 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 3))) && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
     RETURN 0
 ENDIF
 ;수면중은 불가
@@ -45,7 +45,7 @@ SIF TEQUIP:71
 SIF TEQUIP:90
     RETURN 0
 ;동물귀 이외 불가
-SIF TALENT:116 == 0
+SIF TALENT:동물귀 == 0
     RETURN 0
 RETURN 1
 
@@ -62,26 +62,26 @@ CALL TRAIN_MESSAGE_COM672
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 5
-DOWNBASE:1 += 30
+DOWNBASE:기력 += 30
 
 SOURCE:10 = 90
 SOURCE:14 = 30
 SOURCE:11 = 110
 
 ;봉사 정신을 본다
-IF ABL:13 == 0
+IF ABL:봉사정신 == 0
     SOURCE:10 = 45
     SOURCE:11 = 60
-ELSEIF ABL:13 == 1
+ELSEIF ABL:봉사정신 == 1
     SOURCE:10 = 90
     SOURCE:11 = 110
-ELSEIF ABL:13 == 2
+ELSEIF ABL:봉사정신 == 2
     SOURCE:10 = 170
     SOURCE:11 = 200
-ELSEIF ABL:13 == 3
+ELSEIF ABL:봉사정신 == 3
     SOURCE:10 = 300
     SOURCE:11 = 500
-ELSEIF ABL:13 == 4
+ELSEIF ABL:봉사정신 == 4
     SOURCE:10 = 550
     SOURCE:11 = 700
 ELSE
@@ -90,45 +90,45 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:10 , 0.80
     TIMES SOURCE:11 , 0.80
     SOURCE:18 = 10
     SOURCE:19 = 10
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:10 , 1.00
     TIMES SOURCE:11 , 1.00
     SOURCE:18 = 60
     SOURCE:19 = 40
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:10 , 1.20
     TIMES SOURCE:11 , 1.30
     SOURCE:18 = 120
     SOURCE:19 = 80
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:10 , 1.40
     TIMES SOURCE:11 , 1.40
     SOURCE:18 = 240
     SOURCE:19 = 140
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:10 , 1.50
     TIMES SOURCE:11 , 1.70
     SOURCE:18 = 360
     SOURCE:19 = 220
 ELSE
-    SOURCE:10 = SOURCE:10 * (ABL:10 * 10 + 120) / 100
-    SOURCE:11 = SOURCE:11 * (ABL:10 * 15 + 125) / 100
-    SOURCE:18 = 150 + (ABL:10 * 35)
-    SOURCE:19 = 100 + (ABL:10 * 20)
+    SOURCE:10 = SOURCE:10 * (ABL:순종 * 10 + 120) / 100
+    SOURCE:11 = SOURCE:11 * (ABL:순종 * 15 + 125) / 100
+    SOURCE:18 = 150 + (ABL:순종 * 35)
+    SOURCE:19 = 100 + (ABL:순종 * 20)
 ENDIF
 
 ;[괴뢰]와[정신 붕괴]와[괴조인격]을 가지지 않고,[연모]소유라면 애정 경험이 가산
-SIF TALENT:150 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0
+SIF TALENT:연모 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0
     TCVAR:21 += 1
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -139,35 +139,35 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM672
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORM %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 꼬리
-IF TALENT:150 == 1
+IF TALENT:연모 == 1
     PRINTL 를 베고 누웠다. 
-ELSEIF TALENT:160 == 1
+ELSEIF TALENT:복종 == 1
     PRINTL 를 배게 삼아 마구 뒹굴었다.
 ELSE
     PRINTL 에 누웠다.
 ENDIF
-IF TALENT:150 && RAND:4 == 0
+IF TALENT:연모 && RAND:4 == 0
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 상냥하게 %CALLNAME:PLAYER%의 머리를 쓰다듬고 있다….
-ELSEIF TALENT:150 && RAND:3 == 0
+ELSEIF TALENT:연모 && RAND:3 == 0
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 사랑하는 표정으로, %조사선택(CALLNAME:PLAYER, "를")% 안고 있다.
-ELSEIF TALENT:150
+ELSEIF TALENT:연모
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 눈을 동그랗게 뜨고 %조사선택(CALLNAME:PLAYER, "를")% 보고 있다.
-ELSEIF ABL:10 >= 4 && EXP:20 >= 250 && RAND:4 == 0
+ELSEIF ABL:순종 >= 4 && EXP:봉사쾌락경험 >= 250 && RAND:4 == 0
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 부끄러워 하면서도 즐거워 하고 있다.
-ELSEIF ABL:10 >= 4 && EXP:20 >= 250 && RAND:3 == 0
+ELSEIF ABL:순종 >= 4 && EXP:봉사쾌락경험 >= 250 && RAND:3 == 0
     PRINTFORMW %조사선택(CALLNAME:PLAYER, "가")% 아무런 짓도 하지 않자, %조사선택(CALLNAME:TARGET, "는")% 안심하고 있는 것 같다….
-ELSEIF ABL:10 >= 4 && EXP:20 >= 250 && RAND:2 == 0
+ELSEIF ABL:순종 >= 4 && EXP:봉사쾌락경험 >= 250 && RAND:2 == 0
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 기분 좋은지 가만히 있다.
-ELSEIF ABL:10 >= 4 && EXP:20 >= 250
+ELSEIF ABL:순종 >= 4 && EXP:봉사쾌락경험 >= 250
     PRINTFORMW %CALLNAME:TARGET%도 적극적으로 몸을 문지르고 있다….
-ELSEIF ABL:10 >= 2 && EXP:20 <= 150 && RAND:2 == 0
+ELSEIF ABL:순종 >= 2 && EXP:봉사쾌락경험 <= 150 && RAND:2 == 0
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 무서운지 자신의 몸을 웅크리고 있다.
-ELSEIF ABL:10 >= 2 && EXP:20 <= 150
+ELSEIF ABL:순종 >= 2 && EXP:봉사쾌락경험 <= 150
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 얼굴이 빨개졌다.
 ELSEIF RAND:3 == 0
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 날뛰면서, %조사처리(CALLNAME:PLAYER, "로")%부터 멀어졌다….

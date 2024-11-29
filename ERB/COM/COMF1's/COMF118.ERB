@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:118 > 0
     RETURN 0
 ;수치 플레이계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 512) == 0
+SIF (FLAG:커맨드확장 & 512) == 0
     RETURN 0
 ;조수가 없으면 불가
 SIF ASSI < 0
@@ -18,7 +18,7 @@ SIF ASSI < 0
 SIF ASSIPLAY
     RETURN 0
 ;주인과 조수 중 한쪽이라도 남자면 안 됨
-SIF TALENT:MASTER:120 || TALENT:ASSI:120
+SIF TALENT:MASTER:남자 || TALENT:ASSI:남자
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -83,7 +83,7 @@ CALL TRAIN_MESSAGE_COM118
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 5
-DOWNBASE:1 += 20
+DOWNBASE:기력 += 20
 
 SOURCE:12 = 120
 SOURCE:15 = 30
@@ -104,23 +104,23 @@ ELSE
     SOURCE:18 = 240
 ENDIF
 
-SIF ABL:MASTER:14 >= 3
+SIF ABL:MASTER:노출증 >= 3
     TCVAR:MASTER:10 += 1
 
-SIF ABL:ASSI:14 >= 3
+SIF ABL:ASSI:노출증 >= 3
     TCVAR:ASSI:10 += 1
 
 ;주인의 V⇔손가락의 불결이 이동
-STAIN:MASTER:3 |= STAIN:MASTER:1
-STAIN:MASTER:1 |= STAIN:MASTER:3
+STAIN:MASTER:보지 |= STAIN:MASTER:손
+STAIN:MASTER:손 |= STAIN:MASTER:보지
 ;조수의 V⇔손가락의 불결이 이동
-STAIN:ASSI:3 |= STAIN:ASSI:1
-STAIN:ASSI:1 |= STAIN:ASSI:3
+STAIN:ASSI:보지 |= STAIN:ASSI:손
+STAIN:ASSI:손 |= STAIN:ASSI:보지
 
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -131,46 +131,46 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM118
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORM %CALLNAME:MASTER%에게 명령되어 %조사선택(CALLNAME:ASSI, "는")% 
-IF ABL:ASSI:14 == 0
+IF ABL:ASSI:노출증 == 0
     PRINTFORML 울 것 같은 얼굴을 하면서 %조사선택(CALLNAME:MASTER, "를")% 바라보았지만,
     PRINT 다시 명령하자 마지못해 
-    IF TALENT:ASSI:128
+    IF TALENT:ASSI:작은체형
         PRINT 어린 균열에 
     ELSE
         PRINT 보지에 
     ENDIF
     PRINTL 손가락을 찔러 넣어 좌우로 넓혀 보였다.
-ELSEIF ABL:ASSI:14 == 1
+ELSEIF ABL:ASSI:노출증 == 1
     PRINTL 얼굴을 새빨갛게 하면서도 흠칫 흠칫 자신의 음순을 펼쳐 보였다.
-ELSEIF ABL:ASSI:14 == 2
+ELSEIF ABL:ASSI:노출증 == 2
     PRINTFORML 아랫배에 손을 가져가, 집게 손가락과 중지로 브이자를 그리듯이 %CALLNAME:TARGET%에게 자신의 부끄러운 곳을 노출했다.
-    SIF STAIN:ASSI:3 & 6 == 0
+    SIF STAIN:ASSI:보지 & 6 == 0
         PRINTL 벌려진 음문에서 이쪽을 바라보고 있는 질구는 마치 무언가를 기다리고 있, 요사스럽게 꿈틀대고 있다….
-ELSEIF ABL:ASSI:14 == 3
+ELSEIF ABL:ASSI:노출증 == 3
     PRINTL 익숙해진 모습으로 한 손으로 음순을 열어, 다른 손으로 음핵을 만지작거리기 시작했다….
     PRINTFORML %CALLNAME:ASSI%의 손이 음핵에 닿을 때마다 질구에서 애액이 방울져 떨어지고 있다….
-ELSEIF ABL:ASSI:14 == 4
+ELSEIF ABL:ASSI:노출증 == 4
     PRINTL 양손의 손가락을 사용해 음순 뿐만이 아니라, 질구도 동시에 펼쳤다….
     PRINTFORML 질 안을 보여지고 있는 것에 느끼고 있는지, %CALLNAME:ASSI%의 뺨은 은은하게 다홍색으로 물들고 있다….
 ELSE
     PRINTFORML 양손의 손가락을 음순에 걸쳐, 질구를 %CALLNAME:TARGET%에게 과시하듯이 크게 벌렸다.
 ENDIF
 PRINTFORM 동시에, %조사선택(CALLNAME:MASTER, "는")% 자신의 
-IF TALENT:MASTER:128
+IF TALENT:MASTER:작은체형
     PRINT 어린 균열에 
 ELSE
     PRINT 보지에 
 ENDIF
 PRINTFORML 손가락을 찔러 넣어 좌우로 넓혀 %CALLNAME:TARGET%에게 보였다….
-SIF STAIN:MASTER:3 & 6 == 0
+SIF STAIN:MASTER:보지 & 6 == 0
     PRINTFORML 벌려진 음문에서 이쪽을 바라보고 있는 질구는 마치 무언가를 기다리고 있듯이, 요사스럽게 꿈틀대고 있다….
 
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     PRINTL
     PRINTFORML %조사선택(CALLNAME:MASTER, "와")% %CALLNAME:ASSI%의 부끄럽기 짝이 없는 모습을 눈앞에 둔 %조사선택(CALLNAME:TARGET, "는")%
     PRINTW 치밀어 오르는 수치심에, 붉게 물든 얼굴을 돌리지 않을 수 없었다….

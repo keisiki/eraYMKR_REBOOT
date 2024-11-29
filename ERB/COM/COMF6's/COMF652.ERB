@@ -10,10 +10,10 @@ RETURN 0
 
 @EXCOM_ABLE652
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;조교자가 플랑쨩じゃないとダメだよウフフ
 SIF NO:PLAYER != 11
@@ -22,30 +22,30 @@ SIF NO:PLAYER != 11
 SIF EXIST_BAR(PLAYER) == 0
     RETURN 0
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;주인이 [금단의 지식]持ちじゃないとき, 体格差が2段階以内か조교자가 [금단의 지식]持ちじゃないとダメ
-SIF TALENT:MASTER:56 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
+SIF TALENT:MASTER:금단의지식 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
     RETURN 0
 ;윤활 부족이고, 순종4미만 · 레즈끼3미만의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(새드거나 새드끼Lv3이상, 또는 망신이나 복종이 있다면 ＯＫ)
 IF PALAM:10 < PALAMLV:2 && ASSIPLAY
-    SIF (ABL:ASSI:10 < 4 || (TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:22 < 3)) && TALENT:ASSI:81 == 0 && ABL:ASSI:20 < 3 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || (TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 3)) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;조교자가 고양이혀일 경우 고양이 펠라 패치 유효가 아니면 불가
-SIF TALENT:PLAYER:54 && (FLAG:14 & 16) == 0
+SIF TALENT:PLAYER:고양이혀 && (FLAG:조교모드 & 16) == 0
     RETURN 0
 ;조교자가 猫舌だと기교5が필요
-SIF TALENT:PLAYER:54 && ABL:PLAYER:12 < 5
+SIF TALENT:PLAYER:고양이혀 && ABL:PLAYER:기교 < 5
     RETURN 0
 ;기력이 500または체력이 1500미만では使用不可
-SIF BASE:0 < 1500 || BASE:1 < 500
+SIF BASE:0 < 1500 || BASE:기력 < 500
     RETURN 0
-;일정의 Ａ경험이 필요
-SIF EXP:1 < EXPLV:3
+;일정의 A경험이 필요
+SIF EXP:A경험 < EXPLV:3
     RETURN 0
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 조교자가 汚れ無視もしくは汚臭鈍感を持たないなら実行できない
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;Ｖ계 장착구 사용 중에는 불가
 SIF TEQUIP:20 || TEQUIP:21
@@ -91,7 +91,7 @@ RETURN 1
 ;--------------------------------------------------
 ;커맨드 본체
 ;--------------------------------------------------
-;배면좌위 어널(가슴 만지작거리지 말고 팔을 기울기 뒤하에 끌어들이고 있다)＋커닐링구스＋가슴 애무＋구강 성교인 5P
+;배면좌위 애널(가슴 만지작거리지 말고 팔을 기울기 뒤하에 끌어들이고 있다)＋커닐링구스＋가슴 애무＋구강 성교인 5P
 ;포 오브 어 카인드(COM431)의 파생 커맨드
 ;기력을 거의 전부에 가지고 쉽니다
 @COM652
@@ -107,15 +107,15 @@ CALL TRAIN_MESSAGE_COM652
 LOCAL = 0
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     LOCAL = 2200
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     LOCAL = 2300
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     LOCAL = 2500
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     LOCAL = 2800
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     LOCAL = 3200
 ELSE
     LOCAL = 3700
@@ -129,39 +129,39 @@ LOCAL = EJACULATIONCHECK_ABL_31_1(TARGET, LOCAL)
 LOCAL = EJACULATIONCHECK_PALAM_10_1(TARGET, LOCAL)
 
 ;TALENT:혀사용을 본다
-SIF TALENT:52
+SIF TALENT:혀놀림
     TIMES LOCAL , 2.00
 ;TALENT:고양이혀을 본다
-SIF TALENT:54
+SIF TALENT:고양이혀
     TIMES LOCAL , 0.70
 
 ;조교자의 C감각을 본다
 LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
 
 SIF EXIST_PENIS(PLAYER)
-    BASE:PLAYER:2 += LOCAL
+    BASE:PLAYER:사정 += LOCAL
 
 ;-------------------------------------------------
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 1500
-DOWNBASE:1 += 9999
+DOWNBASE:기력 += 9999
 
 TFLAG:242 = 0
 ;애액의 더러움
-SIF STAIN:PLAYER:2 & 1
+SIF STAIN:PLAYER:자지 & 1
     TFLAG:242 += 1
 ;정액의 더러움
-SIF STAIN:PLAYER:2 & 4
+SIF STAIN:PLAYER:자지 & 4
     TFLAG:242 += 3
-;어널의 더러움
-SIF STAIN:PLAYER:2 & 8
+;애널의 더러움
+SIF STAIN:PLAYER:자지 & 8
     TFLAG:242 += 7
-SIF STAIN:PLAYER:2 & 16
+SIF STAIN:PLAYER:자지 & 16
     TFLAG:242 += 15
-SIF TALENT:61
+SIF TALENT:냄새둔감
     TFLAG:242 /= 3
-SIF TALENT:62
+SIF TALENT:냄새민감
     TFLAG:242 *= 2
 SOURCE:30 = TFLAG:242*40 + 250
 
@@ -179,19 +179,19 @@ SOURCE:20 = 0
 SOURCE:22 = 1500
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 40
     SOURCE:22 += 200
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 140
     SOURCE:22 += 300
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 500
     SOURCE:22 += 600
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 900
     SOURCE:22 += 900
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 1800
     SOURCE:22 += 1300
 ELSE
@@ -200,19 +200,19 @@ ELSE
 ENDIF
 
 ;ABL:노출벽을 본다
-IF ABL:14 == 0
+IF ABL:노출증 == 0
     SOURCE:30 += 2000
     SOURCE:12 += 1500
-ELSEIF ABL:14 == 1
+ELSEIF ABL:노출증 == 1
     SOURCE:30 += 1000
     SOURCE:12 += 1250
-ELSEIF ABL:14 == 2
+ELSEIF ABL:노출증 == 2
     SOURCE:30 += 500
     SOURCE:12 += 750
-ELSEIF ABL:14 == 3
+ELSEIF ABL:노출증 == 3
     SOURCE:30 += 200
     SOURCE:12 += 500
-ELSEIF ABL:14 == 4
+ELSEIF ABL:노출증 == 4
     SOURCE:30 += 100
     SOURCE:12 += 250
 ELSE
@@ -221,23 +221,23 @@ ELSE
 ENDIF
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 10
     SOURCE:11 += 5
     SOURCE:22 += 100
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 30
     SOURCE:11 += 10
     SOURCE:22 += 400
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 500
     SOURCE:11 += 50
     SOURCE:22 += 800
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 1000
     SOURCE:11 += 100
     SOURCE:22 += 1600
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 1700
     SOURCE:11 += 250
     SOURCE:22 += 3200
@@ -248,23 +248,23 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES SOURCE:2 , 0.10
     SOURCE:20 += 5000
     SOURCE:18 += 1000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES SOURCE:2 , 0.30
     SOURCE:20 += 2000
     SOURCE:18 += 1000
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES SOURCE:2 , 0.50
     SOURCE:20 += 2000
     SOURCE:18 += 1000
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES SOURCE:2 , 1.00
     SOURCE:20 += 2000
     SOURCE:18 += 1000
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.40
     SOURCE:20 += 1000
     SOURCE:18 += 200
@@ -274,19 +274,19 @@ ELSE
 ENDIF
 
 ;ABL:B감각을 본다
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     SOURCE:3 = 20
     SOURCE:11 += 40
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     SOURCE:3 = 100
     SOURCE:11 += 60
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     SOURCE:3 = 400
     SOURCE:11 += 80
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     SOURCE:3 = 800
     SOURCE:11 += 140
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     SOURCE:3 = 1500
     SOURCE:11 += 180
 ELSE
@@ -295,23 +295,23 @@ ELSE
 ENDIF
 
 ;ABL:봉사 정신을 본다
-IF ABL:13 == 0
+IF ABL:봉사정신 == 0
     SOURCE:15 = 420
     SOURCE:16 = 150
     TIMES SOURCE:30 , 4.00
-ELSEIF ABL:13 == 1
+ELSEIF ABL:봉사정신 == 1
     SOURCE:15 = 500
     SOURCE:16 = 300
     TIMES SOURCE:30 , 2.50
-ELSEIF ABL:13 == 2
+ELSEIF ABL:봉사정신 == 2
     SOURCE:15 = 580
     SOURCE:16 = 600
     TIMES SOURCE:30 , 1.50
-ELSEIF ABL:13 == 3
+ELSEIF ABL:봉사정신 == 3
     SOURCE:15 = 660
     SOURCE:16 = 900
     TIMES SOURCE:30 , 1.00
-ELSEIF ABL:13 == 4
+ELSEIF ABL:봉사정신 == 4
     SOURCE:15 = 740
     SOURCE:16 = 1500
     TIMES SOURCE:30 , 0.50
@@ -322,19 +322,19 @@ ELSE
 ENDIF
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     TIMES SOURCE:15 , 0.50
     TIMES SOURCE:16 , 0.50
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     TIMES SOURCE:15 , 0.80
     TIMES SOURCE:16 , 0.80
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     TIMES SOURCE:15 , 1.00
     TIMES SOURCE:16 , 1.00
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     TIMES SOURCE:15 , 1.20
     TIMES SOURCE:16 , 1.20
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     TIMES SOURCE:15 , 1.50
     TIMES SOURCE:16 , 1.50
 ELSE
@@ -343,19 +343,19 @@ ELSE
 ENDIF
 
 ;EXP:자위 경험을 본다
-IF EXP:10 < EXPLV:1
+IF EXP:자위경험 < EXPLV:1
     TIMES SOURCE:30, 1.50
     TIMES SOURCE:22, 0.20
-ELSEIF EXP:10 < EXPLV:2
+ELSEIF EXP:자위경험 < EXPLV:2
     TIMES SOURCE:30, 1.20
     TIMES SOURCE:22, 0.50
-ELSEIF EXP:10 < EXPLV:3
+ELSEIF EXP:자위경험 < EXPLV:3
     TIMES SOURCE:30, 1.00
     TIMES SOURCE:22, 0.80
-ELSEIF EXP:10 < EXPLV:4
+ELSEIF EXP:자위경험 < EXPLV:4
     TIMES SOURCE:30, 0.80
     TIMES SOURCE:22, 1.00
-ELSEIF EXP:10 < EXPLV:5
+ELSEIF EXP:자위경험 < EXPLV:5
     TIMES SOURCE:30, 0.50
     TIMES SOURCE:22, 1.20
 ELSE
@@ -423,31 +423,31 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:1 , 0.50
     TIMES SOURCE:2 , 0.70
     TIMES SOURCE:11 , 0.60
     TIMES SOURCE:15 , 0.60
     TIMES SOURCE:18, 2.00
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:1 , 0.80
     TIMES SOURCE:2 , 0.90
     TIMES SOURCE:11 , 0.80
     TIMES SOURCE:15 , 0.80
     TIMES SOURCE:18, 1.20
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:1 , 1.00
     TIMES SOURCE:2 , 1.00
     TIMES SOURCE:11 , 1.00
     TIMES SOURCE:15 , 1.00
     TIMES SOURCE:18, 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.10
     TIMES SOURCE:11 , 1.20
     TIMES SOURCE:15 , 1.20
     TIMES SOURCE:18, 0.60
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:1 , 1.40
     TIMES SOURCE:2 , 1.20
     TIMES SOURCE:11 , 1.40
@@ -462,8 +462,8 @@ ELSE
 ENDIF
 
 ;정조관념
-IF TALENT:30
-    IF TALENT:0 == 1
+IF TALENT:정조관념
+    IF TALENT:처녀 == 1
         TIMES SOURCE:11 , 0.60
         TIMES SOURCE:18, 5.00
     ELSE
@@ -471,8 +471,8 @@ IF TALENT:30
         TIMES SOURCE:18, 1.80
     ENDIF
 ;정조무구애
-ELSEIF TALENT:31
-    IF TALENT:0 == 1
+ELSEIF TALENT:정조관둔감
+    IF TALENT:처녀 == 1
         TIMES SOURCE:18, 0.50
     ELSE
         TIMES SOURCE:18, 0.30
@@ -480,32 +480,32 @@ ELSEIF TALENT:31
 ENDIF
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:18 , 1.50
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:18 , 0.60
     TIMES SOURCE:22 , 0.60
     TIMES SOURCE:31 , 0.60
 ENDIF
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
 ;조교자가［유아 퇴행］
-IF TALENT:PLAYER:159
+IF TALENT:PLAYER:유아퇴행
     TIMES SOURCE:11 , 1.20
 ;조교자가［유아］,［유치］
-ELSEIF TALENT:PLAYER:130 || TALENT:PLAYER:131
+ELSEIF TALENT:PLAYER:유아 || TALENT:PLAYER:유치
     TIMES SOURCE:3 , 1.20
     TIMES SOURCE:11 , 1.20
 ENDIF
 
 TCVAR:1 += 5
 SIF ASSIPLAY == 0 && EXIST_BAR(MASTER)
-    CFLAG:174 += 5
+    CFLAG:주인에게A바친회수 += 5
 
 ;-------------------------------------------------
 ;사정 체크
@@ -518,23 +518,23 @@ IF TFLAG:91 >= 1
     TIMES SOURCE:15 , 3.00
 
     ;ABL:정액 중독을 본다
-    IF ABL:31 == 0
+    IF ABL:정액중독 == 0
         SOURCE:24 += 0
         TIMES SOURCE:16 , 2.00
         TIMES SOURCE:22, 4.00
-    ELSEIF ABL:31 == 1
+    ELSEIF ABL:정액중독 == 1
         SOURCE:24 += 500
         TIMES SOURCE:16 , 3.00
         TIMES SOURCE:22, 3.00
-    ELSEIF ABL:31 == 2
+    ELSEIF ABL:정액중독 == 2
         SOURCE:24 += 1200
         TIMES SOURCE:16 , 4.00
         TIMES SOURCE:22, 2.50
-    ELSEIF ABL:31 == 3
+    ELSEIF ABL:정액중독 == 3
         SOURCE:24 += 3000
         TIMES SOURCE:16 , 6.00
         TIMES SOURCE:22, 2.00
-    ELSEIF ABL:31 == 4
+    ELSEIF ABL:정액중독 == 4
         SOURCE:24 += 6000
         TIMES SOURCE:16 , 9.00
         TIMES SOURCE:22, 1.50
@@ -557,13 +557,13 @@ TFLAG:99 = 2
 CALL TRAIN_MESSAGE_COM652
 
 ;노예의 A⇔조교자의 P의 불결이 이동
-    STAIN:4 |= STAIN:PLAYER:2
-    STAIN:PLAYER:2 |= STAIN:4
+    STAIN:애널 |= STAIN:PLAYER:자지
+    STAIN:PLAYER:자지 |= STAIN:애널
 ;노예의 입⇔조교자의 P의 불결이 이동
-    STAIN:0 |= STAIN:PLAYER:2
-    STAIN:PLAYER:2 |= STAIN:0
+    STAIN:입 |= STAIN:PLAYER:자지
+    STAIN:PLAYER:자지 |= STAIN:입
 
-SIF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+SIF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 20
 
 SIF PLAYER == MASTER
@@ -582,17 +582,17 @@ RETURN 1
 @TRAIN_MESSAGE_COM652
 ;말내에서는 TFLAG:99로 조합해 분기 해 주세요(SELECTCOM == 652 && TFLAG:99 == 1 or 2)
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 IF TFLAG:99 == 1
     PRINTL
     PRINTFORM %조사선택(CALLNAME:PLAYER, "는")% 일순간 
-    IF TALENT:81
+    IF TALENT:새드
         PRINT 가학심으로 가득 찬 
-    ELSEIF TALENT:170
+    ELSEIF TALENT:음란
         PRINT 고혹적인 
-    ELSEIF TALENT:PLAYER:130 || TALENT:PLAYER:131
+    ELSEIF TALENT:PLAYER:유아 || TALENT:PLAYER:유치
         PRINT 못된 장난꾸러기 같은 
     ELSE
         PRINT 순진한 
@@ -609,9 +609,9 @@ IF TFLAG:99 == 1
     PRINTFORML 그리고 %조사선택(CALLNAME:TARGET, "가")% 날뛸 수가 없게 손목을 잡고 그대로 몸을 끌어당겼다.
     PRINTFORM 두 명째는 네발로 엎드린 채로 흥건히 젖어있는 비부에 다가가, 팔로 %CALLNAME:TARGET%의 다리를 억누르면서 
     PRINTFORM %CALLNAME:TARGET%의 비순에 혀끝을 찔러 넣어 상냥하게 빨아 돌려, 
-    IF TALENT:121 && PALAM:13 >= PALAMLV:3
+    IF TALENT:후타나리 && PALAM:13 >= PALAMLV:3
         PRINT 발기한 페니스에 혀를 감아 핥아댔다.
-    ELSEIF TALENT:121
+    ELSEIF TALENT:후타나리
         PRINT 페니스의 뿌리를 혀로 핥았다.
     ELSEIF PALAM:13 >= PALAMLV:3
         PRINT 발기한 클리토리스를 정중히 핥았다.

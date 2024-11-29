@@ -23,15 +23,15 @@ CALL TRAIN_MESSAGE_COM655
 LOCAL = 0
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     LOCAL = 75
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     LOCAL = 300
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     LOCAL = 900
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     LOCAL = 1800
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     LOCAL = 2400
 ELSE
     LOCAL = 3600
@@ -50,33 +50,33 @@ LOCAL = EJACULATIONCHECK_EXP_0_1(PLAYER, LOCAL)
 ;조교 대상의 C감각을 본다
 LOCAL = EJACULATIONCHECK_ABL_0_1(TARGET, LOCAL)
 
-SIF TALENT:120 || TALENT:121
-    BASE:2 += LOCAL
+SIF TALENT:남자 || TALENT:후타나리
+    BASE:사정 += LOCAL
 
 ;-------------------------------------------------
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 40
-DOWNBASE:1 += 240
+DOWNBASE:기력 += 240
 
 SOURCE:30 = 1500
 SOURCE:22 = 1800
 SOURCE:31 = 3000
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:22 , 0.80
     SOURCE:23 = 100
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:22 , 0.90
     SOURCE:23 = 200
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:22 , 1.00
     SOURCE:23 = 350
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:22 , 1.10
     SOURCE:23 = 500
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:22 , 1.20
     SOURCE:23 = 800
 ELSE
@@ -85,19 +85,19 @@ ELSE
 ENDIF
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 800
     SOURCE:15 = 1600
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 1400
     SOURCE:15 = 1900
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 2000
     SOURCE:15 = 2300
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 2500
     SOURCE:15 = 2700
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 2900
     SOURCE:15 = 3100
 ELSE
@@ -107,19 +107,19 @@ ENDIF
 
 
 ;ABL:기교를 본다
-IF ABL:PLAYER:12 == 0
+IF ABL:PLAYER:기교 == 0
     TIMES SOURCE:0 , 0.50
     TIMES SOURCE:15 , 0.50
-ELSEIF ABL:PLAYER:12 == 1
+ELSEIF ABL:PLAYER:기교 == 1
     TIMES SOURCE:0 , 0.80
     TIMES SOURCE:15 , 0.80
-ELSEIF ABL:PLAYER:12 == 2
+ELSEIF ABL:PLAYER:기교 == 2
     TIMES SOURCE:0 , 1.00
     TIMES SOURCE:15 , 1.00
-ELSEIF ABL:PLAYER:12 == 3
+ELSEIF ABL:PLAYER:기교 == 3
     TIMES SOURCE:0 , 1.50
     TIMES SOURCE:15 , 1.50
-ELSEIF ABL:PLAYER:12 == 4
+ELSEIF ABL:PLAYER:기교 == 4
     TIMES SOURCE:0 , 2.50
     TIMES SOURCE:15 , 2.50
 ELSE
@@ -128,31 +128,31 @@ ELSE
 ENDIF
 
 ;조교자가 처녀
-IF TALENT:PLAYER:0
+IF TALENT:PLAYER:처녀
     PRINTFORML <%조사선택(CALLNAME:PLAYER, "가")% 처녀>
     CALL LOST_VIRGIN, TARGET, PLAYER
-    IF TALENT:PLAYER:0 == 1
+    IF TALENT:PLAYER:처녀 == 1
         TIMES SOURCE:22 , 20.00
         TIMES SOURCE:31 , 3.00
-        IF (CFLAG:21 & 2) == 0
+        IF (CFLAG:첫특수커맨드 & 2) == 0
             TCVAR:50 += 1
-            CFLAG:21 |= 2
+            CFLAG:첫특수커맨드 |= 2
         ENDIF
-        IF ABL:10 < 1
+        IF ABL:순종 < 1
             PRINTFORML 그리고 %ABLNAME:10%이 1이 되었다.
-            ABL:10 = 1
+            ABL:순종 = 1
         ENDIF
     ELSE
         TIMES SOURCE:22 , 15.00
         TIMES SOURCE:31 , 2.50
     ENDIF
-    TFLAG:(4+ASSIPLAY) += TALENT:PLAYER:0
-    TALENT:PLAYER:0 = 0
-    STAIN:PLAYER:3 |= 32
+    TFLAG:(4+ASSIPLAY) += TALENT:PLAYER:처녀
+    TALENT:PLAYER:처녀 = 0
+    STAIN:PLAYER:보지 |= 32
 ENDIF
 TCVAR:PLAYER:0 += 1
 SIF ASSIPLAY == 0 && EXIST_BAR(TARGET)
-    CFLAG:175 += 1
+    CFLAG:주인의V범한회수 += 1
 
 ;-------------------------------------------------
 ;사정 체크
@@ -166,13 +166,13 @@ SIF ASSIPLAY == 0 && EXIST_BAR(TARGET)
     TFLAG:705 = 1
 
 
-IF TALENT:120 || TALENT:121
+IF TALENT:남자 || TALENT:후타나리
     ;노예의 P⇔조교자의 V의 불결이 이동
-    STAIN:2 |= STAIN:PLAYER:3
-    STAIN:PLAYER:3 |= STAIN:2
+    STAIN:자지 |= STAIN:PLAYER:보지
+    STAIN:PLAYER:보지 |= STAIN:자지
 ENDIF
 
-SIF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+SIF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 4
 
 ;봉사 쾌락 경험 입수 판정
@@ -187,7 +187,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM655
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -197,10 +197,10 @@ IF TFLAG:102 && (PREVCOM == 25 || PREVCOM == 655) && ((ASSIPLAY && TFLAG:133) ||
     PRINTFORMW %CALLNAME:TARGET%의 페니스에 올라탄 채로 다시 허리를 흔들기 시작했다….
 ELSE
     PRINTFORM %조사선택(CALLNAME:PLAYER, "는")% 
-    SIF TALENT:PLAYER:81
+    SIF TALENT:PLAYER:새드
         PRINT 가학적인 미소를 띄워, 
     PRINTFORM 끈적한 거미줄로 %CALLNAME:TARGET%의 페니스를 잡고, 
-    SIF TALENT:PLAYER:0 == 1
+    SIF TALENT:PLAYER:처녀 == 1
         PRINT 남자를 받아들인 적 없는 
     PRINTFORMW 자신의 보지 깊이 찔러 넣었다….
 ENDIF

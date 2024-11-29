@@ -29,9 +29,9 @@ IF CFLAG:5020 == 0
     IF RESULT == 0
         PRINTFORMW ―처녀 모드로 소질, 능력을 변경합니다―
         ;소질：처녀를 얻는다, 능력：V감각을 0으로 한다, 경험：V경험을 0으로 한다
-        TALENT:0 = 1
-        ABL:1 = 0
-        EXP:0 = 0
+        TALENT:처녀 = 1
+        ABL:V감각 = 0
+        EXP:V경험 = 0
     ELSEIF RESULT == 1
         PRINTFORMW ―통상 모드로 조교를 개시합니다―
     ELSE
@@ -45,7 +45,7 @@ ENDIF
 ;==================================================
 @EVENTTRAIN
 ;대사 표시를 OFF했을 경우에는 돌아온다
-SIF FLAG:11 <= 0
+SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 SIF NO:TARGET != 225
     RETURN 0
@@ -132,10 +132,10 @@ ENDIF
 ;-------------------------------------------------
 ;임신 후 초회 조교 개시시 이벤트 CFLAG390
 ;-------------------------------------------------
-IF TALENT:140 == 1 && CFLAG:5390 == 0
+IF TALENT:임신 == 1 && CFLAG:5390 == 0
     DRAWLINE
     ;연모
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「평소보다 늦잖아. 이 저질」
         PRINTFORMW 방에 들어가자마자, 평소와 달리 세이자의 부정적인 말 속에 기쁨이 흐르고 있음을 알아챈 %조사처리(CALLNAME:MASTER,"는")% 조금 놀랐다 
         PRINTFORMW 「왜 그래?, 귀신한테 홀린 듯한 얼굴로. 빨리 들어오면 좋겠는데.」
@@ -224,7 +224,7 @@ ENDIF
 ;조교 개시시(1회째) CFLAG201
 ;-------------------------------------------------
 ;육아방에서 귀환
-    IF CFLAG:5806 == 0 && TALENT:142 == 1 && TALENT:150 == 1 && CFLAG:5390 == 1
+    IF CFLAG:5806 == 0 && TALENT:모성 == 1 && TALENT:연모 == 1 && CFLAG:5390 == 1
         DRAWLINE
         PRINTFORMW 「%CALLNAME:MASTER%……다행이야.」
         PRINTFORMW 세이자는 %CALLNAME:MASTER%의 존재를 깨닫고, 다가와 겨우 %CALLNAME:MASTER%의 품 안에 안겨들었다 
@@ -243,13 +243,13 @@ ENDIF
         PRINTFORMW 그리고 자신을 임신시켰던 페니스를 꺼내, 천천히 매만지기 시작한다. 
         PRINTFORMW 슬프게도 %조사처리(CALLNAME:MASTER,"는")% 어머니가 된 세이자의 표정과 암컷의 냄새에, 순식간에 발기하고 있었다.
         PRINTFORMW 그것이 언제든 세이자의 목숨을 비참하게 앗아갈지도 모르는데도 말이다……
-        BASE:MASTER:2 = 2500
+        BASE:MASTER:사정 = 2500
         PALAM:10 = 1300
         CFLAG:5806 = 1
     RETURN 1
 
 ;반발각인Lv3
-    ELSEIF CFLAG:5204 == 0 && MARK:9 == 3 && TALENT:150 == 0
+    ELSEIF CFLAG:5204 == 0 && MARK:반발각인 == 3 && TALENT:연모 == 0
         DRAWLINE
         PRINTFORMW 『…………절대로 후회하게 만들어 주겠어.』
         PRINTFORMW 저번에 세이자를 조교했을 때의, 그 증오로 불타는 눈동자와 말. 
@@ -279,7 +279,7 @@ ENDIF
         RETURN 1
 
 ;반발각인Lv3＋굴복각인Lv3
-    ELSEIF MARK:9 == 3 && MARK:2 == 3 && TALENT:150 == 0 && CFLAG:5204 == 1
+    ELSEIF MARK:반발각인 == 3 && MARK:굴복각인 == 3 && TALENT:연모 == 0 && CFLAG:5204 == 1
         DRAWLINE
         PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 방에 들어가자, 평소보다 조용한 세이자의 모습이 보였다. 
         PRINTFORMW 최근은 반항도 격렬해진 터라, 이런 모습은 오랜만이었다. 
@@ -296,7 +296,7 @@ ENDIF
         RETURN 1
 
 ;굴복각인Lv1
-    ELSEIF CFLAG:5201 < 2 && MARK:2 == 1 && MARK:9 < 3
+    ELSEIF CFLAG:5201 < 2 && MARK:굴복각인 == 1 && MARK:반발각인 < 3
         DRAWLINE
         PRINTFORMW 「흐응………%조사처리(CALLNAME:MASTER,"는")% 질리지도 않냐.」
         PRINTFORMW 「본래 인간과 요괴는 서로 교차하지 않아야 하는 것」
@@ -308,7 +308,7 @@ ENDIF
         RETURN 1
 
 ;굴복각인Lv2
-    ELSEIF CFLAG:5201 < 3 && MARK:2 == 2 && MARK:9 < 3
+    ELSEIF CFLAG:5201 < 3 && MARK:굴복각인 == 2 && MARK:반발각인 < 3
         DRAWLINE
         PRINTFORMW 「뭐, 뭐야, 또 온 거야?」
         PRINTFORMW 「말해두지만, 이런 걸로 이겼다고 생각하지는 말라고!」
@@ -323,7 +323,7 @@ ENDIF
         RETURN 1
 
 ;굴복각인v3
-    ELSEIF CFLAG:5201 < 4 && MARK:2 == 3 && TALENT:150 == 0 && MARK:9 < 3
+    ELSEIF CFLAG:5201 < 4 && MARK:굴복각인 == 3 && TALENT:연모 == 0 && MARK:반발각인 < 3
         DRAWLINE
         PRINTFORMW 「앗……」
         PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 방에 들어온 것을 보고, 세이자는 휙 시선을 돌렸다. 
@@ -354,7 +354,7 @@ ENDIF
         RETURN 1
 
 ;연인 루트
-    ELSEIF CFLAG:5201 == 5 && MARK:9 < 3
+    ELSEIF CFLAG:5201 == 5 && MARK:반발각인 < 3
         DRAWLINE
         PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 방에 들어가자, 비뚜름하게 웃고있는 세이자의 모습이 보였다. 
         PRINTFORMW 「이제야 온 거야? 정말로 여자의 맘따윈 전혀 모르시는 분이시네.」
@@ -398,7 +398,7 @@ ENDIF
             PRINTFORMW 「………자, 와 줘………. 날, 안아주세요.」
             CFLAG:5201 = 6
             RETURN 1
-        ;처녀, Ｖ경험 없음
+        ;처녀, V경험 없음
         ELSEIF CFLAG:5279 == 0
             PRINTFORMW 좋아하는 사람과의 아이를 가지고 싶다. 
             PRINTFORMW 분명 그 기분은 이해할 수 있지만, 그를 위해 무엇을 해야 하는가. 
@@ -435,7 +435,7 @@ ENDIF
 @K225_MESSAGE_START_2
 ;ELSE 
     ;반발각인Lv3
-    IF MARK:9 == 3 && TALENT:150 == 0 && CFLAG:5204 == 1 && FLAG:11 == 2
+    IF MARK:반발각인 == 3 && TALENT:연모 == 0 && CFLAG:5204 == 1 && FLAG:캐릭터대사표시 == 2
     DRAWLINE
     PRINTFORML 「하아?」
     PRINTFORMW 「이젠 당신 꼴도 보기 싫어.」
@@ -450,7 +450,7 @@ ENDIF
     RETURN 1
 
 ;반발각인Lv3＋굴복각인Lv3
-    ELSEIF MARK:9 == 3 && MARK:2 == 3 && TALENT:150 == 0 && CFLAG:5204 == 2 && FLAG:11 == 2
+    ELSEIF MARK:반발각인 == 3 && MARK:굴복각인 == 3 && TALENT:연모 == 0 && CFLAG:5204 == 2 && FLAG:캐릭터대사표시 == 2
         PRINTFORMW 「왠지 짜증나………」
         PRINTFORMW 「%CALLNAME:MASTER%, 당신의 숨결을 지근거리에서 느끼는 건」
         PRINTFORMW 「아니, 짜증나는 것 보다는, 이상한……?」
@@ -461,28 +461,28 @@ ENDIF
         RETURN 1
 
     ;굴복각인Lv0
-    ELSEIF MARK:2 == 0 && FLAG:11 == 2
+    ELSEIF MARK:굴복각인 == 0 && FLAG:캐릭터대사표시 == 2
         DRAWLINE
         PRINTFORML 「거참 내가 그리도 좋아?」
         PRINTFORMW 세이자는 피식 웃으며 손을 절래절래 흔들었다 
         RETURN 1
 
     ;굴복각인Lv1
-    ELSEIF MARK:2 == 1 && FLAG:11 == 2
+    ELSEIF MARK:굴복각인 == 1 && FLAG:캐릭터대사표시 == 2
         DRAWLINE
         PRINTFORML 「…흐응……」
         PRINTFORMW 세이자는 %CALLNAME:MASTER%의 모습을 확인하고는 위아래로 훑어봤다 
         RETURN 1
 
     ;굴복각인Lv2
-    ELSEIF MARK:2 == 2 && FLAG:11 == 2
+    ELSEIF MARK:굴복각인 == 2 && FLAG:캐릭터대사표시 == 2
         DRAWLINE
         PRINTFORML 「……읏」
         PRINTFORMW 세이자는 %CALLNAME:MASTER%의 모습을 보고 일순 겁먹은 듯 몸을 움츠렸으나 곧 무섭게 노려보기 시작했다. 
         RETURN 1
 
     ;굴복각인Lv3＋연모 미취득
-    ELSEIF MARK:2 == 3 && TALENT:150 == 0 && FLAG:11 == 2
+    ELSEIF MARK:굴복각인 == 3 && TALENT:연모 == 0 && FLAG:캐릭터대사표시 == 2
         DRAWLINE
         PRINTFORML 「니 밑에 깔려버려서, 버르적거리는 내가 혐오스러워?」
         PRINTFORMW 「아니면 내가 혐오스럽지 않냐?」
@@ -491,7 +491,7 @@ ENDIF
         RETURN 1
 
 ;굴복각인Lv3+연모
-    ELSEIF MARK:2 == 3 && TALENT:150 == 1 && FLAG:11 == 2
+    ELSEIF MARK:굴복각인 == 3 && TALENT:연모 == 1 && FLAG:캐릭터대사표시 == 2
         IF CFLAG:5201 <= 3
         DRAWLINE
             ;랜덤하게 지문을 출력(랜덤출력을 사용하고 싶지 않으면 모두 같은 지문으로 만들면 OK)
@@ -521,7 +521,7 @@ RETURN 0
 ;==================================================
 @EVENTEND
 ;대사 표시를 OFF했을 경우에는 돌아온다
-SIF FLAG:11 <= 0
+SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 SIF NO:TARGET != 225
     RETURN 0
@@ -541,13 +541,13 @@ TRYCALL K225_MESSAGE_END
 ;조교 종료시의 대사
 ;--------------------------------------------------
 @K225_MESSAGE_END
-SIF FLAG:11 == 0
+SIF FLAG:캐릭터대사표시 == 0
     RETURN 0
 SIF NO != 255
     RETURN 0
 
 ;반발각인Lv3
-IF MARK:9 == 3 && CFLAG:5204 == 1
+IF MARK:반발각인 == 3 && CFLAG:5204 == 1
     DRAWLINE
     PRINTFORML 「………끝났냐?」
     PRINTFORMW 「끝났으면, 얼른 내 앞에서 꺼져.」
@@ -558,7 +558,7 @@ IF MARK:9 == 3 && CFLAG:5204 == 1
     RETURN 1
 
 ;반발각인Lv3＋굴복각인Lv3
-ELSEIF MARK:2 == 3 && MARK:9 == 3 && CFLAG:5204 == 2
+ELSEIF MARK:굴복각인 == 3 && MARK:반발각인 == 3 && CFLAG:5204 == 2
     DRAWLINE
     PRINTFORMW 「………앗」
     PRINTFORMW %조사처리(CALLNAME:MASTER,"가")% 방을 떠나려 하자, 세이자가 문득 목소리를 냈다
@@ -572,21 +572,21 @@ ELSEIF MARK:2 == 3 && MARK:9 == 3 && CFLAG:5204 == 2
     RETURN 1
 
 ;굴복각인Lv1미만
-ELSEIF MARK:2 <= 1
+ELSEIF MARK:굴복각인 <= 1
     DRAWLINE
     PRINTFORMW 「……이 정도로 날 정복했다고 생각해? 안심하고 있다가 뒤집혀 버리지나 마.」
     PRINTFORMW 세이자는 차가운 얼굴로 옷을 입기 시작했다
     RETURN 1
 
 ;굴복각인Lv2
-ELSEIF MARK:2 == 2
+ELSEIF MARK:굴복각인 == 2
     DRAWLINE
     PRINTFORML 「……이제, 가는 거야?」
     PRINTFORMW 작은 목소리로 묻는 세이자는, 그대로 떠나가는 %조사처리(CALLNAME:MASTER,"를")% 비꼴 생각조차 들지 않는 모양이다
     RETURN 1
 
 ;굴복각인Lv3
-ELSEIF MARK:2 == 3 && TALENT:150 == 0
+ELSEIF MARK:굴복각인 == 3 && TALENT:연모 == 0
     DRAWLINE
     PRINTFORML 「……끝, 이구나…」
     PRINTFORMW 전신의 땀을 닦으며, 거친 숨을 몰아쉬는 세이자 
@@ -594,7 +594,7 @@ ELSEIF MARK:2 == 3 && TALENT:150 == 0
     RETURN 1
 
 ;굴복각인Lv3＋연모＋体力500미만
-ELSEIF MARK:2 == 3 && TALENT:150 == 1 && BASE:0 < 500
+ELSEIF MARK:굴복각인 == 3 && TALENT:연모 == 1 && BASE:0 < 500
     IF CFLAG:5201 <= 6
     DRAWLINE
     PRINTFORML 「…굉장해… 이젠 흐물흐물해 졌잖아…♪」
@@ -603,7 +603,7 @@ ELSEIF MARK:2 == 3 && TALENT:150 == 1 && BASE:0 < 500
     ENDIF
     
 ;굴복각인Lv3＋연모
-ELSEIF MARK:2 == 3 && TALENT:150 == 1
+ELSEIF MARK:굴복각인 == 3 && TALENT:연모 == 1
     IF CFLAG:5201 <= 6
     DRAWLINE
     PRINTFORML 「응읏……」
@@ -1087,10 +1087,10 @@ SIF TFLAG:899 >= 1
 ;커맨드 첫회 판정을 갱신
 CALL COM_FLAG
 ;PANCTION 내의 장비품 대사 보완 함수를 사용한다
-SIF FLAG:10 == 1
+SIF FLAG:조교시텍스트표시 == 1
     TRYCALL EQUIPTEXT
 ;처녀 상실시의 메시지 호출
-SIF TALENT:0 && TFLAG:1
+SIF TALENT:처녀 && TFLAG:1
     TRYCALL K225_MESSAGE_LOST_VIRGIN
 ;커맨드 대사 호출
 TRYCALLFORM K225_MESSAGE_COM_{SELECTCOM}
@@ -1200,7 +1200,7 @@ RETURN 0
 ;TARGET = TFLAG:710
 
 ;음란
-;IF TALENT:170
+;IF TALENT:음란
 ;    LOCAL:1 = 1
 ;에피소드 없음
 ;ELSE

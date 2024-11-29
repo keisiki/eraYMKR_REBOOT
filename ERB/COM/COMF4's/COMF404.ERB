@@ -9,13 +9,13 @@
 SIF DITEMTYPE:999:404 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;조교자가 아키 자매가 아니면 불가
 SIF NO:PLAYER != 37 && NO:PLAYER != 38
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
@@ -27,19 +27,19 @@ SIF TEQUIP:90
 SIF TEQUIP:25 == 9
     RETURN 1
 ;조교 대상이 [소인]일 경우에는 주인이 금단의 지식 보유자가 아니면 불가
-SIF TALENT:127 && TALENT:MASTER:56 == 0
+SIF TALENT:소인 && TALENT:MASTER:금단의지식 == 0
     RETURN 0
 ;체력이 1000미만으로는 장착 불가능
 SIF BASE:0 < 1000
     RETURN 0
 ;기력이 0일 때는 불가
-SIF BASE:1 <= 0
+SIF BASE:기력 <= 0
     RETURN 0
-;Ａ확장경험 적으면 안 됨
-SIF EXP:33 < 5
+;A확장경험 적으면 안 됨
+SIF EXP:A확장경험 < 5
     RETURN 0
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 조교자가 汚れ無視もしくは汚臭鈍感を持たないなら実行できない
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;그밖의 Ａ계 장착구 사용 중에는 불가
 SIF (TEQUIP:25 && TEQUIP:25 != 9) || TEQUIP:26
@@ -74,24 +74,24 @@ COM_NAME = 거봉 고문
 CALL TRAIN_MESSAGE_COM404
 
 DOWNBASE:0 += 300
-DOWNBASE:1 += 400
+DOWNBASE:기력 += 400
 
 SOURCE:31 = 2000
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 100
     SOURCE:22 = 300
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 300
     SOURCE:22 = 800
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 600
     SOURCE:22 = 1400
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 1000
     SOURCE:22 = 1800
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 1500
     SOURCE:22 = 2100
 ELSE
@@ -100,19 +100,19 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES SOURCE:2 , 0.50
     SOURCE:20 = 2000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES SOURCE:2 , 1.00
     SOURCE:20 = 300
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES SOURCE:2 , 1.10
     SOURCE:20 = 50
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES SOURCE:2 , 1.20
     SOURCE:20 = 10
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.40
     SOURCE:20 = 0
 ELSE
@@ -152,40 +152,40 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:2 , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:2 , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:2 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:2 , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:2 , 1.20
 ELSE
     TIMES SOURCE:2 , 1.30
 ENDIF
 
 ;[작은체형]
-IF TALENT:128
+IF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
-SIF TALENT:130 || TALENT:131
+SIF TALENT:유아 || TALENT:유치
     TIMES SOURCE:2 , 2.00
 ENDIF
 
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:22 , 0.60
     TIMES SOURCE:31 , 0.60
 ENDIF
 ;처녀로 정조관념
-SIF TALENT:0 == 1 && TALENT:30
+SIF TALENT:처녀 == 1 && TALENT:정조관념
     SOURCE:22 /= 3
 
 ;야채성활
@@ -221,22 +221,22 @@ RETURN 1
 PRINTL <거봉 포도 삽입 중>
 
 DOWNBASE:0 += 70
-DOWNBASE:1 += 120
+DOWNBASE:기력 += 120
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     LOCAL = 40
     LOCAL:1 = 100
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     LOCAL = 80
     LOCAL:1 = 300
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     LOCAL = 100
     LOCAL:1 = 500
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     LOCAL = 150
     LOCAL:1 = 700
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     LOCAL = 200
     LOCAL:1 = 900
 ELSE
@@ -245,19 +245,19 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES LOCAL , 0.50
     LOCAL:2 = 3000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES LOCAL , 1.00
     LOCAL:2 = 1000
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES LOCAL , 1.10
     LOCAL:2 = 500
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES LOCAL , 1.20
     LOCAL:2 = 100
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES LOCAL , 1.40
     LOCAL:2 = 50
 ELSE
@@ -297,26 +297,26 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL , 1.20
 ELSE
     TIMES LOCAL , 1.30
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES LOCAL:2 , 1.50
 
 ;처녀로 정조관념
-SIF TALENT:0 == 1 && TALENT:30
+SIF TALENT:처녀 == 1 && TALENT:정조관념
     LOCAL:1 /= 3
 
 SOURCE:2 += LOCAL
@@ -328,9 +328,9 @@ TCVAR:33 += 2
 
 TFLAG:164 += 1
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -341,24 +341,24 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM404
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 IF TEQUIP:25 == 9
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 항문에 비져나온 포도줄기를 기세 좋게 뽑아 냈다….
-    IF ABL:2 >= 5 && TALENT:170
+    IF ABL:A감각 >= 5 && TALENT:음란
         PRINTFORML 한때는 행복한 얼굴을 하고 있던 %조사선택(CALLNAME:TARGET, "였")%지만 점차 직장의 상실감이 커져 오는지,
         PRINTFORM 눈물과 침을 흘리며 허리를 경련하며 스스로의 손으로 항문을 펼치면서 애원의 눈빛으로 %조사선택(CALLNAME:PLAYER, "를")% 올려보고
-    ELSEIF ABL:2 >= 3 && EXP:1 < 5 && TALENT:170
+    ELSEIF ABL:A감각 >= 3 && EXP:A경험 < 5 && TALENT:음란
         PRINTFORM 포도의 열매가 항문에서 빠져나갈 때 마다 %조사선택(CALLNAME:TARGET, "는")% 움찔 움찔 떨고
-    ELSEIF ABL:2 >= 1 && EXP:1 < 3 && TALENT:170
+    ELSEIF ABL:A감각 >= 1 && EXP:A경험 < 3 && TALENT:음란
         PRINTFORM 크게 벌려진 %CALLNAME:TARGET%의 항문에서, 장내에 모여 있던 점액들이 방울 방울 떨어지고
-    ELSEIF ABL:2 == 0 && TALENT:170
+    ELSEIF ABL:A감각 == 0 && TALENT:음란
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 아픈 듯이 얼굴을 찡그렸지만, 음순은 애액으로 젖어 들고
-    ELSEIF ABL:2 >= 4
+    ELSEIF ABL:A감각 >= 4
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 황홀함이 가득한 눈으로 %CALLNAME:PLAYER% 쪽을 바라보고
-    ELSEIF ABL:2 >= 2
+    ELSEIF ABL:A감각 >= 2
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 거친 숨을 내쉬면서 눈물을 흘리고
     ELSE
         PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 삽입했을 때 이상으로 큰 소리로 비명을 지르고
@@ -372,24 +372,24 @@ ELSE
         PRINT 점액으로 미끌미끌한 
     SIF PALAM:10 < PALAMLV:3
         PRINT 단단히 닫혀있는 
-    IF TALENT:128
+    IF TALENT:작은체형
         PRINT 사랑스러운 항문을 
     ELSE
         PRINT 애널을 
     ENDIF
     PRINTL 억지로 펼쳐, 굵은 거봉 포도의 열매들을 하나씩 집어넣었다….
     PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-    IF EXP:1 > 200 && TALENT:150
+    IF EXP:A경험 > 200 && TALENT:연모
         PRINT 1알 삽입된 것만으로 부들부들 허리를 진동시키며 절정하려 하고
-    ELSEIF EXP:1 <= 200 && TALENT:150
+    ELSEIF EXP:A경험 <= 200 && TALENT:연모
         PRINT 항문은 마치 식욕이 왕성한 아이 같이, 탐욕스럽게 포도를 삼키고
-    ELSEIF EXP:1 <= 100 && TALENT:150
+    ELSEIF EXP:A경험 <= 100 && TALENT:연모
         PRINT 포도의 열매가 장내를 굴러대는 감촉을 느끼려고 허리를 배배 비틀어대고
-    ELSEIF EXP:1 <= 50 && TALENT:150
+    ELSEIF EXP:A경험 <= 50 && TALENT:연모
         PRINT 고통이 얼굴에 가득했지만, 열매를 삼킬 때 마다 쾌락을 느끼기 시작했는지 서서히 얼굴을 풀고
-    ELSEIF EXP:1 > 200
+    ELSEIF EXP:A경험 > 200
         PRINT 직장에 거대한 질량을 가지는 무엇인가가 들어올 때마다 황홀한 표정을 짓고
-    ELSEIF EXP:1 > 100
+    ELSEIF EXP:A경험 > 100
         PRINT 열매가 장벽에 스치는 감촉을 즐기려는 듯 허리를 흔들고
     ELSE
         PRINT 고통에 얼굴을 찡그렸지만, 항문에서 정수리까지 찌릿하고 흘러가는 쾌락에 일순간 헤벌레 한 표정이 되어버리고

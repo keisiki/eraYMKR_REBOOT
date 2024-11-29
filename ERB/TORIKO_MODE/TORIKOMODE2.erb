@@ -796,7 +796,7 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;失踪中などこの場にいないなら除外
-    SIF CFLAG:COUNT:4 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
@@ -845,7 +845,7 @@ LOCAL:99 = 0
 DO
     LOCAL = GET_LIST((LOCAL:99) + ARG * 20)
     ;주인공과 실종 캐릭터 제외
-    IF LOCAL == 0 || CFLAG:LOCAL:4 == 1 || 대상_제외됨(LOCAL)
+    IF LOCAL == 0 || CFLAG:LOCAL:조교관외 == 1 || 대상_제외됨(LOCAL)
         ;
     ELSE
         ;상태 표시.
@@ -853,24 +853,24 @@ DO
             PRINT ☆
         ELSEIF LOCAL == ASSI
             PRINT ★
-        ELSEIF CFLAG:LOCAL:4 == 4
+        ELSEIF CFLAG:LOCAL:조교관외 == 4
             PRINT ◆
             LOCAL:3 |= 1
-        ELSEIF CFLAG:LOCAL:4 == 8
+        ELSEIF CFLAG:LOCAL:조교관외 == 8
             PRINT ▲
             LOCAL:3 |= 2
-        ELSEIF CFLAG:LOCAL:4 == 16
+        ELSEIF CFLAG:LOCAL:조교관외 == 16
             PRINT ■
             LOCAL:3 |= 4
-        ELSEIF CFLAG:LOCAL:4 & 1024
+        ELSEIF CFLAG:LOCAL:조교관외 & 1024
             PRINT ▼
             LOCAL:3 |= 16
-        ELSEIF CFLAG:LOCAL:4 == 2048 || CFLAG:LOCAL:4 == 4096
+        ELSEIF CFLAG:LOCAL:조교관외 == 2048 || CFLAG:LOCAL:조교관외 == 4096
             PRINT ▽
             LOCAL:3 |= 8
         ELSEIF ISASSI:LOCAL == 1
             PRINT ●
-        ELSEIF CFLAG:LOCAL:1 == 2
+        ELSEIF CFLAG:LOCAL:매각가능 == 2
             PRINT ○
         ELSE
             PRINT 　
@@ -885,13 +885,13 @@ LOOP LOCAL:99 <= 20
 
 IF ARG:2 >= 1
     PRINT 　　　☆:조교중 ★:조수 ○:조수가 ●:전 조수
-    SIF FLAG:15 & 4096 && FLAG:75 & 32768 && LOCAL:3 & 1
+    SIF FLAG:커맨드확장 & 4096 && FLAG:촉수능력 & 32768 && LOCAL:3 & 1
         PRINT  ◆:촉수 유폐중
-    SIF FLAG:73 & 1 && LOCAL:3 & 4
+    SIF FLAG:지하실개조 & 1 && LOCAL:3 & 4
         PRINT  ■:뇌수감중
-;    SIF FLAG:15 & 4096 && LOCAL:3 & 2
+;    SIF FLAG:커맨드확장 & 4096 && LOCAL:3 & 2
 ;        PRINT  ▲:우리 유폐중
-    SIF FLAG:79 & 1 && LOCAL:3 & 8
+    SIF FLAG:허브농원 & 1 && LOCAL:3 & 8
         PRINT  ▽:허브 작업중
     PRINTL 　(을)를 나타내고 있습니다
 ENDIF
@@ -954,7 +954,7 @@ RETURN RESULT:0
 CALL CHECK_MISSION_SLAVE_OK_OR_NOT_TORIKOMODE, ARG:0, ARG:1
 PRINTL
 ;스케쥴 등으로 노예가 다른 작업을 하고 있을 때 (T. 16/12/07)
-IF RESULT == 1 && CFLAG:ARG:4
+IF RESULT == 1 && CFLAG:ARG:조교관외
     PRINTFORMW %조사처리(CALLNAME:(ARG:0),"를")% 팔려면 현재 지정된 작업을 해제해야 합니다.
     PRINTL
 ;납품 가능하다
@@ -982,7 +982,7 @@ ENDIF
 ;의뢰의 보상을 계산
 LOCAL:100 = (ARG:1 %100000000000000)/100000000
 ;매각 가능한지 아닌지를 판별
-IF CFLAG:ARG:1 >= 1 && CFLAG:ARG:3 == 0 && TALENT:ARG:161 == 0 && TALENT:ARG:164 == 0 && TALENT:ARG:169 == 0
+IF CFLAG:ARG:매각가능 >= 1 && CFLAG:ARG:매각불능 == 0 && TALENT:ARG:낙인 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:괴조인격 == 0
     LOCAL:101 = 1
 ELSE 
     LOCAL:101 = 0
@@ -994,7 +994,7 @@ LOCAL:2 = ASSI
 LOCAL:3 = 0
 
 ;売値の計算. 토리코모드 옵션으로 분기.
-IF FLAG:5000 & 2
+IF FLAG:토리코모드 & 2
     CALL SALE_CHARA_TORIKOMODE(ARG)
 ELSE 
     CALL SALE_CHARA(ARG)
@@ -1041,7 +1041,7 @@ ENDIF
 SIF FLAG:570 & 2
     PRINTL ※노예상인이 없기 때문에、매각후 시간이 경과합니다
 IF NO:MASTER == 400 && (FLAG:570 & 6) == 0
-    SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)
+    SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)
         PRINTL ※매각후 시간이 경과합니다
 ENDIF
 PRINTL
@@ -1051,12 +1051,12 @@ PRINTL [1] 아니오
 $INPUT_LOOPSALE
 INPUT
 IF RESULT == 0
-    IF TALENT:ARG:158 && EQUIP:ARG:14 == 0 && (TALENT:ARG:153 || ((TALENT:ARG:151 || TALENT:ARG:157) && TALENT:ARG:160 == 0 && TALENT:ARG:170 == 0 && ABL:ARG:10 < 5))
+    IF TALENT:ARG:광기 && EQUIP:ARG:14 == 0 && (TALENT:ARG:상애 || ((TALENT:ARG:망신 || TALENT:ARG:질투) && TALENT:ARG:복종 == 0 && TALENT:ARG:음란 == 0 && ABL:ARG:순종 < 5))
         TIMES LOCAL , 0.10
         PRINTFORML \@(TFLAG:207) ? %CALLNAME:ARG%は수송시 파괴 폭주를 일으켜 실종했다 # 수송시 파괴 폭주를 일으켜 실종×0.10\@
-        IF TALENT:ARG:150 && TALENT:ARG:158
-            CFLAG:ARG:1 = 0
-            CFLAG:ARG:4 = 1
+        IF TALENT:ARG:연모 && TALENT:ARG:광기
+            CFLAG:ARG:매각가능 = 0
+            CFLAG:ARG:조교관외 = 1
             LOCAL:3 = 1
         ENDIF
         ;狂気脱走時の口上用
@@ -1070,9 +1070,9 @@ IF RESULT == 0
     ;一応、リセット
     TFLAG:0 = 0
 
-    IF (FLAG:12 & 16384) == 0
+    IF (FLAG:SHOP이벤트확장 & 16384) == 0
         CALL SELF_KOJO, ARG, TFLAG:200, LOCAL
-;    ELSEIF (TALENT:ARG:151 || TALENT:ARG:152) && TALENT:MASTER:158
+;    ELSEIF (TALENT:ARG:망신 || TALENT:ARG:친애) && TALENT:MASTER:광기
 ;        PRINTFORML 売却されゆく%CALLNAME:ARG%はふと振り向くと、何かを言ったように見えた
 ;        PRINTFORML しかし、その言葉は%CALLNAME:MASTER%の心には届くことは無かった……
     ENDIF
@@ -1094,7 +1094,7 @@ IF RESULT == 0
     PRINTL
     PRINTFORMW  납품결과, {LOCAL}원을 받았습니다.
     MONEY += LOCAL
-    FLAG:34 += 1
+    FLAG:매각총계 += 1
     FLAG:66 += 1
     ;--------------------------------------------------
     ;奴隷売却で稼いだ最高金額判定処理
@@ -1114,12 +1114,12 @@ IF RESULT == 0
     IF FLAG:570 & 2
         FLAG:570 |= 8
     ELSEIF NO:MASTER == 400 && (FLAG:570 & 6) == 0
-        SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)
+        SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)
             FLAG:570 |= 8
     ENDIF
 
     ;刻符
-    SIF FLAG:3 == 6 || FLAG:3 == 7
+    SIF FLAG:난이도 == 6 || FLAG:난이도 == 7
         CALL TIME_LIMIT_BONUS, ARG
 
     IF LOCAL:3 == 0
@@ -1738,22 +1738,22 @@ LOCALS = ""
 $LOOP_SELECT_DITEMTYPE
 LOCAL:0 = RAND:12 +1
 ;주인이 갓파가 아니라면 다시 돌릴 것.
-SIF LOCAL:0 == 1 && TALENT:MASTER:210 != 1
+SIF LOCAL:0 == 1 && TALENT:MASTER:캇파 != 1
     GOTO LOOP_SELECT_DITEMTYPE
 ;피가 뽑혔다면 다시 돌릴 것.
 SIF LOCAL:0 == 4
     GOTO LOOP_SELECT_DITEMTYPE
 ;타겟이 이미 처녀가 아니고 처녀혈이 없으면 다시 돌림. 
-SIF LOCAL:0 == 5 && TALENT:ARG:0 != 1 &&  DITEMTYPE:((NO:ARG)+100):105 == 0
+SIF LOCAL:0 == 5 && TALENT:ARG:처녀 != 1 &&  DITEMTYPE:((NO:ARG)+100):105 == 0
     GOTO LOOP_SELECT_DITEMTYPE
 ;타겟이 모유체질이 아니면 다시 돌릴 것.
-SIF LOCAL:0 == 9 && TALENT:ARG:134 != 1
+SIF LOCAL:0 == 9 && TALENT:ARG:모유체질 != 1
     GOTO LOOP_SELECT_DITEMTYPE
 ;알이 뽑혔다면 다시 돌릴 것.
 SIF LOCAL:0 == 10
     GOTO LOOP_SELECT_DITEMTYPE
 ;주인이 촉수사역술이 없다면 다시 돌릴 것.
-SIF LOCAL:0 == 11 && TALENT:MASTER:149 != 1
+SIF LOCAL:0 == 11 && TALENT:MASTER:촉수사역술 != 1
     GOTO LOOP_SELECT_DITEMTYPE
 ;그리고, 뽑힌 숫자에 100을 더해서 아이템 타입을 결정한다.
 LOCAL:0 += 100

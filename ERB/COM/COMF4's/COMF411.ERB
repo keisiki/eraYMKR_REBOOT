@@ -9,25 +9,25 @@
 SIF DITEMTYPE:999:411 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;조교자가 ＥＸ化していないアリスでないとダメ
-SIF NO:PLAYER != 14 || CFLAG:PLAYER:0
+SIF NO:PLAYER != 14 || CFLAG:PLAYER:SP캐릭터
     RETURN 0
 ;人形愛撫残り使用可能回数オーバー
 SIF TFLAG:141 > 3
     RETURN 0
 ;対象が～感覚を1つも持っていないならダメ
-SIF ABL:0 <= 0 && ABL:1 <= 0 && ABL:2 <= 0 && ABL:3 <= 0
+SIF ABL:C감각 <= 0 && ABL:V감각 <= 0 && ABL:A감각 <= 0 && ABL:B감각 <= 0
     RETURN 0
 ;대상에게 페니스가 있다면 불가
 SIF EXIST_BAR(TARGET)
     RETURN 0
 ;조교자의 기교가 3無いとできない
-SIF ABL:PLAYER:12 < 3
+SIF ABL:PLAYER:기교 < 3
     RETURN 0
 ;Ｖ계 장착구 사용 중에는 불가
 SIF TEQUIP:20 || TEQUIP:21
@@ -73,7 +73,7 @@ PRINTL 인형 애무
 COM_NAME = 인형 애무
 
 DOWNBASE:0 += 15
-DOWNBASE:1 += 75
+DOWNBASE:기력 += 75
 
 ;-------------------------------------------------
 ;소스의 계산
@@ -86,21 +86,21 @@ SOURCE:31 = 800
 ;여기서 커맨드 사용 회수를 플러스
 TFLAG:141 += 1
 
-IF ABL:0 > 0
+IF ABL:C감각 > 0
     LOCAL:1 = 1
-    SIF ABL:0 > 3
+    SIF ABL:C감각 > 3
         LOCAL:1 += 1
-ELSEIF ABL:1 > 0
+ELSEIF ABL:V감각 > 0
     LOCAL:2 = 1
-    SIF ABL:1 > 3
+    SIF ABL:V감각 > 3
         LOCAL:2 += 1
-ELSEIF ABL:2 > 0
+ELSEIF ABL:A감각 > 0
     LOCAL:3 = 1
-    SIF ABL:2 > 3
+    SIF ABL:A감각 > 3
         LOCAL:3 += 1
-ELSEIF ABL:3 > 0
+ELSEIF ABL:B감각 > 0
     LOCAL:4 = 1
-    SIF ABL:3 > 3
+    SIF ABL:B감각 > 3
         LOCAL:4 += 1
 ELSE
     LOCAL:5 = 1
@@ -108,22 +108,22 @@ ENDIF
 
 SIF LOCAL:2 > 0 || LOCAL:3 > 0
     SOURCE:20 = 600
-SIF ABL:3 > 0
+SIF ABL:B감각 > 0
     SOURCE:22 = 500
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 0
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 100
     SOURCE:11 += 60
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 500
     SOURCE:11 += 120
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 1100
     SOURCE:11 += 240
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 1900
     SOURCE:11 += 360
 ELSE
@@ -132,18 +132,18 @@ ELSE
 ENDIF
 
 ;ABL:V감각을 본다
-IF ABL:1 == 0
+IF ABL:V감각 == 0
     SOURCE:1 = 0
-ELSEIF ABL:1 == 1
+ELSEIF ABL:V감각 == 1
     SOURCE:1 = 50
     SOURCE:22 += 100
-ELSEIF ABL:1 == 2
+ELSEIF ABL:V감각 == 2
     SOURCE:1 = 200
     SOURCE:22 += 150
-ELSEIF ABL:1 == 3
+ELSEIF ABL:V감각 == 3
     SOURCE:1 = 600
     SOURCE:22 += 300
-ELSEIF ABL:1 == 4
+ELSEIF ABL:V감각 == 4
     SOURCE:1 = 1200
     SOURCE:22 += 600
 ELSE
@@ -152,18 +152,18 @@ ELSE
 ENDIF
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 0
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 75
     SOURCE:22 += 100
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 150
     SOURCE:22 += 250
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 400
     SOURCE:22 += 500
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 800
     SOURCE:22 += 800
 ELSE
@@ -172,18 +172,18 @@ ELSE
 ENDIF
 
 ;ABL:B감각을 본다
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     SOURCE:3 = 0
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     SOURCE:3 = 100
     SOURCE:11 += 50
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     SOURCE:3 = 400
     SOURCE:11 += 100
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     SOURCE:3 = 1000
     SOURCE:11 += 200
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     SOURCE:3 = 1700
     SOURCE:11 += 320
 ELSE
@@ -193,30 +193,30 @@ ENDIF
 
 ;C민감, 둔감을 본다
 ;쾌C자체의 체크는 다음에 정리해 준다
-IF TALENT:100
+IF TALENT:C민감
     TIMES SOURCE:0 , 1.50
-ELSEIF TALENT:101
+ELSEIF TALENT:C둔감
     TIMES SOURCE:0 , 0.60
 ENDIF
 ;V민감, 둔감을 본다
 ;쾌V자체의 체크는 다음에 정리해 준다
-IF TALENT:102
+IF TALENT:V민감
     TIMES SOURCE:1 , 1.50
-ELSEIF TALENT:103
+ELSEIF TALENT:V둔감
     TIMES SOURCE:1 , 0.60
 ENDIF
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:104
+IF TALENT:A민감
     TIMES SOURCE:2 , 1.50
-ELSEIF TALENT:105
+ELSEIF TALENT:A둔감
     TIMES SOURCE:2 , 0.60
 ENDIF
 ;B민감, 둔감을 본다
 ;쾌B자체의 체크는 다음에 정리해 준다
-IF TALENT:106
+IF TALENT:B민감
     TIMES SOURCE:3 , 1.50
-ELSEIF TALENT:107
+ELSEIF TALENT:B둔감
     TIMES SOURCE:3 , 0.60
 ENDIF
 
@@ -262,13 +262,13 @@ ELSE
 ENDIF
 
 ;프라이드 높다
-SIF TALENT:16
+SIF TALENT:프라이드가높음
     SOURCE:22 /= 2
 ;보수적
-SIF TALENT:24
+SIF TALENT:보수적
     SOURCE:22 /= 3
 ;연모
-SIF TALENT:150 && ASSIPLAY == 0
+SIF TALENT:연모 && ASSIPLAY == 0
     SOURCE:11 *= 2
 
 ;줄로 긴박중 때는 효과대
@@ -298,9 +298,9 @@ TFLAG:193 = LOCAL:4
 
 CALL TRAIN_MESSAGE_COM411
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 5
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 5
 ENDIF
 
@@ -315,7 +315,7 @@ RETURN 1
 ;TFLAG:193 = ( 구R) 대상의 B감각에 의한 개발도(4번째 )
 @TRAIN_MESSAGE_COM411
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

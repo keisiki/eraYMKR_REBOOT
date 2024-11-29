@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:91 > 0
     RETURN 0
 ;수치 플레이계 확장 커맨드를 유효하게 하지 않으면 안 됨
-SIF (FLAG:15 & 512) == 0
+SIF (FLAG:커맨드확장 & 512) == 0
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
@@ -24,10 +24,10 @@ SIF TEQUIP:60 && TEQUIP:59 == 2
 SIF ITEM:45 == 0 && NOITEM == 0
     RETURN 0
 ;[남자]의 경우, 함락 하고 있지 않으면 안 됨
-SIF TALENT:120 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0
+SIF TALENT:남자 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0
     RETURN 0
 ;순종이 3이상 없으면 안 됨
-SIF ABL:10 < 3
+SIF ABL:순종 < 3
     RETURN 0
 ;수면중은 불가
 SIF EQUIP:14
@@ -93,7 +93,7 @@ CALL TRAIN_MESSAGE_COM091
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 5
-DOWNBASE:1 += 40
+DOWNBASE:기력 += 40
 
 LOCAL:1 = 500
 LOCAL:2 = 500
@@ -111,23 +111,23 @@ ELSE
     TIMES LOCAL:1 , 1.20
 ENDIF
 ;ABL:노출벽을 본다
-IF ABL:14 == 0
+IF ABL:노출증 == 0
     SOURCE:24 += 0
     SOURCE:19 += 0
     TIMES LOCAL:1, 1.00
-ELSEIF ABL:14 == 1
+ELSEIF ABL:노출증 == 1
     SOURCE:24 += 50
     SOURCE:19 += 50
     TIMES LOCAL:1, 1.20
-ELSEIF ABL:14 == 2
+ELSEIF ABL:노출증 == 2
     SOURCE:24 += 100
     SOURCE:19 += 100
     TIMES LOCAL:1, 1.40
-ELSEIF ABL:14 == 3
+ELSEIF ABL:노출증 == 3
     SOURCE:24 += 200
     SOURCE:19 += 200
     TIMES LOCAL:1, 1.60
-ELSEIF ABL:14 == 4
+ELSEIF ABL:노출증 == 4
     SOURCE:24 += 400
     SOURCE:19 += 400
     TIMES LOCAL:1, 2.00
@@ -137,46 +137,46 @@ ELSE
     TIMES LOCAL:1, 3.00
 ENDIF
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     TIMES LOCAL:1 , 0.80
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     TIMES LOCAL:1 , 1.00
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     TIMES LOCAL:1 , 1.30
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     TIMES LOCAL:1 , 1.60
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     TIMES LOCAL:1 , 2.00
 ELSE
     TIMES LOCAL:1 , 3.00
 ENDIF
 
 ;臆病
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL:2 , 2.00
 ;目立ちたがり
-SIF TALENT:28
+SIF TALENT:튀고싶어함
     TIMES LOCAL:1 , 1.50
 ;解放
-SIF TALENT:33
+SIF TALENT:해방
     TIMES LOCAL:1 , 1.50
 ;부끄럼쟁이
-SIF TALENT:35
+SIF TALENT:부끄럼쟁이
     TIMES LOCAL:2 , 2.00
 ;巨乳
-IF TALENT:112
+IF TALENT:거유
     SOURCE:20 = 500
 ;爆乳
-ELSEIF TALENT:113
+ELSEIF TALENT:폭유
     SOURCE:20 = 800
 ENDIF
 ;[작은체형]
-IF TALENT:128
+IF TALENT:작은체형
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
 ENDIF
 ;유아유치유아퇴행
-SIF TALENT:130 || TALENT:131 || TALENT:159
+SIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
     TIMES LOCAL:1 , 2.00
 
 SOURCE:12 += LOCAL:1
@@ -184,15 +184,15 @@ SOURCE:22 += LOCAL:1 /2
 SOURCE:31 += LOCAL:2
 
 ;남자
-IF TALENT:120
+IF TALENT:남자
     SOURCE:20 += 1600
     SOURCE:28 += LOCAL:1 /2
     TIMES SOURCE:31 , 2.50
 ;絶壁
-ELSEIF TALENT:110
+ELSEIF TALENT:절벽
     SOURCE:28 += LOCAL:1 /4
 ;貧乳
-ELSEIF TALENT:111
+ELSEIF TALENT:빈유
     SOURCE:28 += LOCAL:1 /6
 ;普通以上のおっぱいの女
 ELSE
@@ -201,7 +201,7 @@ ENDIF
 
 SOURCE:25 += LOCAL:2 /5
 ;유아유치유아퇴행
-SIF TALENT:130 || TALENT:131 || TALENT:159
+SIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
     SOURCE:25 += SOURCE:31/2
 
 ;スク水の着脱
@@ -210,7 +210,7 @@ IF TEQUIP:59 == 2
 ELSE
     TEQUIP:59 = 2
     ;調教対象のコスプレ経験
-    CFLAG:50 += 1
+    CFLAG:코스프레실행회수 += 1
 ENDIF
 RETURN 1
 
@@ -221,7 +221,7 @@ RETURN 1
 PRINTL <스쿠미즈 플레이 중>
 
 DOWNBASE:0 += 0
-DOWNBASE:1 += 20
+DOWNBASE:기력 += 20
 
 LOCAL = 500
 LOCAL:1 = 500
@@ -239,23 +239,23 @@ ELSE
     TIMES LOCAL , 1.20
 ENDIF
 ;ABL:노출벽을 본다
-IF ABL:14 == 0
+IF ABL:노출증 == 0
     SOURCE:24 += 0
     SOURCE:19 += 0
     TIMES LOCAL, 1.00
-ELSEIF ABL:14 == 1
+ELSEIF ABL:노출증 == 1
     SOURCE:24 += 50
     SOURCE:19 += 50
     TIMES LOCAL, 1.20
-ELSEIF ABL:14 == 2
+ELSEIF ABL:노출증 == 2
     SOURCE:24 += 100
     SOURCE:19 += 100
     TIMES LOCAL, 1.40
-ELSEIF ABL:14 == 3
+ELSEIF ABL:노출증 == 3
     SOURCE:24 += 200
     SOURCE:19 += 200
     TIMES LOCAL, 1.60
-ELSEIF ABL:14 == 4
+ELSEIF ABL:노출증 == 4
     SOURCE:24 += 400
     SOURCE:19 += 400
     TIMES LOCAL, 2.00
@@ -265,46 +265,46 @@ ELSE
     TIMES LOCAL, 3.00
 ENDIF
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     TIMES LOCAL , 0.80
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     TIMES LOCAL , 1.00
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     TIMES LOCAL , 1.30
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     TIMES LOCAL , 1.60
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     TIMES LOCAL , 2.00
 ELSE
     TIMES LOCAL , 3.00
 ENDIF
 
 ;臆病
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL:1 , 2.00
 ;目立ちたがり
-SIF TALENT:28
+SIF TALENT:튀고싶어함
     TIMES LOCAL , 1.50
 ;解放
-SIF TALENT:33
+SIF TALENT:해방
     TIMES LOCAL , 1.50
 ;부끄럼쟁이
-SIF TALENT:35
+SIF TALENT:부끄럼쟁이
     TIMES LOCAL:1 , 2.00
 ;巨乳
-IF TALENT:112
+IF TALENT:거유
     SOURCE:20 += 250
 ;爆乳
-ELSEIF TALENT:113
+ELSEIF TALENT:폭유
     SOURCE:20 += 400
 ENDIF
 ;[작은체형]
-IF TALENT:128
+IF TALENT:작은체형
     TIMES LOCAL , 1.50
     TIMES LOCAL:1 , 1.50
 ENDIF
 ;유아유치유아퇴행
-SIF TALENT:130 || TALENT:131 || TALENT:159
+SIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
     TIMES LOCAL , 2.00
 
 SOURCE:12 += LOCAL
@@ -312,15 +312,15 @@ SOURCE:22 += LOCAL/2
 SOURCE:31 += LOCAL:1
 
 ;남자
-IF TALENT:120
+IF TALENT:남자
     SOURCE:20 += 800
     SOURCE:28 += LOCAL/2
     TIMES SOURCE:31 , 2.50
 ;絶壁
-ELSEIF TALENT:110
+ELSEIF TALENT:절벽
     SOURCE:28 += LOCAL/4
 ;貧乳
-ELSEIF TALENT:111
+ELSEIF TALENT:빈유
     SOURCE:28 += LOCAL/6
 ELSE
     SOURCE:28 += LOCAL/8
@@ -328,19 +328,19 @@ ENDIF
 
 SOURCE:25 += LOCAL:1 /5
 ;유아유치유아퇴행
-SIF TALENT:130 || TALENT:131 || TALENT:159
+SIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
     SOURCE:25 += LOCAL:1 /20
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
 ;露出快楽経験入手判定
 TFLAG:100 |= 2
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && ABL:14 >= 3
+SIF ASSIPLAY == 0 && ABL:노출증 >= 3
     TFLAG:50 += 1
 
 RETURN 1
@@ -350,7 +350,7 @@ RETURN 1
 ;--------------------------------------------------
 @DENIAL_MESSAGE_COM_91
 CALL KOJO_DENIAL_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -367,14 +367,14 @@ ENDIF
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM091
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 IF TEQUIP:59 == 2
-    IF MARK:9 > 1
+    IF MARK:반발각인 > 1
         PRINTFORMW %조사선택(CALLNAME:PLAYER, "가")% 다가오자, %조사선택(CALLNAME:TARGET, "는")% 입고 있던 수영복을 벗어서 던졌다.
-    ELSEIF TALENT:153 && ASSIPLAY == 0
+    ELSEIF TALENT:상애 && ASSIPLAY == 0
         PRINTFORML %조사선택(CALLNAME:PLAYER, "가")%, %조사선택(CALLNAME:TARGET, "가")% 입고 있는 수영복을 벗기자
         PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 약간 빨개진 얼굴을 하고 있다.
     ELSE
@@ -383,22 +383,22 @@ IF TEQUIP:59 == 2
 ELSE
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")%, %CALLNAME:TARGET%에게 학교 수영복을 입도록 명령했다.
     PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-    IF TALENT:35
+    IF TALENT:부끄럼쟁이
         PRINTFORMW 얼굴을 새빨갛게 하면서 %CALLNAME:PLAYER%의 명령을 실행하고 있다….
-    ELSEIF TALENT:110 || TALENT:111
+    ELSEIF TALENT:절벽 || TALENT:빈유
         PRINTL 수영복을 입은 건 좋긴 하지만
         PRINTW 가슴이 납작해서 궁상스러운지 끊임없이 가슴을 가리려고 하고 있다.
-    ELSEIF TALENT:112 || TALENT:113
+    ELSEIF TALENT:거유 || TALENT:폭유
         PRINTL 수영복을 입은 건 좋긴 하지만
         PRINTW 수영복이 조이는지 앞가슴 쪽을 자꾸 잡아 당기고 있다.
-    ELSEIF TALENT:130 || TALENT:131
+    ELSEIF TALENT:유아 || TALENT:유치
         PRINTW 수영복을 입고 아이처럼 까불며 떠들기 시작했다.
-    ELSEIF TALENT:80 || TALENT:170
+    ELSEIF TALENT:도착적 || TALENT:음란
         PRINTL 처음에는 주저했지만
         PRINTW 새로운 쾌감에 눈을 뜬 건지 후다닥 갈아입었다.
-    ELSEIF TALENT:153 || TALENT:162
+    ELSEIF TALENT:상애 || TALENT:예속
         PRINTFORMW %조사선택(CALLNAME:MASTER, "가")% 온몸을 즐길 수 있듯이 빙글 돌면서 갈아 입었다.
-    ELSEIF MARK:9 > 1
+    ELSEIF MARK:반발각인 > 1
         PRINTW 노골적으로 혐오감을 띠면서 수영복을 갈아 입었다.
     ELSE
         PRINTW 기가 막힌 표정을 지으면서 수영복을 갈아 입었다.
@@ -411,35 +411,35 @@ ENDIF
 @COM_ORDER_91, ARG
 LOCAL:99 = ARG
 ;ABL:욕망
-IF ABL:11
+IF ABL:욕망
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:11
+    LOCAL:99 = ABL:욕망
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 ;ABL:노출벽
-IF ABL:14
+IF ABL:노출증
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:14
+    LOCAL:99 = ABL:노출증
     TFLAG:240 += LOCAL:99 * 4
     RESULTS = %RESULTS% %ABLNAME:14%LV{LOCAL:99}({LOCAL:99 * 4})
 ENDIF
 ;ABL:자위중독
-IF ABL:30
+IF ABL:자위중독
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:30
+    LOCAL:99 = ABL:자위중독
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:30%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 
 ;쾌락각인
-IF MARK:1
+IF MARK:쾌락각인
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = MARK:1
+    LOCAL:99 = MARK:쾌락각인
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
@@ -456,20 +456,20 @@ IF LOCAL:2
 ENDIF
 
 ;자제심
-IF TALENT:20
+IF TALENT:자제심
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:20%({LOCAL:99})
 ENDIF
 ;부끄럼쟁이
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ;恥薄い
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 2
@@ -477,7 +477,7 @@ ELSEIF TALENT:36
     RESULTS = %RESULTS% %TALENTNAME:36%({LOCAL:99})
 ENDIF
 ;自慰しやすい
-IF TALENT:60
+IF TALENT:자위하기쉬움
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
@@ -485,21 +485,21 @@ IF TALENT:60
     RESULTS = %RESULTS% %TALENTNAME:60%({LOCAL:99})
 ENDIF
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
 ;쾌감의 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 5
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
 ENDIF
 ;남자
-IF TALENT:120
+IF TALENT:남자
     RESULTS = %RESULTS% - 
     LOCAL:99 = 15
     TFLAG:240 -= LOCAL:99

@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:660 > 0
     RETURN 0
 ;동물귀 이외 불가
-SIF TALENT:116 == 0
+SIF TALENT:동물귀 == 0
     RETURN 0
 RETURN 1
 
@@ -19,7 +19,7 @@ RETURN 1
 @COM660
 
 ;전회의 조교가 꼬리 애무 또한 플레이어의 기교 3이상, 또는 전회의 조교가 꼬리를 잡아당기는, 이라면 꼬리를 잡아당기는에
-IF PREVCOM == 900 && ABL:PLAYER:12 >= 3
+IF PREVCOM == 900 && ABL:PLAYER:기교 >= 3
     CALL EXCOM_ABLE669
     SIF RESULT == 1
         JUMP COM669
@@ -32,7 +32,7 @@ CALL TRAIN_MESSAGE_COM660
 
 
 DOWNBASE:0 += 10
-DOWNBASE:1 += 65
+DOWNBASE:기력 += 65
 
 SOURCE:12 = 20
 SOURCE:15 = 10
@@ -40,18 +40,18 @@ SOURCE:17 = 50
 SOURCE:21 = 50
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     SOURCE:11 = 70
     SOURCE:20 = 20
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     SOURCE:11 = 110
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     SOURCE:11 = 160
     SOURCE:12 = 10
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     SOURCE:11 = 180
     SOURCE:12 = 50
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     SOURCE:11 = 210
     SOURCE:12 = 150
     SOURCE:17 = 100
@@ -62,19 +62,19 @@ ELSE
 ENDIF
 
 ;ABL:욕망을 본다
-IF ABL:11 == 0
+IF ABL:욕망 == 0
     SOURCE:18 = 30
     SOURCE:20 = 20
     SOURCE:21 = 20
-ELSEIF ABL:11 == 1
+ELSEIF ABL:욕망 == 1
     SOURCE:18 = 50
     SOURCE:21 = 5
-ELSEIF ABL:11 == 2
+ELSEIF ABL:욕망 == 2
     SOURCE:18 = 250
-ELSEIF ABL:11 == 3
+ELSEIF ABL:욕망 == 3
     SOURCE:10 = 50
     SOURCE:18 = 700
-ELSEIF ABL:11 == 4
+ELSEIF ABL:욕망 == 4
     SOURCE:10 = 300
     SOURCE:17 = 10
     SOURCE:18 = 1050
@@ -95,7 +95,7 @@ ELSEIF TEQUIP:59 == 17 || SOURCE:59 == 21
     ;곤·라서스펜더 장착중
     SOURCE:10 = 1400
     SOURCE:12 += 800
-ELSEIF TFLAG:899 <= 0 && EQUIP:14 <= 0 && (TALENT:152 || TALENT:153) && (TEQUIP:59 == 1 || TEQUIP:59 == 19)
+ELSEIF TFLAG:899 <= 0 && EQUIP:14 <= 0 && (TALENT:친애 || TALENT:상애) && (TEQUIP:59 == 1 || TEQUIP:59 == 19)
     ;친애나 상애로 앞치마나 웨딩 드레스 장착중(다만 수면이나 실신하고 있지 않을 때)
     TIMES SOURCE:11 , 1.50 
 ELSEIF TEQUIP:36
@@ -112,7 +112,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM660
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 VARSET LOCALS, ""
 SPLIT "더미, 앞치마, 학교 수영복, 여교사옷, 일본식 옷, 메이드복, 체육복, 간호사복, 차이나 드레스, 교복, 네글리제, 와이셔츠, 비키니, 위험한 레오타드, 바니 슈트, 노예 의상, 원아복, 곤, 군복, 웨딩 드레스, 고스로리, 알몸에 서스펜더, 무녀 의상",",", LOCALS
@@ -123,7 +123,7 @@ ELSEIF TEQUIP:59
     PRINTFORM %조사처리(LOCALS:(TEQUIP:59),"를")% 입은 
 ENDIF
 PRINTFORM %CALLNAME:TARGET%의 
-SIF MARK:9 >= 2 && TALENT:150 == 0 && TALENT:151 == 0 && TALENT:152 == 0 && TALENT:160 == 0 && TALENT:153 == 0
+SIF MARK:반발각인 >= 2 && TALENT:연모 == 0 && TALENT:망신 == 0 && TALENT:친애 == 0 && TALENT:복종 == 0 && TALENT:상애 == 0
     PRINT 위협하듯 곤두선 
 IF TEQUIP:90
     PRINTW 꼬리를 촉수가 희롱하고 있다. 
@@ -132,9 +132,9 @@ ELSEIF TEQUIP:68
     IF PALAM:0 >= (PALAMLV:4 - 1) || PALAM:3 >= (PALAMLV:4 - 1)
         PRINTL 하자
         IF EQUIP:14 == 0 && TFLAG:899 == 0
-            IF TALENT:150
+            IF TALENT:연모
                 PRINT 안타까운 듯이 
-            ELSEIF TALENT:16
+            ELSEIF TALENT:프라이드가높음
                 PRINT 애를 태우며 
             ELSE
                 PRINT 물기를 띤 눈동자로 
@@ -146,9 +146,9 @@ ELSEIF TEQUIP:68
             ELSEIF TFLAG:899 > 0
                 PRINT 실신하면서도 
             ENDIF
-            IF ABL:11 > 2
+            IF ABL:욕망 > 2
                 PRINTW 꽤 느끼고 있는 듯, 몸이 반응하고 있다….
-            ELSEIF MARK:9 == 3
+            ELSEIF MARK:반발각인 == 3
                 PRINTW 이리저리 꼬리를 흔들어 손을 피한다….
             ELSE
                 PRINTFORMW 꼬리를 만지자, \@(TEQUIP:42) ? 몸을 부르르 떨# 숨소리를 내쉬\@고 있다….

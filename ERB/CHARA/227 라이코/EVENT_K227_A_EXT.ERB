@@ -13,7 +13,7 @@
 
 ;通常のリセット処理関数 @ASSI_STATE_TAKEOVER, ARGをほぼコピペ。
 ;ARGには壊造人格や即落ちを取得させたかがビット演算で入っている。
-;■助手引き継ぎではTARGETではなくASSIを使うので、フラグ等を見る場合はCFLAG:(TARGET、省略可):0ではなくCFLAG:ASSI:0と書く。
+;■助手引き継ぎではTARGETではなくASSIを使うので、フラグ等を見る場合はCFLAG:(TARGET、省略可):0ではなくCFLAG:ASSI:SP캐릭터と書く。
 @KOJO_227_EVENT_ASSI_TAKEOVER, ARG
 
 ;■誤動作防止用処理
@@ -31,19 +31,19 @@ JUMP ASSI_STATE_TAKEOVER, ARG
 ;助手を経験したことを示す
 ISASSI:ASSI = 1
 ;引き継いだキャラであることを判別するためのフラグ
-CFLAG:ASSI:18 = 1
+CFLAG:ASSI:계승여부 = 1
 ;称号リセット
 NICKNAME:ASSI = %CSVNICKNAME (NO:ASSI , 0)%
 ;館にいた時の状況
 CSTR:ASSI:3 = 過去において%CALLNAME:MASTER%の調教を受けた
 
 ;妊娠・抱卵中・乳母でなく育児中の場合は減っている体力を戻す
-IF TALENT:ASSI:140 || TALENT:ASSI:143 || (TALENT:ASSI:141 && CFLAG:ASSI:79 == 0)
-    MAXBASE:ASSI:0 += 500
+IF TALENT:ASSI:임신 || TALENT:ASSI:포란중 || (TALENT:ASSI:육아중 && CFLAG:ASSI:유모여부 == 0)
+    MAXBASE:ASSI:체력 += 500
     CALL RESET_ASSI_PREGNANT, ASSI
 ;懐卵時の体力の最大値低下を戻す処理
-ELSEIF TALENT:ASSI:145
-    MAXBASE:ASSI:0 += 500
+ELSEIF TALENT:ASSI:회란
+    MAXBASE:ASSI:체력 += 500
 ENDIF
 
 ;特定のゲージをリセット
@@ -52,12 +52,12 @@ REPEAT 4
     BASE:ASSI:(COUNT+4) = 0
 REND
 ;居場所のフラグリセット
-CFLAG:ASSI:4 = 0
+CFLAG:ASSI:조교관외 = 0
 ;恐怖・反発刻印取得済み判定リセット
 MARK:ASSI:96 = 0
 MARK:ASSI:97 = 0
 ;薬物刻印1Lv分減少
-MARK:ASSI:3 = MAX(MARK:ASSI:3 - 1, 0)
+MARK:ASSI:약물각인 = MAX(MARK:ASSI:약물각인 - 1, 0)
 
 ;特定の素質をリセット
 FOR LOCAL, 140, 180
@@ -72,8 +72,8 @@ FOR LOCAL, 140, 180
         TALENT:ASSI:LOCAL = 0
     ENDIF
 NEXT
-TALENT:ASSI:65 = 0
-TALENT:ASSI:998 = 0
+TALENT:ASSI:음모없음 = 0
+TALENT:ASSI:Debug = 0
 
 ;CFLAGをリセット
 FOR LOCAL, 0, 100
@@ -123,7 +123,7 @@ VARSET EQUIP:ASSI:0, 0, 0, 15
 ;好感度は減少させた状態で引き継ぎ
 ;最低は50(引き継ぐ時点で1000以上はあると見込んでいるため)
 ;素質が変動する700、1000、2000、5000を境界に引き継ぎ率が激減するように
-LOCAL:1 = CFLAG:ASSI:2 / 20
+LOCAL:1 = CFLAG:ASSI:호감도 / 20
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 100, 90)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 250, 80)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 500, 75)
@@ -131,4 +131,4 @@ LOCAL:1 = TABLE_CALC2(LOCAL:1, 700, 66)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 1000, 50)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 2000, 33)
 LOCAL:1 = TABLE_CALC2(LOCAL:1, 5000, 25)
-CFLAG:ASSI:2 = LOCAL:1
+CFLAG:ASSI:호감도 = LOCAL:1

@@ -37,41 +37,41 @@ CALL TRAIN_MESSAGE_COM009
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 0
-DOWNBASE:1 += 10
+DOWNBASE:기력 += 10
 
 ;노출벽을 본다
-IF ABL:14 == 0
+IF ABL:노출증 == 0
     SOURCE:12 = 10
-ELSEIF ABL:14 == 1
+ELSEIF ABL:노출증 == 1
     SOURCE:12 = 30
-ELSEIF ABL:14 == 2
+ELSEIF ABL:노출증 == 2
     SOURCE:12 = 60
-ELSEIF ABL:14 == 3
+ELSEIF ABL:노출증 == 3
     SOURCE:12 = 100
-ELSEIF ABL:14 == 4
+ELSEIF ABL:노출증 == 4
     SOURCE:12 = 150
 ELSE
     SOURCE:12 = 200
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     TIMES SOURCE:12 , 0.80
     SOURCE:18 = 0
     SOURCE:19 = 0
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     TIMES SOURCE:12 , 1.00
     SOURCE:18 = 30
     SOURCE:19 = 20
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     TIMES SOURCE:12 , 1.20
     SOURCE:18 = 70
     SOURCE:19 = 40
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     TIMES SOURCE:12 , 1.40
     SOURCE:18 = 120
     SOURCE:19 = 70
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     TIMES SOURCE:12 , 1.50
     SOURCE:18 = 180
     SOURCE:19 = 110
@@ -85,7 +85,7 @@ SIF PALAM:13 >= PALAMLV:3
     TFLAG:82 = 1
 
 ;PHANTASMの場合一度実行したらその調教中は使えない
-SIF FLAG:3 >= 5
+SIF FLAG:난이도 >= 5
     TFLAG:140 |= 1
 
 RETURN 1
@@ -95,7 +95,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM009
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
     PRINTL
@@ -116,10 +116,10 @@ ENDIF
 @AUTONOMOUSLY
 
 ;犯されパッチ無効なら判定必要なし
-SIF (FLAG:1600 & 1) == 0
+SIF (FLAG:범해짐패치 & 1) == 0
     RETURN 0
 ;主人に服従する系統の素質を持っていたら判定無し
-SIF TALENT:151 || TALENT:160 || TALENT:161 || TALENT:162 || TALENT:164 || TALENT:168 || TALENT:169
+SIF TALENT:망신 || TALENT:복종 || TALENT:낙인 || TALENT:예속 || TALENT:사역마 || TALENT:괴뢰 || TALENT:괴조인격
     RETURN 0
 ;縛られてたり촉수拘束中三角木馬騎乗中は何もできない
 SIF TEQUIP:40 || TEQUIP:90 || TEQUIP:43
@@ -135,94 +135,94 @@ SIF TEQUIP:60
 VARSET LOCAL, 0
 
 ;反抗的
-SIF TALENT:11
+SIF TALENT:반항적
     LOCAL += 3000
 ;素直
-SIF TALENT:13
+SIF TALENT:솔직함
     LOCAL -= 3000
 ;生意気
-SIF TALENT:15
+SIF TALENT:건방짐
     LOCAL += 500
 ;プライド高い
-SIF TALENT:16
+SIF TALENT:프라이드가높음
     LOCAL += 1000
 ;プライド低い
-SIF TALENT:17
+SIF TALENT:프라이드가낮음
     LOCAL -= 1000
 ;ツンデレ
-SIF TALENT:18
+SIF TALENT:츤데레
     LOCAL += 500
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     LOCAL -= 2000
 ;無関心
-SIF TALENT:21
+SIF TALENT:무관심
     LOCAL -= 1000
 ;好奇心
-SIF TALENT:23
+SIF TALENT:호기심
     LOCAL += 1000
 ;保守的
-SIF TALENT:24
+SIF TALENT:보수적
     LOCAL -= 500
 ;一線越えない
-SIF TALENT:27
+SIF TALENT:일선을넘지않음
     LOCAL -= 3000
 ;目立ちたがり
-SIF TALENT:28
+SIF TALENT:튀고싶어함
     LOCAL += 1000
 ;부끄럼쟁이
-SIF TALENT:35
+SIF TALENT:부끄럼쟁이
     LOCAL -= 1000
 ;恥薄い
-SIF TALENT:36
+SIF TALENT:부끄럼없음
     LOCAL += 1000
 ;男嫌い
-SIF TALENT:37 && TALENT:PLAYER:120
+SIF TALENT:남성혐오 && TALENT:PLAYER:남자
     LOCAL -= 5000
 ;女嫌い
-SIF TALENT:38 && TALENT:PLAYER:120 == 0
+SIF TALENT:여성혐오 && TALENT:PLAYER:남자 == 0
     LOCAL -= 5000
 ;弱味
-SIF TALENT:39
+SIF TALENT:약점
     LOCAL -= 3000
 ;自慰しやすい
-SIF TALENT:60
+SIF TALENT:자위하기쉬움
     LOCAL += 1000
 ;헌신적
-SIF TALENT:63
+SIF TALENT:헌신적
     LOCAL -= 2000
 ;精液味覚
-SIF TALENT:66
+SIF TALENT:정애미각
     LOCAL += 2000
 ;쾌감에 솔직
-SIF TALENT:70
+SIF TALENT:쾌감에솔직
     LOCAL += 1000
 ;快楽の否定
-SIF TALENT:71
+SIF TALENT:쾌감을부정
     LOCAL -= 1000
 ;サド
-SIF TALENT:81
+SIF TALENT:새드
     LOCAL += 5000
 ;プレイヤーが魅惑
-SIF TALENT:PLAYER:91
+SIF TALENT:PLAYER:매혹
     LOCAL += 500
 ;プレイヤーが謎の魅力
-SIF TALENT:PLAYER:92
+SIF TALENT:PLAYER:수수께끼의매력
     LOCAL += 500
 ;小悪魔
-SIF TALENT:93
+SIF TALENT:소악마
     LOCAL += 1000
 ;嫉妬
-SIF TALENT:157
+SIF TALENT:질투
     LOCAL += 5000
 ;狂気
-SIF TALENT:158
+SIF TALENT:광기
     LOCAL += 5000
 ;淫乱
-SIF TALENT:170
+SIF TALENT:음란
     LOCAL += 5000
 ;淫魔
-SIF TALENT:180
+SIF TALENT:음마
     LOCAL += 5000
 ;媚薬使用中
 SIF TEQUIP:11
@@ -231,32 +231,32 @@ SIF TEQUIP:11
 SIF TEQUIP:68
     LOCAL += 8000
 ;異常経験の回数
-SIF EXP:50 > 0
-    LOCAL:1 = EXP:50 * 500
+SIF EXP:이상경험 > 0
+    LOCAL:1 = EXP:이상경험 * 500
     LOCAL += LOCAL:1
 ;반발각인
-IF MARK:9 == 0
+IF MARK:반발각인 == 0
     LOCAL -= 1000
-ELSEIF MARK:9 == 1
+ELSEIF MARK:반발각인 == 1
     LOCAL += 500
-ELSEIF MARK:9 == 2
+ELSEIF MARK:반발각인 == 2
     LOCAL += 1000
-ELSEIF MARK:9 >= 3
+ELSEIF MARK:반발각인 >= 3
     LOCAL += 1500
 ENDIF
 ;恐怖刻印
-IF MARK:8 == 1
+IF MARK:공포각인 == 1
     LOCAL -= 500
-ELSEIF MARK:8 == 2
+ELSEIF MARK:공포각인 == 2
     LOCAL -= 800
-ELSEIF MARK:8 >= 3
+ELSEIF MARK:공포각인 >= 3
     LOCAL -= 1500
 ENDIF
 
 ;순종의 레벨
-LOCAL -= ABL:10 * 1000
+LOCAL -= ABL:순종 * 1000
 ;욕망의 레벨
-LOCAL += ABL:11 * 500
+LOCAL += ABL:욕망 * 500
 
 ;一旦条件を満たすと毎回実行してくれちゃうので勝手に行動すると補正をかける
 SIF TFLAG:698 > 0
@@ -271,32 +271,32 @@ LOCAL:2 = POWER(SQRT(SQRT(PALAM:13)), 3) + LOCAL
 LOCAL:99 = -1
 
 ;욕망が3以上で縄や촉수を装備していない
-IF ABL:11 >= 3
+IF ABL:욕망 >= 3
     ;実行値が50000以上
     IF LOCAL:2 >= 50000
         TFLAG:699 = 3
         ;淫乱系部位素質持ちだと1/3の確立で素質に応じたコマンド実行
-        IF (TALENT:171 || TALENT:172 || TALENT:173 || TALENT:174) && RAND:3 == 0
+        IF (TALENT:음핵／음경 || TALENT:음호 || TALENT:음고 || TALENT:음유) && RAND:3 == 0
             ;음고
-            IF TALENT:173
+            IF TALENT:음고
                 IF EXIST_PENIS(PLAYER)
                     LOCAL:99 = 34
                 ELSE
                     LOCAL:99 = 182
                 ENDIF
             ;淫壺（非処女）
-            ELSEIF TALENT:172 && TALENT:120 == 0 && TALENT:0 == 0 && EXP:0 > 0
+            ELSEIF TALENT:음호 && TALENT:남자 == 0 && TALENT:처녀 == 0 && EXP:V경험 > 0
                 IF EXIST_PENIS(PLAYER)
                     LOCAL:99 = 24
                 ELSE
                     LOCAL:99 = 7
                 ENDIF
             ;음유
-            ELSEIF TALENT:174
+            ELSEIF TALENT:음유
                 ;絶壁でなくて相手に棒があればパイズリでなければ胸自慰か自慰
-                IF TALENT:110 == 0 && EXIST_PENIS(PLAYER)
+                IF TALENT:절벽 == 0 && EXIST_PENIS(PLAYER)
                     LOCAL:99 = 42
-                ELSEIF TALENT:120 == 0
+                ELSEIF TALENT:남자 == 0
                     LOCAL:99 = 205
                 ELSE
                     LOCAL:99 = 7
@@ -316,15 +316,15 @@ IF ABL:11 >= 3
                     LOCAL:99 = 40
                 ELSEIF RAND:8 == 0 && TEQUIP:42 == 0
                     LOCAL:99 = 41
-                ELSEIF RAND:7 == 0 && TALENT:110 == 0
+                ELSEIF RAND:7 == 0 && TALENT:절벽 == 0
                     LOCAL:99 = 42
                 ELSEIF RAND:6 == 0
                     LOCAL:99 = 43
-                ELSEIF RAND:5 == 0 && TALENT:TARGET:0 == 0 && TALENT:120 == 0
+                ELSEIF RAND:5 == 0 && TALENT:TARGET:처녀 == 0 && TALENT:남자 == 0
                     LOCAL:99 = 24
                 ELSEIF RAND:4 == 0 && TEQUIP:53
                     LOCAL:99 = 352
-                ELSEIF RAND:3 == 0 && ABL:2 >= 3
+                ELSEIF RAND:3 == 0 && ABL:A감각 >= 3
                     LOCAL:99 = 34
                 ENDIF
             ELSE
@@ -332,11 +332,11 @@ IF ABL:11 >= 3
                     LOCAL:99 = 349
                 ELSEIF RAND:6 == 0
                     LOCAL:99 = 7
-                ELSEIF RAND:5 == 0 && TALENT:TARGET:120 == 0
+                ELSEIF RAND:5 == 0 && TALENT:TARGET:남자 == 0
                     LOCAL:99 = 110
                 ELSEIF RAND:4 == 0
                     LOCAL:99 = 327
-                ELSEIF RAND:3 == 0 && TALENT:TARGET:120 == 0
+                ELSEIF RAND:3 == 0 && TALENT:TARGET:남자 == 0
                     LOCAL:99 = 205
                 ENDIF
             ENDIF
@@ -346,7 +346,7 @@ IF ABL:11 >= 3
         TFLAG:699 = 2
         ;入れっぱなしの場合
         IF TFLAG:102
-            IF PREVCOM >= 20 && PREVCOM <= 24 && TALENT:120 == 0
+            IF PREVCOM >= 20 && PREVCOM <= 24 && TALENT:남자 == 0
                 LOCAL:99 = 24
             ELSE
                 LOCAL:99 = 34
@@ -359,11 +359,11 @@ IF ABL:11 >= 3
             IF EXIST_PENIS(PLAYER)
                 IF RAND:4 == 0 && TEQUIP:42 == 0
                     LOCAL:99 = 41
-                ELSEIF RAND:3 == 0 && TALENT:110 == 0
+                ELSEIF RAND:3 == 0 && TALENT:절벽 == 0
                     LOCAL:99 = 42
-                ELSEIF RAND:2 == 0 && ABL:2 >= 3
+                ELSEIF RAND:2 == 0 && ABL:A감각 >= 3
                     LOCAL:99 = 34
-                ELSEIF TALENT:120 == 0
+                ELSEIF TALENT:남자 == 0
                     LOCAL:99 = 24
                 ENDIF
             ELSE
@@ -393,11 +393,11 @@ IF ABL:11 >= 3
                     LOCAL:99 = 40
                 ELSEIF RAND:6 == 0 && TEQUIP:42 == 0
                     LOCAL:99 = 41
-                ELSEIF RAND:5 == 0 && TALENT:110 == 0
+                ELSEIF RAND:5 == 0 && TALENT:절벽 == 0
                     LOCAL:99 = 42
-                ELSEIF RAND:4 == 0 && TALENT:TARGET:0 == 0 && TEQUIP:25 == 1 && TALENT:120 == 0
+                ELSEIF RAND:4 == 0 && TALENT:TARGET:처녀 == 0 && TEQUIP:25 == 1 && TALENT:남자 == 0
                     LOCAL:99 = 24
-                ELSEIF RAND:3 == 0 && ABL:2 >= 3 && TEQUIP:20 == 1
+                ELSEIF RAND:3 == 0 && ABL:A감각 >= 3 && TEQUIP:20 == 1
                     LOCAL:99 = 34
                 ENDIF
             ELSE
@@ -413,7 +413,7 @@ IF ABL:11 >= 3
                     LOCAL:99 = 40
                 ELSEIF RAND:5 == 0 && TEQUIP:42 == 0
                     LOCAL:99 = 41
-                ELSEIF RAND:4 == 0 && TALENT:110 == 0
+                ELSEIF RAND:4 == 0 && TALENT:절벽 == 0
                     LOCAL:99 = 42
                 ENDIF
             ELSE
@@ -431,15 +431,15 @@ IF ABL:11 >= 3
                     LOCAL:99 = 40
                 ELSEIF RAND:8 == 0 && TEQUIP:42 == 0
                     LOCAL:99 = 41
-                ELSEIF RAND:7 == 0 && TALENT:110 == 0
+                ELSEIF RAND:7 == 0 && TALENT:절벽 == 0
                     LOCAL:99 = 42
                 ELSEIF RAND:6 == 0
                     LOCAL:99 = 43
-                ELSEIF RAND:5 == 0 && TALENT:TARGET:0 == 0 && TALENT:120 == 0
+                ELSEIF RAND:5 == 0 && TALENT:TARGET:처녀 == 0 && TALENT:남자 == 0
                     LOCAL:99 = 24
                 ELSEIF RAND:4 == 0 && TEQUIP:53
                     LOCAL:99 = 352
-                ELSEIF RAND:3 == 0 && ABL:2 >= 3
+                ELSEIF RAND:3 == 0 && ABL:A감각 >= 3
                     LOCAL:99 = 34
                 ENDIF
             ELSE
@@ -447,11 +447,11 @@ IF ABL:11 >= 3
                     LOCAL:99 = 349
                 ELSEIF RAND:6 == 0
                     LOCAL:99 = 7
-                ELSEIF RAND:5 == 0 && TALENT:TARGET:120 == 0
+                ELSEIF RAND:5 == 0 && TALENT:TARGET:남자 == 0
                     LOCAL:99 = 110
                 ELSEIF RAND:4 == 0
                     LOCAL:99 = 327
-                ELSEIF RAND:3 == 0 && TALENT:TARGET:120 == 0
+                ELSEIF RAND:3 == 0 && TALENT:TARGET:남자 == 0
                     LOCAL:99 = 205
                 ENDIF
             ENDIF

@@ -13,20 +13,20 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;파트너가 된 상대는 불가
-    SIF CFLAG:COUNT:3 & 4
+    SIF CFLAG:COUNT:매각불능 & 4
         CONTINUE
     ;그 자리에 없는 캐릭터는 제외
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
-    SIF TALENT:COUNT:164
+    SIF TALENT:COUNT:사역마
         CONTINUE
-    IF FLAG:12 & 32
-        SIF (CFLAG:COUNT:3 || TALENT:COUNT:161 || TALENT:COUNT:164 || TALENT:COUNT:169) && CFLAG:COUNT:20 & 16
+    IF FLAG:SHOP이벤트확장 & 32
+        SIF (CFLAG:COUNT:매각불능 || TALENT:COUNT:낙인 || TALENT:COUNT:사역마 || TALENT:COUNT:괴조인격) && CFLAG:COUNT:첫시츄에이션 & 16
             CONTINUE
     ELSE
-        SIF CFLAG:COUNT:3 || TALENT:COUNT:161 || TALENT:COUNT:164 || TALENT:COUNT:169 || CFLAG:COUNT:1 == 0
+        SIF CFLAG:COUNT:매각불능 || TALENT:COUNT:낙인 || TALENT:COUNT:사역마 || TALENT:COUNT:괴조인격 || CFLAG:COUNT:매각가능 == 0
             CONTINUE
     ENDIF
 
@@ -38,7 +38,7 @@ LOCAL:1 = (LOCAL:2 - 1) / 20
 
 $PRINT_LIST
 DRAWLINE
-PRINTFORML \@(FLAG:12 & 32) ? 누구를 판매 또는 해방 # 판매\@하겠습니까? ＜page.{LOCAL+1}/{LOCAL:1+1}＞
+PRINTFORML \@(FLAG:SHOP이벤트확장 & 32) ? 누구를 판매 또는 해방 # 판매\@하겠습니까? ＜page.{LOCAL+1}/{LOCAL:1+1}＞
 DRAWLINE
 CALL SALE_LIST, LOCAL
 DRAWLINE
@@ -61,7 +61,7 @@ ELSEIF RESULT <= 0 || RESULT >= CHARANUM || MARK:RESULT:98 == 0
 ENDIF
 
 LOCAL = RESULT
-IF FLAG:12 & 32
+IF FLAG:SHOP이벤트확장 & 32
     IF NO:LOCAL == 401
         SIF FLAG:570 & 16
                 PRINTFORMW ※이 노예를 매각, 또는 해방하게 되면 %조사처리(NAME:MASTER,"는")% 【촉수사역술】을 잃게 됩니다.
@@ -85,7 +85,7 @@ ENDIF
 
 IF FLAG:570 & 8
     FLAG:570 &= 55
-    FLAG:0 = 1
+    FLAG:휴식 = 1
     BEGIN TURNEND
     RETURN 1
 ENDIF
@@ -106,7 +106,7 @@ REPEAT 20
         PRINT  (조수)
     ELSEIF ISASSI:LOCAL == 1
         PRINT (원조수)
-    ELSEIF CFLAG:LOCAL:1 == 2
+    ELSEIF CFLAG:LOCAL:매각가능 == 2
         PRINT (조수가능)
     ENDIF
     PRINTL 
@@ -117,18 +117,18 @@ REND
 ;-------------------------------------------------
 @SALE_SELECT, ARG
 PRINTL 
-SIF CFLAG:ARG:1 >= 1 && CFLAG:ARG:3 == 0 && TALENT:ARG:161 == 0 && TALENT:ARG:164 == 0 && TALENT:ARG:169 == 0
+SIF CFLAG:ARG:매각가능 >= 1 && CFLAG:ARG:매각불능 == 0 && TALENT:ARG:낙인 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:괴조인격 == 0
     PRINTFORML [0] 판매한다
-SIF (CFLAG:ARG:20 & 16) == 0 && TALENT:ARG:164 == 0
+SIF (CFLAG:ARG:첫시츄에이션 & 16) == 0 && TALENT:ARG:사역마 == 0
     PRINTFORML [1] 해방한다
 PRINTFORML [100] 돌아간다
 $INPUT_LOOP
 INPUT
 IF RESULT == 100
     RETURN 0
-ELSEIF RESULT == 0  && CFLAG:ARG:1 >= 1 && CFLAG:ARG:3 == 0 && TALENT:ARG:161 == 0 && TALENT:ARG:164 == 0 && TALENT:ARG:169 == 0
+ELSEIF RESULT == 0  && CFLAG:ARG:매각가능 >= 1 && CFLAG:ARG:매각불능 == 0 && TALENT:ARG:낙인 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:괴조인격 == 0
     CALL SALE_CONFIRM, ARG
-ELSEIF RESULT == 1 && (CFLAG:ARG:20 & 16) == 0 && TALENT:ARG:164 == 0
+ELSEIF RESULT == 1 && (CFLAG:ARG:첫시츄에이션 & 16) == 0 && TALENT:ARG:사역마 == 0
     CALL CHARA_RELEASE, ARG
 ELSE
     GOTO INPUT_LOOP
@@ -159,13 +159,13 @@ PRINTW ………………
 PRINTW …………
 PRINTW ……
 ;정신붕괴or괴뢰or수면제 효과 발휘 중
-IF TALENT:ARG:167 || TALENT:ARG:168 || EQUIP:ARG:14
+IF TALENT:ARG:정신붕괴 || TALENT:ARG:괴뢰 || EQUIP:ARG:14
     FLAG:67 += 1
 
     ;대상 or 조수의 매각 · 해방에 따른 등록 삭제 처리
     CALL CHARA_GONE, ARG, LOCAL:1, LOCAL:2
 ;망신or친애or예속or주인이 수수께끼의 매력에다 연모＋반발각인3
-ELSEIF ((TALENT:MASTER:92 && TALENT:ARG:150) || TALENT:ARG:151 || TALENT:ARG:152 || TALENT:ARG:162) && MARK:ARG:9 == 3
+ELSEIF ((TALENT:MASTER:수수께끼의매력 && TALENT:ARG:연모) || TALENT:ARG:망신 || TALENT:ARG:친애 || TALENT:ARG:예속) && MARK:ARG:반발각인 == 3
     PRINTFORMW %조사처리(CALLNAME:ARG,"가")% 없어진 빈 방을 청소하고 있노라니, 손님이 왔다는 노크 소리가 들려왔다.
     PRINTFORML 경계하며 문을 열어보니, %조사처리(CALLNAME:A,"가")% 칼을 쥐고 있었다
     PRINTFORMW 죽음을 각오하고 조용히 가슴을 들이댄 %조사처리(CALLNAME:MASTER,"를")% %조사처리(CALLNAME:A,"는")% 가만히 바라보고 있다…….
@@ -173,33 +173,33 @@ ELSEIF ((TALENT:MASTER:92 && TALENT:ARG:150) || TALENT:ARG:151 || TALENT:ARG:152
     PRINTFORMW %CALLNAME:MASTER%의 품에 뛰어들어왔다.
     PRINTFORML 울면서 %CALLNAME:MASTER%에 대한 애정을 말해오는 %CALLNAME:ARG%의 머리를 한동안 쓰다듬고 있었다…….
     PRINTFORMW ＜%조사처리(CALLNAME:A,"는")% 반발각인을 잃었습니다＞
-    MARK:ARG:9 = 0
-    CFLAG:ARG:20 |= 16
+    MARK:ARG:반발각인 = 0
+    CFLAG:ARG:첫시츄에이션 |= 16
     ;돌아온 반발 노예의 이벤트 대사 호출
     CALL SELF_KOJO, ARG, 192
     TARGET = LOCAL:1
 ;망신or친애or상애or예속or괴조인격or주인이 수수께끼의 매력에다 연모＋음란or음마
-ELSEIF ((TALENT:MASTER:92 && TALENT:ARG:150) || TALENT:ARG:151 || TALENT:ARG:152 || TALENT:ARG:153 || TALENT:ARG:162 || TALENT:ARG:169) && (TALENT:ARG:170 || TALENT:ARG:180)
+ELSEIF ((TALENT:MASTER:수수께끼의매력 && TALENT:ARG:연모) || TALENT:ARG:망신 || TALENT:ARG:친애 || TALENT:ARG:상애 || TALENT:ARG:예속 || TALENT:ARG:괴조인격) && (TALENT:ARG:음란 || TALENT:ARG:음마)
     PRINTFORMW %조사처리(CALLNAME:ARG,"가")% 없어진 빈 방을 청소하고 있노라니, 손님이 왔다는 노크 소리가 들려왔다.
     PRINTFORML 경계하며 문을 열었더니, %조사처리(CALLNAME:ARG,"가")% 생글생글 음탕한 웃음을 띠며 서 있었다.
     PRINTFORMW 그 뒤에 굴러다니는 자루를 가리키며 %조사처리(CALLNAME:ARG,"는")% 상을 달라고 졸라온다.
     CALL RETURN_PLUS, ARG
-    CFLAG:ARG:20 |= 16
+    CFLAG:ARG:첫시츄에이션 |= 16
 ;망신or친애or상애or예속or낙인or주인이 수수께끼의 매력에다 연모
-ELSEIF (TALENT:MASTER:92 && TALENT:ARG:150) || TALENT:ARG:151 || TALENT:ARG:152 || TALENT:ARG:153 || TALENT:ARG:161 || TALENT:ARG:162
+ELSEIF (TALENT:MASTER:수수께끼의매력 && TALENT:ARG:연모) || TALENT:ARG:망신 || TALENT:ARG:친애 || TALENT:ARG:상애 || TALENT:ARG:낙인 || TALENT:ARG:예속
     PRINTFORMW %조사처리(CALLNAME:ARG,"가")% 없어진 빈 방을 청소하고 있노라니, 손님이 왔다는 노크 소리가 들려왔다.
     PRINTFORML 경계하면서 문을 열어보니, %조사처리(CALLNAME:ARG,"가")% 갈 곳이 없는지 서 있었다.
     PRINTFORMW 얼굴을 수치의 빛으로 물들이고 동거 허가를 구하는 %조사처리(CALLNAME:ARG,"를")% %조사처리(CALLNAME:MASTER,"는")% 말없이 받아들였다.
-    IF TALENT:ARG:39 == 0
+    IF TALENT:ARG:약점 == 0
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")% [약점]을 얻었다.
-        TALENT:ARG:39 = 1
-        CFLAG:ARG:12 |= 1024
+        TALENT:ARG:약점 = 1
+        CFLAG:ARG:트라우마판정 |= 1024
     ENDIF
-    CFLAG:ARG:20 |= 16
+    CFLAG:ARG:첫시츄에이션 |= 16
     ;돌아온 노예의 이벤트 대사 호출
     CALL SELF_KOJO, ARG, 193
 ;반발각인3에서 주인이 [주정] [봉래인]을 가지고 있지 않았을 경우
-ELSEIF MARK:ARG:9 >= 3 && TALENT:MASTER:48 == 0 && TALENT:MASTER:49 == 0
+ELSEIF MARK:ARG:반발각인 >= 3 && TALENT:MASTER:주정 == 0 && TALENT:MASTER:봉래인 == 0
     CALL BADEND_9, ARG
 ELSE
     FLAG:67 += 1
@@ -234,9 +234,9 @@ IF CHARANUM < LOCAL:1
 ENDIF
 
 ;범용 리스트의 0～148에 소지하고 있지 않은 궁합이 좋은 캐릭터의 캐릭터 번호, LOCAL:2는 그 인원수
-IF LOCAL:2 > 0 && FLAG:4 < 50
+IF LOCAL:2 > 0 && FLAG:게임모드 < 50
     LOCAL:3 = GET_LIST(RAND:(LOCAL:2))
-    CFLAG:ARG:155 |= 4
+    CFLAG:ARG:상태기록 |= 4
     PRINTL 
     PRINTFORMW %조사처리(CALLNAME:ARG,"는")% %조사처리(CSVNAME((LOCAL:3), 0),"를")% 끌고 왔다.
     ;조교 대상을 기억
@@ -244,17 +244,17 @@ IF LOCAL:2 > 0 && FLAG:4 < 50
     ;캐릭터의 추가
     CALL CHARA_STATE_BASIC, LOCAL:3
     ;끌려온 날을 기록
-    CFLAG:3112 = DAY
+    CFLAG:끌려온날 = DAY
     CFLAG:3125 = (DAY*2)+TIME:0
     ;누구에게 끌려왔는지를 기록
-    CFLAG:3109 = FLAG:998
-    CFLAG:3118 = CFLAG:ARG:3109
+    CFLAG:CSV번호 = FLAG:998
+    CFLAG:끌고온사람 = CFLAG:ARG:CSV번호
     ;입수 방법의 기록
     CSTR:3 = %CALLNAME:ARG%에게 끌려왔다.
     ;초기 경험에 긴박경험 · 약물경험 · 이상경험을 추가
-    EXP:31 += 12
-    EXP:40 += 12
-    EXP:50 += 1
+    EXP:긴박경험 += 12
+    EXP:약물경험 += 12
+    EXP:이상경험 += 1
     FLAG:998 += 1
     ;끌려온 쪽의 대사에서의 특수 초기 설정 처리용의 명령 호출
     CALL SET_CHARA_KOJO_EXTRA, TARGET
@@ -282,13 +282,13 @@ ENDIF
 ;해방되어 떠나는 노예의 이벤트 대사 호출
 CALL SELF_KOJO, GOODS, 195, TFLAG:200
 
-IF CFLAG:GOODS:4 == 0
+IF CFLAG:GOODS:조교관외 == 0
     IF NO:GOODS == 401
         IF FLAG:570 & 16
-            TALENT:MASTER:149 = 0
-            ABL:MASTER:98 = 0
+            TALENT:MASTER:촉수사역술 = 0
+            ABL:MASTER:촉수사역 = 0
         ELSEIF FLAG:570 & 32
-            ABL:MASTER:98 = FLAG:572
+            ABL:MASTER:촉수사역 = FLAG:572
         ENDIF
         FLAG:570 &= 15
     ELSEIF NO:MASTER == 400 && NO:GOODS == 402 && FLAG:570 & 4
@@ -326,7 +326,7 @@ LOCAL:2 = ASSI
 LOCAL:3 = 0
 
 ;매각치의 계산. 토리코모드 옵션으로 분기.
-IF FLAG:5000 & 2
+IF FLAG:토리코모드 & 2
     CALL SALE_CHARA_TORIKOMODE(ARG)
 ELSE 
     CALL SALE_CHARA(ARG)
@@ -338,13 +338,13 @@ LOCAL = MAX(RESULT, 0)
 ;매각 확인
 PRINTFORML %조사처리(CALLNAME:ARG,"는")% {LOCAL}원에 팔릴 것 같습니다.
 ;디버그 모드에서는 매각치의 기초값 · 배율 보정(카운터스톱 전의 몫만)을 표시
-SIF TALENT:MASTER:998
+SIF TALENT:MASTER:Debug
     PRINTFORML ※{RESULT:1}원(노예의 매각치 기본) × {(RESULT:2)/10000}.{(RESULT:2)%10000}(기초 구입률 보정) × α(그밖의 보정)
 
 SIF FLAG:570 & 2
     PRINTL ※노예상인이 없기 때문에, 매각 후 시간이 경과합니다.
 IF NO:MASTER == 400 && (FLAG:570 & 6) == 0
-    SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)
+    SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)
         PRINTL ※매각 후 시간이 경과합니다.
 ENDIF
 PRINTL 매각하겠습니까?
@@ -354,12 +354,12 @@ $INPUT_LOOPSALE
 INPUT
 IF RESULT == 0
     DRAWLINE
-    IF TALENT:ARG:158 && EQUIP:ARG:14 == 0 && (TALENT:ARG:153 || ((TALENT:ARG:151 || TALENT:ARG:157) && TALENT:ARG:160 == 0 && TALENT:ARG:170 == 0 && ABL:ARG:10 < 5))
+    IF TALENT:ARG:광기 && EQUIP:ARG:14 == 0 && (TALENT:ARG:상애 || ((TALENT:ARG:망신 || TALENT:ARG:질투) && TALENT:ARG:복종 == 0 && TALENT:ARG:음란 == 0 && ABL:ARG:순종 < 5))
         TIMES LOCAL , 0.10
         PRINTFORML \@(TFLAG:207) ? %조사처리(CALLNAME:ARG,"는")% 수송시 파괴 폭주를 일으켜 실종됐다. # 수송시 파괴 폭주를 일으켜 실종×0.10\@
-        IF TALENT:ARG:150 && TALENT:ARG:158
-            CFLAG:ARG:1 = 0
-            CFLAG:ARG:4 = 1
+        IF TALENT:ARG:연모 && TALENT:ARG:광기
+            CFLAG:ARG:매각가능 = 0
+            CFLAG:ARG:조교관외 = 1
             LOCAL:3 = 1
         ENDIF
         ;광기 탈주시의 대사용
@@ -374,9 +374,9 @@ IF RESULT == 0
     TFLAG:0 = 0
 
     ;「매각시 대사 표시」가 유효하다
-    IF (FLAG:12 & 16384) == 0
+    IF (FLAG:SHOP이벤트확장 & 16384) == 0
         CALL SELF_KOJO, ARG, TFLAG:200, LOCAL
-;    ELSEIF (TALENT:ARG:151 || TALENT:ARG:152) && TALENT:MASTER:158
+;    ELSEIF (TALENT:ARG:망신 || TALENT:ARG:친애) && TALENT:MASTER:광기
 ;        PRINTFORML 매각되어 떠나는 %조사처리(CALLNAME:ARG,"가")% 문득 돌아보더니, 무슨 말을 한 것처럼 보였다.
 ;        PRINTFORML 그러나 그 말은 %CALLNAME:MASTER%의 마음에는 닿지 못 했다…….
     ENDIF
@@ -391,7 +391,7 @@ IF RESULT == 0
     ;매각액
     PRINTFORMW  매각 결과, %조사처리(CALLNAME:ARG,"는")% {LOCAL}원에 팔렸습니다.
     MONEY += LOCAL
-    FLAG:34 += 1
+    FLAG:매각총계 += 1
     FLAG:66 += 1
     ;--------------------------------------------------
     ;노예 매각으로 번 최고 금액 판정 처리
@@ -411,12 +411,12 @@ IF RESULT == 0
     IF FLAG:570 & 2
         FLAG:570 |= 8
     ELSEIF NO:MASTER == 400 && (FLAG:570 & 6) == 0
-        SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)
+        SIF NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)
             FLAG:570 |= 8
     ENDIF
 
     ;각부
-    SIF FLAG:3 == 6 || FLAG:3 == 7
+    SIF FLAG:난이도 == 6 || FLAG:난이도 == 7
         CALL TIME_LIMIT_BONUS, ARG
 
     IF LOCAL:3 == 0
@@ -443,27 +443,27 @@ VARSET LOCALS, ""
 
 IF !TFLAG:207
     ;얀데레 모드 유효일 때에 수면제의 영향 없으면 TALENT:연모를 본다
-    IF FLAG:14 & 4 && TALENT:ARG:150 && EQUIP:ARG:14 == 0 && TALENT:ARG:160 == 0 && TALENT:ARG:164 == 0 && TALENT:ARG:167 == 0 && TALENT:ARG:168 == 0 && TALENT:ARG:169 == 0
+    IF FLAG:조교모드 & 4 && TALENT:ARG:연모 && EQUIP:ARG:14 == 0 && TALENT:ARG:복종 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:정신붕괴 == 0 && TALENT:ARG:괴뢰 == 0 && TALENT:ARG:괴조인격 == 0
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")%, 매각하려고 하자 미친듯이 날뛰었다.
         ;심하게 당황하는 노예의 이벤트 대사 호출
         CALL SELF_KOJO, ARG, 194
         ;반발각인LV3을 취득
-        IF MARK:ARG:97 <= 2 && MARK:ARG:9 <= 2
+        IF MARK:ARG:97 <= 2 && MARK:ARG:반발각인 <= 2
             CALL COMMON_MARK_UP, ARG, 9, 3, 0
             PRINTL 반발각인 LV3을 취득.
             ;감정결여의 경우에는 반발각인에 따른 순종 다운은 없음
-            IF ABL:ARG:10 > 1 && ABL:ARG:10 < 5 && TALENT:ARG:22 == 0
-                ABL:ARG:10 -= 2
-                SIF ABL:ARG:10 < 0
-                    ABL:ARG:10 = 0
-                PRINTFORML 그리고 순종이 {ABL:ARG:0}로 떨어졌다.
+            IF ABL:ARG:순종 > 1 && ABL:ARG:순종 < 5 && TALENT:ARG:감정결여 == 0
+                ABL:ARG:순종 -= 2
+                SIF ABL:ARG:순종 < 0
+                    ABL:ARG:순종 = 0
+                PRINTFORML 그리고 순종이 {ABL:ARG:C감각}로 떨어졌다.
             ENDIF
         ENDIF
         ;꿋꿋함이 없고, 아직 광기가 아닐 경우, 광기를 얻는다
-        IF TALENT:ARG:12 == 0 && TALENT:ARG:158 == 0
-            CFLAG:ARG:12 |= 1
-            CFLAG:ARG:17 |= 2
-            TALENT:ARG:158 = 1
+        IF TALENT:ARG:꿋꿋함 == 0 && TALENT:ARG:광기 == 0
+            CFLAG:ARG:트라우마판정 |= 1
+            CFLAG:ARG:이벤트취득붕괴 |= 2
+            TALENT:ARG:광기 = 1
             PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 지고 있는 해를 향해 흐릿한 웃음을 띠고 중얼중얼대고 있다….
             PRINTFORML %조사처리(CALLNAME:ARG,"는")% 이미 정신줄을 놓은 것 같다….
             PRINTFORMW %조사처리(CALLNAME:ARG,"는")% [광기]를 얻었다.
@@ -472,7 +472,7 @@ IF !TFLAG:207
 ENDIF
 
 ;난이도 PHANTASM일 때 표시 없음
-SIF FLAG:3 == 5 && TFLAG:207 == 0
+SIF FLAG:난이도 == 5 && TFLAG:207 == 0
     TFLAG:207 = 1
 
 ;캐릭터 원가의 1/5을 베이스로 한다
@@ -482,445 +482,445 @@ SIF !TFLAG:207
 LOCAL:1 += LOCAL
 
 ;ABL:Ｃ감각을 본다
-IF ABL:ARG:0 < 3
+IF ABL:ARG:C감각 < 3
     LOCAL = 0
-ELSEIF ABL:ARG:0 == 3
+ELSEIF ABL:ARG:C감각 == 3
     LOCAL = 250
-ELSEIF ABL:ARG:0 == 4
+ELSEIF ABL:ARG:C감각 == 4
     LOCAL = 400
 ELSE
     LOCAL = 600
 ENDIF
 ;[음핵／음경]
-SIF TALENT:ARG:171
+SIF TALENT:ARG:음핵／음경
     TIMES LOCAL , 1.50
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:0, 13, RIGHT%LV{ABL:ARG:0} ＋{LOCAL}
+        PRINTFORML %ABLNAME:0, 13, RIGHT%LV{ABL:ARG:C감각} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:Ｖ감각을 본다
-IF ABL:ARG:1 < 2
+IF ABL:ARG:V감각< 2
     LOCAL = 0
-ELSEIF ABL:ARG:1 == 2
+ELSEIF ABL:ARG:V감각== 2
     LOCAL = 250
-ELSEIF ABL:ARG:1 == 3
+ELSEIF ABL:ARG:V감각== 3
     LOCAL = 500
-ELSEIF ABL:ARG:1 == 4
+ELSEIF ABL:ARG:V감각== 4
     LOCAL = 1000
 ELSE
     LOCAL = 1500
 ENDIF
 ;[음호]
-SIF TALENT:ARG:172
+SIF TALENT:ARG:음호
     TIMES LOCAL , 2.00
-IF LOCAL > 0 && TALENT:ARG:120 == 0
+IF LOCAL > 0 && TALENT:ARG:남자 == 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:1, 13, RIGHT%LV{ABL:ARG:1} ＋{LOCAL}
+        PRINTFORML %ABLNAME:1, 13, RIGHT%LV{ABL:ARG:V감각} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:Ａ감각을 본다
-IF ABL:ARG:2 < 2
+IF ABL:ARG:A감각 < 2
     LOCAL = 0
-ELSEIF ABL:ARG:2 == 2
+ELSEIF ABL:ARG:A감각 == 2
     LOCAL = 200
-ELSEIF ABL:ARG:2 == 3
+ELSEIF ABL:ARG:A감각 == 3
     LOCAL = 400
-ELSEIF ABL:ARG:2 == 4
+ELSEIF ABL:ARG:A감각 == 4
     LOCAL = 700
 ELSE
     LOCAL = 1000
 ENDIF
 ;[음고]
-SIF TALENT:ARG:173
+SIF TALENT:ARG:음고
     TIMES LOCAL , 1.50
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:2, 13, RIGHT%LV{ABL:ARG:2} ＋{LOCAL}
+        PRINTFORML %ABLNAME:2, 13, RIGHT%LV{ABL:ARG:A감각} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:Ｂ감각을 본다
-IF ABL:ARG:3 < 3
+IF ABL:ARG:B감각 < 3
     LOCAL = 0
-ELSEIF ABL:ARG:3 == 3
+ELSEIF ABL:ARG:B감각 == 3
     LOCAL = 320
-ELSEIF ABL:ARG:3 == 4
+ELSEIF ABL:ARG:B감각 == 4
     LOCAL = 480
 ELSE
     LOCAL = 640
 ENDIF
 ;[음유]
-SIF TALENT:ARG:174
+SIF TALENT:ARG:음유
     TIMES LOCAL , 1.50
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:3, 13, RIGHT%LV{ABL:ARG:3} ＋{LOCAL}
+        PRINTFORML %ABLNAME:3, 13, RIGHT%LV{ABL:ARG:B감각} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:ARG:10 == 0
+IF ABL:ARG:순종 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:10 == 1
+ELSEIF ABL:ARG:순종 == 1
     LOCAL = 500
-ELSEIF ABL:ARG:10 == 2
+ELSEIF ABL:ARG:순종 == 2
     LOCAL = 850
-ELSEIF ABL:ARG:10 == 3
+ELSEIF ABL:ARG:순종 == 3
     LOCAL = 1500
-ELSEIF ABL:ARG:10 == 4
+ELSEIF ABL:ARG:순종 == 4
     LOCAL = 2500
 ELSE
     LOCAL = 3500
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:10, 13, RIGHT%LV{ABL:ARG:10} ＋{LOCAL}
+        PRINTFORML %ABLNAME:10, 13, RIGHT%LV{ABL:ARG:순종} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:욕망을 본다
-IF ABL:ARG:11 == 0
+IF ABL:ARG:욕망 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:11 == 1
+ELSEIF ABL:ARG:욕망 == 1
     LOCAL = 200
-ELSEIF ABL:ARG:11 == 2
+ELSEIF ABL:ARG:욕망 == 2
     LOCAL = 450
-ELSEIF ABL:ARG:11 == 3
+ELSEIF ABL:ARG:욕망 == 3
     LOCAL = 900
-ELSEIF ABL:ARG:11 == 4
+ELSEIF ABL:ARG:욕망 == 4
     LOCAL = 1500
 ELSE
     LOCAL = 2400
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:11, 13, RIGHT%LV{ABL:ARG:11} ＋{LOCAL}
+        PRINTFORML %ABLNAME:11, 13, RIGHT%LV{ABL:ARG:욕망} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:기교를 본다
-IF ABL:ARG:12 == 0
+IF ABL:ARG:기교 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:12 == 1
+ELSEIF ABL:ARG:기교 == 1
     LOCAL = 150
-ELSEIF ABL:ARG:12 == 2
+ELSEIF ABL:ARG:기교 == 2
     LOCAL = 300
-ELSEIF ABL:ARG:12 == 3
+ELSEIF ABL:ARG:기교 == 3
     LOCAL = 600
-ELSEIF ABL:ARG:12 == 4
+ELSEIF ABL:ARG:기교 == 4
     LOCAL = 1000
 ELSE
     LOCAL = 1800
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:12, 13, RIGHT%LV{ABL:ARG:12} ＋{LOCAL}
+        PRINTFORML %ABLNAME:12, 13, RIGHT%LV{ABL:ARG:기교} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:봉사정신을 본다
-IF ABL:ARG:13 == 0
+IF ABL:ARG:봉사정신 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:13 == 1
+ELSEIF ABL:ARG:봉사정신 == 1
     LOCAL = 500
-ELSEIF ABL:ARG:13 == 2
+ELSEIF ABL:ARG:봉사정신 == 2
     LOCAL = 900
-ELSEIF ABL:ARG:13 == 3
+ELSEIF ABL:ARG:봉사정신 == 3
     LOCAL = 1400
-ELSEIF ABL:ARG:13 == 4
+ELSEIF ABL:ARG:봉사정신 == 4
     LOCAL = 2100
 ELSE
     LOCAL = 3000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:13, 13, RIGHT%LV{ABL:ARG:13} ＋{LOCAL}
+        PRINTFORML %ABLNAME:13, 13, RIGHT%LV{ABL:ARG:봉사정신} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:노출벽을 본다
-IF ABL:ARG:14 == 0
+IF ABL:ARG:노출증 == 0
     LOCAL = 500
-ELSEIF ABL:ARG:14 == 1
+ELSEIF ABL:ARG:노출증 == 1
     LOCAL = 200
-ELSEIF ABL:ARG:14 == 2
+ELSEIF ABL:ARG:노출증 == 2
     LOCAL = 100
-ELSEIF ABL:ARG:14 == 3
+ELSEIF ABL:ARG:노출증 == 3
     LOCAL = 300
-ELSEIF ABL:ARG:14 == 4
+ELSEIF ABL:ARG:노출증 == 4
     LOCAL = 500
 ELSE
     LOCAL = 1000
 ENDIF
 ;[오줌싸개버릇]
-SIF TALENT:ARG:45
+SIF TALENT:ARG:오줌싸개버릇
     TIMES LOCAL , 1.50
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:14, 13, RIGHT%LV{ABL:ARG:14} ＋{LOCAL}
+        PRINTFORML %ABLNAME:14, 13, RIGHT%LV{ABL:ARG:노출증} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 
 ;ABL:새드끼를 본다
-IF ABL:ARG:20 == 0
+IF ABL:ARG:새드끼 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:20 == 1
+ELSEIF ABL:ARG:새드끼 == 1
     LOCAL = 200
-ELSEIF ABL:ARG:20 == 2
+ELSEIF ABL:ARG:새드끼 == 2
     LOCAL = 400
-ELSEIF ABL:ARG:20 == 3
+ELSEIF ABL:ARG:새드끼 == 3
     LOCAL = 700
-ELSEIF ABL:ARG:20 == 4
+ELSEIF ABL:ARG:새드끼 == 4
     LOCAL = 1200
 ELSE
     LOCAL = 1600
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:20, 13, RIGHT%LV{ABL:ARG:20} ＋{LOCAL}
+        PRINTFORML %ABLNAME:20, 13, RIGHT%LV{ABL:ARG:새드끼} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:마조끼를 본다
-IF ABL:ARG:21 == 0
+IF ABL:ARG:마조끼 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:21 == 1
+ELSEIF ABL:ARG:마조끼 == 1
     LOCAL = 200
-ELSEIF ABL:ARG:21 == 2
+ELSEIF ABL:ARG:마조끼 == 2
     LOCAL = 400
-ELSEIF ABL:ARG:21 == 3
+ELSEIF ABL:ARG:마조끼 == 3
     LOCAL = 700
-ELSEIF ABL:ARG:21 == 4
+ELSEIF ABL:ARG:마조끼 == 4
     LOCAL = 1200
 ELSE
     LOCAL = 1600
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:21, 13, RIGHT%LV{ABL:ARG:21} ＋{LOCAL}
+        PRINTFORML %ABLNAME:21, 13, RIGHT%LV{ABL:ARG:마조끼} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:레즈끼 · ＢＬ끼를 본다
-IF ABL:ARG:(22 + TALENT:ARG:120) < 2
+IF ABL:ARG:(22 + TALENT:ARG:남자) < 2
     LOCAL = 0
-ELSEIF ABL:ARG:(22 + TALENT:ARG:120) == 2
+ELSEIF ABL:ARG:(22 + TALENT:ARG:남자) == 2
     LOCAL = 100
-ELSEIF ABL:ARG:(22 + TALENT:ARG:120) == 3
+ELSEIF ABL:ARG:(22 + TALENT:ARG:남자) == 3
     LOCAL = 250
-ELSEIF ABL:ARG:(22 + TALENT:ARG:120) == 4
+ELSEIF ABL:ARG:(22 + TALENT:ARG:남자) == 4
     LOCAL = 500
 ELSE
     LOCAL = 800
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:(22 + TALENT:ARG:120), 13, RIGHT%LV{ABL:ARG:(22 + TALENT:ARG:120)} ＋{LOCAL}
+        PRINTFORML %ABLNAME:(22 + TALENT:ARG:남자), 13, RIGHT%LV{ABL:ARG:(22 + TALENT:ARG:남자)} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 
 ;ABL:자위중독을 본다
-IF ABL:ARG:30 == 0
+IF ABL:ARG:자위중독 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:30 == 1
+ELSEIF ABL:ARG:자위중독 == 1
     LOCAL = 560
-ELSEIF ABL:ARG:30 == 2
+ELSEIF ABL:ARG:자위중독 == 2
     LOCAL = 850
-ELSEIF ABL:ARG:30 == 3
+ELSEIF ABL:ARG:자위중독 == 3
     LOCAL = 1400
-ELSEIF ABL:ARG:30 == 4
+ELSEIF ABL:ARG:자위중독 == 4
     LOCAL = 1900
 ELSE
     LOCAL = 2700
 ENDIF
 ;[중독되기 어려움]
-SIF TALENT:ARG:85 && ABL:ARG:30 >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:자위중독 >= 3
     TIMES LOCAL , 1.20
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:30, 13, RIGHT%LV{ABL:ARG:30} ＋{LOCAL}
+        PRINTFORML %ABLNAME:30, 13, RIGHT%LV{ABL:ARG:자위중독} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:정액중독을 본다
-IF ABL:ARG:31 == 0
+IF ABL:ARG:정액중독 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:31 == 1
+ELSEIF ABL:ARG:정액중독 == 1
     LOCAL = 400
-ELSEIF ABL:ARG:31 == 2
+ELSEIF ABL:ARG:정액중독 == 2
     LOCAL = 800
-ELSEIF ABL:ARG:31 == 3
+ELSEIF ABL:ARG:정액중독 == 3
     LOCAL = 1200
-ELSEIF ABL:ARG:31 == 4
+ELSEIF ABL:ARG:정액중독 == 4
     LOCAL = 1800
 ELSE
     LOCAL = 2400
 ENDIF
 ;[중독되기 어려움]
-SIF TALENT:ARG:85 && ABL:ARG:31 >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:정액중독 >= 3
     TIMES LOCAL , 1.20
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:31, 13, RIGHT%LV{ABL:ARG:31} ＋{LOCAL}
+        PRINTFORML %ABLNAME:31, 13, RIGHT%LV{ABL:ARG:정액중독} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:레즈중독 · ＢＬ중독을 본다
-IF ABL:ARG:(32 + TALENT:ARG:120) == 0
+IF ABL:ARG:(32 + TALENT:ARG:남자) == 0
     LOCAL = 0
-ELSEIF ABL:ARG:(32 + TALENT:ARG:120) == 1
+ELSEIF ABL:ARG:(32 + TALENT:ARG:남자) == 1
     LOCAL = 200
-ELSEIF ABL:ARG:(32 + TALENT:ARG:120) == 2
+ELSEIF ABL:ARG:(32 + TALENT:ARG:남자) == 2
     LOCAL = 400
-ELSEIF ABL:ARG:(32 + TALENT:ARG:120) == 3
+ELSEIF ABL:ARG:(32 + TALENT:ARG:남자) == 3
     LOCAL = 800
-ELSEIF ABL:ARG:(32 + TALENT:ARG:120) == 4
+ELSEIF ABL:ARG:(32 + TALENT:ARG:남자) == 4
     LOCAL = 1600
 ELSE
     LOCAL = 2000
 ENDIF
 ;[중독되기 어려움]
-SIF TALENT:ARG:85 && ABL:ARG:(32 + TALENT:ARG:120) >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:(32 + TALENT:ARG:남자) >= 3
     TIMES LOCAL , 1.20
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:(32 + TALENT:ARG:120), 13, RIGHT%LV{ABL:ARG:(32 + TALENT:ARG:120)} ＋{LOCAL}
+        PRINTFORML %ABLNAME:(32 + TALENT:ARG:남자), 13, RIGHT%LV{ABL:ARG:(32 + TALENT:ARG:남자)} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:분유중독을 본다
-IF ABL:ARG:34 == 0
+IF ABL:ARG:분유중독 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:34 == 1
+ELSEIF ABL:ARG:분유중독 == 1
     LOCAL = 400
-ELSEIF ABL:ARG:34 == 2
+ELSEIF ABL:ARG:분유중독 == 2
     LOCAL = 800
-ELSEIF ABL:ARG:34 == 3
+ELSEIF ABL:ARG:분유중독 == 3
     LOCAL = 1200
-ELSEIF ABL:ARG:34 == 4
+ELSEIF ABL:ARG:분유중독 == 4
     LOCAL = 1800
 ELSE
     LOCAL = 2200
 ENDIF
 ;[중독되기 어려움]
-SIF TALENT:ARG:85 && ABL:ARG:34 >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:분유중독 >= 3
     TIMES LOCAL , 1.20
-IF LOCAL > 0 && TALENT:ARG:134
+IF LOCAL > 0 && TALENT:ARG:모유체질
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:34, 13, RIGHT%LV{ABL:ARG:34} ＋{LOCAL}
+        PRINTFORML %ABLNAME:34, 13, RIGHT%LV{ABL:ARG:분유중독} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:배설중독을 본다
-IF ABL:ARG:36 == 0
+IF ABL:ARG:배설중독 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:36 == 1
+ELSEIF ABL:ARG:배설중독 == 1
     LOCAL = 50
-ELSEIF ABL:ARG:36 == 2
+ELSEIF ABL:ARG:배설중독 == 2
     LOCAL = 100
-ELSEIF ABL:ARG:36 == 3
+ELSEIF ABL:ARG:배설중독 == 3
     LOCAL = 300
-ELSEIF ABL:ARG:36 == 4
+ELSEIF ABL:ARG:배설중독 == 4
     LOCAL = 500
 ELSE
     LOCAL = 1000
 ENDIF
 ;[오줌싸개버릇]
-SIF TALENT:ARG:45
+SIF TALENT:ARG:오줌싸개버릇
     TIMES LOCAL , 1.50
 ;[음고]
-SIF TALENT:ARG:173
+SIF TALENT:ARG:음고
     TIMES LOCAL , 1.50
 ;[요도광]
-SIF TALENT:ARG:175
+SIF TALENT:ARG:요도광
     TIMES LOCAL , 1.50
 ;[중독되기 어려움]
-SIF TALENT:ARG:85 && ABL:ARG:36 >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:배설중독 >= 3
     TIMES LOCAL , 1.20
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:36, 13, RIGHT%LV{ABL:ARG:36} ＋{LOCAL}
+        PRINTFORML %ABLNAME:36, 13, RIGHT%LV{ABL:ARG:배설중독} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:촉수중독을 본다
 ;촉수에 푹 빠진 나머지 성노예로서의 가치가 떨어져버린다고 해석
-IF ABL:ARG:35 == 0
+IF ABL:ARG:촉수중독 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:35 == 1
+ELSEIF ABL:ARG:촉수중독 == 1
     LOCAL = 100
-ELSEIF ABL:ARG:35 == 2
+ELSEIF ABL:ARG:촉수중독 == 2
     LOCAL = 200
-ELSEIF ABL:ARG:35 == 3
+ELSEIF ABL:ARG:촉수중독 == 3
     LOCAL = 400
-ELSEIF ABL:ARG:35 == 4
+ELSEIF ABL:ARG:촉수중독 == 4
     LOCAL = 800
 ELSE
     LOCAL = 1600
 ENDIF
 ;[중독되기 어려움]
-SIF TALENT:ARG:85 && ABL:ARG:35 >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:촉수중독 >= 3
     TIMES LOCAL , 0.80
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:35, 13, RIGHT%LV{ABL:ARG:35} －{LOCAL}
+        PRINTFORML %ABLNAME:35, 13, RIGHT%LV{ABL:ARG:촉수중독} －{LOCAL}
     LOCAL:1 -= LOCAL
 ENDIF
 
 ;ABL:요리기능을 본다
-IF ABL:ARG:70 == 0
+IF ABL:ARG:요리기능 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:70 == 1
+ELSEIF ABL:ARG:요리기능 == 1
     LOCAL = 200
-ELSEIF ABL:ARG:70 == 2
+ELSEIF ABL:ARG:요리기능 == 2
     LOCAL = 500
-ELSEIF ABL:ARG:70 == 3
+ELSEIF ABL:ARG:요리기능 == 3
     LOCAL = 1000
-ELSEIF ABL:ARG:70 == 4
+ELSEIF ABL:ARG:요리기능 == 4
     LOCAL = 1800
 ELSE
     LOCAL = 3000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:70, 13, RIGHT%LV{ABL:ARG:70} ＋{LOCAL}
+        PRINTFORML %ABLNAME:70, 13, RIGHT%LV{ABL:ARG:요리기능} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:촬영기능을 본다
-IF ABL:ARG:71 == 0
+IF ABL:ARG:촬영기능 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:71 == 1
+ELSEIF ABL:ARG:촬영기능 == 1
     LOCAL = 150
-ELSEIF ABL:ARG:71 == 2
+ELSEIF ABL:ARG:촬영기능 == 2
     LOCAL = 300
-ELSEIF ABL:ARG:71 == 3
+ELSEIF ABL:ARG:촬영기능 == 3
     LOCAL = 600
-ELSEIF ABL:ARG:71 == 4
+ELSEIF ABL:ARG:촬영기능 == 4
     LOCAL = 1400
 ELSE
     LOCAL = 2000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:71, 13, RIGHT%LV{ABL:ARG:71} ＋{LOCAL}
+        PRINTFORML %ABLNAME:71, 13, RIGHT%LV{ABL:ARG:촬영기능} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:가창기능을 본다
-IF ABL:ARG:72 == 0
+IF ABL:ARG:가창기능 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:72 == 1
+ELSEIF ABL:ARG:가창기능 == 1
     LOCAL = 200
-ELSEIF ABL:ARG:72 == 2
+ELSEIF ABL:ARG:가창기능 == 2
     LOCAL = 400
-ELSEIF ABL:ARG:72 == 3
+ELSEIF ABL:ARG:가창기능 == 3
     LOCAL = 800
-ELSEIF ABL:ARG:72 == 4
+ELSEIF ABL:ARG:가창기능 == 4
     LOCAL = 1600
 ELSE
     LOCAL = 2800
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:72, 13, RIGHT%LV{ABL:ARG:72} ＋{LOCAL}
+        PRINTFORML %ABLNAME:72, 13, RIGHT%LV{ABL:ARG:가창기능} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 
 ;MARK:불사각인을 본다
 ;不死性は触手に依るものなので蓬莱人や呪精のような価値は付かない
 ;それどころか逆に触手に依存性を持ってしまっているため、性奴隷としての価値が下がってしまう
-IF MARK:ARG:10
-    LOCAL = 100 * MARK:ARG:10 * MARK:ARG:10
+IF MARK:ARG:불사각인
+    LOCAL = 100 * MARK:ARG:불사각인 * MARK:ARG:불사각인
     SIF !TFLAG:207
-        PRINTFORML %MARKNAME:10, 13, RIGHT%LV{MARK:ARG:10} －{LOCAL}
+        PRINTFORML %MARKNAME:10, 13, RIGHT%LV{MARK:ARG:불사각인} －{LOCAL}
     LOCAL:1 -= LOCAL
 ENDIF
 
@@ -930,8 +930,8 @@ LOCAL:3 = LOCAL:1
 LOCAL:2 = 10000
 
 ;[처녀]를 본다
-IF TALENT:ARG:0
-    IF TALENT:ARG:0 == 2
+IF TALENT:ARG:처녀
+    IF TALENT:ARG:처녀 == 2
         LOCAL = 175
         TIMES LOCAL:1 , 1.75
         TIMES LOCAL:2 , 1.75
@@ -944,7 +944,7 @@ IF TALENT:ARG:0
         PRINTFORML %TALENTNAME:0, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[비대음핵]을 본다
-IF TALENT:ARG:1
+IF TALENT:ARG:비대음핵
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -953,7 +953,7 @@ IF TALENT:ARG:1
 ENDIF
 
 ;[겁쟁이]를 본다
-IF TALENT:ARG:10 && ABL:ARG:21 >= 3
+IF TALENT:ARG:겁쟁이 && ABL:ARG:마조끼 >= 3
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -961,7 +961,7 @@ IF TALENT:ARG:10 && ABL:ARG:21 >= 3
         PRINTFORML %TALENTNAME:10, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[반항적]을 본다
-IF TALENT:ARG:11 && ABL:ARG:10 > 4
+IF TALENT:ARG:반항적 && ABL:ARG:순종 > 4
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -969,7 +969,7 @@ IF TALENT:ARG:11 && ABL:ARG:10 > 4
         PRINTFORML %TALENTNAME:11, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[꿋꿋함]을 본다
-IF TALENT:ARG:12 && ABL:ARG:10 > 2
+IF TALENT:ARG:꿋꿋함 && ABL:ARG:순종 > 2
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -977,7 +977,7 @@ IF TALENT:ARG:12 && ABL:ARG:10 > 2
         PRINTFORML %TALENTNAME:12, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[솔직함]을 본다
-IF TALENT:ARG:13
+IF TALENT:ARG:솔직함
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -985,7 +985,7 @@ IF TALENT:ARG:13
         PRINTFORML %TALENTNAME:13, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[얌전함]을 본다
-IF TALENT:ARG:14
+IF TALENT:ARG:얌전함
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -993,8 +993,8 @@ IF TALENT:ARG:14
         PRINTFORML %TALENTNAME:14, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[프라이드가 높음]을 본다
-IF TALENT:ARG:16 && ABL:ARG:10 > 2
-    IF ABL:ARG:10 > 4
+IF TALENT:ARG:프라이드가높음 && ABL:ARG:순종 > 2
+    IF ABL:ARG:순종 > 4
         LOCAL = 175
         TIMES LOCAL:1 , 1.75
         TIMES LOCAL:2 , 1.75
@@ -1006,7 +1006,7 @@ IF TALENT:ARG:16 && ABL:ARG:10 > 2
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:16, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[프라이드가 낮음]을 본다
-ELSEIF TALENT:ARG:17 && ABL:ARG:10 < 4
+ELSEIF TALENT:ARG:프라이드가낮음 && ABL:ARG:순종 < 4
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
@@ -1014,8 +1014,8 @@ ELSEIF TALENT:ARG:17 && ABL:ARG:10 < 4
         PRINTFORML %TALENTNAME:17, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[자제심]을 본다
-IF TALENT:ARG:20
-    IF ABL:ARG:11 < 4 && ABL:ARG:14 < 3
+IF TALENT:ARG:자제심
+    IF ABL:ARG:욕망 < 4 && ABL:ARG:노출증 < 3
         LOCAL = 80
         TIMES LOCAL:1 , 0.80
         TIMES LOCAL:2 , 0.80
@@ -1028,7 +1028,7 @@ IF TALENT:ARG:20
         PRINTFORML %TALENTNAME:20, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[무관심]을 본다
-IF TALENT:ARG:21 && ABL:ARG:11 < 4
+IF TALENT:ARG:무관심 && ABL:ARG:욕망 < 4
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
@@ -1036,7 +1036,7 @@ IF TALENT:ARG:21 && ABL:ARG:11 < 4
         PRINTFORML %TALENTNAME:21, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[감정결여]를 본다
-IF TALENT:ARG:22 && ABL:ARG:11 < 4
+IF TALENT:ARG:감정결여 && ABL:ARG:욕망 < 4
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
@@ -1044,8 +1044,8 @@ IF TALENT:ARG:22 && ABL:ARG:11 < 4
         PRINTFORML %TALENTNAME:22, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[호기심]을 본다
-IF TALENT:ARG:23
-    IF ABL:ARG:11 < 4
+IF TALENT:ARG:호기심
+    IF ABL:ARG:욕망 < 4
         LOCAL = 120
         TIMES LOCAL:1 , 1.20
         TIMES LOCAL:2 , 1.20
@@ -1058,7 +1058,7 @@ IF TALENT:ARG:23
         PRINTFORML %TALENTNAME:23, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[보수적]을 본다
-IF TALENT:ARG:24 && ABL:ARG:11 < 4
+IF TALENT:ARG:보수적 && ABL:ARG:욕망 < 4
     IF RELATION:ARG:MASTER >= 200
         LOCAL = 25
         TIMES LOCAL:1 , 0.25
@@ -1072,12 +1072,12 @@ IF TALENT:ARG:24 && ABL:ARG:11 < 4
         PRINTFORML %TALENTNAME:24, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[일선을 넘지 않음]을 본다
-IF TALENT:ARG:27
-    IF ABL:ARG:10 < 4
+IF TALENT:ARG:일선을넘지않음
+    IF ABL:ARG:순종 < 4
         LOCAL = 80
         TIMES LOCAL:1 , 0.80
         TIMES LOCAL:2 , 0.80
-    ELSEIF ABL:ARG:11 > 4
+    ELSEIF ABL:ARG:욕망 > 4
         LOCAL = 175
         TIMES LOCAL:1 , 1.75
         TIMES LOCAL:2 , 1.75
@@ -1088,12 +1088,12 @@ IF TALENT:ARG:27
         PRINTFORML %TALENTNAME:27, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[정조관념]을 본다
-IF TALENT:ARG:30
-    IF ABL:ARG:11 > 4 && TALENT:ARG:0
+IF TALENT:ARG:정조관념
+    IF ABL:ARG:욕망 > 4 && TALENT:ARG:처녀
         LOCAL = 150
         TIMES LOCAL:1 , 1.50
         TIMES LOCAL:2 , 1.50
-    ELSEIF ABL:ARG:11 < 3
+    ELSEIF ABL:ARG:욕망 < 3
         LOCAL = 120
         TIMES LOCAL:1 , 1.20
         TIMES LOCAL:2 , 1.20
@@ -1103,12 +1103,12 @@ IF TALENT:ARG:30
     SIF LOCAL != 100 && !TFLAG:207
         PRINTFORML %TALENTNAME:30, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[정조관둔감]을 본다
-ELSEIF TALENT:ARG:31 && TALENT:ARG:0 == 0 && TALENT:ARG:120 == 0
-    IF TALENT:ARG:170 || TALENT:ARG:180
+ELSEIF TALENT:ARG:정조관둔감 && TALENT:ARG:처녀 == 0 && TALENT:ARG:남자 == 0
+    IF TALENT:ARG:음란 || TALENT:ARG:음마
         LOCAL = 120
         TIMES LOCAL:1 , 1.20
         TIMES LOCAL:2 , 1.20
-    ELSEIF ABL:ARG:11 < 4
+    ELSEIF ABL:ARG:욕망 < 4
         LOCAL = 80
         TIMES LOCAL:1 , 0.80
         TIMES LOCAL:2 , 0.80
@@ -1119,16 +1119,16 @@ ELSEIF TALENT:ARG:31 && TALENT:ARG:0 == 0 && TALENT:ARG:120 == 0
         PRINTFORML %TALENTNAME:31, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[해방]을 본다
-IF TALENT:ARG:33
-    IF ((ABL:ARG:1 >= 5 || TALENT:ARG:120) && ABL:ARG:2 >= 5 && ABL:ARG:14 >= 4) || TALENT:ARG:180
+IF TALENT:ARG:해방
+    IF ((ABL:ARG:V감각>= 5 || TALENT:ARG:남자) && ABL:ARG:A감각 >= 5 && ABL:ARG:노출증 >= 4) || TALENT:ARG:음마
         LOCAL = 175
         TIMES LOCAL:1 , 1.75
         TIMES LOCAL:2 , 1.75
-    ELSEIF ((ABL:ARG:1 >= 5 || TALENT:ARG:120) && ABL:ARG:2 >= 5) || CFLAG:ARG:13 & 1
+    ELSEIF ((ABL:ARG:V감각>= 5 || TALENT:ARG:남자) && ABL:ARG:A감각 >= 5) || CFLAG:ARG:소실이벤트 & 1
         LOCAL = 120
         TIMES LOCAL:1 , 1.20
         TIMES LOCAL:2 , 1.20
-    ELSEIF ABL:ARG:1 < 3 || ABL:ARG:2 < 3 || ABL:ARG:14 < 3 || MARK:ARG:3 > 0 || MARK:ARG:8 > 0 || MARK:ARG:9 > 0
+    ELSEIF ABL:ARG:V감각< 3 || ABL:ARG:A감각 < 3 || ABL:ARG:노출증 < 3 || MARK:ARG:약물각인 > 0 || MARK:ARG:공포각인 > 0 || MARK:ARG:반발각인 > 0
         LOCAL = 70
         TIMES LOCAL:1 , 0.70
         TIMES LOCAL:2 , 0.70
@@ -1139,8 +1139,8 @@ IF TALENT:ARG:33
         PRINTFORML %TALENTNAME:33, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[저항]을 본다
-IF TALENT:ARG:34 && ABL:ARG:10 > 3
-    IF ABL:ARG:10 > 4 && ABL:ARG:14 > 4
+IF TALENT:ARG:저항 && ABL:ARG:순종 > 3
+    IF ABL:ARG:순종 > 4 && ABL:ARG:노출증 > 4
         LOCAL = 180
         TIMES LOCAL:1 , 1.80
         TIMES LOCAL:2 , 1.80
@@ -1151,7 +1151,7 @@ IF TALENT:ARG:34 && ABL:ARG:10 > 3
     ENDIF
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:34, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
-ELSEIF TALENT:ARG:34 == 0 && CFLAG:ARG:13 & 2
+ELSEIF TALENT:ARG:저항 == 0 && CFLAG:ARG:소실이벤트 & 2
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1159,14 +1159,14 @@ ELSEIF TALENT:ARG:34 == 0 && CFLAG:ARG:13 & 2
         PRINTFORML %TALENTNAME:34, 12, RIGHT% 소실 ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[아픔에 약함]을 본다
-IF TALENT:ARG:40
+IF TALENT:ARG:아픔에약함
     LOCAL = 75
     TIMES LOCAL:1 , 0.75
     TIMES LOCAL:2 , 0.75
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:40, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[아픔에 강함]을 본다
-ELSEIF TALENT:ARG:41
+ELSEIF TALENT:ARG:아픔에강함
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1174,14 +1174,14 @@ ELSEIF TALENT:ARG:41
         PRINTFORML %TALENTNAME:41, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[젖기 쉬움]을 본다
-IF TALENT:ARG:42
+IF TALENT:ARG:젖기쉬움
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:42, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[젖기 어려움]을 본다
-ELSEIF TALENT:ARG:43
+ELSEIF TALENT:ARG:젖기어려움
     LOCAL = 90
     TIMES LOCAL:1 , 0.90
     TIMES LOCAL:2 , 0.90
@@ -1189,8 +1189,8 @@ ELSEIF TALENT:ARG:43
         PRINTFORML %TALENTNAME:43, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[미약중독]을 본다
-IF TALENT:ARG:46
-    IF TALENT:ARG:170
+IF TALENT:ARG:미약중독
+    IF TALENT:ARG:음란
         LOCAL = 50
         TIMES LOCAL:1 , 0.50
         TIMES LOCAL:2 , 0.50
@@ -1203,7 +1203,7 @@ IF TALENT:ARG:46
         PRINTFORML %TALENTNAME:46, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[천식]을 본다
-IF TALENT:ARG:47
+IF TALENT:ARG:천식
     LOCAL = 60
     TIMES LOCAL:1 , 0.60
     TIMES LOCAL:2 , 0.60
@@ -1212,7 +1212,7 @@ IF TALENT:ARG:47
 ENDIF
 
 ;[혀놀림]을 본다
-IF TALENT:ARG:52
+IF TALENT:ARG:혀놀림
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1220,12 +1220,12 @@ IF TALENT:ARG:52
         PRINTFORML %TALENTNAME:52, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[바느질]을 본다
-IF TALENT:ARG:53
-    IF TALENT:ARG:177
+IF TALENT:ARG:바느질
+    IF TALENT:ARG:초S
         LOCAL = 125
         TIMES LOCAL:1 , 1.25
         TIMES LOCAL:2 , 1.25
-    ELSEIF TALENT:ARG:81 || ABL:ARG:20 >= 5
+    ELSEIF TALENT:ARG:새드 || ABL:ARG:새드끼 >= 5
         LOCAL = 110
         TIMES LOCAL:1 , 1.10
         TIMES LOCAL:2 , 1.10
@@ -1236,7 +1236,7 @@ IF TALENT:ARG:53
         PRINTFORML %TALENTNAME:53, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[조합지식]을 본다
-IF TALENT:ARG:55
+IF TALENT:ARG:조합지식
     LOCAL = 125
     TIMES LOCAL:1 , 1.25
     TIMES LOCAL:2 , 1.25
@@ -1244,7 +1244,7 @@ IF TALENT:ARG:55
         PRINTFORML %TALENTNAME:55, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[금단의 지식]을 본다
-IF TALENT:ARG:56
+IF TALENT:ARG:금단의지식
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -1252,7 +1252,7 @@ IF TALENT:ARG:56
         PRINTFORML %TALENTNAME:56, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[음구지식]을 본다
-IF TALENT:ARG:58 && ABL:ARG:12 >= 3
+IF TALENT:ARG:음구지식 && ABL:ARG:기교 >= 3
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1260,7 +1260,7 @@ IF TALENT:ARG:58 && ABL:ARG:12 >= 3
         PRINTFORML %TALENTNAME:58, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[치료]를 본다
-IF TALENT:ARG:59
+IF TALENT:ARG:치료
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -1269,7 +1269,7 @@ IF TALENT:ARG:59
 ENDIF
 
 ;[헌신적]을 본다
-IF TALENT:ARG:63
+IF TALENT:ARG:헌신적
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1277,7 +1277,7 @@ IF TALENT:ARG:63
         PRINTFORML %TALENTNAME:63, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[음모없음]을 본다
-IF TALENT:ARG:65
+IF TALENT:ARG:음모없음
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1285,7 +1285,7 @@ IF TALENT:ARG:65
         PRINTFORML %TALENTNAME:65, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[정애미각]을 본다
-IF TALENT:ARG:66
+IF TALENT:ARG:정애미각
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1293,15 +1293,15 @@ IF TALENT:ARG:66
         PRINTFORML %TALENTNAME:66, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[쾌감에 솔직]을 본다
-IF TALENT:ARG:70 && ABL:ARG:11 < 4
+IF TALENT:ARG:쾌감에솔직 && ABL:ARG:욕망 < 4
     LOCAL = 60
     TIMES LOCAL:1 , 0.60
     TIMES LOCAL:2 , 0.60
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:70, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[쾌감을 부정]을 본다
-ELSEIF TALENT:ARG:71 && ABL:ARG:11 > 3
-    IF ABL:ARG:11 > 4
+ELSEIF TALENT:ARG:쾌감을부정 && ABL:ARG:욕망 > 3
+    IF ABL:ARG:욕망 > 4
         LOCAL = 240
         TIMES LOCAL:1 , 2.40
         TIMES LOCAL:2 , 2.40
@@ -1314,7 +1314,7 @@ ELSEIF TALENT:ARG:71 && ABL:ARG:11 > 3
         PRINTFORML %TALENTNAME:71, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[도착적]을 본다
-IF TALENT:ARG:80 && ABL:ARG:11 > 3
+IF TALENT:ARG:도착적 && ABL:ARG:욕망 > 3
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1322,7 +1322,7 @@ IF TALENT:ARG:80 && ABL:ARG:11 > 3
         PRINTFORML %TALENTNAME:80, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[바이]를 본다
-IF TALENT:ARG:83 && ((ABL:ARG:22 >= 5 && ABL:ARG:32 >= 3) || (ABL:ARG:23 >= 5 && ABL:ARG:33 >= 3))
+IF TALENT:ARG:바이 && ((ABL:ARG:레즈끼 >= 5 && ABL:ARG:레즈중독 >= 3) || (ABL:ARG:BL끼 >= 5 && ABL:ARG:BL중독 >= 3))
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1330,12 +1330,12 @@ IF TALENT:ARG:83 && ((ABL:ARG:22 >= 5 && ABL:ARG:32 >= 3) || (ABL:ARG:23 >= 5 &&
         PRINTFORML %TALENTNAME:83, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[중독되기 어려움]을 본다
-IF TALENT:ARG:85
-    IF ABL:ARG:30 + ABL:ARG:31 + ABL:ARG:(32 + TALENT:ARG:120) + ABL:ARG:33 + ABL:ARG:34 + ABL:ARG:35 + ABL:ARG:36 + ABL:ARG:37 >= 10
+IF TALENT:ARG:중독되기어려움
+    IF ABL:ARG:자위중독 + ABL:ARG:정액중독 + ABL:ARG:(32 + TALENT:ARG:남자) + ABL:ARG:BL중독 + ABL:ARG:분유중독 + ABL:ARG:촉수중독 + ABL:ARG:배설중독 + ABL:ARG:사정중독 >= 10
         LOCAL = 120
         TIMES LOCAL:1 , 1.20
         TIMES LOCAL:2 , 1.20
-    ELSEIF ABL:ARG:30 >= 3 || ABL:ARG:31 >= 3 || ABL:ARG:(32 + TALENT:ARG:120) >= 3 || ABL:ARG:33 >= 3 || ABL:ARG:34 >= 3 || ABL:ARG:35 >= 3 || ABL:ARG:36 >= 3 || ABL:ARG:37 >= 3
+    ELSEIF ABL:ARG:자위중독 >= 3 || ABL:ARG:정액중독 >= 3 || ABL:ARG:(32 + TALENT:ARG:남자) >= 3 || ABL:ARG:BL중독 >= 3 || ABL:ARG:분유중독 >= 3 || ABL:ARG:촉수중독 >= 3 || ABL:ARG:배설중독 >= 3 || ABL:ARG:사정중독 >= 3
         LOCAL = 100
     ELSE
         LOCAL = 60
@@ -1346,7 +1346,7 @@ IF TALENT:ARG:85
         PRINTFORML %TALENTNAME:85, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[매력]을 본다
-IF TALENT:ARG:90
+IF TALENT:ARG:매력
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -1354,7 +1354,7 @@ IF TALENT:ARG:90
         PRINTFORML %TALENTNAME:90, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[매혹]을 본다
-IF TALENT:ARG:91
+IF TALENT:ARG:매혹
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -1362,7 +1362,7 @@ IF TALENT:ARG:91
         PRINTFORML %TALENTNAME:91, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[수수께끼의 매력]을 본다
-IF TALENT:ARG:92
+IF TALENT:ARG:수수께끼의매력
     LOCAL = 200
     TIMES LOCAL:1 , 2.00
     TIMES LOCAL:2 , 2.00
@@ -1370,7 +1370,7 @@ IF TALENT:ARG:92
         PRINTFORML %TALENTNAME:92, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[소악마]를 본다
-IF TALENT:ARG:93
+IF TALENT:ARG:소악마
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1378,7 +1378,7 @@ IF TALENT:ARG:93
         PRINTFORML %TALENTNAME:93, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[인기]를 본다
-IF TALENT:ARG:94
+IF TALENT:ARG:인기
     LOCAL = 125
     TIMES LOCAL:1 , 1.25
     TIMES LOCAL:2 , 1.25
@@ -1386,8 +1386,8 @@ IF TALENT:ARG:94
         PRINTFORML %TALENTNAME:94, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[고무]를 본다
-IF TALENT:ARG:95
-    IF ABL:ARG:11 >= 3
+IF TALENT:ARG:고무
+    IF ABL:ARG:욕망 >= 3
         LOCAL = 120
         TIMES LOCAL:1 , 1.20
         TIMES LOCAL:2 , 1.20
@@ -1401,14 +1401,14 @@ IF TALENT:ARG:95
 ENDIF
 
 ;[Ｃ둔감]을 본다
-IF TALENT:ARG:101 && ABL:ARG:0 < 4
+IF TALENT:ARG:C둔감 && ABL:ARG:C감각 < 4
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:101, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[Ｃ민감]을 본다
-ELSEIF TALENT:ARG:100 && ABL:ARG:0 > 2
+ELSEIF TALENT:ARG:C민감 && ABL:ARG:C감각 > 2
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -1416,14 +1416,14 @@ ELSEIF TALENT:ARG:100 && ABL:ARG:0 > 2
         PRINTFORML %TALENTNAME:100, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[V둔감]을 본다
-IF TALENT:ARG:103 && ABL:ARG:1 < 4
+IF TALENT:ARG:V둔감 && ABL:ARG:V감각< 4
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:103, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[V민감]을 본다
-ELSEIF TALENT:ARG:102 && ABL:ARG:1 > 2
+ELSEIF TALENT:ARG:V민감 && ABL:ARG:V감각> 2
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1431,14 +1431,14 @@ ELSEIF TALENT:ARG:102 && ABL:ARG:1 > 2
         PRINTFORML %TALENTNAME:102, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[Ａ둔감]을 본다
-IF TALENT:ARG:105 && ABL:ARG:2 < 4
+IF TALENT:ARG:A둔감 && ABL:ARG:A감각 < 4
     LOCAL = 90
     TIMES LOCAL:1 , 0.90
     TIMES LOCAL:2 , 0.90
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:105, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[Ａ민감]을 본다
-ELSEIF TALENT:ARG:104 && ABL:ARG:2 > 2
+ELSEIF TALENT:ARG:A민감 && ABL:ARG:A감각 > 2
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1446,14 +1446,14 @@ ELSEIF TALENT:ARG:104 && ABL:ARG:2 > 2
         PRINTFORML %TALENTNAME:104, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[Ｂ둔감]을 본다
-IF TALENT:ARG:107 && ABL:ARG:3 < 4
+IF TALENT:ARG:B둔감 && ABL:ARG:B감각 < 4
     LOCAL = 90
     TIMES LOCAL:1 , 0.90
     TIMES LOCAL:2 , 0.90
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:107, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[Ｂ민감]을 본다
-ELSEIF TALENT:ARG:106 && ABL:ARG:3 > 2
+ELSEIF TALENT:ARG:B민감 && ABL:ARG:B감각 > 2
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1462,7 +1462,7 @@ ELSEIF TALENT:ARG:106 && ABL:ARG:3 > 2
 ENDIF
 
 ;[일광욕]을 본다
-IF TALENT:ARG:114
+IF TALENT:ARG:일광욕
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -1470,7 +1470,7 @@ IF TALENT:ARG:114
         PRINTFORML %TALENTNAME:114, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[월광욕]을 본다
-IF TALENT:ARG:115
+IF TALENT:ARG:월광욕
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -1478,7 +1478,7 @@ IF TALENT:ARG:115
         PRINTFORML %TALENTNAME:115, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[동물귀]를 본다
-IF TALENT:ARG:116
+IF TALENT:ARG:동물귀
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -1487,20 +1487,20 @@ IF TALENT:ARG:116
 ENDIF
 
 ;[남자]를 본다
-IF TALENT:ARG:120
-    IF BASE:ARG:0 >= 3000 && BASE:ARG:1 >= 2000
+IF TALENT:ARG:남자
+    IF BASE:ARG:체력 >= 3000 && BASE:ARG:기력 >= 2000
         LOCAL = 250
         TIMES LOCAL:1 , 2.50
         TIMES LOCAL:2 , 2.50
-    ELSEIF ABL:ARG:10 > 3 && ABL:ARG:11 > 3 && ABL:ARG:23 > 2
+    ELSEIF ABL:ARG:순종 > 3 && ABL:ARG:욕망 > 3 && ABL:ARG:BL끼 > 2
         LOCAL = 200
         TIMES LOCAL:1 , 2.00
         TIMES LOCAL:2 , 2.00
-    ELSEIF ABL:ARG:10 > 2 && ABL:ARG:11 > 2 && ABL:ARG:23 > 1
+    ELSEIF ABL:ARG:순종 > 2 && ABL:ARG:욕망 > 2 && ABL:ARG:BL끼 > 1
         LOCAL = 150
         TIMES LOCAL:1 , 1.50
         TIMES LOCAL:2 , 1.50
-    ELSEIF ABL:ARG:10 > 1 && ABL:ARG:11 > 1 && ABL:ARG:23
+    ELSEIF ABL:ARG:순종 > 1 && ABL:ARG:욕망 > 1 && ABL:ARG:BL끼
         LOCAL = 125
         TIMES LOCAL:1 , 1.25
         TIMES LOCAL:2 , 1.25
@@ -1514,14 +1514,14 @@ IF TALENT:ARG:120
         PRINTFORML %LOCALS, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[후타나리]를 본다
-IF TALENT:ARG:121
+IF TALENT:ARG:후타나리
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:121, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[구현]을 본다
-ELSEIF TALENT:ARG:123
+ELSEIF TALENT:ARG:구현
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -1529,7 +1529,7 @@ ELSEIF TALENT:ARG:123
         PRINTFORML %TALENTNAME:123, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[광기의 눈]을 본다
-IF TALENT:ARG:125
+IF TALENT:ARG:광기의눈
     LOCAL = 200
     TIMES LOCAL:1 , 2.00
     TIMES LOCAL:2 , 2.00
@@ -1537,7 +1537,7 @@ IF TALENT:ARG:125
         PRINTFORML %TALENTNAME:125, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[모유체질]을 본다
-IF TALENT:ARG:134
+IF TALENT:ARG:모유체질
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1545,14 +1545,14 @@ IF TALENT:ARG:134
         PRINTFORML %TALENTNAME:134, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[난생]을 본다
-IF TALENT:ARG:135
+IF TALENT:ARG:난생
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:135, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[산란체질]을 본다
-ELSEIF TALENT:ARG:136
+ELSEIF TALENT:ARG:산란체질
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1560,14 +1560,14 @@ ELSEIF TALENT:ARG:136
         PRINTFORML %TALENTNAME:136, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[회복빠름]을 본다
-IF TALENT:ARG:137
+IF TALENT:ARG:회복빠름
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:137, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[회복느림]을 본다
-ELSEIF TALENT:ARG:138
+ELSEIF TALENT:ARG:회복느림
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
@@ -1576,14 +1576,14 @@ ELSEIF TALENT:ARG:138
 ENDIF
 
 ;[음치]를 본다
-IF TALENT:ARG:190
+IF TALENT:ARG:음치
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:190, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[음감]을 본다
-ELSEIF TALENT:ARG:191
+ELSEIF TALENT:ARG:음감
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1591,21 +1591,21 @@ ELSEIF TALENT:ARG:191
         PRINTFORML %TALENTNAME:191, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[요리못함]을 본다
-IF TALENT:ARG:192
+IF TALENT:ARG:요리못함
     LOCAL = 75
     TIMES LOCAL:1 , 0.75
     TIMES LOCAL:2 , 0.75
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:192, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[요리잘함]을 본다
-ELSEIF TALENT:ARG:193
+ELSEIF TALENT:ARG:요리잘함
     LOCAL = 125
     TIMES LOCAL:1 , 1.25
     TIMES LOCAL:2 , 1.25
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:193, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[조리명인]을 본다
-ELSEIF TALENT:ARG:194
+ELSEIF TALENT:ARG:조리명인
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -1613,7 +1613,7 @@ ELSEIF TALENT:ARG:194
         PRINTFORML %TALENTNAME:194, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[공작명인]을 본다
-IF TALENT:ARG:195
+IF TALENT:ARG:공작명인
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1621,7 +1621,7 @@ IF TALENT:ARG:195
         PRINTFORML %TALENTNAME:195, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[마술기능]을 본다
-IF TALENT:ARG:197
+IF TALENT:ARG:마술기능
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1630,14 +1630,14 @@ IF TALENT:ARG:197
 ENDIF
 
 ;[봉래인]을 본다
-IF TALENT:ARG:49
+IF TALENT:ARG:봉래인
     LOCAL = 400
     TIMES LOCAL:1 , 4.00
     TIMES LOCAL:2 , 4.00
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:49, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[주정]을 본다
-ELSEIF TALENT:ARG:48
+ELSEIF TALENT:ARG:주정
     LOCAL = 180
     TIMES LOCAL:1 , 1.80
     TIMES LOCAL:2 , 1.80
@@ -1645,7 +1645,7 @@ ELSEIF TALENT:ARG:48
         PRINTFORML %TALENTNAME:48, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[흡혈귀]를 본다
-IF TALENT:ARG:205
+IF TALENT:ARG:흡혈귀
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -1653,7 +1653,7 @@ IF TALENT:ARG:205
         PRINTFORML %TALENTNAME:205, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[인형]을 본다
-IF TALENT:ARG:208
+IF TALENT:ARG:인형
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -1661,7 +1661,7 @@ IF TALENT:ARG:208
         PRINTFORML %TALENTNAME:208, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[캇파]를 본다
-IF TALENT:ARG:210
+IF TALENT:ARG:캇파
     LOCAL = 115
     TIMES LOCAL:1 , 1.15
     TIMES LOCAL:2 , 1.15
@@ -1669,7 +1669,7 @@ IF TALENT:ARG:210
         PRINTFORML %TALENTNAME:210, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[요호]를 본다
-IF TALENT:ARG:211
+IF TALENT:ARG:요호
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1677,8 +1677,8 @@ IF TALENT:ARG:211
         PRINTFORML %TALENTNAME:211, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[사토리]를 본다
-IF TALENT:ARG:213
-    IF TALENT:ARG:213 == 2
+IF TALENT:ARG:사토리
+    IF TALENT:ARG:사토리 == 2
         LOCAL = 110
         TIMES LOCAL:1 , 1.10
         TIMES LOCAL:2 , 1.10
@@ -1691,7 +1691,7 @@ IF TALENT:ARG:213
         PRINTFORML %TALENTNAME:213, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[오니]를 본다
-IF TALENT:ARG:214
+IF TALENT:ARG:오니
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1699,7 +1699,7 @@ IF TALENT:ARG:214
         PRINTFORML %TALENTNAME:214, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[텐구]를 본다
-IF TALENT:ARG:215
+IF TALENT:ARG:텐구
     LOCAL = 125
     TIMES LOCAL:1 , 1.25
     TIMES LOCAL:2 , 1.25
@@ -1707,7 +1707,7 @@ IF TALENT:ARG:215
         PRINTFORML %TALENTNAME:215, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[누에]를 본다
-IF TALENT:ARG:217
+IF TALENT:ARG:누에
     LOCAL = 450
     TIMES LOCAL:1 , 4.50
     TIMES LOCAL:2 , 4.50
@@ -1715,7 +1715,7 @@ IF TALENT:ARG:217
         PRINTFORML %TALENTNAME:217, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[하쿠레이의 무녀]를 본다
-IF TALENT:ARG:218
+IF TALENT:ARG:하쿠레이의무녀
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -1723,7 +1723,7 @@ IF TALENT:ARG:218
         PRINTFORML %TALENTNAME:218, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[카제하후리]를 본다
-IF TALENT:ARG:219
+IF TALENT:ARG:카제하후리
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1731,7 +1731,7 @@ IF TALENT:ARG:219
         PRINTFORML %TALENTNAME:219, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[폭발물]을 본다
-IF TALENT:ARG:220
+IF TALENT:ARG:폭발물
     LOCAL = 75
     TIMES LOCAL:1 , 0.75
     TIMES LOCAL:2 , 0.75
@@ -1739,7 +1739,7 @@ IF TALENT:ARG:220
         PRINTFORML %TALENTNAME:220, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[신령]을 본다
-IF TALENT:ARG:222
+IF TALENT:ARG:신령
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -1747,7 +1747,7 @@ IF TALENT:ARG:222
         PRINTFORML %TALENTNAME:222, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[반신]을 본다
-IF TALENT:ARG:223
+IF TALENT:ARG:반신
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1755,8 +1755,8 @@ IF TALENT:ARG:223
         PRINTFORML %TALENTNAME:223, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[선인]을 본다
-IF TALENT:ARG:225
-    IF ABL:ARG:11 >= 5
+IF TALENT:ARG:선인
+    IF ABL:ARG:욕망 >= 5
         LOCAL = 130
         TIMES LOCAL:1 , 1.30
         TIMES LOCAL:2 , 1.30
@@ -1769,8 +1769,8 @@ IF TALENT:ARG:225
         PRINTFORML %TALENTNAME:225, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[강시]를 본다 - 강시 매각조건 분기는 마조끼
-IF TALENT:ARG:226
-    IF ABL:ARG:21 >= 5
+IF TALENT:ARG:강시
+    IF ABL:ARG:마조끼 >= 5
         LOCAL = 130
         TIMES LOCAL:1 , 1.30
         TIMES LOCAL:2 , 1.30
@@ -1783,7 +1783,7 @@ IF TALENT:ARG:226
         PRINTFORML %TALENTNAME:226, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[둔갑너구리]를 본다
-IF TALENT:ARG:227
+IF TALENT:ARG:둔갑너구리
     LOCAL = 130
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
@@ -1791,7 +1791,7 @@ IF TALENT:ARG:227
         PRINTFORML %TALENTNAME:227, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[츠쿠모가미]를 본다
-IF TALENT:ARG:228
+IF TALENT:ARG:츠쿠모가미
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -1799,7 +1799,7 @@ IF TALENT:ARG:228
         PRINTFORML %TALENTNAME:228, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[인어]를 본다
-IF TALENT:ARG:229
+IF TALENT:ARG:인어
     LOCAL = 200
     TIMES LOCAL:1 , 2.00
     TIMES LOCAL:2 , 2.00
@@ -1807,12 +1807,12 @@ IF TALENT:ARG:229
         PRINTFORML %TALENTNAME:229, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[목 분리]를 본다
-IF TALENT:ARG:230
-    IF TALENT:ARG:230 == 2
+IF TALENT:ARG:목분리
+    IF TALENT:ARG:목분리 == 2
         LOCAL = 130
         TIMES LOCAL:1 , 1.30
         TIMES LOCAL:2 , 1.30
-    ELSEIF TALENT:ARG:230 == 3
+    ELSEIF TALENT:ARG:목분리 == 3
         LOCAL = 75
         TIMES LOCAL:1 , 0.75
         TIMES LOCAL:2 , 0.75
@@ -1826,7 +1826,7 @@ IF TALENT:ARG:230
 ENDIF
 
 ;[창부]를 본다
-IF TALENT:ARG:260
+IF TALENT:ARG:창부
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1834,7 +1834,7 @@ IF TALENT:ARG:260
         PRINTFORML %TALENTNAME:260, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[매춘중독]을 본다
-IF TALENT:ARG:262
+IF TALENT:ARG:매춘중독
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
@@ -1842,7 +1842,7 @@ IF TALENT:ARG:262
         PRINTFORML %TALENTNAME:262, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[간판소녀]를 본다
-IF TALENT:ARG:264
+IF TALENT:ARG:간판소녀
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
     TIMES LOCAL:2 , 1.20
@@ -1851,14 +1851,14 @@ IF TALENT:ARG:264
 ENDIF
 
 ;[음마]를 본다
-IF TALENT:ARG:180
+IF TALENT:ARG:음마
     LOCAL = 250
     TIMES LOCAL:1 , 2.50
     TIMES LOCAL:2 , 2.50
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:180, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[음란]을 본다
-ELSEIF TALENT:ARG:170
+ELSEIF TALENT:ARG:음란
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -1866,7 +1866,7 @@ ELSEIF TALENT:ARG:170
         PRINTFORML %TALENTNAME:170, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[즉각함락]을 본다
-IF TALENT:ARG:179
+IF TALENT:ARG:즉각함락
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
@@ -1875,14 +1875,14 @@ IF TALENT:ARG:179
 ENDIF
 
 ;[상애]를 본다
-IF TALENT:ARG:153
+IF TALENT:ARG:상애
     LOCAL = 50
     TIMES LOCAL:1 , 0.50
     TIMES LOCAL:2 , 0.50
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:153, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[친애]를 본다
-ELSEIF TALENT:ARG:152
+ELSEIF TALENT:ARG:친애
     LOCAL = 60
     TIMES LOCAL:1 , 0.60
     TIMES LOCAL:2 , 0.60
@@ -1891,7 +1891,7 @@ ELSEIF TALENT:ARG:152
 ENDIF
 
 ;[복종]을 본다
-IF TALENT:ARG:160
+IF TALENT:ARG:복종
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -1901,7 +1901,7 @@ ENDIF
 
 
 ;[유아퇴행]을 본다 ;[남자]이고 [작은체형][소인]가 아닐 경우 마이너스
-IF TALENT:ARG:159 && TALENT:ARG:120 && TALENT:ARG:128 == 0 && TALENT:ARG:129 == 0
+IF TALENT:ARG:유아퇴행 && TALENT:ARG:남자 && TALENT:ARG:작은체형 == 0 && TALENT:ARG:거구 == 0
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
@@ -1909,14 +1909,14 @@ IF TALENT:ARG:159 && TALENT:ARG:120 && TALENT:ARG:128 == 0 && TALENT:ARG:129 == 
         PRINTFORML %TALENTNAME:159, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[정신붕괴]를 본다
-IF TALENT:ARG:167
+IF TALENT:ARG:정신붕괴
     LOCAL = 5
     TIMES LOCAL:1 , 0.05
     TIMES LOCAL:2 , 0.05
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:167, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ;[광기]를 본다
-ELSEIF TALENT:ARG:158
+ELSEIF TALENT:ARG:광기
     LOCAL = 50
     TIMES LOCAL:1 , 0.50
     TIMES LOCAL:2 , 0.50
@@ -1924,7 +1924,7 @@ ELSEIF TALENT:ARG:158
         PRINTFORML %TALENTNAME:158, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[흠집]을 본다
-IF TALENT:ARG:163
+IF TALENT:ARG:흠집
     LOCAL = 50
     TIMES LOCAL:1 , 0.50
     TIMES LOCAL:2 , 0.50
@@ -1932,7 +1932,7 @@ IF TALENT:ARG:163
         PRINTFORML %TALENTNAME:163, 16, RIGHT% ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;[괴뢰]를 본다
-IF TALENT:ARG:168
+IF TALENT:ARG:괴뢰
     LOCAL = 50
     TIMES LOCAL:1 , 0.50
     TIMES LOCAL:2 , 0.50
@@ -1941,7 +1941,7 @@ IF TALENT:ARG:168
 ENDIF
 
 ;클리토리스 링
-IF CFLAG:ARG:42 & 1
+IF CFLAG:ARG:특수장비 & 1
     LOCAL = 85
     TIMES LOCAL:1 , 0.85
     TIMES LOCAL:2 , 0.85
@@ -1949,7 +1949,7 @@ IF CFLAG:ARG:42 & 1
         PRINTFORML 클리토리스링 ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;니플 피어스
-IF CFLAG:ARG:42 & 16
+IF CFLAG:ARG:특수장비 & 16
     LOCAL = 90
     TIMES LOCAL:1 , 0.90
     TIMES LOCAL:2 , 0.90
@@ -1957,7 +1957,7 @@ IF CFLAG:ARG:42 & 16
         PRINTFORML 　　니플피어스 ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;라비아 피어스
-IF CFLAG:ARG:42 & 32
+IF CFLAG:ARG:특수장비 & 32
     LOCAL = 80
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
@@ -1965,7 +1965,7 @@ IF CFLAG:ARG:42 & 32
         PRINTFORML 　　라비아피어스 ×{LOCAL/100}.{LOCAL%100}
 ENDIF
 ;벨리 쥬얼
-IF CFLAG:ARG:42 & 4
+IF CFLAG:ARG:특수장비 & 4
     LOCAL = 110
     TIMES LOCAL:1 , 1.10
     TIMES LOCAL:2 , 1.10
@@ -1974,13 +1974,13 @@ IF CFLAG:ARG:42 & 4
 ENDIF
 
 ;임신 중이다
-IF TALENT:ARG:140
+IF TALENT:ARG:임신
     LOCAL:1 /= 4
     LOCAL:2 /= 4
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:140, 16, RIGHT% ×0.25
 ;회란 중이시다
-ELSEIF TALENT:ARG:145
+ELSEIF TALENT:ARG:회란
     LOCAL:1 /= 4
     LOCAL:2 /= 4
     SIF !TFLAG:207
@@ -1988,7 +1988,7 @@ ELSEIF TALENT:ARG:145
 ENDIF
 
 ;조수를 판다
-IF ISASSI:ARG && EXP:ARG:99 < EXPLV:5
+IF ISASSI:ARG && EXP:ARG:조수경험 < EXPLV:5
     LOCAL:1 /= 2
     LOCAL:2 /= 2
     SIF !TFLAG:207
@@ -1996,12 +1996,12 @@ IF ISASSI:ARG && EXP:ARG:99 < EXPLV:5
 ENDIF
 
 ;[거절]을 본다
-SIF TALENT:ARG:830 && !TFLAG:207
+SIF TALENT:ARG:거절 && !TFLAG:207
     PRINTFORML %TALENTNAME:830, 16, RIGHT% ×1.00
 
 ;매각치 보정(HARD 이상이거나 NORMAL 이하로 내용이 다름)
 IF !TFLAG:207
-    IF FLAG:3 >= 3
+    IF FLAG:난이도 >= 3
         LOCAL:1 = PRICE_LIMIT_HARD(ARG, LOCAL:1)
     ELSE
         LOCAL:1 = PRICE_LIMIT_NORMAL(ARG, LOCAL:1)
@@ -2009,18 +2009,18 @@ IF !TFLAG:207
 ENDIF
 
 ;주인의 조교사 LV
-IF ABL:MASTER:99 == 0
+IF ABL:MASTER:조교사Lv == 0
     LOCAL = 100
-ELSEIF ABL:MASTER:99 == 1
+ELSEIF ABL:MASTER:조교사Lv == 1
     LOCAL = 150
     TIMES LOCAL:1 , 1.50
-ELSEIF ABL:MASTER:99 == 2
+ELSEIF ABL:MASTER:조교사Lv == 2
     LOCAL = 200
     TIMES LOCAL:1 , 2.00
-ELSEIF ABL:MASTER:99 == 3
+ELSEIF ABL:MASTER:조교사Lv == 3
     LOCAL = 250
     TIMES LOCAL:1 , 2.50
-ELSEIF ABL:MASTER:99 == 4
+ELSEIF ABL:MASTER:조교사Lv == 4
     LOCAL = 300
     TIMES LOCAL:1 , 3.00
 ELSE
@@ -2028,10 +2028,10 @@ ELSE
     TIMES LOCAL:1 , 4.00
 ENDIF
 SIF !TFLAG:207
-    PRINTFORML 주인의 %ABLNAME:99%{ABL:MASTER:99} ×{LOCAL/100}.{LOCAL%100}
+    PRINTFORML 주인의 %ABLNAME:99%{ABL:MASTER:조교사Lv} ×{LOCAL/100}.{LOCAL%100}
 
 ;YASAI 모드의 캐릭터 한정
-IF ((NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)) && NO:MASTER == 400 && (FLAG:570 & 4) == 0) || FLAG:570 & 2
+IF ((NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)) && NO:MASTER == 400 && (FLAG:570 & 4) == 0) || FLAG:570 & 2
     TIMES LOCAL:1 , 0.50
     SIF !TFLAG:207
         PRINTFORML 　　　중계인부재 ×0.5
@@ -2049,18 +2049,18 @@ RETURN LOCAL:1
 ;한 문자 변수 V를 매각한계치로, LOCAL을 해당 난이도의 기한일수에 사용
 @PRICE_LIMIT_HARD(ARG, ARG:1)
 #FUNCTION
-IF FLAG:3 == 3
+IF FLAG:난이도 == 3
     LOCALS:0 = HARD
     LOCAL = 99
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     LOCALS:0 = LUNATIC
     LOCAL = 90
-ELSEIF FLAG:3 == 5
+ELSEIF FLAG:난이도 == 5
     LOCALS:0 = PHANTASM
     LOCAL = 60
-ELSEIF FLAG:3 == 6
+ELSEIF FLAG:난이도 == 6
     LOCALS:0 = PRO
-ELSEIF FLAG:3 == 7
+ELSEIF FLAG:난이도 == 7
     LOCALS:0 = ULTRA
 ELSE
     LOCALS:0 = UNKNOWN
@@ -2088,7 +2088,7 @@ IF ARG:1 > LOCAL:1
         PRINTFORML %LOCALS:0, 16, RIGHT%：Counter Stop! {LOCAL:1}원
 ENDIF
 
-SIF FLAG:3 == 6 || FLAG:3 == 7
+SIF FLAG:난이도 == 6 || FLAG:난이도 == 7
     RETURNF 0
 
 ;일자 보너스(한계 보정 후에 적용된다)

@@ -10,27 +10,27 @@ VARSET LOCALS, ""
 
 IF !TFLAG:207
     ;ヤンデレもーど有効のときで睡眠薬の影響なければTALENT:恋慕をみる
-    IF FLAG:14 & 4 && TALENT:ARG:150 && EQUIP:ARG:14 == 0 && TALENT:ARG:160 == 0 && TALENT:ARG:164 == 0 && TALENT:ARG:167 == 0 && TALENT:ARG:168 == 0 && TALENT:ARG:169 == 0
+    IF FLAG:조교모드 & 4 && TALENT:ARG:연모 && EQUIP:ARG:14 == 0 && TALENT:ARG:복종 == 0 && TALENT:ARG:사역마 == 0 && TALENT:ARG:정신붕괴 == 0 && TALENT:ARG:괴뢰 == 0 && TALENT:ARG:괴조인격 == 0
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")%、매각하려고 하자 미친듯이 날뛰었다.
         ;激しく狼狽する奴隷のイベント口上呼び出し
         CALL SELF_KOJO, ARG, 194
         ;反発刻印LV3を取得
-        IF MARK:ARG:97 <= 2 && MARK:ARG:9 <= 2
+        IF MARK:ARG:97 <= 2 && MARK:ARG:반발각인 <= 2
             CALL COMMON_MARK_UP, ARG, 9, 3, 0
             PRINTL 반발각인 LV3를 취득
             ;感情乏しいの場合は反発刻印による従順ダウンはなし
-            IF ABL:ARG:10 > 1 && ABL:ARG:10 < 5 && TALENT:ARG:22 == 0
-                ABL:ARG:10 -= 2
-                SIF ABL:ARG:10 < 0
-                    ABL:ARG:10 = 0
-                PRINTFORML 그리고 순종이 {ABL:ARG:0}로 떨어졌다
+            IF ABL:ARG:순종 > 1 && ABL:ARG:순종 < 5 && TALENT:ARG:감정결여 == 0
+                ABL:ARG:순종 -= 2
+                SIF ABL:ARG:순종 < 0
+                    ABL:ARG:순종 = 0
+                PRINTFORML 그리고 순종이 {ABL:ARG:C감각}로 떨어졌다
             ENDIF
         ENDIF
         ;気丈でなく、まだ狂気でない場合、狂気を得る
-        IF TALENT:ARG:12 == 0 && TALENT:ARG:158 == 0
-            CFLAG:ARG:12 |= 1
-            CFLAG:ARG:17 |= 2
-            TALENT:ARG:158 = 1
+        IF TALENT:ARG:꿋꿋함 == 0 && TALENT:ARG:광기 == 0
+            CFLAG:ARG:트라우마판정 |= 1
+            CFLAG:ARG:이벤트취득붕괴 |= 2
+            TALENT:ARG:광기 = 1
             PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 지고 있는 해를 향해 엷은 웃음을 띄고 중얼중얼대고 있다…
             PRINTFORML %조사처리(CALLNAME:ARG,"는")% 이미 정신줄을 놓은 것 같다…
             PRINTFORMW %조사처리(CALLNAME:ARG,"는")% [광기]를 얻었다
@@ -39,7 +39,7 @@ IF !TFLAG:207
 ENDIF
 
 ;難易度PHANTASMのとき表示なし
-SIF FLAG:3 == 5 && TFLAG:207 == 0
+SIF FLAG:난이도 == 5 && TFLAG:207 == 0
     TFLAG:207 = 1
 
 ;캐릭터 가격의 1/5를 베이스로 한다
@@ -52,447 +52,447 @@ SIF !TFLAG:207
     PRINTL ----------------------------------
 
 ;ABL:Ｃ感覚をみる
-IF ABL:ARG:0 < 3
+IF ABL:ARG:C감각 < 3
     LOCAL = 0
-ELSEIF ABL:ARG:0 == 3
+ELSEIF ABL:ARG:C감각 == 3
     LOCAL = 2000
-ELSEIF ABL:ARG:0 == 4
+ELSEIF ABL:ARG:C감각 == 4
     LOCAL = 4500
 ELSE
     LOCAL = 9000
 ENDIF
 ;[淫核／淫茎]
-SIF TALENT:ARG:171
+SIF TALENT:ARG:음핵／음경
     LOCAL +=18000
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:0, 13, RIGHT%LV{ABL:ARG:0} ＋{LOCAL}
+        PRINTFORML %ABLNAME:0, 13, RIGHT%LV{ABL:ARG:C감각} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:Ｖ感覚をみる
-IF ABL:ARG:1 < 2
+IF ABL:ARG:V감각< 2
     LOCAL = 0
-ELSEIF ABL:ARG:1 == 2
+ELSEIF ABL:ARG:V감각== 2
     LOCAL = 3000
-ELSEIF ABL:ARG:1 == 3
+ELSEIF ABL:ARG:V감각== 3
     LOCAL = 6000
-ELSEIF ABL:ARG:1 == 4
+ELSEIF ABL:ARG:V감각== 4
     LOCAL = 13000
 ELSE
     LOCAL = 26000
 ENDIF
 ;[淫壷]
-SIF TALENT:ARG:172
+SIF TALENT:ARG:음호
     LOCAL += 10000
-IF LOCAL > 0 && TALENT:ARG:120 == 0
+IF LOCAL > 0 && TALENT:ARG:남자 == 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:1, 13, RIGHT%LV{ABL:ARG:1} ＋{LOCAL}
+        PRINTFORML %ABLNAME:1, 13, RIGHT%LV{ABL:ARG:V감각} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:Ａ感覚をみる
-IF ABL:ARG:2 < 2
+IF ABL:ARG:A감각 < 2
     LOCAL = 0
-ELSEIF ABL:ARG:2 == 2
+ELSEIF ABL:ARG:A감각 == 2
     LOCAL = 2500
-ELSEIF ABL:ARG:2 == 3
+ELSEIF ABL:ARG:A감각 == 3
     LOCAL = 5000
-ELSEIF ABL:ARG:2 == 4
+ELSEIF ABL:ARG:A감각 == 4
     LOCAL = 10000
 ELSE
     LOCAL = 20000
 ENDIF
 
 ;[淫尻]
-SIF TALENT:ARG:173
+SIF TALENT:ARG:음고
     LOCAL += 10000
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:2, 13, RIGHT%LV{ABL:ARG:2} ＋{LOCAL}
+        PRINTFORML %ABLNAME:2, 13, RIGHT%LV{ABL:ARG:A감각} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:Ｂ感覚をみる
-IF ABL:ARG:3 < 3
+IF ABL:ARG:B감각 < 3
     LOCAL = 0
-ELSEIF ABL:ARG:3 == 3
+ELSEIF ABL:ARG:B감각 == 3
     LOCAL = 4000
-ELSEIF ABL:ARG:3 == 4
+ELSEIF ABL:ARG:B감각 == 4
     LOCAL = 8000
 ELSE
     LOCAL = 16000
 ENDIF
 
 ;[淫乳]
-SIF TALENT:ARG:174
+SIF TALENT:ARG:음유
     LOCAL +=10000
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:3, 13, RIGHT%LV{ABL:ARG:3} ＋{LOCAL}
+        PRINTFORML %ABLNAME:3, 13, RIGHT%LV{ABL:ARG:B감각} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 
 ;ABL:従順をみる
-IF ABL:ARG:10 == 0
+IF ABL:ARG:순종 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:10 == 1
+ELSEIF ABL:ARG:순종 == 1
     LOCAL = 1000
-ELSEIF ABL:ARG:10 == 2
+ELSEIF ABL:ARG:순종 == 2
     LOCAL = 2000
-ELSEIF ABL:ARG:10 == 3
+ELSEIF ABL:ARG:순종 == 3
     LOCAL = 4000
-ELSEIF ABL:ARG:10 == 4
+ELSEIF ABL:ARG:순종 == 4
     LOCAL = 8000
 ELSE
     LOCAL = 16000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:10, 13, RIGHT%LV{ABL:ARG:10} ＋{LOCAL}
+        PRINTFORML %ABLNAME:10, 13, RIGHT%LV{ABL:ARG:순종} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:欲望をみる
-IF ABL:ARG:11 == 0
+IF ABL:ARG:욕망 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:11 == 1
+ELSEIF ABL:ARG:욕망 == 1
     LOCAL = 1000
-ELSEIF ABL:ARG:11 == 2
+ELSEIF ABL:ARG:욕망 == 2
     LOCAL = 2000
-ELSEIF ABL:ARG:11 == 3
+ELSEIF ABL:ARG:욕망 == 3
     LOCAL = 4000
-ELSEIF ABL:ARG:11 == 4
+ELSEIF ABL:ARG:욕망 == 4
     LOCAL = 8000
 ELSE
     LOCAL = 16000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:11, 13, RIGHT%LV{ABL:ARG:11} ＋{LOCAL}
+        PRINTFORML %ABLNAME:11, 13, RIGHT%LV{ABL:ARG:욕망} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:技巧をみる
-IF ABL:ARG:12 == 0
+IF ABL:ARG:기교 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:12 == 1
+ELSEIF ABL:ARG:기교 == 1
     LOCAL = 1000
-ELSEIF ABL:ARG:12 == 2
+ELSEIF ABL:ARG:기교 == 2
     LOCAL = 2000
-ELSEIF ABL:ARG:12 == 3
+ELSEIF ABL:ARG:기교 == 3
     LOCAL = 4000
-ELSEIF ABL:ARG:12 == 4
+ELSEIF ABL:ARG:기교 == 4
     LOCAL = 8000
 ELSE
     LOCAL = 16000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:12, 13, RIGHT%LV{ABL:ARG:12} ＋{LOCAL}
+        PRINTFORML %ABLNAME:12, 13, RIGHT%LV{ABL:ARG:기교} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:奉仕精神をみる
-IF ABL:ARG:13 == 0
+IF ABL:ARG:봉사정신 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:13 == 1
+ELSEIF ABL:ARG:봉사정신 == 1
     LOCAL = 1000
-ELSEIF ABL:ARG:13 == 2
+ELSEIF ABL:ARG:봉사정신 == 2
     LOCAL = 2000
-ELSEIF ABL:ARG:13 == 3
+ELSEIF ABL:ARG:봉사정신 == 3
     LOCAL = 4000
-ELSEIF ABL:ARG:13 == 4
+ELSEIF ABL:ARG:봉사정신 == 4
     LOCAL = 8000
 ELSE
     LOCAL = 16000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:13, 13, RIGHT%LV{ABL:ARG:13} ＋{LOCAL}
+        PRINTFORML %ABLNAME:13, 13, RIGHT%LV{ABL:ARG:봉사정신} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:露出癖をみる
-IF ABL:ARG:14 == 0
+IF ABL:ARG:노출증 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:14 == 1
+ELSEIF ABL:ARG:노출증 == 1
     LOCAL = 500
-ELSEIF ABL:ARG:14 == 2
+ELSEIF ABL:ARG:노출증 == 2
     LOCAL = 1250
-ELSEIF ABL:ARG:14 == 3
+ELSEIF ABL:ARG:노출증 == 3
     LOCAL = 2500
-ELSEIF ABL:ARG:14 == 4
+ELSEIF ABL:ARG:노출증 == 4
     LOCAL = 5000
 ELSE
     LOCAL = 10000
 ENDIF
 ;[おもらし癖]
-SIF TALENT:ARG:45
+SIF TALENT:ARG:오줌싸개버릇
     LOCAL +=1500
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:14, 13, RIGHT%LV{ABL:ARG:14} ＋{LOCAL}
+        PRINTFORML %ABLNAME:14, 13, RIGHT%LV{ABL:ARG:노출증} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 
 ;ABL:サドっ気をみる
-IF ABL:ARG:20 == 0
+IF ABL:ARG:새드끼 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:20 == 1
+ELSEIF ABL:ARG:새드끼 == 1
     LOCAL = 625
-ELSEIF ABL:ARG:20 == 2
+ELSEIF ABL:ARG:새드끼 == 2
     LOCAL = 1500
-ELSEIF ABL:ARG:20 == 3
+ELSEIF ABL:ARG:새드끼 == 3
     LOCAL = 3000
-ELSEIF ABL:ARG:20 == 4
+ELSEIF ABL:ARG:새드끼 == 4
     LOCAL = 6000
 ELSE
     LOCAL = 12000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:20, 13, RIGHT%LV{ABL:ARG:20} ＋{LOCAL}
+        PRINTFORML %ABLNAME:20, 13, RIGHT%LV{ABL:ARG:새드끼} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:マゾっ気をみる
-IF ABL:ARG:21 == 0
+IF ABL:ARG:마조끼 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:21 == 1
+ELSEIF ABL:ARG:마조끼 == 1
     LOCAL = 625
-ELSEIF ABL:ARG:21 == 2
+ELSEIF ABL:ARG:마조끼 == 2
     LOCAL = 1500
-ELSEIF ABL:ARG:21 == 3
+ELSEIF ABL:ARG:마조끼 == 3
     LOCAL = 3000
-ELSEIF ABL:ARG:21 == 4
+ELSEIF ABL:ARG:마조끼 == 4
     LOCAL = 6000
 ELSE
     LOCAL = 12000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:21, 13, RIGHT%LV{ABL:ARG:21} ＋{LOCAL}
+        PRINTFORML %ABLNAME:21, 13, RIGHT%LV{ABL:ARG:마조끼} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:レズっ気・ＢＬっ気をみる
-IF ABL:ARG:(22 + TALENT:ARG:120) < 2
+IF ABL:ARG:(22 + TALENT:ARG:남자) < 2
     LOCAL = 0
-ELSEIF ABL:ARG:(22 + TALENT:ARG:120) == 2
+ELSEIF ABL:ARG:(22 + TALENT:ARG:남자) == 2
     LOCAL = 1000
-ELSEIF ABL:ARG:(22 + TALENT:ARG:120) == 3
+ELSEIF ABL:ARG:(22 + TALENT:ARG:남자) == 3
     LOCAL = 2500
-ELSEIF ABL:ARG:(22 + TALENT:ARG:120) == 4
+ELSEIF ABL:ARG:(22 + TALENT:ARG:남자) == 4
     LOCAL = 5000
 ELSE
     LOCAL = 10000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:(22 + TALENT:ARG:120), 13, RIGHT%LV{ABL:ARG:(22 + TALENT:ARG:120)} ＋{LOCAL}
+        PRINTFORML %ABLNAME:(22 + TALENT:ARG:남자), 13, RIGHT%LV{ABL:ARG:(22 + TALENT:ARG:남자)} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 
 ;ABL:自慰中毒をみる
-IF ABL:ARG:30 == 0
+IF ABL:ARG:자위중독 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:30 == 1
+ELSEIF ABL:ARG:자위중독 == 1
     LOCAL = 2500
-ELSEIF ABL:ARG:30 == 2
+ELSEIF ABL:ARG:자위중독 == 2
     LOCAL = 5000
-ELSEIF ABL:ARG:30 == 3
+ELSEIF ABL:ARG:자위중독 == 3
     LOCAL = 10000
-ELSEIF ABL:ARG:30 == 4
+ELSEIF ABL:ARG:자위중독 == 4
     LOCAL = 20000
 ELSE
     LOCAL = 40000
 ENDIF
 ;[中毒しにくい]
-SIF TALENT:ARG:85 && ABL:ARG:30 >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:자위중독 >= 3
     LOCAL +=10000
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:30, 13, RIGHT%LV{ABL:ARG:30} ＋{LOCAL}
+        PRINTFORML %ABLNAME:30, 13, RIGHT%LV{ABL:ARG:자위중독} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:精液中毒をみる
-IF ABL:ARG:31 == 0
+IF ABL:ARG:정액중독 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:31 == 1
+ELSEIF ABL:ARG:정액중독 == 1
     LOCAL = 2500
-ELSEIF ABL:ARG:31 == 2
+ELSEIF ABL:ARG:정액중독 == 2
     LOCAL = 5000
-ELSEIF ABL:ARG:31 == 3
+ELSEIF ABL:ARG:정액중독 == 3
     LOCAL = 10000
-ELSEIF ABL:ARG:31 == 4
+ELSEIF ABL:ARG:정액중독 == 4
     LOCAL = 20000
 ELSE
     LOCAL = 40000
 ENDIF
 ;[中毒しにくい]
-SIF TALENT:ARG:85 && ABL:ARG:31 >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:정액중독 >= 3
     LOCAL +=10000
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:31, 13, RIGHT%LV{ABL:ARG:31} ＋{LOCAL}
+        PRINTFORML %ABLNAME:31, 13, RIGHT%LV{ABL:ARG:정액중독} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:レズ中毒・ＢＬ中毒をみる
-IF ABL:ARG:(32 + TALENT:ARG:120) == 0
+IF ABL:ARG:(32 + TALENT:ARG:남자) == 0
     LOCAL = 0
-ELSEIF ABL:ARG:(32 + TALENT:ARG:120) == 1
+ELSEIF ABL:ARG:(32 + TALENT:ARG:남자) == 1
     LOCAL = 2500
-ELSEIF ABL:ARG:(32 + TALENT:ARG:120) == 2
+ELSEIF ABL:ARG:(32 + TALENT:ARG:남자) == 2
     LOCAL = 5000
-ELSEIF ABL:ARG:(32 + TALENT:ARG:120) == 3
+ELSEIF ABL:ARG:(32 + TALENT:ARG:남자) == 3
     LOCAL = 10000
-ELSEIF ABL:ARG:(32 + TALENT:ARG:120) == 4
+ELSEIF ABL:ARG:(32 + TALENT:ARG:남자) == 4
     LOCAL = 20000
 ELSE
     LOCAL = 40000
 ENDIF
 ;[中毒しにくい]
-SIF TALENT:ARG:85 && ABL:ARG:(32 + TALENT:ARG:120) >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:(32 + TALENT:ARG:남자) >= 3
     LOCAL +=10000
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:(32 + TALENT:ARG:120), 13, RIGHT%LV{ABL:ARG:(32 + TALENT:ARG:120)} ＋{LOCAL}
+        PRINTFORML %ABLNAME:(32 + TALENT:ARG:남자), 13, RIGHT%LV{ABL:ARG:(32 + TALENT:ARG:남자)} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:噴乳中毒をみる
-IF ABL:ARG:34 == 0
+IF ABL:ARG:분유중독 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:34 == 1
+ELSEIF ABL:ARG:분유중독 == 1
     LOCAL = 2500
-ELSEIF ABL:ARG:34 == 2
+ELSEIF ABL:ARG:분유중독 == 2
     LOCAL = 5000
-ELSEIF ABL:ARG:34 == 3
+ELSEIF ABL:ARG:분유중독 == 3
     LOCAL = 10000
-ELSEIF ABL:ARG:34 == 4
+ELSEIF ABL:ARG:분유중독 == 4
     LOCAL = 20000
 ELSE
     LOCAL = 40000
 ENDIF
 ;[中毒しにくい]
-SIF TALENT:ARG:85 && ABL:ARG:34 >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:분유중독 >= 3
     LOCAL +=10000
-IF LOCAL > 0 && TALENT:ARG:134
+IF LOCAL > 0 && TALENT:ARG:모유체질
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:34, 13, RIGHT%LV{ABL:ARG:34} ＋{LOCAL}
+        PRINTFORML %ABLNAME:34, 13, RIGHT%LV{ABL:ARG:분유중독} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:排泄中毒をみる
-IF ABL:ARG:36 == 0
+IF ABL:ARG:배설중독 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:36 == 1
+ELSEIF ABL:ARG:배설중독 == 1
     LOCAL = 2500
-ELSEIF ABL:ARG:36 == 2
+ELSEIF ABL:ARG:배설중독 == 2
     LOCAL = 5000
-ELSEIF ABL:ARG:36 == 3
+ELSEIF ABL:ARG:배설중독 == 3
     LOCAL = 10000
-ELSEIF ABL:ARG:36 == 4
+ELSEIF ABL:ARG:배설중독 == 4
     LOCAL = 20000
 ELSE
     LOCAL = 40000
 ENDIF
 ;[おもらし癖]
-SIF TALENT:ARG:45
+SIF TALENT:ARG:오줌싸개버릇
     LOCAL +=1500
 ;[淫尻]
-SIF TALENT:ARG:173
+SIF TALENT:ARG:음고
     LOCAL +=1500
 ;[尿道狂]
-SIF TALENT:ARG:175
+SIF TALENT:ARG:요도광
     LOCAL +=5000
 ;[中毒しにくい]
-SIF TALENT:ARG:85 && ABL:ARG:36 >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:배설중독 >= 3
     LOCAL +=10000
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:36, 13, RIGHT%LV{ABL:ARG:36} ＋{LOCAL}
+        PRINTFORML %ABLNAME:36, 13, RIGHT%LV{ABL:ARG:배설중독} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:触手中毒をみる
 ;触手に夢中なあまり性奴隷としての価値が下がってしまうと解釈
-IF ABL:ARG:35 == 0
+IF ABL:ARG:촉수중독 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:35 == 1
+ELSEIF ABL:ARG:촉수중독 == 1
     LOCAL = 2500
-ELSEIF ABL:ARG:35 == 2
+ELSEIF ABL:ARG:촉수중독 == 2
     LOCAL = 5000
-ELSEIF ABL:ARG:35 == 3
+ELSEIF ABL:ARG:촉수중독 == 3
     LOCAL = 10000
-ELSEIF ABL:ARG:35 == 4
+ELSEIF ABL:ARG:촉수중독 == 4
     LOCAL = 20000
 ELSE
     LOCAL = 40000
 ENDIF
 ;[中毒しにくい]
-SIF TALENT:ARG:85 && ABL:ARG:35 >= 3
+SIF TALENT:ARG:중독되기어려움 && ABL:ARG:촉수중독 >= 3
     LOCAL +=10000
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:35, 13, RIGHT%LV{ABL:ARG:35} －{LOCAL}
+        PRINTFORML %ABLNAME:35, 13, RIGHT%LV{ABL:ARG:촉수중독} －{LOCAL}
     LOCAL:1 -= LOCAL
 ENDIF
 
 ;ABL:料理技能をみる . 적당히. 요리기능은 1회 요리에 1~10정도 얻는데, 요리경험 50이면 5렙이다 벌써.
-IF ABL:ARG:70 == 0
+IF ABL:ARG:요리기능 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:70 == 1
+ELSEIF ABL:ARG:요리기능 == 1
     LOCAL = 500
-ELSEIF ABL:ARG:70 == 2
+ELSEIF ABL:ARG:요리기능 == 2
     LOCAL = 1250
-ELSEIF ABL:ARG:70 == 3
+ELSEIF ABL:ARG:요리기능 == 3
     LOCAL = 2500
-ELSEIF ABL:ARG:70 == 4
+ELSEIF ABL:ARG:요리기능 == 4
     LOCAL = 5000
 ELSE
     LOCAL = 10000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:70, 13, RIGHT%LV{ABL:ARG:70} ＋{LOCAL}
+        PRINTFORML %ABLNAME:70, 13, RIGHT%LV{ABL:ARG:요리기능} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:撮影技能をみる. 의외로 올리기 쉬우므로 적당히.
-IF ABL:ARG:71 == 0
+IF ABL:ARG:촬영기능 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:71 == 1
+ELSEIF ABL:ARG:촬영기능 == 1
     LOCAL = 500
-ELSEIF ABL:ARG:71 == 2
+ELSEIF ABL:ARG:촬영기능 == 2
     LOCAL = 1250
-ELSEIF ABL:ARG:71 == 3
+ELSEIF ABL:ARG:촬영기능 == 3
     LOCAL = 2500
-ELSEIF ABL:ARG:71 == 4
+ELSEIF ABL:ARG:촬영기능 == 4
     LOCAL = 5000
 ELSE
     LOCAL = 10000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:71, 13, RIGHT%LV{ABL:ARG:71} ＋{LOCAL}
+        PRINTFORML %ABLNAME:71, 13, RIGHT%LV{ABL:ARG:촬영기능} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 ;ABL:歌唱技能をみる. 아이돌마스터를 노려라! 대략 경험 50~100사이에서 5렙이 된다.
-IF ABL:ARG:72 == 0
+IF ABL:ARG:가창기능 == 0
     LOCAL = 0
-ELSEIF ABL:ARG:72 == 1
+ELSEIF ABL:ARG:가창기능 == 1
     LOCAL = 500
-ELSEIF ABL:ARG:72 == 2
+ELSEIF ABL:ARG:가창기능 == 2
     LOCAL = 1250
-ELSEIF ABL:ARG:72 == 3
+ELSEIF ABL:ARG:가창기능 == 3
     LOCAL = 2500
-ELSEIF ABL:ARG:72 == 4
+ELSEIF ABL:ARG:가창기능 == 4
     LOCAL = 5000
 ELSE
     LOCAL = 10000
 ENDIF
 IF LOCAL > 0
     SIF !TFLAG:207
-        PRINTFORML %ABLNAME:72, 13, RIGHT%LV{ABL:ARG:72} ＋{LOCAL}
+        PRINTFORML %ABLNAME:72, 13, RIGHT%LV{ABL:ARG:가창기능} ＋{LOCAL}
     LOCAL:1 += LOCAL
 ENDIF
 
 ;MARK:不死刻印をみる
 ;不死性は触手に依るものなので蓬莱人や呪精のような価値は付かない
 ;それどころか逆に触手に依存性を持ってしまっているため、性奴隷としての価値が下がってしまう
-IF MARK:ARG:10
-    LOCAL = 3000 * MARK:ARG:10 * MARK:ARG:10
+IF MARK:ARG:불사각인
+    LOCAL = 3000 * MARK:ARG:불사각인 * MARK:ARG:불사각인
     SIF !TFLAG:207
-        PRINTFORML %MARKNAME:10, 13, RIGHT%LV{MARK:ARG:10} －{LOCAL}
+        PRINTFORML %MARKNAME:10, 13, RIGHT%LV{MARK:ARG:불사각인} －{LOCAL}
     LOCAL:1 -= LOCAL
 ENDIF
 
@@ -507,13 +507,13 @@ SIF !TFLAG:207
     ;-----------------탈렌트 보정 시작
     LOCAL:11 = 100
     ;[処女]をみる
-    IF TALENT:ARG:0 == 1
+    IF TALENT:ARG:처녀 == 1
         LOCAL = -100 + 250
         LOCAL:11 =  LOCAL:11 -100 + 250
         LOCAL:2 = LOCAL:2 - 100 +  250
         SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 0
-    ELSEIF TALENT:ARG:0 == 2
+    ELSEIF TALENT:ARG:처녀 == 2
         LOCAL = -100 + 150
         LOCAL:11 =  LOCAL:11 -100 + 150
         LOCAL:2 = LOCAL:2 - 100 +  150
@@ -522,7 +522,7 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 0
     ENDIF
     ;肥大陰核]をみる
-    IF TALENT:ARG:1
+    IF TALENT:ARG:비대음핵
         LOCAL = -100 + 180
         LOCAL:11 =  LOCAL:11 -100 + 180
         LOCAL:2 = LOCAL:2 - 100 +  180
@@ -530,9 +530,9 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 1
     ENDIF
     ;겁쟁이를 본다
-    IF TALENT:ARG:10
+    IF TALENT:ARG:겁쟁이
         ;개화조건 : 노출증 3 레벨 이상 그리고 노출쾌락경험 30 이상
-        IF ABL:ARG:14 >= 3 && EXP:ARG:14 >= 30
+        IF ABL:ARG:노출증 >= 3 && EXP:ARG:노출쾌락경험 >= 30
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -546,9 +546,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;反抗的]をみる
-    IF TALENT:ARG:11
+    IF TALENT:ARG:반항적
         ;개화조건 : 순종 5레벨 이상
-        IF ABL:ARG:10 >= 5
+        IF ABL:ARG:순종 >= 5
             LOCAL = -100 + 170
             LOCAL:11 =  LOCAL:11 -100 + 170
             LOCAL:2 = LOCAL:2 - 100 +  170
@@ -562,9 +562,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;気丈]をみる
-    IF TALENT:ARG:12 
+    IF TALENT:ARG:꿋꿋함 
         ;개화조건 : 굴복각인 3이상
-        IF MARK:ARG:2 >= 3
+        IF MARK:ARG:굴복각인 >= 3
             LOCAL = -100 + 170
             LOCAL:11 =  LOCAL:11 -100 + 170
             LOCAL:2 = LOCAL:2 - 100 +  170
@@ -578,7 +578,7 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;素直]をみる
-    IF TALENT:ARG:13
+    IF TALENT:ARG:솔직함
         LOCAL = -100 + 120
         LOCAL:11 =  LOCAL:11 -100 + 120
         LOCAL:2 = LOCAL:2 - 100 +  120
@@ -586,7 +586,7 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 13
     ENDIF
     ;大人しい]をみる
-    IF TALENT:ARG:14
+    IF TALENT:ARG:얌전함
         LOCAL = -100 + 120
         LOCAL:11 =  LOCAL:11 -100 + 120
         LOCAL:2 = LOCAL:2 - 100 +  120
@@ -594,9 +594,9 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 14
     ENDIF
     ;プライド高い]をみる
-    IF TALENT:ARG:16
+    IF TALENT:ARG:프라이드가높음
         ;개화조건 : 봉사쾌락경험 400 이상
-        IF EXP:ARG:20 >= 400
+        IF EXP:ARG:봉사쾌락경험 >= 400
             LOCAL = -100 + 210
             LOCAL:11 =  LOCAL:11 -100 + 210
             LOCAL:2 = LOCAL:2 - 100 +  210
@@ -612,9 +612,9 @@ SIF !TFLAG:207
     ENDIF
     
     ;プライド低い]をみる
-    IF TALENT:ARG:17
+    IF TALENT:ARG:프라이드가낮음
         ;개화조건 : 고통쾌락경험 50이상 또는 방뇨경험 10 이상 또는 배설경험 3 이상
-        IF EXP:ARG:30 >= 50 || EXP:ARG:6 >= 10 || EXP:ARG:7 >= 3
+        IF EXP:ARG:고통쾌락경험 >= 50 || EXP:ARG:방뇨경험 >= 10 || EXP:ARG:조교배설경험 >= 3
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -628,9 +628,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;질투하기 쉬움
-    IF TALENT:ARG:19
+    IF TALENT:ARG:질투하기쉬움
         ;개화조건 : 질투심 소질이 있거나 호감도가 500 이상일 것
-        IF TALENT:ARG:157 || CFLAG:ARG:2 >= 500
+        IF TALENT:ARG:질투 || CFLAG:ARG:호감도 >= 500
             LOCAL = -100 + 170
             LOCAL:11 =  LOCAL:11 -100 + 170
             LOCAL:2 = LOCAL:2 - 100 +  170
@@ -644,9 +644,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;自制心]をみる
-    IF TALENT:ARG:20
+    IF TALENT:ARG:자제심
         ;개화조건 : 욕망 레벨 5이상
-        IF ABL:ARG:11 >=5
+        IF ABL:ARG:욕망 >=5
             LOCAL = -100 + 180
             LOCAL:11 =  LOCAL:11 -100 + 180
             LOCAL:2 = LOCAL:2 - 100 +  180
@@ -660,9 +660,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;無関心]をみる
-    IF TALENT:ARG:21
+    IF TALENT:ARG:무관심
         ;개화조건 : 봉사쾌락경험 300 이상
-        IF EXP:ARG:20 >= 300
+        IF EXP:ARG:봉사쾌락경험 >= 300
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -676,9 +676,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;感情乏しい]をみる
-    IF TALENT:ARG:22
+    IF TALENT:ARG:감정결여
         ;개화조건 : 애정경험 100 이상
-        IF EXP:ARG:21 >= 100
+        IF EXP:ARG:애정경험 >= 100
             LOCAL = -100 + 180
             LOCAL:11 =  LOCAL:11 -100 + 180
             LOCAL:2 = LOCAL:2 - 100 +  180
@@ -692,9 +692,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;好奇心]をみる
-    IF TALENT:ARG:23
+    IF TALENT:ARG:호기심
         ;개화조건 : 이상경험 2이상
-        IF EXP:ARG:50 >= 2
+        IF EXP:ARG:이상경험 >= 2
             LOCAL = -100 + 170
             LOCAL:11 =  LOCAL:11 -100 + 170
             LOCAL:2 = LOCAL:2 - 100 +  170
@@ -708,9 +708,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;保守的]をみる
-    IF TALENT:ARG:24
+    IF TALENT:ARG:보수적
         ;개화조건 : A경험 300 이상 또는 U확장경험 30이상
-        IF EXP:ARG:1 >= 300 || EXP:ARG:34 >= 30
+        IF EXP:ARG:A경험 >= 300 || EXP:ARG:U확장경험 >= 30
             LOCAL = -100 + 180
             LOCAL:11 =  LOCAL:11 -100 + 180
             LOCAL:2 = LOCAL:2 - 100 +  180
@@ -724,9 +724,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;一線越えない]をみる
-    IF TALENT:ARG:27
+    IF TALENT:ARG:일선을넘지않음
         ; 개화조건 : 음란, 음마 중 하나가 있다. 또는 각종중독의 레벨합이 4이상이다.
-        IF  TALENT:ARG:170 == 1 || TALENT:ARG:180 == 1 || (ABL:ARG:30 + ABL:ARG:31 + ABL:ARG:32 + ABL:ARG:33 + ABL:ARG:34 + ABL:ARG:35 + ABL:ARG:36 +ABL:ARG:37) >= 4
+        IF  TALENT:ARG:음란 == 1 || TALENT:ARG:음마 == 1 || (ABL:ARG:자위중독 + ABL:ARG:정액중독 + ABL:ARG:레즈중독 + ABL:ARG:BL중독 + ABL:ARG:분유중독 + ABL:ARG:촉수중독 + ABL:ARG:배설중독 +ABL:ARG:사정중독) >= 4
             LOCAL = -100 + 250
             LOCAL:11 =  LOCAL:11 -100 + 250
             LOCAL:2 = LOCAL:2 - 100 +  250
@@ -740,9 +740,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;눈에 띄고 싶어함
-    IF TALENT:ARG:28
+    IF TALENT:ARG:튀고싶어함
         ; 개화조건 : 피사경험 5 이상 또는 노출쾌락경험 150 이상
-        IF EXP:ARG:72 >= 5 || EXP:ARG:14 >=150
+        IF EXP:ARG:피사경험 >= 5 || EXP:ARG:노출쾌락경험 >=150
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -756,13 +756,13 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;貞操観念]をみる
-    IF TALENT:ARG:30
+    IF TALENT:ARG:정조관념
         ;개화조건 : 처녀이면서 봉사정신이 3이상(보정大). 또는 노출증 5레벨이면서 A감각이 5레벨(보정中)
-        IF TALENT:ARG:0 && ABL:ARG:13 >= 3
+        IF TALENT:ARG:처녀 && ABL:ARG:봉사정신 >= 3
             LOCAL = -100 + 230
             LOCAL:11 =  LOCAL:11 -100 + 230
             LOCAL:2 = LOCAL:2 - 100 +  230
-        ELSEIF ABL:ARG:2 >=5 && ABL:ARG:14 >=5
+        ELSEIF ABL:ARG:A감각 >=5 && ABL:ARG:노출증 >=5
             LOCAL = -100 + 170
             LOCAL:11 =  LOCAL:11 -100 + 170
             LOCAL:2 = LOCAL:2 - 100 +  170
@@ -776,9 +776,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;貞操無頓着]をみる
-    IF TALENT:ARG:31
+    IF TALENT:ARG:정조관둔감
         ;개화조건 : 음란이나 음마소질을 획득
-        IF TALENT:ARG:170 || TALENT:ARG:180
+        IF TALENT:ARG:음란 || TALENT:ARG:음마
             LOCAL = -100 + 170
             LOCAL:11 =  LOCAL:11 -100 + 170
             LOCAL:2 = LOCAL:2 - 100 +  170
@@ -792,7 +792,7 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;解放]をみる
-    IF TALENT:ARG:33
+    IF TALENT:ARG:해방
         LOCAL = -100 + 120
         LOCAL:11 =  LOCAL:11 -100 + 120
         LOCAL:2 = LOCAL:2 - 100 +  120
@@ -800,9 +800,9 @@ SIF !TFLAG:207
             CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 33
     ENDIF
     ;抵抗]をみる
-    IF TALENT:ARG:34
+    IF TALENT:ARG:저항
         ; 해방 : 키스경험 200 이상
-        IF EXP:ARG:23 >=200
+        IF EXP:ARG:키스경험 >=200
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -816,9 +816,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;부끄럼쟁이
-    IF TALENT:ARG:35
+    IF TALENT:ARG:부끄럼쟁이
         ; 개화조건 : 노출쾌락경험 300 이상. 또는 가창기능 3레벨 이상
-        IF EXP:ARG:14 >= 300 || ABL:ARG:72 >= 3
+        IF EXP:ARG:노출쾌락경험 >= 300 || ABL:ARG:가창기능 >= 3
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -832,9 +832,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;부끄럼없음
-    IF TALENT:ARG:36
+    IF TALENT:ARG:부끄럼없음
         ; 개화조건 : 야외 라이브공연, 공개노출라이브를 성공시키거나, 공중육변기 플레이 1 회 이상.
-        IF CFLAG:ARG:151 >= 2 || CFLAG:ARG:51 >= 1 || CFLAG:ARG:51 >= 1 || CFLAG:ARG:54 >= 1
+        IF CFLAG:ARG:라이브기록 >= 2 || CFLAG:ARG:노출라이브성공회수 >= 1 || CFLAG:ARG:노출라이브성공회수 >= 1 || CFLAG:ARG:공중육변기회수 >= 1
             LOCAL = -100 + 170
             LOCAL:11 =  LOCAL:11 -100 + 170
             LOCAL:2 = LOCAL:2 - 100 +  170
@@ -848,9 +848,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;남성혐오
-    IF TALENT:ARG:37
+    IF TALENT:ARG:남성혐오
         ; 개화조건 : 정액중독 4레벨 이상
-        IF ABL:ARG:31 >= 4
+        IF ABL:ARG:정액중독 >= 4
             LOCAL = -100 + 200
             LOCAL:11 =  LOCAL:11 -100 + 200
             LOCAL:2 = LOCAL:2 - 100 +  200
@@ -864,9 +864,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;여성혐오
-    IF TALENT:ARG:38
+    IF TALENT:ARG:여성혐오
         ; 개화조건 : 파이즈를 30회 이상 당할 것
-        IF CFLAG:ARG:57 >= 30
+        IF CFLAG:ARG:파이즈리받은회수 >= 30
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -880,7 +880,7 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;약점
-    IF TALENT:ARG:39
+    IF TALENT:ARG:약점
         LOCAL = -100 + 120
         LOCAL:11 =  LOCAL:11 -100 + 120
         LOCAL:2 = LOCAL:2 - 100 +  120
@@ -888,9 +888,9 @@ SIF !TFLAG:207
             CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 39
     ENDIF
     ;痛みに弱い]をみる
-    IF TALENT:ARG:40
+    IF TALENT:ARG:아픔에약함
         ;개화조건 : 고통쾌락경험 300 이상
-        IF EXP:ARG:30 >= 300
+        IF EXP:ARG:고통쾌락경험 >= 300
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -904,9 +904,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;痛みに強い]をみる
-    IF TALENT:ARG:41
+    IF TALENT:ARG:아픔에강함
         ;개화조건 : 고통쾌락경험 600 이상
-        IF EXP:ARG:30 >= 600
+        IF EXP:ARG:고통쾌락경험 >= 600
             LOCAL = -100 + 180
             LOCAL:11 =  LOCAL:11 -100 + 180
             LOCAL:2 = LOCAL:2 - 100 +  180
@@ -921,7 +921,7 @@ SIF !TFLAG:207
     ENDIF
     ;濡れやすい]をみる
     ;개화조건없음
-    IF TALENT:ARG:42
+    IF TALENT:ARG:젖기쉬움
         LOCAL = -100 + 110
         LOCAL:11 =  LOCAL:11 -100 + 110
         LOCAL:2 = LOCAL:2 - 100 +  110
@@ -930,7 +930,7 @@ SIF !TFLAG:207
     ENDIF
     ;[濡れにくい]をみる
     ;개화조건없음
-    IF TALENT:ARG:43
+    IF TALENT:ARG:젖기어려움
         LOCAL = -100 + 95
         LOCAL:11 =  LOCAL:11 -100 + 95
         LOCAL:2 = LOCAL:2 - 100 +  95
@@ -938,9 +938,9 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 43
     ENDIF
     ;약물내성
-    IF TALENT:ARG:44
+    IF TALENT:ARG:약물내성
         ;개화조건 : 약물각인 1이상 또는 약물경험 20 이상
-        IF MARK:ARG:3 >= 1 || EXP:ARG:40 >= 20
+        IF MARK:ARG:약물각인 >= 1 || EXP:ARG:약물경험 >= 20
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -954,9 +954,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;오줌싸게버릇
-    IF TALENT:ARG:45
+    IF TALENT:ARG:오줌싸개버릇
         ;개화조건 : 방뇨경험 100이상
-        IF EXP:ARG:30 >= 100
+        IF EXP:ARG:고통쾌락경험 >= 100
             LOCAL = -100 + 180
             LOCAL:11 =  LOCAL:11 -100 + 180
             LOCAL:2 = LOCAL:2 - 100 +  180
@@ -970,9 +970,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[媚薬中毒]をみる
-    IF TALENT:ARG:46
+    IF TALENT:ARG:미약중독
         ;개화조건 : 음란이 '없을' 것
-        IF TALENT:ARG:170
+        IF TALENT:ARG:음란
             LOCAL = -100 + 50
             LOCAL:11 =  LOCAL:11 -100 + 50
             LOCAL:2 = LOCAL:2 - 100 +  50
@@ -986,9 +986,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[천식]をみる
-    IF TALENT:ARG:47
+    IF TALENT:ARG:천식
         ;개화조건 : 가창기능 2레벨 이상
-        IF ABL:ARG:72 >= 2
+        IF ABL:ARG:가창기능 >= 2
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -1002,9 +1002,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[蓬莱人]をみる
-    IF TALENT:ARG:49
+    IF TALENT:ARG:봉래인
         ;개화조건 : 봉래인의 힘으로 부활한 적이 있을 것.
-        IF CFLAG:ARG:163
+        IF CFLAG:ARG:봉래력으로부활회수
             LOCAL = -100 + 250
             LOCAL:11 =  LOCAL:11 -100 + 250
             LOCAL:2 = LOCAL:2 - 100 +  250
@@ -1018,9 +1018,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[呪精]をみる
-    IF TALENT:ARG:48
+    IF TALENT:ARG:주정
         ;개화조건 : 주정의 힘으로 부활한 적이 있을 것.
-        IF CFLAG:ARG:164
+        IF CFLAG:ARG:주정으로부활회수
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1034,9 +1034,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[舌使い]をみる
-    IF TALENT:ARG:52
+    IF TALENT:ARG:혀놀림
         ;개화조건 : 펠라경험 50 이상 
-        IF EXP:ARG:22 >= 50
+        IF EXP:ARG:펠라경험 >= 50
             LOCAL = -100 + 170
             LOCAL:11 =  LOCAL:11 -100 + 170
             LOCAL:2 = LOCAL:2 - 100 +  170
@@ -1050,9 +1050,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[針さばき]をみる
-    IF TALENT:ARG:53
+    IF TALENT:ARG:바느질
         ;개화조건 : 새드끼 4이상
-        IF ABL:ARG:20 >= 3
+        IF ABL:ARG:새드끼 >= 3
             LOCAL = -100 + 140
             LOCAL:11 =  LOCAL:11 -100 + 140
             LOCAL:2 = LOCAL:2 - 100 +  140
@@ -1068,7 +1068,7 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;고양이 혀
-    IF TALENT:ARG:54
+    IF TALENT:ARG:고양이혀
         ;개화조건 : 없다
         LOCAL = -100 + 90
         LOCAL:11 =  LOCAL:11 -100 + 90
@@ -1078,9 +1078,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[調合知識]をみる
-    IF TALENT:ARG:55
+    IF TALENT:ARG:조합지식
         ;개화조건 : 약물경험 5이상
-        IF EXP:ARG:40 >= 5
+        IF EXP:ARG:약물경험 >= 5
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1094,9 +1094,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[禁断の知識]をみる
-    IF TALENT:ARG:56
+    IF TALENT:ARG:금단의지식
         ;개화조건 : 조수경험 100 이상. 또는 약물경험 20 이상
-        IF EXP:ARG:99 >=100 || EXP:ARG:40 >= 20
+        IF EXP:ARG:조수경험 >=100 || EXP:ARG:약물경험 >= 20
             LOCAL = -100 + 180
             LOCAL:11 =  LOCAL:11 -100 + 180
             LOCAL:2 = LOCAL:2 - 100 +  180
@@ -1110,9 +1110,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;음구지식을 본다.
-    IF TALENT:ARG:58
+    IF TALENT:ARG:음구지식
         ;개화조건 : 기교레벨 4이상
-        IF ABL:ARG:12 >= 4
+        IF ABL:ARG:기교 >= 4
             LOCAL = -100 + 140
             LOCAL:11 =  LOCAL:11 -100 + 140
             LOCAL:2 = LOCAL:2 - 100 +  140
@@ -1127,7 +1127,7 @@ SIF !TFLAG:207
     ENDIF
     ;[治療]をみる
     ;개화조건 : 없다
-    IF TALENT:ARG:59
+    IF TALENT:ARG:치료
         LOCAL = -100 + 110
         LOCAL:11 =  LOCAL:11 -100 + 110
         LOCAL:2 = LOCAL:2 - 100 +  110
@@ -1135,9 +1135,9 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 59
     ENDIF
     ;자위하기 쉬움
-    IF TALENT:ARG:60
+    IF TALENT:ARG:자위하기쉬움
         ;개화조건 : 자위경험 50 이상
-        IF EXP:ARG:10 >= 50
+        IF EXP:ARG:자위경험 >= 50
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -1151,9 +1151,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;냄새둔감
-    IF TALENT:ARG:61
+    IF TALENT:ARG:냄새둔감
         ;개화조건 : 정음절정경험 1회 이상
-        IF EXP:ARG:8 >= 1
+        IF EXP:ARG:정음절정경험 >= 1
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1167,9 +1167,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;냄새민감
-    IF TALENT:ARG:62
+    IF TALENT:ARG:냄새민감
         ;개화조건 : 조교배설경험 1 회 이상 또는 요리기능 3 이상
-        IF EXP:ARG:7 >=1 || ABL:ARG:70 >= 3
+        IF EXP:ARG:조교배설경험 >=1 || ABL:ARG:요리기능 >= 3
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1183,9 +1183,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;헌신적
-    IF TALENT:ARG:63
+    IF TALENT:ARG:헌신적
         ;개화조건 : 봉사정신 5이상, 그리고 순종 5이상
-        IF ABL:ARG:13 >= 5 && ABL:ARG:10 >= 5 
+        IF ABL:ARG:봉사정신 >= 5 && ABL:ARG:순종 >= 5 
             LOCAL = -100 + 180
             LOCAL:11 =  LOCAL:11 -100 + 180
             LOCAL:2 = LOCAL:2 - 100 +  180
@@ -1199,9 +1199,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;불결무시
-    IF TALENT:ARG:64
+    IF TALENT:ARG:불결무시
         ;개화조건 : 정액경험 300 이상 또는 조교배설경험 5 회 이상 또는 동물성애경험 5 회 이상
-        IF  EXP:ARG:4 >= 300 || EXP:ARG:7 >= 5 || EXP:ARG:56 >= 5
+        IF  EXP:ARG:정액경험 >= 300 || EXP:ARG:조교배설경험 >= 5 || EXP:ARG:동물성애경험 >= 5
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1216,7 +1216,7 @@ SIF !TFLAG:207
     ENDIF
     ;[パイパン]をみる
     ;해방할 방법이 없다
-    IF TALENT:ARG:65
+    IF TALENT:ARG:음모없음
         LOCAL = -100 + 130
         LOCAL:11 =  LOCAL:11 -100 + 130
         LOCAL:2 = LOCAL:2 - 100 +  130
@@ -1224,9 +1224,9 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 65
     ENDIF
     ;정애미각
-    IF TALENT:ARG:66
+    IF TALENT:ARG:정애미각
         ;개화조건 : 정액중독 4레벨 이상
-        IF ABL:ARG:31 >= 4
+        IF ABL:ARG:정액중독 >= 4
             LOCAL = -100 + 200
             LOCAL:11 =  LOCAL:11 -100 + 200
             LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1240,9 +1240,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[快感に素直]をみる
-    IF TALENT:ARG:70
+    IF TALENT:ARG:쾌감에솔직
         ;개화조건 : 절정경험 300이상 또는 극락절정경험 1회 이상
-        IF EXP:ARG:2 >= 300 || EXP:ARG:97 >= 1
+        IF EXP:ARG:절정경험 >= 300 || EXP:ARG:극락절정경험 >= 1
             LOCAL = -100 + 180
             LOCAL:11 =  LOCAL:11 -100 + 180
             LOCAL:2 = LOCAL:2 - 100 +  180
@@ -1256,9 +1256,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[快感の否定]をみる
-    IF TALENT:ARG:71
+    IF TALENT:ARG:쾌감을부정
         ;개화조건: 자위중독레벨 3이상 또는 음란, 음마가 있다.
-        IF ABL:ARG:30 >= 3 || TALENT:ARG:170 ==1 || TALENT:ARG:180 ==1 
+        IF ABL:ARG:자위중독 >= 3 || TALENT:ARG:음란 ==1 || TALENT:ARG:음마 ==1 
             LOCAL = -100 + 190
             LOCAL:11 =  LOCAL:11 -100 + 190
             LOCAL:2 = LOCAL:2 - 100 +  230
@@ -1272,9 +1272,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[倒錯的]をみる
-    IF TALENT:ARG:80
+    IF TALENT:ARG:도착적
         ; 개화조건 : SM교육경험 50 이상 그리고 긴박경험 20 이상
-        IF EXP:ARG:39 >= 50 && EXP:ARG:31 >= 20
+        IF EXP:ARG:SM교육경험 >= 50 && EXP:ARG:긴박경험 >= 20
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1288,9 +1288,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[새드]
-    IF TALENT:ARG:81
+    IF TALENT:ARG:새드
         ; 개화조건 : 새드끼 4레벨 이상
-        IF ABL:ARG:20 >= 4
+        IF ABL:ARG:새드끼 >= 4
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1304,9 +1304,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[마조]
-    IF TALENT:ARG:82
+    IF TALENT:ARG:마조
         ; 개화조건 : 마조끼 4레벨 이상
-        IF ABL:ARG:21 >= 4
+        IF ABL:ARG:마조끼 >= 4
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1320,9 +1320,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[중독선동]
-    IF TALENT:ARG:86
+    IF TALENT:ARG:중독선동
         ; 개화조건 : 조수경험 30 이상. 또는 약물경험 15 이상
-        IF EXP:ARG:99 >= 30 || EXP:ARG:40 >= 15
+        IF EXP:ARG:조수경험 >= 30 || EXP:ARG:약물경험 >= 15
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1336,9 +1336,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[魅力]をみる
-    IF TALENT:ARG:90
+    IF TALENT:ARG:매력
         ;개화조건: 창관인기 40이상 또는 주인조교경험 200이상
-        IF EXP:ARG:77 >= 40 || EXP:ARG:98 >= 200
+        IF EXP:ARG:창관인기 >= 40 || EXP:ARG:주인조교경험 >= 200
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1352,9 +1352,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[魅惑]をみる
-    IF TALENT:ARG:91
+    IF TALENT:ARG:매혹
         ;개화조건: 창관인기 45이상 또는 주인조교경험 300이상
-        IF EXP:ARG:77 >= 60 || EXP:ARG:98 >= 300
+        IF EXP:ARG:창관인기 >= 60 || EXP:ARG:주인조교경험 >= 300
             LOCAL = -100 + 170
             LOCAL:11 =  LOCAL:11 -100 + 170
             LOCAL:2 = LOCAL:2 - 100 +  170
@@ -1368,9 +1368,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[謎の魅力]をみる
-    IF TALENT:ARG:92
+    IF TALENT:ARG:수수께끼의매력
         ;개화조건: 창관인기 50이상 또는 주인조교경험 400이상.
-        IF EXP:ARG:77 >= 50 || EXP:ARG:98 >= 400
+        IF EXP:ARG:창관인기 >= 50 || EXP:ARG:주인조교경험 >= 400
             LOCAL = -100 + 190
             LOCAL:11 =  LOCAL:11 -100 + 190
             LOCAL:2 = LOCAL:2 - 100 +  190
@@ -1384,9 +1384,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[小悪魔]をみる
-    IF TALENT:ARG:93
+    IF TALENT:ARG:소악마
         ;개화조건: 욕망레벨이 5이상
-        IF ABL:ARG:11 >= 5
+        IF ABL:ARG:욕망 >= 5
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1400,9 +1400,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[人気]をみる
-    IF TALENT:ARG:94
+    IF TALENT:ARG:인기
         ;개화조건: 매춘경험 1이상 또는 노출쾌락경험 150이상
-        IF EXP:ARG:76 >= 1 || EXP:ARG:14 >= 150
+        IF EXP:ARG:매춘경험 >= 1 || EXP:ARG:노출쾌락경험 >= 150
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1416,9 +1416,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[고무]をみる
-    IF TALENT:ARG:95
+    IF TALENT:ARG:고무
         ;개화조건: 조수경험 50 이상
-        IF EXP:ARG:99 >= 50
+        IF EXP:ARG:조수경험 >= 50
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1432,14 +1432,14 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[Ｃ鈍感]をみる
-    IF TALENT:ARG:101 && ABL:ARG:0 < 4
+    IF TALENT:ARG:C둔감 && ABL:ARG:C감각 < 4
         LOCAL = -100 + 90
         LOCAL:11 =  LOCAL:11 -100 + 90
         LOCAL:2 = LOCAL:2 - 100 +  90
         SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 101
     ;[Ｃ敏感]をみる
-    ELSEIF TALENT:ARG:100 && ABL:ARG:0 > 2
+    ELSEIF TALENT:ARG:C민감 && ABL:ARG:C감각 > 2
         LOCAL = -100 + 120
         LOCAL:11 =  LOCAL:11 -100 + 120
         LOCAL:2 = LOCAL:2 - 100 +  120
@@ -1447,14 +1447,14 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 100
     ENDIF
     ;[Ｖ鈍感]をみる
-    IF TALENT:ARG:103 && ABL:ARG:1 < 4
+    IF TALENT:ARG:V둔감 && ABL:ARG:V감각< 4
         LOCAL = -100 + 90
         LOCAL:11 =  LOCAL:11 -100 + 90
         LOCAL:2 = LOCAL:2 - 100 +  90
         SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 103
     ;[Ｖ敏感]をみる
-    ELSEIF TALENT:ARG:102 && ABL:ARG:1 > 2
+    ELSEIF TALENT:ARG:V민감 && ABL:ARG:V감각> 2
         LOCAL = -100 + 130
         LOCAL:11 =  LOCAL:11 -100 + 130
         LOCAL:2 = LOCAL:2 - 100 +  130
@@ -1462,14 +1462,14 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 102
     ENDIF
     ;[Ａ鈍感]をみる
-    IF TALENT:ARG:105 && ABL:ARG:2 < 4
+    IF TALENT:ARG:A둔감 && ABL:ARG:A감각 < 4
         LOCAL = -100 + 90
         LOCAL:11 =  LOCAL:11 -100 + 80
         LOCAL:2 = LOCAL:2 - 100 +  90
         SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 105
     ;[Ａ敏感]をみる
-    ELSEIF TALENT:ARG:104 && ABL:ARG:2 > 2
+    ELSEIF TALENT:ARG:A민감 && ABL:ARG:A감각 > 2
         LOCAL = -100 + 130
         LOCAL:11 =  LOCAL:11 -100 + 130
         LOCAL:2 = LOCAL:2 - 100 +  130
@@ -1477,14 +1477,14 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 104
     ENDIF
     ;[Ｂ鈍感]をみる
-    IF TALENT:ARG:107 && ABL:ARG:3 < 4
+    IF TALENT:ARG:B둔감 && ABL:ARG:B감각 < 4
         LOCAL = -100 + 90
         LOCAL:11 =  LOCAL:11 -100 + 90
         LOCAL:2 = LOCAL:2 - 100 +  90
         SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 107
     ;[Ｂ敏感]をみる
-    ELSEIF TALENT:ARG:106 && ABL:ARG:3 > 2
+    ELSEIF TALENT:ARG:B민감 && ABL:ARG:B감각 > 2
         LOCAL = -100 + 130
         LOCAL:11 =  LOCAL:11 -100 + 130
         LOCAL:2 = LOCAL:2 - 100 +  130
@@ -1492,7 +1492,7 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 106
     ENDIF
     ;[動物耳]をみる
-    IF TALENT:ARG:116
+    IF TALENT:ARG:동물귀
         LOCAL = -100 + 110
         LOCAL:11 =  LOCAL:11 -100 + 110
         LOCAL:2 = LOCAL:2 - 100 +  110
@@ -1500,20 +1500,20 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 116
     ENDIF
     ;[オトコ]をみる
-    IF TALENT:ARG:120
-        IF BASE:ARG:0 >= 3000 && BASE:ARG:1 >= 2000
+    IF TALENT:ARG:남자
+        IF BASE:ARG:체력 >= 3000 && BASE:ARG:기력 >= 2000
             LOCAL = -100 + 250
             LOCAL:11 =  LOCAL:11 -100 + 250
             LOCAL:2 = LOCAL:2 - 100 +  250
-        ELSEIF ABL:ARG:10 > 3 && ABL:ARG:11 > 3 && ABL:ARG:23 > 2
+        ELSEIF ABL:ARG:순종 > 3 && ABL:ARG:욕망 > 3 && ABL:ARG:BL끼 > 2
             LOCAL = -100 + 200
             LOCAL:11 =  LOCAL:11 -100 + 200
             LOCAL:2 = LOCAL:2 - 100 +  200
-        ELSEIF ABL:ARG:10 > 2 && ABL:ARG:11 > 2 && ABL:ARG:23 > 1
+        ELSEIF ABL:ARG:순종 > 2 && ABL:ARG:욕망 > 2 && ABL:ARG:BL끼 > 1
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
-        ELSEIF ABL:ARG:10 > 1 && ABL:ARG:11 > 1 && ABL:ARG:23
+        ELSEIF ABL:ARG:순종 > 1 && ABL:ARG:욕망 > 1 && ABL:ARG:BL끼
             LOCAL = -100 + 90
             LOCAL:11 =  LOCAL:11 -100 + 90
             LOCAL:2 = LOCAL:2 - 100 +  90
@@ -1528,9 +1528,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[후타나리]をみる
-    IF TALENT:ARG:121
+    IF TALENT:ARG:후타나리
         ;개화조건: 사정경험 50 이상
-        IF EXP:ARG:3 >= 50
+        IF EXP:ARG:사정경험 >= 50
             LOCAL = -100 + 220
             LOCAL:11 =  LOCAL:11 -100 + 220
             LOCAL:2 = LOCAL:2 - 100 +  220
@@ -1544,9 +1544,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[수상한 뿌리]をみる
-    IF TALENT:ARG:122
+    IF TALENT:ARG:수상한뿌리
         ;개화조건: 사정경험 20 이상
-        IF EXP:ARG:3 >= 20
+        IF EXP:ARG:사정경험 >= 20
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -1560,9 +1560,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[具現]をみる
-    IF TALENT:ARG:123
+    IF TALENT:ARG:구현
         ;개화조건: 사정경험 40 이상
-        IF EXP:ARG:3 >= 40
+        IF EXP:ARG:사정경험 >= 40
             LOCAL = -100 + 190
             LOCAL:11 =  LOCAL:11 -100 + 190
             LOCAL:2 = LOCAL:2 - 100 +  190
@@ -1576,9 +1576,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[현계화]をみる
-    IF TALENT:ARG:124
+    IF TALENT:ARG:현계화
         ;개화조건: 사정경험 40 이상
-        IF EXP:ARG:3 >= 40
+        IF EXP:ARG:사정경험 >= 40
             LOCAL = -100 + 190
             LOCAL:11 =  LOCAL:11 -100 + 190
             LOCAL:2 = LOCAL:2 - 100 +  190
@@ -1592,9 +1592,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[광기의 눈]をみる
-    IF TALENT:ARG:125
+    IF TALENT:ARG:광기의눈
         ;개화조건 : 조수경험 50 이상 또는 호감도 300 이상. 또는 광기를 가지고 있다
-        IF EXP:ARG:99 >= 50 || CFLAG:ARG:2 >= 300 || TALENT:ARG:158
+        IF EXP:ARG:조수경험 >= 50 || CFLAG:ARG:호감도 >= 300 || TALENT:ARG:광기
             LOCAL = -100 + 210
             LOCAL:11 =  LOCAL:11 -100 + 210
             LOCAL:2 = LOCAL:2 - 100 +  210
@@ -1608,9 +1608,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[母乳体質]をみる
-    IF TALENT:ARG:134
+    IF TALENT:ARG:모유체질
         ;개화조건: 분유경험 100 이상
-        IF EXP:ARG:5 >= 100
+        IF EXP:ARG:분유경험 >= 100
             LOCAL = -100 + 200
             LOCAL:11 =  LOCAL:11 -100 + 200
             LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1624,9 +1624,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[卵生]をみる
-    IF TALENT:ARG:135
+    IF TALENT:ARG:난생
         ;개화조건: 산란경험 1회 이상
-        IF EXP:ARG:51 >= 1
+        IF EXP:ARG:산란경험 >= 1
             LOCAL = -100 + 200
             LOCAL:11 =  LOCAL:11 -100 + 200
             LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1640,9 +1640,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[産卵体質]をみる
-    IF TALENT:ARG:136
+    IF TALENT:ARG:산란체질
         ;개화조건: 산란경험 1회 이상
-        IF EXP:ARG:51 >= 1
+        IF EXP:ARG:산란경험 >= 1
             LOCAL = -100 + 200
             LOCAL:11 =  LOCAL:11 -100 + 200
             LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1656,9 +1656,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[回復早い]をみる
-    IF TALENT:ARG:137
+    IF TALENT:ARG:회복빠름
         ;개화조건: 고통쾌락경험 100회 이상 혹은 조교실신경험 3회 이상
-        IF EXP:ARG:30 >= 100 || EXP:ARG:55 >= 3
+        IF EXP:ARG:고통쾌락경험 >= 100 || EXP:ARG:조교실신경험 >= 3
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1672,9 +1672,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[回復遅い]をみる
-    IF TALENT:ARG:138
+    IF TALENT:ARG:회복느림
         ;개화조건: 고통쾌락경험 200회 이상 조교실신경험 3회 이상
-        IF EXP:ARG:30 >= 200 || EXP:ARG:55 >= 3
+        IF EXP:ARG:고통쾌락경험 >= 200 || EXP:ARG:조교실신경험 >= 3
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1689,7 +1689,7 @@ SIF !TFLAG:207
     ENDIF
     ;[親愛]をみる
     ; 이거 띄우고 팔아먹을 생각 말아라
-    IF TALENT:ARG:152
+    IF TALENT:ARG:친애
         LOCAL = -100 + -300
         LOCAL:11 =  LOCAL:11 -100 -200
         LOCAL:2 = LOCAL:2 - 100 -200
@@ -1698,7 +1698,7 @@ SIF !TFLAG:207
     ENDIF
     ;[相愛]をみる
     ; 이거 띄우고 팔아먹을 생각 말아라
-    IF TALENT:ARG:153
+    IF TALENT:ARG:상애
         LOCAL = -100 + -400
         LOCAL:11 =  LOCAL:11 -100  -300
         LOCAL:2 = LOCAL:2 - 100  -300
@@ -1707,9 +1707,9 @@ SIF !TFLAG:207
     ENDIF
     ;[狂気]をみる
     ; 원래대로라면 매각가에 큰 -를 줘야 하지만 플랑 때문에...
-    IF TALENT:ARG:158
+    IF TALENT:ARG:광기
         ;개화조건 : 흡혈귀 소질을 가지고 있다.
-        IF TALENT:ARG:205
+        IF TALENT:ARG:흡혈귀
             LOCAL = -100 + 105
             LOCAL:11 =  LOCAL:11 -100 + 105
             LOCAL:2 = LOCAL:2 - 100 +  105
@@ -1724,7 +1724,7 @@ SIF !TFLAG:207
     ENDIF
     ;[복종]をみる
     ; 노예의 가치를 증명했다.
-    IF TALENT:ARG:160
+    IF TALENT:ARG:복종
         LOCAL = -100 + 200
         LOCAL:11 =  LOCAL:11 -100 + 200
         LOCAL:2 = LOCAL:2 - 100+ 200
@@ -1733,7 +1733,7 @@ SIF !TFLAG:207
     ENDIF
     ;[낙인]をみる
     ; 팔아먹을 수가 없다. 그래도 보정치는 넣어둠
-    IF TALENT:ARG:161
+    IF TALENT:ARG:낙인
         LOCAL = -100 + -500
         LOCAL:11 =  LOCAL:11 -100 + -400
         LOCAL:2 = LOCAL:2 - 100+ -400
@@ -1742,7 +1742,7 @@ SIF !TFLAG:207
     ENDIF
     ;[예속]をみる
     ; 진정한 노예이다
-    IF TALENT:ARG:162
+    IF TALENT:ARG:예속
         LOCAL = -100 + 300
         LOCAL:11 =  LOCAL:11 -100 + 300
         LOCAL:2 = LOCAL:2 - 100+ 300
@@ -1751,7 +1751,7 @@ SIF !TFLAG:207
     ENDIF
     ;[傷物]をみる
     ; 이거 띄우고 팔아먹을 생각 말아라
-    IF TALENT:ARG:163
+    IF TALENT:ARG:흠집
         LOCAL = -100 + -200
         LOCAL:11 =  LOCAL:11 -100 -100
         LOCAL:2 = LOCAL:2 - 100 -100
@@ -1760,7 +1760,7 @@ SIF !TFLAG:207
     ENDIF
     ;[精神崩壊]をみる
     ; 이거 띄우고 팔아먹을 생각 말아라
-    IF TALENT:ARG:167
+    IF TALENT:ARG:정신붕괴
         LOCAL = -100 + -300
         LOCAL:11 =  LOCAL:11 -100 -200
         LOCAL:2 = LOCAL:2 - 100 -200
@@ -1770,7 +1770,7 @@ SIF !TFLAG:207
     
     ;[傀儡]をみる
     ; 이거 띄우고 팔아먹을 생각 말아라 (그나마 정신붕괴보다는 낫다. 이쪽은 말을 들으니까)
-    IF TALENT:ARG:168
+    IF TALENT:ARG:괴뢰
         LOCAL = -100 + -200
         LOCAL:11 =  LOCAL:11 -100  -100
         LOCAL:2 = LOCAL:2 - 100 -100
@@ -1779,7 +1779,7 @@ SIF !TFLAG:207
     ENDIF
     ;[淫乱]をみる
     ; 개화조건 없다. 유저의 노력에 의해 얻어진 결실
-    IF TALENT:ARG:170
+    IF TALENT:ARG:음란
         LOCAL = -100 + 180
         LOCAL:11 =  LOCAL:11 -100 + 180
         LOCAL:2 = LOCAL:2 - 100 +  180
@@ -1788,7 +1788,7 @@ SIF !TFLAG:207
     ENDIF
     ;[음핵/음경]をみる
     ; 개화조건 없다. 유저의 노력에 의해 얻어진 결실
-    IF TALENT:ARG:171
+    IF TALENT:ARG:음핵／음경
         LOCAL = -100 + 200
         LOCAL:11 =  LOCAL:11 -100 + 200
         LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1797,7 +1797,7 @@ SIF !TFLAG:207
     ENDIF
     ;[음호]をみる
     ; 개화조건 없다. 유저의 노력에 의해 얻어진 결실
-    IF TALENT:ARG:172
+    IF TALENT:ARG:음호
         LOCAL = -100 + 200
         LOCAL:11 =  LOCAL:11 -100 + 200
         LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1806,7 +1806,7 @@ SIF !TFLAG:207
     ENDIF
     ;[음고]をみる
     ; 개화조건 없다. 유저의 노력에 의해 얻어진 결실
-    IF TALENT:ARG:173
+    IF TALENT:ARG:음고
         LOCAL = -100 + 200
         LOCAL:11 =  LOCAL:11 -100 + 200
         LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1815,7 +1815,7 @@ SIF !TFLAG:207
     ENDIF
     ;[음유]をみる
     ; 개화조건 없다. 유저의 노력에 의해 얻어진 결실
-    IF TALENT:ARG:174
+    IF TALENT:ARG:음유
         LOCAL = -100 + 200
         LOCAL:11 =  LOCAL:11 -100 + 200
         LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1824,7 +1824,7 @@ SIF !TFLAG:207
     ENDIF
     ;[요도광]をみる
     ; 개화조건 없다. 유저의 노력에 의해 얻어진 결실
-    IF TALENT:ARG:175
+    IF TALENT:ARG:요도광
         LOCAL = -100 + 200
         LOCAL:11 =  LOCAL:11 -100 + 200
         LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1833,7 +1833,7 @@ SIF !TFLAG:207
     ENDIF
     ;[키스마]をみる
     ; 개화조건 없다. 유저의 노력에 의해 얻어진 결실
-    IF TALENT:ARG:176
+    IF TALENT:ARG:키스마
         LOCAL = -100 + 200
         LOCAL:11 =  LOCAL:11 -100 + 200
         LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1842,7 +1842,7 @@ SIF !TFLAG:207
     ENDIF
     ;[초S]
     ; 개화조건 없다. 유저의 노력에 의해 얻어진 결실
-    IF TALENT:ARG:177
+    IF TALENT:ARG:초S
         LOCAL = -100 + 200
         LOCAL:11 =  LOCAL:11 -100 + 200
         LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1851,7 +1851,7 @@ SIF !TFLAG:207
     ENDIF
     ;[초M]
     ; 개화조건 없다. 유저의 노력에 의해 얻어진 결실
-    IF TALENT:ARG:178
+    IF TALENT:ARG:초M
         LOCAL = -100 + 200
         LOCAL:11 =  LOCAL:11 -100 + 200
         LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1860,7 +1860,7 @@ SIF !TFLAG:207
     ENDIF
     ;[即落ち]をみる
     ;개화조건 없다. 유저의 노력에 의해 얻어진 결실 . 보통 다른 거 하다 얻게 됨.
-    IF TALENT:ARG:179
+    IF TALENT:ARG:즉각함락
         LOCAL = -100 + 170
         LOCAL:11 =  LOCAL:11 -100 + 170
         LOCAL:2 = LOCAL:2 - 100 +  170
@@ -1869,7 +1869,7 @@ SIF !TFLAG:207
     ENDIF
     ;[淫魔]をみる
     ; 개화조건 없다. 유저의 노력에 의해 얻어진 결실
-    IF TALENT:ARG:180
+    IF TALENT:ARG:음마
         LOCAL = -100 + 250
         LOCAL:11 =  LOCAL:11 -100 + 250
         LOCAL:2 = LOCAL:2 - 100 +  250
@@ -1877,9 +1877,9 @@ SIF !TFLAG:207
             CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 180
     ENDIF
     ;[音痴]をみる
-    IF TALENT:ARG:190
+    IF TALENT:ARG:음치
         ;개화조건 : 가창기능 1이상으로 해방
-        IF ABL:ARG:72 >= 1
+        IF ABL:ARG:가창기능 >= 1
             LOCAL = -100 + 130
             LOCAL:11 =  LOCAL:11 -100 + 130
             LOCAL:2 = LOCAL:2 - 100 +  130
@@ -1893,9 +1893,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[音感]をみる
-    IF TALENT:ARG:191
+    IF TALENT:ARG:음감
         ;개화조건 : 가창기능 3이상으로 해방
-        IF ABL:ARG:72 > 2
+        IF ABL:ARG:가창기능 > 2
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -1909,9 +1909,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[料理苦手]をみる
-    IF TALENT:ARG:192
+    IF TALENT:ARG:요리못함
         ;개화조건 : 요리기능 2이상으로 해방
-        IF ABL:ARG:70 > 1
+        IF ABL:ARG:요리기능 > 1
             LOCAL = -100 + 120
             LOCAL:11 =  LOCAL:11 -100 + 120
             LOCAL:2 = LOCAL:2 - 100 +  120
@@ -1925,9 +1925,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[料理得意]をみる.
-    IF TALENT:ARG:193
+    IF TALENT:ARG:요리잘함
         ;개화조건 : 요리기능 3이상으로 해방
-        IF ABL:ARG:70 >= 3
+        IF ABL:ARG:요리기능 >= 3
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -1941,9 +1941,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[調理名人]をみる
-    IF TALENT:ARG:194
+    IF TALENT:ARG:조리명인
         ;개화조건 : 요리기능 5이상으로 해방
-        IF ABL:ARG:70 >= 5
+        IF ABL:ARG:요리기능 >= 5
             LOCAL = -100 + 200
             LOCAL:11 =  LOCAL:11 -100 + 200
             LOCAL:2 = LOCAL:2 - 100 +  200
@@ -1957,9 +1957,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[보도자]をみる
-    IF TALENT:ARG:196
+    IF TALENT:ARG:보도자
         ;개화조건 : 촬영기능 4이상
-        IF ABL:ARG:71 >= 4
+        IF ABL:ARG:촬영기능 >= 4
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -1974,7 +1974,7 @@ SIF !TFLAG:207
     ENDIF
     ;[魔術技能]をみる
     ;개화조건 없음
-    IF TALENT:ARG:197
+    IF TALENT:ARG:마술기능
         LOCAL = -100 + 120
         LOCAL:11 =  LOCAL:11 -100 + 120
         LOCAL:2 = LOCAL:2 - 100 +  120
@@ -1983,7 +1983,7 @@ SIF !TFLAG:207
     ENDIF
     ;[吸血鬼]をみる
     ;흡혈회수로 해방되면 좋겠지만, 어디있는지 모르겠다. (흡혈을 한다 명령을 써야하는데... 조교로 활동할때만 발동하니까)
-    IF TALENT:ARG:205
+    IF TALENT:ARG:흡혈귀
         LOCAL = -100 + 130
         LOCAL:11 =  LOCAL:11 -100 + 130
         LOCAL:2 = LOCAL:2 - 100 +  130
@@ -1991,9 +1991,9 @@ SIF !TFLAG:207
         CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 205
     ENDIF
     ;[人形]をみる
-    IF TALENT:ARG:208
+    IF TALENT:ARG:인형
         ; 개화조건 : 괴뢰 상태일 것.
-        IF TALENT:ARG:168
+        IF TALENT:ARG:괴뢰
             LOCAL = -100 + 300
             LOCAL:11 =  LOCAL:11 -100 + 300
             LOCAL:2 = LOCAL:2 - 100 + 300
@@ -2007,9 +2007,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[河童]をみる
-    IF TALENT:ARG:210
+    IF TALENT:ARG:캇파
         ; 개화조건 : 순종이 5레벨이상, A감각 4이상 또는 배설중독 2레벨이상
-        IF ABL:ARG:10 > 4 || ABL:ARG:2 >= 4 || ABL:ARG:36 >= 2
+        IF ABL:ARG:순종 > 4 || ABL:ARG:A감각 >= 4 || ABL:ARG:배설중독 >= 2
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -2023,9 +2023,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[妖狐]をみる
-    IF TALENT:ARG:211
+    IF TALENT:ARG:요호
         ;개화조건 : 노출증이 5이상. 또는 또는 동물성애경험 10회 이상
-        IF ABL:ARG:14 >= 5 || EXP:ARG:56 >= 10
+        IF ABL:ARG:노출증 >= 5 || EXP:ARG:동물성애경험 >= 10
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -2039,9 +2039,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[사토리]をみる
-    IF TALENT:ARG:213
+    IF TALENT:ARG:사토리
         ;개화조건 : 애정경험 50 이상
-        IF EXP:ARG:21 >= 50
+        IF EXP:ARG:애정경험 >= 50
             LOCAL = -100 + 160
             LOCAL:11 =  LOCAL:11 -100 + 160
             LOCAL:2 = LOCAL:2 - 100 +  160
@@ -2055,9 +2055,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[오니]をみる
-    IF TALENT:ARG:214
+    IF TALENT:ARG:오니
         ;개화조건 : 고통쾌락경험 500 이상
-        IF EXP:ARG:30 >= 500
+        IF EXP:ARG:고통쾌락경험 >= 500
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -2072,9 +2072,9 @@ SIF !TFLAG:207
     ENDIF
     
     ;[텐구]をみる
-    IF TALENT:ARG:215
+    IF TALENT:ARG:텐구
         ;개화조건 : 촬영 혹은 피사경험 120 이상. 또는 동물성애경험1회 이상
-        IF EXP:ARG:71 >= 120 || EXP:ARG:72 >= 150  || EXP:ARG:56 >= 1
+        IF EXP:ARG:촬영경험 >= 120 || EXP:ARG:피사경험 >= 150  || EXP:ARG:동물성애경험 >= 1
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -2088,9 +2088,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[누에]をみる
-    IF TALENT:ARG:217
+    IF TALENT:ARG:누에
         ;개화조건 : 동물성애경험 10 이상 또는 연모,친애,상애소질 중 하나 획득
-        IF EXP:ARG:56 >= 10 || TALENT:ARG:150 ||TALENT:ARG:152 ||TALENT:ARG:153
+        IF EXP:ARG:동물성애경험 >= 10 || TALENT:ARG:연모 ||TALENT:ARG:친애 ||TALENT:ARG:상애
             LOCAL = -100 + 250
             LOCAL:11 =  LOCAL:11 -100 + 250
             LOCAL:2 = LOCAL:2 - 100 +  250
@@ -2104,9 +2104,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[博麗の巫女]をみる
-    IF TALENT:ARG:218
+    IF TALENT:ARG:하쿠레이의무녀
         ;개화조건 : 새드끼 3레벨 또는 노출증 4레벨이상
-        IF ABL:ARG:20 >=3 || ABL:ARG:14 >=4
+        IF ABL:ARG:새드끼 >=3 || ABL:ARG:노출증 >=4
             LOCAL = -100 + 150
             LOCAL:11 =  LOCAL:11 -100 + 150
             LOCAL:2 = LOCAL:2 - 100 +  150
@@ -2120,9 +2120,9 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[風祝]をみる
-    IF TALENT:ARG:219
+    IF TALENT:ARG:카제하후리
         ;개화조건 : 새드끼 4이상 또는 봉사쾌락경험 100이상
-        IF ABL:ARG:20 >=4 || EXP:ARG:20 >= 100
+        IF ABL:ARG:새드끼 >=4 || EXP:ARG:봉사쾌락경험 >= 100
             LOCAL = -100 + 140
             LOCAL:11 =  LOCAL:11 -100 + 140
             LOCAL:2 = LOCAL:2 - 100 +  140
@@ -2136,7 +2136,7 @@ SIF !TFLAG:207
         ENDIF
     ENDIF
     ;[爆発物]をみる
-    IF TALENT:ARG:220
+    IF TALENT:ARG:폭발물
         LOCAL = -100 + 85
         LOCAL:11 =  LOCAL:11 -100 + 85
         LOCAL:2 = LOCAL:2 - 100 +  85
@@ -2145,7 +2145,7 @@ SIF !TFLAG:207
     ENDIF
     ;[仙人]をみる
     ;개화조건 없다. 약간 인기없다는 설정. (카센이 너무 비싸서...)
-    IF TALENT:ARG:225
+    IF TALENT:ARG:선인
         LOCAL = -100 + 90
         LOCAL:11 =  LOCAL:11 -100 + 90
         LOCAL:2 = LOCAL:2 - 100 +  90
@@ -2154,7 +2154,7 @@ SIF !TFLAG:207
     ENDIF
     ;[売春中毒]をみる
     ; 개화조건 없다.
-    IF TALENT:ARG:262
+    IF TALENT:ARG:매춘중독
         LOCAL = -100 + 50
         LOCAL:11 =  LOCAL:11 -100 + 50
         LOCAL:2 = LOCAL:2 - 100 +  50
@@ -2163,7 +2163,7 @@ SIF !TFLAG:207
     ENDIF
     ;[看板娘]をみる
     ; 개화조건 없다.
-    IF TALENT:ARG:264
+    IF TALENT:ARG:간판소녀
         LOCAL = -100 + 125
         LOCAL:11 =  LOCAL:11 -100 + 125
         LOCAL:2 = LOCAL:2 - 100 +  125
@@ -2171,12 +2171,12 @@ SIF !TFLAG:207
             CALL TALENT_NONBLOSSOM_TORIKOMODE, LOCAL, 264
     ENDIF
     ;[단골]をみる
-    IF TALENT:ARG:265
+    IF TALENT:ARG:단골
         ;개화조건 : 단골1인 이상. 단골 수X2 만큼 상승.
-        IF TALENT:ARG:265 >= 1
-            LOCAL = -100 + 100 + (TALENT:ARG:265)*2
-            LOCAL:11 =  LOCAL:11 -100 + 100 + (TALENT:ARG:265)*2
-            LOCAL:2 = LOCAL:2 - 100 +  100 + (TALENT:ARG:265)*2
+        IF TALENT:ARG:단골 >= 1
+            LOCAL = -100 + 100 + (TALENT:ARG:단골)*2
+            LOCAL:11 =  LOCAL:11 -100 + 100 + (TALENT:ARG:단골)*2
+            LOCAL:2 = LOCAL:2 - 100 +  100 + (TALENT:ARG:단골)*2
         ELSE
             LOCAL = -100 + 95
             LOCAL:11 =  LOCAL:11 -100 + 95
@@ -2207,13 +2207,13 @@ PRINTL ----------------------------------
 CALL SETCOLOR_TORIKOMODE, "RED", 4
 
 ;임신하면 1/4
-IF TALENT:ARG:140
+IF TALENT:ARG:임신
     LOCAL:1 /= 4
     LOCAL:2 /= 4
     SIF !TFLAG:207
         PRINTFORML %TALENTNAME:140, 16, RIGHT% ×0.25 倍
 ;알을 배고 있으면 1/4
-ELSEIF TALENT:ARG:145
+ELSEIF TALENT:ARG:회란
     LOCAL:1 /= 4
     LOCAL:2 /= 4
     SIF !TFLAG:207
@@ -2221,7 +2221,7 @@ ELSEIF TALENT:ARG:145
 ENDIF
 
 ;조수경력이 있으면 1/2
-IF ISASSI:ARG && EXP:ARG:99 < EXPLV:5
+IF ISASSI:ARG && EXP:ARG:조수경험 < EXPLV:5
     LOCAL:1 /= 2
     LOCAL:2 /= 2
     SIF !TFLAG:207
@@ -2229,12 +2229,12 @@ IF ISASSI:ARG && EXP:ARG:99 < EXPLV:5
 ENDIF
 
 ;[拒絶]をみる
-SIF TALENT:ARG:830 && !TFLAG:207
+SIF TALENT:ARG:거절 && !TFLAG:207
     PRINTFORML %TALENTNAME:830, 16, RIGHT% ×1.00 倍
 
 ;売値補正(HARD以上かNORMAL以下で内容が違う)
 IF !TFLAG:207
-    IF FLAG:3 >= 3
+    IF FLAG:난이도 >= 3
         LOCAL:1 = PRICE_LIMIT_HARD(ARG, LOCAL:1)
     ELSE
         LOCAL:1 = PRICE_LIMIT_NORMAL(ARG, LOCAL:1)
@@ -2245,18 +2245,18 @@ ENDIF
     ;PRINTFORML {LOCAL:1} == LOCAL:1
 
 ;主人の調教師LV
-IF ABL:MASTER:99 == 0
+IF ABL:MASTER:조교사Lv == 0
     LOCAL = 100
-ELSEIF ABL:MASTER:99 == 1
+ELSEIF ABL:MASTER:조교사Lv == 1
     LOCAL = 120
     TIMES LOCAL:1 , 1.20
-ELSEIF ABL:MASTER:99 == 2
+ELSEIF ABL:MASTER:조교사Lv == 2
     LOCAL = 140
     TIMES LOCAL:1 , 1.40
-ELSEIF ABL:MASTER:99 == 3
+ELSEIF ABL:MASTER:조교사Lv == 3
     LOCAL = 160
     TIMES LOCAL:1 , 1.60
-ELSEIF ABL:MASTER:99 == 4
+ELSEIF ABL:MASTER:조교사Lv == 4
     LOCAL = 180
     TIMES LOCAL:1 , 1.80
 ELSE
@@ -2264,10 +2264,10 @@ ELSE
     TIMES LOCAL:1 , 2.00
 ENDIF
 SIF !TFLAG:207
-    PRINTFORML 주인의%ABLNAME:99%{ABL:MASTER:99} ×{LOCAL/100}.{LOCAL%100}
+    PRINTFORML 주인의%ABLNAME:99%{ABL:MASTER:조교사Lv} ×{LOCAL/100}.{LOCAL%100}
 
 ;YASAIモードのキャラ限定
-IF ((NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:0 == 2)) && NO:MASTER == 400 && (FLAG:570 & 4) == 0) || FLAG:570 & 2
+IF ((NO:ARG == 401 || NO:ARG == 403 || (NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 2)) && NO:MASTER == 400 && (FLAG:570 & 4) == 0) || FLAG:570 & 2
     LOCAL:1 +=50
     SIF !TFLAG:207
         PRINTFORML 중계인부재 ×0.5 倍
@@ -2512,8 +2512,8 @@ PRINTL
 ;………………………………………………
 @EDIT_CHARASALE_ABILITY_TORIKOMODE, ARG
 ;매각 가능 플래그
-SIF CFLAG:1 < 1
-    CFLAG:1 = 1
+SIF CFLAG:매각가능 < 1
+    CFLAG:매각가능 = 1
 ;従順、欲望、技巧、奉仕精神、露出癖、全感覚 지정 레벨로
 REPEAT 15
     SIF COUNT >= 4 && COUNT < 10
@@ -2544,10 +2544,10 @@ IF ARG ==  5
     REND
 
     ; 봉래부활횟수, 주정 부활횟수
-    CFLAG:163 = 1
-    CFLAG:164 = 1
+    CFLAG:봉래력으로부활회수 = 1
+    CFLAG:주정으로부활회수 = 1
 
-    TALENT:170 =1
+    TALENT:음란 =1
 
 
     ;전 소질 5렙으로
@@ -2566,53 +2566,53 @@ IF ARG ==  5
     REND
 
     ;각인 3렙으로
-    MARK:0 = 3
-    MARK:1 = 3
-    MARK:2 = 3
-    MARK:3 = 3
-    MARK:4 = 3
+    MARK:고통각인 = 3
+    MARK:쾌락각인 = 3
+    MARK:굴복각인 = 3
+    MARK:약물각인 = 3
+    MARK:치욕각인 = 3
     MARK:5 = 3
-    MARK:8 = 3
-    MARK:10 = 3
+    MARK:공포각인 = 3
+    MARK:불사각인 = 3
 
 ENDIF
 
 ;아다나 남자의 경우 V 경험 없ㅋ엉ㅋ
-SIF TALENT:0 || TALENT:120
-    ABL:1 = 0
+SIF TALENT:처녀 || TALENT:남자
+    ABL:V감각 = 0
 ;『매각가능』특수처리
 IF ARG == 3
     ;[해방]에 변화[억압]은 되돌린다. 또 [저항]이 소멸했을 경우, 부활.
-    IF CFLAG:13 & 1 && TALENT:32 == 0
-        TALENT:32 = 1
-        CFLAG:13 -= 1
-        IF CFLAG:12 & 65536 && TALENT:33
-            TALENT:33 = 0
-            CFLAG:12 -= 65536
+    IF CFLAG:소실이벤트 & 1 && TALENT:억압 == 0
+        TALENT:억압 = 1
+        CFLAG:소실이벤트 -= 1
+        IF CFLAG:트라우마판정 & 65536 && TALENT:해방
+            TALENT:해방 = 0
+            CFLAG:트라우마판정 -= 65536
         ENDIF
     ENDIF
-    IF CFLAG:13 & 2 && TALENT:34 == 0
-        TALENT:34 = 1
-        CFLAG:13 -= 2
+    IF CFLAG:소실이벤트 & 2 && TALENT:저항 == 0
+        TALENT:저항 = 1
+        CFLAG:소실이벤트 -= 2
     ENDIF
     ;매각에 순종이나 욕망이 레벨4 이상 필요한 경우 인상.
-    SIF TALENT:11 || TALENT:12
-        ABL:10 = 4
-    SIF TALENT:20 || TALENT:32 || TALENT:34
-        ABL:11 = 4
+    SIF TALENT:반항적 || TALENT:꿋꿋함
+        ABL:순종 = 4
+    SIF TALENT:자제심 || TALENT:억압 || TALENT:저항
+        ABL:욕망 = 4
     PRINTFORMW %CALLNAME:TARGET%を『매각가능』상태에 맞추었습니다.
 ;『육성완료』특수처리
 ELSE
     ;[억압]은 소멸하고[해방]에 변화, [저항]은 소멸했다고 가정.
-    IF TALENT:32
-        TALENT:32 = 0
-        TALENT:33 = 1
-        CFLAG:13 |= 1
-        CFLAG:12 |= 65536
+    IF TALENT:억압
+        TALENT:억압 = 0
+        TALENT:해방 = 1
+        CFLAG:소실이벤트 |= 1
+        CFLAG:트라우마판정 |= 65536
     ENDIF
-    IF TALENT:34
-        TALENT:34 = 0
-        CFLAG:13 |= 2
+    IF TALENT:저항
+        TALENT:저항 = 0
+        CFLAG:소실이벤트 |= 2
     ENDIF
     PRINTFORMW %CALLNAME:TARGET%を『육성완료』상태에 맞추었습니다.
 ENDIF
@@ -2626,9 +2626,9 @@ SIF !TFLAG:207
     DRAWLINE
 
 ;만약 얀데레가 켜져있다면 잠시 끈다.
-IF FLAG:14 & 4
+IF FLAG:조교모드 & 4
     LOCAL:99 =1
-    FLAG:14 ^= 4
+    FLAG:조교모드 ^= 4
 ENDIF
 
 ;가격계산, 출력
@@ -2646,7 +2646,7 @@ PRINTFORMW ※{LOCAL:1}圓(노예 판매가 기초치) × {(LOCAL:2)/100}.{(LOCA
 
 ; 얀데레를 껐다면 다시 켠다
 SIF LOCAL:99 == 1
-    FLAG:14 ^= 4
+    FLAG:조교모드 ^= 4
 
 SIF !TFLAG:207
     DRAWLINE

@@ -12,8 +12,8 @@ SIF DITEMTYPE:999:351 > 0
 SIF TEQUIP:54
     RETURN 1
 ;吸血鬼や動物耳には순종4がないと使用不可(プレイヤーが새드ならＯＫ)
-IF TALENT:205 || TALENT:116
-    SIF ABL:0 < 4 && TALENT:PLAYER:81 == 0
+IF TALENT:흡혈귀 || TALENT:동물귀
+    SIF ABL:C감각 < 4 && TALENT:PLAYER:새드 == 0
         RETURN 0
 ENDIF
 ;お風呂プレイ中じゃないとダメ
@@ -48,7 +48,7 @@ RETURN 1
 @COM351
 LOCAL:1 = 1
 PRINTL 샤워
-IF TEQUIP:54 || (FLAG:15 & 1024) == 0
+IF TEQUIP:54 || (FLAG:커맨드확장 & 1024) == 0
     COM_NAME = 샤워
 ELSE
     CALL SELECT_SHOWER
@@ -61,7 +61,7 @@ CALL TRAIN_MESSAGE_COM351
 ;온수(보통) 샤워, 샤워 정지
 IF LOCAL:1 == 1
     DOWNBASE:0 += 0
-    DOWNBASE:1 += 10
+    DOWNBASE:기력 += 10
 
     SOURCE:12 = 50
     SOURCE:16 = 400
@@ -72,7 +72,7 @@ ELSEIF LOCAL:1 == 2
     ;치르노＆레티는 별취급
     IF NO:TARGET == 5 || NO:TARGET == 12
         DOWNBASE:0 += 0
-        DOWNBASE:1 += 10
+        DOWNBASE:기력 += 10
     
         SOURCE:12 = 50
         SOURCE:16 = 400
@@ -80,7 +80,7 @@ ELSEIF LOCAL:1 == 2
         SOURCE:31 = 50
     ELSE
         DOWNBASE:0 += 20
-        DOWNBASE:1 += 30
+        DOWNBASE:기력 += 30
     
         SOURCE:12 = 50
         SOURCE:16 = 400
@@ -92,7 +92,7 @@ ELSEIF LOCAL:1 == 3
     ;치르노＆레티는 별취급
     IF NO:TARGET == 5 || NO:TARGET == 12
         DOWNBASE:0 += 40
-        DOWNBASE:1 += 60
+        DOWNBASE:기력 += 60
     
         SOURCE:12 = 50
         SOURCE:16 = 400
@@ -100,7 +100,7 @@ ELSEIF LOCAL:1 == 3
         SOURCE:31 = 400
     ELSE
         DOWNBASE:0 += 20
-        DOWNBASE:1 += 30
+        DOWNBASE:기력 += 30
 
         SOURCE:12 = 50
         SOURCE:16 = 400
@@ -123,52 +123,52 @@ ELSE
 ENDIF
 
 ;ABL:봉사 정신을 본다
-IF ABL:13 == 0
+IF ABL:봉사정신 == 0
     SOURCE:11 = 0
-ELSEIF ABL:13 == 1
+ELSEIF ABL:봉사정신 == 1
     SOURCE:11 = 20
-ELSEIF ABL:13 == 2
+ELSEIF ABL:봉사정신 == 2
     SOURCE:11 = 40
-ELSEIF ABL:13 == 3
+ELSEIF ABL:봉사정신 == 3
     SOURCE:11 = 70
-ELSEIF ABL:13 == 4
+ELSEIF ABL:봉사정신 == 4
     SOURCE:11 = 110
 ELSE
     SOURCE:11 = 150
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:16 , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:16 , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:16 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:16 , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:16 , 1.20
 ELSE
     TIMES SOURCE:16 , 1.30
 ENDIF
 
 ;흡혈귀의 경우
-IF TALENT:205
+IF TALENT:흡혈귀
     SOURCE:21 = 100
     TIMES SOURCE:20 , 1.60
     TIMES SOURCE:22 , 2.00
     TIMES SOURCE:32 , 1.40
 ENDIF
 ;동물귀의 경우
-IF TALENT:116
+IF TALENT:동물귀
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.60
     TIMES SOURCE:32 , 2.00
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -213,18 +213,18 @@ RETURN RESULT
 IF TEQUIP:54 == 1
     PRINTL <샤워 사용 중>
     DOWNBASE:0 += 0
-    DOWNBASE:1 += 10
+    DOWNBASE:기력 += 10
     SOURCE:17 += 200
 ELSEIF TEQUIP:54 == 2
     PRINTL <샤워(냉수) 사용 중>
     ;치르노＆레티는 구별
     IF NO:TARGET == 5 || NO:TARGET == 12
         DOWNBASE:0 += 0
-        DOWNBASE:1 += 10
+        DOWNBASE:기력 += 10
         SOURCE:17 += 200
     ELSE
         DOWNBASE:0 += 5
-        DOWNBASE:1 += 20
+        DOWNBASE:기력 += 20
         SOURCE:20 += 200
     ENDIF
 ELSEIF TEQUIP:54 == 3
@@ -232,12 +232,12 @@ ELSEIF TEQUIP:54 == 3
     ;치르노＆레티는 구별
     IF NO:TARGET == 5 || NO:TARGET == 12
         DOWNBASE:0 += 10
-        DOWNBASE:1 += 50
+        DOWNBASE:기력 += 50
         SOURCE:20 += 200
         SOURCE:31 += 50
     ELSE
         DOWNBASE:0 += 5
-        DOWNBASE:1 += 25
+        DOWNBASE:기력 += 25
         SOURCE:20 += 100
     ENDIF
 ENDIF
@@ -259,30 +259,30 @@ ELSE
 ENDIF
 
 ;ABL:봉사 정신을 본다
-IF ABL:13 == 0
+IF ABL:봉사정신 == 0
     SOURCE:11 += 0
-ELSEIF ABL:13 == 1
+ELSEIF ABL:봉사정신 == 1
     SOURCE:11 += 20
-ELSEIF ABL:13 == 2
+ELSEIF ABL:봉사정신 == 2
     SOURCE:11 += 40
-ELSEIF ABL:13 == 3
+ELSEIF ABL:봉사정신 == 3
     SOURCE:11 += 70
-ELSEIF ABL:13 == 4
+ELSEIF ABL:봉사정신 == 4
     SOURCE:11 += 110
 ELSE
     SOURCE:11 += 150
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:16 , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:16 , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:16 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:16 , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:16 , 1.20
 ELSE
     TIMES SOURCE:16 , 1.30
@@ -292,23 +292,23 @@ SOURCE:18 += 50
 SOURCE:12 += 50
 
 ;흡혈귀의 경우
-IF TALENT:205
+IF TALENT:흡혈귀
     SOURCE:21 += 150
     TIMES SOURCE:20 , 1.60
     TIMES SOURCE:22 , 2.00
     TIMES SOURCE:32 , 1.40
 ENDIF
 ;동물귀의 경우
-IF TALENT:116
+IF TALENT:동물귀
     SOURCE:32 += 150
     TIMES SOURCE:31 , 1.60
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:32 , 2.00
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -325,7 +325,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM351
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:290 > 0
     RETURN 0
 ;조교자奉仕 · ウフフ系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 2048) == 0
+SIF (FLAG:커맨드확장 & 2048) == 0
     RETURN 0
 ;コンドームを持っているか, 아이템なし設定でないとダメ
 SIF ITEM:78 == 0 && NOITEM == 0
@@ -56,7 +56,7 @@ COM_NAME = 콘돔
 TFLAG:99 = -1
 LOCAL = 0
 ;대상이 봉을 가지고 있다
-IF TALENT:120 || TALENT:121
+IF TALENT:남자 || TALENT:후타나리
     ;승마중, 나체정식안, 한증과 암반 욕 이외의 특수 목욕탕 입욕중, 옴트프레이중, 곤착용중을 제외
     SIF TEQUIP:43 == 0 && TEQUIP:60 == 0 && (TEQUIP:55 == 0 || TEQUIP:55 == 12 || TEQUIP:55 == 15) && TEQUIP:58 == 0 && TEQUIP:59 != 17
         LOCAL |= 1
@@ -148,14 +148,14 @@ ENDIF
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 0
-DOWNBASE:1 += 10
+DOWNBASE:기력 += 10
 
 ;조교 대상이 수면중 혹은 실신중의 경우는 소스 추가 없음.
 SIF EQUIP:14 || TFLAG:899 > 0
     RETURN 1
 
 ;조교 대상이 처녀
-IF TALENT:0 == 1
+IF TALENT:처녀 == 1
     SOURCE:11 = 10
     SOURCE:10 = 10
     SOURCE:18 = 20
@@ -165,7 +165,7 @@ ELSE
 ENDIF
 
 ;정조관념
-SIF TALENT:30
+SIF TALENT:정조관념
     TIMES SOURCE:11 , 1.50
 
 RETURN 1
@@ -175,7 +175,7 @@ RETURN 1
 ;--------------------------------------------------
 @ITEM_CONSUME_COM290
 ITEM:78 -= 1
-SIF FLAG:13 & 16 && MONEY:0 >= ITEMPRICE:78
+SIF FLAG:아이템확장 & 16 && MONEY:0 >= ITEMPRICE:78
     CALL FILL_PLURAL_ITEM, 78
 
 ;--------------------------------------------------
@@ -183,7 +183,7 @@ SIF FLAG:13 & 16 && MONEY:0 >= ITEMPRICE:78
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM290
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 SELECTCASE TFLAG:99
@@ -193,7 +193,7 @@ SELECTCASE TFLAG:99
             PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% 스스로 콘돔을 벗겼다.
         ELSE
             ;수면중, 실신, 재갈, 눈 가림, 긴박, 때 멈추어 반발 Lv2 이상의 머지않아도 아니어서 순종 3이상의 경우
-            IF ABL:10 >= 3 && EQUIP:14 == 0 && TFLAG:899 <= 0 && TEQUIP:42 == 0 && TEQUIP:41 == 0 && TEQUIP:40 == 0 && TEQUIP:71 == 0 && MARK:9 < 2
+            IF ABL:순종 >= 3 && EQUIP:14 == 0 && TFLAG:899 <= 0 && TEQUIP:42 == 0 && TEQUIP:41 == 0 && TEQUIP:40 == 0 && TEQUIP:71 == 0 && MARK:반발각인 < 2
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 콘돔을 물고, 입을 사용해 %CALLNAME:PLAYER%의 페니스에 상냥하게 씌웠다….
             ELSE
                 PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% 자신의 페니스에 콘돔을 씌웠다….
@@ -213,7 +213,7 @@ SELECTCASE TFLAG:99
                 PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% 스스로 콘돔을 벗겼다.
             ELSE
                 ;수면중, 실신, 재갈, 눈 가림, 긴박, 때 멈추어 반발 Lv2 이상의 머지않아도 아니어서 순종 3이상의 경우
-                IF ABL:10 >= 3 && EQUIP:14 == 0 && TFLAG:899 <= 0 && TEQUIP:42 == 0 && TEQUIP:41 == 0 && TEQUIP:40 == 0 && TEQUIP:71 == 0 && MARK:9 < 2
+                IF ABL:순종 >= 3 && EQUIP:14 == 0 && TFLAG:899 <= 0 && TEQUIP:42 == 0 && TEQUIP:41 == 0 && TEQUIP:40 == 0 && TEQUIP:71 == 0 && MARK:반발각인 < 2
                     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 콘돔을 물고, 입을 사용해 %CALLNAME:PLAYER%의 페니스에 상냥하게 씌웠다….
                 ELSE
                     PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% 자신의 페니스에 콘돔을 씌웠다….
@@ -224,7 +224,7 @@ SELECTCASE TFLAG:99
                 PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 콘돔을 벗겼다.
             ELSE
                 PRINTFORM %조사선택(CALLNAME:PLAYER, "는")% 
-                SIF ASSIPLAY && ABL:10 >= 3
+                SIF ASSIPLAY && ABL:순종 >= 3
                     PRINTFORM 콘돔을 물고, 입을 사용해 
                 PRINTFORMW %CALLNAME:TARGET%의 페니스에 콘돔을 씌웠다….
             ENDIF

@@ -9,25 +9,25 @@
 SIF DITEMTYPE:999:372 > 0
     RETURN 0
 ;特殊風呂系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 1024) == 0
+SIF (FLAG:커맨드확장 & 1024) == 0
     RETURN 0
 ;風呂を改装していないとダメ
-SIF (FLAG:74 & 4096) == 0
+SIF (FLAG:욕탕개조 & 4096) == 0
     RETURN 0
 ;一度も厄毒風呂に入ったことが無く, さらに異常경험이 5미만의 場合
 ;이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && (CFLAG:23 & 32) == 0 && EXP:50 < 5
+SIF FLAG:VA이상조교필터 & 4 && (CFLAG:첫목욕탕 & 32) == 0 && EXP:이상경험 < 5
     RETURN 0
 ;순종5미만의 ASSI일 경우, 実行できない(새드거나 새드끼Lv3이상か狂気, 또는 망신이나 복종이 있다면 ＯＫ)
 IF ASSIPLAY
-    SIF ABL:ASSI:10 < 5 && TALENT:ASSI:81 == 0 && ABL:ASSI:20 < 3 && TALENT:ASSI:158 == 0 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF ABL:ASSI:순종 < 5 && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:광기 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;해제는 언제든 가능
 SIF TEQUIP:55 == 14
     RETURN 1
 ;기계면 불가
-SIF TALENT:206
+SIF TALENT:기계
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -94,8 +94,8 @@ IF TEQUIP:55 == 14
 ENDIF
 
 ;약에 들어 있는 독 내성이라면 소모가 적은
-DOWNBASE:0 += (TALENT:44) ?  30 # 60
-DOWNBASE:1 += (TALENT:44) ?  50 # 100
+DOWNBASE:0 += (TALENT:약물내성) ?  30 # 60
+DOWNBASE:기력 += (TALENT:약물내성) ?  50 # 100
 
 SOURCE:20 = 900
 SOURCE:19 = 2000
@@ -106,23 +106,23 @@ LOCAL:2 = 8000
 LOCAL:3 = 1800
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL:1 , 0.50
     TIMES LOCAL:2 , 2.75
     TIMES LOCAL:3 , 0.60
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL:1 , 0.75
     TIMES LOCAL:2 , 1.80
     TIMES LOCAL:3 , 0.80
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL:1 , 1.00
     TIMES LOCAL:2 , 1.00
     TIMES LOCAL:3 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 0.80
     TIMES LOCAL:3 , 1.20
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL:1 , 2.00
     TIMES LOCAL:2 , 0.50
     TIMES LOCAL:3 , 1.50
@@ -133,7 +133,7 @@ ELSE
 ENDIF
 
 ;ABL:자위 중독, 정액 중독, 분유중독, 촉수 중독의 합계를 본다
-LOCAL:4 = ABL:30 + ABL:31 + ABL:34 + ABL:35
+LOCAL:4 = ABL:자위중독 + ABL:정액중독 + ABL:분유중독 + ABL:촉수중독
 IF LOCAL:4 == 0
     TIMES LOCAL:1 , 0.30
     TIMES LOCAL:2 , 2.00
@@ -161,37 +161,37 @@ ELSE
 ENDIF
 
 ;약에 들어 있는 독 내성
-IF TALENT:44
+IF TALENT:약물내성
     TIMES LOCAL:1 , 0.20
     TIMES LOCAL:2 , 0.40
     TIMES LOCAL:3 , 0.30
 ENDIF
 ;도착적
-IF TALENT:80
+IF TALENT:도착적
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 0.80
     TIMES LOCAL:3 , 1.20
 ENDIF
 ;마조
-IF TALENT:82
+IF TALENT:마조
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 0.50
     TIMES LOCAL:3 , 1.50
 ENDIF
 
 ;EXP:이상 경험을 본다
-IF EXP:50 < EXPLV:1
+IF EXP:이상경험 < EXPLV:1
     TIMES LOCAL:3 , 2.50
     SOURCE:25 += 250
-ELSEIF EXP:50 < EXPLV:2
+ELSEIF EXP:이상경험 < EXPLV:2
     TIMES LOCAL:3 , 1.80
     SOURCE:25 += 100
-ELSEIF EXP:50 < EXPLV:3
+ELSEIF EXP:이상경험 < EXPLV:3
     TIMES LOCAL:3 , 1.00
     SOURCE:25 += 50
-ELSEIF EXP:50 < EXPLV:4
+ELSEIF EXP:이상경험 < EXPLV:4
     TIMES LOCAL:3 , 0.50
-ELSEIF EXP:50 < EXPLV:5
+ELSEIF EXP:이상경험 < EXPLV:5
     TIMES LOCAL:3 , 0.30
 ELSE
     TIMES LOCAL:3 , 0.10
@@ -202,9 +202,9 @@ SOURCE:24 = LOCAL:1
 SOURCE:30 = LOCAL:2
 SOURCE:23 = LOCAL:3
 
-IF (CFLAG:23 & 32) == 0 && EXP:50 < 5
+IF (CFLAG:첫목욕탕 & 32) == 0 && EXP:이상경험 < 5
     TCVAR:50 += 1
-    CFLAG:23 |= 32
+    CFLAG:첫목욕탕 |= 32
 ENDIF
 RETURN 1
 
@@ -215,8 +215,8 @@ RETURN 1
 PRINTL <액독 담그기 중>
 
 ;약에 들어 있는 독 내성이라면 소모가 적은
-DOWNBASE:0 += (TALENT:44) ?  30 # 60
-DOWNBASE:1 += (TALENT:44) ?  40 # 80
+DOWNBASE:0 += (TALENT:약물내성) ?  30 # 60
+DOWNBASE:기력 += (TALENT:약물내성) ?  40 # 80
 
 SOURCE:20 += 400
 SOURCE:19 += 2000
@@ -227,23 +227,23 @@ LOCAL:2 = 2000
 LOCAL:3 = 400
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL:1 , 0.50
     TIMES LOCAL:2 , 2.75
     TIMES LOCAL:3 , 0.60
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL:1 , 0.75
     TIMES LOCAL:2 , 1.80
     TIMES LOCAL:3 , 0.80
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL:1 , 1.00
     TIMES LOCAL:2 , 1.00
     TIMES LOCAL:3 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 0.80
     TIMES LOCAL:3 , 1.20
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL:1 , 2.00
     TIMES LOCAL:2 , 0.50
     TIMES LOCAL:3 , 1.50
@@ -254,7 +254,7 @@ ELSE
 ENDIF
 
 ;ABL:자위 중독, 정액 중독, 분유중독, 촉수 중독의 합계를 본다
-LOCAL:4 = ABL:30 + ABL:31 + ABL:34 + ABL:35
+LOCAL:4 = ABL:자위중독 + ABL:정액중독 + ABL:분유중독 + ABL:촉수중독
 IF LOCAL:4 == 0
     TIMES LOCAL:1 , 0.30
     TIMES LOCAL:2 , 2.00
@@ -282,37 +282,37 @@ ELSE
 ENDIF
 
 ;약에 들어 있는 독 내성
-IF TALENT:44
+IF TALENT:약물내성
     TIMES LOCAL:1 , 0.20
     TIMES LOCAL:2 , 0.40
     TIMES LOCAL:3 , 0.30
 ENDIF
 ;도착적
-IF TALENT:80
+IF TALENT:도착적
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 0.80
     TIMES LOCAL:3 , 1.20
 ENDIF
 ;마조
-IF TALENT:82
+IF TALENT:마조
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 0.50
     TIMES LOCAL:3 , 1.50
 ENDIF
 
 ;EXP:이상 경험을 본다
-IF EXP:50 < EXPLV:1
+IF EXP:이상경험 < EXPLV:1
     TIMES LOCAL:3 , 2.50
     SOURCE:19 += 250
-ELSEIF EXP:50 < EXPLV:2
+ELSEIF EXP:이상경험 < EXPLV:2
     TIMES LOCAL:3 , 1.80
     SOURCE:19 += 100
-ELSEIF EXP:50 < EXPLV:3
+ELSEIF EXP:이상경험 < EXPLV:3
     TIMES LOCAL:3 , 1.00
     SOURCE:19 += 50
-ELSEIF EXP:50 < EXPLV:4
+ELSEIF EXP:이상경험 < EXPLV:4
     TIMES LOCAL:3 , 0.50
-ELSEIF EXP:50 < EXPLV:5
+ELSEIF EXP:이상경험 < EXPLV:5
     TIMES LOCAL:3 , 0.30
 ELSE
     TIMES LOCAL:3 , 0.10
@@ -329,7 +329,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM372
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -338,15 +338,15 @@ IF TEQUIP:55 == 14
 ELSE
     PRINTFORML 정체를 알 수 없는 액체로 가득한 욕조에 %조사선택(CALLNAME:TARGET, "를")% 빠뜨렸다.
     PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-    IF EXP:50 < EXPLV:1
+    IF EXP:이상경험 < EXPLV:1
         PRINTW 정체를 알 수 없는 액체가 몸에 얽혀 붙는 감촉에 공포를 느끼고 있는 것 같다….
-    ELSEIF EXP:50 < EXPLV:2
+    ELSEIF EXP:이상경험 < EXPLV:2
         PRINTW 수수께끼의 액체의 감촉에 강한 불쾌감을 느끼고 있는 것 같다….
-    ELSEIF EXP:50 < EXPLV:3
+    ELSEIF EXP:이상경험 < EXPLV:3
         PRINTW 눈을 꼭 감고 무언가를 참고 있는 듯, 몸을 움츠렸다.
-    ELSEIF EXP:50 < EXPLV:4
+    ELSEIF EXP:이상경험 < EXPLV:4
         PRINTW 어색한 표정을 지으면서, 이런 것에 익숙해져 버린 자신에게 단념해버리고 있다….
-    ELSEIF EXP:50 < EXPLV:5
+    ELSEIF EXP:이상경험 < EXPLV:5
         PRINTFORMW 얼굴의 반을 액체 안에 가라앉히고, 약간 불만 섞인 눈으로 %조사선택(CALLNAME:MASTER, "를")% 보고 있다….
     ELSE
         PRINTW 완전하게 익숙해져 있는지, 얼굴색 하나 바꾸지 않고 욕조에 잠겨있다.

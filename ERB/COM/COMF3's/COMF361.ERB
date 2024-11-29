@@ -9,29 +9,29 @@
 SIF DITEMTYPE:999:361 > 0
     RETURN 0
 ;特殊風呂系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 1024) == 0
+SIF (FLAG:커맨드확장 & 1024) == 0
     RETURN 0
 ;風呂を改装していないとダメ
-SIF (FLAG:74 & 2) == 0
+SIF (FLAG:욕탕개조 & 2) == 0
     RETURN 0
 ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
-;一度も鰻風呂に入ったことが無い場合, もしくはＶ경험レベルが0일 경우
+;一度も鰻風呂に入ったことが無い場合, もしくはV경험レベルが0일 경우
 ;이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && ( EXP:0 < EXPLV:1 || (CFLAG:23 & 2) == 0 )
+SIF FLAG:VA이상조교필터 & 4 && ( EXP:V경험 < EXPLV:1 || (CFLAG:첫목욕탕 & 2) == 0 )
     RETURN 0
 ;해제는 언제든 가능
 SIF TEQUIP:55 == 2
     RETURN 1
 ;조교자가 ミスティアまたは衣玖さんまたは금단의 지식을 갖고 있지 않으면 불가
-SIF TALENT:PLAYER:56 == 0 && NO:PLAYER != 25 && NO:PLAYER != 51
+SIF TALENT:PLAYER:금단의지식 == 0 && NO:PLAYER != 25 && NO:PLAYER != 51
     RETURN 0
 ;기계면 불가
-SIF TALENT:206
+SIF TALENT:기계
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -104,7 +104,7 @@ COM_NAME = %LOCALS:(TFLAG:155)%
 
 TFLAG:147 = 0
 ;남자
-SIF TALENT:120
+SIF TALENT:남자
     TFLAG:147 |= 1
 ;바이브래이터등의 기구를 삽입하고 있다
 SIF TEQUIP:20 || TEQUIP:21
@@ -125,34 +125,34 @@ ENDIF
 TEQUIP:55 = 2
 IF (TFLAG:147 & 1) == 0
     ;ABL:V감각을 본다
-    IF ABL:1 == 0
+    IF ABL:V감각 == 0
         SOURCE:1 = 50
-    ELSEIF ABL:1 == 1
+    ELSEIF ABL:V감각 == 1
         SOURCE:1 = 200
-    ELSEIF ABL:1 == 2
+    ELSEIF ABL:V감각 == 2
         SOURCE:1 = 400
-    ELSEIF ABL:1 == 3
+    ELSEIF ABL:V감각 == 3
         SOURCE:1 = 800
-    ELSEIF ABL:1 == 4
+    ELSEIF ABL:V감각 == 4
         SOURCE:1 = 1200
     ELSE
         SOURCE:1 = 1600
     ENDIF
     ;EXP:V경험을 본다
-    IF EXP:0 < EXPLV:1
+    IF EXP:V경험 < EXPLV:1
         TIMES SOURCE:1 , 0.20
         SOURCE:20 += 5000
         TCVAR:50 += 1
-    ELSEIF EXP:0 < EXPLV:2
+    ELSEIF EXP:V경험 < EXPLV:2
         TIMES SOURCE:1 , 0.60
         SOURCE:20 += 200
-    ELSEIF EXP:0 < EXPLV:3
+    ELSEIF EXP:V경험 < EXPLV:3
         TIMES SOURCE:1 , 1.00
         SOURCE:20 += 50
-    ELSEIF EXP:0 < EXPLV:4
+    ELSEIF EXP:V경험 < EXPLV:4
         TIMES SOURCE:1 , 1.20
         SOURCE:20 += 10
-    ELSEIF EXP:0 < EXPLV:5
+    ELSEIF EXP:V경험 < EXPLV:5
         TIMES SOURCE:1 , 1.40
         SOURCE:20 += 0
     ELSE
@@ -162,19 +162,19 @@ IF (TFLAG:147 & 1) == 0
 ENDIF
 IF (TFLAG:147 & 2) == 0
     ;ABL:A감각을 본다
-    IF ABL:2 == 0
+    IF ABL:A감각 == 0
         SOURCE:2 = 50
         SOURCE:22 = 200
-    ELSEIF ABL:2 == 1
+    ELSEIF ABL:A감각 == 1
         SOURCE:2 = 200
         SOURCE:22 = 600
-    ELSEIF ABL:2 == 2
+    ELSEIF ABL:A감각 == 2
         SOURCE:2 = 400
         SOURCE:22 = 1000
-    ELSEIF ABL:2 == 3
+    ELSEIF ABL:A감각 == 3
         SOURCE:2 = 800
         SOURCE:22 = 1400
-    ELSEIF ABL:2 == 4
+    ELSEIF ABL:A감각 == 4
         SOURCE:2 = 1200
         SOURCE:22 = 1800
     ELSE
@@ -182,19 +182,19 @@ IF (TFLAG:147 & 2) == 0
         SOURCE:22 = 2100
     ENDIF
     ;EXP:A경험을 본다
-    IF EXP:1 < EXPLV:1
+    IF EXP:A경험 < EXPLV:1
         TIMES SOURCE:2 , 0.50
         SOURCE:20 += 1500
-    ELSEIF EXP:1 < EXPLV:2
+    ELSEIF EXP:A경험 < EXPLV:2
         TIMES SOURCE:2 , 1.00
         SOURCE:20 += 200
-    ELSEIF EXP:1 < EXPLV:3
+    ELSEIF EXP:A경험 < EXPLV:3
         TIMES SOURCE:2 , 1.10
         SOURCE:20 += 50
-    ELSEIF EXP:1 < EXPLV:4
+    ELSEIF EXP:A경험 < EXPLV:4
         TIMES SOURCE:2 , 1.20
         SOURCE:20 += 10
-    ELSEIF EXP:1 < EXPLV:5
+    ELSEIF EXP:A경험 < EXPLV:5
         TIMES SOURCE:2 , 1.40
         SOURCE:20 += 0
     ELSE
@@ -229,65 +229,65 @@ ENDIF
 
 LOCAL:1 = 100
 ;EXP:이상 경험을 본다
-IF EXP:50 < EXPLV:1
+IF EXP:이상경험 < EXPLV:1
     TIMES LOCAL:1 , 3.00
-ELSEIF EXP:50 < EXPLV:2
+ELSEIF EXP:이상경험 < EXPLV:2
     TIMES LOCAL:1 , 2.50
-ELSEIF EXP:50 < EXPLV:3
+ELSEIF EXP:이상경험 < EXPLV:3
     TIMES LOCAL:1 , 2.00
-ELSEIF EXP:50 < EXPLV:4
+ELSEIF EXP:이상경험 < EXPLV:4
     TIMES LOCAL:1 , 1.00
-ELSEIF EXP:50 < EXPLV:5
+ELSEIF EXP:이상경험 < EXPLV:5
     TIMES LOCAL:1 , 0.80
 ELSE
     TIMES LOCAL:1 , 0.60
 ENDIF
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 30
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 150
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 600
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 1200
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 1800
 ELSE
     SOURCE:0 = 2500
 ENDIF
 
 ;ABL:B감각을 본다
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     SOURCE:3 = 20
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     SOURCE:3 = 100
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     SOURCE:3 = 500
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     SOURCE:3 = 1000
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     SOURCE:3 = 1500
 ELSE
     SOURCE:3 = 2000
 ENDIF
 
 ;겁쟁이
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL:1 , 2.00
 ;감정결여
-SIF TALENT:22
+SIF TALENT:감정결여
     TIMES LOCAL:1 , 0.60
 ;[소인]
-SIF TALENT:127
+SIF TALENT:소인
     TIMES SOURCE:20 , 1.80
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:20 , 1.20
 
 DOWNBASE:0 += LOCAL:1 / 4
-DOWNBASE:1 += LOCAL:1 / 2
+DOWNBASE:기력 += LOCAL:1 / 2
 
 SOURCE:25 += LOCAL:1 * (1 + TFLAG:155)
 SOURCE:31 += LOCAL:1 * 3
@@ -303,20 +303,20 @@ ENDIF
 
 IF (TFLAG:147 & 2) == 0
     TFLAG:167 = 1
-    STAIN:4 = 72
+    STAIN:애널 = 72
 ENDIF
 IF (TFLAG:147 & 1) == 0
     TFLAG:166 = 1
-    STAIN:3 = 65
+    STAIN:보지 = 65
 ENDIF
-IF (CFLAG:23 & 2) == 0
+IF (CFLAG:첫목욕탕 & 2) == 0
     TCVAR:50 += 1
-    CFLAG:23 |= 2
+    CFLAG:첫목욕탕 |= 2
 ENDIF
 
-STAIN:1 = 64
-STAIN:2 = 66
-STAIN:5 = 64
+STAIN:손 = 64
+STAIN:자지 = 66
+STAIN:가슴 = 64
 ;촉수 경험 플래그
 TFLAG:90 = 0
 RETURN 1
@@ -327,11 +327,11 @@ RETURN 1
 @EQUIP_COM361
 PRINTL <뱀장어 목욕탕 입욕 중>
 
-LOCAL:4 = (TALENT:120 || TEQUIP:20 || TEQUIP:21) ?  0 # 1
+LOCAL:4 = (TALENT:남자 || TEQUIP:20 || TEQUIP:21) ?  0 # 1
 LOCAL:5 = (TEQUIP:25 || TEQUIP:26) ?  0 # 1
 TFLAG:147 = 0
 ;남자
-SIF TALENT:120
+SIF TALENT:남자
     TFLAG:147 |= 1
 ;바이브래이터등의 기구를 삽입하고 있다
 SIF TEQUIP:20 || TEQUIP:21
@@ -343,15 +343,15 @@ IF (TFLAG:147 & 1) == 0 || TFLAG:166 == 1
     ;V경험을 수반하는 커맨드의 플래그(처녀막 재생 대응)
     TFLAG:1 = 1
     ;ABL:V감각을 본다
-    IF ABL:1 == 0
+    IF ABL:V감각 == 0
         LOCAL:1 = 20
-    ELSEIF ABL:1 == 1
+    ELSEIF ABL:V감각 == 1
         LOCAL:1 = 40
-    ELSEIF ABL:1 == 2
+    ELSEIF ABL:V감각 == 2
         LOCAL:1 = 80
-    ELSEIF ABL:1 == 3
+    ELSEIF ABL:V감각 == 3
         LOCAL:1 = 160
-    ELSEIF ABL:1 == 4
+    ELSEIF ABL:V감각 == 4
         LOCAL:1 = 320
     ELSE
         LOCAL:1 = 640
@@ -364,15 +364,15 @@ IF (TFLAG:147 & 1) == 0 || TFLAG:166 == 1
 ENDIF
 IF (TFLAG:147 & 2) == 0 || TFLAG:167 == 1
     ;ABL:A감각을 본다
-    IF ABL:2 == 0
+    IF ABL:A감각 == 0
         LOCAL:2 = 15
-    ELSEIF ABL:2 == 1
+    ELSEIF ABL:A감각 == 1
         LOCAL:2 = 30
-    ELSEIF ABL:2 == 2
+    ELSEIF ABL:A감각 == 2
         LOCAL:2 = 60
-    ELSEIF ABL:2 == 3
+    ELSEIF ABL:A감각 == 3
         LOCAL:2 = 120
-    ELSEIF ABL:2 == 4
+    ELSEIF ABL:A감각 == 4
         LOCAL:2 = 240
     ELSE
         LOCAL:2 = 600
@@ -386,29 +386,29 @@ IF (TFLAG:147 & 2) == 0 || TFLAG:167 == 1
 ENDIF
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 += 30
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 += 50
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 += 100
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 += 200
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 += 400
 ELSE
     SOURCE:0 += 800
 ENDIF
 ;ABL:B감각을 본다
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     SOURCE:3 += 20
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     SOURCE:3 += 40
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     SOURCE:3 += 80
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     SOURCE:3 += 160
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     SOURCE:3 += 320
 ELSE
     SOURCE:3 += 640
@@ -416,35 +416,35 @@ ENDIF
 
 LOCAL = 100
 ;EXP:이상 경험을 본다
-IF EXP:50 < EXPLV:1
+IF EXP:이상경험 < EXPLV:1
     TIMES LOCAL , 3.00
-ELSEIF EXP:50 < EXPLV:2
+ELSEIF EXP:이상경험 < EXPLV:2
     TIMES LOCAL , 2.50
-ELSEIF EXP:50 < EXPLV:3
+ELSEIF EXP:이상경험 < EXPLV:3
     TIMES LOCAL , 2.00
-ELSEIF EXP:50 < EXPLV:4
+ELSEIF EXP:이상경험 < EXPLV:4
     TIMES LOCAL , 1.00
-ELSEIF EXP:50 < EXPLV:5
+ELSEIF EXP:이상경험 < EXPLV:5
     TIMES LOCAL , 0.80
 ELSE
     TIMES LOCAL , 0.60
 ENDIF
 
 ;겁쟁이
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL , 2.00
 ;감정결여
-SIF TALENT:22
+SIF TALENT:감정결여
     TIMES LOCAL , 0.60
 ;[소인]
-SIF TALENT:127
+SIF TALENT:소인
     TIMES LOCAL , 1.80
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES LOCAL , 1.20
 
 DOWNBASE:0 += LOCAL / 2
-DOWNBASE:1 += LOCAL / 3
+DOWNBASE:기력 += LOCAL / 3
 
 SOURCE:25 += LOCAL * 5
 SOURCE:30 += LOCAL * 5
@@ -460,19 +460,19 @@ ELSEIF TFLAG:155 == 2
     SOURCE:18 += LOCAL
 ENDIF
 
-STAIN:1 = 64
-STAIN:2 = 66
-STAIN:5 = 64
-STAIN:6 = 64
-STAIN:7 = 64
+STAIN:손 = 64
+STAIN:자지 = 66
+STAIN:가슴 = 64
+STAIN:다리 = 64
+STAIN:발 = 64
 TIMES SOURCE:20 , 1.20
 IF (TFLAG:147 & 1) == 0
     TCVAR:0 += 2
-    STAIN:3 = 65
+    STAIN:보지 = 65
 ENDIF
 IF (TFLAG:147 & 2) == 0
     TCVAR:1 += 2
-    STAIN:4 = 72
+    STAIN:애널 = 72
 ENDIF
 RETURN 1
 
@@ -481,7 +481,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM361
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -504,7 +504,7 @@ ELSE
     IF (TFLAG:147 & 1) == 0
         PRINTL
         PRINTFORML 몇 마리의 뱀장어는 %CALLNAME:TARGET%의 질구가 비어있는 걸 알아채고 그 안에 기어들어갔다.
-        IF TALENT:0
+        IF TALENT:처녀
             PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 눈에 눈물을 머금고 반미치광이가 되어 뱀장어를 질안에서 잡아 끌어내려 했지만,
             PRINTW 뱀장어들이 분비하는 점액에 의해 별다른 저항도 하지 못한 채 처녀의 증거를 찢겨 먹혀버렸다….
             ;V경험을 수반하는 커맨드의 플래그(처녀막 재생 대응)

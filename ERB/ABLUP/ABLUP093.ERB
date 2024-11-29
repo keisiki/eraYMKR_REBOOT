@@ -3,14 +3,14 @@
 ;=============================================================================
 @ABLUP93
 DRAWLINE
-SIF MARK:3 >= 3
+SIF MARK:약물각인 >= 3
     JUMP ABLUP_MAX
 
 ;上げるときは異常経験必要(素質：[中毒しやすい]なら無視できる)
 SIF COST93(3)
     PRINTFORM %EXPNAME:50% {COST93(3)} 이상, 그리고 
 ;薬物刻印Lv+1Lvの快楽刻印が必要
-PRINTFORML %MARKNAME:1% {MARK:3 + 1}LV 이상(현재 {MARK:1})이며 
+PRINTFORML %MARKNAME:1% {MARK:약물각인 + 1}LV 이상(현재 {MARK:쾌락각인})이며 
 
 PRINTFORM [0] - %PALAMNAME:13%의 구슬×{COST93(0)}, %PALAMNAME:30%의 구슬×{COST93(1)}, %EXPNAME:40% {COST93(2)} 이상……
 CALL SHOW_ISABLUP_COMMON, CAN93(0)
@@ -31,10 +31,10 @@ ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-CALL COMMON_MARK_UP, TARGET, 3, MARK:3+1, 0
+CALL COMMON_MARK_UP, TARGET, 3, MARK:약물각인+1, 0
 
 ;薬物刻印がLv3になったとき, 남은薬毒의 구슬を別의 구슬로 변환可能
-SIF MARK:3 == 3
+SIF MARK:약물각인 == 3
     CALL EXCHANGE_JUEL_ABLUP93
 
 @AUTO_ABLUP93
@@ -54,7 +54,7 @@ RETURN 1
 ;レベルアップに必要な珠計算, レベルアップ予告処理
 ;--------------------------------------------------
 @ISABLUP93
-SIF MARK:3 >= 3
+SIF MARK:약물각인 >= 3
     RETURN 0
 
 CALLF CALC_COST93, "CALC"
@@ -73,32 +73,32 @@ SIF ARGS == "GET"
 ;必要な条件の算出
 VARSET LOCAL, 0
 
-IF MARK:3 == 0
+IF MARK:약물각인 == 0
     LOCAL:0 = 40000
     LOCAL:1 = 10000
     LOCAL:2 = 50
     ;一線越えない
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 1.50
         TIMES LOCAL:1 , 1.50
         TIMES LOCAL:2 , 1.50
     ENDIF
-ELSEIF MARK:3 == 1
+ELSEIF MARK:약물각인 == 1
     LOCAL:0 = 80000
     LOCAL:1 = 50000
     LOCAL:2 = 100
     ;一線越えない
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 2.00
         TIMES LOCAL:1 , 2.00
         TIMES LOCAL:2 , 2.00
     ENDIF
-ELSEIF MARK:3 == 2
+ELSEIF MARK:약물각인 == 2
     LOCAL:0 = 160000
     LOCAL:1 = 100000
     LOCAL:2 = 200
     ;一線越えない
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 3.00
         TIMES LOCAL:1 , 3.00
         TIMES LOCAL:2 , 3.00
@@ -106,7 +106,7 @@ ELSEIF MARK:3 == 2
 ENDIF
 
 ;必要な異常経験計算(素質：[中毒しやすい]なら無視できる)
-IF TALENT:84 == 0
+IF TALENT:중독되기쉬움 == 0
     REPEAT 8
         LOCAL:3 += ABL:(30+COUNT)
     REND
@@ -127,67 +127,67 @@ IF TALENT:84 == 0
 ENDIF
 
 ;薬毒耐性
-IF TALENT:44
+IF TALENT:약물내성
     TIMES LOCAL:0 , 3.00
     TIMES LOCAL:1 , 3.00
     TIMES LOCAL:2 , 3.00
 ENDIF
 ;媚薬中毒
-IF TALENT:46
+IF TALENT:미약중독
     TIMES LOCAL:1 , 0.25
     TIMES LOCAL:2 , 0.25
 ENDIF
 ;快感に素直
-IF TALENT:70
+IF TALENT:쾌감에솔직
     TIMES LOCAL:0 , 0.50
     TIMES LOCAL:3 , 0.50
 ;快感の否定
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     TIMES LOCAL:0 , 1.50
     TIMES LOCAL:3 , 1.50
 ENDIF
 ;中毒しやすい
-IF TALENT:84
+IF TALENT:중독되기쉬움
     TIMES LOCAL:0 , 0.75
     TIMES LOCAL:1 , 0.75
     TIMES LOCAL:2 , 0.75
 ;中毒しにくい
-ELSEIF TALENT:85
+ELSEIF TALENT:중독되기어려움
     TIMES LOCAL:0 , 1.25
     TIMES LOCAL:1 , 1.25
     TIMES LOCAL:2 , 1.25
 ENDIF
 ;即落ち
-IF TALENT:179
+IF TALENT:즉각함락
     TIMES LOCAL:0 , 0.50
     TIMES LOCAL:1 , 0.50
     TIMES LOCAL:2 , 0.50
     TIMES LOCAL:3 , 0.50
 ENDIF
 ;呪精
-IF TALENT:48
+IF TALENT:주정
     TIMES LOCAL:0 , 1.50
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
 ENDIF
 ;蓬莱人
-IF TALENT:49
+IF TALENT:봉래인
     TIMES LOCAL:0 , 2.50
     TIMES LOCAL:1 , 2.50
     TIMES LOCAL:2 , 2.50
 ENDIF
 ;機械
-IF TALENT:206
+IF TALENT:기계
     TIMES LOCAL:1 , 2.50
     TIMES LOCAL:2 , 2.50
 ENDIF
 ;霊体
-IF TALENT:207
+IF TALENT:영체
     TIMES LOCAL:0 , 1.50
     TIMES LOCAL:1 , 1.50
 ENDIF
 ;人形
-IF TALENT:208
+IF TALENT:인형
     TIMES LOCAL:0 , 1.50
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -205,11 +205,11 @@ SIF ARGS == "GET"
     RETURNF LOCAL:ARG
 VARSET LOCAL, 0
 ;薬物刻印Lv+1Lvと同じLvの快楽刻印が必要
-SIF MARK:3 + 1 > MARK:1
+SIF MARK:약물각인 + 1 > MARK:쾌락각인
     LOCAL:0 |= 8
 
 ;上げるときは異常経験が必要(素質：[中毒しやすい]なら無視できる)
-IF EXP:50 < COST93(3)
+IF EXP:이상경험 < COST93(3)
     ;異常経験が不足
     LOCAL:0 |= 2
 ENDIF
@@ -222,7 +222,7 @@ SIF JUEL:30 < COST93(1)
     LOCAL:0 |= 1
 
 ;薬物経験が必要
-SIF EXP:40 < COST93(2)
+SIF EXP:약물경험 < COST93(2)
     LOCAL:0 |= 2
 
 RETURNF (LOCAL:0 == 0)

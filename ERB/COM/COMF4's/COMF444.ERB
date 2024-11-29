@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:444 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;対象, または조교자가 요우키でないとダメ
 SIF NO:TARGET != 70 && NO:PLAYER != 70
@@ -21,10 +21,10 @@ FOR LOCAL, 0, CHARANUM
     SIF LOCAL == MASTER || LOCAL == ASSI || LOCAL == TARGET
         CONTINUE
     ;妊娠していたら除外
-    SIF TALENT:LOCAL:140 == 1
+    SIF TALENT:LOCAL:임신 == 1
         CONTINUE
     ;失踪中などこの場にいないなら除外
-    SIF CFLAG:LOCAL:4
+    SIF CFLAG:LOCAL:조교관외
         CONTINUE
     ;반령(요우키)だったらLOCAL:1に+1
     SIF NO:LOCAL == 99
@@ -34,7 +34,7 @@ SIF LOCAL:1 == 0
     RETURN 0
 ;요우키が대상의 とき, 助手可または恋慕または복종または조교자가 幽々子
 IF NO:TARGET == 70
-    SIF CFLAG:1 < 2 && TALENT:150 == 0 && TALENT:160 == 0 && NO:PLAYER != 20
+    SIF CFLAG:매각가능 < 2 && TALENT:연모 == 0 && TALENT:복종 == 0 && NO:PLAYER != 20
         RETURN 0
 ENDIF
 RETURN 1
@@ -50,16 +50,16 @@ COM_NAME = 반령 재구성
 
 IF NO:TARGET == 70
     DOWNBASE:0 += 200
-    DOWNBASE:1 += 1000
+    DOWNBASE:기력 += 1000
 ENDIF
 DRAWLINE
 PRINTL [재구성할 캐릭터를 선택해 주세요] 
 REPEAT CHARANUM
     ;임신하고 있으면 제외
-    SIF TALENT:COUNT:140 == 1
+    SIF TALENT:COUNT:임신 == 1
         CONTINUE
     ;실종중 등 이 장소에 없으면 제외
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     SIF NO:COUNT == 99
         CALL ARRANGE_CHARALIST, COUNT
@@ -81,9 +81,9 @@ PRINTL [1] ♀
 $INPUT_LOOP_1
 INPUT
 IF RESULT == 0
-    TALENT:120 = 1
+    TALENT:남자 = 1
 ELSEIF RESULT == 1
-    TALENT:120 = 0
+    TALENT:남자 = 0
 ELSE
     GOTO INPUT_LOOP_1
 ENDIF
@@ -95,19 +95,19 @@ PRINTL [2] 인형 사이즈로!
 $INPUT_LOOP_2
 INPUT
 IF RESULT == 0
-    TALENT:127 = 0
-    TALENT:128 = 0
+    TALENT:소인 = 0
+    TALENT:작은체형 = 0
 ELSEIF RESULT == 1
-    TALENT:127 = 0
-    TALENT:128 = 1
+    TALENT:소인 = 0
+    TALENT:작은체형 = 1
 ELSEIF RESULT == 2
-    TALENT:127 = 1
-    TALENT:128 = 1
+    TALENT:소인 = 1
+    TALENT:작은체형 = 1
 ELSE
     GOTO INPUT_LOOP_2
 ENDIF
 
-IF TALENT:120 == 0
+IF TALENT:남자 == 0
     PRINTL 가슴은… 어찌 해야 될까?
     PRINTL [0] 납작!
     PRINTL [1] 손바닥에 쏙 들어올 정도가 좋다.
@@ -128,9 +128,9 @@ IF TALENT:120 == 0
     $INPUT_LOOP_4
     INPUT
     IF RESULT == 0
-        TALENT:121 = 0
+        TALENT:후타나리 = 0
     ELSEIF RESULT == 1
-        TALENT:121 = 1
+        TALENT:후타나리 = 1
     ELSE
         GOTO INPUT_LOOP_4
     ENDIF
@@ -142,9 +142,9 @@ PRINTL [1] 이야앗호! 해버리자고!
 $INPUT_LOOP_5
 INPUT
 IF RESULT == 0
-    TALENT:116 = 0
+    TALENT:동물귀 = 0
 ELSEIF RESULT == 1
-    TALENT:116 = 1
+    TALENT:동물귀 = 1
 ELSE
 GOTO INPUT_LOOP_5
 ENDIF
@@ -155,101 +155,101 @@ PRINTL [1] 야옹~! 냥냥 냐~~~앙!!!
 $INPUT_LOOP_6
 INPUT
 IF RESULT == 0
-    TALENT:54 = 0
+    TALENT:고양이혀 = 0
 ELSEIF RESULT == 1
-    TALENT:54 = 1
+    TALENT:고양이혀 = 1
 ELSE
     GOTO INPUT_LOOP_6
 ENDIF
 
 ;주인이나 조수가 금단의 지식 소유의 경우, 종족 선택도 추가
-IF TALENT:MASTER:56 || (ASSI > 0 && TALENT:ASSI:56)
+IF TALENT:MASTER:금단의지식 || (ASSI > 0 && TALENT:ASSI:금단의지식)
     PRINTL 종족을 골라주세요!
     PRINT [0] 엥, 보통이 좋지 않나? 
-        IF TALENT:22
+        IF TALENT:감정결여
             PRINTFORML 　　　　　　　　*%TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL
         ENDIF
     PRINT [1] 요정 씨! 
-    IF (TALENT:127 && TALENT:128) || (TALENT:127 == 0 && TALENT:128 == 0)
+    IF (TALENT:소인 && TALENT:작은체형) || (TALENT:소인 == 0 && TALENT:작은체형 == 0)
         PRINTFORM 　　　　　　　　　　　　*%TALENTNAME:128%이 
-        IF TALENT:22
+        IF TALENT:감정결여
             PRINTFORML 되고, %TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL 됩니다*
         ENDIF
-    ELSEIF TALENT:127 == 0 && TALENT:128
-        IF TALENT:22
+    ELSEIF TALENT:소인 == 0 && TALENT:작은체형
+        IF TALENT:감정결여
             PRINTFORML 　　　　　　　　　　　　*%TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL
         ENDIF
     ENDIF
     PRINT [2] 좀비 페어리! 
-    IF (TALENT:127 && TALENT:128) || (TALENT:127 == 0 && TALENT:128 == 0)
+    IF (TALENT:소인 && TALENT:작은체형) || (TALENT:소인 == 0 && TALENT:작은체형 == 0)
         PRINTFORM 　　　　　　*%TALENTNAME:128%이 
-        IF TALENT:22 == 0
+        IF TALENT:감정결여 == 0
             PRINTFORML 되고, %TALENTNAME:22%를 얻습니다*
         ELSE
             PRINTL 됩니다*
         ENDIF
-    ELSEIF TALENT:127 == 0 && TALENT:128
-        IF TALENT:22 == 0
+    ELSEIF TALENT:소인 == 0 && TALENT:작은체형
+        IF TALENT:감정결여 == 0
             PRINTFORML 　　　　　　*%TALENTNAME:22%를 얻습니다*
         ELSE
             PRINTL
         ENDIF
     ENDIF
     PRINT [3] 흡혈귀도 좋지 
-        IF TALENT:22
+        IF TALENT:감정결여
             PRINTFORML 　　　　　　　　*%TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL
         ENDIF
     PRINT [4] 사이보그 모에! 
-        IF TALENT:22
+        IF TALENT:감정결여
             PRINTFORML 　　　　　　　　　*%TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL
         ENDIF
     PRINT [5] 영체는 신비적이야 
-        IF TALENT:22
+        IF TALENT:감정결여
             PRINTFORML 　　　　　　　*%TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL
         ENDIF
     PRINT [6] 우후후후후후 자동인형 우후후후후 
-        IF TALENT:22
+        IF TALENT:감정결여
             PRINTFORML 　*%TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL
         ENDIF
     PRINT [7] 갓파! 
-    IF TALENT:116
+    IF TALENT:동물귀
         PRINTFORM 　　　　　　　　　　　*%TALENTNAME:116%
-        IF TALENT:22
+        IF TALENT:감정결여
             PRINTFORML 와 %TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL 를 잃습니다*
         ENDIF
     ELSE
-        IF TALENT:22
+        IF TALENT:감정결여
             PRINTFORML 　　　　　　　　　　　*%TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL
         ENDIF
     ENDIF
     PRINT [8] 여우, 최강! 
-    IF TALENT:116 == 0
+    IF TALENT:동물귀 == 0
         PRINTFORM 　　　　　　　　　　*%TALENTNAME:116%가 
-        IF TALENT:22
+        IF TALENT:감정결여
             PRINTFORML 되고, %TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL 됩니다*
         ENDIF
     ELSE
-        IF TALENT:22
+        IF TALENT:감정결여
             PRINTFORML 　　　　　　　　　　*%TALENTNAME:22%를 잃습니다*
         ELSE
             PRINTL
@@ -259,109 +259,109 @@ IF TALENT:MASTER:56 || (ASSI > 0 && TALENT:ASSI:56)
     INPUT
     ;감정결여를 잃는다
     IF RESULT == 0
-        TALENT:22 = 0
-        TALENT:48 = 0
-        TALENT:200 = 0
-        TALENT:205 = 0
-        TALENT:206 = 0
-        TALENT:207 = 0
-        TALENT:208 = 0
-        TALENT:210 = 0
-        TALENT:211 = 0
+        TALENT:감정결여 = 0
+        TALENT:주정 = 0
+        TALENT:요정 = 0
+        TALENT:흡혈귀 = 0
+        TALENT:기계 = 0
+        TALENT:영체 = 0
+        TALENT:인형 = 0
+        TALENT:캇파 = 0
+        TALENT:요호 = 0
     ;[작은체형]·요정을 얻어, 감정결여를 잃는다
     ELSEIF RESULT == 1
-        TALENT:22 = 0
-        TALENT:48 = 0
-        TALENT:127 = 0
-        TALENT:128 = 1
-        TALENT:200 = 1
-        TALENT:205 = 0
-        TALENT:206 = 0
-        TALENT:207 = 0
-        TALENT:208 = 0
-        TALENT:210 = 0
-        TALENT:211 = 0
+        TALENT:감정결여 = 0
+        TALENT:주정 = 0
+        TALENT:소인 = 0
+        TALENT:작은체형 = 1
+        TALENT:요정 = 1
+        TALENT:흡혈귀 = 0
+        TALENT:기계 = 0
+        TALENT:영체 = 0
+        TALENT:인형 = 0
+        TALENT:캇파 = 0
+        TALENT:요호 = 0
     ;[작은체형]·요정·주정·감정결여를 얻는다
     ELSEIF RESULT == 2
-        TALENT:22 = 1
-        TALENT:48 = 1
-        TALENT:127 = 0
-        TALENT:128 = 1
-        TALENT:200 = 1
-        TALENT:205 = 0
-        TALENT:206 = 0
-        TALENT:207 = 0
-        TALENT:208 = 0
-        TALENT:210 = 0
-        TALENT:211 = 0
+        TALENT:감정결여 = 1
+        TALENT:주정 = 1
+        TALENT:소인 = 0
+        TALENT:작은체형 = 1
+        TALENT:요정 = 1
+        TALENT:흡혈귀 = 0
+        TALENT:기계 = 0
+        TALENT:영체 = 0
+        TALENT:인형 = 0
+        TALENT:캇파 = 0
+        TALENT:요호 = 0
     ;흡혈귀를 얻어, 감정결여를 잃는다
     ELSEIF RESULT == 3
-        TALENT:22 = 0
-        TALENT:48 = 0
-        TALENT:200 = 0
-        TALENT:205 = 1
-        TALENT:206 = 0
-        TALENT:207 = 0
-        TALENT:208 = 0
-        TALENT:210 = 0
-        TALENT:211 = 0
+        TALENT:감정결여 = 0
+        TALENT:주정 = 0
+        TALENT:요정 = 0
+        TALENT:흡혈귀 = 1
+        TALENT:기계 = 0
+        TALENT:영체 = 0
+        TALENT:인형 = 0
+        TALENT:캇파 = 0
+        TALENT:요호 = 0
     ;기계를 얻어, 감정결여를 잃는다
     ELSEIF RESULT == 4
-        TALENT:22 = 0
-        TALENT:48 = 0
-        TALENT:200 = 0
-        TALENT:205 = 0
-        TALENT:206 = 1
-        TALENT:207 = 0
-        TALENT:208 = 0
-        TALENT:210 = 0
-        TALENT:211 = 0
+        TALENT:감정결여 = 0
+        TALENT:주정 = 0
+        TALENT:요정 = 0
+        TALENT:흡혈귀 = 0
+        TALENT:기계 = 1
+        TALENT:영체 = 0
+        TALENT:인형 = 0
+        TALENT:캇파 = 0
+        TALENT:요호 = 0
     ;령체를 얻어, 감정결여를 잃는다
     ELSEIF RESULT == 5
-        TALENT:22 = 0
-        TALENT:48 = 0
-        TALENT:200 = 0
-        TALENT:205 = 0
-        TALENT:206 = 0
-        TALENT:207 = 1
-        TALENT:208 = 0
-        TALENT:210 = 0
-        TALENT:211 = 0
+        TALENT:감정결여 = 0
+        TALENT:주정 = 0
+        TALENT:요정 = 0
+        TALENT:흡혈귀 = 0
+        TALENT:기계 = 0
+        TALENT:영체 = 1
+        TALENT:인형 = 0
+        TALENT:캇파 = 0
+        TALENT:요호 = 0
     ;인형을 얻어, 감정결여를 잃는다
     ELSEIF RESULT == 6
-        TALENT:22 = 0
-        TALENT:48 = 0
-        TALENT:200 = 0
-        TALENT:205 = 0
-        TALENT:206 = 0
-        TALENT:207 = 0
-        TALENT:208 = 1
-        TALENT:210 = 0
-        TALENT:211 = 0
+        TALENT:감정결여 = 0
+        TALENT:주정 = 0
+        TALENT:요정 = 0
+        TALENT:흡혈귀 = 0
+        TALENT:기계 = 0
+        TALENT:영체 = 0
+        TALENT:인형 = 1
+        TALENT:캇파 = 0
+        TALENT:요호 = 0
     ;갓빠를 얻어, 동물귀·감정결여를 잃는다
     ELSEIF RESULT == 7
-        TALENT:22 = 0
-        TALENT:48 = 0
-        TALENT:116 = 0
-        TALENT:200 = 0
-        TALENT:205 = 0
-        TALENT:206 = 0
-        TALENT:207 = 0
-        TALENT:208 = 0
-        TALENT:210 = 1
-        TALENT:211 = 0
+        TALENT:감정결여 = 0
+        TALENT:주정 = 0
+        TALENT:동물귀 = 0
+        TALENT:요정 = 0
+        TALENT:흡혈귀 = 0
+        TALENT:기계 = 0
+        TALENT:영체 = 0
+        TALENT:인형 = 0
+        TALENT:캇파 = 1
+        TALENT:요호 = 0
     ;요호·동물귀를 얻어, 감정결여를 잃는다
     ELSEIF RESULT == 8
-        TALENT:22 = 0
-        TALENT:48 = 0
-        TALENT:116 = 1
-        TALENT:200 = 0
-        TALENT:205 = 0
-        TALENT:206 = 0
-        TALENT:207 = 0
-        TALENT:208 = 0
-        TALENT:210 = 0
-        TALENT:211 = 1
+        TALENT:감정결여 = 0
+        TALENT:주정 = 0
+        TALENT:동물귀 = 1
+        TALENT:요정 = 0
+        TALENT:흡혈귀 = 0
+        TALENT:기계 = 0
+        TALENT:영체 = 0
+        TALENT:인형 = 0
+        TALENT:캇파 = 0
+        TALENT:요호 = 1
     ELSE
         GOTO INPUT_LOOP_7
     ENDIF

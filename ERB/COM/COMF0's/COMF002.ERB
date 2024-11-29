@@ -9,15 +9,15 @@
 SIF DITEMTYPE:999:2 > 0
     RETURN 0
 ;A조교 필터가 오프되지 않았으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;윤활 부족해, 순종 4 미만·레즈끼(BL끼) 4 미만의 ASSI의 경우, 조교 대상이 동성이라면 실행할 수 없다(새드나 새드끼 Lv3 이상, 또는 망신이나 복종이 있다면 OK)
 IF PALAM:10 < PALAMLV:2 && ASSIPLAY
-    SIF (ABL:ASSI:10 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:22 < 4) || (TALENT:120 && TALENT:ASSI:120 && ABL:ASSI:23 < 4))) && TALENT:ASSI:81 == 0 && ABL:ASSI:20 < 3 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 4) || (TALENT:남자 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 4))) && TALENT:ASSI:새드 == 0 && ABL:ASSI:새드끼 < 3 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;그 조교중에 관장 플레이＋배설이 있었을 경우, 조교자가 더러운 무시 혹은 악취 둔감을 가지지 않으면 실행할 수 없다
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
@@ -29,7 +29,7 @@ SIF TEQUIP:55 && TEQUIP:55 != 12 && TEQUIP:55 != 15
 SIF TEQUIP:58
     RETURN 0
 ;훈도시 착용중의 경우 조교자의 기교 4이상 필수
-SIF TEQUIP:59 == 17 && ABL:PLAYER:12 < 4
+SIF TEQUIP:59 == 17 && ABL:PLAYER:기교 < 4
     RETURN 0
 RETURN 1
 
@@ -42,25 +42,25 @@ COM_NAME = 애널 애무
 CALL TRAIN_MESSAGE_COM002
 
 DOWNBASE:0 += 20
-DOWNBASE:1 += 100
+DOWNBASE:기력 += 100
 
 SOURCE:12 = 850
 SOURCE:31 = 400
 
 ;ABL:Ａ감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 20
     SOURCE:22 = 300
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 75
     SOURCE:22 = 350
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 300
     SOURCE:22 = 400
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 700
     SOURCE:22 = 650
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 1100
     SOURCE:22 = 1000
 ELSE
@@ -68,24 +68,24 @@ ELSE
     SOURCE:22 = 1500
 ENDIF
 
-;EXP:Ａ경험을 본다
-IF EXP:1 < EXPLV:1
+;EXP:A경험을 본다
+IF EXP:A경험 < EXPLV:1
     TIMES SOURCE:2 , 0.20
     TIMES SOURCE:22 , 0.20
     SOURCE:20 = 500
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES SOURCE:2 , 0.50
     TIMES SOURCE:22 , 0.50
     SOURCE:20 = 400
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES SOURCE:2 , 1.00
     TIMES SOURCE:22 , 1.00
     SOURCE:20 = 300
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES SOURCE:2 , 1.20
     TIMES SOURCE:22 , 1.20
     SOURCE:20 = 200
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.60
     TIMES SOURCE:22 , 1.60
     SOURCE:20 = 100
@@ -138,20 +138,20 @@ ENDIF
 
 ;Ａ민감둔감을 본다
 ;快Ａ自体のチェックは後でまとめてやる
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:22 , 0.60
     TIMES SOURCE:31 , 0.60
 ENDIF
 
 ;처녀에다 정조관념
-IF TALENT:0 == 1 && TALENT:30
+IF TALENT:처녀 == 1 && TALENT:정조관념
     SOURCE:22 /= 3
-ELSEIF TALENT:0 && TALENT:30
+ELSEIF TALENT:처녀 && TALENT:정조관념
     SOURCE:22 /= 2
 ENDIF
 
@@ -159,17 +159,17 @@ TCVAR:1 += 1
 
 IF TEQUIP:90
     ;노예의 Ａ에 촉수의 더러움이 붙는다
-    STAIN:4 |= 2
-    STAIN:4 |= 4
+    STAIN:애널 |= 2
+    STAIN:애널 |= 4
 ELSE
     ;노예의 Ａ⇔조교자의 손가락의 불결이 이동
-    STAIN:4 |= STAIN:PLAYER:1
-    STAIN:PLAYER:1 |= STAIN:4
+    STAIN:애널 |= STAIN:PLAYER:손
+    STAIN:PLAYER:손 |= STAIN:애널
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 2
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 5
 ENDIF
 RETURN 1
@@ -179,7 +179,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM002
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -209,7 +209,7 @@ ELSE
     ELSEIF TEQUIP:25 == 6
         PRINTW 애널을 한계까지 넓히고 있는 풍선을 앞뒤로 움직였다….
     ELSEIF TEQUIP:25 == 7
-        IF FLAG:14 & 256
+        IF FLAG:조교모드 & 256
             PRINTW 이물감에 떨고 있는 항문을 플러그로 푹푹 하고 후볐다….
         ELSE
             PRINTW 배설감에 떨고 있는 항문을 플러그로 푹푹 하고 후볐다….
@@ -230,7 +230,7 @@ ELSE
         PRINTW 손가락을 깊숙이 넣지 않고 항문 입구 쪽을 손가락으로 살짝 간질였다….
     ELSE
         PRINTFORM %CALLNAME:TARGET%의 애널을 희롱했다. 
-        SIF PALAM:13 >= PALAMLV:3 && ABL:2 >= 3
+        SIF PALAM:13 >= PALAMLV:3 && ABL:A감각 >= 3
             PRINT 손가락 끝으로 직장까지 쑤셔댔다….
         PRINTW
     ENDIF

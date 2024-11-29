@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:3 > 0
     RETURN 0
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;한증과 암반 욕 이외의00목욕탕 입욕 중에는 불가
 SIF TEQUIP:55 && TEQUIP:55 != 12 && TEQUIP:55 != 15
@@ -21,7 +21,7 @@ RETURN 1
 ;--------------------------------------------------
 @COM3
 ;Ｖ계 확장 커맨드 유효시에 전회와 금회의 조교자 동일하며 후배위 혹은 후배위 가슴 애무에의 경우 후배위 가슴 애무로
-IF FLAG:15 & 2
+IF FLAG:커맨드확장 & 2
     IF (PREVCOM == 21 || PREVCOM == 616) && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
         CALL EXCOM_ABLE616
         SIF RESULT == 1
@@ -34,7 +34,7 @@ IF FLAG:15 & 2
     ENDIF
 ENDIF
 ;Ａ계 확장 커맨드有効時に前回と今回の조교자同じかつ後背位アナルもしくは後背位アナル胸愛撫への場合後背位アナル胸愛撫へ
-IF FLAG:15 & 4
+IF FLAG:커맨드확장 & 4
     IF (PREVCOM == 31 || PREVCOM == 618) && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
         CALL EXCOM_ABLE618
         SIF RESULT == 1
@@ -52,26 +52,26 @@ COM_NAME = 가슴 애무
 CALL TRAIN_MESSAGE_COM003
 
 DOWNBASE:0 += 5
-DOWNBASE:1 += 50
+DOWNBASE:기력 += 50
 
 SOURCE:12 = 100
 SOURCE:15 = 60
 SOURCE:30 = 20
 
 ;ABL:Ｂ감각을 본다
-IF ABL:3 == 0
+IF ABL:B감각 == 0
     SOURCE:3 = 20
     SOURCE:11 = 50
-ELSEIF ABL:3 == 1
+ELSEIF ABL:B감각 == 1
     SOURCE:3 = 100
     SOURCE:11 = 100
-ELSEIF ABL:3 == 2
+ELSEIF ABL:B감각 == 2
     SOURCE:3 = 500
     SOURCE:11 = 160
-ELSEIF ABL:3 == 3
+ELSEIF ABL:B감각 == 3
     SOURCE:3 = 1200
     SOURCE:11 = 200
-ELSEIF ABL:3 == 4
+ELSEIF ABL:B감각 == 4
     SOURCE:3 = 2000
     SOURCE:11 = 230
 ELSE
@@ -80,52 +80,52 @@ ELSE
 ENDIF
 
 ;음유
-IF TALENT:174
+IF TALENT:음유
     TIMES SOURCE:3 , 1.20
     TIMES SOURCE:11 , 1.20
     TIMES SOURCE:30 , 0.80
 ENDIF
 
 ;조교자가 ［유아］또는［유치］
-IF TALENT:PLAYER:130 || TALENT:PLAYER:131
+IF TALENT:PLAYER:유아 || TALENT:PLAYER:유치
     TIMES SOURCE:3 , 1.20
     TIMES SOURCE:11 , 1.20
 ENDIF
 ;조교자가 ［유아퇴행］
-SIF TALENT:PLAYER:159
+SIF TALENT:PLAYER:유아퇴행
     TIMES SOURCE:11 , 1.20
 
 IF TEQUIP:90
     ;노예의 Ｂに촉수의 더러움がつく
-    STAIN:5 |= 2
-    STAIN:5 |= 4
+    STAIN:가슴 |= 2
+    STAIN:가슴 |= 4
 ELSE
     ;조교자가 고양이혀ではなく노예의 胸의 더러움がなければ口をつかう（愛液と母乳よごれはＯＫ불결무시か助手調教時は問題なし）
-    IF TALENT:PLAYER:54 == 0 && (STAIN:5 < 2 || STAIN:5 == 16 || STAIN:5 == 17 || ASSIPLAY == 1 || TALENT:MASTER:64)
+    IF TALENT:PLAYER:고양이혀 == 0 && (STAIN:가슴 < 2 || STAIN:가슴 == 16 || STAIN:가슴 == 17 || ASSIPLAY == 1 || TALENT:MASTER:불결무시)
         ;조교자의 TALENT:혀놀림을 본다
-        IF TALENT:PLAYER:52
+        IF TALENT:PLAYER:혀놀림
             TIMES SOURCE:3 , 1.40
             SOURCE:17 += SOURCE:3 / 20
         ENDIF
 
         ;노예의 Ｂ⇔조교자의 입의 불결이 이동
-        STAIN:5 |= STAIN:PLAYER:0
-        STAIN:PLAYER:0 |= STAIN:5
+        STAIN:가슴 |= STAIN:PLAYER:입
+        STAIN:PLAYER:입 |= STAIN:가슴
     ENDIF
 
     ;노예의 Ｂ⇔조교자의 손가락의 불결이 이동
-    STAIN:5 |= STAIN:PLAYER:1
-    STAIN:PLAYER:1 |= STAIN:5
+    STAIN:가슴 |= STAIN:PLAYER:손
+    STAIN:PLAYER:손 |= STAIN:가슴
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 5
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 5
 ENDIF
 
 ;확장유두
-IF TALENT:2 == 1
+IF TALENT:확장유두 == 1
     IF TEQUIP:35 == 6
         TCVAR:35 += 2
     ELSE
@@ -134,7 +134,7 @@ IF TALENT:2 == 1
 ENDIF
 
 ;촉수調教やＢ感覚4未満[母乳体質][남자][소인][작은체형][貧乳][絶壁]持ちでは発生しない. 
-SIF ABL:3 > 3 && TEQUIP:90 == 0 && TALENT:120 == 0  && TALENT:134 == 0 && TALENT:127 == 0 && TALENT:128 == 0 && TALENT:110 == 0  && TALENT:111 == 0
+SIF ABL:B감각 > 3 && TEQUIP:90 == 0 && TALENT:남자 == 0  && TALENT:모유체질 == 0 && TALENT:소인 == 0 && TALENT:작은체형 == 0 && TALENT:절벽 == 0  && TALENT:빈유 == 0
     CALL YOUJI
 
 RETURN 1
@@ -144,20 +144,20 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM003
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORM %CALLNAME:TARGET%의 
-IF TALENT:110
+IF TALENT:절벽
     PRINT 거의 없는 거나 마찬가지인 
-ELSEIF TALENT:128 && TALENT:111
+ELSEIF TALENT:작은체형 && TALENT:빈유
     PRINT 약간 부풀어 오른 게 느껴질 정도의 
-ELSEIF TALENT:111
+ELSEIF TALENT:빈유
     PRINT 표준보다 약간 작은 크기의 
-ELSEIF TALENT:112
+ELSEIF TALENT:거유
     PRINT 손에서 흘러 넘칠 정도의 
-ELSEIF TALENT:113
+ELSEIF TALENT:폭유
     PRINT 감당할 수 없을 만큼 큰 
 ENDIF
 ;촉수
@@ -170,13 +170,13 @@ ELSEIF TEQUIP:68
 ELSEIF TEQUIP:35 == 6
     PRINTW 가슴에 삽입된 로터를 가볍게 넣었다 빼면서 왕복했다….
 ;확장유두
-ELSEIF TALENT:2 == 1
+ELSEIF TALENT:확장유두 == 1
     PRINTW 가슴을, 유두 속으로 손가락을 살짝 넣어 괴롭히면서 주물렀다….
 ;욕정LV 3 이상에 유두장비 없음
 ELSEIF PALAM:13 > PALAMLV:3 && TEQUIP:35 == 0
     PRINTW 가슴 끝의 딱딱해진 돌기를 손가락으로 쥐었다….
 ;절벽
-ELSEIF TALENT:110
+ELSEIF TALENT:절벽
     PRINTW 가슴을 상냥하게 쓰다듬듯이 만졌다….
 ELSE
     PRINTW 가슴을 주물러댔다….

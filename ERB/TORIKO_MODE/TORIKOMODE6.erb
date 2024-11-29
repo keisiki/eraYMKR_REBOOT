@@ -5,7 +5,7 @@
 ;기존처럼 애정요리 하나 한다고 한 턴이 가버리거나 하지는 않게 됨.
 ;또한 본격적으로 '휴식'을 할 수 있게 되며, 특정 캐릭터들의 기능을 풀로 뽑아낼 수 있게 된다...
 ;130916~  BY VANDIT KING
-;CFLAG:4 를 사용하며, 비트연산을 함
+;CFLAG:조교관외 를 사용하며, 비트연산을 함
 ;0 = 조교가능, 대기중.
 ;1=失踪 실종
 ;2=育児室 육아실 ◇
@@ -57,7 +57,7 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;失踪中などこの場にいないなら除外
-    SIF CFLAG:COUNT:4 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
@@ -109,11 +109,11 @@ IF TIME == 0
     CALL SETCOLOR_TORIKOMODE, "MAGENTA", 2
     PRINTFORMW (스케쥴은 밤에만 변경 가능합니다)
     RESETCOLOR
-ELSEIF CFLAG:ARG:4 & 1024
+ELSEIF CFLAG:ARG:조교관외 & 1024
     CALL SETCOLOR_TORIKOMODE, "MAGENTA", 2
     PRINTFORMW (%조사처리(CALLNAME:ARG,"는")% 현재 창관에 있습니다. 아침에 창관에서 데려 와 주세요.)
     RESETCOLOR
-ELSEIF CFLAG:ARG:4 & 2048 || CFLAG:ARG:4 & 4096 
+ELSEIF CFLAG:ARG:조교관외 & 2048 || CFLAG:ARG:조교관외 & 4096 
     CALL SETCOLOR_TORIKOMODE, "MAGENTA", 2
     PRINTFORMW (%조사처리(CALLNAME:ARG,"는")% 현재 허브원에 있습니다. 허브원에서 데려 와 주세요)
     RESETCOLOR
@@ -138,7 +138,7 @@ ELSE
     ;스케쥴 비우기
     IF RESULT == 0
         PRINTFORMW %CALLNAME:ARG%의 스케쥴을 비웠다.
-        CFLAG:ARG:4 = 0
+        CFLAG:ARG:조교관외 = 0
         ;구속을 해제한다
         CALL RESTRICTION_RELEASE, ARG
     ELSEIF RESULT == 1
@@ -147,7 +147,7 @@ ELSE
             PRINTFORMW 그런 사치스러운 행동을 하기에는 여유가 부족하다.
         ELSE
             PRINTFORMW %CALLNAME:ARG%에게 하룻동안 쉬라고 명령했다.
-            CFLAG:ARG:4 = 64
+            CFLAG:ARG:조교관외 = 64
             ;구속을 해제한다
             CALL RESTRICTION_RELEASE, ARG
         ENDIF
@@ -158,7 +158,7 @@ ELSE
             PRINTFORMW 그런 사치스러운 행동을 하기에는 여유가 부족하다.
         ELSE
             PRINTFORMW %CALLNAME:ARG%에게 운동으로 체력을 키우라고 명령했다.
-            CFLAG:ARG:4 = 128
+            CFLAG:ARG:조교관외 = 128
             ;구속을 해제한다
             CALL RESTRICTION_RELEASE, ARG
         ENDIF
@@ -169,17 +169,17 @@ ELSE
             PRINTFORMW 그런 사치스러운 행동을 하기에는 여유가 부족하다.
         ELSE
             PRINTFORMW %CALLNAME:ARG%에게 독서를 해 기력을 키우라고 명령했다.
-            CFLAG:ARG:4 = 256
+            CFLAG:ARG:조교관외 = 256
             ;구속을 해제한다
             CALL RESTRICTION_RELEASE, ARG
         ENDIF
     ELSEIF RESULT == 4
         ;순종 2 이상이 필요
-        IF ABL:ARG:10 < 2
+        IF ABL:ARG:순종 < 2
             PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 명령을 거부했다... (순종 2 이상이 필요하다)
         ELSE
             PRINTFORMW %CALLNAME:ARG%에게 도시락을 만들도록 지시했다.
-            CFLAG:ARG:4 = 8192
+            CFLAG:ARG:조교관외 = 8192
             ;구속을 해제한다
             CALL RESTRICTION_RELEASE, ARG
         ENDIF    
@@ -188,14 +188,14 @@ ELSE
         IF ITEM:52 == 0
             PRINTFORMW 마이크가 없어 공연을 할 수 없다. 상점에서 사야한다. (강력아이템/커맨드 옵션을 켜야 구매가능)
         ;순종 2 이상 필요
-        ELSEIF ABL:ARG:10 < 2
+        ELSEIF ABL:ARG:순종 < 2
             PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 명령을 거부했다... (순종 2 이상이 필요하다)
         ;반발각인이 없어야 함
-        ELSEIF MARK:ARG:9 > 0
+        ELSEIF MARK:ARG:반발각인 > 0
             PRINTFORMW %조사처리(CALLNAME:ARG,"는")% 명령을 거부했다... (반발각인이 없어야 한다)
         ELSE
             PRINTFORMW %CALLNAME:ARG%에게 라이브 공연을 지시했다.
-            CFLAG:ARG:4 = 4194304
+            CFLAG:ARG:조교관외 = 4194304
             ;구속을 해제한다
             CALL RESTRICTION_RELEASE, ARG
         ENDIF
@@ -203,17 +203,17 @@ ELSE
         ;애액채집기 필요
         IF ITEM:6 == 0
             PRINTFORMW 애액채집기가 필요하다. 상점에서 사야한다. (강력아이템/커맨드 옵션을 켜야 구매가능)
-        ELSEIF TALENT:ARG:120 == 1
+        ELSEIF TALENT:ARG:남자 == 1
             PRINTFORMW 남자의 애액은 팔 만한 물건이 아니다...
         ;만약 미함락 노예라면 밧줄도 있어야 돼.
-        ELSEIF TALENT:ARG:150 == 0 &&TALENT:ARG:160 == 0 && TALENT:ARG:170 == 0  && ITEM:29 == 0
+        ELSEIF TALENT:ARG:연모 == 0 &&TALENT:ARG:복종 == 0 && TALENT:ARG:음란 == 0  && ITEM:29 == 0
             PRINTFORMW 이 노예에게 이런 걸 시키려면 밧줄로 묶어야만 한다. (밧줄이 필요하다.)
         ;남자는 안돼
         ELSE
             PRINTFORMW %CALLNAME:ARG%의 애액을 채집하기로 했다.
-            CFLAG:ARG:4 = 16384
+            CFLAG:ARG:조교관외 = 16384
             ;미함락이면 구속한다. 함락이면 구속해제.
-            IF TALENT:ARG:150 || TALENT:ARG:160 || TALENT:ARG:170
+            IF TALENT:ARG:연모 || TALENT:ARG:복종 || TALENT:ARG:음란
                 CALL RESTRICTION_RELEASE, ARG
             ELSE
                 CALL RESTRICTION_BIND, ARG
@@ -224,13 +224,13 @@ ELSE
         IF ITEM:26 == 0
             PRINTFORMW 채뇨기가 필요하다. 상점에서 사야한다. (강력아이템/커맨드 옵션을 켜야 구매가능)
         ;만약 미함락 노예라면 밧줄도 있어야 돼.
-        ELSEIF TALENT:ARG:150 == 0 &&TALENT:ARG:160 == 0 && TALENT:ARG:170 == 0  && ITEM:29 == 0
+        ELSEIF TALENT:ARG:연모 == 0 &&TALENT:ARG:복종 == 0 && TALENT:ARG:음란 == 0  && ITEM:29 == 0
             PRINTFORMW 이 노예에게 이런 걸 시키려면 밧줄로 묶어야만 한다. (밧줄이 필요하다.)
         ELSE
             PRINTFORMW %CALLNAME:ARG%의 황금수를 채집하기로 했다.
-            CFLAG:ARG:4 = 32768 
+            CFLAG:ARG:조교관외 = 32768 
             ;미함락이면 구속한다. 함락이면 구속해제.
-            IF TALENT:ARG:150 || TALENT:ARG:160 || TALENT:ARG:170
+            IF TALENT:ARG:연모 || TALENT:ARG:복종 || TALENT:ARG:음란
                 CALL RESTRICTION_RELEASE, ARG
             ELSE
                 CALL RESTRICTION_BIND, ARG
@@ -241,16 +241,16 @@ ELSE
         IF ITEM:21 == 0
             PRINTFORMW 착유기가 필요하다. 상점에서 사야한다. (강력아이템/커맨드 옵션을 켜야 구매가능)
         ;만약 미함락 노예라면 밧줄도 있어야 돼.
-        ELSEIF TALENT:ARG:150 == 0 &&TALENT:ARG:160 == 0 && TALENT:ARG:170 == 0  && ITEM:29 == 0
+        ELSEIF TALENT:ARG:연모 == 0 &&TALENT:ARG:복종 == 0 && TALENT:ARG:음란 == 0  && ITEM:29 == 0
             PRINTFORMW 이 노예에게 이런 걸 시키려면 밧줄로 묶어야만 한다. (밧줄이 필요하다.)
         ;모유체질이 아니면 안돼
-        ELSEIF TALENT:ARG:134 == 0
+        ELSEIF TALENT:ARG:모유체질 == 0
             PRINTFORMW 이 노예는 모유가 나오지 않는다.
         ELSE
             PRINTFORMW %CALLNAME:ARG%의 모유를 채집하기로 했다.
-            CFLAG:ARG:4 = 65536
+            CFLAG:ARG:조교관외 = 65536
             ;미함락이면 구속한다. 함락이면 구속해제.
-            IF TALENT:ARG:150 || TALENT:ARG:160 || TALENT:ARG:170
+            IF TALENT:ARG:연모 || TALENT:ARG:복종 || TALENT:ARG:음란
                 CALL RESTRICTION_RELEASE, ARG
             ELSE
                 CALL RESTRICTION_BIND, ARG
@@ -261,16 +261,16 @@ ELSE
         IF ITEM:17 == 0 
             PRINTFORMW 전극오나홀이 필요하다. 상점에서 사야한다. (강력아이템/커맨드 옵션을 켜야 구매가능)
         ;만약 미함락 노예라면 밧줄도 있어야 돼.
-        ELSEIF TALENT:ARG:150 == 0 &&TALENT:ARG:160 == 0 && TALENT:ARG:170 == 0  && ITEM:29 == 0
+        ELSEIF TALENT:ARG:연모 == 0 &&TALENT:ARG:복종 == 0 && TALENT:ARG:음란 == 0  && ITEM:29 == 0
             PRINTFORMW 이 노예에게 이런 걸 시키려면 밧줄로 묶어야만 한다. (밧줄이 필요하다.)
         ;페니스가 없으면 안돼
-        ELSEIF TALENT:ARG:120 == 0 && TALENT:ARG:121 == 0 
+        ELSEIF TALENT:ARG:남자 == 0 && TALENT:ARG:후타나리 == 0 
             PRINTFORMW 이 캐릭터는 흰 잼을 만들수가 없다...
         ELSE
             PRINTFORMW %CALLNAME:ARG%의 흰 잼을 채집하기로 했다.
-            CFLAG:ARG:4 = 524288 
+            CFLAG:ARG:조교관외 = 524288 
             ;미함락이면 구속한다. 함락이면 구속해제.
-            IF TALENT:ARG:150 || TALENT:ARG:160 || TALENT:ARG:170
+            IF TALENT:ARG:연모 || TALENT:ARG:복종 || TALENT:ARG:음란
                 CALL RESTRICTION_RELEASE, ARG
             ELSE
                 CALL RESTRICTION_BIND, ARG
@@ -283,10 +283,10 @@ ELSE
     ENDIF
 
     ;타겟이 스케쥴을 받으면 타겟을 비운다.
-    SIF TARGET == ARG && CFLAG:ARG:4 > 0
+    SIF TARGET == ARG && CFLAG:ARG:조교관외 > 0
         TARGET = -1
     ;조수가 스케쥴을 받으면 조수를 비운다. T(220213)
-    SIF ASSI == ARG && CFLAG:ARG:4 > 0
+    SIF ASSI == ARG && CFLAG:ARG:조교관외 > 0
         ASSI = -1
 ENDIF
 
@@ -301,55 +301,55 @@ ENDIF
 LOCAL:99 = 0
 ;
 DO
-    IF CFLAG:(LOCAL:99):4 == 64
+    IF CFLAG:(LOCAL:99):조교관외 == 64
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "GREEN", 2
         PRINTFORML <%CALLNAME:(LOCAL:99)%의 스케쥴 : 여가를 보낸다>
         RESETCOLOR
         CALL SCHEDULE_REST_TORIKOMODE, (LOCAL:99)
-    ELSEIF CFLAG:(LOCAL:99):4 == 128
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 128
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "GREEN", 2
         PRINTFORML <%CALLNAME:(LOCAL:99)%의 스케쥴 : 체력 단련>
         RESETCOLOR
         CALL SCHEDULE_EXERCISE_TORIKOMODE, (LOCAL:99)
-    ELSEIF CFLAG:(LOCAL:99):4 == 256
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 256
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "GREEN", 2
         PRINTFORML <%CALLNAME:(LOCAL:99)%의 스케쥴 : 독서>
         RESETCOLOR
         CALL SCHEDULE_READBOOKS_TORIKOMODE, (LOCAL:99)
-    ELSEIF CFLAG:(LOCAL:99):4 == 8192
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 8192
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "GREEN", 2
         PRINTFORML <%CALLNAME:(LOCAL:99)%의 스케쥴 : 도시락 제작>
         RESETCOLOR
         CALL SCHEDULE_MAKEBENTO_TORIKOMODE, (LOCAL:99)
-    ELSEIF CFLAG:(LOCAL:99):4 == 16384
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 16384
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "GREEN", 2
         PRINTFORML <%CALLNAME:(LOCAL:99)%의 스케쥴 : 애액 채집>
         RESETCOLOR
         CALL SCHEDULE_MAKELOVEJUICE_TORIKOMODE, (LOCAL:99)
-    ELSEIF CFLAG:(LOCAL:99):4 == 32768 
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 32768 
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "GREEN", 2
         PRINTFORML <%CALLNAME:(LOCAL:99)%의 스케쥴 : 황금수 채집>
         RESETCOLOR
         CALL SCHEDULE_MAKEGOLDWATER_TORIKOMODE, (LOCAL:99)
-    ELSEIF CFLAG:(LOCAL:99):4 == 65536 
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 65536 
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "GREEN", 2
         PRINTFORML <%CALLNAME:(LOCAL:99)%의 스케쥴 : 모유 채집>
         RESETCOLOR
         CALL SCHEDULE_MAKEMILK_TORIKOMODE, (LOCAL:99)
-    ELSEIF CFLAG:(LOCAL:99):4 == 524288 
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 524288 
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "GREEN", 2
         PRINTFORML <%CALLNAME:(LOCAL:99)%의 스케쥴 : 흰 잼 채집>
         RESETCOLOR
         CALL SCHEDULE_MAKESEMEN_TORIKOMODE, (LOCAL:99)
-    ELSEIF CFLAG:(LOCAL:99):4 == 4194304 
+    ELSEIF CFLAG:(LOCAL:99):조교관외 == 4194304 
         DRAWLINE
         CALL SETCOLOR_TORIKOMODE, "GREEN", 2
         PRINTFORML <%CALLNAME:(LOCAL:99)%의 스케쥴 : 야외 라이브 공연>
@@ -366,75 +366,75 @@ LOOP LOCAL:99 < CHARANUM
 @ARRANGE_SCHEDULE_TORIKOMODE, ARG
 PRINTFORM ☏스케쥴:
 ;디버그
-;PRINTFORM / CFLAG:ARG:4 = {CFLAG:ARG:4} /
+;PRINTFORM / CFLAG:ARG:조교관외 = {CFLAG:ARG:조교관외} /
 CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 2
-IF CFLAG:ARG:4 == 0
+IF CFLAG:ARG:조교관외 == 0
     RESETCOLOR
     PRINTFORM 없음　
-ELSEIF CFLAG:ARG:4 == 1
+ELSEIF CFLAG:ARG:조교관외 == 1
     PRINTFORM 실종　
-ELSEIF CFLAG:ARG:4 == 2
+ELSEIF CFLAG:ARG:조교관외 == 2
     PRINTFORM 육아중　
-ELSEIF CFLAG:ARG:4 == 4
+ELSEIF CFLAG:ARG:조교관외 == 4
     PRINTFORM 촉수유폐　
-ELSEIF CFLAG:ARG:4 == 8
+ELSEIF CFLAG:ARG:조교관외 == 8
     PRINTFORM 우리유폐　
-ELSEIF CFLAG:ARG:4 == 16
+ELSEIF CFLAG:ARG:조교관외 == 16
     PRINTFORM 투옥중　
-ELSEIF CFLAG:ARG:4 == 32
+ELSEIF CFLAG:ARG:조교관외 == 32
     PRINTFORM 요리중　
-ELSEIF CFLAG:ARG:4 == 64
+ELSEIF CFLAG:ARG:조교관외 == 64
     PRINTFORM \@ TIME==1 ? 뭘 하고 놀 지 고민중　 # 여가를 보내는 중　 \@
-ELSEIF CFLAG:ARG:4 == 128
+ELSEIF CFLAG:ARG:조교관외 == 128
     PRINTFORM  \@ TIME==1 ? 준비 체조 중　 # 열심히 운동중　 \@
-ELSEIF CFLAG:ARG:4 == 256
+ELSEIF CFLAG:ARG:조교관외 == 256
     PRINTFORM  \@ TIME==1 ? 읽을 책을 고르는 중　 # 독서중　 \@
-ELSEIF CFLAG:ARG:4 == 512
+ELSEIF CFLAG:ARG:조교관외 == 512
     PRINTFORM 욕탕 사용중　
-ELSEIF CFLAG:ARG:4 & 1024
+ELSEIF CFLAG:ARG:조교관외 & 1024
     CALL SETCOLOR_TORIKOMODE, "PINK", 3
     PRINTFORM 창관 근무중　
-ELSEIF CFLAG:ARG:4 & 2048
+ELSEIF CFLAG:ARG:조교관외 & 2048
     CALL SETCOLOR_TORIKOMODE, "OLIVE", 2
     PRINTFORM 신종허브 개발중　
-ELSEIF CFLAG:ARG:4 & 4096
+ELSEIF CFLAG:ARG:조교관외 & 4096
     CALL SETCOLOR_TORIKOMODE, "OLIVE", 2
     PRINTFORM 허브 생산중　
-ELSEIF CFLAG:ARG:4 == 8192
+ELSEIF CFLAG:ARG:조교관외 == 8192
     PRINTFORM \@ TIME==1 ? 식재료를 모으는 중　 # 도시락 제작 중　 \@
-ELSEIF CFLAG:ARG:4 == 16384
+ELSEIF CFLAG:ARG:조교관외 == 16384
     PRINTFORM \@ TIME==1 ? 채집 전 영양보충 중　 # 애액 채집중　 \@
-ELSEIF CFLAG:ARG:4 == 32768
+ELSEIF CFLAG:ARG:조교관외 == 32768
     PRINTFORM \@ TIME==1 ? 채집 전 영양보충 중　 # 황금수 채집중　 \@
-ELSEIF CFLAG:ARG:4 == 65536
+ELSEIF CFLAG:ARG:조교관외 == 65536
     PRINTFORM \@ TIME==1 ? 채집 전 영양보충 중　 # 모유 채집중　 \@
-ELSEIF CFLAG:ARG:4 == 131072
+ELSEIF CFLAG:ARG:조교관외 == 131072
     PRINTFORM 부적 생산중　
-ELSEIF CFLAG:ARG:4 == 262144
+ELSEIF CFLAG:ARG:조교관외 == 262144
     PRINTFORM 알 생산중　
-ELSEIF CFLAG:ARG:4 == 524288
+ELSEIF CFLAG:ARG:조교관외 == 524288
     PRINTFORM \@ TIME==1 ? 채집 전 영양보충 중　 # 흰 잼 채집중　 \@
-ELSEIF CFLAG:ARG:4 == 1048576
+ELSEIF CFLAG:ARG:조교관외 == 1048576
     PRINTFORM 주치육륜 중　
-ELSEIF CFLAG:ARG:4 == 2097152
+ELSEIF CFLAG:ARG:조교관외 == 2097152
     PRINTFORM 육변기 플레이 중　
-ELSEIF CFLAG:ARG:4 == 4194304
+ELSEIF CFLAG:ARG:조교관외 == 4194304
     PRINTFORM \@ TIME==1 ? 공연 연습중　 # 야외 라이브 공연중　 \@
-ELSEIF CFLAG:ARG:4 == 8388608
+ELSEIF CFLAG:ARG:조교관외 == 8388608
     PRINTFORM 조수 조교중　
-ELSEIF CFLAG:ARG:4 == 16777216
+ELSEIF CFLAG:ARG:조교관외 == 16777216
     PRINTFORM 경호중　
-ELSEIF CFLAG:ARG:4 == 33554432
+ELSEIF CFLAG:ARG:조교관외 == 33554432
     PRINTFORM 경비중　
-ELSEIF CFLAG:ARG:4 == 67108864
+ELSEIF CFLAG:ARG:조교관외 == 67108864
     PRINTFORM 촬영중　
-ELSEIF CFLAG:ARG:4 == 134217728
+ELSEIF CFLAG:ARG:조교관외 == 134217728
     PRINTFORM 모델 중　
-ELSEIF CFLAG:ARG:4 == 268435456
+ELSEIF CFLAG:ARG:조교관외 == 268435456
     PRINTFORM 요괴찻집　
-ELSEIF CFLAG:ARG:4 == 536870912
+ELSEIF CFLAG:ARG:조교관외 == 536870912
     PRINTFORM 콜걸　
-ELSEIF CFLAG:ARG:4 == 1073741824
+ELSEIF CFLAG:ARG:조교관외 == 1073741824
     PRINTFORM ???　
 ENDIF
 RESETCOLOR
@@ -467,7 +467,7 @@ LOCAL:3 = 0
 IF ARG:1 == 64
     LOCAL:0 = + (300 + RAND:10*30)
     LOCAL:1 = + (200 + RAND:10*20)
-    LOCAL:2 = - (100 + RAND:10*5) - (CFLAG:ARG:65/10)
+    LOCAL:2 = - (100 + RAND:10*5) - (CFLAG:ARG:스트레스/10)
 ;운동한다. 체력소비가 크다.
 ELSEIF ARG:1 == 128
     LOCAL:0 = - (400 + RAND:10*40)
@@ -499,31 +499,31 @@ ELSEIF ARG:1 == 4194304
 ELSEIF ARG:1 == 16384
     LOCAL:0 = - (600 + RAND:10*30)
     LOCAL:1 = - (200 + RAND:10*20)
-    LOCAL:2 = + (50*(6-ABL:ARG:10)) + RAND:10*5
+    LOCAL:2 = + (50*(6-ABL:ARG:순종)) + RAND:10*5
 ;황금수채집. 체력소비가 크다. 스트레스는 많으나, 순종에 따라 떨어져간다.
 ELSEIF ARG:1 == 32768
     LOCAL:0 = - (600 + RAND:10*30)
     LOCAL:1 = - (200 + RAND:10*20)
-    LOCAL:2 = + (50*(6-ABL:ARG:10)) + RAND:10*5
+    LOCAL:2 = + (50*(6-ABL:ARG:순종)) + RAND:10*5
 ;모유채집. 체력소비가 크다. 스트레스는 많으나, 순종에 따라 떨어져간다.
 ELSEIF ARG:1 == 65536
     LOCAL:0 = - (600 + RAND:10*30)
     LOCAL:1 = - (200 + RAND:10*20)
-    LOCAL:2 = + (50*(6-ABL:ARG:10)) + RAND:10*5
+    LOCAL:2 = + (50*(6-ABL:ARG:순종)) + RAND:10*5
 ;정액채집. 체력소비가 크다. 스트레스는 많으나, 순종에 따라 떨어져간다.
 ELSEIF ARG:1 == 524288
     LOCAL:0 = - (600 + RAND:10*30)
     LOCAL:1 = - (200 + RAND:10*20)
-    LOCAL:2 = + (50*(6-ABL:ARG:10)) + RAND:10*5
+    LOCAL:2 = + (50*(6-ABL:ARG:순종)) + RAND:10*5
 ENDIF
 
 ;[괴뢰] 및 [괴조인격]의 경우 스트레스가 쌓이지 않도록 함
-SIF TALENT:ARG:168 == 1 || TALENT:ARG:169 == 1
+SIF TALENT:ARG:괴뢰 == 1 || TALENT:ARG:괴조인격 == 1
     LOCAL:2 = MAX(LOCAL:2, 0)
 
-BASE:ARG:0 = MAX(BASE:ARG:0 + LOCAL:0, 1)
-BASE:ARG:1 = MAX(BASE:ARG:1 + LOCAL:1, 0)
-CFLAG:ARG:65 = MAX(CFLAG:ARG:65 + LOCAL:2, 0)
+BASE:ARG:체력 = MAX(BASE:ARG:체력 + LOCAL:0, 1)
+BASE:ARG:기력 = MAX(BASE:ARG:기력 + LOCAL:1, 0)
+CFLAG:ARG:스트레스 = MAX(CFLAG:ARG:스트레스 + LOCAL:2, 0)
 
 ;체력출력
 IF  LOCAL:0 > 0

@@ -9,16 +9,16 @@
 SIF DITEMTYPE:999:106 > 0
     RETURN 0
 ;강력 아이템 · 커맨드 무효시에는 불가
-SIF (FLAG:13 & 2) == 0
+SIF (FLAG:아이템확장 & 2) == 0
     RETURN 0
 ;수치 플레이계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 512) == 0
+SIF (FLAG:커맨드확장 & 512) == 0
     RETURN 0
 ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;公衆肉便器プレイの場合は아이템｢プラカード｣を持っているか, 아이템なし設定でないとダメ
 SIF TEQUIP:52 && ITEM:43 == 0 && NOITEM == 0
@@ -27,38 +27,38 @@ SIF TEQUIP:52 && ITEM:43 == 0 && NOITEM == 0
 SIF PLAYER != MASTER
     RETURN 0
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;공중육변기플레이를 실행할 경우, 낙인을 찍었거나 괴조인격이 아니면 안됨
-IF TALENT:161 == 0 && TALENT:169 == 0 && TEQUIP:52
+IF TALENT:낙인 == 0 && TALENT:괴조인격 == 0 && TEQUIP:52
     RETURN 0
 ;육변기플레이를 실행할 경우, 대상에게 붉은 개목걸이를 주었거나 낙인을 찍었거나 괴조인격이 아니면 안됨
-ELSEIF TALENT:161 == 0 && TALENT:162 == 0 && TALENT:169 == 0
+ELSEIF TALENT:낙인 == 0 && TALENT:예속 == 0 && TALENT:괴조인격 == 0
     ;ただし주인이 狂気持ちで対象が反発刻印Lv3または精神崩壊, 망신, 傀儡のどれかなら実行可能
-    SIF TALENT:MASTER:158 == 0 || (MARK:9 < 3 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:151 == 0)
+    SIF TALENT:MASTER:광기 == 0 || (MARK:반발각인 < 3 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:망신 == 0)
         RETURN 0
 ENDIF
-IF TALENT:128
+IF TALENT:작은체형
     ;[작은체형]なら순종이 4이상かつ마조끼が4이상かつ확장경험10이상じゃないと実行できない
-    SIF ABL:10 <= 3 || ABL:21 <= 3 || EXP:32 < 10 || EXP:33 < 10
+    SIF ABL:순종 <= 3 || ABL:마조끼 <= 3 || EXP:V확장경험 < 10 || EXP:A확장경험 < 10
         RETURN 0
-ELSEIF TALENT:127
+ELSEIF TALENT:소인
     ;조교 대상이 [소인]の場合, 上の条件に加え주인이 금단의 지식 보유자가 아니면 불가
-     SIF TALENT:MASTER:56 == 0 || ABL:10 <= 3 || ABL:21 <= 3 || EXP:32 < 10 || EXP:33 < 10
+     SIF TALENT:MASTER:금단의지식 == 0 || ABL:순종 <= 3 || ABL:마조끼 <= 3 || EXP:V확장경험 < 10 || EXP:A확장경험 < 10
         RETURN 0
 ELSE
     ;그 외의 경우, 순종と마조끼が3이상 없으면 안 됨
-    SIF ABL:10 < 3 || ABL:21 < 3
+    SIF ABL:순종 < 3 || ABL:마조끼 < 3
         RETURN 0
 ENDIF
 ;체력이 1000미만では使用不可
 SIF BASE:0 < 1000
     RETURN 0
 ;기력이 0일 때는 불가
-SIF BASE:1 <= 0
+SIF BASE:기력 <= 0
     RETURN 0
-;일정의 Ｖ · Ａ경험이 필요
-SIF EXP:0 < 20 || EXP:1 < 20
+;일정의 Ｖ · A경험이 필요
+SIF EXP:V경험 < 20 || EXP:A경험 < 20
     RETURN 0
 ;Ｖ계 장착구 사용 중에는 불가
 SIF TEQUIP:20 || TEQUIP:21
@@ -103,7 +103,7 @@ SIF TEQUIP:71
 SIF TEQUIP:90
     RETURN 0
 ;시체는 안됨
-SIF TALENT:226 == 1
+SIF TALENT:강시 == 1
     RETURN 0
 RETURN 1
 
@@ -129,10 +129,10 @@ COM_NAME = 육변기 플레이
 CALL TRAIN_MESSAGE_COM106_IN
 
 DOWNBASE:0 += 750
-DOWNBASE:1 += 850
+DOWNBASE:기력 += 850
 
 ;↓나전용의 구멍
-LOCAL:3 = (ABL:11+ABL:13+ABL:14+ABL:31)
+LOCAL:3 = (ABL:욕망+ABL:봉사정신+ABL:노출증+ABL:정액중독)
 LOCAL:2 = 2+RAND:(LOCAL:3)
 LOCAL:1 = 1+RAND:(LOCAL:3)
 SOURCE:1 += 250*LOCAL:2
@@ -149,23 +149,23 @@ SOURCE:23 += 150*(LOCAL:2 + LOCAL:1)
 
 ;V경험을 수반하는 커맨드의 플래그(처녀막 재생 대응)
 TFLAG:1 = 1
-SIF TALENT:0 && TALENT:150 && ASSIPLAY == 0
-    TFLAG:2 = TALENT:0
+SIF TALENT:처녀 && TALENT:연모 && ASSIPLAY == 0
+    TFLAG:2 = TALENT:처녀
 
 ;-------------------------------------------------
 ;사정 게이지 체크
 ;-------------------------------------------------
 LOCAL = 0
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     LOCAL = 500
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     LOCAL = 600
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     LOCAL = 800
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     LOCAL = 1000
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     LOCAL = 1400
 ELSE
     LOCAL = 2000
@@ -182,7 +182,7 @@ LOCAL = EJACULATIONCHECK_PALAM_10_2(TARGET, LOCAL)
 LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
 
 SIF EXIST_PENIS(PLAYER)
-    BASE:PLAYER:2 += LOCAL
+    BASE:PLAYER:사정 += LOCAL
 
 ;-------------------------------------------------
 ;사정 체크
@@ -201,21 +201,21 @@ IF TFLAG:91 >= 1
 ENDIF
 
 ;노예의 A⇔조교자의 P의 불결이 이동
-STAIN:4 |= STAIN:PLAYER:2
-STAIN:PLAYER:2 |= STAIN:4
+STAIN:애널 |= STAIN:PLAYER:자지
+STAIN:PLAYER:자지 |= STAIN:애널
 ;노예의 V⇔조교자의 P의 불결이 이동
-STAIN:3 |= STAIN:PLAYER:2
-STAIN:PLAYER:2 |= STAIN:3
+STAIN:보지 |= STAIN:PLAYER:자지
+STAIN:PLAYER:자지 |= STAIN:보지
 ;노예의 A⇔손가락의 불결이 이동
-STAIN:4 |= STAIN:1
-STAIN:1 |= STAIN:4
+STAIN:애널 |= STAIN:손
+STAIN:손 |= STAIN:애널
 ;노예의 V⇔손가락의 불결이 이동
-STAIN:3 |= STAIN:1
-STAIN:1 |= STAIN:3
+STAIN:보지 |= STAIN:손
+STAIN:손 |= STAIN:보지
 ;노예의 지⇒구의 불결이 이동
 IF NOWEX:MASTER:5 > 0
-    STAIN:1 |= STAIN:3
-    STAIN:1 |= STAIN:4
+    STAIN:손 |= STAIN:보지
+    STAIN:손 |= STAIN:애널
 ENDIF
 
 ;V경험
@@ -225,8 +225,8 @@ TCVAR:42 += (PLAYER == MASTER) ?  LOCAL:1 # 0
 ;A경험
 TCVAR:1 += LOCAL:2
 IF ASSIPLAY == 0 && EXIST_BAR(MASTER)
-    CFLAG:173 += LOCAL:1
-    CFLAG:174 += LOCAL:2
+    CFLAG:주인에게V바친회수 += LOCAL:1
+    CFLAG:주인에게A바친회수 += LOCAL:2
 ENDIF
 
 RETURN 1
@@ -235,10 +235,10 @@ RETURN 1
 ;조교시 메시지(육변기 플레이)
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM106_IN
-IF CFLAG:99 == 1
+IF CFLAG:지문소거판정 == 1
     CALL SELF_KOJO, TARGET, 5
     RETURN 0
-ELSEIF FLAG:10 == 0
+ELSEIF FLAG:조교시텍스트표시 == 0
     RETURN 0
 ENDIF
 
@@ -303,7 +303,7 @@ ELSEIF NO:TARGET == 52
     COM_NAME = 전인류의 공중 육변기
     LOCAL:1 = 2
 ;가 EX화하지 않은 것이 조건
-ELSEIF NO:TARGET == 63 && CFLAG:0 == 0
+ELSEIF NO:TARGET == 63 && CFLAG:SP캐릭터 == 0
     PRINTL 핵융합 공중 육변기
     COM_NAME = 핵융합 공중 육변기
     LOCAL:1 = 3
@@ -313,7 +313,7 @@ ELSE
 ENDIF
 
 DOWNBASE:0 += 850
-DOWNBASE:1 += 1000
+DOWNBASE:기력 += 1000
 
 ;V경험을 수반하는 커맨드의 플래그(처녀막 재생 대응)
 TFLAG:1 = 1
@@ -326,72 +326,72 @@ LOCAL:7 = 0
 
 ;보정 여러가지
 ;처녀
-IF TALENT:0
+IF TALENT:처녀
     TIMES LOCAL:5 , 1.50
     TIMES LOCAL:6 , 0.80
 ENDIF
 ;겁쟁이
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL:5 , 1.50
 ;반항적
-SIF TALENT:11
+SIF TALENT:반항적
     TIMES LOCAL:5 , 1.50
 ;프라이드 높다
-IF TALENT:16
+IF TALENT:프라이드가높음
     TIMES LOCAL:5 , 1.50
 ;프라이드 낮다
-ELSEIF TALENT:17
+ELSEIF TALENT:프라이드가낮음
     TIMES LOCAL:6 , 1.20
 ENDIF
 ;무관심
-IF TALENT:21
+IF TALENT:무관심
     TIMES LOCAL:5 , 0.50
     TIMES LOCAL:6 , 0.50
 ENDIF
 ;감정결여
-IF TALENT:22
+IF TALENT:감정결여
     TIMES LOCAL:5 , 0.80
     TIMES LOCAL:6 , 0.80
 ENDIF
 ;부끄럼쟁이
-SIF TALENT:35
+SIF TALENT:부끄럼쟁이
     TIMES LOCAL:5 , 1.50
 ;남자 싫다
-IF TALENT:37
+IF TALENT:남성혐오
     TIMES LOCAL:5 , 0.80
     TIMES LOCAL:6 , 0.80
 ENDIF
 ;도착적
-IF TALENT:80
+IF TALENT:도착적
     TIMES LOCAL:5 , 1.25
     TIMES LOCAL:6 , 1.25
 ENDIF
 ;매혹
-SIF TALENT:91
+SIF TALENT:매혹
     TIMES LOCAL:5 , 1.50
 ;수수께끼의 매력
-SIF TALENT:92
+SIF TALENT:수수께끼의매력
     TIMES LOCAL:5 , 1.50
 ;인기
-SIF TALENT:94
+SIF TALENT:인기
     TIMES LOCAL:5 , 1.50
 ;음 단지
-SIF TALENT:172
+SIF TALENT:음호
     TIMES LOCAL:6 , 0.90
 ;음고
-SIF TALENT:173
+SIF TALENT:음고
     TIMES LOCAL:6 , 1.50
 
 ;ABL:정액 중독을 본다
-IF ABL:31 == 0
+IF ABL:정액중독 == 0
     TIMES LOCAL:4 , 0.90
-ELSEIF ABL:31 == 1
+ELSEIF ABL:정액중독 == 1
     TIMES LOCAL:4 , 1.00
-ELSEIF ABL:31 == 2
+ELSEIF ABL:정액중독 == 2
     TIMES LOCAL:4 , 1.20
-ELSEIF ABL:31 == 3
+ELSEIF ABL:정액중독 == 3
     TIMES LOCAL:4 , 1.50
-ELSEIF ABL:31 == 4
+ELSEIF ABL:정액중독 == 4
     TIMES LOCAL:4 , 1.80
 ELSE
     TIMES LOCAL:4 , 2.40
@@ -422,15 +422,15 @@ ELSEIF LOCAL:2 >= 3
     PRINTFORML 요괴의 산에 도착하자 %조사선택(CALLNAME:TARGET, "를")% 적당한 돌 위에서
 ENDIF
 PRINTL 가랑이를 쩍 벌린 자세로 앉히고, 손에는
-IF TALENT:0 == 1
+IF TALENT:처녀 == 1
     ;조건에서는 V경험이 일정수 필요하고 있지만, 일단 숫처녀의 처리도 작성
     PRINTL 　　　　　　         　「☆ 첫 회 5만원 ☆」
     LOCAL:7 += 50000
-    SOURCE:31 = (EXP:0 <= 0) ?  7500000 # 5000000
-ELSEIF TALENT:0
+    SOURCE:31 = (EXP:V경험 <= 0) ?  7500000 # 5000000
+ELSEIF TALENT:처녀
     PRINTL 　　　　　　         　「☆ 첫 회 2만원 ☆」
     LOCAL:7 += 20000
-    SOURCE:31 = (EXP:0 <= 0) ?  1200000 # 1000000
+    SOURCE:31 = (EXP:V경험 <= 0) ?  1200000 # 1000000
 ENDIF
 PRINTFORML 　　　　　   「♡ 1회 {LOCAL:3}원·질 내 사정＋{LOCAL:3*2}원 ♡」
 PRINTW …이라고 쓰여진 플랜카드를 들게 했다.
@@ -440,9 +440,9 @@ PRINTW     ·
 PRINTW     ·
 PRINTW     ·
 ;노예의 A, V, 입에 정액 더러움
-STAIN:0 |= 4
-STAIN:3 |= 4
-STAIN:4 |= 4
+STAIN:입 |= 4
+STAIN:보지 |= 4
+STAIN:애널 |= 4
 TCVAR:0 += LOCAL:5-LOCAL:6
 TCVAR:1 += LOCAL:6
 TCVAR:4 += LOCAL:4
@@ -493,7 +493,7 @@ ELSEIF LOCAL:2 == 2 && (NO:TARGET == 27 || NO:TARGET == 28 || NO:TARGET == 29 ||
     SOURCE:22 += 1000
     SOURCE:23 += 1000
 ;대상이 텐구, 갓빠, 귀신이라면 조교의 효과 상승(유명 캐릭터는 종족 빗나가도 해당, 그 이외는 TALENT로 판단)
-ELSEIF LOCAL:2 >= 3 && (NO:TARGET == 23 || NO:TARGET == 32 || NO:TARGET == 40 || NO:TARGET == 41 || NO:TARGET == 79 || TALENT:210 || TALENT:214 || TALENT:215)
+ELSEIF LOCAL:2 >= 3 && (NO:TARGET == 23 || NO:TARGET == 32 || NO:TARGET == 40 || NO:TARGET == 41 || NO:TARGET == 79 || TALENT:캇파 || TALENT:오니 || TALENT:텐구)
     TIMES SOURCE:12 , 2.00
     SOURCE:19 += 1000
     SOURCE:22 += 1000
@@ -501,7 +501,7 @@ ELSEIF LOCAL:2 >= 3 && (NO:TARGET == 23 || NO:TARGET == 32 || NO:TARGET == 40 ||
 ENDIF
 
 ;삽입 회수×설정 요금
-IF TALENT:0
+IF TALENT:처녀
     LOCAL:7 += LOCAL:3 * (LOCAL:5 + LOCAL:6 - 1)
 ELSE
     LOCAL:7 += LOCAL:3 * (LOCAL:5 + LOCAL:6)
@@ -532,7 +532,7 @@ CALL SHOW_MONEY_INCREACE
 ;육변기 플레이로 번 최고 금액 판정 처리
 SIF MONEY:1 > MONEY:974
     CALL NEW_HIGH_INCOME_ALL, 974
-SIF MONEY:1 > CFLAG:86
+SIF MONEY:1 > CFLAG:최고금액_육변기
     CALL NEW_HIGH_INCOME_SLAVE, 86
 CALL TOTAL_INCOME_SLAVE, MONEY:1
 ;--------------------------------------------------
@@ -541,6 +541,6 @@ WAIT
 ;노출 쾌락 경험 입수 판정
 TFLAG:100 |= 2
 ;조교 대상의 공중육 변기 플레이 실행 회수
-CFLAG:54 += 1
+CFLAG:공중육변기회수 += 1
 
 RETURN 1

@@ -22,11 +22,11 @@ SIF ITEM:29 == 0 && NOITEM == 0
     RETURN 0
 ;助手は기교5でないとダメ
 IF ASSIPLAY
-    SIF ABL:ASSI:12 < 5
+    SIF ABL:ASSI:기교 < 5
         RETURN 0
 ;조교자의 기교가 3無いとできない
 ELSE
-    SIF ABL:PLAYER:12 < 3
+    SIF ABL:PLAYER:기교 < 3
         RETURN 0
 ENDIF
 ;荊で緊縛中, 거미줄で緊縛中はダメ
@@ -63,7 +63,7 @@ ELSE
     COM_TOOL_CALLNAME = %COM_TOOL_NAME%
 ENDIF
 
-IF TEQUIP:40 == 0 && TEQUIP:90 == 0 && FLAG:15 & 16
+IF TEQUIP:40 == 0 && TEQUIP:90 == 0 && FLAG:커맨드확장 & 16
     CALL SELECT_ROPE
     SELECTCASE RESULT
         CASE 1
@@ -88,15 +88,15 @@ ENDIF
 ;소스의 계산
 ;-------------------------------------------------
 ;긴박 경험이 높으면 소비 감소
-IF EXP:31 < EXPLV:3
+IF EXP:긴박경험 < EXPLV:3
     DOWNBASE:0 += 100
-    DOWNBASE:1 += 150
-ELSEIF EXP:31 < EXPLV:4
+    DOWNBASE:기력 += 150
+ELSEIF EXP:긴박경험 < EXPLV:4
     DOWNBASE:0 += 80
-    DOWNBASE:1 += 120
+    DOWNBASE:기력 += 120
 ELSE
     DOWNBASE:0 += 60
-    DOWNBASE:1 += 90
+    DOWNBASE:기력 += 90
 ENDIF
 CALL TRAIN_MESSAGE_COM224
 
@@ -120,37 +120,37 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL:1 , 0.40
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL:1 , 0.60
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL:1 , 0.80
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL:1 , 1.00
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL:1 , 1.10
 ELSE
     TIMES LOCAL:1 , 1.20
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     TIMES LOCAL:1 , 0.80
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     TIMES LOCAL:1 , 1.00
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     TIMES LOCAL:1 , 1.30
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     TIMES LOCAL:1 , 1.60
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     TIMES LOCAL:1 , 2.00
 ELSE
     TIMES LOCAL:1 , 3.00
 ENDIF
 
 ;도착적
-SIF TALENT:80
+SIF TALENT:도착적
     TIMES LOCAL:1 , 2.00
 
 IF (FLAG:1100 & 1) && TEQUIP:90 == 0
@@ -176,10 +176,10 @@ IF TEQUIP:90
         TEQUIP:40 = 0
     ELSE
         TEQUIP:40 = 1
-        STAIN:1 |= 2
-        STAIN:1 |= 4
-        STAIN:5 |= 2
-        STAIN:5 |= 4
+        STAIN:손 |= 2
+        STAIN:손 |= 4
+        STAIN:가슴 |= 2
+        STAIN:가슴 |= 4
     ENDIF
 ELSE
     IF TEQUIP:40
@@ -210,10 +210,10 @@ DRAWLINE
 PRINTL [0]-보통으로 묶는다.
 PRINTL [1]-사지 결박
 ;조교자의 기교 Lv가 3이상 있는 경우
-SIF ABL:PLAYER:12 >= 3
+SIF ABL:PLAYER:기교 >= 3
     PRINTL [2]-귀갑 묶기
 ;조교자가 새드이나 왕S나 기교 Lv가 4이상 있는 경우
-SIF ABL:PLAYER:12 >= 4 || TALENT:PLAYER:81 || TALENT:PLAYER:177
+SIF ABL:PLAYER:기교 >= 4 || TALENT:PLAYER:새드 || TALENT:PLAYER:초S
     PRINTL [3]-매달기
 $INPUT_LOOP
 INPUT
@@ -221,9 +221,9 @@ IF RESULT == 0
     RETURN 0
 ELSEIF RESULT == 1
     RETURN 1
-ELSEIF RESULT == 2 && ABL:PLAYER:12 >= 3
+ELSEIF RESULT == 2 && ABL:PLAYER:기교 >= 3
     RETURN 2
-ELSEIF RESULT == 3 && (ABL:PLAYER:12 >= 4 || TALENT:PLAYER:81 || TALENT:PLAYER:177)
+ELSEIF RESULT == 3 && (ABL:PLAYER:기교 >= 4 || TALENT:PLAYER:새드 || TALENT:PLAYER:초S)
     RETURN 3
 ELSE
     GOTO INPUT_LOOP
@@ -240,34 +240,34 @@ ELSE
 ENDIF
 
 ;긴박 경험이 높으면 소비 감소
-IF EXP:31 < EXPLV:3
+IF EXP:긴박경험 < EXPLV:3
     DOWNBASE:0 += 50
-    DOWNBASE:1 += 100
-ELSEIF EXP:31 < EXPLV:4
+    DOWNBASE:기력 += 100
+ELSEIF EXP:긴박경험 < EXPLV:4
     DOWNBASE:0 += 40
-    DOWNBASE:1 += 80
+    DOWNBASE:기력 += 80
 ELSE
     DOWNBASE:0 += 30
-    DOWNBASE:1 += 60
+    DOWNBASE:기력 += 60
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     LOCAL = 60
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     LOCAL = 180
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     LOCAL = 300
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     LOCAL = 480
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     LOCAL = 700
 ELSE
     LOCAL = 850
 ENDIF
 
 ;도착적
-SIF TALENT:80
+SIF TALENT:도착적
     TIMES LOCAL , 2.00
 
 ;PALAM:욕정을 본다
@@ -298,13 +298,13 @@ SOURCE:12 += LOCAL
 SOURCE:22 += LOCAL
 SOURCE:31 += LOCAL
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && ABL:21 >= 2
+SIF ASSIPLAY == 0 && ABL:마조끼 >= 2
     TFLAG:50 += 1
 ;촉수 경험 플래그
 SIF TEQUIP:90
@@ -319,7 +319,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM224
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 ;토리코 모드에서의 직접 호출 대비
@@ -346,21 +346,21 @@ ELSE
         PRINTFORMW %CALLNAME:TARGET%의 %조사선택(COM_TOOL_NAME, "를")% 풀어 주었다….
     ELSE
         ;도착적이어 공포 각인이 1 이하로 반발 각인이 없을 때
-        IF TALENT:80 && MARK:8 < 2 && MARK:9 < 1
+        IF TALENT:도착적 && MARK:공포각인 < 2 && MARK:반발각인 < 1
             PRINTFORML %조사선택(CALLNAME:TARGET, "를")% %조사선택(COM_TOOL_CALLNAME, "로")% 묶었다.
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 밧줄의 감촉을 전신으로 느끼며, 쾌감을 마음껏 맛보고 있는 것 같다….
         ;반항적인가 저항을 가져 함락 하지 않는 경우
-        ELSEIF (TALENT:11 || TALENT:34) && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0
+        ELSEIF (TALENT:반항적 || TALENT:저항) && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0
             PRINTFORMW 격렬하게 바둥대는 %조사선택(CALLNAME:TARGET, "를")% 억지로 %조사선택(COM_TOOL_CALLNAME, "로")% 붙들어 매었다….
         ;겁쟁이 소유나 공포 각인 2이상으로 기장과 감정결여를 가지지 않고, 함락 하고 있지 않는 경우
-        ELSEIF  (TALENT:10 || MARK:8 >= 2) && TALENT:12 == 0 && TALENT:22 == 0 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0
+        ELSEIF  (TALENT:겁쟁이 || MARK:공포각인 >= 2) && TALENT:꿋꿋함 == 0 && TALENT:감정결여 == 0 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0
             PRINTFORMW 공포에 질린 %조사선택(CALLNAME:TARGET, "를")% %조사선택(COM_TOOL_CALLNAME, "로")% 정중하게 묶었다….
         ;프라이드 높은가 신령해 게다가, 굴복 각인과 치욕 각인이 1 이하로, 함락 하고 있지 않는 경우
-        ELSEIF (TALENT:16 || TALENT:222) && MARK:2 < 2 && MARK:4 < 2 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0
+        ELSEIF (TALENT:프라이드가높음 || TALENT:신령) && MARK:굴복각인 < 2 && MARK:치욕각인 < 2 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0
             PRINTFORML %조사선택(CALLNAME:TARGET, "를")% %조사선택(COM_TOOL_CALLNAME, "로")% 묶었다.
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 속박되면서도, 그 프라이드만은 꺾이지 않는 것 같다….
         ;해방이나 쾌감에 솔직한가 봄의 사람으로 아픔에 약하지만 않고, 반발 각인이 없는 경우
-        ELSEIF (TALENT:33 || TALENT:70 || TALENT:263) && TALENT:40 == 0 && MARK:9 <= 0
+        ELSEIF (TALENT:해방 || TALENT:쾌감에솔직 || TALENT:봄의여인) && TALENT:아픔에약함 == 0 && MARK:반발각인 <= 0
             PRINTFORMW 어딘지 즐거워 보이는 %조사선택(CALLNAME:TARGET, "를")% %조사선택(COM_TOOL_CALLNAME, "로")% 정중하게 묶었다….
         ELSE
             PRINTFORMW %조사선택(CALLNAME:TARGET, "를")% %조사선택(COM_TOOL_CALLNAME, "로")% 묶었다….

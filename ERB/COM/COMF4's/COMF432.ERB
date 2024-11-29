@@ -9,10 +9,10 @@
 SIF DITEMTYPE:999:432 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;Ａ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 2
+SIF FLAG:VA이상조교필터 & 2
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
@@ -27,13 +27,13 @@ SIF TEQUIP:26
 SIF NO:PLAYER != 5
     RETURN 0
 ;기교3이상이 아니면 쓸 수 없다
-SIF ABL:PLAYER:12 < 3
+SIF ABL:PLAYER:기교 < 3
     RETURN 0
 ;潤滑不足の場合氷柱責めはできない(새드または새드끼Lv3이상, 또는 망신이나 복종이 있다면 ＯＫ)
-SIF PALAM:10 < PALAMLV:1 && TALENT:PLAYER:81 == 0 && ABL:PLAYER:20 < 3 && ASSI > 0 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+SIF PALAM:10 < PALAMLV:1 && TALENT:PLAYER:새드 == 0 && ABL:PLAYER:새드끼 < 3 && ASSI > 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
     RETURN 0
 ;그 조교 중에 관장 플레이＋배설이 있었을 경우, 조교자가 汚れ無視もしくは汚臭鈍感を持たないなら実行できない
-SIF TFLAG:140 & 256 && TALENT:PLAYER:61 == 0 && TALENT:PLAYER:64 == 0
+SIF TFLAG:140 & 256 && TALENT:PLAYER:냄새둔감 == 0 && TALENT:PLAYER:불결무시 == 0
     RETURN 0
 ;Ａ계 장착구 사용 중에는 불가
 SIF TEQUIP:25 || TEQUIP:26
@@ -64,24 +64,24 @@ COM_NAME = 고드름 고문
 CALL TRAIN_MESSAGE_COM432
 
 DOWNBASE:0 += 100
-DOWNBASE:1 += 200
+DOWNBASE:기력 += 200
 
 SOURCE:19 += 250
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     SOURCE:2 = 50
     SOURCE:22 = 100
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     SOURCE:2 = 100
     SOURCE:22 = 300
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     SOURCE:2 = 250
     SOURCE:22 = 600
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     SOURCE:2 = 500
     SOURCE:22 = 1200
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     SOURCE:2 = 1000
     SOURCE:22 = 2000
 ELSE
@@ -90,19 +90,19 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES SOURCE:2 , 0.50
     SOURCE:20 = 3000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES SOURCE:2 , 1.00
     SOURCE:20 = 1700
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES SOURCE:2 , 1.10
     SOURCE:20 = 600
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES SOURCE:2 , 1.20
     SOURCE:20 = 100
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES SOURCE:2 , 1.40
     SOURCE:20 = 50
 ELSE
@@ -142,9 +142,9 @@ ELSE
 ENDIF
 
 ;[작은체형]
-IF TALENT:128
+IF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
-    SIF TALENT:130 || TALENT:131
+    SIF TALENT:유아 || TALENT:유치
         TIMES SOURCE:2 , 2.00
     SIF NO:TARGET == 44 || NO:TARGET == 66 || NO:TARGET == 67
         TIMES SOURCE:2 , 1.20
@@ -152,17 +152,17 @@ ENDIF
 
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:22 , 0.60
     TIMES SOURCE:31 , 0.60
 ENDIF
 
-SIF TALENT:0 == 1 && TALENT:30
+SIF TALENT:처녀 == 1 && TALENT:정조관념
     SOURCE:22 /= 3
 
 ;고드름의 착탈
@@ -177,7 +177,7 @@ ELSE
     TEQUIP:26 = 1
     LOCAL = 0
     TIMES SOURCE:2 , 0.80
-    IF TFLAG:171 == 0 && EXP:33 >= 10 && EXP:1 >= 50
+    IF TFLAG:171 == 0 && EXP:A확장경험 >= 10 && EXP:A경험 >= 50
         LOCAL += 1
     ELSEIF TFLAG:171 > 0 && TFLAG:171 <= 5
         LOCAL += 2
@@ -195,9 +195,9 @@ ELSE
     TFLAG:171 += 1
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
@@ -228,22 +228,22 @@ ENDIF
 LOCAL:3 = MAX(TEQUIP:26 / 2, 1)
 
 DOWNBASE:0 += 25 * LOCAL:3
-DOWNBASE:1 += 50 * LOCAL:3
+DOWNBASE:기력 += 50 * LOCAL:3
 
 ;ABL:A감각을 본다
-IF ABL:2 == 0
+IF ABL:A감각 == 0
     LOCAL = 20
     LOCAL:1 = 50
-ELSEIF ABL:2 == 1
+ELSEIF ABL:A감각 == 1
     LOCAL = 40
     LOCAL:1 = 100
-ELSEIF ABL:2 == 2
+ELSEIF ABL:A감각 == 2
     LOCAL = 60
     LOCAL:1 = 300
-ELSEIF ABL:2 == 3
+ELSEIF ABL:A감각 == 3
     LOCAL = 100
     LOCAL:1 = 600
-ELSEIF ABL:2 == 4
+ELSEIF ABL:A감각 == 4
     LOCAL = 200
     LOCAL:1 = 1200
 ELSE
@@ -252,19 +252,19 @@ ELSE
 ENDIF
 
 ;EXP:A경험을 본다
-IF EXP:1 < EXPLV:1
+IF EXP:A경험 < EXPLV:1
     TIMES LOCAL , 0.50
     LOCAL:2 = 3000
-ELSEIF EXP:1 < EXPLV:2
+ELSEIF EXP:A경험 < EXPLV:2
     TIMES LOCAL , 1.00
     LOCAL:2 = 1700
-ELSEIF EXP:1 < EXPLV:3
+ELSEIF EXP:A경험 < EXPLV:3
     TIMES LOCAL , 1.10
     LOCAL:2 = 600
-ELSEIF EXP:1 < EXPLV:4
+ELSEIF EXP:A경험 < EXPLV:4
     TIMES LOCAL , 1.20
     LOCAL:2 = 100
-ELSEIF EXP:1 < EXPLV:5
+ELSEIF EXP:A경험 < EXPLV:5
     TIMES LOCAL , 1.40
     LOCAL:2 = 50
 ELSE
@@ -304,22 +304,22 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL , 1.20
 ELSE
     TIMES LOCAL , 1.30
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES LOCAL:2 , 1.50
 ;샹하이 인형, 호라이 인형, 케로 보정
 SIF NO:TARGET == 44 || NO:TARGET == 66 || NO:TARGET == 67
@@ -329,16 +329,16 @@ LOCAL *= LOCAL:3
 
 ;A민감, 둔감을 본다
 ;쾌A자체의 체크는 다음에 정리해 준다
-IF TALENT:105
+IF TALENT:A둔감
     TIMES LOCAL:2 , 1.50
     TIMES LOCAL:1 , 1.50
-ELSEIF TALENT:104
+ELSEIF TALENT:A민감
     TIMES LOCAL:2 , 0.60
     TIMES LOCAL:1 , 0.60
 ENDIF
 
 ;처녀로 정조관념
-SIF TALENT:0 == 1 && TALENT:30
+SIF TALENT:처녀 == 1 && TALENT:정조관념
     LOCAL:1 /= 3
 
 SOURCE:2 += LOCAL
@@ -357,7 +357,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM432
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -365,10 +365,10 @@ IF TEQUIP:26
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 항문에서 고드름을 잡고, 단번에 뽑아냈다….
 ELSE
     PRINTFORM %조사선택(CALLNAME:PLAYER, "는")% 손바닥 위에 
-    IF TFLAG:171 == 0 && EXP:1 < 1
+    IF TFLAG:171 == 0 && EXP:A경험 < 1
         PRINTFORML 아직 충분히 개발되어 있지 않은 %CALLNAME:TARGET%의 항문에도
         PRINT 충분히 들어갈 정도로 작은 얼음 조각을 
-    ELSEIF TFLAG:171 == 0 && EXP:33 >= 10 && EXP:1 >= 50
+    ELSEIF TFLAG:171 == 0 && EXP:A확장경험 >= 10 && EXP:A경험 >= 50
         PRINTFORM 충분히 개발된 %CALLNAME:TARGET%의 항문에도 
         PRINT 쾌감을 줄 수 있도록 형태를 정돈한 고드름을 
     ELSEIF TFLAG:171 > 0 && TFLAG:171 <= 5

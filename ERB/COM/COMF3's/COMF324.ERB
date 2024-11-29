@@ -9,24 +9,24 @@
 SIF DITEMTYPE:999:324 > 0
     RETURN 0
 ;조교자奉仕 · ウフフ系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 2048) == 0
+SIF (FLAG:커맨드확장 & 2048) == 0
     RETURN 0
 ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;조교 대상에게 페니스가 없으면 불가
 SIF EXIST_BAR(TARGET) == 0
     RETURN 0
 ;조교자가 남자면 안 됨
-SIF TALENT:PLAYER:120
+SIF TALENT:PLAYER:남자
     RETURN 0
 ;순종4미만 · 레즈끼3미만의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(망신か복종ならＯＫ)
 IF ASSIPLAY
-    SIF (ABL:ASSI:10 < 4 || (TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:22 < 3)) && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || (TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 3)) && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;주인이 [금단의 지식]持ちじゃないとき, 体格差が2段階以内か조교자가 [금단의 지식]持ちじゃないとダメ
-SIF TALENT:MASTER:56 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
+SIF TALENT:MASTER:금단의지식 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
     RETURN 0
 ;오나홀 · 전극 오나홀사용 중에는 불가
 SIF TEQUIP:30 == 2 || TEQUIP:30 == 6
@@ -53,10 +53,10 @@ SIF TEQUIP:55
 SIF TEQUIP:58
     RETURN 0
 ;조수가 훈도시 착용 중일 경우 , 助手の기교4이상 필수
-SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:59 == 17 && ABL:ASSI:12 < 4
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:59 == 17 && ABL:ASSI:기교 < 4
     RETURN 0
 ;훈도시 착용 중일 경우 기교4이상 필수
-SIF TEQUIP:59 == 17 && ABL:12 < 4
+SIF TEQUIP:59 == 17 && ABL:기교 < 4
     RETURN 0
 ;알몸 앞치마 중에는 불가
 SIF TEQUIP:59 == 1
@@ -103,15 +103,15 @@ CALL TRAIN_MESSAGE_COM324
 LOCAL = 0
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     LOCAL = 50
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     LOCAL = 300
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     LOCAL = 800
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     LOCAL = 1500
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     LOCAL = 2000
 ELSE
     LOCAL = 3200
@@ -130,14 +130,14 @@ LOCAL = EJACULATIONCHECK_EXP_0_1(PLAYER, LOCAL)
 ;조교 대상의 C감각을 본다
 LOCAL = EJACULATIONCHECK_ABL_0_1(TARGET, LOCAL)
 
-SIF TALENT:120 || TALENT:121
-    BASE:2 += LOCAL
+SIF TALENT:남자 || TALENT:후타나리
+    BASE:사정 += LOCAL
 
 ;-------------------------------------------------
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 50
-DOWNBASE:1 += 220
+DOWNBASE:기력 += 220
 
 SOURCE:10 = 700
 SOURCE:11 = 800
@@ -147,19 +147,19 @@ SOURCE:24 = 600
 SOURCE:31 = 500
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 800
     SOURCE:15 = 1200
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 1000
     SOURCE:15 = 1500
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 1500
     SOURCE:15 = 1800
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 2000
     SOURCE:15 = 2300
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 2500
     SOURCE:15 = 2700
 ELSE
@@ -168,19 +168,19 @@ ELSE
 ENDIF
 
 ;ABL:기교를 본다
-IF ABL:PLAYER:12 == 0
+IF ABL:PLAYER:기교 == 0
     TIMES SOURCE:0 , 0.50
     TIMES SOURCE:15 , 0.50
-ELSEIF ABL:PLAYER:12 == 1
+ELSEIF ABL:PLAYER:기교 == 1
     TIMES SOURCE:0 , 0.80
     TIMES SOURCE:15 , 0.80
-ELSEIF ABL:PLAYER:12 == 2
+ELSEIF ABL:PLAYER:기교 == 2
     TIMES SOURCE:0 , 1.00
     TIMES SOURCE:15 , 1.00
-ELSEIF ABL:PLAYER:12 == 3
+ELSEIF ABL:PLAYER:기교 == 3
     TIMES SOURCE:0 , 1.50
     TIMES SOURCE:15 , 1.50
-ELSEIF ABL:PLAYER:12 == 4
+ELSEIF ABL:PLAYER:기교 == 4
     TIMES SOURCE:0 , 2.50
     TIMES SOURCE:15 , 2.50
 ELSE
@@ -189,29 +189,29 @@ ELSE
 ENDIF
 
 ;조교자가 처녀
-IF TALENT:PLAYER:0
+IF TALENT:PLAYER:처녀
     PRINTFORML < %조사선택(CALLNAME:PLAYER, "가")% 처녀>
     CALL LOST_VIRGIN, TARGET, PLAYER
-    IF TALENT:PLAYER:0 == 1
+    IF TALENT:PLAYER:처녀 == 1
         TIMES SOURCE:14 , 5.00
         TIMES SOURCE:22 , 8.00
         TIMES SOURCE:31 , 3.00
-        IF ABL:10 < 1
+        IF ABL:순종 < 1
             PRINTFORML 그리고 %ABLNAME:10%이 1이 되었다. 
-            ABL:10 = 1
+            ABL:순종 = 1
         ENDIF
     ELSE
         TIMES SOURCE:14 , 3.00
         TIMES SOURCE:22 , 6.40
         TIMES SOURCE:31 , 2.40
     ENDIF
-    TFLAG:(4+ASSIPLAY) += TALENT:PLAYER:0
-    TALENT:PLAYER:0 = 0
-    STAIN:PLAYER:3 |= 32
+    TFLAG:(4+ASSIPLAY) += TALENT:PLAYER:처녀
+    TALENT:PLAYER:처녀 = 0
+    STAIN:PLAYER:보지 |= 32
 ENDIF
 TCVAR:PLAYER:0 += 1
 SIF ASSIPLAY == 0 && EXIST_BAR(TARGET)
-    CFLAG:175 += 1
+    CFLAG:주인의V범한회수 += 1
 
 ;-------------------------------------------------
 ;사정 체크
@@ -226,11 +226,11 @@ SIF ASSIPLAY == 0 && EXIST_BAR(TARGET)
 
 IF EXIST_BAR(TARGET)
     ;노예의 P⇔조교자의 V의 불결이 이동
-    STAIN:2 |= STAIN:PLAYER:3
-    STAIN:PLAYER:3 |= STAIN:2
+    STAIN:자지 |= STAIN:PLAYER:보지
+    STAIN:PLAYER:보지 |= STAIN:자지
 ENDIF
 
-SIF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+SIF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 7
 
 ;봉사 쾌락 경험 입수 판정
@@ -251,7 +251,7 @@ RETURN 1
 ;다만, 조수 조교 때는 조수가 거절했는지 대상이 거절했는지 불명해서 표시하지 않는다.
 @DENIAL_MESSAGE_COM_324
 CALL KOJO_DENIAL_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 IF ASSIPLAY == 0
@@ -265,7 +265,7 @@ ENDIF
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM324
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -273,12 +273,12 @@ PRINTL
 IF TFLAG:102 && PREVCOM == 324 && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% %CALLNAME:PLAYER%의 허리를 잡고,
     ;연모로 추가
-    SIF TALENT:150 && RAND:3 >= 1
+    SIF TALENT:연모 && RAND:3 >= 1
         PRINTFORM %CALLNAME:PLAYER%의 목덜미에 혀를 가져가 핥으며 
     ;「TARGET가 진성의 새드인가」 「새드끼인가」로 분기
-    IF (TALENT:81 || TALENT:177 || ABL:20 == 5) && RAND:3 == 0
+    IF (TALENT:새드 || TALENT:초S || ABL:새드끼 == 5) && RAND:3 == 0
         PRINTFORMW 입체적으로 허리를 그라인드 시켜, %CALLNAME:PLAYER%의 몸을 흔들어댔다….
-    ELSEIF TALENT:81 || TALENT:177 || (ABL:20 >= 3 && RAND:2 == 0)
+    ELSEIF TALENT:새드 || TALENT:초S || (ABL:새드끼 >= 3 && RAND:2 == 0)
         PRINTW 짐승과 같이 움찔움찔 하며 허리를 떨고 있다….
     ELSE
         PRINTW 다시 허리를 앞뒤로 움직였다….
@@ -288,12 +288,12 @@ ELSEIF TFLAG:102 && (PREVCOM == 323 || PREVCOM == 325) && ((ASSIPLAY && TFLAG:13
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 질안에서 빼지 않고 그대로 %조사선택(CALLNAME:PLAYER, "를")% 엎드리게 하여 다시금 허리를 움직였다….
 ELSE
     PRINTFORM %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%의 앞에서 네발로 엎드린 자세가 되어, 
-    SIF TALENT:PLAYER:0 == 1
+    SIF TALENT:PLAYER:처녀 == 1
         PRINT 남자를 받아들인 적 없는 
     PRINTFORML 자신의 보지에 삽입해달라고 애원했다….
     PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
     ;연모로 추가
-    SIF TALENT:150 && RAND:3 >= 1
+    SIF TALENT:연모 && RAND:3 >= 1
         PRINT 몸을 딱 밀착시켜 
     PRINTFORMW %CALLNAME:PLAYER%에게 삽입했다….
 ENDIF
@@ -304,19 +304,19 @@ ENDIF
 @COM_ORDER_324, ARG
 LOCAL:99 = ARG
 ;ABL:욕망
-IF ABL:11
+IF ABL:욕망
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:11
+    LOCAL:99 = ABL:욕망
     TFLAG:240 += LOCAL:99 * 2
     RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 2})
 ENDIF
 
 ;쾌락 각인
-IF MARK:1
+IF MARK:쾌락각인
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = MARK:1
+    LOCAL:99 = MARK:쾌락각인
     TFLAG:240 += LOCAL:99 * 2
     RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99 * 2})
 ENDIF
@@ -333,21 +333,21 @@ IF LOCAL:2
 ENDIF
 
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 2
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:70%({LOCAL:99})
 ;쾌감의 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 2
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
 ENDIF
 ;연모
-IF TALENT:150 && ASSIPLAY == 0
+IF TALENT:연모 && ASSIPLAY == 0
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
@@ -356,20 +356,20 @@ IF TALENT:150 && ASSIPLAY == 0
 ENDIF
 
 ;조교자가 처녀
-IF TALENT:PLAYER:0 == 1
+IF TALENT:PLAYER:처녀 == 1
     RESULTS = %RESULTS% - 
     LOCAL:99 = 15
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %조사처리(CALLNAME:PLAYER,"가")% 처녀({LOCAL:99})
 ENDIF
 ;조교자가 정조관념
-IF TALENT:PLAYER:30
+IF TALENT:PLAYER:정조관념
     RESULTS = %RESULTS% - 
     LOCAL:99 = 10
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %조사처리(CALLNAME:PLAYER,"가")% 정조관념({LOCAL:99})
 ;조교자가 정조무구애
-ELSEIF TALENT:PLAYER:31
+ELSEIF TALENT:PLAYER:정조관둔감
     RESULTS = %RESULTS% + 
     LOCAL:99 = 5
     TFLAG:240 += LOCAL:99
@@ -378,10 +378,10 @@ ELSEIF TALENT:PLAYER:31
 ENDIF
 
 ;조교자의 ABL:기교
-IF ABL:PLAYER:12
+IF ABL:PLAYER:기교
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:PLAYER:12
+    LOCAL:99 = ABL:PLAYER:기교
     TFLAG:240 += LOCAL:99 * 4
     RESULTS = %RESULTS% %CALLNAME:PLAYER%의 %ABLNAME:12%Lv{LOCAL:99}({LOCAL:99 * 4})
 ENDIF

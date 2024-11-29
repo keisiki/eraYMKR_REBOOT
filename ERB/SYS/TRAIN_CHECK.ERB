@@ -32,18 +32,18 @@ TFLAG:50 += TFLAG:51 * LOCAL:1
 
 ;사정
 FOR COUNT, 8, 25
-    SIF TFLAG:COUNT > 0 && (EXP:4 + TCVAR:4) >= EXPLV:3
+    SIF TFLAG:COUNT > 0 && (EXP:정액경험 + TCVAR:4) >= EXPLV:3
         TFLAG:50 += TFLAG:COUNT
 NEXT
 
 ;주인(아나타)와 대상의 능력을 계산
 ;ABL:순종을 본다
-TFLAG:97 = ABL:10
+TFLAG:97 = ABL:순종
 
 ;주인과 대상이 동성
-IF !(TALENT:MASTER:120 ^^ TALENT:120)
+IF !(TALENT:MASTER:남자 ^^ TALENT:남자)
     ;男ならＢＬっ気, 女ならレズっ気を見る
-    LOCAL = 22 + TALENT:120
+    LOCAL = 22 + TALENT:남자
     IF ABL:LOCAL == 0
         TFLAG:97 -= 1
     ELSEIF ABL:LOCAL < 3
@@ -54,83 +54,83 @@ IF !(TALENT:MASTER:120 ^^ TALENT:120)
         TFLAG:97 += 2
     ENDIF
     ;男ならＢＬ中毒, 女ならレズ中毒を見る
-    LOCAL = 32 + TALENT:120
+    LOCAL = 32 + TALENT:남자
     IF ABL:LOCAL > 4
         TFLAG:97 += 2
     ELSEIF ABL:LOCAL > 2
         TFLAG:97 += 1
     ENDIF
     ;両刀
-    SIF TALENT:83
+    SIF TALENT:바이
         TFLAG:97 += 1
 ENDIF
 ;素質による増減
 ;反抗的
-SIF TALENT:11
+SIF TALENT:반항적
     TFLAG:97 -= 1
 ;素直
-SIF TALENT:13 && TFLAG:97 > 0
+SIF TALENT:솔직함 && TFLAG:97 > 0
     TFLAG:97 += 1
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     TFLAG:97 -= 1
 ;感情乏しい
-SIF TALENT:22
+SIF TALENT:감정결여
     TFLAG:97 -= 1
 ;抵抗
-SIF TALENT:34
+SIF TALENT:저항
     TFLAG:97 -= 1
 ;헌신적
-SIF TALENT:63 && TFLAG:97 > 0
+SIF TALENT:헌신적 && TFLAG:97 > 0
     TFLAG:97 += 1
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     TFLAG:97 += 1
 ;쾌감을 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     TFLAG:97 -= 1
 ENDIF
 ;男嫌い
-IF TALENT:37 && TALENT:MASTER:120
+IF TALENT:남성혐오 && TALENT:MASTER:남자
     TFLAG:97 -= 1
 ;女嫌い
-ELSEIF TALENT:38 && TALENT:MASTER:120 == 0
+ELSEIF TALENT:여성혐오 && TALENT:MASTER:남자 == 0
     TFLAG:97 -= 1
 ENDIF
 ;연모
-SIF TALENT:150
+SIF TALENT:연모
     TFLAG:97 += 2
 ;망신・상애
-SIF TALENT:151 || TALENT:153
+SIF TALENT:망신 || TALENT:상애
     TFLAG:97 += 2
 ;친애・괴조인격
-SIF TALENT:152 || TALENT:169
+SIF TALENT:친애 || TALENT:괴조인격
     TFLAG:97 += 3
 ;服従
-SIF TALENT:160
+SIF TALENT:복종
     TFLAG:97 += 2
 ;烙印
-SIF TALENT:161
+SIF TALENT:낙인
     TFLAG:97 += 1
 ;隷属
-SIF TALENT:162
+SIF TALENT:예속
     TFLAG:97 += 3
 
 ;주인의 매력
-SIF TALENT:MASTER:90
+SIF TALENT:MASTER:매력
     TFLAG:97 += 1
 ;주인의 매혹
-SIF TALENT:MASTER:91
+SIF TALENT:MASTER:매혹
     TFLAG:97 += 1
 ;주인의 수수께끼의 매력
-SIF TALENT:MASTER:92
+SIF TALENT:MASTER:수수께끼의매력
     TFLAG:97 += 1
 ;주인의 인기
-SIF TALENT:MASTER:94
+SIF TALENT:MASTER:인기
     TFLAG:97 += 1
 
 ;촉수 임플란트
-SIF CFLAG:41
+SIF CFLAG:촉수이식
     CALL TENTACLE_INPLANT
 
 TFLAG:97 += TFLAG:50 / 2
@@ -142,11 +142,11 @@ IF LOCAL:1 > 0 && LOCAL:1 != 100 && TFLAG:97 > 0
 ENDIF
 
 ;반발각인 보정
-TFLAG:97 -= (FLAG:3 < 3) ? 2 * MARK:9 # 5 * MARK:9
+TFLAG:97 -= (FLAG:난이도 < 3) ? 2 * MARK:반발각인 # 5 * MARK:반발각인
 
 ;非陥落なら, 恐怖각인 보정(難易度HARD 이상のみ)
-SIF FLAG:3 > 2 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0
-    TFLAG:97 -= 2 * MARK:8
+SIF FLAG:난이도 > 2 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0
+    TFLAG:97 -= 2 * MARK:공포각인
 
 ;ふぉーゆーっ！がしつこすぎると嫌われる
 IF TFLAG:143 > 50
@@ -156,43 +156,43 @@ ELSEIF TFLAG:143 >= 5
 ENDIF
 
 ;神霊の場合, 主人が[수수께끼의 매력]を持っていないとなびきにくい
-SIF TALENT:222 && TALENT:MASTER:92 == 0 && TFLAG:97 > 0
+SIF TALENT:신령 && TALENT:MASTER:수수께끼의매력 == 0 && TFLAG:97 > 0
     TIMES TFLAG:97 , 0.50
 ;半神の場合も主人が[수수께끼의 매력]または[매혹]を持っていないとなびきにくい
-SIF TALENT:223 && TALENT:MASTER:91 == 0 && TALENT:MASTER:92 == 0 && TFLAG:97 > 0
+SIF TALENT:반신 && TALENT:MASTER:매혹 == 0 && TALENT:MASTER:수수께끼의매력 == 0 && TFLAG:97 > 0
     TIMES TFLAG:97 , 0.75
 ;死神の場合, 主人が[仙人]ならばなびきにくい
-SIF TALENT:224 && TALENT:MASTER:225
+SIF TALENT:사신 && TALENT:MASTER:선인
     TIMES TFLAG:97 , 0.75
 ;仙人の場合, 主人が[死神]ならばなびきにくい
-SIF TALENT:225 && TALENT:MASTER:224
+SIF TALENT:선인 && TALENT:MASTER:사신
     TIMES TFLAG:97 , 0.75
 
 ;結果が一定数 미만の場合
-IF MARK:9 >= 3 && TFLAG:97 < -3
+IF MARK:반발각인 >= 3 && TFLAG:97 < -3
     TFLAG:97 = -3
-ELSEIF MARK:9 == 2 && TFLAG:97 < -2
+ELSEIF MARK:반발각인 == 2 && TFLAG:97 < -2
     TFLAG:97 = -2
-ELSEIF MARK:9 == 1 && TFLAG:97 < -1
+ELSEIF MARK:반발각인 == 1 && TFLAG:97 < -1
     TFLAG:97 = -1
 ELSEIF TFLAG:97 < 0
     TFLAG:97 = 0
 ENDIF
 
 ;정신붕괴の場合, 호감도가 変化しない
-IF TALENT:167
+IF TALENT:정신붕괴
     TFLAG:97 = 0
 ;괴뢰の場合, 호감도가 上昇しにくい
-ELSEIF TALENT:168
+ELSEIF TALENT:괴뢰
     TFLAG:97 /= 4
 ;無関心の場合, 연모がないと호감도가 上がりにくい
-ELSEIF TALENT:21 && TALENT:150 == 0
+ELSEIF TALENT:무관심 && TALENT:연모 == 0
     IF TFLAG:97 > 1
         TFLAG:97 /= 2
     ELSEIF TFLAG:97 > 0
         TFLAG:97 = 1
     ENDIF
-    SIF ABL:10 >= 4
+    SIF ABL:순종 >= 4
         TFLAG:97 += 1
 ENDIF
 ;お香の効果(ムスク・フランキンセンス)
@@ -214,26 +214,26 @@ ELSEIF TFLAG:98 == 9 && TFLAG:97 > 0
     TFLAG:97 = 0
 ;촉수プレイ中は호감도減少(촉수中毒が大きいと減少値は小さくなる)
 ELSEIF TEQUIP:90
-    TFLAG:97 -= (5 - ABL:35)
+    TFLAG:97 -= (5 - ABL:촉수중독)
 ;裸エプロン装着中は호감도가 2 이상アップすると愛情経験が＋1
 ELSEIF TFLAG:97 > 1 && TEQUIP:59 == 1
     TCVAR:21 += 1
 ;상애持ちの場合ウェディングドレスコスプレ中は호감도가 5 이상アップすると愛情経験が＋1（助手はだめ）
-ELSEIF TFLAG:97 > 4 && TALENT:153 && TEQUIP:59 == 19
+ELSEIF TFLAG:97 > 4 && TALENT:상애 && TEQUIP:59 == 19
     TCVAR:21 += 1
 ENDIF
 
-CFLAG:2 += TFLAG:97
+CFLAG:호감도 += TFLAG:97
 TFLAG:238 += TFLAG:97
 ;호감도는 0 이하로도 100만 이상으로도 되지 않음
-CFLAG:2 = LIMIT(CFLAG:2, 0, 999999)
+CFLAG:호감도 = LIMIT(CFLAG:호감도, 0, 999999)
 
 ;フラグが立ってなく, 촉수プレイ中以外は主人調教経験も追加
 SIF TEQUIP:90 == 0 && TFLAG:59 == 0
     TCVAR:98 += 1
 
 ;호감도 표시
-SIF FLAG:12 & 4 && TFLAG:97 != 0
+SIF FLAG:SHOP이벤트확장 & 4 && TFLAG:97 != 0
     PRINTFORML \@(TFLAG:97 >= 0) ? 호감도＋{TFLAG:97} # －호감도{-TFLAG:97}\@
 
 ;-------------------------------------------------
@@ -241,7 +241,7 @@ SIF FLAG:12 & 4 && TFLAG:97 != 0
 ;-------------------------------------------------
 @MASTER_SKILL_CHECK
 ;질투
-IF TALENT:157 && ASSI < 0
+IF TALENT:질투 && ASSI < 0
     TIMES SOURCE:11 , 1.30
     TIMES SOURCE:24 , 1.50
     TIMES SOURCE:31 , 0.50
@@ -253,7 +253,7 @@ SIF ASSIPLAY
     RETURN 0
 
 ;주인이 하는 조교경험
-IF EXP:98 >= 500
+IF EXP:주인조교경험 >= 500
     TIMES SOURCE:0 , 1.20
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.20
@@ -261,7 +261,7 @@ IF EXP:98 >= 500
     TIMES SOURCE:11 , 1.30
     TIMES SOURCE:30 , 0.70
     TIMES SOURCE:31 , 0.70
-ELSEIF EXP:98 >= 300
+ELSEIF EXP:주인조교경험 >= 300
     TIMES SOURCE:0 , 1.10
     TIMES SOURCE:1 , 1.10
     TIMES SOURCE:2 , 1.10
@@ -269,7 +269,7 @@ ELSEIF EXP:98 >= 300
     TIMES SOURCE:11 , 1.20
     TIMES SOURCE:30 , 0.80
     TIMES SOURCE:31 , 0.80
-ELSEIF EXP:98 >= 100
+ELSEIF EXP:주인조교경험 >= 100
     TIMES SOURCE:11 , 1.10
     TIMES SOURCE:30 , 0.90
     TIMES SOURCE:31 , 0.90
@@ -277,7 +277,7 @@ ENDIF
 
 ;음란, 연모, 친애는 주인경험과의 중복 전제로 계산
 ;음란
-IF TALENT:170
+IF TALENT:음란
     TIMES SOURCE:0 , 1.80
     TIMES SOURCE:1 , 1.80
     TIMES SOURCE:2 , 1.80
@@ -285,7 +285,7 @@ IF TALENT:170
 ENDIF
 
 ;친애
-IF TALENT:152
+IF TALENT:친애
     TIMES SOURCE:0 , 1.50
     TIMES SOURCE:1 , 1.50
     TIMES SOURCE:2 , 1.50
@@ -295,7 +295,7 @@ IF TALENT:152
     TIMES SOURCE:16 , 1.50
     TIMES SOURCE:24 , 1.20
 ;연모
-ELSEIF TALENT:150
+ELSEIF TALENT:연모
     TIMES SOURCE:0 , 1.30
     TIMES SOURCE:1 , 1.30
     TIMES SOURCE:2 , 1.30
@@ -303,7 +303,7 @@ ELSEIF TALENT:150
     TIMES SOURCE:11 , 1.80
 ENDIF
 ;[연모]か[친애]持ちが処女(乙女ではなく)を今回の調教で散らせた場合
-IF (TALENT:150 || TALENT:152) && TALENT:0 == 1 && TFLAG:2
+IF (TALENT:연모 || TALENT:친애) && TALENT:처녀 == 1 && TFLAG:2
     LOCAL:1 = 0
     LOCAL = NO:PLAYER
     ;主人との相性が100% 이상で痛みのソースが2000 미만で反感追加のソースが3000以下
@@ -316,14 +316,14 @@ IF (TALENT:150 || TALENT:152) && TALENT:0 == 1 && TFLAG:2
     SIF TEQUIP:40 == 0 && TEQUIP:41 == 0 && TEQUIP:42 == 0 && TEQUIP:43 == 0 && TEQUIP:50 == 0 && TEQUIP:51 == 0 && TEQUIP:52 == 0 && TEQUIP:54 == 0 && TEQUIP:55 == 0 && TEQUIP:60 == 0 && TEQUIP:90 == 0
         LOCAL:1 += 1
     ;上の３条件を満たしてなおかつ調教テキストを表示する設定であるならば幸福を感じていることを表示し, なおかつ반발각인回避フラグを立てる
-    IF LOCAL:1 == 3 && FLAG:10
+    IF LOCAL:1 == 3 && FLAG:조교시텍스트표시
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%에게 처녀를 바칠 수 있어서 행복해하고 있다.
         TFLAG:105 = 1
     ENDIF
     ;情愛のソース倍増
     TIMES SOURCE:11 , 2.00
     ;친애なら反感追加のソースが1/10に
-    IF TALENT:152
+    IF TALENT:친애
         TIMES SOURCE:32 , 0.10
     ;친애なくても反感追加のソースは30%に
     ELSE
@@ -358,144 +358,144 @@ ENDIF
 LOCAL += CFLAG:(LOCAL:2) / 100
 LOCAL:1 += CFLAG:ASSI:(LOCAL:3) / 100
 ;欲情で補正
-IF ABL:11 > 0
-    LOCAL *= (100 + ABL:11 * ABL:11 * 4)
+IF ABL:욕망 > 0
+    LOCAL *= (100 + ABL:욕망 * ABL:욕망 * 4)
     LOCAL /= 100
 ENDIF
-IF ABL:ASSI:11 > 0
-    LOCAL:1 *= (100 + ABL:ASSI:11 * ABL:ASSI:11 * 4)
+IF ABL:ASSI:욕망 > 0
+    LOCAL:1 *= (100 + ABL:ASSI:욕망 * ABL:ASSI:욕망 * 4)
     LOCAL:1 /= 100
 ENDIF
 ;자제심で補正
-SIF TALENT:20
+SIF TALENT:자제심
     LOCAL /= 2
-SIF TALENT:ASSI:20
+SIF TALENT:ASSI:자제심
     LOCAL:1 /= 2
 ;無関心で補正
-SIF TALENT:21
+SIF TALENT:무관심
     TIMES LOCAL, 0.80
-SIF TALENT:ASSI:21
+SIF TALENT:ASSI:무관심
     TIMES LOCAL:1, 0.80
 ;感情乏しいで補正
-SIF TALENT:22
+SIF TALENT:감정결여
     LOCAL /= 4
-SIF TALENT:ASSI:22
+SIF TALENT:ASSI:감정결여
     LOCAL:1 /= 4
 ;一線越えないで補正
-SIF TALENT:27
+SIF TALENT:일선을넘지않음
     LOCAL /= 2
-SIF TALENT:ASSI:27
+SIF TALENT:ASSI:일선을넘지않음
     LOCAL:1 /= 2
 ;쾌감을 부정で補正
-SIF TALENT:71
+SIF TALENT:쾌감을부정
     LOCAL /= 3
-SIF TALENT:ASSI:71
+SIF TALENT:ASSI:쾌감을부정
     LOCAL:1 /= 3
 ;素直で補正
-SIF TALENT:13
+SIF TALENT:솔직함
     TIMES LOCAL, 1.2
-SIF TALENT:ASSI:13
+SIF TALENT:ASSI:솔직함
     TIMES LOCAL:1, 1.2
 ;好奇心で補正
-SIF TALENT:23
+SIF TALENT:호기심
     TIMES LOCAL, 1.2
-SIF TALENT:ASSI:23
+SIF TALENT:ASSI:호기심
     TIMES LOCAL:1 , 1.2
 ;헌신적で補正
-SIF TALENT:63
+SIF TALENT:헌신적
     TIMES LOCAL, 1.25
-SIF TALENT:ASSI:63
+SIF TALENT:ASSI:헌신적
     TIMES LOCAL:1, 1.25
 ;쾌감에 솔직で補正
-SIF TALENT:70
+SIF TALENT:쾌감에솔직
     LOCAL *= 2
-SIF TALENT:ASSI:70
+SIF TALENT:ASSI:쾌감에솔직
     LOCAL:1 *= 2
 ;倒錯的で補正
-SIF TALENT:80
+SIF TALENT:도착적
     TIMES LOCAL, 1.5
-SIF TALENT:ASSI:80
+SIF TALENT:ASSI:도착적
     TIMES LOCAL:1, 1.5
 ;매력で補正
-SIF TALENT:90
+SIF TALENT:매력
     TIMES LOCAL:1, 1.2
-SIF TALENT:ASSI:90
+SIF TALENT:ASSI:매력
     TIMES LOCAL, 1.2
 ;매혹で補正
-SIF TALENT:91
+SIF TALENT:매혹
     TIMES LOCAL:1, 1.2
-SIF TALENT:ASSI:91
+SIF TALENT:ASSI:매혹
     TIMES LOCAL, 1.2
 ;수수께끼의 매력で補正
-SIF TALENT:92
+SIF TALENT:수수께끼의매력
     TIMES LOCAL:1, 1.3
-SIF TALENT:ASSI:92
+SIF TALENT:ASSI:수수께끼의매력
     TIMES LOCAL, 1.3
 ;소악마で補正
-SIF TALENT:93
+SIF TALENT:소악마
     TIMES LOCAL:1, 1.1
-SIF TALENT:ASSI:93
+SIF TALENT:ASSI:소악마
     TIMES LOCAL, 1.1
 ;인기로 보정
-SIF TALENT:94
+SIF TALENT:인기
     TIMES LOCAL:1, 1.25
-SIF TALENT:ASSI:94
+SIF TALENT:ASSI:인기
     TIMES LOCAL, 1.25
 
 ;소질 의존의 부분(남자 관련)
-IF TALENT:120 == 0 && TALENT:ASSI:120 == 0
+IF TALENT:남자 == 0 && TALENT:ASSI:남자 == 0
     ;女嫌いならマイナス補正（両方）
-    SIF TALENT:38
+    SIF TALENT:여성혐오
         LOCAL /= 2
-    SIF TALENT:ASSI:38
+    SIF TALENT:ASSI:여성혐오
         LOCAL:1 /= 2
     ;両刀ならプラス補正
-    SIF TALENT:83
+    SIF TALENT:바이
         LOCAL *= 2
-    SIF TALENT:ASSI:83
+    SIF TALENT:ASSI:바이
         LOCAL:1 *= 2
     ;レズっ気の補正
-    IF ABL:22 > 0
-        LOCAL *= (100 + ABL:22 * 10)
+    IF ABL:레즈끼 > 0
+        LOCAL *= (100 + ABL:레즈끼 * 10)
         LOCAL /= 100
     ENDIF
-    IF ABL:ASSI:22 > 0
-        LOCAL:1 *= (100 + ABL:ASSI:22 * 10)
+    IF ABL:ASSI:레즈끼 > 0
+        LOCAL:1 *= (100 + ABL:ASSI:레즈끼 * 10)
         LOCAL:1 /= 100
     ENDIF
     ;レズ中毒の補正
-    IF ABL:32 > 0
-        LOCAL *= (100 + ABL:32 * 25)
+    IF ABL:레즈중독 > 0
+        LOCAL *= (100 + ABL:레즈중독 * 25)
         LOCAL /= 100
     ENDIF
-    IF ABL:ASSI:32 > 0
-        LOCAL:1 *= (100 + ABL:ASSI:32 * 25)
+    IF ABL:ASSI:레즈중독 > 0
+        LOCAL:1 *= (100 + ABL:ASSI:레즈중독 * 25)
         LOCAL:1 /= 100
     ENDIF
-ELSEIF TALENT:120 && TALENT:ASSI:120 == 0
+ELSEIF TALENT:남자 && TALENT:ASSI:남자 == 0
     ;女嫌いならマイナス補正（奴隷）
-    SIF TALENT:38
+    SIF TALENT:여성혐오
         LOCAL /= 2
     ;男嫌いならマイナス補正（助手）
-    SIF TALENT:37
+    SIF TALENT:남성혐오
         LOCAL:1 /= 2
-ELSEIF TALENT:120 == 0 && TALENT:ASSI:120
+ELSEIF TALENT:남자 == 0 && TALENT:ASSI:남자
     ;男嫌いならマイナス補正（奴隷）
-    SIF TALENT:37
+    SIF TALENT:남성혐오
         LOCAL:1 /= 2
     ;女嫌いならマイナス補正（助手）
-    SIF TALENT:38
+    SIF TALENT:여성혐오
         LOCAL /= 2
 ELSE
     ;男嫌いならマイナス補正（両方）
-    SIF TALENT:37
+    SIF TALENT:남성혐오
         LOCAL /= 2
-    SIF TALENT:ASSI:37
+    SIF TALENT:ASSI:남성혐오
         LOCAL:1 /= 2
     ;両刀ならプラス補正
-    SIF TALENT:83
+    SIF TALENT:바이
         LOCAL *= 2
-    SIF TALENT:ASSI:83
+    SIF TALENT:ASSI:바이
         LOCAL:1 *= 2
 ENDIF
 
@@ -517,17 +517,17 @@ TCVAR:ASSI:99 += 1
 LOCAL = UP:0 + UP:1 / 5 + UP:2 / 50 + UP:3 / 50
 
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     LOCAL /= 2
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     TIMES LOCAL , 1.20
 ;쾌감을 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     TIMES LOCAL , 0.80
 ENDIF
 ;음란
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL , 1.10
 
 ;미약
@@ -541,22 +541,22 @@ SIF TEQUIP:55 == 1
     LOCAL *= 2
 
 ;촉수 임플란트
-SIF CFLAG:41 & 1
+SIF CFLAG:촉수이식 & 1
     TIMES LOCAL , 1.25
 
 LOCAL = 500 + LOCAL / 2
-BASE:2 += LOCAL
+BASE:사정 += LOCAL
 
 TFLAG:91 = SAMEN_CHECK(TARGET)
 
 ;Ｃ계 확장コマンド有効の場合, Ｃ刺激かＧスポット（前立腺ぽく）責めでないと사정できない(感覚増幅薬効果中は사정できる)
-IF TFLAG:91 >= 1 && FLAG:15 & 1 && UP:0 == 0 && NOWEX:20 == 0 && SELECTCOM != 520 && SELECTCOM != 600 && SELECTCOM != 414 && TEQUIP:20 != 2
-    SOURCE:18 += ((BASE:2 * 30) / MAXBASE:2)
-    SOURCE:20 += ((BASE:2 * 15) / MAXBASE:2)
+IF TFLAG:91 >= 1 && FLAG:커맨드확장 & 1 && UP:0 == 0 && NOWEX:20 == 0 && SELECTCOM != 520 && SELECTCOM != 600 && SELECTCOM != 414 && TEQUIP:20 != 2
+    SOURCE:18 += ((BASE:사정 * 30) / MAXBASE:사정)
+    SOURCE:20 += ((BASE:사정 * 15) / MAXBASE:사정)
     TIMES SOURCE:18 , 1.10
     TIMES SOURCE:20 , 1.10
     PRINTL ＜사정갈망중＞
-    BASE:2 = EJAC-1
+    BASE:사정 = EJAC-1
     ;사정갈망중의 이벤트 대사 호출
     CALL SELF_KOJO, TARGET, 20
 ;대량사정저지
@@ -564,7 +564,7 @@ ELSEIF TFLAG:91 == 2 && TEQUIP:68
     SOURCE:20 += 800
     SOURCE:22 += 1000
     PRINTFORML %CALLNAME:TARGET% 대량사정저지
-    BASE:2 = EJAC-1
+    BASE:사정 = EJAC-1
     NOWEX:30 += 2
     EX:30 += 2
 ;통상의 사정저지
@@ -572,50 +572,50 @@ ELSEIF TFLAG:91 == 1 && TEQUIP:68
     SOURCE:20 += 300
     SOURCE:22 += 500
     PRINTFORML %CALLNAME:TARGET% 사정저지
-    BASE:2 = EJAC-1
+    BASE:사정 = EJAC-1
     NOWEX:30 += 1
     EX:30 += 1
 ;강헛사정
 ELSEIF TFLAG:91 == 2 && (TEQUIP:69 || SELECTCOM == 128)
-    SOURCE:18 += ((BASE:2 * 60) / MAXBASE:2)
-    SOURCE:20 += ((BASE:2 * 30) / MAXBASE:2)
+    SOURCE:18 += ((BASE:사정 * 60) / MAXBASE:사정)
+    SOURCE:20 += ((BASE:사정 * 30) / MAXBASE:사정)
     TIMES SOURCE:18 , 1.20
     TIMES SOURCE:20 , 1.20
     PRINTFORML %CALLNAME:TARGET% 강헛사정
-    BASE:2 -= EJAC*2
+    BASE:사정 -= EJAC*2
     NOWEX:40 += 2
     EX:40 += 2
 ;헛사정
 ELSEIF TFLAG:91 == 1 && (TEQUIP:69 || SELECTCOM == 128)
-    SOURCE:18 += ((BASE:2 * 30) / MAXBASE:2)
-    SOURCE:20 += ((BASE:2 * 15) / MAXBASE:2)
+    SOURCE:18 += ((BASE:사정 * 30) / MAXBASE:사정)
+    SOURCE:20 += ((BASE:사정 * 15) / MAXBASE:사정)
     TIMES SOURCE:18 , 1.10
     TIMES SOURCE:20 , 1.10
     PRINTFORML %CALLNAME:TARGET% 헛사정
-    BASE:2 -= EJAC
+    BASE:사정 -= EJAC
     NOWEX:40 += 1
     EX:40 += 1
 ;대량사정
 ELSEIF TFLAG:91 == 2
-    LOCAL:1 = 20 - (2 * ABL:37)
-    LOCAL:2 = 100 - (10 * ABL:37)
+    LOCAL:1 = 20 - (2 * ABL:사정중독)
+    LOCAL:2 = 100 - (10 * ABL:사정중독)
     DOWNBASE:0 += LOCAL:1
-    DOWNBASE:1 += LOCAL:2
+    DOWNBASE:기력 += LOCAL:2
 
     ;対象の사정経験を見る
-    IF EXP:3 < EXPLV:1
+    IF EXP:사정경험 < EXPLV:1
         SOURCE:12 += 20000
         SOURCE:22 += 10000
-    ELSEIF EXP:3 < EXPLV:2
+    ELSEIF EXP:사정경험 < EXPLV:2
         SOURCE:12 += 10000
         SOURCE:22 += 8000
-    ELSEIF EXP:3 < EXPLV:3
+    ELSEIF EXP:사정경험 < EXPLV:3
         SOURCE:12 += 7000
         SOURCE:22 += 6000
-    ELSEIF EXP:3 < EXPLV:4
+    ELSEIF EXP:사정경험 < EXPLV:4
         SOURCE:12 += 5000
         SOURCE:22 += 4000
-    ELSEIF EXP:3 < EXPLV:5
+    ELSEIF EXP:사정경험 < EXPLV:5
         SOURCE:12 += 3000
         SOURCE:22 += 2000
     ELSE
@@ -623,10 +623,10 @@ ELSEIF TFLAG:91 == 2
         SOURCE:22 += 1200
     ENDIF
 
-    SOURCE:18 += ABL:37 * 2500
+    SOURCE:18 += ABL:사정중독 * 2500
 
     PRINTFORML %CALLNAME:TARGET% 대량사정
-    SIF EXP:3 == 0 && TALENT:120 == 0
+    SIF EXP:사정경험 == 0 && TALENT:남자 == 0
         TCVAR:50 += 1
     TCVAR:3 += 2
     TCVAR:4 += 1
@@ -636,10 +636,10 @@ ELSEIF TFLAG:91 == 2
         TEQUIP:31 = 0
 
     ;Ｐに精液汚れ
-    STAIN:2 |= 4
+    STAIN:자지 |= 4
     CALL PLAYER_SAMEN_STAIN_FROM_TARGET
 
-    BASE:2 -= EJAC*2
+    BASE:사정 -= EJAC*2
 
     ;조교 대상이 사정 플래그
     TFLAG:30 = 2
@@ -647,23 +647,23 @@ ELSEIF TFLAG:91 == 2
     EX:11 += 2
 ;통상의 사정
 ELSEIF TFLAG:91 == 1
-    LOCAL:2 = 40 - (4 * ABL:37)
-    DOWNBASE:1 += LOCAL:2
+    LOCAL:2 = 40 - (4 * ABL:사정중독)
+    DOWNBASE:기력 += LOCAL:2
 
     ;対象の사정経験を見る
-    IF EXP:3 < EXPLV:1
+    IF EXP:사정경험 < EXPLV:1
         SOURCE:12 += 10000
         SOURCE:22 += 5000
-    ELSEIF EXP:3 < EXPLV:2
+    ELSEIF EXP:사정경험 < EXPLV:2
         SOURCE:12 += 5000
         SOURCE:22 += 4000
-    ELSEIF EXP:3 < EXPLV:3
+    ELSEIF EXP:사정경험 < EXPLV:3
         SOURCE:12 += 2500
         SOURCE:22 += 2000
-    ELSEIF EXP:3 < EXPLV:4
+    ELSEIF EXP:사정경험 < EXPLV:4
         SOURCE:12 += 1600
         SOURCE:22 += 1400
-    ELSEIF EXP:3 < EXPLV:5
+    ELSEIF EXP:사정경험 < EXPLV:5
         SOURCE:12 += 800
         SOURCE:22 += 500
     ELSE
@@ -671,10 +671,10 @@ ELSEIF TFLAG:91 == 1
         SOURCE:22 += 250
     ENDIF
 
-    SOURCE:18 += ABL:37 * 750
+    SOURCE:18 += ABL:사정중독 * 750
 
     PRINTFORML %CALLNAME:TARGET% 사정
-    SIF EXP:3 == 0 && TALENT:120 == 0
+    SIF EXP:사정경험 == 0 && TALENT:남자 == 0
         TCVAR:50 += 1
     TCVAR:3 += 1
 
@@ -683,17 +683,17 @@ ELSEIF TFLAG:91 == 1
         TEQUIP:31 = 0
 
     ;Ｐに精液汚れ
-    STAIN:2 |= 4
+    STAIN:자지 |= 4
     CALL PLAYER_SAMEN_STAIN_FROM_TARGET
 
-    BASE:2 -= EJAC
+    BASE:사정 -= EJAC
 
     ;조교 대상이 사정 플래그
     TFLAG:30 = 1
     NOWEX:11 += 1
     EX:11 += 1
 ENDIF
-BASE:2 = MIN(BASE:2, EJAC - 1)
+BASE:사정 = MIN(BASE:사정, EJAC - 1)
 
 ;-------------------------------------------------
 ;조교 대상의 분유 체크
@@ -702,26 +702,26 @@ BASE:2 = MIN(BASE:2, EJAC - 1)
 LOCAL = UP:0 / 50 + UP:1 / 50 + UP:2 / 50 + UP:3 * 3
 
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     LOCAL /= 2
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     TIMES LOCAL , 1.20
 ;쾌감을 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     TIMES LOCAL , 0.80
 ENDIF
 ;Ｂ민감
-SIF TALENT:106
+SIF TALENT:B민감
     TIMES LOCAL , 1.50
 ;절벽
-SIF TALENT:110
+SIF TALENT:절벽
     TIMES LOCAL , 0.25
 ;빈유
-SIF TALENT:111
+SIF TALENT:빈유
     TIMES LOCAL , 0.50
 ;음란
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL , 1.10
 
 ;미약
@@ -735,36 +735,36 @@ SIF TEQUIP:55 == 1
     LOCAL *= 2
 
 ;조교자가 幼児
-SIF TALENT:PLAYER:130
+SIF TALENT:PLAYER:유아
     LOCAL *= 2
 ;조교자가 幼稚
-SIF TALENT:PLAYER:131
+SIF TALENT:PLAYER:유치
     LOCAL *= 2
 
 ;분유中毒のレベルを見る
-IF ABL:34 == 0
+IF ABL:분유중독 == 0
     TIMES LOCAL , 1.00
-ELSEIF ABL:34 == 1
+ELSEIF ABL:분유중독 == 1
     TIMES LOCAL , 1.05
-ELSEIF ABL:34 == 2
+ELSEIF ABL:분유중독 == 2
     TIMES LOCAL , 1.10
-ELSEIF ABL:34 == 3
+ELSEIF ABL:분유중독 == 3
     TIMES LOCAL , 1.20
-ELSEIF ABL:34 == 4
+ELSEIF ABL:분유중독 == 4
     TIMES LOCAL , 1.30
 ELSE
     TIMES LOCAL , 1.50
 ENDIF
 
 ;촉수 임플란트
-SIF CFLAG:41 & 8
+SIF CFLAG:촉수이식 & 8
     TIMES LOCAL , 1.25
 
 LOCAL = 500 + LOCAL / 2
-BASE:3 += LOCAL
+BASE:모유 += LOCAL
 
-LOCAL:1 = BASE:3
-EJAC = MAXBASE:3
+LOCAL:1 = BASE:모유
+EJAC = MAXBASE:모유
 
 IF LOCAL:1 > EJAC * 2
     LOCAL:2 = 2
@@ -775,13 +775,13 @@ ELSE
 ENDIF
 
 ;Ｂ계 확장コマンド有効の場合, Ｂ刺激がないと분유できない(感覚増幅薬効果中は분유できる)
-IF LOCAL:2 >= 1 && FLAG:15 & 8 && UP:3 == 0 && NOWEX:23 == 0
-    SOURCE:18 += ((BASE:3 * 10) / MAXBASE:3)
-    SOURCE:20 += ((BASE:3 * 5) / MAXBASE:3)
+IF LOCAL:2 >= 1 && FLAG:커맨드확장 & 8 && UP:3 == 0 && NOWEX:23 == 0
+    SOURCE:18 += ((BASE:모유 * 10) / MAXBASE:모유)
+    SOURCE:20 += ((BASE:모유 * 5) / MAXBASE:모유)
     TIMES SOURCE:18 , 1.10
     TIMES SOURCE:20 , 1.10
     PRINTL ＜분유갈망중＞
-    BASE:3 = EJAC-1
+    BASE:모유 = EJAC-1
     ;분유갈망중における이벤트 대사 호출
     CALL SELF_KOJO, TARGET, 21
 ;대량분유저지
@@ -789,7 +789,7 @@ ELSEIF LOCAL:2 == 2 && TEQUIP:68
     SOURCE:18 += 400
     SOURCE:22 += 500
     PRINTFORML %CALLNAME:TARGET% 대량분유저지
-    BASE:3 = EJAC-1
+    BASE:모유 = EJAC-1
     NOWEX:31 += 2
     EX:31 += 2
 ;통상의 분유저지
@@ -797,28 +797,28 @@ ELSEIF LOCAL:2 == 1 && TEQUIP:68
     SOURCE:18 += 150
     SOURCE:22 += 250
     PRINTFORML %CALLNAME:TARGET% 분유저지
-    BASE:3 = EJAC-1
+    BASE:모유 = EJAC-1
     NOWEX:31 += 1
     EX:31 += 1
 ;대량분유
 ELSEIF LOCAL:2 == 2
     DOWNBASE:0 += 20
-    DOWNBASE:1 += 100
+    DOWNBASE:기력 += 100
 
     ;対象の분유経験を見る
-    IF EXP:5 < EXPLV:1
+    IF EXP:분유경험 < EXPLV:1
         SOURCE:12 += 20000
         SOURCE:22 += 10000
-    ELSEIF EXP:5 < EXPLV:2
+    ELSEIF EXP:분유경험 < EXPLV:2
         SOURCE:12 += 10000
         SOURCE:22 += 8000
-    ELSEIF EXP:5 < EXPLV:3
+    ELSEIF EXP:분유경험 < EXPLV:3
         SOURCE:12 += 7000
         SOURCE:22 += 6000
-    ELSEIF EXP:5 < EXPLV:4
+    ELSEIF EXP:분유경험 < EXPLV:4
         SOURCE:12 += 5000
         SOURCE:22 += 4000
-    ELSEIF EXP:5 < EXPLV:5
+    ELSEIF EXP:분유경험 < EXPLV:5
         SOURCE:12 += 3000
         SOURCE:22 += 2000
     ELSE
@@ -827,13 +827,13 @@ ELSEIF LOCAL:2 == 2
     ENDIF
 
     PRINTFORML %CALLNAME:TARGET%\@(TEQUIP:36) ? %조사만처리(CALLNAME:TARGET,"가")% 입고 있던 붕대에서 힘차게 # 의 유두에서 대량의\@ 모유가 뿜어져 나왔다.
-    SIF EXP:5 == 0
+    SIF EXP:분유경험 == 0
         TCVAR:50 += 1
     TCVAR:5 += 2
     ;Ｂに母乳汚れ
-    STAIN:5 |= 16
+    STAIN:가슴 |= 16
 
-    BASE:3 -= EJAC*2
+    BASE:모유 -= EJAC*2
 
     ;조교 대상が분유フラグ
     TFLAG:31 += 2
@@ -845,22 +845,22 @@ ELSEIF LOCAL:2 == 2
         TFLAG:126 += 2
 ;통상의 분유
 ELSEIF LOCAL:2 == 1
-    DOWNBASE:1 += 40
+    DOWNBASE:기력 += 40
 
     ;対象の분유経験を見る
-    IF EXP:5 < EXPLV:1
+    IF EXP:분유경험 < EXPLV:1
         SOURCE:12 += 10000
         SOURCE:22 += 5000
-    ELSEIF EXP:5 < EXPLV:2
+    ELSEIF EXP:분유경험 < EXPLV:2
         SOURCE:12 += 5000
         SOURCE:22 += 4000
-    ELSEIF EXP:5 < EXPLV:3
+    ELSEIF EXP:분유경험 < EXPLV:3
         SOURCE:12 += 2500
         SOURCE:22 += 2000
-    ELSEIF EXP:5 < EXPLV:4
+    ELSEIF EXP:분유경험 < EXPLV:4
         SOURCE:12 += 1600
         SOURCE:22 += 1400
-    ELSEIF EXP:5 < EXPLV:5
+    ELSEIF EXP:분유경험 < EXPLV:5
         SOURCE:12 += 800
         SOURCE:22 += 500
     ELSE
@@ -869,13 +869,13 @@ ELSEIF LOCAL:2 == 1
     ENDIF
 
     PRINTFORML %CALLNAME:TARGET%\@(TEQUIP:36) ? %조사만처리(CALLNAME:TARGET,"가")% 차고있던 붕대에서 모유가 방울방울 새어 # 의 유두에서 모유가 실실\@ 나왔다.
-    SIF EXP:5 == 0
+    SIF EXP:분유경험 == 0
         TCVAR:50 += 1
     TCVAR:5 += 1
     ;Ｂに母乳汚れ
-    STAIN:5 |= 16
+    STAIN:가슴 |= 16
 
-    BASE:3 -= EJAC
+    BASE:모유 -= EJAC
 
     ;조교 대상が분유フラグ
     TFLAG:31 += 1
@@ -886,10 +886,10 @@ ELSEIF LOCAL:2 == 1
     SIF TEQUIP:35 == 2
         TFLAG:126 += 1
 ENDIF
-BASE:3 = MIN(BASE:3, EJAC - 1)
+BASE:모유 = MIN(BASE:모유, EJAC - 1)
 
 ;母乳回収
-SIF LOCAL:2 > 0 && FLAG:12 & 8 && TEQUIP:68 == 0
+SIF LOCAL:2 > 0 && FLAG:SHOP이벤트확장 & 8 && TEQUIP:68 == 0
     CALL SWEET_POTATO_MILK
 
 ;-------------------------------------------------
@@ -897,57 +897,57 @@ SIF LOCAL:2 > 0 && FLAG:12 & 8 && TEQUIP:68 == 0
 ;-------------------------------------------------
 @TARGET_PEE_CHECK
 LOCAL = UP:0 / 2 + UP:1 / 10 + UP:2 / 50 + UP:3 / 50
-IF LOCAL < 10000 && TEQUIP:12 == 0 && TALENT:45 == 0
+IF LOCAL < 10000 && TEQUIP:12 == 0 && TALENT:오줌싸개버릇 == 0
     RETURN 0
-ELSEIF TEQUIP:12 == 0 && TALENT:45 == 0
+ELSEIF TEQUIP:12 == 0 && TALENT:오줌싸개버릇 == 0
     LOCAL /= 500
 ENDIF
 
 ;臆病
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL , 1.20
 ;反抗的
-SIF TALENT:11
+SIF TALENT:반항적
     TIMES LOCAL , 0.50
 ;プライド高い
-IF TALENT:16
+IF TALENT:프라이드가높음
     TIMES LOCAL , 0.50
 ;プライド低い
-ELSEIF TALENT:17
+ELSEIF TALENT:프라이드가낮음
     TIMES LOCAL , 1.20
 ENDIF
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     LOCAL /= 4
 ;目立ちたがり
-SIF TALENT:28
+SIF TALENT:튀고싶어함
     TIMES LOCAL , 1.20
 ;抑圧
-SIF TALENT:32
+SIF TALENT:억압
     TIMES LOCAL , 0.30
 ;抵抗
-SIF TALENT:34
+SIF TALENT:저항
     TIMES LOCAL , 0.30
 ;恥じらい
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     TIMES LOCAL , 0.20
 ;恥薄い
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     TIMES LOCAL , 1.50
 ENDIF
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     TIMES LOCAL , 1.20
 ;쾌감을 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     TIMES LOCAL , 0.60
 ENDIF
 ;幼児or幼稚or유아퇴행
-SIF TALENT:130 || TALENT:131 || TALENT:159
+SIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
     TIMES LOCAL , 1.50
 
 ;おもらし癖を持たない
-SIF TALENT:45 == 0
+SIF TALENT:오줌싸개버릇 == 0
     LOCAL /= 2
 ;이뇨제
 IF TEQUIP:12
@@ -956,14 +956,14 @@ IF TEQUIP:12
 ENDIF
 
 ;촉수 임플란트
-SIF CFLAG:41 & 64
+SIF CFLAG:촉수이식 & 64
     TIMES LOCAL , 1.50
 
 LOCAL /= 2
-BASE:4 += LOCAL
+BASE:뇨의 += LOCAL
 
-LOCAL:1 = BASE:4
-EJAC = MAXBASE:4
+LOCAL:1 = BASE:뇨의
+EJAC = MAXBASE:뇨의
 
 IF LOCAL:1 > EJAC * 2
     LOCAL:2 = 2
@@ -974,13 +974,13 @@ ELSE
 ENDIF
 
 ;Ｃ계 확장コマンド有効の場合, Ｃ刺激がないと방뇨できない(感覚増幅薬効果中は방뇨できる)
-IF LOCAL:2 >= 1 && FLAG:15 & 1 && UP:0 == 0 && NOWEX:20 == 0
-    SOURCE:18 += ((BASE:4 * 30) / MAXBASE:4)
-    SOURCE:20 += ((BASE:4 * 15) / MAXBASE:4)
+IF LOCAL:2 >= 1 && FLAG:커맨드확장 & 1 && UP:0 == 0 && NOWEX:20 == 0
+    SOURCE:18 += ((BASE:뇨의 * 30) / MAXBASE:뇨의)
+    SOURCE:20 += ((BASE:뇨의 * 15) / MAXBASE:뇨의)
     TIMES SOURCE:18 , 1.10
     TIMES SOURCE:20 , 1.10
     PRINTL ＜방뇨갈망중＞
-    BASE:4 = EJAC-1
+    BASE:뇨의 = EJAC-1
     ;방뇨갈망중における이벤트 대사 호출
     CALL SELF_KOJO, TARGET, 22
 ;대량방뇨저지
@@ -988,7 +988,7 @@ ELSEIF LOCAL:2 == 2 && TEQUIP:68
     SOURCE:18 += 800
     SOURCE:22 += 1000
     PRINTFORML %CALLNAME:TARGET% 대량방뇨저지
-    BASE:4 = EJAC-1
+    BASE:뇨의 = EJAC-1
     NOWEX:32 += 2
     EX:32 += 2
 ;통상의 방뇨저지
@@ -996,48 +996,48 @@ ELSEIF LOCAL:2 == 1 && TEQUIP:68
     SOURCE:18 += 300
     SOURCE:22 += 500
     PRINTFORML %CALLNAME:TARGET% 방뇨저지
-    BASE:4 = EJAC-1
+    BASE:뇨의 = EJAC-1
     NOWEX:32 += 1
     EX:32 += 1
 ;강헛방뇨(オトコのみ)
-ELSEIF LOCAL:2 == 2 && TALENT:120 && (TEQUIP:69 || SELECTCOM == 128)
-    SOURCE:18 += ((BASE:4 * 60) / MAXBASE:4)
-    SOURCE:20 += ((BASE:4 * 30) / MAXBASE:4)
+ELSEIF LOCAL:2 == 2 && TALENT:남자 && (TEQUIP:69 || SELECTCOM == 128)
+    SOURCE:18 += ((BASE:뇨의 * 60) / MAXBASE:뇨의)
+    SOURCE:20 += ((BASE:뇨의 * 30) / MAXBASE:뇨의)
     TIMES SOURCE:18 , 1.20
     TIMES SOURCE:20 , 1.20
     PRINTFORML %CALLNAME:TARGET% 강헛방뇨
-    BASE:4 -= EJAC*2
+    BASE:뇨의 -= EJAC*2
     NOWEX:43 += 2
     EX:43 += 2
 ;헛방뇨(オトコのみ)
-ELSEIF LOCAL:2 == 1 && TALENT:120 && (TEQUIP:69 || SELECTCOM == 128)
-    SOURCE:18 += ((BASE:4 * 30) / MAXBASE:4)
-    SOURCE:20 += ((BASE:4 * 15) / MAXBASE:4)
+ELSEIF LOCAL:2 == 1 && TALENT:남자 && (TEQUIP:69 || SELECTCOM == 128)
+    SOURCE:18 += ((BASE:뇨의 * 30) / MAXBASE:뇨의)
+    SOURCE:20 += ((BASE:뇨의 * 15) / MAXBASE:뇨의)
     TIMES SOURCE:18 , 1.10
     TIMES SOURCE:20 , 1.10
     PRINTFORML %CALLNAME:TARGET% 헛방뇨
-    BASE:4 -= EJAC
+    BASE:뇨의 -= EJAC
     NOWEX:43 += 1
     EX:43 += 1
 ;대량방뇨
 ELSEIF LOCAL:2 == 2
     DOWNBASE:0 += 10
-    DOWNBASE:1 += 120
+    DOWNBASE:기력 += 120
 
     ;対象の방뇨経験を見る
-    IF EXP:6 < EXPLV:1
+    IF EXP:방뇨경험 < EXPLV:1
         SOURCE:12 += 20000
         SOURCE:22 += 10000
-    ELSEIF EXP:6 < EXPLV:2
+    ELSEIF EXP:방뇨경험 < EXPLV:2
         SOURCE:12 += 10000
         SOURCE:22 += 8000
-    ELSEIF EXP:6 < EXPLV:3
+    ELSEIF EXP:방뇨경험 < EXPLV:3
         SOURCE:12 += 7000
         SOURCE:22 += 6000
-    ELSEIF EXP:6 < EXPLV:4
+    ELSEIF EXP:방뇨경험 < EXPLV:4
         SOURCE:12 += 5000
         SOURCE:22 += 4000
-    ELSEIF EXP:6 < EXPLV:5
+    ELSEIF EXP:방뇨경험 < EXPLV:5
         SOURCE:12 += 3000
         SOURCE:22 += 2000
     ELSE
@@ -1046,15 +1046,15 @@ ELSEIF LOCAL:2 == 2
     ENDIF
 
     PRINTFORML %CALLNAME:TARGET% 대량방뇨
-    IF EXP:6 == 0 && TALENT:45 == 0
-        CFLAG:31 += 1
+    IF EXP:방뇨경험 == 0 && TALENT:오줌싸개버릇 == 0
+        CFLAG:방뇨레벨 += 1
         TCVAR:50 += 1
-    ELSEIF TALENT:45 == 0
-        CFLAG:31 += 2
+    ELSEIF TALENT:오줌싸개버릇 == 0
+        CFLAG:방뇨레벨 += 2
     ENDIF
     TCVAR:6 += 2
 
-    BASE:4 -= EJAC*2
+    BASE:뇨의 -= EJAC*2
 
     ;利尿薬を解除
     SIF TEQUIP:12
@@ -1073,22 +1073,22 @@ ELSEIF LOCAL:2 == 2
         CALL URINATION_IN_PLAYER
 ;통상의 방뇨
 ELSEIF LOCAL:2 == 1
-    DOWNBASE:1 += 50
+    DOWNBASE:기력 += 50
 
     ;対象の방뇨経験を見る
-    IF EXP:6 < EXPLV:1
+    IF EXP:방뇨경험 < EXPLV:1
         SOURCE:12 += 10000
         SOURCE:22 += 5000
-    ELSEIF EXP:6 < EXPLV:2
+    ELSEIF EXP:방뇨경험 < EXPLV:2
         SOURCE:12 += 5000
         SOURCE:22 += 4000
-    ELSEIF EXP:6 < EXPLV:3
+    ELSEIF EXP:방뇨경험 < EXPLV:3
         SOURCE:12 += 2500
         SOURCE:22 += 2000
-    ELSEIF EXP:6 < EXPLV:4
+    ELSEIF EXP:방뇨경험 < EXPLV:4
         SOURCE:12 += 1600
         SOURCE:22 += 1400
-    ELSEIF EXP:6 < EXPLV:5
+    ELSEIF EXP:방뇨경험 < EXPLV:5
         SOURCE:12 += 800
         SOURCE:22 += 500
     ELSE
@@ -1097,15 +1097,15 @@ ELSEIF LOCAL:2 == 1
     ENDIF
 
     PRINTFORML %CALLNAME:TARGET% 방뇨
-    IF EXP:6 == 0 && TALENT:45 == 0
-        CFLAG:31 += 1
+    IF EXP:방뇨경험 == 0 && TALENT:오줌싸개버릇 == 0
+        CFLAG:방뇨레벨 += 1
         TCVAR:50 += 1
-    ELSEIF TALENT:45 == 0
-        CFLAG:31 += 1
+    ELSEIF TALENT:오줌싸개버릇 == 0
+        CFLAG:방뇨레벨 += 1
     ENDIF
     TCVAR:6 += 1
 
-    BASE:4 -= EJAC
+    BASE:뇨의 -= EJAC
 
     ;조교 대상이 방뇨 플래그
     TFLAG:32 = 1
@@ -1119,7 +1119,7 @@ ELSEIF LOCAL:2 == 1
     SIF TFLAG:102
         CALL URINATION_IN_PLAYER
 ENDIF
-BASE:4 = MIN(BASE:4, EJAC - 1)
+BASE:뇨의 = MIN(BASE:뇨의, EJAC - 1)
 
 ;-------------------------------------------------
 ;조교 대상に挿しっぱなしでおしっこされた調教者 체크
@@ -1133,7 +1133,7 @@ SIF ASSIPLAY == 0
     RETURN 0
 
 ;基礎値は対象の能力に依存する
-LOCAL = ABL:11 + ABL:13 + ABL:14 + ABL:31
+LOCAL = ABL:욕망 + ABL:봉사정신 + ABL:노출증 + ABL:정액중독
 LOCAL:1 = 2 + RAND:LOCAL
 LOCAL:2 = 1 + RAND:LOCAL
 LOCAL:3 = 100 * (LOCAL:1 + LOCAL:2)
@@ -1141,27 +1141,27 @@ LOCAL:4 = LOCAL:3
 LOCAL:5 = 400 * (LOCAL:1 + LOCAL:2)
 
 ;조교자가 保守的
-SIF TALENT:PLAYER:24
+SIF TALENT:PLAYER:보수적
     TIMES LOCAL:5 , 3.00
 
 ;ABL:조교자의 순종을 본다
-IF ABL:PLAYER:10 == 0
+IF ABL:PLAYER:순종 == 0
     TIMES LOCAL:3 , 1.60
     TIMES LOCAL:4 , 1.40
     TIMES LOCAL:5 , 1.00
-ELSEIF ABL:PLAYER:10 == 1
+ELSEIF ABL:PLAYER:순종 == 1
     TIMES LOCAL:3 , 1.30
     TIMES LOCAL:4 , 1.20
     TIMES LOCAL:5 , 0.80
-ELSEIF ABL:PLAYER:10 == 2
+ELSEIF ABL:PLAYER:순종 == 2
     TIMES LOCAL:3 , 1.10
     TIMES LOCAL:4 , 1.00
     TIMES LOCAL:5 , 0.70
-ELSEIF ABL:PLAYER:10 == 3
+ELSEIF ABL:PLAYER:순종 == 3
     TIMES LOCAL:3 , 1.00
     TIMES LOCAL:4 , 0.80
     TIMES LOCAL:5 , 0.40
-ELSEIF ABL:PLAYER:10 == 4
+ELSEIF ABL:PLAYER:순종 == 4
     TIMES LOCAL:3 , 0.80
     TIMES LOCAL:4 , 0.50
     TIMES LOCAL:5 , 0.20
@@ -1172,19 +1172,19 @@ ELSE
 ENDIF
 
 ;ABL:조교자의 排泄中毒をみる
-IF ABL:PLAYER:36 == 0
+IF ABL:PLAYER:배설중독 == 0
     TIMES LOCAL:3 , 0.60
     TIMES LOCAL:4 , 1.00
-ELSEIF ABL:PLAYER:36 == 1
+ELSEIF ABL:PLAYER:배설중독 == 1
     TIMES LOCAL:3 , 0.40
     TIMES LOCAL:4 , 0.80
-ELSEIF ABL:PLAYER:36 == 2
+ELSEIF ABL:PLAYER:배설중독 == 2
     TIMES LOCAL:3 , 0.25
     TIMES LOCAL:4 , 0.60
-ELSEIF ABL:PLAYER:36 == 3
+ELSEIF ABL:PLAYER:배설중독 == 3
     TIMES LOCAL:3 , 0.10
     TIMES LOCAL:4 , 0.30
-ELSEIF ABL:PLAYER:36 == 4
+ELSEIF ABL:PLAYER:배설중독 == 4
     TIMES LOCAL:3 , 0.00
     TIMES LOCAL:4 , 0.10
 ELSE
@@ -1193,22 +1193,22 @@ ELSE
 ENDIF
 
 ;ABL:조교자의 欲望をみる
-IF ABL:PLAYER:11 == 0
+IF ABL:PLAYER:욕망 == 0
     TIMES LOCAL:5 , 0.90
-ELSEIF ABL:PLAYER:11 == 1
+ELSEIF ABL:PLAYER:욕망 == 1
     TIMES LOCAL:5 , 0.70
-ELSEIF ABL:PLAYER:11 == 2
+ELSEIF ABL:PLAYER:욕망 == 2
     TIMES LOCAL:5 , 0.50
-ELSEIF ABL:PLAYER:11 == 3
+ELSEIF ABL:PLAYER:욕망 == 3
     TIMES LOCAL:5 , 0.30
-ELSEIF ABL:PLAYER:11 == 4
+ELSEIF ABL:PLAYER:욕망 == 4
     TIMES LOCAL:5 , 0.10
 ELSE
     TIMES LOCAL:5 , 0.00
 ENDIF
 
 ;조교자가 マゾ
-SIF TALENT:PLAYER:82
+SIF TALENT:PLAYER:마조
     TIMES LOCAL:5 , 0.50
 
 ;助手の反感と不快のパラに追加
@@ -1239,7 +1239,7 @@ IF TARGET > 0
     CALL SELF_KOJO, TARGET, 38, TFLAG:99
 ENDIF
 ;地の文カット
-SIF CFLAG:99 == 0
+SIF CFLAG:지문소거판정 == 0
     PRINTFORML %조사처리(CALLNAME:TARGET,"가")% 싼 오줌을 맞은%조사처리(CALLNAME:PLAYER,"는")% 기분이 나빠졌다.
 PRINTFORML 부정의 구슬(%CALLNAME:PLAYER%)＋{LOCAL:100}
 JUEL:PLAYER:100 += LOCAL:100
@@ -1248,98 +1248,98 @@ JUEL:PLAYER:100 += LOCAL:100
 ;조교 대상의 정음절정 체크
 ;-------------------------------------------------
 ;정음절정の仕様を大きく変更。분유などの形式に近い形にしました
-;강제정음절정の経験回数, 정음절정ゲージをCFLAG:64に格納
+;강제정음절정の経験回数, 정음절정ゲージをCFLAG:정음개발도に格納
 @TARGET_SEIIN_CHECK
 ;정액중독を見る
-IF ABL:31 == 0
+IF ABL:정액중독 == 0
     LOCAL = 0
-ELSEIF ABL:31 == 1
+ELSEIF ABL:정액중독 == 1
     LOCAL = 10
-ELSEIF ABL:31 == 2
+ELSEIF ABL:정액중독 == 2
     LOCAL = 50
-ELSEIF ABL:31 == 3
+ELSEIF ABL:정액중독 == 3
     LOCAL = 100
-ELSEIF ABL:31 == 4
+ELSEIF ABL:정액중독 == 4
     LOCAL = 150
 ELSE
     LOCAL = 200
 ENDIF
 
 ;気丈
-SIF TALENT:12
+SIF TALENT:꿋꿋함
     TIMES LOCAL , 0.60
 ;保守的
-SIF TALENT:24
+SIF TALENT:보수적
     TIMES LOCAL , 0.60
 ;楽観的
-IF TALENT:25
+IF TALENT:낙관적
     TIMES LOCAL , 1.20
 ;悲観的
-ELSEIF TALENT:26
+ELSEIF TALENT:비관적
     TIMES LOCAL , 0.80
 ENDIF
 ;一線越えない
-SIF TALENT:27
+SIF TALENT:일선을넘지않음
     TIMES LOCAL , 0.20
 ;抑圧
-IF TALENT:32
+IF TALENT:억압
     TIMES LOCAL , 0.60
 ;해방
-ELSEIF TALENT:33
+ELSEIF TALENT:해방
     TIMES LOCAL , 1.50
 ENDIF
 ;汚臭鈍感
-IF TALENT:61
+IF TALENT:냄새둔감
     TIMES LOCAL , 1.25
 ;汚臭민감
-ELSEIF TALENT:62
+ELSEIF TALENT:냄새민감
     TIMES LOCAL , 0.75
 ENDIF
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     TIMES LOCAL , 2.00
 ;쾌감을 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     TIMES LOCAL , 0.50
 ENDIF
 ;倒錯的
-SIF TALENT:80
+SIF TALENT:도착적
     TIMES LOCAL , 1.80
 ;중독되기 쉬움
-SIF TALENT:84
+SIF TALENT:중독되기쉬움
     TIMES LOCAL , 2.00
 ;음란
-SIF TALENT:170
+SIF TALENT:음란
     TIMES LOCAL , 1.80
 ;精愛味覚
-SIF TALENT:66
+SIF TALENT:정애미각
     TIMES LOCAL , 2.50
 
 IF LOCAL <= 0
     RETURN 0
 ELSE
-    CFLAG:64 += LOCAL
+    CFLAG:정음개발도 += LOCAL
 ENDIF
 EJAC = 1000
-IF CFLAG:64 > EJAC * 2
+IF CFLAG:정음개발도 > EJAC * 2
     LOCAL:1 = 2
-ELSEIF CFLAG:64 > EJAC
+ELSEIF CFLAG:정음개발도 > EJAC
     LOCAL:1 = 1
 ELSE
     LOCAL:1 = 0
 ENDIF
 
 ;対象が[精愛味覚]を持たない場合
-IF TALENT:66 == 0
+IF TALENT:정애미각 == 0
     PRINTL 강제정음절정
     DOWNBASE:0 += 10
-    DOWNBASE:1 += 20
+    DOWNBASE:기력 += 20
 
     ;정액중독を見る
-    IF ABL:31 < 2
+    IF ABL:정액중독 < 2
         SOURCE:22 += 1000
         SOURCE:25 += 1000
-    ELSEIF ABL:31 < 4
+    ELSEIF ABL:정액중독 < 4
         SOURCE:18 += 500
         SOURCE:22 += 1000
         SOURCE:25 += 500
@@ -1358,14 +1358,14 @@ ENDIF
 ;정음절정경험의 회수 추가
 IF ARG == 2
     PRINTFORML %CALLNAME:TARGET% 정음강절정
-    DOWNBASE:1 += 10
+    DOWNBASE:기력 += 10
     LOCAL = 2000
     LOCAL:1 = 2000
     LOCAL:2 = 5000
     LOCAL:3 = 8000
 ELSE
     PRINTFORML %CALLNAME:TARGET% 정음절정
-    DOWNBASE:1 += 5
+    DOWNBASE:기력 += 5
     LOCAL = 800
     LOCAL:1 = 1000
     LOCAL:2 = 2500
@@ -1376,25 +1376,25 @@ EX:13 += ARG
 TCVAR:8 += ARG
 TFLAG:33 = ARG
 ;첫체험
-IF EXP:8 <= 1
+IF EXP:정음절정경험 <= 1
     TIMES LOCAL , 2.00
     TIMES LOCAL:3 , 3.00
 ENDIF
 ;정액중독
-IF ABL:31 == 0
+IF ABL:정액중독 == 0
     TIMES LOCAL:1 , 0.40
     TIMES LOCAL:2 , 0.40
     TIMES LOCAL:3 , 2.00
-ELSEIF ABL:31 == 1
+ELSEIF ABL:정액중독 == 1
     TIMES LOCAL:1 , 0.60
     TIMES LOCAL:2 , 0.60
     TIMES LOCAL:3 , 1.50
-ELSEIF ABL:31 == 2
+ELSEIF ABL:정액중독 == 2
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
-ELSEIF ABL:31 == 3
+ELSEIF ABL:정액중독 == 3
     TIMES LOCAL:3 , 0.75
-ELSEIF ABL:31 == 4
+ELSEIF ABL:정액중독 == 4
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
     TIMES LOCAL:3 , 0.50
@@ -1409,8 +1409,8 @@ SOURCE:18 += LOCAL:1
 SOURCE:19 += LOCAL:2
 SOURCE:22 += LOCAL:3
 
-CFLAG:64 -= (EJAC * ARG - 100)
-CFLAG:64 = MIN(CFLAG:64, EJAC - 1)
+CFLAG:정음개발도 -= (EJAC * ARG - 100)
+CFLAG:정음개발도 = MIN(CFLAG:정음개발도, EJAC - 1)
 
 ;=============================================================================
 ;소스 보정 처리
@@ -1419,20 +1419,20 @@ CFLAG:64 = MIN(CFLAG:64, EJAC - 1)
 ;동성인 경우의 체크
 ;-------------------------------------------------
 @SOURCE_SEX_CHECK
-SIF TALENT:120 == 0 && TALENT:PLAYER:120
+SIF TALENT:남자 == 0 && TALENT:PLAYER:남자
     RETURN 0
-SIF TALENT:120 && TALENT:PLAYER:120 == 0
+SIF TALENT:남자 && TALENT:PLAYER:남자 == 0
     RETURN 0
 
 ;레즈
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     ;ABL:레즈끼를 본다
-    IF ABL:22 == 0
+    IF ABL:레즈끼 == 0
         TIMES SOURCE:22 , 0.90
 
         TIMES SOURCE:30 , 0.80
         TIMES SOURCE:31 , 0.80
-    ELSEIF ABL:22 == 1
+    ELSEIF ABL:레즈끼 == 1
         SOURCE:24 += 100
         TIMES SOURCE:0 , 1.10
         TIMES SOURCE:1 , 1.10
@@ -1443,7 +1443,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
 
         TIMES SOURCE:30 , 0.60
         TIMES SOURCE:31 , 0.60
-    ELSEIF ABL:22 == 2
+    ELSEIF ABL:레즈끼 == 2
         SOURCE:24 += 200
         TIMES SOURCE:0 , 1.20
         TIMES SOURCE:1 , 1.20
@@ -1454,7 +1454,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
 
         TIMES SOURCE:30 , 0.40
         TIMES SOURCE:31 , 0.40
-    ELSEIF ABL:22 == 3
+    ELSEIF ABL:레즈끼 == 3
         SOURCE:24 += 350
         TIMES SOURCE:0 , 1.30
         TIMES SOURCE:1 , 1.30
@@ -1465,7 +1465,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
 
         TIMES SOURCE:30 , 0.25
         TIMES SOURCE:31 , 0.25
-    ELSEIF ABL:22 == 4
+    ELSEIF ABL:레즈끼 == 4
         SOURCE:24 += 500
         TIMES SOURCE:0 , 1.40
         TIMES SOURCE:1 , 1.40
@@ -1490,7 +1490,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
     ENDIF
 
     ;ABL:레즈중독을 본다
-    IF ABL:32 == 1
+    IF ABL:레즈중독 == 1
         TIMES SOURCE:0 , 1.20
         TIMES SOURCE:1 , 1.20
         TIMES SOURCE:2 , 1.20
@@ -1499,7 +1499,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
 
         TIMES SOURCE:30 , 0.60
         TIMES SOURCE:31 , 0.60
-    ELSEIF ABL:32 == 2
+    ELSEIF ABL:레즈중독 == 2
         TIMES SOURCE:0 , 1.40
         TIMES SOURCE:1 , 1.40
         TIMES SOURCE:2 , 1.40
@@ -1508,7 +1508,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
 
         TIMES SOURCE:30 , 0.40
         TIMES SOURCE:31 , 0.40
-    ELSEIF ABL:32 == 3
+    ELSEIF ABL:레즈중독 == 3
         TIMES SOURCE:0 , 1.60
         TIMES SOURCE:1 , 1.60
         TIMES SOURCE:2 , 1.60
@@ -1517,7 +1517,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
 
         TIMES SOURCE:30 , 0.30
         TIMES SOURCE:31 , 0.30
-    ELSEIF ABL:32 == 4
+    ELSEIF ABL:레즈중독 == 4
         TIMES SOURCE:0 , 1.80
         TIMES SOURCE:1 , 1.80
         TIMES SOURCE:2 , 1.80
@@ -1526,7 +1526,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
 
         TIMES SOURCE:30 , 0.20
         TIMES SOURCE:31 , 0.20
-    ELSEIF ABL:32 >= 5
+    ELSEIF ABL:레즈중독 >= 5
         TIMES SOURCE:0 , 2.00
         TIMES SOURCE:1 , 2.00
         TIMES SOURCE:2 , 2.00
@@ -1537,7 +1537,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
         TIMES SOURCE:31 , 0.10
     ENDIF
     ;조교자의 ABL:레즈끼
-    IF ABL:PLAYER:22 == 0
+    IF ABL:PLAYER:레즈끼 == 0
         TIMES SOURCE:0 , 0.40
         TIMES SOURCE:1 , 0.40
         TIMES SOURCE:2 , 0.40
@@ -1545,7 +1545,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
         TIMES SOURCE:11 , 0.20
         TIMES SOURCE:15 , 0.30
         TIMES SOURCE:16 , 0.30
-    ELSEIF ABL:PLAYER:22 == 1
+    ELSEIF ABL:PLAYER:레즈끼 == 1
         TIMES SOURCE:0 , 0.70
         TIMES SOURCE:1 , 0.70
         TIMES SOURCE:2 , 0.70
@@ -1553,7 +1553,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
         TIMES SOURCE:11 , 0.60
         TIMES SOURCE:15 , 0.70
         TIMES SOURCE:16 , 0.70
-    ELSEIF ABL:PLAYER:22 == 2
+    ELSEIF ABL:PLAYER:레즈끼 == 2
         TIMES SOURCE:0 , 1.00
         TIMES SOURCE:1 , 1.00
         TIMES SOURCE:2 , 1.00
@@ -1561,7 +1561,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
         TIMES SOURCE:11 , 1.00
         TIMES SOURCE:15 , 1.00
         TIMES SOURCE:16 , 1.00
-    ELSEIF ABL:PLAYER:22 == 3
+    ELSEIF ABL:PLAYER:레즈끼 == 3
         TIMES SOURCE:0 , 1.10
         TIMES SOURCE:1 , 1.10
         TIMES SOURCE:2 , 1.10
@@ -1569,7 +1569,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
         TIMES SOURCE:11 , 1.40
         TIMES SOURCE:15 , 1.30
         TIMES SOURCE:16 , 1.30
-    ELSEIF ABL:PLAYER:22 == 4
+    ELSEIF ABL:PLAYER:레즈끼 == 4
         TIMES SOURCE:0 , 1.20
         TIMES SOURCE:1 , 1.20
         TIMES SOURCE:2 , 1.20
@@ -1587,7 +1587,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
         TIMES SOURCE:16 , 2.00
     ENDIF
     ;조교자의 ABL:레즈중독
-    IF ABL:PLAYER:32 == 1
+    IF ABL:PLAYER:레즈중독 == 1
         TIMES SOURCE:0 , 1.10
         TIMES SOURCE:1 , 1.10
         TIMES SOURCE:2 , 1.10
@@ -1595,7 +1595,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
         TIMES SOURCE:11 , 1.50
         TIMES SOURCE:15 , 1.50
         TIMES SOURCE:16 , 1.50
-    ELSEIF ABL:PLAYER:32 == 2
+    ELSEIF ABL:PLAYER:레즈중독 == 2
         TIMES SOURCE:0 , 1.20
         TIMES SOURCE:1 , 1.20
         TIMES SOURCE:2 , 1.20
@@ -1603,7 +1603,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
         TIMES SOURCE:11 , 2.00
         TIMES SOURCE:15 , 2.00
         TIMES SOURCE:16 , 2.00
-    ELSEIF ABL:PLAYER:32 == 3
+    ELSEIF ABL:PLAYER:레즈중독 == 3
         TIMES SOURCE:0 , 1.40
         TIMES SOURCE:1 , 1.40
         TIMES SOURCE:2 , 1.40
@@ -1611,7 +1611,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
         TIMES SOURCE:11 , 2.50
         TIMES SOURCE:15 , 2.50
         TIMES SOURCE:16 , 2.50
-    ELSEIF ABL:PLAYER:32 == 4
+    ELSEIF ABL:PLAYER:레즈중독 == 4
         TIMES SOURCE:0 , 1.60
         TIMES SOURCE:1 , 1.60
         TIMES SOURCE:2 , 1.60
@@ -1619,7 +1619,7 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
         TIMES SOURCE:11 , 3.50
         TIMES SOURCE:15 , 3.00
         TIMES SOURCE:16 , 3.00
-    ELSEIF ABL:PLAYER:32 == 5
+    ELSEIF ABL:PLAYER:레즈중독 == 5
         TIMES SOURCE:0 , 1.80
         TIMES SOURCE:1 , 1.80
         TIMES SOURCE:2 , 1.80
@@ -1630,19 +1630,19 @@ IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
     ENDIF
 
     ;조교자의 자제심
-    IF TALENT:PLAYER:20
+    IF TALENT:PLAYER:자제심
         TIMES SOURCE:15 , 0.50
         TIMES SOURCE:16 , 0.50
     ENDIF
 ;ＢＬ
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     ;ABL:ＢＬ끼를 본다
-    IF ABL:23 == 0
+    IF ABL:BL끼 == 0
         TIMES SOURCE:16 , 0.50
 
         TIMES SOURCE:30 , 4.00
         TIMES SOURCE:31 , 4.00
-    ELSEIF ABL:23 == 1
+    ELSEIF ABL:BL끼 == 1
         SOURCE:24 += 10
         TIMES SOURCE:0 , 1.10
         TIMES SOURCE:1 , 1.10
@@ -1652,7 +1652,7 @@ ELSEIF TALENT:120 && TALENT:PLAYER:120
 
         TIMES SOURCE:30 , 2.00
         TIMES SOURCE:31 , 2.00
-    ELSEIF ABL:23 == 2
+    ELSEIF ABL:BL끼 == 2
         SOURCE:24 += 40
         TIMES SOURCE:0 , 1.20
         TIMES SOURCE:1 , 1.20
@@ -1662,7 +1662,7 @@ ELSEIF TALENT:120 && TALENT:PLAYER:120
 
         TIMES SOURCE:30 , 1.40
         TIMES SOURCE:31 , 1.40
-    ELSEIF ABL:23 == 3
+    ELSEIF ABL:BL끼 == 3
         SOURCE:24 += 100
         TIMES SOURCE:0 , 1.30
         TIMES SOURCE:1 , 1.30
@@ -1672,7 +1672,7 @@ ELSEIF TALENT:120 && TALENT:PLAYER:120
 
         TIMES SOURCE:30 , 1.00
         TIMES SOURCE:31 , 1.00
-    ELSEIF ABL:23 == 4
+    ELSEIF ABL:BL끼 == 4
         SOURCE:24 += 200
         TIMES SOURCE:0 , 1.40
         TIMES SOURCE:1 , 1.40
@@ -1695,7 +1695,7 @@ ELSEIF TALENT:120 && TALENT:PLAYER:120
     ENDIF
 
     ;조교자의 자제심
-    IF TALENT:PLAYER:20
+    IF TALENT:PLAYER:자제심
         TIMES SOURCE:15 , 0.50
         TIMES SOURCE:16 , 0.50
     ENDIF
@@ -1708,22 +1708,22 @@ ENDIF
 ;[ふたなり]やペニバンよりも色々と不遇気味な[オトコ]の特権ということで
 @SOURCE_SEX_MALE_CHECK_EASY
 ;호감도10万越え, ここまで来る人はまずいないとおもうけど…
-IF CFLAG:2 >= 100000
-    SOURCE:24 += 1000 + (CFLAG:2 / 100)
+IF CFLAG:호감도 >= 100000
+    SOURCE:24 += 1000 + (CFLAG:호감도 / 100)
     SOURCE:0 *= 10
     SOURCE:1 *= 10
     SOURCE:2 *= 10
     SOURCE:3 *= 10
     SOURCE:16 *= 10
 ;호감도5万越え, ここで助手・奴隷ともにレズ中毒･レズっ気Lv5のとき（7.488倍）に勝てます
-ELSEIF CFLAG:2 >= 50000
+ELSEIF CFLAG:호감도 >= 50000
     SOURCE:24 += 1500
     TIMES SOURCE:0 , 7.50
     TIMES SOURCE:1 , 7.50
     TIMES SOURCE:2 , 7.50
     TIMES SOURCE:3 , 7.50
     TIMES SOURCE:16 ,7.50
-ELSEIF CFLAG:2 >= 30000
+ELSEIF CFLAG:호감도 >= 30000
     SOURCE:24 += 1250
     TIMES SOURCE:0 , 5.00
     TIMES SOURCE:1 , 5.00
@@ -1731,7 +1731,7 @@ ELSEIF CFLAG:2 >= 30000
     TIMES SOURCE:3 , 5.00
     TIMES SOURCE:16 , 5.00
 ;호감도2万越え, 女主人による調教の最大値が3.2倍なんでそれに勝つのはここから
-ELSEIF CFLAG:2 >= 20000
+ELSEIF CFLAG:호감도 >= 20000
     SOURCE:24 += 1000
     TIMES SOURCE:0 , 3.50
     TIMES SOURCE:1 , 3.50
@@ -1739,14 +1739,14 @@ ELSEIF CFLAG:2 >= 20000
     TIMES SOURCE:3 , 3.50
     TIMES SOURCE:16 , 3.50
 ;호감도1万5千, レズっ気5の中毒充足の750にならぶとともに女주인의 限界すれすれに
-ELSEIF CFLAG:2 >= 15000
+ELSEIF CFLAG:호감도 >= 15000
     SOURCE:24 += 750
     TIMES SOURCE:0 , 3.00
     TIMES SOURCE:1 , 3.00
     TIMES SOURCE:2 , 3.00
     TIMES SOURCE:3 , 3.00
     TIMES SOURCE:16 ,3.00
-ELSEIF CFLAG:2 >= 10000
+ELSEIF CFLAG:호감도 >= 10000
     SOURCE:24 += 350
     TIMES SOURCE:0 , 2.50
     TIMES SOURCE:1 , 2.50
@@ -1754,20 +1754,20 @@ ELSEIF CFLAG:2 >= 10000
     TIMES SOURCE:3 , 2.50
     TIMES SOURCE:16 , 2.50
 ;ここから主人に対する中毒が発生（マゾっ気Lv1相当）
-ELSEIF CFLAG:2 >= 5000
+ELSEIF CFLAG:호감도 >= 5000
     SOURCE:24 += 100
     TIMES SOURCE:0 , 2.00
     TIMES SOURCE:1 , 2.00
     TIMES SOURCE:2 , 2.00
     TIMES SOURCE:3 , 2.00
     TIMES SOURCE:16 , 2.00
-ELSEIF CFLAG:2 >= 3000
+ELSEIF CFLAG:호감도 >= 3000
     TIMES SOURCE:0 , 1.50
     TIMES SOURCE:1 , 1.50
     TIMES SOURCE:2 , 1.50
     TIMES SOURCE:3 , 1.50
     TIMES SOURCE:16 , 1.50
-ELSEIF CFLAG:2 >= 2000
+ELSEIF CFLAG:호감도 >= 2000
     TIMES SOURCE:0 , 1.20
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.20
@@ -1788,27 +1788,27 @@ ENDIF
 ;上昇幅の計算がEASYと違う([淫壷]補正もあり)
 ;[ふたなり]やペニバンよりも色々と不遇気味な[オトコ]の特権ということで
 @SOURCE_SEX_MALE_CHECK_NORMAL
-IF CFLAG:2 >= 10000
+IF CFLAG:호감도 >= 10000
     SOURCE:24 += 2000
     LOCAL = 350
-ELSEIF CFLAG:2 >= 7500
+ELSEIF CFLAG:호감도 >= 7500
     SOURCE:24 += 1000
     LOCAL = 250
-ELSEIF CFLAG:2 >= 5000
+ELSEIF CFLAG:호감도 >= 5000
     SOURCE:24 += 500
     LOCAL = 200
-ELSEIF CFLAG:2 >= 3000
+ELSEIF CFLAG:호감도 >= 3000
     SOURCE:24 += 250
     LOCAL = 175
-ELSEIF CFLAG:2 >= 2500
+ELSEIF CFLAG:호감도 >= 2500
     SOURCE:24 += 100
     LOCAL = 150
-ELSEIF CFLAG:2 >= 2000
+ELSEIF CFLAG:호감도 >= 2000
     LOCAL = 125
 ELSE
     LOCAL = 120
 ENDIF
-SIF TALENT:172
+SIF TALENT:음호
     TIMES LOCAL , 1.50
 
 IF LOCAL > 0
@@ -1829,7 +1829,7 @@ ENDIF
 ;-------------------------------------------------
 @PLAYER_SKILL_CHECK
 ;조교자의 [해방]을 본다
-IF TALENT:PLAYER:33
+IF TALENT:PLAYER:해방
     TIMES SOURCE:0 , 1.20
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.20
@@ -1837,10 +1837,10 @@ IF TALENT:PLAYER:33
     TIMES SOURCE:11 , 1.20
 ENDIF
 ;조교자의 [소악마]를 본다
-SIF TALENT:PLAYER:93
+SIF TALENT:PLAYER:소악마
     TIMES SOURCE:12 , 1.60
 ;조교자의 [매혹]을 본다
-IF TALENT:PLAYER:91
+IF TALENT:PLAYER:매혹
     TIMES SOURCE:0 , 1.20
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.20
@@ -1851,7 +1851,7 @@ IF TALENT:PLAYER:91
     TIMES SOURCE:31 , 0.50
 ENDIF
 ;조교자의 [수수께끼의 매력], [대범함]을 본다
-IF TALENT:PLAYER:92 || TALENT:PLAYER:98
+IF TALENT:PLAYER:수수께끼의매력 || TALENT:PLAYER:대범함
     TIMES SOURCE:0 , 1.20
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.20
@@ -1862,7 +1862,7 @@ IF TALENT:PLAYER:92 || TALENT:PLAYER:98
     TIMES SOURCE:31 , 0.50
 ENDIF
 ;조교자의 [유아퇴행]을 본다
-IF TALENT:PLAYER:159
+IF TALENT:PLAYER:유아퇴행
     TIMES SOURCE:0 , 1.10
     TIMES SOURCE:1 , 1.10
     TIMES SOURCE:2 , 1.10
@@ -1876,27 +1876,27 @@ IF TALENT:PLAYER:159
 ENDIF
 
 ;조교자의 ABL:技巧
-IF ABL:PLAYER:12 == 0
+IF ABL:PLAYER:기교 == 0
     TIMES SOURCE:0 , 0.50
     TIMES SOURCE:1 , 0.50
     TIMES SOURCE:2 , 0.50
     TIMES SOURCE:3 , 0.50
-ELSEIF ABL:PLAYER:12 == 1
+ELSEIF ABL:PLAYER:기교 == 1
     TIMES SOURCE:0 , 0.80
     TIMES SOURCE:1 , 0.80
     TIMES SOURCE:2 , 0.80
     TIMES SOURCE:3 , 0.80
-ELSEIF ABL:PLAYER:12 == 2
+ELSEIF ABL:PLAYER:기교 == 2
     TIMES SOURCE:0 , 1.00
     TIMES SOURCE:1 , 1.00
     TIMES SOURCE:2 , 1.00
     TIMES SOURCE:3 , 1.00
-ELSEIF ABL:PLAYER:12 == 3
+ELSEIF ABL:PLAYER:기교 == 3
     TIMES SOURCE:0 , 1.20
     TIMES SOURCE:1 , 1.20
     TIMES SOURCE:2 , 1.20
     TIMES SOURCE:3 , 1.20
-ELSEIF ABL:PLAYER:12 == 4
+ELSEIF ABL:PLAYER:기교 == 4
     TIMES SOURCE:0 , 1.50
     TIMES SOURCE:1 , 1.50
     TIMES SOURCE:2 , 1.50
@@ -1909,29 +1909,29 @@ ELSE
 ENDIF
 
 ;조교자가 助手かつ[연모]で[질투]であるとき
-IF ASSIPLAY && TALENT:PLAYER:150 && TALENT:PLAYER:157
+IF ASSIPLAY && TALENT:PLAYER:연모 && TALENT:PLAYER:질투
     ;助手のABL:サドっ気をみる
-    IF ABL:ASSI:20 == 0
+    IF ABL:ASSI:새드끼 == 0
         TIMES SOURCE:20 , 1.00
         TIMES SOURCE:21 , 1.00
         TIMES SOURCE:23 , 1.00
         TIMES SOURCE:31 , 1.00
-    ELSEIF ABL:ASSI:20 == 1
+    ELSEIF ABL:ASSI:새드끼 == 1
         TIMES SOURCE:20 , 1.10
         TIMES SOURCE:21 , 1.00
         TIMES SOURCE:23 , 1.00
         TIMES SOURCE:31 , 1.05
-    ELSEIF ABL:ASSI:20 == 2
+    ELSEIF ABL:ASSI:새드끼 == 2
         TIMES SOURCE:20 , 1.15
         TIMES SOURCE:21 , 1.05
         TIMES SOURCE:23 , 1.05
         TIMES SOURCE:31 , 1.10
-    ELSEIF ABL:ASSI:20 == 3
+    ELSEIF ABL:ASSI:새드끼 == 3
         TIMES SOURCE:20 , 1.20
         TIMES SOURCE:21 , 1.05
         TIMES SOURCE:23 , 1.10
         TIMES SOURCE:31 , 1.15
-    ELSEIF ABL:ASSI:20 == 4
+    ELSEIF ABL:ASSI:새드끼 == 4
         TIMES SOURCE:20 , 1.25
         TIMES SOURCE:21 , 1.10
         TIMES SOURCE:23 , 1.15
@@ -1945,29 +1945,29 @@ IF ASSIPLAY && TALENT:PLAYER:150 && TALENT:PLAYER:157
 ENDIF
 
 ;조교자가 助手かつ[使い魔]であるとき
-IF ASSIPLAY && TALENT:PLAYER:164
+IF ASSIPLAY && TALENT:PLAYER:사역마
     ;주인의 ABL:技巧をみる
-    IF ABL:MASTER:12 == 0
+    IF ABL:MASTER:기교 == 0
         TIMES SOURCE:0 , 0.80
         TIMES SOURCE:1 , 0.80
         TIMES SOURCE:2 , 0.80
         TIMES SOURCE:3 , 0.80
-    ELSEIF ABL:MASTER:12 == 1
+    ELSEIF ABL:MASTER:기교 == 1
         TIMES SOURCE:0 , 0.90
         TIMES SOURCE:1 , 0.90
         TIMES SOURCE:2 , 0.90
         TIMES SOURCE:3 , 0.90
-    ELSEIF ABL:MASTER:12 == 2
+    ELSEIF ABL:MASTER:기교 == 2
         TIMES SOURCE:0 , 1.00
         TIMES SOURCE:1 , 1.00
         TIMES SOURCE:2 , 1.00
         TIMES SOURCE:3 , 1.00
-    ELSEIF ABL:MASTER:12 == 3
+    ELSEIF ABL:MASTER:기교 == 3
         TIMES SOURCE:0 , 1.10
         TIMES SOURCE:1 , 1.10
         TIMES SOURCE:2 , 1.10
         TIMES SOURCE:3 , 1.10
-    ELSEIF ABL:MASTER:12 == 4
+    ELSEIF ABL:MASTER:기교 == 4
         TIMES SOURCE:0 , 1.15
         TIMES SOURCE:1 , 1.15
         TIMES SOURCE:2 , 1.15
@@ -1979,30 +1979,30 @@ IF ASSIPLAY && TALENT:PLAYER:164
         TIMES SOURCE:3 , 1.20
     ENDIF
     ;주인의 [매혹]をみる
-    IF TALENT:MASTER:91
+    IF TALENT:MASTER:매혹
         TIMES SOURCE:30 , 0.90
         TIMES SOURCE:31 , 0.90
     ENDIF
     ;주인의 [수수께끼의 매력]をみる
-    IF TALENT:MASTER:92
+    IF TALENT:MASTER:수수께끼의매력
         TIMES SOURCE:30 , 0.90
         TIMES SOURCE:31 , 0.90
     ENDIF
     ;주인의 [소악마]をみる
-    SIF TALENT:MASTER:93
+    SIF TALENT:MASTER:소악마
         TIMES SOURCE:12 , 1.15
     ;주인의 カリスマ(堕とした人数)を見る
-    IF FLAG:30
-        IF FLAG:30 < 5
+    IF FLAG:함락총계
+        IF FLAG:함락총계 < 5
             TIMES SOURCE:16 , 1.10
             TIMES SOURCE:23 , 1.10
-        ELSEIF FLAG:30 < 10
+        ELSEIF FLAG:함락총계 < 10
             TIMES SOURCE:16 , 1.20
             TIMES SOURCE:23 , 1.20
-        ELSEIF FLAG:30 < 100
+        ELSEIF FLAG:함락총계 < 100
             TIMES SOURCE:16 , 1.30
             TIMES SOURCE:23 , 1.30
-        ELSEIF FLAG:30 < 1000
+        ELSEIF FLAG:함락총계 < 1000
             TIMES SOURCE:16 , 1.40
             TIMES SOURCE:23 , 1.40
         ELSE
@@ -2013,7 +2013,7 @@ IF ASSIPLAY && TALENT:PLAYER:164
 ENDIF
 
 ;조교자가 [死神]で[仙人]を調教している, もしくは조교자가 [仙人]で[死神]を調教しているとき
-IF (TALENT:PLAYER:224 && TALENT:225) || (TALENT:PLAYER:225 && TALENT:224)
+IF (TALENT:PLAYER:사신 && TALENT:선인) || (TALENT:PLAYER:선인 && TALENT:사신)
     TIMES SOURCE:0 , 0.70
     TIMES SOURCE:1 , 0.70
     TIMES SOURCE:2 , 0.70
@@ -2032,32 +2032,32 @@ IF (TALENT:PLAYER:224 && TALENT:225) || (TALENT:PLAYER:225 && TALENT:224)
 ENDIF
 
 ;조교자가 [妖精知識]を持ち, かつ[妖精]を調教しているとき
-IF TALENT:PLAYER:57 && TALENT:200
+IF TALENT:PLAYER:요정지식 && TALENT:요정
     LOCAL:1 = 0
     FOR LOCAL, 0, CHARANUM
         ;失踪中, 調教者, 조교 대상なら除外
-        SIF CFLAG:LOCAL:4 || LOCAL == PLAYER || LOCAL == TARGET
+        SIF CFLAG:LOCAL:조교관외 || LOCAL == PLAYER || LOCAL == TARGET
             CONTINUE
         ;熾烈なる妖精（とも）との戦いの中で精と子の狭間を見切った
-        SIF (TALENT:LOCAL:150 || TALENT:LOCAL:160 || TALENT:LOCAL:170) && TALENT:LOCAL:200
+        SIF (TALENT:LOCAL:연모 || TALENT:LOCAL:복종 || TALENT:LOCAL:음란) && TALENT:LOCAL:요정
             LOCAL:1 += 1
     NEXT
     ;堕とした, または堕としている妖精10人につき0.01倍＋
-    IF FLAG:32 > 999 && LOCAL:1 > 999
-        SOURCE:0 *= (1000 + LOCAL:1 + FLAG:32)
-        SOURCE:1 *= (1000 + LOCAL:1 + FLAG:32)
-        SOURCE:2 *= (1000 + LOCAL:1 + FLAG:32)
-        SOURCE:3 *= (1000 + LOCAL:1 + FLAG:32)
+    IF FLAG:요정함락총계 > 999 && LOCAL:1 > 999
+        SOURCE:0 *= (1000 + LOCAL:1 + FLAG:요정함락총계)
+        SOURCE:1 *= (1000 + LOCAL:1 + FLAG:요정함락총계)
+        SOURCE:2 *= (1000 + LOCAL:1 + FLAG:요정함락총계)
+        SOURCE:3 *= (1000 + LOCAL:1 + FLAG:요정함락총계)
         IF TEQUIP:90 == 0
-            SOURCE:11 *= (LOCAL:1 + FLAG:32)
-            SOURCE:16 *= (LOCAL:1 + FLAG:32)
-            SOURCE:17 *= (LOCAL:1 + FLAG:32)
-            SOURCE:22 *= (LOCAL:1 + FLAG:32)
-            SOURCE:29 *= (LOCAL:1 + FLAG:32)
-            SOURCE:18 *= (500 + LOCAL:1 + FLAG:32)
-            SOURCE:19 *= (500 + LOCAL:1 + FLAG:32)
-            SOURCE:20 *= (500 + LOCAL:1 + FLAG:32)
-            SOURCE:23 *= (500 + LOCAL:1 + FLAG:32)
+            SOURCE:11 *= (LOCAL:1 + FLAG:요정함락총계)
+            SOURCE:16 *= (LOCAL:1 + FLAG:요정함락총계)
+            SOURCE:17 *= (LOCAL:1 + FLAG:요정함락총계)
+            SOURCE:22 *= (LOCAL:1 + FLAG:요정함락총계)
+            SOURCE:29 *= (LOCAL:1 + FLAG:요정함락총계)
+            SOURCE:18 *= (500 + LOCAL:1 + FLAG:요정함락총계)
+            SOURCE:19 *= (500 + LOCAL:1 + FLAG:요정함락총계)
+            SOURCE:20 *= (500 + LOCAL:1 + FLAG:요정함락총계)
+            SOURCE:23 *= (500 + LOCAL:1 + FLAG:요정함락총계)
         ENDIF
         SOURCE:0 /= 1000
         SOURCE:1 /= 1000
@@ -2075,7 +2075,7 @@ IF TALENT:PLAYER:57 && TALENT:200
             SOURCE:23 /= 1000
         ENDIF
     ;オーバーフローこわい人用
-    ;IF FLAG:32 > 999 && LOCAL:1 > 999
+    ;IF FLAG:요정함락총계 > 999 && LOCAL:1 > 999
     ;    TIMES SOURCE:0 , 3.00
     ;    TIMES SOURCE:1 , 3.00
     ;    TIMES SOURCE:2 , 3.00
@@ -2091,7 +2091,7 @@ IF TALENT:PLAYER:57 && TALENT:200
     ;        TIMES SOURCE:20 , 2.50
     ;        TIMES SOURCE:23 , 2.50
     ;    ENDIF
-    ELSEIF FLAG:32 > 999 && LOCAL:1 > 499
+    ELSEIF FLAG:요정함락총계 > 999 && LOCAL:1 > 499
         TIMES SOURCE:0 , 2.70
         TIMES SOURCE:1 , 2.70
         TIMES SOURCE:2 , 2.70
@@ -2107,7 +2107,7 @@ IF TALENT:PLAYER:57 && TALENT:200
             TIMES SOURCE:20 , 2.20
             TIMES SOURCE:23 , 2.20
         ENDIF
-    ELSEIF FLAG:32 > 999 && LOCAL:1 > 99
+    ELSEIF FLAG:요정함락총계 > 999 && LOCAL:1 > 99
         TIMES SOURCE:0 , 2.50
         TIMES SOURCE:1 , 2.50
         TIMES SOURCE:2 , 2.50
@@ -2123,7 +2123,7 @@ IF TALENT:PLAYER:57 && TALENT:200
             TIMES SOURCE:20 , 2.00
             TIMES SOURCE:23 , 2.00
         ENDIF
-    ELSEIF FLAG:32 > 999
+    ELSEIF FLAG:요정함락총계 > 999
         TIMES SOURCE:0 , 2.10
         TIMES SOURCE:1 , 2.10
         TIMES SOURCE:2 , 2.10
@@ -2140,7 +2140,7 @@ IF TALENT:PLAYER:57 && TALENT:200
             TIMES SOURCE:23 , 1.50
         ENDIF
     ;フェアリーロードからは心を掌握する能力も追加
-    ELSEIF FLAG:32 > 499
+    ELSEIF FLAG:요정함락총계 > 499
         TIMES SOURCE:0 , 1.70
         TIMES SOURCE:1 , 1.70
         TIMES SOURCE:2 , 1.70
@@ -2156,7 +2156,7 @@ IF TALENT:PLAYER:57 && TALENT:200
             TIMES SOURCE:20 , 1.30
             TIMES SOURCE:23 , 1.30
         ENDIF
-    ELSEIF FLAG:32 > 99
+    ELSEIF FLAG:요정함락총계 > 99
         TIMES SOURCE:0 , 1.70
         TIMES SOURCE:1 , 1.70
         TIMES SOURCE:2 , 1.70
@@ -2167,7 +2167,7 @@ IF TALENT:PLAYER:57 && TALENT:200
             TIMES SOURCE:20 , 1.30
             TIMES SOURCE:23 , 1.30
         ENDIF
-    ELSEIF FLAG:32 > 9
+    ELSEIF FLAG:요정함락총계 > 9
         TIMES SOURCE:0 , 1.50
         TIMES SOURCE:1 , 1.50
         TIMES SOURCE:2 , 1.50
@@ -2185,33 +2185,33 @@ ENDIF
 ;조교자의 [つるぺた堕し]をみる
 ;以下[つるぺた堕し]持ちの心の叫び(?)
 LOCAL = 0
-IF TALENT:PLAYER:97
+IF TALENT:PLAYER:절벽가슴격추왕
     ;[絶壁]！鉄壁！無敵！
-    IF TALENT:110
+    IF TALENT:절벽
         LOCAL = 4
     ;[빈유]は品乳である
-    ELSEIF TALENT:111
+    ELSEIF TALENT:빈유
         LOCAL = 3
     ;[巨乳]は虚乳にして嘘乳である
-    ELSEIF TALENT:112
+    ELSEIF TALENT:거유
         LOCAL = 2
     ;[爆乳]は人類の敵だ！
-    ELSEIF TALENT:113
+    ELSEIF TALENT:폭유
         LOCAL = 1
     ENDIF
 ;조교자의 [大乳導]をみる
-ELSEIF TALENT:PLAYER:96
+ELSEIF TALENT:PLAYER:대유도
     ;[絶壁]
-    IF TALENT:110
+    IF TALENT:절벽
         LOCAL = 1
     ;[빈유]
-    ELSEIF TALENT:111
+    ELSEIF TALENT:빈유
         LOCAL = 2
     ;[巨乳]
-    ELSEIF TALENT:112
+    ELSEIF TALENT:거유
         LOCAL = 3
     ;[爆乳]
-    ELSEIF TALENT:113
+    ELSEIF TALENT:폭유
         LOCAL = 4
     ENDIF
 ENDIF
@@ -2301,18 +2301,18 @@ ENDIF
 ;-------------------------------------------------
 @SOURCE_STRESS_CHECK
 ;ストレスは僅か
-IF CFLAG:65 < 100
+IF CFLAG:스트레스 < 100
     TIMES SOURCE:14 , 0.90
     TIMES SOURCE:29 , 0.95
 ;ちょっと気が重い
-ELSEIF CFLAG:65 < 250
+ELSEIF CFLAG:스트레스 < 250
     TIMES SOURCE:11 , 0.90
     TIMES SOURCE:14 , 0.80
     TIMES SOURCE:15 , 0.90
     TIMES SOURCE:16 , 0.90
     TIMES SOURCE:29 , 0.90
 ;ある程度重い
-ELSEIF CFLAG:65 < 500
+ELSEIF CFLAG:스트레스 < 500
     TIMES SOURCE:0 , 0.90
     TIMES SOURCE:1 , 0.90
     TIMES SOURCE:2 , 0.90
@@ -2327,7 +2327,7 @@ ELSEIF CFLAG:65 < 500
     TIMES SOURCE:19 , 0.95
     TIMES SOURCE:29 , 0.80
 ;結構参ってる
-ELSEIF CFLAG:65 < 1000
+ELSEIF CFLAG:스트레스 < 1000
     TIMES SOURCE:0 , 0.80
     TIMES SOURCE:1 , 0.80
     TIMES SOURCE:2 , 0.80
@@ -2344,7 +2344,7 @@ ELSEIF CFLAG:65 < 1000
     TIMES SOURCE:29 , 0.75
     TIMES SOURCE:32 , 1.10
 ;明らかに様子がおかしい
-ELSEIF CFLAG:65 < 3000
+ELSEIF CFLAG:스트레스 < 3000
     TIMES SOURCE:0 , 0.70
     TIMES SOURCE:1 , 0.70
     TIMES SOURCE:2 , 0.70
@@ -2394,13 +2394,13 @@ ENDIF
 @UP_VIGOR_CVA_CHECK
 ;残り気力補正
 ;残り気力が0
-IF BASE:1 <= 0
+IF BASE:기력 <= 0
     LOCAL = 0
 ;残り気力が25％以下
-ELSEIF BASE:1 <= MAXBASE:1 / 4
+ELSEIF BASE:기력 <= MAXBASE:기력 / 4
     LOCAL = 1
 ;残り気力が50％以下
-ELSEIF BASE:1 <= MAXBASE:1 / 2
+ELSEIF BASE:기력 <= MAXBASE:기력 / 2
     LOCAL = 2
 ;残り気力が50％ 이상
 ELSE
@@ -2489,13 +2489,13 @@ ENDIF
 @UP_VIGOR_CHECK
 ;残り気力補正
 ;残り気力が0
-IF BASE:1 <= 0
+IF BASE:기력 <= 0
     LOCAL = 0
 ;残り気力が25％以下
-ELSEIF BASE:1 <= MAXBASE:1 / 4
+ELSEIF BASE:기력 <= MAXBASE:기력 / 4
     LOCAL = 1
 ;残り気力が50％以下
-ELSEIF BASE:1 <= MAXBASE:1 / 2
+ELSEIF BASE:기력 <= MAXBASE:기력 / 2
     LOCAL = 2
 ;残り気力が50％ 이상
 ELSE
@@ -2604,13 +2604,13 @@ ENDIF
 ;호감도가 높으면 순종이 오르기 쉽고, 질투도가 없으면 반감이 오르기 쉽다
 @UP_ENVY_CHECK
 ;호감도가 1500 미만
-IF CFLAG:2 < 1500
+IF CFLAG:호감도 < 1500
     TIMES UP:12 , 1.00
 ;호감도가 2000 미만
-ELSEIF CFLAG:2 < 2000
+ELSEIF CFLAG:호감도 < 2000
     TIMES UP:12 , 1.25
 ;호감도가 5000 미만
-ELSEIF CFLAG:2 < 5000
+ELSEIF CFLAG:호감도 < 5000
     TIMES UP:12 , 1.50
 ;호감도가 5000 이상
 ELSE
@@ -2618,19 +2618,19 @@ ELSE
 ENDIF
 
 ;질투도가 10 미만
-IF CFLAG:30 < 10
+IF CFLAG:질투포인트 < 10
     TIMES UP:20 , 0.60
 ;질투도가 25 미만
-ELSEIF CFLAG:30 < 25
+ELSEIF CFLAG:질투포인트 < 25
     TIMES UP:20 , 0.80
 ;질투도가 50 미만
-ELSEIF CFLAG:30 < 50
+ELSEIF CFLAG:질투포인트 < 50
     TIMES UP:20 , 1.00
 ;질투도가 75 미만
-ELSEIF CFLAG:30 < 75
+ELSEIF CFLAG:질투포인트 < 75
     TIMES UP:20 , 1.25
 ;질투도가 100 미만
-ELSEIF CFLAG:30 < 100
+ELSEIF CFLAG:질투포인트 < 100
     TIMES UP:20 , 1.50
 ;질투도가 100 이상
 ELSE
@@ -2644,7 +2644,7 @@ ENDIF
 ;미약
 IF TEQUIP:11
     ;미약중독으로 효과 살짝 강화
-    IF TALENT:46
+    IF TALENT:미약중독
         TIMES UP:0 , 2.25
         TIMES UP:1 , 2.25
         TIMES UP:2 , 2.25
@@ -2685,22 +2685,22 @@ IF TEQUIP:95 & 4
 ENDIF
 
 ;陰核が成長しすぎていると感度減少
-SIF BASE:7 > 200
+SIF BASE:음핵 > 200
     TIMES UP:0 , 0.75
 
 ;肥大陰核
-SIF TALENT:1
+SIF TALENT:비대음핵
     TIMES UP:0 , 0.40
 ;자제심
-IF TALENT:20
+IF TALENT:자제심
     TIMES UP:0 , 0.30
     TIMES UP:1 , 0.50
     TIMES UP:2 , 0.70
     TIMES UP:3 , 0.30
 ENDIF
 ;映姫様補正
-IF NO:TARGET == 36 && TALENT:71
-    IF (TALENT:150 || TALENT:151 || TALENT:152 || TALENT:153) && ASSIPLAY == 0
+IF NO:TARGET == 36 && TALENT:쾌감을부정
+    IF (TALENT:연모 || TALENT:망신 || TALENT:친애 || TALENT:상애) && ASSIPLAY == 0
         TIMES UP:0 , 1.50
         TIMES UP:1 , 1.50
         TIMES UP:2 , 1.50
@@ -2713,30 +2713,30 @@ IF NO:TARGET == 36 && TALENT:71
     ENDIF
 ENDIF
 ;オトコ
-SIF TALENT:120
+SIF TALENT:남자
     TIMES UP:2 , 1.30
 ;정신붕괴
-IF TALENT:167
+IF TALENT:정신붕괴
     TIMES UP:0 , 0.20
     TIMES UP:1 , 0.20
     TIMES UP:2 , 0.20
     TIMES UP:3 , 0.20
 ENDIF
 ;괴조인격
-IF TALENT:169
+IF TALENT:괴조인격
     TIMES UP:0 , 1.25
     TIMES UP:1 , 1.25
     TIMES UP:2 , 1.25
     TIMES UP:3 , 1.25
 ENDIF
 ;음마
-IF TALENT:180
+IF TALENT:음마
     TIMES UP:0 , 1.75
     TIMES UP:1 , 1.75
     TIMES UP:2 , 1.75
     TIMES UP:3 , 1.75
 ;즉각함락
-ELSEIF TALENT:179
+ELSEIF TALENT:즉각함락
     TIMES UP:0 , 1.50
     TIMES UP:1 , 1.50
     TIMES UP:2 , 1.50
@@ -2744,7 +2744,7 @@ ELSEIF TALENT:179
 ENDIF
 
 ;[강시]
-IF TALENT:226
+IF TALENT:강시
     TIMES UP:0 , 0.60
     TIMES UP:1 , 0.60
     TIMES UP:2 , 0.60
@@ -2752,25 +2752,25 @@ IF TALENT:226
 ENDIF
 
 ;1週目
-IF FLAG:6 == 1
+IF FLAG:주회수 == 1
     FOR COUNT, 0, 4
         TIMES UP:COUNT , 1.20
     NEXT
 ENDIF
 ;HARD
-IF FLAG:3 == 3
+IF FLAG:난이도 == 3
     TIMES UP:0 , 0.60
     TIMES UP:1 , 0.60
     TIMES UP:2 , 0.60
     TIMES UP:3 , 0.60
 ;LUNATIC
-ELSEIF FLAG:3 == 4 || FLAG:3 == 6
+ELSEIF FLAG:난이도 == 4 || FLAG:난이도 == 6
     TIMES UP:0 , 0.50
     TIMES UP:1 , 0.50
     TIMES UP:2 , 0.50
     TIMES UP:3 , 0.50
 ;PHANTASM
-ELSEIF FLAG:3 >= 5
+ELSEIF FLAG:난이도 >= 5
     TIMES UP:0 , 0.40
     TIMES UP:1 , 0.40
     TIMES UP:2 , 0.40
@@ -2786,15 +2786,15 @@ IF TEQUIP:55 == 1
 ENDIF
 
 ;クリトリスリング
-IF CFLAG:42 & 1
+IF CFLAG:특수장비 & 1
     TIMES UP:0 , 2.00
     UP:0 += 100
 ENDIF
 ;ラビアピアス
-SIF CFLAG:42 & 16
+SIF CFLAG:특수장비 & 16
     TIMES UP:1 , 0.60
 ;ニプルピアス
-SIF CFLAG:42 & 32
+SIF CFLAG:특수장비 & 32
     TIMES UP:3 , 0.25
 
 ;防御力が上昇することで定評のある国士無双の薬
@@ -2820,14 +2820,14 @@ ENDIF
 ;-------------------------------------------------
 @UP_TALENT_CHECK
 ;백보지
-IF TALENT:65
+IF TALENT:음모없음
     UP:14 += 100
     UP:15 += 200
     UP:22 += 100
     TIMES UP:14 , 1.20
     TIMES UP:15 , 2.50
     TIMES UP:22 , 1.50
-    IF BASE:5 > 50 && BASE:5 <= 250
+    IF BASE:음모 > 50 && BASE:음모 <= 250
         ;生えかけ
         UP:16 += 100
         UP:21 += 100
@@ -2839,7 +2839,7 @@ ENDIF
 ;미약
 IF TEQUIP:11
     ;미약중독으로 효과 살짝 강화
-    IF TALENT:46
+    IF TALENT:미약중독
         TIMES UP:12 , 1.30
         TIMES UP:13 , 2.25
         TIMES UP:14 , 1.30
@@ -2873,7 +2873,7 @@ IF EQUIP:14 || TFLAG:899 > 0
     TIMES UP:20 , 0.00
     TIMES UP:21 , 0.10
     TIMES UP:22 , 0.00
-    TIMES DOWNBASE:1 , 0.25
+    TIMES DOWNBASE:기력 , 0.25
 ENDIF
 ;荊
 IF TEQUIP:40 == 5
@@ -2913,19 +2913,19 @@ IF TEQUIP:77 == 2
 ENDIF
 
 ;臆病
-IF TALENT:10
+IF TALENT:겁쟁이
     TIMES UP:17 , 2.00
     TIMES UP:20 , 0.50
     TIMES UP:22 , 0.25
 ENDIF
 ;反抗的
-IF TALENT:11
+IF TALENT:반항적
     TIMES UP:12 , 0.25
     TIMES UP:13 , 0.50
     TIMES UP:20 , 1.50
 ENDIF
 ;気丈
-IF TALENT:12
+IF TALENT:꿋꿋함
     TIMES UP:12 , 0.30
     TIMES UP:13 , 0.75
     TIMES UP:17 , 0.80
@@ -2933,26 +2933,26 @@ IF TALENT:12
     TIMES UP:22 , 2.00
 ENDIF
 ;素直
-IF TALENT:13
+IF TALENT:솔직함
     TIMES UP:12 , 2.00
     TIMES UP:20 , 0.60
 ENDIF
 ;大人しい
-SIF TALENT:14
+SIF TALENT:얌전함
     TIMES UP:20 , 0.30
 ;プライド高い
-IF TALENT:16
+IF TALENT:프라이드가높음
     TIMES UP:14 , 0.50
     TIMES UP:17 , 0.60
     TIMES UP:20 , 1.20
 ;プライド低い
-ELSEIF TALENT:17
+ELSEIF TALENT:프라이드가낮음
     TIMES UP:14 , 2.00
     TIMES UP:17 , 1.50
     TIMES UP:20 , 0.80
 ENDIF
 ;無関心
-IF TALENT:21
+IF TALENT:무관심
     TIMES UP:12 , 0.50
     TIMES UP:13 , 0.50
     TIMES UP:14 , 0.50
@@ -2960,7 +2960,7 @@ IF TALENT:21
     TIMES UP:20 , 0.80
 ENDIF
 ;感情乏しい
-IF TALENT:22
+IF TALENT:감정결여
     TIMES UP:12 , 0.60
     TIMES UP:13 , 0.60
     TIMES UP:14 , 0.60
@@ -2971,125 +2971,125 @@ IF TALENT:22
     TIMES UP:22 , 0.60
 ENDIF
 ;好奇心
-SIF TALENT:23
+SIF TALENT:호기심
     TIMES UP:11 , 1.20
 ;保守的
-SIF TALENT:24
+SIF TALENT:보수적
     TIMES UP:11 , 0.80
 ;楽観的
-IF TALENT:25
+IF TALENT:낙관적
     TIMES UP:22 , 0.30
 ;悲観的
-ELSEIF TALENT:26
+ELSEIF TALENT:비관적
     TIMES UP:22 , 2.50
 ENDIF
 ;貞操無頓着
-IF TALENT:31
+IF TALENT:정조관둔감
     TIMES UP:12 , 1.20
     TIMES UP:13 , 1.25
     TIMES UP:20 , 0.60
     TIMES UP:22 , 0.40
 ENDIF
 ;抑圧
-IF TALENT:32
+IF TALENT:억압
     TIMES UP:13 , 0.50
     TIMES UP:20 , 2.00
     TIMES UP:22 , 1.50
 ENDIF
 ;해방
-IF TALENT:33
+IF TALENT:해방
     TIMES UP:13 , 2.00
     TIMES UP:14 , 2.00
 ENDIF
 ;抵抗
-IF TALENT:34
+IF TALENT:저항
     TIMES UP:13 , 0.50
     TIMES UP:20 , 2.00
 ENDIF
 ;痛みに弱い
-IF TALENT:40
+IF TALENT:아픔에약함
     TIMES UP:17 , 2.00
     TIMES UP:20 , 1.50
 ;아픔에 강함
-ELSEIF TALENT:41
+ELSEIF TALENT:아픔에강함
     TIMES UP:17 , 0.50
     TIMES UP:20 , 0.75
 ENDIF
 ;薬毒耐性
-IF TALENT:44
+IF TALENT:약물내성
     TIMES UP:30 , 0.20
 ;미약중독
-ELSEIF TALENT:46
+ELSEIF TALENT:미약중독
     TIMES UP:30 , 1.50
 ENDIF
 ;習得早い
-IF TALENT:50
+IF TALENT:습득빠름
     TIMES UP:11 , 2.00
 ;習得遅い
-ELSEIF TALENT:51
+ELSEIF TALENT:습득느림
     TIMES UP:11 , 0.50
 ENDIF
 ;헌신적
-SIF TALENT:63
+SIF TALENT:헌신적
     TIMES UP:14 , 2.00
 ;쾌감에 솔직
-IF TALENT:70
+IF TALENT:쾌감에솔직
     TIMES UP:13 , 2.00
 ;쾌감을 부정
-ELSEIF TALENT:71
+ELSEIF TALENT:쾌감을부정
     TIMES UP:13 , 0.50
     ;에이키 님 보정(조수가 하는 조교거나 연애계 소질이 없을 경우 굴복의 파라미터 상승이 억제됨)
-    SIF NO:TARGET == 36 && ((TALENT:150 + TALENT:151 + TALENT:152 + TALENT:153) == 0 || ASSIPLAY)
+    SIF NO:TARGET == 36 && ((TALENT:연모 + TALENT:망신 + TALENT:친애 + TALENT:상애) == 0 || ASSIPLAY)
         TIMES UP:14 , 0.75
 ENDIF
 ;중독되기 쉬움
-SIF TALENT:84
+SIF TALENT:중독되기쉬움
     TIMES UP:30 , 1.20
 ;거구
-IF TALENT:129
+IF TALENT:거구
     TIMES UP:16 , 0.75
     TIMES UP:17 , 0.80
 ENDIF
 ;망신 외의 연모계 소질은 주인 조교에서만 효과를 발휘
 IF ASSIPLAY == 0
     ;상애
-    IF TALENT:153
+    IF TALENT:상애
         TIMES UP:12 , 2.50
         TIMES UP:14 , 3.00
         TIMES UP:20 , 0.10
         TIMES UP:21 , 0.10
         TIMES UP:22 , 0.10
     ;친애
-    ELSEIF TALENT:152
+    ELSEIF TALENT:친애
         TIMES UP:12 , 2.00
         TIMES UP:14 , 2.50
         TIMES UP:20 , 0.20
         TIMES UP:21 , 0.20
         TIMES UP:22 , 0.20
     ;연모
-    ELSEIF TALENT:150
+    ELSEIF TALENT:연모
         TIMES UP:12 , 1.50
         TIMES UP:20 , 0.50
         TIMES UP:21 , 0.50
     ENDIF
 ENDIF
 ;망신
-IF TALENT:151
+IF TALENT:망신
     TIMES UP:14 , 4.00
     TIMES UP:20 , 0.50
 ENDIF
 ;질투
-IF TALENT:158 && ASSI >= 0 && CFLAG:ASSI:2 >= 500 && ASSIPLAY == 0
+IF TALENT:광기 && ASSI >= 0 && CFLAG:ASSI:호감도 >= 500 && ASSIPLAY == 0
     ;상애
-    IF TALENT:ASSI:153
+    IF TALENT:ASSI:상애
         TIMES UP:14 , 2.50
         TIMES UP:16 , 2.00
     ;친애
-    ELSEIF TALENT:ASSI:152
+    ELSEIF TALENT:ASSI:친애
         TIMES UP:14 , 2.00
         TIMES UP:16 , 1.50
     ;연모
-    ELSEIF TALENT:ASSI:150
+    ELSEIF TALENT:ASSI:연모
         TIMES UP:14 , 1.50
         TIMES UP:16 , 1.20
     ELSE
@@ -3097,7 +3097,7 @@ IF TALENT:158 && ASSI >= 0 && CFLAG:ASSI:2 >= 500 && ASSIPLAY == 0
     ENDIF
 ENDIF
 ;유아퇴행
-IF TALENT:159
+IF TALENT:유아퇴행
     TIMES UP:12 , 1.50
     TIMES UP:16 , 1.50
     TIMES UP:17 , 2.00
@@ -3109,19 +3109,19 @@ IF TALENT:159
     TIMES UP:22 , 0.50
 ENDIF
 ;服従
-IF TALENT:160
+IF TALENT:복종
     TIMES UP:14 , 2.00
     TIMES UP:20 , 0.50
 ENDIF
 ;烙印
-IF TALENT:161
+IF TALENT:낙인
     TIMES UP:14 , 2.00
     TIMES UP:15 , 2.00
     TIMES UP:20 , 0.30
     TIMES UP:21 , 0.30
 ENDIF
 ;隷属
-IF TALENT:162
+IF TALENT:예속
     TIMES UP:12 , 1.80
     TIMES UP:14 , 2.50
     TIMES UP:20 , 0.25
@@ -3129,7 +3129,7 @@ IF TALENT:162
     TIMES UP:22 , 0.20
 ENDIF
 ;傷物
-IF TALENT:163
+IF TALENT:흠집
     TIMES UP:12 , 0.50
     TIMES UP:16 , 0.80
     TIMES UP:17 , 1.50
@@ -3137,7 +3137,7 @@ IF TALENT:163
     TIMES UP:22 , 2.50
 ENDIF
 ;使い魔
-IF TALENT:164
+IF TALENT:사역마
     TIMES UP:12 , 1.75
     TIMES UP:13 , 1.75
     TIMES UP:14 , 1.75
@@ -3145,7 +3145,7 @@ IF TALENT:164
     TIMES UP:21 , 0.60
 ENDIF
 ;정신붕괴
-IF TALENT:167
+IF TALENT:정신붕괴
     TIMES UP:11 , 0.40
     TIMES UP:12 , 0.20
     TIMES UP:13 , 0.40
@@ -3158,7 +3158,7 @@ IF TALENT:167
     TIMES UP:30 , 0.20
 ENDIF
 ;괴뢰
-IF TALENT:168
+IF TALENT:괴뢰
     TIMES UP:12 , 0.40
     TIMES UP:13 , 0.40
     TIMES UP:14 , 0.40
@@ -3169,7 +3169,7 @@ IF TALENT:168
     TIMES UP:22 , 0.40
 ENDIF
 ;괴조인격
-IF TALENT:169
+IF TALENT:괴조인격
     TIMES UP:10 , 1.25
     TIMES UP:11 , 1.50
     TIMES UP:12 , 1.50
@@ -3183,53 +3183,53 @@ IF TALENT:169
     TIMES UP:22 , 0.20
 ENDIF
 ;음마
-IF TALENT:180
+IF TALENT:음마
     TIMES UP:13 , 3.00
 ;즉각함락
-ELSEIF TALENT:179
+ELSEIF TALENT:즉각함락
     TIMES UP:13 , 2.00
 ENDIF
 ;흡혈귀
-IF TALENT:205
-    IF ABL:10 < 3 && ABL:11 < 3
+IF TALENT:흡혈귀
+    IF ABL:순종 < 3 && ABL:욕망 < 3
         TIMES UP:12 , 0.75
         TIMES UP:14 , 0.75
     ENDIF
     TIMES UP:17 , 0.50
 ENDIF
 ;인형
-IF TALENT:208
+IF TALENT:인형
     TIMES UP:10 , 0.75
     TIMES UP:13 , 0.75
 ENDIF
 ;악마
-SIF TALENT:209
+SIF TALENT:악마
     TIMES UP:13 , 1.25
-IF TALENT:PLAYER:209
+IF TALENT:PLAYER:악마
     TIMES UP:13 , 1.25
     TIMES UP:16 , 1.25
 ENDIF
 ;캇파
-SIF TALENT:210
+SIF TALENT:캇파
     TIMES UP:11 , 1.50
-SIF TALENT:PLAYER:210
+SIF TALENT:PLAYER:캇파
     TIMES UP:11 , 1.20
 ;요호
-SIF TALENT:PLAYER:211
+SIF TALENT:PLAYER:요호
     TIMES UP:15 , 2.50
 ;사토리(마음의 눈을 닫고 있거나 [정신붕괴] 제외하고)
-IF TALENT:213 == 1 && TALENT:167 == 0
+IF TALENT:사토리 == 1 && TALENT:정신붕괴 == 0
     TIMES UP:17 , 1.25
     TIMES UP:20 , 1.25
 ENDIF
-IF TALENT:PLAYER:213 && TALENT:PLAYER:167 == 0 && NO:PLAYER != 64
+IF TALENT:PLAYER:사토리 && TALENT:PLAYER:정신붕괴 == 0 && NO:PLAYER != 64
     TIMES UP:14 , 1.25
     TIMES UP:15 , 1.25
     TIMES UP:17 , 1.25
 ENDIF
 ;오니
-IF TALENT:214
-    IF ABL:10 < 3 && ABL:11 < 3
+IF TALENT:오니
+    IF ABL:순종 < 3 && ABL:욕망 < 3
         TIMES UP:12 , 0.80
         TIMES UP:14 , 0.50
     ENDIF
@@ -3237,8 +3237,8 @@ IF TALENT:214
     TIMES UP:17 , 0.50
 ENDIF
 ;텐구
-IF TALENT:215
-    IF ABL:10 < 3 && ABL:11 < 3
+IF TALENT:텐구
+    IF ABL:순종 < 3 && ABL:욕망 < 3
         TIMES UP:12 , 0.60
         TIMES UP:14 , 0.60
     ENDIF
@@ -3246,15 +3246,15 @@ IF TALENT:215
     TIMES UP:17 , 0.80
 ENDIF
 ;[선인]
-IF TALENT:225
-    IF ABL:10 < 3 && ABL:11 < 3
+IF TALENT:선인
+    IF ABL:순종 < 3 && ABL:욕망 < 3
         TIMES UP:13 , 0.50
         TIMES UP:14 , 0.80
     ENDIF
     TIMES UP:21 , 0.80
 ENDIF
 ;[강시]
-IF TALENT:226
+IF TALENT:강시
     TIMES UP:11 , 0.80
     TIMES UP:14 , 1.20
     TIMES UP:15 , 0.80
@@ -3265,50 +3265,50 @@ IF TALENT:226
     TIMES UP:30 , 0.60
 ENDIF
 ;[둔갑너구리]
-SIF TALENT:PLAYER:227
+SIF TALENT:PLAYER:둔갑너구리
     TIMES UP:14 , 2.50
 
 ;츠쿠모가미(함락소질 없을 때와 함락소질이 있을 때)
 ;연모, 복종 미취득 시에는 굴복이 오르기 어려우나, 연모 취득시 순종, 복종 취득시 굴복이 오르기 쉽다.
-IF TALENT:228 == 1 && ( TALENT:150 == 0 || TALENT:160 == 0 || TALENT:170 == 0 )
+IF TALENT:츠쿠모가미 == 1 && ( TALENT:연모 == 0 || TALENT:복종 == 0 || TALENT:음란 == 0 )
     TIMES UP:14 , 0.80
 ENDIF
-IF TALENT:228 == 1 && TALENT:150
+IF TALENT:츠쿠모가미 == 1 && TALENT:연모
     TIMES UP:12 , 1.30
 ENDIF
-IF TALENT:228 == 1 && TALENT:160
+IF TALENT:츠쿠모가미 == 1 && TALENT:복종
     TIMES UP:14 , 1.30
 ENDIF
 
 ;인어 - 윤활에 보너스
-SIF TALENT:229
+SIF TALENT:인어
     TIMES UP:10 , 1.25
-SIF TALENT:PLAYER:229
+SIF TALENT:PLAYER:인어
     TIMES UP:10 , 1.25
 
 ;목분리 1단계와 2단계 - 습득에 보너스
-IF TALENT:230 == 1
+IF TALENT:목분리 == 1
     TIMES UP:11 , 1.30
-ELSEIF TALENT:230 == 2
+ELSEIF TALENT:목분리 == 2
     TIMES UP:11 , 1.50
 ENDIF
-IF TALENT:PLAYER:230 
+IF TALENT:PLAYER:목분리 
     TIMES UP:11 , 1.20
     TIMES UP:17 , 1.20
 ENDIF
 
 ;늑대인간 - 피조교자시에 선도와 욕정, 조교자시에 고통과 공포
-IF TALENT:231
+IF TALENT:늑대인간
     TIMES UP:13 , 1.25
     TIMES UP:32 , 1.25
 ENDIF
-IF TALENT:PLAYER:231
+IF TALENT:PLAYER:늑대인간
     TIMES UP:16 , 1.20
     TIMES UP:17 , 1.25
 ENDIF
 
 ;1주차
-IF FLAG:6 == 1
+IF FLAG:주회수 == 1
     FOR COUNT, 11, 18
         TIMES UP:COUNT , 1.25
     NEXT
@@ -3317,21 +3317,21 @@ IF FLAG:6 == 1
     TIMES UP:22 , 0.75
 ENDIF
 ;HARD
-IF FLAG:3 == 3
+IF FLAG:난이도 == 3
     TIMES UP:12 , 0.75
     TIMES UP:13 , 0.75
     TIMES UP:14 , 0.75
     TIMES UP:17 , 0.75
     TIMES UP:21 , 3.00
 ;LUNATIC
-ELSEIF FLAG:3 == 4 || FLAG:3 == 6
+ELSEIF FLAG:난이도 == 4 || FLAG:난이도 == 6
     TIMES UP:12 , 0.50
     TIMES UP:13 , 0.50
     TIMES UP:14 , 0.50
     TIMES UP:17 , 0.50
     TIMES UP:21 , 5.00
 ;PHANTASM
-ELSEIF FLAG:3 >= 5
+ELSEIF FLAG:난이도 >= 5
     TIMES UP:12 , 0.30
     TIMES UP:13 , 0.30
     TIMES UP:14 , 0.30
@@ -3340,7 +3340,7 @@ ELSEIF FLAG:3 >= 5
 ENDIF
 
 ;클리토리스 링
-IF CFLAG:42 & 1
+IF CFLAG:특수장비 & 1
     UP:13 += 60
     UP:14 += 50
     UP:16 += 80
@@ -3350,19 +3350,19 @@ IF CFLAG:42 & 1
 ENDIF
 
 ;조교자의 技巧による反感と不快の軽減処理
-IF ABL:PLAYER:12 == 0
+IF ABL:PLAYER:기교 == 0
     TIMES UP:20 , 1.20
     TIMES UP:21 , 1.20
-ELSEIF ABL:PLAYER:12 == 1
+ELSEIF ABL:PLAYER:기교 == 1
     TIMES UP:20 , 1.10
     TIMES UP:21 , 1.10
-ELSEIF ABL:PLAYER:12 == 2
+ELSEIF ABL:PLAYER:기교 == 2
     TIMES UP:20 , 1.00
     TIMES UP:21 , 1.00
-ELSEIF ABL:PLAYER:12 == 3
+ELSEIF ABL:PLAYER:기교 == 3
     TIMES UP:20 , 0.75
     TIMES UP:21 , 0.75
-ELSEIF ABL:PLAYER:12 == 4
+ELSEIF ABL:PLAYER:기교 == 4
     TIMES UP:20 , 0.50
     TIMES UP:21 , 0.50
 ELSE
@@ -3370,7 +3370,7 @@ ELSE
     TIMES UP:21 , 0.25
 ENDIF
 ;조교자의 폭발물
-IF TALENT:PLAYER:220
+IF TALENT:PLAYER:폭발물
     TIMES UP:12 , 0.80
     TIMES UP:13 , 0.75
     TIMES UP:15 , 0.80
@@ -3379,8 +3379,8 @@ IF TALENT:PLAYER:220
     TIMES UP:17 , 2.00
 ENDIF
 ;조교자의 사신(상대가 영체라면 굴복도 상승)
-IF TALENT:PLAYER:224 && TALENT:222 == 0
-    SIF TALENT:207
+IF TALENT:PLAYER:사신 && TALENT:신령 == 0
+    SIF TALENT:영체
         TIMES UP:14 , 1.25
     TIMES UP:17 , 1.25
 ENDIF
@@ -3412,35 +3412,35 @@ IF TFLAG:160
 ENDIF
 
 ;치욕각인
-IF MARK:4 == 3
+IF MARK:치욕각인 == 3
     TIMES UP:15 , 1.80
     TIMES UP:22 , 0.40
-ELSEIF MARK:4 == 2
+ELSEIF MARK:치욕각인 == 2
     TIMES UP:15 , 1.50
     TIMES UP:22 , 0.70
-ELSEIF MARK:4 == 1
+ELSEIF MARK:치욕각인 == 1
     TIMES UP:15 , 1.20
     TIMES UP:22 , 0.90
 ENDIF
 ;공포각인
-IF MARK:8 == 3
+IF MARK:공포각인 == 3
     TIMES UP:17 , 2.40
-ELSEIF MARK:8 == 2
+ELSEIF MARK:공포각인 == 2
     TIMES UP:17 , 1.80
-ELSEIF MARK:8 == 1
+ELSEIF MARK:공포각인 == 1
     TIMES UP:17 , 1.30
 ENDIF
 ;반발각인
-IF MARK:9 == 3
+IF MARK:반발각인 == 3
     TIMES UP:12 , 0.10
-ELSEIF MARK:9 == 2
+ELSEIF MARK:반발각인 == 2
     TIMES UP:12 , 0.40
-ELSEIF MARK:9 == 1
+ELSEIF MARK:반발각인 == 1
     TIMES UP:12 , 0.70
 ENDIF
 
 ;촉수調教中か[寄生]・[懐卵]持ちでない限り侵蝕のパラメータは上昇しない
-SIF TEQUIP:90 == 0 && TALENT:145 == 0 && TALENT:146 == 0
+SIF TEQUIP:90 == 0 && TALENT:회란 == 0 && TALENT:기생 == 0
     UP:31 = 0
 
 ;=============================================================================
@@ -3448,13 +3448,13 @@ SIF TEQUIP:90 == 0 && TALENT:145 == 0 && TALENT:146 == 0
 ;=============================================================================
 @MARK_GOT_CHECK
 ;순종 변동 판정용
-LOCAL:2 = ABL:10
+LOCAL:2 = ABL:순종
 ;-------------------------------------------------
 ;반발각인
 ;-------------------------------------------------
 TFLAG:44 = 0
 ;특정 소질이 없는 조수 플레이 중에는 각인이 붙기 쉽다
-SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:91 == 0 && TALENT:ASSI:92 == 0 && TALENT:ASSI:93 == 0 && TALENT:ASSI:95 == 0
+SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:매혹 == 0 && TALENT:ASSI:수수께끼의매력 == 0 && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:고무 == 0
     TIMES LOCAL , 1.20
 LOCAL = UP:20 + UP:21
 IF LOCAL >= 500 && LOCAL < 2000
@@ -3471,10 +3471,10 @@ IF TFLAG:84 > LOCAL:1
     LOCAL:1 = TFLAG:84
     TFLAG:84 = 0
 ENDIF
-IF MARK:9 < LOCAL:1 && MARK:97 < LOCAL:1 && TFLAG:105 == 0
+IF MARK:반발각인 < LOCAL:1 && MARK:97 < LOCAL:1 && TFLAG:105 == 0
     TFLAG:44 = LOCAL:1
 ;HARD 이상の場合, あまりに反感および不快を味合わせると履歴に関わらず反発３を取得
-ELSEIF LOCAL >= 40000000 && FLAG:3 > 2 && TFLAG:105 == 0
+ELSEIF LOCAL >= 40000000 && FLAG:난이도 > 2 && TFLAG:105 == 0
     LOCAL:1 = 3
     TFLAG:44 = LOCAL:1
 ENDIF
@@ -3483,13 +3483,13 @@ SIF LOCAL:1 > 0 && TFLAG:105 == 0
 IF TFLAG:44
     CALL COMMON_MARK_UP, TARGET, 9, LOCAL:1, 0
     ;感情乏しい, 괴뢰, 정신붕괴, 괴조인격の場合は반발각인による従順ダウンはなし
-    IF TALENT:22 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TALENT:169 == 0
-        IF ABL:10 > 0 && ABL:10 <= 2 && TFLAG:44 == 3
-            ABL:10 = 0
-        ELSEIF ABL:10 == 3 && TFLAG:44 == 3
-            ABL:10 = 2
-        ELSEIF ABL:10 && ABL:10 <= 2 && TFLAG:44 == 2
-            ABL:10 -= 1
+    IF TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TALENT:괴조인격 == 0
+        IF ABL:순종 > 0 && ABL:순종 <= 2 && TFLAG:44 == 3
+            ABL:순종 = 0
+        ELSEIF ABL:순종 == 3 && TFLAG:44 == 3
+            ABL:순종 = 2
+        ELSEIF ABL:순종 && ABL:순종 <= 2 && TFLAG:44 == 2
+            ABL:순종 -= 1
         ENDIF
     ENDIF
 ENDIF
@@ -3500,7 +3500,7 @@ ENDIF
 TFLAG:40 = 0
 LOCAL = UP:16
 ;특정 소질이 없는 조수 플레이 중에는 각인이 붙기 어렵다
-SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:91 == 0 && TALENT:ASSI:92 == 0 && TALENT:ASSI:93 == 0 && TALENT:ASSI:95 == 0
+SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:매혹 == 0 && TALENT:ASSI:수수께끼의매력 == 0 && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:고무 == 0
     TIMES LOCAL , 0.80
 IF LOCAL >= 500 && LOCAL < 1500
     LOCAL:1 = 1
@@ -3516,20 +3516,20 @@ IF TFLAG:80 > LOCAL:1
     LOCAL:1 = TFLAG:80
     TFLAG:80 = 0
 ENDIF
-SIF MARK:0 < LOCAL:1
+SIF MARK:고통각인 < LOCAL:1
     TFLAG:40 = LOCAL:1
 SIF LOCAL:1 > 0
     FLAG:411 += LOCAL:1
 IF TFLAG:40
     CALL COMMON_MARK_UP, TARGET, 0, LOCAL:1, 0
     ;気丈・感情乏しい, 괴뢰, 정신붕괴の場合は고통각인による従順アップはなし
-    SIF ABL:10 == 0 && TALENT:12 == 0 && TALENT:22 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:40 >= 2
-        ABL:10 = 1
+    SIF ABL:순종 == 0 && TALENT:꿋꿋함 == 0 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:40 >= 2
+        ABL:순종 = 1
     ;[サド]または[針さばき]の調教者
-    IF (TALENT:PLAYER:81 || (TALENT:PLAYER:53 && SELECTCOM == 222)) && TFLAG:40 == 3
+    IF (TALENT:PLAYER:새드 || (TALENT:PLAYER:바느질 && SELECTCOM == 222)) && TFLAG:40 == 3
         ;地の文表示のときは説明する
-        SIF CFLAG:99 != 0
-            PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:PLAYER%의 \@(TALENT:PLAYER:53 && SELECTCOM == 222) ? 바늘 다루기 # 가학적인 플레이\@로 유발된 고통에 지워지지 않을 공포가 새겨졌다.
+        SIF CFLAG:지문소거판정 != 0
+            PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:PLAYER%의 \@(TALENT:PLAYER:바느질 && SELECTCOM == 222) ? 바늘 다루기 # 가학적인 플레이\@로 유발된 고통에 지워지지 않을 공포가 새겨졌다.
         TCVAR:50 += 1
     ENDIF
 ENDIF
@@ -3540,7 +3540,7 @@ ENDIF
 TFLAG:41 = 0
 LOCAL = UP:0 + UP:1 + UP:2 + UP:3
 ;특정 소질이 없는 조수 플레이 중에는 각인이 붙기 어렵다
-SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:91 == 0 && TALENT:ASSI:92 == 0 && TALENT:ASSI:93 == 0 && TALENT:ASSI:95 == 0
+SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:매혹 == 0 && TALENT:ASSI:수수께끼의매력 == 0 && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:고무 == 0
     TIMES LOCAL , 0.80
 IF LOCAL >= 1000 && LOCAL < 3000
     LOCAL:1 = 1
@@ -3556,15 +3556,15 @@ IF TFLAG:81 > LOCAL:1
     LOCAL:1 = TFLAG:81
     TFLAG:81 = 0
 ENDIF
-SIF MARK:1 < LOCAL:1
+SIF MARK:쾌락각인 < LOCAL:1
     TFLAG:41 = LOCAL:1
 SIF LOCAL:1 > 0
     FLAG:412 += LOCAL:1
 IF TFLAG:41
     CALL COMMON_MARK_UP, TARGET, 1, LOCAL:1, 0
     ;자제심・感情乏しい, 괴뢰, 정신붕괴の場合は쾌락각인による従順アップはなし
-    SIF ABL:10 == 0 && TALENT:20 == 0 && TALENT:22 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:41 == 3
-        ABL:10 = 1
+    SIF ABL:순종 == 0 && TALENT:자제심 == 0 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:41 == 3
+        ABL:순종 = 1
 ENDIF
 
 ;-------------------------------------------------
@@ -3573,7 +3573,7 @@ ENDIF
 TFLAG:42 = 0
 LOCAL = UP:14 + UP:15 / 20 + UP:16 / 20 + UP:17 / 5
 ;특정 소질이 없는 조수 플레이 중에는 각인이 붙기 어렵다
-SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:91 == 0 && TALENT:ASSI:92 == 0 && TALENT:ASSI:93 == 0 && TALENT:ASSI:95 == 0
+SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:매혹 == 0 && TALENT:ASSI:수수께끼의매력 == 0 && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:고무 == 0
     TIMES LOCAL , 0.60
 IF LOCAL >= 1000 && LOCAL < 2500
     LOCAL:1 = 1
@@ -3589,17 +3589,17 @@ IF TFLAG:82 > LOCAL:1
     LOCAL:1 = TFLAG:82
     TFLAG:82 = 0
 ENDIF
-SIF MARK:2 < LOCAL:1
+SIF MARK:굴복각인 < LOCAL:1
     TFLAG:42 = LOCAL:1
 SIF LOCAL:1 > 0
     FLAG:413 += LOCAL:1
 IF TFLAG:42
     CALL COMMON_MARK_UP, TARGET, 2, LOCAL:1, 0
     ;感情乏しい, 괴뢰, 정신붕괴の場合は굴복각인による従順アップはなし
-    IF ABL:10 < 1 && TALENT:22 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:42 == 1
-        ABL:10 = 1
-    ELSEIF ABL:10 < 2 && TALENT:22 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:42 >= 2
-        ABL:10 = 2
+    IF ABL:순종 < 1 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:42 == 1
+        ABL:순종 = 1
+    ELSEIF ABL:순종 < 2 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:42 >= 2
+        ABL:순종 = 2
     ENDIF
 ENDIF
 
@@ -3609,7 +3609,7 @@ ENDIF
 TFLAG:46 = 0
 LOCAL = UP:15 + UP:14 / 10 + UP:13 / 20
 ;특정 소질이 없는 조수 플레이 중에는 각인이 붙기 어렵다
-SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:91 == 0 && TALENT:ASSI:92 == 0 && TALENT:ASSI:93 == 0 && TALENT:ASSI:95 == 0
+SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:매혹 == 0 && TALENT:ASSI:수수께끼의매력 == 0 && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:고무 == 0
     TIMES LOCAL , 0.60
 SIF UP:15 < 1000
     LOCAL = 0
@@ -3627,15 +3627,15 @@ IF TFLAG:86 > LOCAL:1
     LOCAL:1 = TFLAG:86
     TFLAG:86 = 0
 ENDIF
-SIF MARK:4 < LOCAL:1
+SIF MARK:치욕각인 < LOCAL:1
     TFLAG:46 = LOCAL:1
 SIF LOCAL:1 > 0
     FLAG:415 += LOCAL:1
 IF TFLAG:46
     CALL COMMON_MARK_UP, TARGET, 4, LOCAL:1, 0
     ;感情乏しい, 괴뢰, 정신붕괴, 露出癖Lv3 이상の場合は치욕각인による従順アップはなし
-    SIF ABL:10 < 1 && ABL:14 >= 3 && TALENT:22 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:46 == 3
-        ABL:10 += 1
+    SIF ABL:순종 < 1 && ABL:노출증 >= 3 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:46 == 3
+        ABL:순종 += 1
 ENDIF
 
 ;-------------------------------------------------
@@ -3644,7 +3644,7 @@ ENDIF
 TFLAG:43 = 0
 LOCAL = UP:17 + UP:16 / 50
 ;특정 소질이 없는 조수 플레이 중에는 각인이 붙기 어렵다
-SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:91 == 0 && TALENT:ASSI:92 == 0 && TALENT:ASSI:93 == 0 && TALENT:ASSI:95 == 0
+SIF ASSI >= 0 && ASSIPLAY && TALENT:ASSI:매혹 == 0 && TALENT:ASSI:수수께끼의매력 == 0 && TALENT:ASSI:소악마 == 0 && TALENT:ASSI:고무 == 0
     TIMES LOCAL , 0.80
 IF LOCAL >= 1000 && LOCAL < 2500
     LOCAL:1 = 1
@@ -3660,10 +3660,10 @@ IF TFLAG:83 > LOCAL:1
     LOCAL:1 = TFLAG:83
     TFLAG:83 = 0
 ENDIF
-IF MARK:8 < LOCAL:1 && MARK:96 < LOCAL:1 && TFLAG:105 == 0
+IF MARK:공포각인 < LOCAL:1 && MARK:96 < LOCAL:1 && TFLAG:105 == 0
     TFLAG:43 = LOCAL:1
 ;HARD 이상の場合, あまりに苦痛および恐怖を味合わせると履歴に関わらず恐怖３を取得
-ELSEIF LOCAL >= 50000000 && FLAG:3 > 2 && TFLAG:105 == 0
+ELSEIF LOCAL >= 50000000 && FLAG:난이도 > 2 && TFLAG:105 == 0
     LOCAL:1 = 3
     TFLAG:43 = LOCAL:1
 ENDIF
@@ -3672,21 +3672,21 @@ SIF LOCAL:1 > 0
 IF TFLAG:43
     CALL COMMON_MARK_UP, TARGET, 8, LOCAL:1, 0
     ;感情乏しい, 괴뢰, 정신붕괴の場合は공포각인による従順アップはなし
-    IF ABL:10 < 3 && TALENT:22 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:43 == 3
-        ABL:10 += 1
+    IF ABL:순종 < 3 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:43 == 3
+        ABL:순종 += 1
         ;臆病の場合一気に2上がる
-        SIF TALENT:10
-            ABL:10 += 1
-    ELSEIF ABL:10 < 2 && TALENT:22 == 0 && TALENT:167 == 0 && TALENT:168 == 0 && TFLAG:43 == 2
-        ABL:10 += 1
+        SIF TALENT:겁쟁이
+            ABL:순종 += 1
+    ELSEIF ABL:순종 < 2 && TALENT:감정결여 == 0 && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0 && TFLAG:43 == 2
+        ABL:순종 += 1
     ENDIF
 ENDIF
 
 ;-------------------------------------------------
 ;刻印取得による従順変動
 ;-------------------------------------------------
-IF LOCAL:2 != ABL:10
-    PRINTFORML 순종이 LV{ABL:10}로 변했다.
+IF LOCAL:2 != ABL:순종
+    PRINTFORML 순종이 LV{ABL:순종}로 변했다.
     CALL JUJUN_UP_CHECK
 ENDIF
 TFLAG:105 = 0
@@ -3716,7 +3716,7 @@ ELSE
 ENDIF
 
 ;難易度HARD 이상のとき不快のパラ上昇を見る
-IF FLAG:3 > 2
+IF FLAG:난이도 > 2
     IF UP:21 < 300
         TIMES LOCAL , 1.00
     ELSEIF UP:21 < 1000
@@ -3784,7 +3784,7 @@ ELSE
 ENDIF
 
 ;難易度HARD 이상のとき不快のパラ上昇を見る
-IF FLAG:3 > 2
+IF FLAG:난이도 > 2
     IF UP:21 < 300
         TIMES LOCAL , 1.00
     ELSEIF UP:21 < 1000
@@ -3868,7 +3868,7 @@ ELSE
 ENDIF
 
 ;難易度HARD 이상のとき反感のパラ上昇を見る
-IF FLAG:3 > 2
+IF FLAG:난이도 > 2
     IF UP:20 < 300
         TIMES LOCAL , 1.00
     ELSEIF UP:20 < 1000
@@ -3952,22 +3952,22 @@ LOCAL = UP:0 + UP:1 + UP:2 + UP:3
 LOCAL:1 = 0
 
 ;対象のマゾっ気Lvと苦痛のパラ上昇を見る
-IF (ABL:21 >= 5 || LOCAL >= 3000) && UP:16 >= 2000
+IF (ABL:마조끼 >= 5 || LOCAL >= 3000) && UP:16 >= 2000
     LOCAL:1 = 16
     TIMES UP:20 , 0.65
-ELSEIF (ABL:21 >= 5 || LOCAL >= 2500) && UP:16 >= 1500
+ELSEIF (ABL:마조끼 >= 5 || LOCAL >= 2500) && UP:16 >= 1500
     LOCAL:1 = 12
     TIMES UP:20 , 0.70
-ELSEIF (ABL:21 >= 4 || LOCAL >= 1500) && UP:16 >= 1000
+ELSEIF (ABL:마조끼 >= 4 || LOCAL >= 1500) && UP:16 >= 1000
     LOCAL:1 = 8
     TIMES UP:20 , 0.75
-ELSEIF (ABL:21 >= 4 || LOCAL >= 1000) && UP:16 >= 500
+ELSEIF (ABL:마조끼 >= 4 || LOCAL >= 1000) && UP:16 >= 500
     LOCAL:1 = 4
     TIMES UP:20 , 0.80
-ELSEIF (ABL:21 >= 3 || LOCAL >= 600) && UP:16 >= 300
+ELSEIF (ABL:마조끼 >= 3 || LOCAL >= 600) && UP:16 >= 300
     LOCAL:1 = 2
     TIMES UP:20 , 0.85
-ELSEIF (ABL:21 >= 3 || LOCAL >= 300) && UP:16 >= 100
+ELSEIF (ABL:마조끼 >= 3 || LOCAL >= 300) && UP:16 >= 100
     LOCAL:1 = 1
     TIMES UP:20 , 0.90
 ENDIF
@@ -4128,11 +4128,11 @@ IF ARG == TARGET
     ELSE
         LOCAL *= 10
     ENDIF
-    BASE:ARG:8 += LOCAL
+    BASE:ARG:취기 += LOCAL
 ENDIF
 
 ;酔いにおけるパラメーター上昇下降補正
-LOCAL = (BASE:ARG:8 *100) / MAXBASE:ARG:8
+LOCAL = (BASE:ARG:취기 *100) / MAXBASE:ARG:취기
 IF LOCAL < 40
     ;微酔
     LOCAL:1 = 110
@@ -4177,10 +4177,10 @@ ELSE
 ENDIF
 
 ;機械・鬼・黄昏の怪物
-SIF TALENT:ARG:206 || TALENT:ARG:214 || TALENT:ARG:221
+SIF TALENT:ARG:기계 || TALENT:ARG:오니 || TALENT:ARG:황혼의괴물
     LOCAL:1 = 100
 ;河童・天狗
-SIF (TALENT:ARG:210 || TALENT:ARG:215) && LOCAL:1 > 120
+SIF (TALENT:ARG:캇파 || TALENT:ARG:텐구) && LOCAL:1 > 120
     LOCAL:1 = 120
 
 ;酔いにおける体力・気力の消耗増加
@@ -4199,7 +4199,7 @@ ENDIF
 @TRAIN_EXPLOSION_CHECK
 ;조교자가 製作者のときは無条件で爆発しない。ただしアリスはEX化していないときのみ
 ;また, 製作者番号が500のときは「あなた」が製作者
-SIF (NO:PLAYER == TALENT:220 && ((NO:PLAYER == 14 && CFLAG:PLAYER:0 == 0) || NO:PLAYER != 14)) || (NO:PLAYER == 0 && TALENT:220 == 500)
+SIF (NO:PLAYER == TALENT:폭발물 && ((NO:PLAYER == 14 && CFLAG:PLAYER:SP캐릭터 == 0) || NO:PLAYER != 14)) || (NO:PLAYER == 0 && TALENT:폭발물 == 500)
     RETURN 0
 
 LOCAL = 0
@@ -4212,33 +4212,33 @@ REPEAT 4
         LOCAL += 200
 REND
 ;苦痛が10000 이상上昇した, あるいは気力が最大値の半分以下の時に苦痛が3000 이상上昇した場合
-SIF UP:16 >= 10000 || (BASE:1 <= MAXBASE:1 / 2 && UP:16 >= 3000)
+SIF UP:16 >= 10000 || (BASE:기력 <= MAXBASE:기력 / 2 && UP:16 >= 3000)
     LOCAL += 1000
 ;[해방]もなく, 露出癖がLv3 미만で야외 플레이またはビデオ撮影中, 恥情が10000 이상(이)가 되었다あるいは恥情が2000 이상上昇した場合
-SIF TALENT:33 == 0 && ABL:14 < 3 && (TEQUIP:50 || TEQUIP:52) && (PALAM:15 >= 10000 || UP:15 >= 2000)
+SIF TALENT:해방 == 0 && ABL:노출증 < 3 && (TEQUIP:50 || TEQUIP:52) && (PALAM:15 >= 10000 || UP:15 >= 2000)
     LOCAL += 200
 ;반발각인があるとダメージ悪化
-IF MARK:9 == 3
+IF MARK:반발각인 == 3
     TIMES LOCAL , 2.00
-ELSEIF MARK:9 == 2
+ELSEIF MARK:반발각인 == 2
     TIMES LOCAL , 1.50
-ELSEIF MARK:9 == 1
+ELSEIF MARK:반발각인 == 1
     TIMES LOCAL , 1.25
 ENDIF
 ; 이상の条件を満たす場合, 爆発処理に移行
 IF LOCAL > 0
     PRINTFORML ――강력한 자극에 %조사처리(CALLNAME:TARGET,"는")% 폭발했습니다--
-    IF (CFLAG:20 & 8192) == 0
-        CFLAG:20 |= 8192
+    IF (CFLAG:첫시츄에이션 & 8192) == 0
+        CFLAG:첫시츄에이션 |= 8192
         CALL COMMON_UP_EXP, TARGET, 50, 1, 0, 2
     ENDIF
     DOWNBASE:0 += LOCAL
-    DOWNBASE:1 += LOCAL/2
-    DOWNBASE:MASTER:0 += LOCAL
-    DOWNBASE:MASTER:1 += LOCAL/2
+    DOWNBASE:기력 += LOCAL/2
+    DOWNBASE:MASTER:체력 += LOCAL
+    DOWNBASE:MASTER:기력 += LOCAL/2
     IF ASSI >= 0
-        DOWNBASE:ASSI:0 += LOCAL
-        DOWNBASE:ASSI:1 += LOCAL/2
+        DOWNBASE:ASSI:체력 += LOCAL
+        DOWNBASE:ASSI:기력 += LOCAL/2
     ENDIF
 ENDIF
 
@@ -4252,18 +4252,18 @@ ENDIF
 ;………………………………………………
 IF TEQUIP:89 == 1 || TEQUIP:89 == 6
     TIMES DOWNBASE:0 , 0.90
-    TIMES DOWNBASE:MASTER:0 , 0.90
+    TIMES DOWNBASE:MASTER:체력 , 0.90
     SIF ASSI >= 0
-        TIMES DOWNBASE:ASSI:0 , 0.90
+        TIMES DOWNBASE:ASSI:체력 , 0.90
 ENDIF
 ;………………………………………………
 ;気力消費軽減(ペパーミント・フランキンセンス)
 ;………………………………………………
 IF TEQUIP:89 == 2 || TEQUIP:89 == 6
-    TIMES DOWNBASE:1 , 0.90
-    TIMES DOWNBASE:MASTER:1 , 0.90
+    TIMES DOWNBASE:기력 , 0.90
+    TIMES DOWNBASE:MASTER:기력 , 0.90
     SIF ASSI >= 0
-        TIMES DOWNBASE:ASSI:1 , 0.90
+        TIMES DOWNBASE:ASSI:기력 , 0.90
 ENDIF
 ;………………………………………………
 ;ネガティブパラメーターの上昇量を軽減(ラヴェンダー・フランキンセンス)
@@ -4312,7 +4312,7 @@ SIF DEBUG_ABL_CHECK2(32, 20, 11)
 SIF DEBUG_ABL_CHECK2(16, 21, 11)
     LOCAL |= 1024
 
-IF TALENT:120 == 0
+IF TALENT:남자 == 0
     SIF DEBUG_ABL_CHECK3(12, 22, 11)
         LOCAL |= 2048
 ELSE
@@ -4324,68 +4324,68 @@ SIF LOCAL == 0
     RETURN 0
 ;Ｃ感覚上昇
 IF LOCAL & 1
-    ABL:0 += 1
-    PRINTFORML %ABLNAME:0%LV{ABL:0}(이)가 되었다.
+    ABL:C감각 += 1
+    PRINTFORML %ABLNAME:0%LV{ABL:C감각}(이)가 되었다.
 ENDIF
 ;Ｖ感覚上昇
 IF LOCAL & 2
-    ABL:1 += 1
-    PRINTFORML %ABLNAME:1%LV{ABL:1}(이)가 되었다.
+    ABL:V감각 += 1
+    PRINTFORML %ABLNAME:1%LV{ABL:V감각}(이)가 되었다.
 ENDIF
 ;Ａ感覚上昇
 IF LOCAL & 4
-    ABL:2 += 1
-    PRINTFORML %ABLNAME:2%LV{ABL:2}(이)가 되었다.
+    ABL:A감각 += 1
+    PRINTFORML %ABLNAME:2%LV{ABL:A감각}(이)가 되었다.
 ENDIF
 ;Ｂ感覚上昇
 IF LOCAL & 8
-    ABL:3 += 1
-    PRINTFORML %ABLNAME:3%LV{ABL:3}(이)가 되었다.
+    ABL:B감각 += 1
+    PRINTFORML %ABLNAME:3%LV{ABL:B감각}(이)가 되었다.
 ENDIF
 ;従順Lv上昇
 IF LOCAL & 16
-    ABL:10 += 1
-    PRINTFORML %ABLNAME:10%LV{ABL:10}(이)가 되었다.
+    ABL:순종 += 1
+    PRINTFORML %ABLNAME:10%LV{ABL:순종}(이)가 되었다.
 ENDIF
 ;欲望Lv上昇
 IF LOCAL & 32
-    ABL:11 += 1
-    PRINTFORML %ABLNAME:11%LV{ABL:11}(이)가 되었다.
+    ABL:욕망 += 1
+    PRINTFORML %ABLNAME:11%LV{ABL:욕망}(이)가 되었다.
 ENDIF
 ;技巧Lv上昇
 IF LOCAL & 64
-    ABL:12 += 1
-    PRINTFORML %ABLNAME:12%LV{ABL:12}(이)가 되었다.
+    ABL:기교 += 1
+    PRINTFORML %ABLNAME:12%LV{ABL:기교}(이)가 되었다.
 ENDIF
 ;奉仕精神Lv上昇
 IF LOCAL & 128
-    ABL:13 += 1
-    PRINTFORML %ABLNAME:13%LV{ABL:13}(이)가 되었다.
+    ABL:봉사정신 += 1
+    PRINTFORML %ABLNAME:13%LV{ABL:봉사정신}(이)가 되었다.
 ENDIF
 ;露出癖Lv上昇
 IF LOCAL & 256
-    ABL:14 += 1
-    PRINTFORML %ABLNAME:14%LV{ABL:14}(이)가 되었다.
+    ABL:노출증 += 1
+    PRINTFORML %ABLNAME:14%LV{ABL:노출증}(이)가 되었다.
 ENDIF
 ;サドっ気Lv上昇
 IF LOCAL & 512
-    ABL:20 += 1
-    PRINTFORML %ABLNAME:20%LV{ABL:20}(이)가 되었다.
+    ABL:새드끼 += 1
+    PRINTFORML %ABLNAME:20%LV{ABL:새드끼}(이)가 되었다.
 ENDIF
 ;マゾっ気Lv上昇
 IF LOCAL & 1024
-    ABL:21 += 1
-    PRINTFORML %ABLNAME:21%LV{ABL:21}(이)가 되었다.
+    ABL:마조끼 += 1
+    PRINTFORML %ABLNAME:21%LV{ABL:마조끼}(이)가 되었다.
 ENDIF
 ;レズっ気Lv上昇
 IF LOCAL & 2048
-    ABL:22 += 1
-    PRINTFORML %ABLNAME:22%LV{ABL:22}(이)가 되었다.
+    ABL:레즈끼 += 1
+    PRINTFORML %ABLNAME:22%LV{ABL:레즈끼}(이)가 되었다.
 ENDIF
 ;ＢＬっ気Lv上昇
 IF LOCAL & 4096
-    ABL:23 += 1
-    PRINTFORML %ABLNAME:23%LV{ABL:23}(이)가 되었다.
+    ABL:BL끼 += 1
+    PRINTFORML %ABLNAME:23%LV{ABL:BL끼}(이)가 되었다.
 ENDIF
 
 ;-------------------------------------------------
@@ -4480,19 +4480,19 @@ TFLAG:108 += (LOCAL >= 10) ? LOCAL # 0
 ;회복 기초치
 LOCAL = 10
 ;臆病
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL , 0.50
 ;気丈
-SIF TALENT:20
+SIF TALENT:자제심
     TIMES LOCAL , 1.50
 ;大人しい
-SIF TALENT:14
+SIF TALENT:얌전함
     TIMES LOCAL , 1.20
 ;자제심
-SIF TALENT:20
+SIF TALENT:자제심
     TIMES LOCAL , 1.50
 ;狂気
-SIF TALENT:158
+SIF TALENT:광기
     TIMES LOCAL , 0.75
 
 LOCAL = MAX(LOCAL, 0)
@@ -4615,18 +4615,18 @@ ENDIF
 ;判定に加えたい調教状況やアイテムを追加したい場合はここに書き加えて下さい。
 ;非挿入中且つコンドーム装備中に대량사정するとゴムから溢れる…という個人的設定のため少しややこしくなってます
 ;余りにも面倒なためテキストは사정系と装備系に分け, どちらかしか表示されないようになってます（優先度は사정＞装備）。
-;また, ぶっかけ用に使われているCFLAG:74もここで一旦リセットします。
+;また, ぶっかけ用に使われているCFLAG:붓카게장소もここで一旦リセットします。
 
 ;それ以降
 IF TFLAG:899 > 1
     IF TFLAG:11 + TFLAG:36 >= 1
-        IF SELECTCOM == 230 || CFLAG:74 == 1 || CFLAG:74 == 2
+        IF SELECTCOM == 230 || CFLAG:붓카게장소 == 1 || CFLAG:붓카게장소 == 2
             IF TEQUIP:PLAYER:31 == 0
                 TFLAG:868 += TFLAG:11 + TFLAG:36
             ELSE
                 TFLAG:868 += (TFLAG:11 + TFLAG:36) - 1
             ENDIF
-        ELSEIF SELECTCOM == 32 || CFLAG:74 == 3 || CFLAG:74 == 5
+        ELSEIF SELECTCOM == 32 || CFLAG:붓카게장소 == 3 || CFLAG:붓카게장소 == 5
             IF TEQUIP:PLAYER:31 == 0
                 TFLAG:869 += TFLAG:11 + TFLAG:36
             ELSE
@@ -4652,7 +4652,7 @@ IF TFLAG:899 > 1
     ENDIF
     TFLAG:873 += TFLAG:0
     IF TFLAG:10 + TFLAG:36 >= 1
-        IF SELECTCOM == 43 || CFLAG:74 == 4 || CFLAG:74 == 6 || CFLAG:74 == 7
+        IF SELECTCOM == 43 || CFLAG:붓카게장소 == 4 || CFLAG:붓카게장소 == 6 || CFLAG:붓카게장소 == 7
             IF TEQUIP:PLAYER:31 == 0
                 TFLAG:874 += TFLAG:36
             ELSE
@@ -4718,8 +4718,8 @@ IF TFLAG:899 == 1
     ;촉수계 커맨드 실행 중 판정
     TFLAG:882 = TEQUIP:90
 
-    SIF CFLAG:74 != 0
-        CFLAG:74 = 0
+    SIF CFLAG:붓카게장소 != 0
+        CFLAG:붓카게장소 = 0
 
 ;2회째 이후
 ELSE
@@ -4769,7 +4769,7 @@ IF TFLAG:899 >= 1
         PRINTFORML %조사처리(CALLNAME:TARGET,"는")% 의식을 되찾았다.
         WAIT
         ;지문 컷
-        SIF CFLAG:99 == 0
+        SIF CFLAG:지문소거판정 == 0
             CALL PASSOUT_MESSAGE
         ;실신 회복시 대사 호출
         CALL SELF_KOJO, TARGET, 12
@@ -4840,9 +4840,9 @@ ELSEIF TFLAG:871 >= 1
         PRINT 항문
     ENDIF
     PRINTFORM 에서 \@(TFLAG:871 >= 2 || TFLAG:872 >= 2) ? 울컥울컥 나오는 대량의  # 흘러 떨어지는 \@정액을 
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTW 깨닫고는 곤혹스러워 하는 것 같다….
-    ELSEIF TALENT:10 == 1
+    ELSEIF TALENT:겁쟁이 == 1
         PRINTW 깨닫고는 지금 당장이라도 울어버릴 것 같다….
     ELSE
         PRINTFORMW 깨닫고는 %조사처리(CALLNAME:PLAYER,"를")% 노려보고 있다….
@@ -4856,9 +4856,9 @@ ELSEIF TFLAG:872 >= 1
         ENDIF
     ENDIF
     PRINTFORM 항문에서 \@(TFLAG:871 >= 2 || TFLAG:872 >= 2) ? 샘솟는 대량의  # 흘러 떨어지는 \@정액을 
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTW 깨닫고는 곤혹스러워 하는 것 같다….
-    ELSEIF TALENT:10 == 1
+    ELSEIF TALENT:겁쟁이 == 1
         PRINTW 깨닫고는 지금 당장이라도 울어버릴 것 같다….
     ELSE
         PRINTFORMW 깨닫고는 %조사처리(CALLNAME:PLAYER,"를")% 노려보고 있다….
@@ -4873,7 +4873,7 @@ ELSEIF TFLAG:868 + TFLAG:869 + TFLAG:870 + TFLAG:874 + TFLAG:875 >= 1
     SIF TFLAG:868 + TFLAG:869 + TFLAG:870 + TFLAG:874 + TFLAG:875 >= 3
         PRINT  전체
     PRINT 에 끼얹어진 정액에, 
-    PRINTFORMW \@(TALENT:150) ? 곤혹스러워 하는 것 같다…. # 완전히 겁먹은 것 같다…….\@
+    PRINTFORMW \@(TALENT:연모) ? 곤혹스러워 하는 것 같다…. # 완전히 겁먹은 것 같다…….\@
 ELSEIF TFLAG:867 < 0 || TFLAG:877 < 0
     PRINTFORM 어느 새 
     IF TEQUIP:20 == 1
@@ -5014,11 +5014,11 @@ SIF TFLAG:862 >= 1
     LOCAL += 1
 SIF (TFLAG:871 + TFLAG:872) >= 1
     LOCAL += 1
-IF ABL:31 == 3
+IF ABL:정액중독 == 3
     UP:13 += 1000 * LOCAL
-ELSEIF ABL:31 == 4
+ELSEIF ABL:정액중독 == 4
     UP:13 += 1500 * LOCAL
-ELSEIF ABL:31 >= 5
+ELSEIF ABL:정액중독 >= 5
     UP:13 += 2000 * LOCAL
 ENDIF
 
@@ -5030,10 +5030,10 @@ FOR COUNT, 1, 7
 NEXT
 
 LOCAL:7 = 100
-LOCAL:7 -= MARK:2 * 10
-LOCAL:7 -= ABL:10 * 5
+LOCAL:7 -= MARK:굴복각인 * 10
+LOCAL:7 -= ABL:순종 * 5
 
-SIF TALENT:150
+SIF TALENT:연모
     LOCAL:7 /= 2
 
 UP:14 += LOCAL:1 * (100 - LOCAL:7) / 100
@@ -5067,5 +5067,5 @@ PRINTFORMW %조사처리(CALLNAME:TARGET,"가")% 실신했기 때문에 방에 �
 ;조교자의 体力・気力が若干減少
 LOCAL:0 = 20
 LOCAL:1 = 10
-BASE:PLAYER:0 = MAX(BASE:PLAYER:0 - LOCAL:0, 0)
-BASE:PLAYER:1 = MAX(BASE:PLAYER:1 - LOCAL:1, 0)
+BASE:PLAYER:체력 = MAX(BASE:PLAYER:체력 - LOCAL:0, 0)
+BASE:PLAYER:기력 = MAX(BASE:PLAYER:기력 - LOCAL:1, 0)

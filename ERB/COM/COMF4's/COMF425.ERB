@@ -9,19 +9,19 @@
 SIF DITEMTYPE:999:425 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;조교자奉仕 · ウフフ系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 2048) == 0
+SIF (FLAG:커맨드확장 & 2048) == 0
     RETURN 0
 ;조교자가 レミリアお嬢様じゃないとダメだよ
 SIF NO:PLAYER != 10
     RETURN 0
 ;조교자가 [精神崩壊], [傀儡]だとダメ
-SIF TALENT:PLAYER:167 || TALENT:PLAYER:168
+SIF TALENT:PLAYER:정신붕괴 || TALENT:PLAYER:괴뢰
     RETURN 0
 ;조교 대상이 [精神崩壊], [傀儡]だとダメ
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -47,21 +47,21 @@ CALL TRAIN_MESSAGE_COM425
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 5
-DOWNBASE:1 += 30
+DOWNBASE:기력 += 30
 
 SOURCE:16 = 50
 SOURCE:24 = 100
 
 ;ABL:조교자의 봉사 정신을 본다
-IF ABL:PLAYER:13 == 0
+IF ABL:PLAYER:봉사정신 == 0
     SOURCE:11 = 20
-ELSEIF ABL:PLAYER:13 == 1
+ELSEIF ABL:PLAYER:봉사정신 == 1
     SOURCE:11 = 50
-ELSEIF ABL:PLAYER:13 == 2
+ELSEIF ABL:PLAYER:봉사정신 == 2
     SOURCE:11 = 80
-ELSEIF ABL:PLAYER:13 == 3
+ELSEIF ABL:PLAYER:봉사정신 == 3
     SOURCE:11 = 125
-ELSEIF ABL:PLAYER:13 == 4
+ELSEIF ABL:PLAYER:봉사정신 == 4
     SOURCE:11 = 200
 ELSE
     SOURCE:11 = 350
@@ -78,16 +78,16 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM425
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 ;대소밤응(다만 반발  3이외)
-IF NO:TARGET == 9 && MARK:9 < 3
+IF NO:TARGET == 9 && MARK:반발각인 < 3
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% 사랑스럽게 주저앉아 가드 하는 자세를 취했다.
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 그것을 미소 짓고 바라보고 있다.
 ;대파체씨(다만 반발 없는 것)
-ELSEIF NO:TARGET == 8 && MARK:9 == 0
+ELSEIF NO:TARGET == 8 && MARK:반발각인 == 0
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% 사랑스럽게 주저앉아 가드 하는 자세를 취했다.
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 거기에 쓴웃음을 지으면서도 상냥한 눈으로 바라보고 있는 것 같다….
 ELSE

@@ -12,13 +12,13 @@ SIF DITEMTYPE:999:230 > 0
 SIF EXIST_BAR(PLAYER) == 0
     RETURN 0
 ;[猫舌]だとダメ
-SIF TALENT:54
+SIF TALENT:고양이혀
     RETURN 0
 ;주인이 [금단의 지식]持ちじゃないとき, 体格差が2段階以内か조교자가 [금단의 지식]持ちじゃないとダメ
-SIF TALENT:MASTER:56 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
+SIF TALENT:MASTER:금단의지식 == 0 && COMMON_BODYSIZE_CHECK(PLAYER, TARGET) == 0
     RETURN 0
 ;순종, 욕망의 합계가 6이상 없을 경우 개구기 및 밧줄을 쓰지 않으면 불가. T(170214)
-SIF ABL:10 + ABL:11 < 6 && (TEQUIP:42 != 3 || TEQUIP:40 == 0)
+SIF ABL:순종 + ABL:욕망 < 6 && (TEQUIP:42 != 3 || TEQUIP:40 == 0)
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -48,7 +48,7 @@ SIF TEQUIP:60
 SIF TEQUIP:71
     RETURN 0
 ;촉수 조교중일 시 주인의 촉수사역Lv2이하는 안 됨
-SIF TEQUIP:90 && ABL:MASTER:98 <= 2
+SIF TEQUIP:90 && ABL:MASTER:촉수사역 <= 2
     RETURN 0
 ;촉수 관통중은 안됨
 SIF TEQUIP:90 && TEQUIP:25 == 3
@@ -78,7 +78,7 @@ ELSEIF (ASSIPLAY && TFLAG:133 == 0) || (ASSIPLAY == 0 && TFLAG:133)
 ENDIF
 
 ;전회와 이번 조교자가 같아 새드끼 LV3 이상이나 욕망 LV3 이상으로 줄사용중이 아니고 전회의 조교가 이라마치오 때
-IF PREVCOM == 230 && TEQUIP:40 == 0 && (ABL:PLAYER:20 > 2 || ABL:PLAYER:11 > 2) && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
+IF PREVCOM == 230 && TEQUIP:40 == 0 && (ABL:PLAYER:새드끼 > 2 || ABL:PLAYER:욕망 > 2) && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
     PRINTL 딥스로트
 ELSE
     PRINTL 이라마치오
@@ -98,7 +98,7 @@ ENDIF
 ;실행 결정
 ;-------------------------------------------------
 ;전회와 이번 조교자가 같아 새드끼 LV3 이상이나 욕망 LV3 이상으로 줄사용중이 아니고 전회의 조교가 이라마치오 때
-IF PREVCOM == 230 && TEQUIP:40 == 0 && (ABL:PLAYER:20 > 2 || ABL:PLAYER:11 > 2) && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
+IF PREVCOM == 230 && TEQUIP:40 == 0 && (ABL:PLAYER:새드끼 > 2 || ABL:PLAYER:욕망 > 2) && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
     COM_NAME = 딥스로트
 ELSE
     COM_NAME = 이라마치오
@@ -111,15 +111,15 @@ CALL TRAIN_MESSAGE_COM230
 LOCAL = 0
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     LOCAL = 1200
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     LOCAL = 1700
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     LOCAL = 2300
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     LOCAL = 3000
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     LOCAL = 3600
 ELSE
     LOCAL = 4200
@@ -133,23 +133,23 @@ LOCAL = EJACULATIONCHECK_ABL_13_1(TARGET, LOCAL)
 LOCAL = EJACULATIONCHECK_ABL_31_1(TARGET, LOCAL)
 
 ;TALENT:혀사용을 본다
-SIF TALENT:52
+SIF TALENT:혀놀림
     TIMES LOCAL , 2.00
 ;TALENT:고양이혀을 본다(실행할 수 없지만 일단)
-SIF TALENT:54
+SIF TALENT:고양이혀
     TIMES LOCAL , 0.70
 
 ;조교자의 C감각을 본다
 LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
 
 SIF EXIST_PENIS(PLAYER)
-    BASE:PLAYER:2 += LOCAL
+    BASE:PLAYER:사정 += LOCAL
 
 ;-------------------------------------------------
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 200
-DOWNBASE:1 += 150
+DOWNBASE:기력 += 150
 
 SOURCE:20 = 200
 SOURCE:22 = 1500
@@ -160,23 +160,23 @@ SOURCE:17 = 500
 SOURCE:30 = TFLAG:242*40 + 100
 
 ;ABL:봉사 정신을 본다
-IF ABL:13 == 0
+IF ABL:봉사정신 == 0
     SOURCE:15 = 420
     SOURCE:16 = 150
     TIMES SOURCE:30 , 4.00
-ELSEIF ABL:13 == 1
+ELSEIF ABL:봉사정신 == 1
     SOURCE:15 = 500
     SOURCE:16 = 300
     TIMES SOURCE:30 , 2.50
-ELSEIF ABL:13 == 2
+ELSEIF ABL:봉사정신 == 2
     SOURCE:15 = 580
     SOURCE:16 = 600
     TIMES SOURCE:30 , 1.50
-ELSEIF ABL:13 == 3
+ELSEIF ABL:봉사정신 == 3
     SOURCE:15 = 660
     SOURCE:16 = 900
     TIMES SOURCE:30 , 1.00
-ELSEIF ABL:13 == 4
+ELSEIF ABL:봉사정신 == 4
     SOURCE:15 = 740
     SOURCE:16 = 1500
     TIMES SOURCE:30 , 0.50
@@ -187,19 +187,19 @@ ELSE
 ENDIF
 
 ;ABL:기교를 본다
-IF ABL:12 == 0
+IF ABL:기교 == 0
     TIMES SOURCE:15 , 0.50
     TIMES SOURCE:16 , 0.50
-ELSEIF ABL:12 == 1
+ELSEIF ABL:기교 == 1
     TIMES SOURCE:15 , 0.80
     TIMES SOURCE:16 , 0.80
-ELSEIF ABL:12 == 2
+ELSEIF ABL:기교 == 2
     TIMES SOURCE:15 , 1.00
     TIMES SOURCE:16 , 1.00
-ELSEIF ABL:12 == 3
+ELSEIF ABL:기교 == 3
     TIMES SOURCE:15 , 1.20
     TIMES SOURCE:16 , 1.20
-ELSEIF ABL:12 == 4
+ELSEIF ABL:기교 == 4
     TIMES SOURCE:15 , 1.50
     TIMES SOURCE:16 , 1.50
 ELSE
@@ -208,7 +208,7 @@ ELSE
 ENDIF
 
 ;전회와 이번 조교자가 같아 새드끼 LV3 이상이나 욕망 LV3 이상으로 줄사용중이 아니고 전회의 조교가 이라마치오 때
-IF PREVCOM == 230 && TEQUIP:40 == 0 && (ABL:PLAYER:20 > 2 || ABL:PLAYER:11 > 2) && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
+IF PREVCOM == 230 && TEQUIP:40 == 0 && (ABL:PLAYER:새드끼 > 2 || ABL:PLAYER:욕망 > 2) && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
     TIMES DOWNBASE:0 , 1.10
     TIMES SOURCE:17 , 1.10
     TIMES SOURCE:16 , 1.10
@@ -227,23 +227,23 @@ IF TFLAG:91 >= 1
     TIMES SOURCE:15 , 3.00
 
     ;ABL:정액 중독을 본다
-    IF ABL:31 == 0
+    IF ABL:정액중독 == 0
         SOURCE:24 = 0
         TIMES SOURCE:16 , 2.00
         TIMES SOURCE:22, 4.00
-    ELSEIF ABL:31 == 1
+    ELSEIF ABL:정액중독 == 1
         SOURCE:24 = 500
         TIMES SOURCE:16 , 3.00
         TIMES SOURCE:22, 3.00
-    ELSEIF ABL:31 == 2
+    ELSEIF ABL:정액중독 == 2
         SOURCE:24 = 1200
         TIMES SOURCE:16 , 4.00
         TIMES SOURCE:22, 2.50
-    ELSEIF ABL:31 == 3
+    ELSEIF ABL:정액중독 == 3
         SOURCE:24 = 3000
         TIMES SOURCE:16 , 6.00
         TIMES SOURCE:22, 2.00
-    ELSEIF ABL:31 == 4
+    ELSEIF ABL:정액중독 == 4
         SOURCE:24 = 6000
         TIMES SOURCE:16 , 9.00
         TIMES SOURCE:22, 1.50
@@ -266,29 +266,29 @@ ENDIF
 TCVAR:22 += 1
 
 ;노예의 입⇔조교자의 P의 불결이 이동
-STAIN:0 |= STAIN:PLAYER:2
-STAIN:PLAYER:2 |= STAIN:0
+STAIN:입 |= STAIN:PLAYER:자지
+STAIN:PLAYER:자지 |= STAIN:입
 
 ;봉사 정신 LV2 이상, 기교 LV2 이상이라면 P의 더러움을 없는 취한다
 ;다만 대상이 고양이혀의 경우, 고양이 펠라 패치 유효해 게다가
 ;봉사 정신 LV4 이상, 기교 LV5, 순종 LV3 이상 없으면 않은 취하지 않는다
-IF (TALENT:54 == 0 && ABL:13 >= 2 && ABL:12 >= 2) || (TALENT:54 && FLAG:14 & 16 && ABL:13 >= 4 && ABL:12 >= 5 && ABL:10 >=3)
-    STAIN:PLAYER:2 = 2
+IF (TALENT:고양이혀 == 0 && ABL:봉사정신 >= 2 && ABL:기교 >= 2) || (TALENT:고양이혀 && FLAG:조교모드 & 16 && ABL:봉사정신 >= 4 && ABL:기교 >= 5 && ABL:순종 >=3)
+    STAIN:PLAYER:자지 = 2
     SIF LOCAL:2 >= 1
         TFLAG:21 = 1
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 7
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 7
 ENDIF
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && EXP:22 >= EXPLV:3
+SIF ASSIPLAY == 0 && EXP:펠라경험 >= EXPLV:3
     TFLAG:50 += 1
 
 ;조교자가 후타나리
-SIF TALENT:PLAYER:121
+SIF TALENT:PLAYER:후타나리
     SOURCE:22 /= 2
 ;봉사 쾌락 경험 입수 판정
 TFLAG:100 |= 1
@@ -300,7 +300,7 @@ RETURN 1
 ;--------------------------------------------------
 @DENIAL_MESSAGE_COM_230
 CALL KOJO_DENIAL_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 ;--------------------------------------------------
@@ -308,12 +308,12 @@ SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM230
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 ;전회와 이번 조교자가 같아 새드끼 LV3 이상이나 욕망 LV3 이상으로 줄사용중이 아니고 전회의 조교가 이라마치오 때
-IF PREVCOM == 230 && TEQUIP:40 == 0 && (ABL:PLAYER:20 > 2 || ABL:PLAYER:11 > 2) && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
+IF PREVCOM == 230 && TEQUIP:40 == 0 && (ABL:PLAYER:새드끼 > 2 || ABL:PLAYER:욕망 > 2) && ((ASSIPLAY && TFLAG:133) || (ASSIPLAY == 0 && TFLAG:133 == 0))
     PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% 다시금 %CALLNAME:TARGET%의 목의 안쪽에 쑤셔 넣었다….
 ELSE
     PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% 난폭하게 %CALLNAME:TARGET%의 목까지 찔러 넣었다….
@@ -325,35 +325,35 @@ ENDIF
 @COM_ORDER_230, ARG
 LOCAL:99 = ARG
 ;ABL:욕망
-IF ABL:11
+IF ABL:욕망
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:11
+    LOCAL:99 = ABL:욕망
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:11%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 ;ABL:봉사 정신
-IF ABL:13
+IF ABL:봉사정신
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:13
+    LOCAL:99 = ABL:봉사정신
     TFLAG:240 += LOCAL:99 * 4
     RESULTS = %RESULTS% %ABLNAME:13%LV{LOCAL:99}({LOCAL:99 * 4})
 ENDIF
 ;ABL:정액 중독
-IF ABL:31
+IF ABL:정액중독
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = ABL:31
+    LOCAL:99 = ABL:정액중독
     TFLAG:240 += LOCAL:99 * 3
     RESULTS = %RESULTS% %ABLNAME:31%LV{LOCAL:99}({LOCAL:99 * 3})
 ENDIF
 
 ;쾌락 각인
-IF MARK:1
+IF MARK:쾌락각인
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
-    LOCAL:99 = MARK:1
+    LOCAL:99 = MARK:쾌락각인
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %MARKNAME:1%LV{LOCAL:99}({LOCAL:99})
 ENDIF
@@ -370,28 +370,28 @@ IF LOCAL:2
 ENDIF
 
 ;부끄럼쟁이
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     RESULTS = %RESULTS% - 
     LOCAL:99 = 1
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:35%({LOCAL:99})
 ENDIF
 ;악취 둔감
-IF TALENT:61
+IF TALENT:냄새둔감
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 1
     TFLAG:240 += LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:61%({LOCAL:99})
 ;악취 민감
-ELSEIF TALENT:62
+ELSEIF TALENT:냄새민감
     RESULTS = %RESULTS% - 
     LOCAL:99 = 3
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:62%({LOCAL:99})
 ENDIF
 ;헌신적
-IF TALENT:63
+IF TALENT:헌신적
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 6
@@ -399,14 +399,14 @@ IF TALENT:63
     RESULTS = %RESULTS% %TALENTNAME:63%({LOCAL:99})
 ENDIF
 ;쾌감의 부정
-IF TALENT:71
+IF TALENT:쾌감을부정
     RESULTS = %RESULTS% - 
     LOCAL:99 = 1
     TFLAG:240 -= LOCAL:99
     RESULTS = %RESULTS% %TALENTNAME:71%({LOCAL:99})
 ENDIF
 ;연모
-IF TALENT:150 && ASSIPLAY == 0
+IF TALENT:연모 && ASSIPLAY == 0
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 5
@@ -415,7 +415,7 @@ IF TALENT:150 && ASSIPLAY == 0
 ENDIF
 
 ;조교자가 후타나리
-IF TALENT:PLAYER:121
+IF TALENT:PLAYER:후타나리
     SIF LOCAL:99
         RESULTS = %RESULTS% + 
     LOCAL:99 = 8
@@ -432,9 +432,9 @@ IF TFLAG:242
     TFLAG:240 -= TFLAG:242
     RESULTS = %RESULTS% 서로 불결
     ;악취 둔감
-    IF TALENT:61
+    IF TALENT:냄새둔감
         RESULTS = %RESULTS%, %TALENTNAME:61%
-    ELSEIF TALENT:62
+    ELSEIF TALENT:냄새민감
         RESULTS = %RESULTS%, %TALENTNAME:62%
     ENDIF
     RESULTS = %RESULTS%({TFLAG:242})

@@ -8,7 +8,7 @@
 ;HARD와 그 외에서는 금액 제한 처리의 방법이 약간 다르다(HARD 쪽이 빡빡함)
 @GET_PICTURE
 ;HARD 모드 이상
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     TFLAG:124 = TABLE_CALC(TFLAG:124, 2500, 2)
     TFLAG:124 = TABLE_CALC(TFLAG:124, 5000, 5)
     TFLAG:124 = TABLE_CALC(TFLAG:124, 10000, 10)
@@ -26,7 +26,7 @@ ENDIF
 TFLAG:124 = MAX(TFLAG:124, 5)
 PRINTFORML %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:TARGET%의 사진을 현상했다.
 ;전시실 유효 시에는 사진의 보존이 가능
-IF FLAG:12 & 8
+IF FLAG:SHOP이벤트확장 & 8
     CALL SELECT_PICTURE
 ELSE
     CALL SELL_PICTURE
@@ -48,7 +48,7 @@ CALL SHOW_MONEY_INCREACE
 ;사진으로 번 최고 금액 판정 처리
 SIF MONEY:1 > MONEY:971
     CALL NEW_HIGH_INCOME_ALL, 971
-SIF MONEY:1 > CFLAG:83
+SIF MONEY:1 > CFLAG:최고금액_사진
     CALL NEW_HIGH_INCOME_SLAVE, 83
 CALL TOTAL_INCOME_SLAVE, MONEY:1
 ;--------------------------------------------------
@@ -61,7 +61,7 @@ PRINTFORML 이 사진이라면 {TFLAG:124}원의 가치가 있을 것 같다…�
 PRINTW 어쩔까? 팔까? 가지고 있을까? 아니면 파기할까?
 DRAWLINE
 PRINTL [0] - 판다
-PRINTFORML [1] - 수중에 남긴다\@(CFLAG:10 & 64) ?  (전시실에는 %CALLNAME:TARGET%의 사진이 있습니다) # (아직 전시실에는 %CALLNAME:TARGET%의 사진이 없습니다)\@
+PRINTFORML [1] - 수중에 남긴다\@(CFLAG:수집품채취여부 & 64) ?  (전시실에는 %CALLNAME:TARGET%의 사진이 있습니다) # (아직 전시실에는 %CALLNAME:TARGET%의 사진이 없습니다)\@
 PRINTL [2] - 파기한다
 DRAWLINE
 
@@ -78,7 +78,7 @@ IF RESULT == 0
     ;사진으로 번 최고 금액 판정 처리
     SIF MONEY:1 > MONEY:971
         CALL NEW_HIGH_INCOME_ALL, 971
-    SIF MONEY:1 > CFLAG:83
+    SIF MONEY:1 > CFLAG:최고금액_사진
         CALL NEW_HIGH_INCOME_SLAVE, 83
     CALL TOTAL_INCOME_SLAVE, MONEY:1
     ;--------------------------------------------------
@@ -97,16 +97,16 @@ ENDIF
 ;搾乳機を使っていない場合はAFTERTRA.ERBの時点でこっちに来ないように
 @SELL_MILK
 ;난이도가 PHANTASM이상
-IF FLAG:3 >= 5
+IF FLAG:난이도 >= 5
     LOCAL:1 = TFLAG:126 * 5
 ;난이도가 LUNATIC
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     LOCAL:1 = TFLAG:126 * 20
 ELSE
     LOCAL:1 = TFLAG:126 * 25
 ENDIF
 ;븐유경험을 본다
-GETEXPLV EXP:5, 6
+GETEXPLV EXP:분유경험, 6
 LOCAL = (RESULT + 1) * LOCAL:1
 
 ;脱水症状ならぬ脱水少女もいいところなので○○ccの表示のみ修正
@@ -118,17 +118,17 @@ LOCAL:1 = MIN(LOCAL:1, 300)
 
 
 ;숫처녀에 난이도HARD이상
-IF TALENT:0 == 1 && EXP:0 == 0 && FLAG:3 >= 3
+IF TALENT:처녀 == 1 && EXP:V경험 == 0 && FLAG:난이도 >= 3
     TIMES LOCAL , 2.50
-;숫처녀 혹은 Ｖ경험 없음
-ELSEIF TALENT:0 == 1 || EXP:0 == 0
+;숫처녀 혹은 V경험 없음
+ELSEIF TALENT:처녀 == 1 || EXP:V경험 == 0
     TIMES LOCAL , 1.50
 ;재상처녀
-ELSEIF TALENT:0
+ELSEIF TALENT:처녀
     TIMES LOCAL , 1.20
 ENDIF
 ;음유
-SIF TALENT:174
+SIF TALENT:음유
     TIMES LOCAL , 1.50
 LOCAL:2 = NO:TARGET
 ;히낫치의 모유는 야쿠(厄)르트
@@ -140,7 +140,7 @@ ELSEIF LOCAL:2 == 5 || LOCAL:2 == 45 || LOCAL:2 == 108
 ENDIF
 
 ;난이도HARD이상
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL = TABLE_CALC(LOCAL, 5000, 2)
     LOCAL = TABLE_CALC(LOCAL, 10000, 4)
     LOCAL = TABLE_CALC(LOCAL, 50000, 5)
@@ -162,7 +162,7 @@ IF FLAG:5010  == 4
     PRINTW 어쩔까? 팔까? 병에 넣어서 가지고 있을까? 아니면 파기할까?
     DRAWLINE
     PRINTL [0] - 판다
-    PRINTFORML [1] - 수중에 남긴다\@(CFLAG:10 & 256) ?  (전시실에는 %CALLNAME:TARGET%의 모유가 있습니다) # (아직 전시실에는 %CALLNAME:TARGET%의 모유가 없습니다)\@
+    PRINTFORML [1] - 수중에 남긴다\@(CFLAG:수집품채취여부 & 256) ?  (전시실에는 %CALLNAME:TARGET%의 모유가 있습니다) # (아직 전시실에는 %CALLNAME:TARGET%의 모유가 없습니다)\@
     PRINTL [2] - 파기한다
     DRAWLINE
 
@@ -179,7 +179,7 @@ IF FLAG:5010  == 4
         ;모유で稼いだ最高金額判定처리
         SIF MONEY:1 > MONEY:980
             CALL NEW_HIGH_INCOME_ALL, 980
-        SIF MONEY:1 > CFLAG:87
+        SIF MONEY:1 > CFLAG:최고금액_모유
             CALL NEW_HIGH_INCOME_SLAVE, 87
         CALL TOTAL_INCOME_SLAVE, MONEY:1
         ;--------------------------------------------------
@@ -210,7 +210,7 @@ ELSE
     ;모유で稼いだ最高金額判定처리
     SIF MONEY:1 > MONEY:980
         CALL NEW_HIGH_INCOME_ALL, 980
-    SIF MONEY:1 > CFLAG:87
+    SIF MONEY:1 > CFLAG:최고금액_모유
         CALL NEW_HIGH_INCOME_SLAVE, 87
     CALL TOTAL_INCOME_SLAVE, MONEY:1
     ;--------------------------------------------------
@@ -223,24 +223,24 @@ ENDIF
 ;採尿器を使っていない場合はAFTERTRA.ERBの時点でこっちに来ないように
 @SELL_PEE
 ;난이도PHANTASM이상
-IF FLAG:3 >= 5
+IF FLAG:난이도 >= 5
     LOCAL:1 = TFLAG:127 * 2
 ;난이도LUNATIC
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     LOCAL:1 = TFLAG:127 * 4
 ELSE
     LOCAL:1 = TFLAG:127 * 8
 ENDIF
 ;放尿경험をみる
-IF EXP:6 < EXPLV:1
+IF EXP:방뇨경험 < EXPLV:1
     LOCAL = 1
-ELSEIF EXP:6 < EXPLV:2
+ELSEIF EXP:방뇨경험 < EXPLV:2
     LOCAL = 2
-ELSEIF EXP:6 < EXPLV:3
+ELSEIF EXP:방뇨경험 < EXPLV:3
     LOCAL = 5
-ELSEIF EXP:6 < EXPLV:4
+ELSEIF EXP:방뇨경험 < EXPLV:4
     LOCAL = 10
-ELSEIF EXP:6 < EXPLV:5
+ELSEIF EXP:방뇨경험 < EXPLV:5
     LOCAL = 15
 ELSE
     LOCAL = 30
@@ -255,17 +255,17 @@ LOCAL:1 = TABLE_CALC(LOCAL, 200, 10)
 LOCAL:1 = MIN(LOCAL:1, 300)
 
 ;おもらし癖＋幼児or幼稚or幼児退行
-IF TALENT:45 && (TALENT:130 || TALENT:131 || TALENT:159)
+IF TALENT:오줌싸개버릇 && (TALENT:유아 || TALENT:유치 || TALENT:유아퇴행)
     TIMES LOCAL , 2.50
 ;幼児or幼稚or幼児退行
-ELSEIF TALENT:130 || TALENT:131 || TALENT:159
+ELSEIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
     TIMES LOCAL , 1.80
 ;おもらし癖
-ELSEIF TALENT:45
+ELSEIF TALENT:오줌싸개버릇
     TIMES LOCAL , 1.20
 ENDIF
 ;尿道狂
-SIF TALENT:175
+SIF TALENT:요도광
     TIMES LOCAL , 1.50
 
 ;フ　ラ　ン　ち　ゃ　ん　ウ　フ　フ
@@ -279,7 +279,7 @@ SIF NO:TARGET == 46
     TIMES LOCAL , 1.50
 
 ;난이도HARD이상
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL = TABLE_CALC(LOCAL, 5000, 2)
     LOCAL = TABLE_CALC(LOCAL, 10000, 4)
     LOCAL = TABLE_CALC(LOCAL, 50000, 5)
@@ -300,7 +300,7 @@ IF FLAG:5010  == 4
     PRINTW 어쩔까? 팔까? 병에 넣어서 가지고 있을까? 아니면 파기할까?
     DRAWLINE
     PRINTL [0] - 판다
-    PRINTFORML [1] - 수중에 남긴다\@(CFLAG:10 & 2) ?  (전시실에는 %CALLNAME:TARGET%의 황금수가 있습니다) # (아직 전시실에는 %CALLNAME:TARGET%의 황금수가 없습니다)\@
+    PRINTFORML [1] - 수중에 남긴다\@(CFLAG:수집품채취여부 & 2) ?  (전시실에는 %CALLNAME:TARGET%의 황금수가 있습니다) # (아직 전시실에는 %CALLNAME:TARGET%의 황금수가 없습니다)\@
     PRINTL [2] - 파기한다
     DRAWLINE
 
@@ -317,7 +317,7 @@ IF FLAG:5010  == 4
         ;聖水で稼いだ最高金額判定처리
         SIF MONEY:1 > MONEY:981
             CALL NEW_HIGH_INCOME_ALL, 981
-        SIF MONEY:1 > CFLAG:88
+        SIF MONEY:1 > CFLAG:최고금액_성수
             CALL NEW_HIGH_INCOME_SLAVE, 88
         CALL TOTAL_INCOME_SLAVE, MONEY:1
         ;--------------------------------------------------
@@ -348,7 +348,7 @@ ELSE
     ;聖水で稼いだ最高金額判定처리
     SIF MONEY:1 > MONEY:981
         CALL NEW_HIGH_INCOME_ALL, 981
-    SIF MONEY:1 > CFLAG:88
+    SIF MONEY:1 > CFLAG:최고금액_성수
         CALL NEW_HIGH_INCOME_SLAVE, 88
     CALL TOTAL_INCOME_SLAVE, MONEY:1
     ;--------------------------------------------------
@@ -361,24 +361,24 @@ ENDIF
 ;愛液採集器を使っていない場合はAFTERTRA.ERBの時点でこっちに来ないように
 @SELL_LOVERWATER
 ;난이도PHANTASM이상
-IF FLAG:3 >= 5
+IF FLAG:난이도 >= 5
     LOCAL:1 = TFLAG:129 * 2
 ;난이도LUNATIC
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     LOCAL:1 = TFLAG:129 * 4
 ELSE
     LOCAL:1 = TFLAG:129 * 8
 ENDIF
 ;Ｖ調律경험をみる
-IF EXP:42 < EXPLV:1
+IF EXP:V조율경험 < EXPLV:1
     LOCAL = 1
-ELSEIF EXP:42 < EXPLV:2
+ELSEIF EXP:V조율경험 < EXPLV:2
     LOCAL = 2
-ELSEIF EXP:42 < EXPLV:3
+ELSEIF EXP:V조율경험 < EXPLV:3
     LOCAL = 5
-ELSEIF EXP:42 < EXPLV:4
+ELSEIF EXP:V조율경험 < EXPLV:4
     LOCAL = 10
-ELSEIF EXP:42 < EXPLV:5
+ELSEIF EXP:V조율경험 < EXPLV:5
     LOCAL = 15
 ELSE
     LOCAL = 30
@@ -397,10 +397,10 @@ TIMES LOCAL:1 , 0.50
 TIMES LOCAL , 0.70
 
 ;幼児or幼稚or幼児退行
-SIF TALENT:130 || TALENT:131 || TALENT:159
+SIF TALENT:유아 || TALENT:유치 || TALENT:유아퇴행
     TIMES LOCAL , 2.00
 ;淫壷
-SIF TALENT:172
+SIF TALENT:음호
     TIMES LOCAL , 1.50
 
 LOCAL:2 = NO:TARGET
@@ -413,7 +413,7 @@ ELSEIF LOVERWATER_SPECAIL_PRICE(LOCAL:2) > 0
 ENDIF
 
 ;난이도HARD이상
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL = TABLE_CALC(LOCAL, 5000, 2)
     LOCAL = TABLE_CALC(LOCAL, 10000, 4)
     LOCAL = TABLE_CALC(LOCAL, 50000, 5)
@@ -434,7 +434,7 @@ ENDIF
     PRINTW 어쩔까? 팔까? 병에 넣어서 가지고 있을까? 아니면 파기할까?
     DRAWLINE
     PRINTL [0] - 판다
-    PRINTFORML [1] - 수중에 남긴다\@(CFLAG:10 & 4) ?  (전시실에는 %CALLNAME:TARGET%의 애액이 있습니다) # (아직 전시실에는 %CALLNAME:TARGET%의 애액이 없습니다)\@
+    PRINTFORML [1] - 수중에 남긴다\@(CFLAG:수집품채취여부 & 4) ?  (전시실에는 %CALLNAME:TARGET%의 애액이 있습니다) # (아직 전시실에는 %CALLNAME:TARGET%의 애액이 없습니다)\@
     PRINTL [2] - 파기한다
     DRAWLINE
 
@@ -451,7 +451,7 @@ ENDIF
         ;愛液で稼いだ最高金額判定처리
         SIF MONEY:1 > MONEY:984
             CALL NEW_HIGH_INCOME_ALL, 984
-        SIF MONEY:1 > CFLAG:95
+        SIF MONEY:1 > CFLAG:최고금액_애액
             CALL NEW_HIGH_INCOME_SLAVE, 95
         CALL TOTAL_INCOME_SLAVE, MONEY:1
         ;--------------------------------------------------
@@ -483,7 +483,7 @@ ELSE
     ;愛液で稼いだ最高金額判定처리
     SIF MONEY:1 > MONEY:984
         CALL NEW_HIGH_INCOME_ALL, 984
-    SIF MONEY:1 > CFLAG:95
+    SIF MONEY:1 > CFLAG:최고금액_애액
         CALL NEW_HIGH_INCOME_SLAVE, 95
     CALL TOTAL_INCOME_SLAVE, MONEY:1
     ;--------------------------------------------------
@@ -509,133 +509,133 @@ RETURNF 0
 LOCAL = RAND(100,151)
 
 ;난이도PHANTASM이상
-IF FLAG:3 >= 5
+IF FLAG:난이도 >= 5
     TIMES LOCAL , 0.80
 ;난이도LUNATIC
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     TIMES LOCAL , 1.00
 ELSE
     TIMES LOCAL , 1.20
 ENDIF
 
 ;露出癖をみる
-IF ABL:14 == 0
+IF ABL:노출증 == 0
     TIMES LOCAL , 2.00
-ELSEIF ABL:14 == 1
+ELSEIF ABL:노출증 == 1
     TIMES LOCAL , 1.50
-ELSEIF ABL:14 == 2
+ELSEIF ABL:노출증 == 2
     TIMES LOCAL , 1.20
-ELSEIF ABL:14 == 3
+ELSEIF ABL:노출증 == 3
     TIMES LOCAL , 1.00
-ELSEIF ABL:14 == 4
+ELSEIF ABL:노출증 == 4
     TIMES LOCAL , 0.80
 ELSE
     TIMES LOCAL , 0.60
 ENDIF
 
 ;本物の処女
-IF TALENT:0 == 1
+IF TALENT:처녀 == 1
     TIMES LOCAL , 3.00
 ;再生処女
-ELSEIF TALENT:0 == 2
+ELSEIF TALENT:처녀 == 2
     TIMES LOCAL , 2.00
 ENDIF
 ;臆病
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL , 1.10
 ;反抗的
-SIF TALENT:11
+SIF TALENT:반항적
     TIMES LOCAL , 1.10
 ;生意気
-SIF TALENT:15
+SIF TALENT:건방짐
     TIMES LOCAL , 1.10
 ;プライド高い
-IF TALENT:16
+IF TALENT:프라이드가높음
     TIMES LOCAL , 1.10
 ;プライド低い
-ELSEIF TALENT:17
+ELSEIF TALENT:프라이드가낮음
     TIMES LOCAL , 0.90
 ENDIF
 ;自制心
-SIF TALENT:20
+SIF TALENT:자제심
     TIMES LOCAL , 1.10
 ;保守的
-SIF TALENT:24
+SIF TALENT:보수적
     TIMES LOCAL , 1.10
 ;一線越えない
-SIF TALENT:27
+SIF TALENT:일선을넘지않음
     TIMES LOCAL , 1.10
 ;抵抗
-SIF TALENT:34
+SIF TALENT:저항
     TIMES LOCAL , 1.10
 ;恥じらい
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     TIMES LOCAL , 1.30
 ;恥薄い
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     TIMES LOCAL , 0.80
 ENDIF
 ;蓬莱人
-SIF TALENT:49
+SIF TALENT:봉래인
     TIMES LOCAL , 1.80
 ;魅力
-SIF TALENT:90
+SIF TALENT:매력
     TIMES LOCAL , 1.50
 ;謎の魅力
-SIF TALENT:92
+SIF TALENT:수수께끼의매력
     TIMES LOCAL , 1.50
 ;人気
-SIF TALENT:94
+SIF TALENT:인기
     TIMES LOCAL , 1.50
 ;オトコ
-SIF TALENT:120
+SIF TALENT:남자
     TIMES LOCAL , 0.30
 ;フタナリ
-SIF TALENT:121
+SIF TALENT:후타나리
     TIMES LOCAL , 1.20
 ;幼児
-SIF TALENT:130
+SIF TALENT:유아
     TIMES LOCAL , 2.50
 ;妖精
-SIF TALENT:200
+SIF TALENT:요정
     TIMES LOCAL , 1.70
 ;吸血鬼
-SIF TALENT:205
+SIF TALENT:흡혈귀
     TIMES LOCAL , 1.50
 ;鬼
-SIF TALENT:214
+SIF TALENT:오니
     TIMES LOCAL , 1.50
 ;巫女さん修正
-SIF NO:TARGET == 1 || NO:TARGET == 42 || TALENT:218 || TALENT:219
+SIF NO:TARGET == 1 || NO:TARGET == 42 || TALENT:하쿠레이의무녀 || TALENT:카제하후리
     TIMES LOCAL , 1.20
 
 ;脱毛状態（もう生えてこない）
-SIF CFLAG:36 == 1
+SIF CFLAG:털성장판정 == 1
     TIMES LOCAL , 2.00
 
 ;主人の技巧による修正
-IF ABL:MASTER:12 == 0
+IF ABL:MASTER:기교 == 0
     TIMES LOCAL , 0.50
-ELSEIF ABL:MASTER:12 == 1
+ELSEIF ABL:MASTER:기교 == 1
     TIMES LOCAL , 0.80
-ELSEIF ABL:MASTER:12 == 2
+ELSEIF ABL:MASTER:기교 == 2
     TIMES LOCAL , 1.00
-ELSEIF ABL:MASTER:12 == 3
+ELSEIF ABL:MASTER:기교 == 3
     TIMES LOCAL , 1.20
-ELSEIF ABL:MASTER:12 == 4
+ELSEIF ABL:MASTER:기교 == 4
     TIMES LOCAL , 1.50
 ELSE
     TIMES LOCAL , 2.00
 ENDIF
 
 ;主人の工作名人
-SIF TALENT:MASTER:195
+SIF TALENT:MASTER:공작명인
     TIMES LOCAL , 1.50
 ;主人の謎の魅力
-SIF TALENT:MASTER:92
+SIF TALENT:MASTER:수수께끼의매력
     TIMES LOCAL , 1.20
 ;主人の人気
-SIF TALENT:MASTER:94
+SIF TALENT:MASTER:인기
     TIMES LOCAL , 1.20
 
 ;陰毛お守り作成의 이벤트 대사 호출(金額はTFLAG:99で)
@@ -647,7 +647,7 @@ PRINTW 어쩔까? 팔까? 병에 넣어서 가지고 있을까? 아니면 파기
 DRAWLINE
 PRINTL [0] - 판다
 ;そのキャラの陰毛が蒐集されていない場合
-IF (CFLAG:10 & 1024) == 0
+IF (CFLAG:수집품채취여부 & 1024) == 0
     PRINTL [1] - 가지고 있는다
 ELSE
     PRINTFORML [1] - 가지고 있는다 (이미 수집장에 %CALLNAME:TARGET%의 음모는 있습니다)
@@ -668,7 +668,7 @@ IF RESULT == 0
     ;陰毛守りで稼いだ最高金額判定처리
     SIF MONEY:1 > MONEY:983
         CALL NEW_HIGH_INCOME_ALL, 983
-    SIF MONEY:1 > CFLAG:94
+    SIF MONEY:1 > CFLAG:최고금액_음모
         CALL NEW_HIGH_INCOME_SLAVE, 94
     CALL TOTAL_INCOME_SLAVE, MONEY:1
     ;--------------------------------------------------
@@ -691,24 +691,24 @@ ENDIF
 ;産卵個数をLOCAL:2で再定義しておく（産卵促進剤なしに対応するため）
 LOCAL:2 = (TFLAG:128 > 0) ? TFLAG:128 # 1
 ;난이도PHANTASM이상
-IF FLAG:3 >= 5
+IF FLAG:난이도 >= 5
     LOCAL:1 = LOCAL:2 * 50
 ;난이도LUNATIC
-ELSEIF FLAG:3 == 4
+ELSEIF FLAG:난이도 == 4
     LOCAL:1 = LOCAL:2 * 100
 ELSE
     LOCAL:1 = LOCAL:2 * 250
 ENDIF
 ;産卵경험をみる
-IF EXP:51 < EXPLV:1
+IF EXP:산란경험 < EXPLV:1
     LOCAL = 1
-ELSEIF EXP:51 < EXPLV:2
+ELSEIF EXP:산란경험 < EXPLV:2
     LOCAL = 2
-ELSEIF EXP:51 < EXPLV:3
+ELSEIF EXP:산란경험 < EXPLV:3
     LOCAL = 4
-ELSEIF EXP:51 < EXPLV:4
+ELSEIF EXP:산란경험 < EXPLV:4
     LOCAL = 6
-ELSEIF EXP:51 < EXPLV:5
+ELSEIF EXP:산란경험 < EXPLV:5
     LOCAL = 8
 ELSE
     LOCAL = 10
@@ -716,11 +716,11 @@ ENDIF
 LOCAL *= LOCAL:1
 
 ;淫壷
-SIF TALENT:172
+SIF TALENT:음호
     TIMES LOCAL , 1.50
 
 ;난이도HARD이상
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL = TABLE_CALC(LOCAL, 50000, 2)
     LOCAL = TABLE_CALC(LOCAL, 100000, 4)
     LOCAL = TABLE_CALC(LOCAL, 500000, 5)
@@ -748,7 +748,7 @@ CALL SHOW_MONEY_INCREACE
 ;卵で稼いだ最高金額判定처리
 SIF MONEY:1 > MONEY:982
     CALL NEW_HIGH_INCOME_ALL, 982
-SIF MONEY:1 > CFLAG:89
+SIF MONEY:1 > CFLAG:최고금액_알
     CALL NEW_HIGH_INCOME_SLAVE, 89
 CALL TOTAL_INCOME_SLAVE, MONEY:1
 ;--------------------------------------------------
@@ -762,16 +762,16 @@ WAIT
 ;--------------------------------------------------
 @SELL_DINNER_POTATO
 LOCAL:1 = TFLAG:163 * 15
-;Ｖ경험をみる
-GETEXPLV EXP:0, 6
+;V경험をみる
+GETEXPLV EXP:V경험, 6
 LOCAL = (RESULT + 1) * LOCAL:1
 
 ;淫壷
-SIF TALENT:172
+SIF TALENT:음호
     LOCAL *= 3
 
 ;난이도HARD이상
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL = TABLE_CALC(LOCAL, 5000, 2)
     LOCAL = TABLE_CALC(LOCAL, 10000, 4)
     LOCAL = TABLE_CALC(LOCAL, 25000, 5)
@@ -794,7 +794,7 @@ CALL SHOW_MONEY_INCREACE
 ;スイートポテトで稼いだ最高金額判定처리
 SIF MONEY:1 > MONEY:985
     CALL NEW_HIGH_INCOME_ALL, 985
-SIF MONEY:1 > CFLAG:92
+SIF MONEY:1 > CFLAG:최고금액_군고구마
     CALL NEW_HIGH_INCOME_SLAVE, 92
 CALL TOTAL_INCOME_SLAVE, MONEY:1
 ;--------------------------------------------------
@@ -807,16 +807,16 @@ SIF TFLAG:164 > 0 || TFLAG:165 > 0
 ;--------------------------------------------------
 @SELL_DINNER_WINE
 LOCAL:1 = TFLAG:164 * 15
-;Ａ경험をみる
-GETEXPLV EXP:1, 6
+;A경험をみる
+GETEXPLV EXP:A경험, 6
 LOCAL = (RESULT + 1) * LOCAL:1
 
 ;淫尻
-SIF TALENT:173
+SIF TALENT:음고
     LOCAL *= 3
 
 ;난이도HARD이상
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL = TABLE_CALC(LOCAL, 5000, 2)
     LOCAL = TABLE_CALC(LOCAL, 10000, 4)
     LOCAL = TABLE_CALC(LOCAL, 25000, 5)
@@ -839,7 +839,7 @@ CALL SHOW_MONEY_INCREACE
 ;ワインで稼いだ最高金額判定처리
 SIF MONEY:1 > MONEY:986
     CALL NEW_HIGH_INCOME_ALL, 986
-SIF MONEY:1 > CFLAG:91
+SIF MONEY:1 > CFLAG:최고금액_와인
     CALL NEW_HIGH_INCOME_SLAVE, 91
 CALL TOTAL_INCOME_SLAVE, MONEY:1
 ;--------------------------------------------------
@@ -853,15 +853,15 @@ SIF TFLAG:165 > 0
 @SELL_DINNER_ASPARAGUS
 LOCAL:1 = TFLAG:165 * 15
 ;尿道開発경험をみる
-GETEXPLV EXP:46, 6
+GETEXPLV EXP:요도개발경험, 6
 LOCAL = (RESULT + 1) * LOCAL:1
 
 ;尿道狂
-SIF TALENT:175
+SIF TALENT:요도광
     LOCAL *= 3
 
 ;난이도HARD이상
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL = TABLE_CALC(LOCAL, 5000, 2)
     LOCAL = TABLE_CALC(LOCAL, 10000, 4)
     LOCAL = TABLE_CALC(LOCAL, 25000, 5)
@@ -884,7 +884,7 @@ CALL SHOW_MONEY_INCREACE
 ;アスパラの尿浸しで稼いだ最高金額判定처리
 SIF MONEY:1 > MONEY:987
     CALL NEW_HIGH_INCOME_ALL, 987
-SIF MONEY:1 > CFLAG:90
+SIF MONEY:1 > CFLAG:최고금액_아스파라
     CALL NEW_HIGH_INCOME_SLAVE, 90
 CALL TOTAL_INCOME_SLAVE, MONEY:1
 ;--------------------------------------------------

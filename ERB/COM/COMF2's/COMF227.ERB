@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:227 > 0
     RETURN 0
 ;조교자가 새드持ちまたはドＳ持ちまたは새드끼Lv3이상이 아니면 불가
-SIF TALENT:PLAYER:81 == 0 && TALENT:PLAYER:177 == 0 && ABL:PLAYER:20 < 3
+SIF TALENT:PLAYER:새드 == 0 && TALENT:PLAYER:초S == 0 && ABL:PLAYER:새드끼 < 3
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -34,76 +34,76 @@ CALL TRAIN_MESSAGE_COM227
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 5
-DOWNBASE:1 += 150
+DOWNBASE:기력 += 150
 
 SOURCE:22 = 200
 SOURCE:31 = 300
 SOURCE:32 = 200
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     SOURCE:16 = 150
     SOURCE:23 = 60
     SOURCE:18 = 0
-    TIMES DOWNBASE:1 , 2.00
-ELSEIF ABL:21 == 1
+    TIMES DOWNBASE:기력 , 2.00
+ELSEIF ABL:마조끼 == 1
     SOURCE:16 = 300
     SOURCE:23 = 120
     SOURCE:18 = 100
     TIMES SOURCE:22 , 1.50
-    TIMES DOWNBASE:1 , 1.50
-ELSEIF ABL:21 == 2
+    TIMES DOWNBASE:기력 , 1.50
+ELSEIF ABL:마조끼 == 2
     SOURCE:16 = 600
     SOURCE:23 = 240
     SOURCE:18 = 150
     TIMES SOURCE:22 , 2.00
-    TIMES DOWNBASE:1 , 1.00
-ELSEIF ABL:21 == 3
+    TIMES DOWNBASE:기력 , 1.00
+ELSEIF ABL:마조끼 == 3
     SOURCE:16 = 900
     SOURCE:23 = 360
     SOURCE:18 = 250
     TIMES SOURCE:22 , 2.50
-    TIMES DOWNBASE:1 , 0.75
-ELSEIF ABL:21 == 4
+    TIMES DOWNBASE:기력 , 0.75
+ELSEIF ABL:마조끼 == 4
     SOURCE:16 = 1500
     SOURCE:23 = 480
     SOURCE:18 = 500
     TIMES SOURCE:22 , 3.00
-    TIMES DOWNBASE:1 , 0.50
+    TIMES DOWNBASE:기력 , 0.50
 ELSE
     SOURCE:16 = 2200
     SOURCE:23 = 600
     SOURCE:18 = 1000
     TIMES SOURCE:22 , 4.00
-    TIMES DOWNBASE:1 , 0.25
+    TIMES DOWNBASE:기력 , 0.25
 ENDIF
 
 ;TALENT:반항적을 본다
-IF TALENT:11
+IF TALENT:반항적
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:32 , 2.50
 ENDIF
 ;TALENT:기장을 본다
-IF TALENT:12
+IF TALENT:꿋꿋함
     TIMES SOURCE:22 , 2.50
     TIMES SOURCE:32 , 1.50
 ENDIF
 ;TALENT:거만함을 본다
-IF TALENT:15
+IF TALENT:건방짐
     TIMES SOURCE:22 , 1.75
     TIMES SOURCE:32 , 1.75
 ENDIF
 ;TALENT:프라이드 높은을 본다
-IF TALENT:16
+IF TALENT:프라이드가높음
     TIMES SOURCE:22 , 2.00
     TIMES SOURCE:32 , 2.00
 ;TALENT:프라이드 낮은을 본다
-ELSEIF TALENT:17
+ELSEIF TALENT:프라이드가낮음
     TIMES SOURCE:22 , 0.75
     TIMES SOURCE:32 , 0.75
 ENDIF
 ;TALENT:감정결여를 본다
-IF TALENT:22
+IF TALENT:감정결여
     TIMES SOURCE:16 , 0.50
     TIMES SOURCE:23 , 0.50
     TIMES SOURCE:22 , 0.50
@@ -118,10 +118,10 @@ SIF TEQUIP:40
 SIF TEQUIP:42
     TIMES SOURCE:22 , 1.75
 
-IF ABL:21 == 0 && TFLAG:84 == 0
+IF ABL:마조끼 == 0 && TFLAG:84 == 0
     ;반발 각인 1에 상당(프라이드 높은 또는 거만함 소유라면 2)
-    TFLAG:84 = (TALENT:15 || TALENT:16) ?  2 # 1
-ELSEIF ABL:21 > 2
+    TFLAG:84 = (TALENT:건방짐 || TALENT:프라이드가높음) ?  2 # 1
+ELSEIF ABL:마조끼 > 2
     ;마조끼 3이상이라면 매도해져 쾌락을 느끼도록(듯이)
     TFLAG:100 |= 1
 ENDIF
@@ -133,7 +133,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM227
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -141,11 +141,11 @@ PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% 도발하듯이 %CALLNAME:TARG
 PRINTL
 PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
 IF TEQUIP:42
-    IF ABL:21 == 0
+    IF ABL:마조끼 == 0
         PRINTL 무엇인가 말대답하려 하고 있지만 재갈이 물려 말을 할 수가 없다….
-    ELSEIF ABL:21 < 3
+    ELSEIF ABL:마조끼 < 3
         PRINTL 일순간 무엇인가 말대답하고 싶은 것 같은 행동을 보였지만, 자신의 입이 막혀있는 것을 생각해 냈는지 점잖아졌다….
-    ELSEIF ABL:21 < 5
+    ELSEIF ABL:마조끼 < 5
         PRINTL 매도 당하는 것에 쾌감을 느끼고 있는 것 같다….
     ELSE
         PRINTL 얼굴을 붉히며 콧바람을 내고 있다. 
@@ -156,17 +156,17 @@ IF TEQUIP:42
         PRINTL 한층 더 매도해달라고 말하는 듯이 음탕한 시선을 보내고 있다….
     ENDIF
 ENDIF
-IF ABL:21 == 0
-    IF TALENT:11 == 0 && TALENT:15 == 0 && TALENT:16 == 0
+IF ABL:마조끼 == 0
+    IF TALENT:반항적 == 0 && TALENT:건방짐 == 0 && TALENT:프라이드가높음 == 0
         PRINTFORML 눈에 희미하게 눈물을 머금으면서 %CALLNAME:PLAYER%의 갖은 험담을 견디고 있다.
-    ELSEIF TALENT:11 && TALENT:15 && TALENT:16
+    ELSEIF TALENT:반항적 && TALENT:건방짐 && TALENT:프라이드가높음
         PRINTFORML 부득부득 이빨을 갈아대며 %조사선택(CALLNAME:PLAYER, "를")% 째려보고 있다.
     ELSE
         PRINTFORML 분노와 굴욕으로 가득 한 얼굴로 %조사선택(CALLNAME:PLAYER, "를")% 노려보고 있다.
     ENDIF
-ELSEIF ABL:21 < 3
+ELSEIF ABL:마조끼 < 3
     PRINTFORML %조사선택(CALLNAME:PLAYER, "를")% 째려보고 있지만 그 표정에는 조그마한 쾌감이 스치고 있다.
-ELSEIF ABL:21 < 5
+ELSEIF ABL:마조끼 < 5
     PRINTL 매도 당하는 것에 쾌감을 느끼고 있는 것 같다….
 ELSE
     PRINTL 매도 당하는 것에 완전히 쾌감을 느끼고 있는 것 같다….

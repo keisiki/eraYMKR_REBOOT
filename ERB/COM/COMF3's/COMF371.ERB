@@ -9,32 +9,32 @@
 SIF DITEMTYPE:999:371 > 0
     RETURN 0
 ;特殊風呂系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 1024) == 0
+SIF (FLAG:커맨드확장 & 1024) == 0
     RETURN 0
 ;風呂を改装していないとダメ
-SIF (FLAG:74 & 2048) == 0
+SIF (FLAG:욕탕개조 & 2048) == 0
     RETURN 0
 ;조교 대상か조수가 一度も国士無双の薬風呂に入ったことが無い場合, 
 ;이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && ( (CFLAG:23 & 16) == 0 || (CFLAG:ASSI:23 & 16) == 0 )
+SIF FLAG:VA이상조교필터 & 4 && ( (CFLAG:첫목욕탕 & 16) == 0 || (CFLAG:ASSI:첫목욕탕 & 16) == 0 )
     RETURN 0
 ;해제는 언제든 가능
 SIF TEQUIP:55 == 13
     RETURN 1
 ;主人か助手のどちらかが調合知識을 갖고 있지 않으면 불가
-IF TALENT:MASTER:55 == 0
+IF TALENT:MASTER:조합지식 == 0
     IF ASSI >= 0
-        SIF TALENT:ASSI:55 == 0
+        SIF TALENT:ASSI:조합지식 == 0
             RETURN 0
     ELSE
         RETURN 0
     ENDIF
 ENDIF
 ;薬毒耐性だとダメ
-SIF TALENT:44
+SIF TALENT:약물내성
     RETURN 0
 ;기계면 불가
-SIF TALENT:206
+SIF TALENT:기계
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -97,7 +97,7 @@ COM_NAME = 국사무쌍의약 욕탕
 CALL TRAIN_MESSAGE_COM371
 
 DOWNBASE:0 += 80
-DOWNBASE:1 += 200
+DOWNBASE:기력 += 200
 
 IF TEQUIP:55 == 13
     TEQUIP:55 = 0
@@ -121,14 +121,14 @@ RETURN 1
 ;수채 코로 도핑중
 ;--------------------------------------------------
 @EQUIP_COM371
-IF TALENT:120 == 0
+IF TALENT:남자 == 0
     PRINTL <소녀 야고코로쨩 도핑 중>
 ELSE
     PRINTL <신사 야고코로 씨 도핑 중>
 ENDIF
 
 DOWNBASE:0 += 20
-DOWNBASE:1 += 50
+DOWNBASE:기력 += 50
 
 TFLAG:160 += 1
 SOURCE:19 += 10 * TFLAG:160
@@ -152,16 +152,16 @@ RETURN 1
 ;내용은 약효과리셋, 체력 감소나 고통 증가 등
 @DOPING8556_BURST_SLAVE
 DOWNBASE:0 += 50
-DOWNBASE:1 += 100
+DOWNBASE:기력 += 100
 
 SOURCE:20 += 5000
 SOURCE:24 += 5000
 SOURCE:31 += 5000
 
 PRINTFORMW <약이 너무 강했는지 %조사선택(CALLNAME:TARGET, "는")% 폭발해 버렸다>
-IF (CFLAG:23 & 16) == 0
+IF (CFLAG:첫목욕탕 & 16) == 0
     TCVAR:50 += 1
-    CFLAG:23 |= 16
+    CFLAG:첫목욕탕 |= 16
 ENDIF
 
 TFLAG:160 = 0
@@ -170,7 +170,7 @@ TFLAG:160 = 0
 ;수채 코로 폭발(조수)
 ;--------------------------------------------------
 @DOPING8556_BURST_ASSI
-DOWNBASE:ASSI:0 += 50
+DOWNBASE:ASSI:체력 += 50
 
 JUEL:ASSI:12 += 50
 JUEL:ASSI:13 += 50
@@ -185,9 +185,9 @@ PRINTL 고통의 구슬＋100
 PRINTL 공포의 구슬＋50 
 PRINTL 부정의 구슬＋75 
 
-IF (CFLAG:ASSI:23 & 16) == 0
+IF (CFLAG:ASSI:첫목욕탕 & 16) == 0
     TCVAR:ASSI:50 += 1
-    CFLAG:ASSI:23 |= 16
+    CFLAG:ASSI:첫목욕탕 |= 16
 ENDIF
 WAIT
 TFLAG:162 = 0
@@ -196,7 +196,7 @@ TFLAG:162 = 0
 ;수채 코로 폭발(주인)
 ;--------------------------------------------------
 @DOPING8556_BURST_MASTER
-BASE:MASTER:0 = MAX(BASE:MASTER:0 - 100, 10)
+BASE:MASTER:체력 = MAX(BASE:MASTER:체력 - 100, 10)
 
 PRINTFORMW <약이 너무 강했는지 %조사선택(CALLNAME:MASTER, "는")% 폭발해 버렸다>
 TFLAG:161 = 0
@@ -206,7 +206,7 @@ TFLAG:161 = 0
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM371
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

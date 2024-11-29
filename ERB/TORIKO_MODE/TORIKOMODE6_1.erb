@@ -18,94 +18,94 @@ VARSET LOCAL, 0
 LOCAL = RAND:16
 
 ;ABL:ARG:기교를 본다
-IF ABL:ARG:12 == 0
+IF ABL:ARG:기교 == 0
     LOCAL:2 = 10
-ELSEIF ABL:ARG:12 == 1
+ELSEIF ABL:ARG:기교 == 1
     LOCAL:2 = 15
-ELSEIF ABL:ARG:12 == 2
+ELSEIF ABL:ARG:기교 == 2
     LOCAL:2 = 20
-ELSEIF ABL:ARG:12 == 3
+ELSEIF ABL:ARG:기교 == 3
     LOCAL:2 = 30
-ELSEIF ABL:ARG:12 == 4
+ELSEIF ABL:ARG:기교 == 4
     LOCAL:2 = 40
 ELSE
     LOCAL:2 = 50
 ENDIF
 
 ;ABL:ARG:봉사 정신을 본다
-LOCAL:2 += 5 * ABL:ARG:13
+LOCAL:2 += 5 * ABL:ARG:봉사정신
 
 ;ABL:ARG:요리 기능을 본다
-IF ABL:ARG:70 == 0
+IF ABL:ARG:요리기능 == 0
     TIMES LOCAL:2 , 1.00
-ELSEIF ABL:ARG:70 == 1
+ELSEIF ABL:ARG:요리기능 == 1
     TIMES LOCAL:2 , 1.20
-ELSEIF ABL:ARG:70 == 2
+ELSEIF ABL:ARG:요리기능 == 2
     TIMES LOCAL:2 , 1.40
-ELSEIF ABL:ARG:70 == 3
+ELSEIF ABL:ARG:요리기능 == 3
     TIMES LOCAL:2 , 1.60
-ELSEIF ABL:ARG:70 == 4
+ELSEIF ABL:ARG:요리기능 == 4
     TIMES LOCAL:2 , 1.80
 ELSE
     TIMES LOCAL:2 , 2.00
 ENDIF
 
-;EXP:ARG:70을 본다
-IF EXP:ARG:70 < EXPLV:1
+;EXP:ARG:조리경험을 본다
+IF EXP:ARG:조리경험 < EXPLV:1
     TIMES LOCAL:2 , 0.80
-ELSEIF EXP:ARG:70 < EXPLV:2
+ELSEIF EXP:ARG:조리경험 < EXPLV:2
     TIMES LOCAL:2 , 1.00
-ELSEIF EXP:ARG:70 < EXPLV:3
+ELSEIF EXP:ARG:조리경험 < EXPLV:3
     TIMES LOCAL:2 , 1.20
-ELSEIF EXP:ARG:70 < EXPLV:4
+ELSEIF EXP:ARG:조리경험 < EXPLV:4
     TIMES LOCAL:2 , 1.40
-ELSEIF EXP:ARG:70 < EXPLV:5
+ELSEIF EXP:ARG:조리경험 < EXPLV:5
     TIMES LOCAL:2 , 1.70
 ELSE
     TIMES LOCAL:2 , 2.00
 ENDIF
 
 ;헌신적
-SIF TALENT:ARG:63
+SIF TALENT:ARG:헌신적
     TIMES LOCAL:2 , 1.20
 ;서로 사랑함
-IF TALENT:ARG:153
+IF TALENT:ARG:상애
     TIMES LOCAL:2 , 3.00
 ;친애
-ELSEIF TALENT:ARG:152
+ELSEIF TALENT:ARG:친애
     TIMES LOCAL:2 , 2.50
 ;연모
-ELSEIF TALENT:ARG:150
+ELSEIF TALENT:ARG:연모
     TIMES LOCAL:2 , 2.00
 ENDIF
 
 ;EASY가 아니면 제작자의 체력 소모, 기력 소모, 취해, 스트레스에 의한 마이나스 보정이 있다
-IF FLAG:3 != 1
+IF FLAG:난이도 != 1
     ;체력 소모 상태
-    SIF MAXBASE:ARG:0 > 0 && (100 * BASE:ARG:0) / MAXBASE:ARG:0 <= 25
+    SIF MAXBASE:ARG:체력 > 0 && (100 * BASE:ARG:체력) / MAXBASE:ARG:체력 <= 25
         TIMES LOCAL:2 , 0.90
     ;기력 소모 상태
-    SIF MAXBASE:ARG:1 > 0 && (100 * BASE:ARG:1) / MAXBASE:ARG:1 <= 25
+    SIF MAXBASE:ARG:기력 > 0 && (100 * BASE:ARG:기력) / MAXBASE:ARG:기력 <= 25
         TIMES LOCAL:2 , 0.90
     ;취하고 있다
-    SIF MAXBASE:ARG:8 > 0 && (100 * BASE:ARG:8) / MAXBASE:ARG:8 >= 80
+    SIF MAXBASE:ARG:취기 > 0 && (100 * BASE:ARG:취기) / MAXBASE:ARG:취기 >= 80
         TIMES LOCAL:2 , 0.50
 
     ;스트레스가 10000이상
-    IF CFLAG:ARG:65 >= 10000
+    IF CFLAG:ARG:스트레스 >= 10000
         TIMES LOCAL:2 , 0.80
     ;스트레스가 1000이상
-    ELSEIF CFLAG:ARG:65 >= 1000
+    ELSEIF CFLAG:ARG:스트레스 >= 1000
         TIMES LOCAL:2 , 0.90
     ENDIF
 ENDIF
 
 ;반발 각인 소유
-SIF MARK:ARG:9
+SIF MARK:ARG:반발각인
     TIMES LOCAL:2 , 0.90
 
 ;LOCAL = 요리의 종류
-IF LOCAL == 0 && ABL:ARG:70 >= 4
+IF LOCAL == 0 && ABL:ARG:요리기능 >= 4
     ;캐릭터 고유 요리
     LOCAL:4 = 350
 ELSEIF LOCAL == 1 || LOCAL == 15
@@ -126,10 +126,10 @@ ELSEIF LOCAL == 5 || LOCAL == 11
 ELSEIF LOCAL == 6 || LOCAL == 10
     ;햄버거
     LOCAL:4 = 270
-ELSEIF LOCAL == 7 && TALENT:ARG:134
+ELSEIF LOCAL == 7 && TALENT:ARG:모유체질
     ;모유 요리
     LOCAL:4 = 350
-ELSEIF LOCAL == 9 && (TALENT:ARG:135 || TALENT:ARG:136)
+ELSEIF LOCAL == 9 && (TALENT:ARG:난생 || TALENT:ARG:산란체질)
     ;무레트
     LOCAL:4 = 350
 ELSE
@@ -138,13 +138,13 @@ ELSE
 ENDIF
 
 ;조리 명인
-IF TALENT:ARG:194
+IF TALENT:ARG:조리명인
     TIMES LOCAL:4 , 2.00
 ;요리 잘함
-ELSEIF TALENT:ARG:193
+ELSEIF TALENT:ARG:요리잘함
     TIMES LOCAL:4 , 1.50
 ;요리 못함
-ELSEIF TALENT:ARG:192
+ELSEIF TALENT:ARG:요리못함
     TIMES LOCAL:4 , 0.75
 ENDIF
 
@@ -153,13 +153,13 @@ SIF NO:ARG == 5 && (LOCAL == 5 || LOCAL == 11)
     TIMES LOCAL:2 , 1.20
 
 ;매력
-SIF TALENT:ARG:90
+SIF TALENT:ARG:매력
     TIMES LOCAL:4 , 1.10
 ;수수께끼의 매력
-SIF TALENT:ARG:92
+SIF TALENT:ARG:수수께끼의매력
     TIMES LOCAL:4 , 1.10
 ;인기
-SIF TALENT:ARG:94
+SIF TALENT:ARG:인기
     TIMES LOCAL:4 , 1.30
 
 PRINTL 
@@ -169,7 +169,7 @@ PRINTL
 ;구속구에 의한 방해를 받을지 체크. 방해받으면 거기서 종료한다.
 CALL EFFECT_BY_RESTRICTION_TORIKOMODE, ARG, 2
 IF RESULT == 1
-    CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG:0, CFLAG:(ARG:0):4
+    CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG:0, CFLAG:(ARG:0):조교관외
     RETURN 0
 ENDIF
 
@@ -185,8 +185,8 @@ ENDIF
 ;도시락 작성
 CALL SELF_KOJO, ARG, 111, LOCAL
 ;스케쥴 중이면 처리를 빠르게 한다
-IF CFLAG:ARG:4 > 0
-    IF TALENT:ARG:150
+IF CFLAG:ARG:조교관외 > 0
+    IF TALENT:ARG:연모
         PRINTL   「♪~」
         PRINTL  「♪♪~」
         PRINTL 「♪~♪~」
@@ -198,7 +198,7 @@ IF CFLAG:ARG:4 > 0
         PRINTW      ！
     ENDIF
 ELSE
-    IF TALENT:ARG:150
+    IF TALENT:ARG:연모
         PRINTW   「♪~」
         PRINTW  「♪♪~」
         PRINTW 「♪~♪~」
@@ -212,20 +212,20 @@ ELSE
 ENDIF
 PRINTL 
 PRINTFORM %조사처리(CALLNAME:ARG,"는")% 
-SIF TALENT:ARG:152 || TALENT:ARG:153
+SIF TALENT:ARG:친애 || TALENT:ARG:상애
     PRINTFORM 애정이 듬뿍 담긴 
-IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
+IF LOCAL == 0 && (ABL:ARG:요리기능 >= 4 || LOCAL:1 == 1)
     ;경력 플래그를 ON
-    CFLAG:ARG:150 |= 1
+    CFLAG:ARG:도시락기록 |= 1
     ;(전용) 말측에서 정의되고 있는 고유 요리가25%의 확률로 나온다
     IF CSTR:ARG:88 != "" && RAND:4 == 0
         PRINTS CSTR:88
         LOCAL:4 += 88
     ;캐릭터 고유 요리
-    ELSEIF NO:ARG == 1 && CFLAG:ARG:0 == 0
+    ELSEIF NO:ARG == 1 && CFLAG:ARG:SP캐릭터 == 0
         ;레이무
         LOCAL:6 = RAND:8
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             PRINT 밥과 된장국
             LOCAL:4 += 88
         ELSEIF LOCAL:6 == 1
@@ -250,10 +250,10 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
             PRINT 전병
             LOCAL:4 += 50
         ENDIF
-    ELSEIF NO:ARG == 1 && CFLAG:ARG:0
+    ELSEIF NO:ARG == 1 && CFLAG:ARG:SP캐릭터
         ;레이무 님
         LOCAL:6 = RAND:3
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             PRINT 라면
             LOCAL:4 = 777
         ELSEIF LOCAL:6 == 1
@@ -317,7 +317,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
         ELSEIF LOCAL:6 == 5
             PRINT 토끼사과
             LOCAL:4 += 66
-        ELSEIF LOCAL:6 == 6 && TALENT:ARG:150
+        ELSEIF LOCAL:6 == 6 && TALENT:ARG:연모
             PRINT 고기감자조림
             LOCAL:4 += 555
             
@@ -354,7 +354,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 6 || NO:ARG == 204
         ;메이링
         LOCAL:6 = RAND:7
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             PRINT 북경오리
             LOCAL:4 += 210
         ELSEIF LOCAL:6 == 1
@@ -422,7 +422,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
         LOCAL:6 = RAND:2
         IF LOCAL:6 == 0
             LOCAL:6 = RAND:2
-            IF LOCAL:6 > 0 && TALENT:ARG:150
+            IF LOCAL:6 > 0 && TALENT:ARG:연모
                 PRINT 오색찬란초밥
                 LOCAL:4 += 250
             ELSE
@@ -485,7 +485,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
             LOCAL:4 += 140
             ;주인이[약에 들어 있는 독 내성]을 가지고 있는과 이따금 독들이
             ;함께 마시는 경우는, 사쿠야씨의 홍차에는 독없음
-            IF TALENT:MASTER:44 && RAND:5 == 0
+            IF TALENT:MASTER:약물내성 && RAND:5 == 0
                 PRINT (독성)
                 LOCAL:4 -= 100
             ENDIF
@@ -497,7 +497,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 11
         ;플랑쨩 우후후
         LOCAL:6 = RAND:8
-        IF LOCAL:6 == 0 && TALENT:ARG:170
+        IF LOCAL:6 == 0 && TALENT:ARG:음란
             ;유기용매 테트라 히드로 프랑→포오브아카인드로 H인 프랑→
             ;4사람에게 분열한 프란 가 진심을 담아 애액으로 맛내기한 유기 요괴딸기→Marvelous(불가사의한)!
             PRINT 유기요매(有機妖莓) 「4-H-플랑」
@@ -535,7 +535,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
             PRINT 고양이밥
             LOCAL:4 += 33
         ENDIF
-    ELSEIF NO:ARG == 14 && CFLAG:ARG:0 == 0
+    ELSEIF NO:ARG == 14 && CFLAG:ARG:SP캐릭터 == 0
         ;앨리스
         LOCAL:6 = RAND:5
         IF LOCAL:6 == 0
@@ -554,7 +554,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
             PRINT 스튜
             LOCAL:4 += 87
         ENDIF
-    ELSEIF NO:ARG == 14 && CFLAG:ARG:0
+    ELSEIF NO:ARG == 14 && CFLAG:ARG:SP캐릭터
         ;꼬마 앨리스
         PRINT 오야코동
         LOCAL:4 += 210
@@ -590,10 +590,10 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
         ;메르 란
         ;빙빙은 감정의 증폭기, 라고 해서
         LOCAL:6 = RAND:5
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             PRINT 바움쿠헨
             LOCAL:4 += 110
-        ELSEIF LOCAL:6 == 1 && TALENT:ARG:150
+        ELSEIF LOCAL:6 == 1 && TALENT:ARG:연모
             PRINT 롤 케이크
             LOCAL:4 += 110
         ELSEIF LOCAL:6 == 2
@@ -610,7 +610,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
         ;루나사
         ;성실하지만 어두운, 이라고 하는 일이므로
         LOCAL:6 = RAND:5
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             PRINT 프랑스 요리 풀코스
             LOCAL:4 += 150
         ELSEIF LOCAL:6 == 1
@@ -629,7 +629,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 19
         ;요우무
         LOCAL:6 = RAND:5
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             ;외형 호쾌한 요리로 칼→처리한다고 하는 안이한 발상보다
             PRINT 도미 머릿살
             LOCAL:4 += 97
@@ -668,7 +668,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 21
         ;란 님
         LOCAL:6 = RAND:6
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             PRINT 왕새우 칵테일
             LOCAL:4 += 175
         ELSEIF LOCAL:6 == 1
@@ -690,7 +690,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 22
         ;유카리
         LOCAL:6 = RAND:16
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             PRINT 푸아그라의 소테 포르치니 버섯 소스 캐비어 모듬
             LOCAL:4 += 300
         ELSEIF LOCAL:6 >= 1 &&  LOCAL:6 < 4
@@ -853,7 +853,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
             PRINT 미네오카 두부
             LOCAL:4 += 102
         ENDIF
-    ELSEIF NO:ARG == 31 && CFLAG:ARG:0 == 0
+    ELSEIF NO:ARG == 31 && CFLAG:ARG:SP캐릭터 == 0
         ;매홍
         LOCAL:6 = RAND:4
         IF LOCAL:6 == 0
@@ -883,7 +883,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
             PRINT 구운 주먹밥
             LOCAL:4 += 80
         ENDIF
-    ELSEIF NO:ARG == 31 && CFLAG:ARG:0
+    ELSEIF NO:ARG == 31 && CFLAG:ARG:SP캐릭터
         ;귀족의 딸(아가씨)의 매홍
         LOCAL:6 = RAND:5
         ;섭관가 클래스의 확실히 호화로운 향응요리
@@ -967,7 +967,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
         ;시키 님
         ;추가인 J의 대말의 사람 YM Mk-2 rev6용영공주님 말
         LOCAL:6 = RAND:8
-        IF DAY == 60 || (LOCAL:6 == 0 && TALENT:ARG:153)
+        IF DAY == 60 || (LOCAL:6 == 0 && TALENT:ARG:상애)
             PRINT 쇠고기 정식
             LOCAL:4 += 80
         ELSE
@@ -1037,7 +1037,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 39
         ;히나
         LOCAL:6 = RAND:8
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             ;뻥튀기가 없는 모습인 병아리씨라고 하는 의미로
             PRINT 병아리 뻥튀기
             LOCAL:4 += 200
@@ -1065,7 +1065,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 41
         ;모미지
         LOCAL:6 = RAND:5
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             PRINT 단팥빵과 병 우유 세트
             LOCAL:4 += 56
         ELSEIF LOCAL:6 == 1
@@ -1081,10 +1081,10 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
             PRINT 개밥
             LOCAL:4 += 33
         ENDIF
-    ELSEIF NO:ARG == 42 && CFLAG:ARG:0 == 0
+    ELSEIF NO:ARG == 42 && CFLAG:ARG:SP캐릭터 == 0
         ;사나에
         LOCAL:6 = RAND:5
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             PRINT 입에 머금었던 술
             LOCAL:4 += 256
             
@@ -1101,7 +1101,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
             PRINT 후쿠진즈케
             LOCAL:4 += 35
         ENDIF
-    ELSEIF NO:ARG == 42 && CFLAG:ARG:0
+    ELSEIF NO:ARG == 42 && CFLAG:ARG:SP캐릭터
         ;사나에 님　(정력을 붙이는 요리가 줄섭니다)
         LOCAL:6 = RAND:3
         IF LOCAL:6 == 0
@@ -1163,7 +1163,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 45
         ;서니
         LOCAL:6 = RAND:4
-        IF LOCAL:6 == 0 && TALENT:ARG:134
+        IF LOCAL:6 == 0 && TALENT:ARG:모유체질
             PRINT 서니젖
             LOCAL:4 += 333
         ELSEIF LOCAL:6 == 0
@@ -1179,7 +1179,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 46
         ;루나
         LOCAL:6 = RAND:6
-        IF LOCAL:6 == 0 && TALENT:ARG:45
+        IF LOCAL:6 == 0 && TALENT:ARG:오줌싸개버릇
             PRINT 루나 차
             LOCAL:4 += 300
         ELSEIF LOCAL:6 == 1
@@ -1225,7 +1225,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 49
         ;렌코
         IF ASSI >= 0
-            IF NO:ASSI == 50 && ABL:ASSI:13 >= 4
+            IF NO:ASSI == 50 && ABL:ASSI:봉사정신 >= 4
                 LOCAL:6 = RAND:3
                 IF LOCAL:6 == 0
                     PRINT 죽순밥
@@ -1271,7 +1271,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 50
         ;메리
         IF ASSI >= 0
-            IF NO:ASSI == 49 && ABL:ASSI:13 >= 4
+            IF NO:ASSI == 49 && ABL:ASSI:봉사정신 >= 4
                 LOCAL:6 = RAND:3
                 IF LOCAL:6 == 0
                     PRINT 죽순 새우 그라탕
@@ -1356,7 +1356,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
         ENDIF
     ELSEIF NO:ARG == 54
         ;요리히메
-        IF TALENT:ARG:150
+        IF TALENT:ARG:연모
             ;신에 대한 공양물
             PRINT 신약선
             LOCAL:4 += 150
@@ -1433,10 +1433,10 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 63
         ;오쿠
         LOCAL:6 = RAND:6
-        IF (ITEM:61 > 0 || NOITEM) && TALENT:ARG:170 && LOCAL:6 == 0
+        IF (ITEM:61 > 0 || NOITEM) && TALENT:ARG:음란 && LOCAL:6 == 0
             IF NOITEM == 0
                 ITEM:61 -= 1
-                SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+                SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                     CALL FILL_PLURAL_ITEM, 61
             ENDIF
             
@@ -1471,16 +1471,16 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
         ;주류는 잘된 것과 못된 것에 의해 크게 가격이 좌우됩니다. 원래 요리 인지 아닌지는 신경써서는 안됩니다
         ;대충 그그는 같은 상품의 명칭의 술은 없었기 때문에 괜찮아. (이)라고 생각한다
         ;또한 연재 종료시점에서는 술의 완성품은 없었기 때문에, 림지조의 주조의 솜씨는 미지수입니다(양조하고는 있었습니다만)
-        IF LOCAL:6 == 2 && ABL:ARG:12 > 4 && ABL:ARG:70 > 4
+        IF LOCAL:6 == 2 && ABL:ARG:기교 > 4 && ABL:ARG:요리기능 > 4
             PRINT 지맥주 「대신주(大神主)」
             LOCAL:4 += (RAND:200 + 201)
-        ELSEIF LOCAL:6 < 5 && ABL:ARG:12 > 3
+        ELSEIF LOCAL:6 < 5 && ABL:ARG:기교 > 3
             PRINT 대음양 「야마타잡이」
             LOCAL:4 += (RAND:850 - 349)
-        ELSEIF LOCAL:6 < 8  && ABL:ARG:12 > 2
+        ELSEIF LOCAL:6 < 8  && ABL:ARG:기교 > 2
             PRINT 양조주 「마츠오 님」
             LOCAL:4 += (RAND:50 + 51)
-        ELSEIF LOCAL:6 < 10  && ABL:ARG:12 > 1
+        ELSEIF LOCAL:6 < 10  && ABL:ARG:기교 > 1
             PRINT 신주(新酒) 「주림(酒林)」
             LOCAL:4 += (RAND:20 + 61)
         ELSEIF LOCAL:6 < 13 && LOCAL:6 >= 10
@@ -1605,7 +1605,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
         ENDIF
     ELSEIF NO:ARG == 100
         ;미마
-        IF TALENT:ARG:134 && (TALENT:ARG:152 || TALENT:ARG:153) && TALENT:ARG:170
+        IF TALENT:ARG:모유체질 && (TALENT:ARG:친애 || TALENT:ARG:상애) && TALENT:ARG:음란
             PRINT 특제 우유죽
             LOCAL:4 += 250
         ELSE
@@ -1728,11 +1728,11 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
     ELSEIF NO:ARG == 119
         ;신키 님
         LOCAL:6 = RAND:5
-        IF LOCAL:6 == 0 && TALENT:ARG:150
+        IF LOCAL:6 == 0 && TALENT:ARG:연모
             PRINT 마계요리 풀코스
             LOCAL:4 += 256
             
-        ELSEIF LOCAL:6 == 1 && TALENT:ARG:153
+        ELSEIF LOCAL:6 == 1 && TALENT:ARG:상애
             PRINTW 지고의 백미와 지고의 된장국,
             PRINTW 지고의 생선구이에 지고의 시금치 무침 요리,
             PRINTW 그리고 지고의 매실 장아찌
@@ -1802,7 +1802,7 @@ IF LOCAL == 0 && (ABL:ARG:70 >= 4 || LOCAL:1 == 1)
         ELSE
             LOCAL:4 -= 300
         ENDIF
-    ELSEIF TALENT:ARG:48
+    ELSEIF TALENT:ARG:주정
         ;소질【주정】소유. 닥치는 대로 발효식품인 것은 신경쓰지 말아  있고입니다
         LOCAL:6 = RAND:4
         PRINTDATA LOCAL
@@ -1833,11 +1833,11 @@ ELSEIF LOCAL == 5 || LOCAL == 11
     PRINT 샐러드
 ELSEIF LOCAL == 6 || LOCAL == 10
     PRINT 햄버그
-ELSEIF LOCAL == 7 && TALENT:ARG:134
-    IF (ITEM:61 > 0 || NOITEM) && TALENT:ARG:170 && RAND:4 == 0
+ELSEIF LOCAL == 7 && TALENT:ARG:모유체질
+    IF (ITEM:61 > 0 || NOITEM) && TALENT:ARG:음란 && RAND:4 == 0
         IF NOITEM == 0
             ITEM:61 -= 1
-            SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+            SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                 CALL FILL_PLURAL_ITEM, 61
         ENDIF
         LOCAL:4 += 100
@@ -1845,11 +1845,11 @@ ELSEIF LOCAL == 7 && TALENT:ARG:134
     ELSE
         PRINT 모유 요리
     ENDIF
-ELSEIF LOCAL == 9 && (TALENT:ARG:135 || TALENT:ARG:136)
-    IF (ITEM:61 > 0 || NOITEM) && TALENT:ARG:170 && RAND:4 == 0
+ELSEIF LOCAL == 9 && (TALENT:ARG:난생 || TALENT:ARG:산란체질)
+    IF (ITEM:61 > 0 || NOITEM) && TALENT:ARG:음란 && RAND:4 == 0
         IF NOITEM == 0
             ITEM:61 = 1
-            SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+            SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                 CALL FILL_PLURAL_ITEM, 61
         ENDIF
         LOCAL:4 += 100
@@ -1858,10 +1858,10 @@ ELSEIF LOCAL == 9 && (TALENT:ARG:135 || TALENT:ARG:136)
         PRINT 오믈렛
     ENDIF
 ELSE
-    IF (ITEM:61 > 0 || NOITEM) && TALENT:ARG:170 && RAND:4 == 0
+    IF (ITEM:61 > 0 || NOITEM) && TALENT:ARG:음란 && RAND:4 == 0
         IF NOITEM == 0
             ITEM:61 -= 1
-            SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+            SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                 CALL FILL_PLURAL_ITEM, 61
         ENDIF
         LOCAL:4 += 80
@@ -1875,10 +1875,10 @@ PRINTL      ・
 PRINTL      ・
 PRINTL      ・
 ;요리 기능 Lv4 또한 고유 요리의 경우, 가격은 하부수정(원래는 Lv5 전용이었으므로)
-SIF LOCAL == 0 && ABL:ARG:70 == 4 && LOCAL:1 == 0
+SIF LOCAL == 0 && ABL:ARG:요리기능 == 4 && LOCAL:1 == 0
     TIMES LOCAL:4 , 0.75
 LOCAL:3 = (LOCAL:2 * LOCAL:4) / 40
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL:3 = TABLE_CALC(LOCAL:3, 5000, 3)
     LOCAL:3 = TABLE_CALC(LOCAL:3, 10000, 5)
     LOCAL:3 = TABLE_CALC(LOCAL:3, 50000, 10)
@@ -1890,13 +1890,13 @@ ELSE
     LOCAL:3 = TABLE_CALC(LOCAL:3, 50000, 8)
 ENDIF
 PRINTFORM %조사처리(CALLNAME:ARG,"가")% 
-IF TALENT:ARG:152
+IF TALENT:ARG:친애
     PRINTFORM 사랑을 담아 
     TIMES LOCAL:3 , 1.50
 ENDIF
 
 ;스케쥴 진행중이면 가격보정을 한다. (최대 5천원)
-IF CFLAG:ARG:4 == 8192
+IF CFLAG:ARG:조교관외 == 8192
     TIMES LOCAL:3 , 3
     LOCAL:3 = MIN(LOCAL:3, 5000)
 ENDIF
@@ -1904,7 +1904,7 @@ ENDIF
 PRINTFORMW 만든 요리에는 {LOCAL:3}원의 매입가가 붙었다.
 ;독이 들어있을 경우를 체크.
 ;독이 들어있을 확률 = 반발각인*20%
-LOCAL:4 = MARK:ARG:9 *20
+LOCAL:4 = MARK:ARG:반발각인 *20
 ;독이 들어있다.
 IF LOCAL:4 > RAND:100
     PRINTFORMW ..........
@@ -1931,7 +1931,7 @@ ENDIF
 ;도시락(노예)으로 번 최고 금액 판정 처리
 ;SIF MONEY:1 > MONEY:996
 ;    CALL NEW_HIGH_INCOME_ALL, 996
-;SIF MONEY:1 > CFLAG:ARG:93
+;SIF MONEY:1 > CFLAG:ARG:최고금액_도시락
 ;    CALL NEW_HIGH_INCOME_SLAVE, 93
 ;CALL TOTAL_INCOME_SLAVE, MONEY:1
 ;--------------------------------------------------
@@ -1940,20 +1940,20 @@ ENDIF
 ;    BASE:ARG:(LOCAL:3) = MIN(BASE:ARG:(LOCAL:3), MAXBASE:ARG:(LOCAL:3))
 ;    BASE:ARG:MASTER:(LOCAL:3) = MIN(BASE:ARG:MASTER:(LOCAL:3), MAXBASE:ARG:MASTER:(LOCAL:3))
 ;NEXT
-;CFLAG:ARG:65 = MAX(CFLAG:ARG:65, 0)
+;CFLAG:ARG:스트레스 = MAX(CFLAG:ARG:스트레스, 0)
 
-LOCAL:6 = ABL:ARG:70 + 1 + LOCAL:1
+LOCAL:6 = ABL:ARG:요리기능 + 1 + LOCAL:1
 LOCAL:5 = LOCAL:6 + RAND:5
 ;습득의 주
 CALL COMMON_UP_JUEL, ARG, 11, (LOCAL:2*LOCAL:6), 0
 ;부정의 주(반발 각인 소유라면 뜻에 맞지 않은 것을 하게 했으므로)
-SIF MARK:ARG:9
+SIF MARK:ARG:반발각인
     CALL COMMON_UP_JUEL, ARG, 100, ((LOCAL:2*LOCAL:6)/2), 0
 ;조리 경험
 CALL COMMON_UP_EXP, ARG, 70, LOCAL:5, 1
 
 ;스케쥴 결과 처리.
-CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG:0, CFLAG:(ARG:0):4
+CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG:0, CFLAG:(ARG:0):조교관외
 WAIT
 
 
@@ -1976,98 +1976,98 @@ LOCAL:3 = TARGET
 TARGET = ARG
 
 TFLAG:236 = CHECK_TRIO()
-SIF TFLAG:236 != 0 && TALENT:(TFLAG:237):205 && TIME == 0 && ITEM:48 == 0 && NOITEM == 0
+SIF TFLAG:236 != 0 && TALENT:(TFLAG:237):흡혈귀 && TIME == 0 && ITEM:48 == 0 && NOITEM == 0
     TFLAG:236 = 0
 ;ここまでやっておいてトリオライブの確率は20%
 SIF RAND:5 != 0
     TFLAG:236 = 0
 ;トリオライブフラグON
 SIF TFLAG:236 != 0
-    CFLAG:151 |= 8
+    CFLAG:라이브기록 |= 8
 
 ;ABL:歌唱技能
-IF ABL:72 == 0
+IF ABL:가창기능 == 0
     LOCAL:1 = 0
-ELSEIF ABL:72 == 1
+ELSEIF ABL:가창기능 == 1
     LOCAL:1 = 1
-ELSEIF ABL:72 == 2
+ELSEIF ABL:가창기능 == 2
     LOCAL:1 = 2
-ELSEIF ABL:72 == 3
+ELSEIF ABL:가창기능 == 3
     LOCAL:1 = 4
-ELSEIF ABL:72 == 4
+ELSEIF ABL:가창기능 == 4
     LOCAL:1 = 7
 ELSE
     LOCAL:1 = 10
 ENDIF
 
 ;EXP:歌唱経験をみる
-IF EXP:73 < EXPLV:1
+IF EXP:가창경험 < EXPLV:1
     LOCAL:1 += 1
-ELSEIF EXP:73 < EXPLV:2
+ELSEIF EXP:가창경험 < EXPLV:2
     LOCAL:1 += 2
-ELSEIF EXP:73 < EXPLV:3
+ELSEIF EXP:가창경험 < EXPLV:3
     LOCAL:1 += 4
-ELSEIF EXP:73 < EXPLV:4
+ELSEIF EXP:가창경험 < EXPLV:4
     LOCAL:1 += 7
-ELSEIF EXP:73 < EXPLV:5
+ELSEIF EXP:가창경험 < EXPLV:5
     LOCAL:1 += 10
 ELSE
     LOCAL:1 += 15
 ENDIF
 
 ;ABL:露出癖をみる
-IF ABL:14 < 2
+IF ABL:노출증 < 2
     LOCAL:1 += 1
-ELSEIF ABL:14 < 4
+ELSEIF ABL:노출증 < 4
     LOCAL:1 += 4
 ELSE
     LOCAL:1 += 9
 ENDIF
 
 ;臆病
-SIF TALENT:10
+SIF TALENT:겁쟁이
     LOCAL:1 -= 2
 ;自制心
-SIF TALENT:20
+SIF TALENT:자제심
     LOCAL:1 += 1
 ;好奇心
-SIF TALENT:23
+SIF TALENT:호기심
     LOCAL:1 += 1
 ;目立ちたがり
-SIF TALENT:28
+SIF TALENT:튀고싶어함
     LOCAL:1 += 2
 ;抑圧
-IF TALENT:32
+IF TALENT:억압
     LOCAL:1 -= 1
 ;解放
-ELSEIF TALENT:33
+ELSEIF TALENT:해방
     LOCAL:1 += 1
 ENDIF
 ;恥じらい
-IF TALENT:35
+IF TALENT:부끄럼쟁이
     LOCAL:1 -= 1
 ;恥薄い
-ELSEIF TALENT:36
+ELSEIF TALENT:부끄럼없음
     LOCAL:1 += 2
 ENDIF
 
 ;EASYでないなら作り手の体力消耗、気力消耗、酔い、ストレスによるマイナス補正がある
-IF FLAG:3 != 1
+IF FLAG:난이도 != 1
     ;体力消耗状態
     SIF MAXBASE:0 > 0 && (100 * BASE:0) / MAXBASE:0 <= 25
         LOCAL:1 -= 1
     ;気力消耗状態
-    SIF MAXBASE:1 > 0 && (100 * BASE:1) / MAXBASE:1 <= 25
+    SIF MAXBASE:기력 > 0 && (100 * BASE:기력) / MAXBASE:기력 <= 25
         LOCAL:1 -= 1
     ;酔っている
-    SIF MAXBASE:8 > 0 && (100 * BASE:8) / MAXBASE:8 >= 80
+    SIF MAXBASE:취기 > 0 && (100 * BASE:취기) / MAXBASE:취기 >= 80
         LOCAL:1 -= 2
 
     ;ストレスが10000以上
-    IF CFLAG:65 >= 10000
+    IF CFLAG:스트레스 >= 10000
         LOCAL:1 -= 2
     ;ストレスが1000以上
-    ELSEIF CFLAG:65 >= 1000
+    ELSEIF CFLAG:스트레스 >= 1000
         LOCAL:1 -= 1
     ENDIF
 ENDIF
@@ -2075,7 +2075,7 @@ ENDIF
 LOCAL:1 = MAX(LOCAL:1, 0)
 
 ;鼓舞
-IF TALENT:95
+IF TALENT:고무
     LOCAL:1 += 1 + RAND:15
 ELSE
     LOCAL:1 += 1 + RAND:10
@@ -2092,42 +2092,42 @@ ELSEIF TFLAG:236 & 2
 ENDIF
 
 ;相愛
-IF TALENT:153
+IF TALENT:상애
     LOCAL:2 += RAND:11
 ;恋慕、親愛
-ELSEIF TALENT:150 || TALENT:152
+ELSEIF TALENT:연모 || TALENT:친애
     LOCAL:2 += RAND:16
 ELSE
     LOCAL:2 += RAND:21
 ENDIF
 ;場馴れしていると難易度ダウン
-IF EXP:73 > EXPLV:5
+IF EXP:가창경험 > EXPLV:5
     LOCAL:2 -= 5
-ELSEIF EXP:73 > EXPLV:4
+ELSEIF EXP:가창경험 > EXPLV:4
     LOCAL:2 -= 3
-ELSEIF EXP:73 > EXPLV:3
+ELSEIF EXP:가창경험 > EXPLV:3
     LOCAL:2 -= 1
 ENDIF
 
 ;キャラによって難易度変化
 ;[音感]持ち
-SIF TALENT:191
+SIF TALENT:음감
     LOCAL:2 -= 5
 IF ASSI >= 0
     ;助手に[音感]持ちがいると難易度低下
-    SIF TALENT:ASSI:191
+    SIF TALENT:ASSI:음감
         LOCAL:2 -= 3
     ;助手が[鼓舞]持ちまたは歌唱技能Lv5以上だと難易度低下
-    SIF TALENT:ASSI:95
+    SIF TALENT:ASSI:고무
         LOCAL:2 -= 1
-    SIF ABL:ASSI:72 >= 5
+    SIF ABL:ASSI:가창기능 >= 5
         LOCAL:2 -= 1
 ENDIF
 ;[音痴]持ち
-SIF TALENT:190
+SIF TALENT:음치
     LOCAL:2 += 2
 ;[喘息]か[求聞持]持ち
-SIF TALENT:47 || TALENT:216
+SIF TALENT:천식 || TALENT:구문지
     LOCAL:2 += 3
 
 ;구속구에 의한 방해를 받을지 체크. 결과가 1이면 실패.
@@ -2145,7 +2145,7 @@ TFLAG:154 = 1
 TFLAG:99 = 0
 
 ;스케쥴 결과 처리.
-CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:4
+CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:조교관외
 WAIT
 
 ;타겟 복귀.
@@ -2174,7 +2174,7 @@ ELSE
     IF RESULT == 0
         PRINTFORMW %조사처리(CALLNAME:ARG,"는")%...
         ;반감이 있거나 순종이 낮다
-        IF MARK:ARG:9 > 0 || ABL:ARG:10 < 2
+        IF MARK:ARG:반발각인 > 0 || ABL:ARG:순종 < 2
             LOCAL:0 += 200
             SELECTCASE RAND:10
                 CASE 0
@@ -2194,7 +2194,7 @@ ELSE
             ENDSELECT
 
         ;연모이다
-        ELSEIF TALENT:ARG:150 == 1
+        ELSEIF TALENT:ARG:연모 == 1
             SELECTCASE RAND:10
                 CASE 0
                     PRINTFORMW %조사처리(CALLNAME:MASTER,"를")% 위해 밤의 기술을 단련했다...
@@ -2227,13 +2227,13 @@ ELSE
     ENDIF
 
     ;스케쥴 결과 처리.
-    CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:4
+    CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:조교관외
 ENDIF
 WAIT
 
 
 ;------------------------------------
-;스케쥴:체력단련. CFLAG:4=128
+;스케쥴:체력단련. CFLAG:조교관외=128
 ;ARG : 캐러등록번호
 ;체력 소비가 크다. 
 ;돈이 든다. 300 + 약간
@@ -2246,14 +2246,14 @@ IF LOCAL:0 > MONEY
     PRINTFORMW 스케쥴을 실행할 수가 없다.
     PRINTFORMW {LOCAL:0}원이 필요하다... (현재 잔고:{MONEY}원)
 ELSE
-    SIF MAXBASE:ARG:0 >= 2000
-        LOCAL:0 += (MAXBASE:ARG:0%2000)*3 + ((MAXBASE:ARG:0/2000)-1)*10000
+    SIF MAXBASE:ARG:체력 >= 2000
+        LOCAL:0 += (MAXBASE:ARG:체력%2000)*3 + ((MAXBASE:ARG:체력/2000)-1)*10000
     ;디버그
-    ;PRINTFORML {(MAXBASE:ARG:0%2000)*3} 중간보정값  / {((MAXBASE:ARG:1/2000)-1)*10000} 끝보정값
+    ;PRINTFORML {(MAXBASE:ARG:체력%2000)*3} 중간보정값  / {((MAXBASE:ARG:기력/2000)-1)*10000} 끝보정값
     ;판정치1. 최대체력 기반. 2이하:걸어다니는 시체수준 3이하 :약골 4이하 : 보통 5이하 : 강하다  그 이상 : 초사이어인?
-    LOCAL:1 = MAXBASE:ARG:0 / 500
+    LOCAL:1 = MAXBASE:ARG:체력 / 500
     ;판정치2. 현재체력/최대체력. 30%이하:위험  50%이하:지쳤다 70%이하:보통 그이상:충전완료
-    LOCAL:2 = BASE:ARG:0 *100 / MAXBASE:ARG:0 / 100
+    LOCAL:2 = BASE:ARG:체력 *100 / MAXBASE:ARG:체력 / 100
     ;체력 상승량.
     LOCAL:3 = 10+RAND:10
 
@@ -2270,16 +2270,16 @@ ELSE
     IF LOCAL:1 <=3
         PRINTFORMW 울고 싶은 표정으로 마지못해 체력을 단련했다...
     ;스트레스가 쌓였다
-    ELSEIF CFLAG:ARG:65 >= 500
+    ELSEIF CFLAG:ARG:스트레스 >= 500
         PRINTFORMW 그동안 찌뿌등했는지, 열심히 몸을 움직이기 시작했다...
     ;반감이 있거나 순종이 낮다
-    ELSEIF MARK:ARG:9 > 0 || ABL:ARG:10 < 2
+    ELSEIF MARK:ARG:반발각인 > 0 || ABL:ARG:순종 < 2
         PRINTFORMW 체력을 길러서 도망치려는 생각을 하는 모양이다...
     ;체력에 자신이 있다
     ELSEIF LOCAL:1 >= 5
         PRINTFORMW 운동에는 자신이 있다는 표정으로, 운동복으로 갈아입고 몸을 풀었다.
     ;함락되었다
-    ELSEIF TALENT:ARG:150 || TALENT:ARG:160 || TALENT:ARG:170 
+    ELSEIF TALENT:ARG:연모 || TALENT:ARG:복종 || TALENT:ARG:음란 
         PRINTFORMW %조사처리(CALLNAME:MASTER,"를")% 위해서라면 체력단련도 기쁜 일인 것 같다...
     ;그 외
     ELSE
@@ -2315,13 +2315,13 @@ ELSE
                 PRINTFORMW 두꺼운 송판을 {LOCAL:1*2 + LOCAL:2*100/100 + RAND:3 +1}장 이나 격파했다!
             CASE 9
                 ;특수훈련. 약골 또는 천식
-                IF LOCAL:1 <=2 || TALENT:ARG:47
+                IF LOCAL:1 <=2 || TALENT:ARG:천식
                     PRINTFORMW 숨쉬기 운동을 {LOCAL:1*10 + LOCAL:2*100/100 + RAND:10 +1}분 이나 했다!
                 ;특수훈련. 음란
-                ELSEIF TALENT: ARG:170
+                ELSEIF TALENT:ARG:음란
                     PRINTFORMW 자위를 {LOCAL:1*10 + LOCAL:2*100/100 + RAND:10 +1}분 이나 했다! 그러나 그걸로도 만족하지 못한 것 같다...
                 ;특수훈련. 복종
-                ELSEIF TALENT: ARG:160
+                ELSEIF TALENT:ARG:복종
                     PRINTFORMW '조교관에 찾아오는 신사분들을 접대하는 101가지 방법'을 {LOCAL:1*100 + LOCAL:2*100/100 + RAND:100 +1}회나 반복했다!
                 ;특수훈련. 기타
                 ELSE
@@ -2336,18 +2336,18 @@ ELSE
         PRINTFORM {LOCAL:3}
         RESETCOLOR
         PRINTFORML 점 상승했다.
-        PRINTFORMW ※최대체력[{MAXBASE:ARG:0}] → [{MAXBASE:ARG:0+LOCAL:3}]
-        MAXBASE:ARG:0 += LOCAL:3
+        PRINTFORMW ※최대체력[{MAXBASE:ARG:체력}] → [{MAXBASE:ARG:체력+LOCAL:3}]
+        MAXBASE:ARG:체력 += LOCAL:3
         PRINTL
     ENDIF
     ;스케쥴 공통 결과 처리.
-    CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:4
+    CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:조교관외
 ENDIF
 WAIT
 
 
 ;------------------------------------
-;스케쥴:독서한다. CFLAG:4=256
+;스케쥴:독서한다. CFLAG:조교관외=256
 ;ARG : 캐러등록번호
 ;기력 소비가 크다. 
 ;돈이 든다. 300 + 약간
@@ -2360,12 +2360,12 @@ IF LOCAL:0 > MONEY
     PRINTFORMW 스케쥴을 실행할 수가 없다.
     PRINTFORMW {LOCAL:0}원이 필요하다... (현재 잔고:{MONEY}원)
 ELSE
-    SIF MAXBASE:ARG:1 >= 1500
-        LOCAL:0 += (MAXBASE:ARG:1%1500)*3 + ((MAXBASE:ARG:1/1500)-1)*10000
+    SIF MAXBASE:ARG:기력 >= 1500
+        LOCAL:0 += (MAXBASE:ARG:기력%1500)*3 + ((MAXBASE:ARG:기력/1500)-1)*10000
     ;판정치1. 최대기력 기반. 2이하:아키리신지 3이하:유리멘탈 4이하:보통 5이하:대인배 그이상:부처
-    LOCAL:1 = MAXBASE:ARG:0 / 400
+    LOCAL:1 = MAXBASE:ARG:체력 / 400
     ;판정치2. 현재체력/최대체력. 30%이하:위험  50%이하:지쳤다 70%이하:보통 그이상:충전완료
-    LOCAL:2 = BASE:ARG:0 *100 / MAXBASE:ARG:0 /100
+    LOCAL:2 = BASE:ARG:체력 *100 / MAXBASE:ARG:체력 /100
     ;체력 상승량.
     LOCAL:3 = 8+RAND:8
     ;물건형 아이템 이름
@@ -2387,13 +2387,13 @@ ELSE
     IF LOCAL:1 <=3
         PRINTFORMW 싫다는 표정으로 책을 집어들었다...
     ;반감이 있거나 순종이 낮다
-    ELSEIF MARK:ARG:9 > 0 || ABL:ARG:10 < 2
+    ELSEIF MARK:ARG:반발각인 > 0 || ABL:ARG:순종 < 2
         PRINTFORMW 탈출과 독약 만드는 법을 찾기 시작했다...
     ;기력에 자신이 있다
     ELSEIF LOCAL:1 >= 5
         PRINTFORMW 심심하던 차에 잘됐다는 듯이 책을 읽기 시작했다...
     ;함락되었다
-    ELSEIF TALENT:ARG:150 || TALENT:ARG:160 || TALENT:ARG:170 
+    ELSEIF TALENT:ARG:연모 || TALENT:ARG:복종 || TALENT:ARG:음란 
         PRINTFORMW %CALLNAME:MASTER%에게 도움이 될 내용을 찾고있다...
     ;그 외
     ELSE
@@ -2468,19 +2468,19 @@ ELSE
         PRINTFORM {LOCAL:3}
         RESETCOLOR
         PRINTFORML 점 상승했다.
-        PRINTFORMW ※최대기력[{MAXBASE:ARG:1}] → [{MAXBASE:ARG:1+LOCAL:3}]
-        MAXBASE:ARG:1 += LOCAL:3
+        PRINTFORMW ※최대기력[{MAXBASE:ARG:기력}] → [{MAXBASE:ARG:기력+LOCAL:3}]
+        MAXBASE:ARG:기력 += LOCAL:3
         PRINTL
     ENDIF
     ;스케쥴 공통 결과 처리.
-    CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:4
+    CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:조교관외
 ENDIF
 WAIT
 
 
 
 ;------------------------------------
-;스케쥴:애액생산. CFLAG:4=16384
+;스케쥴:애액생산. CFLAG:조교관외=16384
 ;ARG : 캐러등록번호
 ;체력 소비가 큼.빈 병이 없어도 채집되며, 소액에 팔린다.
 ;남자는 실행불가. 애액채집기 필수. 미함락 노예는 스케쥴 실행시 '구속' 상태가 됨.
@@ -2491,25 +2491,25 @@ LOCAL:0 = 0
 ;애액의 가격
 LOCAL:1 = 0
 ;묶여있는가?
-SIF CFLAG:ARG:4010&2
+SIF CFLAG:ARG:스케줄_구속상태&2
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 밧줄에 단단히 묶인채로, 고간에 애액채집기를 장착당했다.
 PRINTL      ・
 PRINTL      ・
 PRINTL      ・
 ;생산품의 양 계산.
 ;욕망 레벨에 따라 기본치 설정. 최소 6CC는 보장한다.
-LOCAl:0 = (RAND:5+10) * ABL:ARG:11 + (RAND:5+1)
+LOCAl:0 = (RAND:5+10) * ABL:ARG:욕망 + (RAND:5+1)
 ;음란이면 +
-IF TALENT:ARG:170
+IF TALENT:ARG:음란
     LOCAL:0 += 50
     PRINTFORMW 음란함에 찌든 %조사처리(CALLNAME:ARG,"는")% 애액채집기가 달린 채로 뜨거운 신음을 흘리며 다리를 꼬아댄다.
     PRINTFORMW 그 때 마다 애액이 푸슛 푸슛 하고 채집기를 채우고 있다...
 ENDIF
 ;젖기 쉬우면 +, 젖기 어려우면 -
-IF TALENT:ARG:42
+IF TALENT:ARG:젖기쉬움
     LOCAL:0 += 30
     PRINTFORMW 젖기 쉬운 체질이니  애액을 모으는 건 쉬울 것 같다.
-ELSEIF TALENT:ARG:43
+ELSEIF TALENT:ARG:젖기어려움
     LOCAL:0 -= 30
     PRINTFORMW 젖기 어려운 체질이니 애액을 모으는 건 조금 어려울 것으로 예상된다...
 ELSE
@@ -2588,15 +2588,15 @@ PRINTFORML %CALLNAME:ARG%의 애액을 팔아, {LOCAL:1}원을 벌었다. (잔�
 PRINTL
 ;노예의 경험획득
 ;구속상태라면, 긴박경험 획득
-IF CFLAG:ARG:4010 & 2
-    EXP:ARG:31 += 10
+IF CFLAG:ARG:스케줄_구속상태 & 2
+    EXP:ARG:긴박경험 += 10
     PRINTFORML 긴박경험 + 10
 ENDIF
 ;C조율경험
-EXP:ARG:41 += 5
+EXP:ARG:C조율경험 += 5
 PRINTFORML C조율경험 + 5
 ;V조율경험
-EXP:ARG:42 += 10
+EXP:ARG:V조율경험 += 10
 PRINTFORML V조율경험 + 10
 ;윤활의 주
 JUEL:ARG:10 += LOCAL:0*30
@@ -2605,21 +2605,21 @@ PRINTFORML 윤활의 구슬 + {LOCAL:0*30}
 JUEL:ARG:15 += LOCAL:0*30
 PRINTFORML 치정의 구슬 + {LOCAL:0*30}
 ;미함락 상태면 부정의 구슬 획득
-IF TALENT:ARG:150 == 0 &&TALENT:ARG:160 == 0 && TALENT:ARG:170  == 0
+IF TALENT:ARG:연모 == 0 &&TALENT:ARG:복종 == 0 && TALENT:ARG:음란  == 0
     JUEL:ARG:100 += LOCAL:0
     CALL SETCOLOR_TORIKOMODE, "RED", 2
-    PRINTFORML 부정의 구슬 + {LOCAL:0*(6-ABL:ARG:10)/3 + (15-ABL:ARG:10)}
+    PRINTFORML 부정의 구슬 + {LOCAL:0*(6-ABL:ARG:순종)/3 + (15-ABL:ARG:순종)}
     RESETCOLOR
 ENDIF
 PRINTL
 
 ;스케쥴 공통 결과 처리.
-CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:4
+CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:조교관외
 WAIT
     
 
 ;------------------------------------
-;스케쥴:황금수 생산. CFLAG:4=32768
+;스케쥴:황금수 생산. CFLAG:조교관외=32768
 ;ARG : 캐러등록번호
 ;체력 소비가 큼.빈 병이 없어도 채집되며, 소액에 팔린다.
 ;채뇨기 필수. 미함락 노예는 스케쥴 실행시 '구속' 상태가 됨.
@@ -2630,27 +2630,27 @@ LOCAL:0 = 0
 ;황금수의 가격
 LOCAL:1 = 0
 ;묶여있는가?
-SIF CFLAG:ARG:4010&2
+SIF CFLAG:ARG:스케줄_구속상태&2
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 밧줄에 단단히 묶인채로 다리가 벌려져, 요도에 채뇨기를 삽입당했다.
 PRINTL      ・
 PRINTL      ・
 PRINTL      ・
 ;생산품의 양 계산.
 ;욕망 레벨에 따라 기본치 설정. 최소 15CC는 보장한다. 애액의 3배 정도 나옴.
-LOCAl:0 = (RAND:15+30) * ABL:ARG:11 + (RAND:15+1)
+LOCAl:0 = (RAND:15+30) * ABL:ARG:욕망 + (RAND:15+1)
 ;음란이면 +
-IF TALENT:ARG:170
+IF TALENT:ARG:음란
     LOCAL:0 += 100
     PRINTFORMW 음란함에 찌든 %조사처리(CALLNAME:ARG,"는")% 채뇨기를 단 채로 열락에 빠져 다리를 꼬아댄다.
     PRINTFORMW 그 때 마다 뜨거운 황금수가 푸슛 푸슛 하고 채뇨기를 채우고 있다...
 ENDIF
 ;배설중독 +
-IF ABL:ARG:36 >=1
-    LOCAL:0 += ABL:ARG:36 * 50
+IF ABL:ARG:배설중독 >=1
+    LOCAL:0 += ABL:ARG:배설중독 * 50
     PRINTFORMW 배설감에 중독되버린 %조사처리(CALLNAME:ARG,"는")% 오줌을 싸면서 오르가즘을 느끼고 있다...
 ENDIF
 ;오줌싸게 버릇 +
-IF TALENT:ARG:45
+IF TALENT:ARG:오줌싸개버릇
     LOCAL:0 += 100
     PRINTFORMW %CALLNAME:ARG%의 오줌싸개 버릇이 도움이 될 것 같다...
 ELSE
@@ -2729,21 +2729,21 @@ PRINTFORML %CALLNAME:ARG%의 황금수를 팔아, {LOCAL:1}원을 벌었다. (�
 PRINTL
 ;노예의 경험획득
 ;구속상태라면, 긴박경험 획득
-IF CFLAG:ARG:4010 & 2
-    EXP:ARG:31 += 10
+IF CFLAG:ARG:스케줄_구속상태 & 2
+    EXP:ARG:긴박경험 += 10
     PRINTFORML 긴박경험 + 10
 ENDIF
 ;C조율경험
-EXP:ARG:41 += 10
+EXP:ARG:C조율경험 += 10
 PRINTFORML C조율경험 + 10
 ;방뇨경험
-EXP:ARG:6 += LOCAL:0/20
+EXP:ARG:방뇨경험 += LOCAL:0/20
 PRINTFORML 방뇨경험 + {LOCAL:0/50 + 1}
 ;U확장경험
-EXP:ARG:34 += LOCAL:0/100
+EXP:ARG:U확장경험 += LOCAL:0/100
 PRINTFORML U확장경험 + {LOCAL:0/200 }
 ;요도개발경험
-EXP:ARG:46 += LOCAL:0/50 + 1
+EXP:ARG:요도개발경험 += LOCAL:0/50 + 1
 PRINTFORML 요도개발경험 + {LOCAL:0/50 + 1}
 ;치정의 구슬
 JUEL:ARG:15 += LOCAL:0*3
@@ -2752,20 +2752,20 @@ PRINTFORML 치정의 구슬 + {LOCAL:0*3 + 100}
 JUEL:ARG:16 += LOCAL:0*3
 PRINTFORML 고통의 구슬 + {LOCAL:0*3 + 100}
 ;미함락 상태면 부정의 구슬 획득. 순종레벨이 낮을수록 많이 생긴다.
-IF TALENT:ARG:150 == 0 &&TALENT:ARG:160 == 0 && TALENT:ARG:170  == 0
+IF TALENT:ARG:연모 == 0 &&TALENT:ARG:복종 == 0 && TALENT:ARG:음란  == 0
     JUEL:ARG:100 += LOCAL:0/2
     CALL SETCOLOR_TORIKOMODE, "RED", 2
-    PRINTFORML 부정의 구슬 + {LOCAL:0*(6-ABL:ARG:10)/10 + (15-ABL:ARG:10)}
+    PRINTFORML 부정의 구슬 + {LOCAL:0*(6-ABL:ARG:순종)/10 + (15-ABL:ARG:순종)}
     RESETCOLOR
 ENDIF
 PRINTL
 
 ;스케쥴 공통 결과 처리.
-CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:4
+CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:조교관외
 WAIT
 
 ;------------------------------------
-;스케쥴:모유 생산. CFLAG:4=65536
+;스케쥴:모유 생산. CFLAG:조교관외=65536
 ;ARG : 캐러등록번호
 ;체력 소비가 큼.빈 병이 없어도 채집되며, 소액에 팔린다.
 ;남자는 실행불가. 착유기 필수. 미함락 노예는 스케쥴 실행시 '구속' 상태가 됨.
@@ -2776,41 +2776,41 @@ LOCAL:0 = 0
 ;모유의 가격
 LOCAL:1 = 0
 ;묶여있는가?
-SIF CFLAG:ARG:4010&2
+SIF CFLAG:ARG:스케줄_구속상태&2
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 밧줄에 단단히 묶인채로, 착유기를 장착당했다.
 PRINTL      ・
 PRINTL      ・
 PRINTL      ・
 ;생산품의 양 계산.
 ;욕망 레벨에 따라 기본치 설정. 애액의 2배~3배 정도 나옴.
-LOCAl:0 = (RAND:10+15) * ABL:ARG:11 + (RAND:8+1)
+LOCAl:0 = (RAND:10+15) * ABL:ARG:욕망 + (RAND:8+1)
 ;음란이면 +
-IF TALENT:ARG:170
+IF TALENT:ARG:음란
     LOCAL:0 += 50
     PRINTFORMW 음란함에 찌든 %조사처리(CALLNAME:ARG,"는")% 착유기를 단 채로 몸을 떨고 있다.
     PRINTFORMW 그 때 마다 뜨거운 모유가 푸슛 푸슛 쏟아져 나와, 착유기를 덥히고 있다...
 ENDIF
 ;음유 +
-IF TALENT:ARG:174
+IF TALENT:ARG:음유
     LOCAL:0 += 100
     PRINTFORMW 가슴으로 느끼는 것의 노예가 된 %조사처리(CALLNAME:ARG,"는")% 착유의 기쁨을 한껏 느끼고 있다.
 ENDIF
 ;분유중독 + 가산치가 크다.
-IF ABL:ARG:36 >=1
-    LOCAL:0 += ABL:ARG:36 * 50
+IF ABL:ARG:배설중독 >=1
+    LOCAL:0 += ABL:ARG:배설중독 * 50
     PRINTFORMW 젖을 내는 것에 중독되어버린 %조사처리(CALLNAME:ARG,"는")% 희멀건 모유가 나올 때 마다 허리를 튕기며 열락에 빠져들고 있다...
 ENDIF
 ;가슴크기 보정. 가슴이 클 수록 많이 나온다. 뭔가 불공평하지만.
-IF TALENT:ARG:110
+IF TALENT:ARG:절벽
     LOCAL:0 -= 100
     PRINTFORMW 아무래도 잘 나오지 않는다...%CALLNAME:ARG%의 절벽과도 같은 납작가슴에 착유기를 단 것이 과연 잘하는 짓인지 의문스럽다.
-ELSEIF TALENT:ARG:111
+ELSEIF TALENT:ARG:빈유
     LOCAL:0 -= 50
     PRINTFORMW %CALLNAME:ARG%의 빈약한 가슴에서는 생각처럼 많은 모유가 나오질 않는다...
-ELSEIF TALENT:ARG:112
+ELSEIF TALENT:ARG:거유
     LOCAL:0 += 50
     PRINTFORMW %CALLNAME:ARG%의 풍만한 가슴에서는 만족스러울 만큼의 모유가 나오고 있다...
-ELSEIF TALENT:ARG:113
+ELSEIF TALENT:ARG:폭유
     LOCAL:0 += 100
     PRINTFORMW %CALLNAME:ARG%의 터질듯한 가슴에서 폭포수와 같이 모유가 쏟아지고 있다...
 ELSE
@@ -2889,18 +2889,18 @@ PRINTFORML %CALLNAME:ARG%의 모유를 팔아, {LOCAL:1}원을 벌었다. (잔�
 PRINTL
 ;노예의 경험획득
 ;구속상태라면, 긴박경험 획득
-IF CFLAG:ARG:4010 & 2
-    EXP:ARG:31 += 10
+IF CFLAG:ARG:스케줄_구속상태 & 2
+    EXP:ARG:긴박경험 += 10
     PRINTFORML 긴박경험 + 10
 ENDIF
 ;B쾌락경험
-EXP:ARG:44 += 10
+EXP:ARG:B쾌락경험 += 10
 PRINTFORML B쾌락경험 + 10
 ;분유경험
-EXP:ARG:5 += LOCAL:0/50
+EXP:ARG:분유경험 += LOCAL:0/50
 PRINTFORML 분유경험 + {LOCAL:0/50 + 1}
 ;유선개발경험
-EXP:ARG:45 += LOCAL:0/200
+EXP:ARG:유선개발경험 += LOCAL:0/200
 PRINTFORML 유선개발경험 + {LOCAL:0/200 + 1}
 ;치정의 구슬
 JUEL:ARG:15 += LOCAL:0*3
@@ -2909,21 +2909,21 @@ PRINTFORML 치정의 구슬 + {LOCAL:0*3 + 100}
 JUEL:ARG:16 += LOCAL:0*3
 PRINTFORML 고통의 구슬 + {LOCAL:0*3 + 100}
 ;미함락 상태면 부정의 구슬 획득. 순종레벨이 낮을수록 많이 생긴다.
-IF TALENT:ARG:150 == 0 &&TALENT:ARG:160 == 0 && TALENT:ARG:170  == 0
+IF TALENT:ARG:연모 == 0 &&TALENT:ARG:복종 == 0 && TALENT:ARG:음란  == 0
     JUEL:ARG:100 += LOCAL:0/2
     CALL SETCOLOR_TORIKOMODE, "RED", 2
-    PRINTFORML 부정의 구슬 + {LOCAL:0*(6-ABL:ARG:10)/10 + (15-ABL:ARG:10)}
+    PRINTFORML 부정의 구슬 + {LOCAL:0*(6-ABL:ARG:순종)/10 + (15-ABL:ARG:순종)}
     RESETCOLOR
 ENDIF
 PRINTL
 
 ;스케쥴 공통 결과 처리.
-CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:4
+CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:조교관외
 WAIT
 
 
 ;------------------------------------
-;스케쥴:정액 생산. CFLAG:4=524288
+;스케쥴:정액 생산. CFLAG:조교관외=524288
 ;ARG : 캐러등록번호
 ;체력 소비가 큼.빈 병이 없어도 채집되며, 소액에 팔린다.
 ;후나타리나 남자 소질 필수. 미함락 노예는 스케쥴 실행시 '구속' 상태가 됨.
@@ -2934,30 +2934,30 @@ LOCAL:0 = 0
 ;정액의 가격
 LOCAL:1 = 0
 ;묶여있는가?
-SIF CFLAG:ARG:4010&2
+SIF CFLAG:ARG:스케줄_구속상태&2
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 밧줄에 단단히 묶인채로, 전극 오나홀에 페니스를 삽입당했다.
 PRINTL      ・
 PRINTL      ・
 PRINTL      ・
 ;생산품의 양 계산.
 ;욕망 레벨에 따라 기본치 설정.
-LOCAl:0 = (RAND:2+1) * ABL:ARG:11
+LOCAl:0 = (RAND:2+1) * ABL:ARG:욕망
 ;음란이면 +
-IF TALENT:ARG:170
+IF TALENT:ARG:음란
     LOCAL:0 += 10
     PRINTFORMW 음란함에 찌든 %조사처리(CALLNAME:ARG,"는")% 전극 오나홀에 전류가 흐를 때 마다 허리를 튕기며 눈을 치켜뜨고 가버리고 있다.
     PRINTFORMW 그 때 마다 정액이 푸슛 푸슛 하고 오나홀을 채워간다.
 ENDIF
 ;음핵 음경 +
-IF TALENT:ARG:171
+IF TALENT:ARG:음핵／음경
     LOCAL:0 += 15
     PRINTFORMW 페니스로 느끼는 것에 더 없는 행복을 느끼는 %CALLNAME:ARG%에게는 지금이야 말로 행복의 극치인 것이다...
 ENDIF
 ;사정중독 + 가산치가 크다.
-IF ABL:ARG:37 >=1
-    LOCAL:0 += ABL:ARG:36 * 5
+IF ABL:ARG:사정중독 >=1
+    LOCAL:0 += ABL:ARG:배설중독 * 5
     PRINTFORMW 사정감의 노예가 된 %조사처리(CALLNAME:ARG,"는")% 마지막 한 방울 까지 짜내려는 듯이 사정을 그치지 않는다...
-    SIF ABL:ARG:37 >=3
+    SIF ABL:ARG:사정중독 >=3
     PRINTFORMW 전극 오나홀은 터질듯이 팽창하고 있다...
 ELSE
     PRINTFORMW 전극 오나홀로 %CALLNAME:ARG%의 정액을 채집했다...
@@ -3033,15 +3033,15 @@ PRINTFORML %CALLNAME:ARG%의 정액을 팔아, {LOCAL:1}원을 벌었다. (잔�
 PRINTL
 ;노예의 경험획득
 ;구속상태라면, 긴박경험 획득
-IF CFLAG:ARG:4010 & 2
-    EXP:ARG:31 += 10
+IF CFLAG:ARG:스케줄_구속상태 & 2
+    EXP:ARG:긴박경험 += 10
     PRINTFORML 긴박경험 + 10
 ENDIF
 ;C조율경험
-EXP:ARG:41 += 5
+EXP:ARG:C조율경험 += 5
 PRINTFORML C조율경험 + 5
 ;사정경험
-EXP:ARG:3 += LOCAL:0/10 + 1
+EXP:ARG:사정경험 += LOCAL:0/10 + 1
 PRINTFORML 사정경험 + {LOCAL:0/10 + 1}
 ;습득의 구슬
 JUEL:ARG:11 += LOCAL:0*10
@@ -3050,14 +3050,14 @@ PRINTFORML 습득의 구슬 + {LOCAL:0*10}
 JUEL:ARG:15 += LOCAL:0*50
 PRINTFORML 치정의 구슬 + {LOCAL:0*50}
 ;미함락 상태면 부정의 구슬 획득
-IF TALENT:ARG:150 == 0 &&TALENT:ARG:160 == 0 && TALENT:ARG:170  == 0
-    JUEL:ARG:100 += LOCAL:0*(6-ABL:ARG:10) + (15-ABL:ARG:10)
+IF TALENT:ARG:연모 == 0 &&TALENT:ARG:복종 == 0 && TALENT:ARG:음란  == 0
+    JUEL:ARG:100 += LOCAL:0*(6-ABL:ARG:순종) + (15-ABL:ARG:순종)
     CALL SETCOLOR_TORIKOMODE, "RED", 2
-    PRINTFORML 부정의 구슬 + {LOCAL:0*(6-ABL:ARG:10) + (15-ABL:ARG:10)}
+    PRINTFORML 부정의 구슬 + {LOCAL:0*(6-ABL:ARG:순종) + (15-ABL:ARG:순종)}
     RESETCOLOR
 ENDIF
 PRINTL
 
 ;스케쥴 공통 결과 처리.
-CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:4
+CALL CALC_SCHEDULE_RESULT_TORIKOMODE,  ARG, CFLAG:ARG:조교관외
 WAIT

@@ -51,23 +51,23 @@ RETURNF LOCAL:9
 @SPOILER_PRINT_SELL
 ;#LOCALSIZE 5
 
-IF CFLAG:1 < 2
+IF CFLAG:매각가능 < 2
     ;売却条件の表示
-    IF CFLAG:1 == 0
+    IF CFLAG:매각가능 == 0
         ;基礎条件
         PRINT 판매 기초 조건：
-        LOCAL:0 = SPOILER_PRINT_FLAG("순종+욕망 6이상 ", (ABL:10+ABL:11)>=6, 0)
+        LOCAL:0 = SPOILER_PRINT_FLAG("순종+욕망 6이상 ", (ABL:순종+ABL:욕망)>=6, 0)
         LOCAL:1 = 1
-        IF (TALENT:11 || TALENT:12)
-            LOCAL:0 = SPOILER_PRINT_FLAG("순종 4이상 ", (ABL:10>=4), 0) && LOCAL:0
+        IF (TALENT:반항적 || TALENT:꿋꿋함)
+            LOCAL:0 = SPOILER_PRINT_FLAG("순종 4이상 ", (ABL:순종>=4), 0) && LOCAL:0
             LOCAL:1 += 1
         ENDIF
-        IF (TALENT:20 || TALENT:32 || TALENT:34)
-            LOCAL:0 = SPOILER_PRINT_FLAG("욕망 4이상 ", (ABL:11>=4), 0) && LOCAL:0
+        IF (TALENT:자제심 || TALENT:억압 || TALENT:저항)
+            LOCAL:0 = SPOILER_PRINT_FLAG("욕망 4이상 ", (ABL:욕망>=4), 0) && LOCAL:0
             LOCAL:1 += 1
         ENDIF
         LOCAL:2 = 0
-        LOCAL:2 += SPOILER_PRINT_FLAG("감각 3이상 ",  ABL:0 >= 3 || ABL:1 >= 3 || ABL:2 >= 3 || ABL:3 >= 3)
+        LOCAL:2 += SPOILER_PRINT_FLAG("감각 3이상 ",  ABL:C감각 >= 3 || ABL:V감각 >= 3 || ABL:A감각 >= 3 || ABL:B감각 >= 3)
 
         IF LOCAL:0 && LOCAL:2
             CALLF SPOILER_PRINT_FLAG("(OK)",1)
@@ -79,13 +79,13 @@ IF CFLAG:1 < 2
         ;追加条件
         PRINT 판매 추가 조건：
         LOCAL:3 = 0
-        LOCAL:3 += SPOILER_PRINT_FLAG("기교 3이상+봉사정신 3이상 ", ABL:12 >= 3 && ABL:13 >= 3)
-        LOCAL:3 += SPOILER_PRINT_FLAG("노출 3이상+자위중독 2이상 ",  ABL:14 >= 3 && ABL:30 >= 2)
+        LOCAL:3 += SPOILER_PRINT_FLAG("기교 3이상+봉사정신 3이상 ", ABL:기교 >= 3 && ABL:봉사정신 >= 3)
+        LOCAL:3 += SPOILER_PRINT_FLAG("노출 3이상+자위중독 2이상 ",  ABL:노출증 >= 3 && ABL:자위중독 >= 2)
         PRINTL
         PRINT 　　　　　　　  
-        LOCAL:3 += SPOILER_PRINT_FLAG("마조끼 3이상 ",  ABL:21 >= 3)
-        LOCAL:3 += SPOILER_PRINT_FLAG("감각 합계 13이상 ",  ABL:0+ABL:1+ABL:2+ABL:3 >= 13)
-        LOCAL:3 += SPOILER_PRINT_FLAG("순종 5이상 or 욕망 5이상 ", ABL:10 >= 5 || ABL:11 >= 5)
+        LOCAL:3 += SPOILER_PRINT_FLAG("마조끼 3이상 ",  ABL:마조끼 >= 3)
+        LOCAL:3 += SPOILER_PRINT_FLAG("감각 합계 13이상 ",  ABL:C감각+ABL:V감각+ABL:A감각+ABL:B감각 >= 13)
+        LOCAL:3 += SPOILER_PRINT_FLAG("순종 5이상 or 욕망 5이상 ", ABL:순종 >= 5 || ABL:욕망 >= 5)
         
         IF LOCAL:3
             CALLF SPOILER_PRINT_FLAG("(OK)",1)
@@ -110,71 +110,71 @@ RETURN
 ;#LOCALSIZE 5
 
     ;연모、服従、淫乱、妄信、親愛の共通前提条件(傀儡もしくは精神崩壊を持っているものは弾く）
-    IF (TALENT:150 == 0 || TALENT:160 == 0 || TALENT:170 == 0 || TALENT:151 == 0 || TALENT:152 == 0) && TALENT:167 == 0 && TALENT:168 == 0
+    IF (TALENT:연모 == 0 || TALENT:복종 == 0 || TALENT:음란 == 0 || TALENT:망신 == 0 || TALENT:친애 == 0) && TALENT:정신붕괴 == 0 && TALENT:괴뢰 == 0
         ;前提条件
         PRINT 함락 전제 조건：
         ;主人と対象が同性である場合
-        IF !(TALENT:MASTER:120 ^^ TALENT:120)
+        IF !(TALENT:MASTER:남자 ^^ TALENT:남자)
             LOCAL:0 = 0
             LOCAL:1 = 0
-            LOCAL:0 += SPOILER_PRINT_FLAG("호감도 1500이상 ", CFLAG:2 >= 1500)
+            LOCAL:0 += SPOILER_PRINT_FLAG("호감도 1500이상 ", CFLAG:호감도 >= 1500)
             LOCAL:1 += 1
             ;対象が바이でない場合
-            IF TALENT:83 == 0
+            IF TALENT:바이 == 0
                 ;対象がオトコの場合
-                IF TALENT:120
-                    LOCAL:0 += SPOILER_PRINT_FLAG("BL끼 4이상+BL중독 3이상 ",  ABL:23 >= 3 && ABL:33 >= 3)
+                IF TALENT:남자
+                    LOCAL:0 += SPOILER_PRINT_FLAG("BL끼 4이상+BL중독 3이상 ",  ABL:BL끼 >= 3 && ABL:BL중독 >= 3)
                     LOCAL:1 += 1
                 ;対象がオンナの場合
                 ELSE
-                    LOCAL:0 += SPOILER_PRINT_FLAG("레즈끼 4이상+레즈중독 3이상 ",  ABL:22 >= 3 && ABL:32 >= 3)
+                    LOCAL:0 += SPOILER_PRINT_FLAG("레즈끼 4이상+레즈중독 3이상 ",  ABL:레즈끼 >= 3 && ABL:레즈중독 >= 3)
                     LOCAL:1 += 1
                 ENDIF
             ELSE
-                LOCAL:0 += SPOILER_PRINT_FLAG("바이 ", TALENT:83 >= 1)
+                LOCAL:0 += SPOILER_PRINT_FLAG("바이 ", TALENT:바이 >= 1)
                 LOCAL:1 += 1
             ENDIF
             ;対象が引き継ぎキャラでない場合
-            IF CFLAG:18 == 0
+            IF CFLAG:계승여부 == 0
                 ;対象がオトコの場合
-                IF TALENT:120
-                    LOCAL:0 += SPOILER_PRINT_FLAG("BL경험 1500이상 ",  EXP:13 >= 1500)
+                IF TALENT:남자
+                    LOCAL:0 += SPOILER_PRINT_FLAG("BL경험 1500이상 ",  EXP:BL경험 >= 1500)
                     LOCAL:1 += 1
                 ;対象がオンナの場合
                 ELSE
-                    LOCAL:0 += SPOILER_PRINT_FLAG("레즈경험 1500이상 ",  EXP:12 >= 1500)
+                    LOCAL:0 += SPOILER_PRINT_FLAG("레즈경험 1500이상 ",  EXP:레즈경험 >= 1500)
                     LOCAL:1 += 1
                 ENDIF
             ELSE
-                LOCAL:0 += SPOILER_PRINT_FLAG("계승 캐릭터 ", CFLAG:18 >= 1)
+                LOCAL:0 += SPOILER_PRINT_FLAG("계승 캐릭터 ", CFLAG:계승여부 >= 1)
                 LOCAL:1 += 1
             ENDIF
             PRINTL
             PRINT 　　　　　　　　
-            LOCAL:0 += SPOILER_PRINT_FLAG("반발각인 없음 ",  MARK:9 <= 0)
+            LOCAL:0 += SPOILER_PRINT_FLAG("반발각인 없음 ",  MARK:반발각인 <= 0)
             LOCAL:1 += 1
         ;主人と対象が異性である場合
         ELSE
             LOCAL:0 = 0
             LOCAL:1 = 0
-            LOCAL:0 += SPOILER_PRINT_FLAG("호감도 1000이상 ", CFLAG:2 >= 1000)
+            LOCAL:0 += SPOILER_PRINT_FLAG("호감도 1000이상 ", CFLAG:호감도 >= 1000)
             LOCAL:1 += 1
             ;対象が引き継ぎキャラでない場合
-            IF CFLAG:18 == 0
+            IF CFLAG:계승여부 == 0
                 ;対象がオトコの場合
-                IF TALENT:120
-                    LOCAL:0 += SPOILER_PRINT_FLAG("BL경험 1000미만 ",  EXP:13 < 1000, 1)
+                IF TALENT:남자
+                    LOCAL:0 += SPOILER_PRINT_FLAG("BL경험 1000미만 ",  EXP:BL경험 < 1000, 1)
                     LOCAL:1 += 1
                 ;対象がオンナの場合
                 ELSE
-                    LOCAL:0 += SPOILER_PRINT_FLAG("레즈경험 1000미만 ",  EXP:12 < 1000, 1)
+                    LOCAL:0 += SPOILER_PRINT_FLAG("레즈경험 1000미만 ",  EXP:레즈경험 < 1000, 1)
                     LOCAL:1 += 1
                 ENDIF
             ELSE
-                LOCAL:0 += SPOILER_PRINT_FLAG("계승 캐릭터 ", CFLAG:18 >= 1)
+                LOCAL:0 += SPOILER_PRINT_FLAG("계승 캐릭터 ", CFLAG:계승여부 >= 1)
                 LOCAL:1 += 1
             ENDIF
-            LOCAL:0 += SPOILER_PRINT_FLAG("반발각인 없음 ",  MARK:9 <= 0)
+            LOCAL:0 += SPOILER_PRINT_FLAG("반발각인 없음 ",  MARK:반발각인 <= 0)
             LOCAL:1 += 1
         ENDIF
         
@@ -186,16 +186,16 @@ RETURN
         PRINTL
 
         ;연모条件
-        IF TALENT:150 == 0
+        IF TALENT:연모 == 0
             LOCAL:2 = 0
             PRINT 연모 조건：
-            LOCAL:2 += SPOILER_PRINT_FLAG("순종 3이상 ", ABL:10 >= 3)
-            LOCAL:2 += SPOILER_PRINT_FLAG("약물각인 0 ", MARK:3 <= 0)
-            LOCAL:2 += SPOILER_PRINT_FLAG("공포각인 0 ", MARK:8 <= 0)
-            LOCAL:2 += SPOILER_PRINT_FLAG("괴조인격 없음 ", TALENT:169 <= 0, 1)
+            LOCAL:2 += SPOILER_PRINT_FLAG("순종 3이상 ", ABL:순종 >= 3)
+            LOCAL:2 += SPOILER_PRINT_FLAG("약물각인 0 ", MARK:약물각인 <= 0)
+            LOCAL:2 += SPOILER_PRINT_FLAG("공포각인 0 ", MARK:공포각인 <= 0)
+            LOCAL:2 += SPOILER_PRINT_FLAG("괴조인격 없음 ", TALENT:괴조인격 <= 0, 1)
             PRINTL
             PRINT 　　　　　 
-            LOCAL:2 += SPOILER_PRINT_FLAG("봉사쾌락경험 200이상 ", EXP:20 >= 200)
+            LOCAL:2 += SPOILER_PRINT_FLAG("봉사쾌락경험 200이상 ", EXP:봉사쾌락경험 >= 200)
             IF LOCAL:2 >= 5
                 CALLF SPOILER_PRINT_FLAG("(OK)",1)
             ELSE
@@ -203,18 +203,18 @@ RETURN
             ENDIF
             PRINTL
         ;親愛条件
-        ELSEIF TALENT:152 == 0
+        ELSEIF TALENT:친애 == 0
             LOCAL:2 = 0
             PRINT 친애 조건：
-            LOCAL:2 += SPOILER_PRINT_FLAG("순종 5이상 ", ABL:10 >= 5)
-            LOCAL:2 += SPOILER_PRINT_FLAG("약물각인 0 ", MARK:3 <= 0)
-            LOCAL:2 += SPOILER_PRINT_FLAG("공포각인 0 ", MARK:8 <= 0)
-            LOCAL:2 += SPOILER_PRINT_FLAG("연모 ", TALENT:150 > 0)
-            LOCAL:2 += SPOILER_PRINT_FLAG("괴조인격 없음 ", TALENT:169 <= 0, 1)
+            LOCAL:2 += SPOILER_PRINT_FLAG("순종 5이상 ", ABL:순종 >= 5)
+            LOCAL:2 += SPOILER_PRINT_FLAG("약물각인 0 ", MARK:약물각인 <= 0)
+            LOCAL:2 += SPOILER_PRINT_FLAG("공포각인 0 ", MARK:공포각인 <= 0)
+            LOCAL:2 += SPOILER_PRINT_FLAG("연모 ", TALENT:연모 > 0)
+            LOCAL:2 += SPOILER_PRINT_FLAG("괴조인격 없음 ", TALENT:괴조인격 <= 0, 1)
             PRINTL
             PRINT 　　　　　 
-            LOCAL:2 += SPOILER_PRINT_FLAG("애정경험 200이상 ", EXP:21 >= 200)
-            LOCAL:2 += SPOILER_PRINT_FLAG(( (TALENT:MASTER:120 ^^ TALENT:120) ? "호감도 5000이상 " # "호감도 7500이상 "), (CFLAG:2 >= ((TALENT:MASTER:120 ^^ TALENT:120) ? 5000 # 7500)))
+            LOCAL:2 += SPOILER_PRINT_FLAG("애정경험 200이상 ", EXP:애정경험 >= 200)
+            LOCAL:2 += SPOILER_PRINT_FLAG(( (TALENT:MASTER:남자 ^^ TALENT:남자) ? "호감도 5000이상 " # "호감도 7500이상 "), (CFLAG:호감도 >= ((TALENT:MASTER:남자 ^^ TALENT:남자) ? 5000 # 7500)))
             IF LOCAL:2 >= 7
                 CALLF SPOILER_PRINT_FLAG("(OK)",1)
             ELSE
@@ -224,22 +224,22 @@ RETURN
         ENDIF
 
         ;服従条件
-        IF TALENT:160 == 0
+        IF TALENT:복종 == 0
             LOCAL:2 = 0
             PRINT 복종 조건：
-            LOCAL:2 += SPOILER_PRINT_FLAG("순종 4이상 ", ABL:10 >= 4)
-            LOCAL:2 += SPOILER_PRINT_FLAG("봉사정신 4이상 ", ABL:13 >= 4)
-            LOCAL:2 += SPOILER_PRINT_FLAG("욕망 3이상 ", ABL:11 >= 3)
-            LOCAL:2 += SPOILER_PRINT_FLAG("쾌락각인 3이상 ", MARK:1 >= 3)
+            LOCAL:2 += SPOILER_PRINT_FLAG("순종 4이상 ", ABL:순종 >= 4)
+            LOCAL:2 += SPOILER_PRINT_FLAG("봉사정신 4이상 ", ABL:봉사정신 >= 4)
+            LOCAL:2 += SPOILER_PRINT_FLAG("욕망 3이상 ", ABL:욕망 >= 3)
+            LOCAL:2 += SPOILER_PRINT_FLAG("쾌락각인 3이상 ", MARK:쾌락각인 >= 3)
             PRINTL
             PRINT 　　　　　 
-            LOCAL:2 += SPOILER_PRINT_FLAG("굴복각인 3이상 ", MARK:2 >= 3)
-            LOCAL:2 += SPOILER_PRINT_FLAG("치욕각인 2이상 ", MARK:4 >= 2)
-            LOCAL:2 += SPOILER_PRINT_FLAG("공포각인 1이상 ", MARK:8 >= 1)
+            LOCAL:2 += SPOILER_PRINT_FLAG("굴복각인 3이상 ", MARK:굴복각인 >= 3)
+            LOCAL:2 += SPOILER_PRINT_FLAG("치욕각인 2이상 ", MARK:치욕각인 >= 2)
+            LOCAL:2 += SPOILER_PRINT_FLAG("공포각인 1이상 ", MARK:공포각인 >= 1)
             PRINTL
             PRINT 　　　　　 
-            LOCAL:2 += SPOILER_PRINT_FLAG("주인조교경험 250이상 ", EXP:98 >= 250)
-            LOCAL:2 += SPOILER_PRINT_FLAG("이상경험 1이상", EXP:50 >= 1)
+            LOCAL:2 += SPOILER_PRINT_FLAG("주인조교경험 250이상 ", EXP:주인조교경험 >= 250)
+            LOCAL:2 += SPOILER_PRINT_FLAG("이상경험 1이상", EXP:이상경험 >= 1)
             IF LOCAL:2 >= 9
                 CALLF SPOILER_PRINT_FLAG("(OK)",1)
             ELSE
@@ -249,11 +249,11 @@ RETURN
         ENDIF
 
         ;淫乱条件
-        IF TALENT:170 == 0
+        IF TALENT:음란 == 0
             LOCAL:2 = 0
             PRINT 음란 조건：
-            LOCAL:2 += SPOILER_PRINT_FLAG("욕망 4이상 ", ABL:11 >= 4)
-            LOCAL:2 += SPOILER_PRINT_FLAG("이상경험 3이상 ", EXP:50 >= 3)
+            LOCAL:2 += SPOILER_PRINT_FLAG("욕망 4이상 ", ABL:욕망 >= 4)
+            LOCAL:2 += SPOILER_PRINT_FLAG("이상경험 3이상 ", EXP:이상경험 >= 3)
             IF LOCAL:2 >= 2
                 CALLF SPOILER_PRINT_FLAG("(OK)",1)
             ELSE
@@ -263,20 +263,20 @@ RETURN
         ENDIF
 
         ;妄信条件
-        IF TALENT:151 == 0 && (TALENT:150 || TALENT:160 || TALENT:170)
+        IF TALENT:망신 == 0 && (TALENT:연모 || TALENT:복종 || TALENT:음란)
             LOCAL:2 = 0
             PRINT 망신 조건：
-            LOCAL:2 += SPOILER_PRINT_FLAG("순종 5이상 ", ABL:10 >= 5)
-            LOCAL:2 += SPOILER_PRINT_FLAG("봉사정신 5이상 ", ABL:13 >= 5)
-            LOCAL:2 += SPOILER_PRINT_FLAG("굴복각인 3 ", MARK:2 >= 3)
-            LOCAL:2 += SPOILER_PRINT_FLAG("공포각인 0 ", MARK:8 <= 0)
-            LOCAL:2 += SPOILER_PRINT_FLAG("연모 ", TALENT:150 > 0)
-            LOCAL:2 += SPOILER_PRINT_FLAG("복종 ", TALENT:160 > 0)
-            LOCAL:2 += SPOILER_PRINT_FLAG("음란 ", TALENT:170 > 0)
+            LOCAL:2 += SPOILER_PRINT_FLAG("순종 5이상 ", ABL:순종 >= 5)
+            LOCAL:2 += SPOILER_PRINT_FLAG("봉사정신 5이상 ", ABL:봉사정신 >= 5)
+            LOCAL:2 += SPOILER_PRINT_FLAG("굴복각인 3 ", MARK:굴복각인 >= 3)
+            LOCAL:2 += SPOILER_PRINT_FLAG("공포각인 0 ", MARK:공포각인 <= 0)
+            LOCAL:2 += SPOILER_PRINT_FLAG("연모 ", TALENT:연모 > 0)
+            LOCAL:2 += SPOILER_PRINT_FLAG("복종 ", TALENT:복종 > 0)
+            LOCAL:2 += SPOILER_PRINT_FLAG("음란 ", TALENT:음란 > 0)
             PRINTL
             PRINT 　　　　　 
-            LOCAL:2 += SPOILER_PRINT_FLAG("조수 가능 ", CFLAG:1 >= 2)
-            LOCAL:2 += SPOILER_PRINT_FLAG("호감도 2000이상 ", CFLAG:2 >= 2000)
+            LOCAL:2 += SPOILER_PRINT_FLAG("조수 가능 ", CFLAG:매각가능 >= 2)
+            LOCAL:2 += SPOILER_PRINT_FLAG("호감도 2000이상 ", CFLAG:호감도 >= 2000)
             IF LOCAL:2 >= 9
                 CALLF SPOILER_PRINT_FLAG("(OK)",1)
             ELSE
@@ -287,20 +287,20 @@ RETURN
     ENDIF
     
         ;즉각함락
-        IF TALENT:179 == 0
+        IF TALENT:즉각함락 == 0
             LOCAL:2 = 0
             PRINT 즉각함락 조건(음란) 　　 : 
-            LOCAL:2 += SPOILER_PRINT_FLAG("음핵 ", CFLAG:16 & 2)
-        SIF TALENT:120 == 0
-            LOCAL:2 += SPOILER_PRINT_FLAG("음호 ", CFLAG:16 & 4)
-            LOCAL:2 += SPOILER_PRINT_FLAG("음고 ", CFLAG:16 & 8)
-            LOCAL:2 += SPOILER_PRINT_FLAG("음유 ", CFLAG:16 & 16)
-            LOCAL:2 += SPOILER_PRINT_FLAG("요도광 ", CFLAG:16 & 32)
-            LOCAL:2 += SPOILER_PRINT_FLAG("키스마 ", CFLAG:16 & 64)
-            LOCAL:2 += SPOILER_PRINT_FLAG("초S ", CFLAG:16 & 128)
-            LOCAL:2 += SPOILER_PRINT_FLAG("초M ", CFLAG:16 & 256)
+            LOCAL:2 += SPOILER_PRINT_FLAG("음핵 ", CFLAG:이벤트취득음란 & 2)
+        SIF TALENT:남자 == 0
+            LOCAL:2 += SPOILER_PRINT_FLAG("음호 ", CFLAG:이벤트취득음란 & 4)
+            LOCAL:2 += SPOILER_PRINT_FLAG("음고 ", CFLAG:이벤트취득음란 & 8)
+            LOCAL:2 += SPOILER_PRINT_FLAG("음유 ", CFLAG:이벤트취득음란 & 16)
+            LOCAL:2 += SPOILER_PRINT_FLAG("요도광 ", CFLAG:이벤트취득음란 & 32)
+            LOCAL:2 += SPOILER_PRINT_FLAG("키스마 ", CFLAG:이벤트취득음란 & 64)
+            LOCAL:2 += SPOILER_PRINT_FLAG("초S ", CFLAG:이벤트취득음란 & 128)
+            LOCAL:2 += SPOILER_PRINT_FLAG("초M ", CFLAG:이벤트취득음란 & 256)
             PRINT  취득경험 있음
-      IF TALENT:120 == 1
+      IF TALENT:남자 == 1
               IF LOCAL:2 >= 7
                   CALLF SPOILER_PRINT_FLAG("(OK)",1)
               ELSE
@@ -316,15 +316,15 @@ RETURN
             PRINTL
             LOCAL:2 = 0
             PRINT 즉각함락 조건(연모/복종) : 
-            LOCAL:2 += SPOILER_PRINT_FLAG("연모 ", CFLAG:14 & 1)
-            LOCAL:2 += SPOILER_PRINT_FLAG("망신 ", CFLAG:14 & 2)
-            LOCAL:2 += SPOILER_PRINT_FLAG("친애 ", CFLAG:14 & 4)
-            LOCAL:2 += SPOILER_PRINT_FLAG("상애 ", CFLAG:14 & 8)
-            LOCAL:2 += SPOILER_PRINT_FLAG("복종 ", CFLAG:15 & 1)
-            LOCAL:2 += SPOILER_PRINT_FLAG("예속 ", CFLAG:15 & 4)
-            LOCAL:2 += SPOILER_PRINT_FLAG("낙인 ", CFLAG:15 & 2)
-            LOCAL:2 += SPOILER_PRINT_FLAG("사역마 ", CFLAG:15 & 8)
-            LOCAL:2 += SPOILER_PRINT_FLAG("음란 ", CFLAG:16 & 1)
+            LOCAL:2 += SPOILER_PRINT_FLAG("연모 ", CFLAG:이벤트취득연모 & 1)
+            LOCAL:2 += SPOILER_PRINT_FLAG("망신 ", CFLAG:이벤트취득연모 & 2)
+            LOCAL:2 += SPOILER_PRINT_FLAG("친애 ", CFLAG:이벤트취득연모 & 4)
+            LOCAL:2 += SPOILER_PRINT_FLAG("상애 ", CFLAG:이벤트취득연모 & 8)
+            LOCAL:2 += SPOILER_PRINT_FLAG("복종 ", CFLAG:이벤트취득복종 & 1)
+            LOCAL:2 += SPOILER_PRINT_FLAG("예속 ", CFLAG:이벤트취득복종 & 4)
+            LOCAL:2 += SPOILER_PRINT_FLAG("낙인 ", CFLAG:이벤트취득복종 & 2)
+            LOCAL:2 += SPOILER_PRINT_FLAG("사역마 ", CFLAG:이벤트취득복종 & 8)
+            LOCAL:2 += SPOILER_PRINT_FLAG("음란 ", CFLAG:이벤트취득음란 & 1)
             PRINT  취득경험 있음
             IF LOCAL:2 >= 9
                 CALLF SPOILER_PRINT_FLAG("(OK)",1)
@@ -335,14 +335,14 @@ RETURN
         ENDIF
 
         ;괴조인격
-        IF TALENT:169 == 0
+        IF TALENT:괴조인격 == 0
             LOCAL:2 = 0
             PRINT 괴조인격 조건　　　　　  : 
-            LOCAL:2 += SPOILER_PRINT_FLAG("유아퇴행 ", CFLAG:17 & 1)
-            LOCAL:2 += SPOILER_PRINT_FLAG("광기 ", CFLAG:17 & 2)
-            LOCAL:2 += SPOILER_PRINT_FLAG("정신붕괴 ", CFLAG:17 & 4)
-            LOCAL:2 += SPOILER_PRINT_FLAG("괴뢰 ", CFLAG:17 & 8)
-            LOCAL:2 += SPOILER_PRINT_FLAG("기억소거 ", CFLAG:17 & 16)
+            LOCAL:2 += SPOILER_PRINT_FLAG("유아퇴행 ", CFLAG:이벤트취득붕괴 & 1)
+            LOCAL:2 += SPOILER_PRINT_FLAG("광기 ", CFLAG:이벤트취득붕괴 & 2)
+            LOCAL:2 += SPOILER_PRINT_FLAG("정신붕괴 ", CFLAG:이벤트취득붕괴 & 4)
+            LOCAL:2 += SPOILER_PRINT_FLAG("괴뢰 ", CFLAG:이벤트취득붕괴 & 8)
+            LOCAL:2 += SPOILER_PRINT_FLAG("기억소거 ", CFLAG:이벤트취득붕괴 & 16)
             PRINT  취득경험 있음
             IF LOCAL:2 >= 5
                 CALLF SPOILER_PRINT_FLAG("(OK)",1)

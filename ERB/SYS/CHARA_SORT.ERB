@@ -22,7 +22,7 @@ REPEAT CHARANUM
     SIF COUNT == MASTER
         CONTINUE
     ;실종 중도 제외
-    SIF CFLAG:COUNT:4
+    SIF CFLAG:COUNT:조교관외
         CONTINUE
     ;조교 대상과 조수를 보존한다
     IF COUNT == TARGET
@@ -54,7 +54,7 @@ DRAWLINE
 PRINTL 아래 항목대로 자동 정렬한다.
 PRINTL [1102] 캐릭터 번호　 [1103] 능력　　　[1104] 경험
 PRINTL [1105] 각인　　    　[1106] 구슬　　　[1107] 기념일
-PRINTFORML [1108] 체력 기력 \@(FLAG:1500 & 1) ? 및 체격 #\@
+PRINTFORML [1108] 체력 기력 \@(FLAG:신체측정패치 & 1) ? 및 체격 #\@
 PRINTL [1109] 호감도 수입 스트레스 등
 DRAWLINE
 PRINTFORMLC \@(LOCAL == 0) ? %" " * 13% # [1001] 앞 페이지로\@
@@ -189,7 +189,7 @@ ELSE
         ELSEIF TFLAG:0 == 6
             SIF COUNT >= 2 && COUNT <= 9
                 CONTINUE
-            SIF (FLAG:1500 & 1) == 0 && COUNT >= 10
+            SIF (FLAG:신체측정패치 & 1) == 0 && COUNT >= 10
                 CONTINUE
             SIF STRLENS(BASENAME:COUNT) < 1
                 CONTINUE
@@ -197,9 +197,9 @@ ELSE
         ELSEIF TFLAG:0 == 7
             SIF STRLENS(CFLAGNAME:COUNT) < 1
                 CONTINUE
-            SIF (COUNT == 31 || (COUNT >= 60 && COUNT <= 64)) && TALENT:MASTER:198 == 0 && TALENT:MASTER:998 == 0
+            SIF (COUNT == 31 || (COUNT >= 60 && COUNT <= 64)) && TALENT:MASTER:초상계산 == 0 && TALENT:MASTER:Debug == 0
                 CONTINUE
-            SIF (COUNT == 80 || COUNT == 81) && FLAG:13 & 1024 == 0
+            SIF (COUNT == 80 || COUNT == 81) && FLAG:아이템확장 & 1024 == 0
                 CONTINUE
             COM_NAME = %CFLAGNAME:COUNT%
         ENDIF
@@ -254,11 +254,11 @@ ELSEIF TFLAG:0 == 5
 ELSEIF TFLAG:0 == 6
     COM_NAME = %BASENAME:RESULT%
 ELSEIF TFLAG:0 == 7
-    SIF (RESULT == 80 || RESULT == 81) && FLAG:13 & 1024 == 0
+    SIF (RESULT == 80 || RESULT == 81) && FLAG:아이템확장 & 1024 == 0
         GOTO INPUT_LOOP_0
     COM_NAME = %CFLAGNAME:RESULT%
 ENDIF
-IF TFLAG:0 == 6 && TFLAG:2 > 9 && FLAG:1500 & 1
+IF TFLAG:0 == 6 && TFLAG:2 > 9 && FLAG:신체측정패치 & 1
     REPEAT CHARANUM
         CALL MAKE_SIZE, 1, COUNT
     REND
@@ -352,7 +352,7 @@ REPEAT 20
     ;주인공과 실종 캐릭터는 배제
     SIF LOCAL == MASTER
         CONTINUE
-    SIF CFLAG:LOCAL:4
+    SIF CFLAG:LOCAL:조교관외
         CONTINUE
     ;첫 번째에 선택한 캐릭터는 배제
     SIF LOCAL == ARG:1
@@ -363,7 +363,7 @@ REPEAT 20
         PRINT ★
     ELSEIF ISASSI:LOCAL == 1
         PRINT ●
-    ELSEIF CFLAG:LOCAL:1 == 2
+    ELSEIF CFLAG:LOCAL:매각가능 == 2
         PRINT ○
     ELSE
         PRINT 　

@@ -9,20 +9,20 @@
 SIF DITEMTYPE:999:380 > 0
     RETURN 0
 ;獣姦系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 8192) == 0
+SIF (FLAG:커맨드확장 & 8192) == 0
     RETURN 0
 ;動物性愛경험이 1미만의 場合
 ;이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && EXP:56 < EXPLV:1
+SIF FLAG:VA이상조교필터 & 4 && EXP:동물성애경험 < EXPLV:1
     RETURN 0
 ;動物小屋と犬が필요
-SIF (FLAG:72 & 1) == 0 || (FLAG:72 & 2) == 0
+SIF (FLAG:보유한동물 & 1) == 0 || (FLAG:보유한동물 & 2) == 0
     RETURN 0
 ;主人じゃないとダメ
 SIF ASSIPLAY
     RETURN 0
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;쿠스코 삽입 중에는 불가
 SIF TEQUIP:21
@@ -66,7 +66,7 @@ COM_NAME = 버터개플레이
 CALL TRAIN_MESSAGE_COM380
 
 DOWNBASE:0 += 10
-DOWNBASE:1 += 75
+DOWNBASE:기력 += 75
 
 SOURCE:12 = 220
 SOURCE:19 = 120
@@ -76,22 +76,22 @@ SOURCE:30 = 5000
 SOURCE:31 = 15500
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 60
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 240
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 1050
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 2250
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 3600
 ELSE
     SOURCE:0 = 4950
 ENDIF
 
 ;고양이혀 소유는 트라우마와 일탈 증가
-IF TALENT:54
+IF TALENT:고양이혀
     TIMES SOURCE:31 , 2.0
     SOURCE:25 = 800
 ENDIF
@@ -99,7 +99,7 @@ ENDIF
 ;노예의 V에 동물의 더러움을 붙이고 싶은 곳이지만 향후가 과제로 한다
 
 ;음란을 가지고 있지 않아서, 동물성사랑 경험이 없었던 경우에는 이상 경험이 증가한다
-SIF EXP:56 == 0 && TALENT:170 == 0
+SIF EXP:동물성애경험 == 0 && TALENT:음란 == 0
     TCVAR:50 += 1
 
 TCVAR:56 += 1
@@ -114,14 +114,14 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM380
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORM %CALLNAME:TARGET%의 고간에 버터를 바르니, 그 향을 눈치챈 개가 %CALLNAME:TARGET%의 고간을 파고들며, 
-IF TALENT:121 && PALAM:13 >= PALAMLV:3
+IF TALENT:후타나리 && PALAM:13 >= PALAMLV:3
     PRINT 발기한 페니스에 혀를 올려 핥아댔다.
-ELSEIF TALENT:121
+ELSEIF TALENT:후타나리
     PRINT 페니스의 뿌리를 혀로 핥아댔다….
 ELSEIF PALAM:13 >= PALAMLV:3
     PRINT 뾰족할 정도로 솟아오른 클리토리스를 혀로 빨아댔다….

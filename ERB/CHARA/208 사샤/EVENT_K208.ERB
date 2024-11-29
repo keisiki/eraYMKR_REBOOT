@@ -19,8 +19,8 @@
 @EVENTTRAIN
 #PRI
 ;FLAG:1208 = 1
-SIF FLAG:11 == 0
-FLAG:11 = 2
+SIF FLAG:캐릭터대사표시 == 0
+FLAG:캐릭터대사표시 = 2
 
 @EVENTEND
 #LATER
@@ -35,12 +35,12 @@ RETURN 1
 ;조교 개시시의 대사 CFLAG 201～210을 사용
 ;-------------------------------------------------
 @EVENTTRAIN
-SIF FLAG:11 <= 0
+SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 SIF NO:TARGET != 208
     RETURN 0
 ;[정신붕괴] [괴뢰]시 대사를 스킵한다
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;--------------------------------------------------
 ;特定조수, 主人時に特殊조수口上を呼び出す
@@ -69,7 +69,7 @@ SIF TALENT:167 || TALENT:168
 IF CFLAG:5001 == 0
     DRAWLINE
     ;봉사정신 Lv3 이상에다 반발각인 없음(쉽게 말해 주차 인계용)
-    IF ABL:13 >= 3 && MARK:9 == 0 && (CFLAG:17 & 16) == 0
+    IF ABL:봉사정신 >= 3 && MARK:반발각인 == 0 && (CFLAG:이벤트취득붕괴 & 16) == 0
         PRINTFORMW 「음, 뭔가 여러가지로 환경이 바뀐 것 같네」
         PRINTFORMW 「이건 그건가. 강하게 뉴 게임이라는 녀석이군」
     ;통상의 첫조교는 이쪽
@@ -98,14 +98,14 @@ IF CFLAG:5001 == 0
 ;    RETURN 1
 
 ;屈服刻印Lv3
-;ELSEIF CFLAG:5001 < 4 && MARK:屈服刻印 == 3 && (TALENT:150 || TALENT:160 || TALENT:170) == 0
+;ELSEIF CFLAG:5001 < 4 && MARK:屈服刻印 == 3 && (TALENT:연모 || TALENT:복종 || TALENT:음란) == 0
 ;    DRAWLINE
 ;    PRINTFORMW 
 ;    CFLAG:5001 = 4
 ;    RETURN 1
 
 ;함락 후
-;ELSEIF CFLAG:5001 < 5 && (TALENT:150 || TALENT:160 || TALENT:170)
+;ELSEIF CFLAG:5001 < 5 && (TALENT:연모 || TALENT:복종 || TALENT:음란)
 ;    DRAWLINE
 ;    PRINTFORMW 
 ;    CFLAG:5001 = 5
@@ -125,7 +125,7 @@ ELSEIF ASSI < 0
     ;처음
 ;    IF CFLAG:5002 == 0
         ;연모＋연모時初口上（陥落イベント）が発生済み
-;        IF (TALENT:150 || TALENT:160 || TALENT:170) && CFLAG:201 >= 5
+;        IF (TALENT:연모 || TALENT:복종 || TALENT:음란) && CFLAG:201 >= 5
 ;            PRINTFORMW 
         ;그 외
 ;        ELSE
@@ -136,7 +136,7 @@ ELSEIF ASSI < 0
     ;2회째 이후
 ;    ELSE
         ;연모
-;        IF (TALENT:150 || TALENT:160 || TALENT:170)
+;        IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
 ;            PRINTFORMW 
         ;그 외
 ;        ELSE
@@ -150,7 +150,7 @@ ELSEIF ASSI < 0
     ;처음
 ;    IF CFLAG:5003 == 0
         ;연모＋연모時初口上（陥落イベント）が発生済み
-;        IF (TALENT:150 || TALENT:160 || TALENT:170) && CFLAG:201 >= 5
+;        IF (TALENT:연모 || TALENT:복종 || TALENT:음란) && CFLAG:201 >= 5
 ;            PRINTFORMW 
         ;그 외
 ;        ELSE
@@ -161,7 +161,7 @@ ELSEIF ASSI < 0
     ;2회째 이후
 ;    ELSE
         ;연모
-;        IF (TALENT:150 || TALENT:160 || TALENT:170)
+;        IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
 ;            PRINTFORMW 
         ;그 외
 ;        ELSE
@@ -181,7 +181,7 @@ ENDIF
 @K208_KOJO2
 ;함락 후
 ;口調のせいかお姉キャラになってしまって幼稚持ちっぽくない不具合…
-IF (TALENT:150 || TALENT:160 || TALENT:170)
+IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
     DRAWLINE
     IF RAND:3 == 0
         PRINTFORML 「으음, 좋은 각도가…… 뭔가 찰싹찰싹하면 즐거울 거 같네」
@@ -214,12 +214,12 @@ RETURN 0
 ;조교종료시의 대사 CFLAG 211～220을 사용
 ;-------------------------------------------------
 @EVENTEND
-SIF FLAG:11 == 0
+SIF FLAG:캐릭터대사표시 == 0
     RETURN 0
 SIF NO != 208
     RETURN 0
 ;[정신붕괴] [괴뢰]시 대사를 스킵한다
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;--------------------------------------------------
 ;特定조수, 主人時に特殊조수口上を呼び出す
@@ -237,7 +237,7 @@ SIF TALENT:167 || TALENT:168
 ;調教終了時のセリフ
 ;--------------------------------------------------
 ;함락 후
-IF (TALENT:150 || TALENT:160 || TALENT:170)
+IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
     DRAWLINE
     ;체력이 500 이상
     IF BASE:0 >= 500
@@ -285,7 +285,7 @@ SIF TEQUIP:42 && (SELECTCOM != 226 && SELECTCOM != 229 && SELECTCOM != 506 && SE
 SIF EQUIP:14 || TFLAG:899 > 0 || TFLAG:898 == 1
     RETURN 0
 ;[정신붕괴] [괴뢰]시 대사를 스킵한다
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;--------------------------------------------------
 ;特定조수, 主人時に特殊조수口上を呼び出す
@@ -308,7 +308,7 @@ SIF TALENT:167 || TALENT:168
 ;-------------------------------------------------
 IF SELECTCOM == 0 || SELECTCOM == 606
     ;Ｃ感覚またはＢ感覚Lv2以上
-    IF (ABL:0 >= 2 || ABL:3 >= 2)
+    IF (ABL:C감각 >= 2 || ABL:B감각 >= 2)
         PRINTFORMW 「아, 하아, 우……」
         CFLAG:9000 = 2
     ;그 외
@@ -325,14 +325,14 @@ ENDIF
 ;クンニ
 IF SELECTCOM == 1
     ;함락 후
-    IF (TALENT:150 || TALENT:160 || TALENT:170)
+    IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
         PRINTFORMW 「우웃, 읏, 벗기지, 하앗, 마랏, 크으…읏」
         PRINTFORMW 「앗, 잠깐, 벗겨버릴대로 벗겨놓곤 버려두는 거―― 히야아아아!?」
         PRINTFORMW 갑작스럽게 입술로 깨물자, 들뜬 목소리와 함께 사샤의 허벅지가 떨렸다.
         PRINTFORMW 「큿, 읏, 핫, 응, 으으으응…♪」
         CFLAG:9001 = 3
     ;Ｃ感覚Lv2以上
-    ELSEIF ABL:0 >= 2
+    ELSEIF ABL:C감각 >= 2
         PRINTFORMW 「가장자리만 맴돌지 말고, 흐…읏, 아, 하…앗」
         CFLAG:9001 = 2
     ;그 외
@@ -348,11 +348,11 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 2 && TEQUIP:25 == 0
     ;Ａ感覚Lv2以上
-    IF ABL:2 >= 2
+    IF ABL:A감각 >= 2
         PRINTFORMW 「응, 읏, 장벽을,손가락이, 웃, 문질러…선」
         CFLAG:9002 = 3
     ;Ａ感覚Lv1
-    ELSEIF ABL:2 == 1
+    ELSEIF ABL:A감각 == 1
         PRINTFORMW 「후, 응…」
         CFLAG:9002 = 2
     ;그 외
@@ -368,7 +368,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 3
     ;Ｂ感覚Lv2以上
-    IF ABL:3 >= 2
+    IF ABL:B감각 >= 2
         PRINTFORMW 「하, 으…응, 으…너, 일부러 젖꼭지를 피해서, 아아…앗」
         PRINTFORMW 「하이이이잇, 하, 거깃, 거길 만져줘, 젖꼭지를, 으으으…읏!」
         CFLAG:9003 = 2
@@ -386,7 +386,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 4 || SELECTCOM == 600
     ;Ｖ感覚Lv2以上
-    IF ABL:1 >= 3
+    IF ABL:V감각 >= 3
         PRINTFORMW 「큿, 클리토리스 뒷면을, 교활하게, 하아…앗, 후아아아앗♪」
         CFLAG:9004 = 2
     ;그 외
@@ -402,7 +402,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 6
     ;함락 후
-    IF (TALENT:150 || TALENT:160 || TALENT:170)
+    IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
         PRINTFORMW 「응, 츄웃, 츄릅, 하읍, 으으응…♪」
         CFLAG:9006 = 2
     ;그 외
@@ -419,7 +419,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 7
     ;노출벽Lv4以上
-    IF ABL:14 >= 4
+    IF ABL:노출증 >= 4
         ;野外プレイ中＋ギャラリー有り
         IF TEQUIP:52 && TFLAG:151 == 4
             PRINTFORMW 「하아, 읏, 보여져서, 가버려어어어엇!!」
@@ -450,7 +450,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 10
     ;Ｃ感覚Lv2以上
-    IF ABL:0 >= 2
+    IF ABL:C감각 >= 2
         PRINTFORMW 「히, 웃, 응, 크으으으…읏!」
         CFLAG:9010 = 2
     ;그 외
@@ -468,7 +468,7 @@ ENDIF
 ;開始時
 IF SELECTCOM == 13 && TEQUIP:25
     ;Ａ感覚Lv3以上
-    IF ABL:2 >= 3
+    IF ABL:A감각 >= 3
         PRINTFORMW 「우으응… 엉덩이 안에서, 움직이는구나……」
         CFLAG:9013 = 2
     ;그 외
@@ -480,7 +480,7 @@ IF SELECTCOM == 13 && TEQUIP:25
 ;脱着時
 ELSEIF SELECTCOM == 13 && TEQUIP:25 == 0
     ;Ａ感覚Lv3以上
-    IF ABL:2 >= 3
+    IF ABL:A감각 >= 3
         PRINTFORMW 「이건… 지금은 좀 저리니까, 응, 만지지 말거라……」
         CFLAG:8812 = 2
     ;그 외
@@ -497,7 +497,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || SELECTCOM == 24 || SELECTCOM == 27 || SELECTCOM == 28 || SELECTCOM == 614 || SELECTCOM == 615 || SELECTCOM == 616 || SELECTCOM == 617
     ;処女かつ陥落
-    IF TALENT:0 == 1 && (TALENT:150 || TALENT:160 || TALENT:170)
+    IF TALENT:처녀 == 1 && (TALENT:연모 || TALENT:복종 || TALENT:음란)
         PRINTFORMW 「차, 참아 줄 터이니 어서 하거라…. 이 쪽은 긴장으로 울 것 같단 말이다……」
         PRINTFORMW 「학, 흐으으응…!」
         CFLAG:9020 = 1
@@ -505,7 +505,7 @@ IF SELECTCOM == 20 || SELECTCOM == 21 || SELECTCOM == 22 || SELECTCOM == 23 || S
     ;2회째 이후
     ELSE
         ;함락 후
-        IF (TALENT:150 || TALENT:160 || TALENT:170)
+        IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
             ;前回のコマンドが主人によるセックス系
             IF TFLAG:133 == 0 && (PREVCOM == 20 || PREVCOM == 21 || PREVCOM == 22 || PREVCOM == 23 || PREVCOM == 24 || PREVCOM == 27 || PREVCOM == 28 || PREVCOM == 614 || PREVCOM == 615 || PREVCOM == 616 || PREVCOM == 617)
                 ;正常位・挿入Ｇスポ責め・挿入子宮口責め
@@ -558,7 +558,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 30 || SELECTCOM == 31 || SELECTCOM == 32 || SELECTCOM == 33 || SELECTCOM == 34 || SELECTCOM == 37 || SELECTCOM == 38 || SELECTCOM == 618 || SELECTCOM == 619
     ;Ａ感覚Lv3以上
-    IF ABL:2 >= 3
+    IF ABL:A감각 >= 3
         ;正常位アナルは専用. 그 외は4種類からランダム
         IF SELECTCOM == 30
             PRINTFORMW 「좀 더 체중을 실어서, 난폭하게 해주길 원하는데……」
@@ -590,7 +590,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 40
     ;함락 후
-    IF (TALENT:150 || TALENT:160 || TALENT:170)
+    IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
         PRINTFORMW 「정말이지, 씩씩하기도 하지…. 후후, 음낭의 경계선을… 얍얍♪」
         CFLAG:9040 = 2
     ;그 외
@@ -606,12 +606,12 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 41
     ;함락 후
-    IF (TALENT:150 || TALENT:160 || TALENT:170)
+    IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
         PRINTFORMW 「으음, 웅~」
         PRINTFORMW 「츕, 츄웃, 츄릇, 쮸우웁」
         CFLAG:9041 = 3
     ;技巧Lv2以上＋봉사정신Lv2以上(汚れを舐め取るようになる)
-    ELSEIF ABL:12 >= 2 && ABL:13 >= 2
+    ELSEIF ABL:기교 >= 2 && ABL:봉사정신 >= 2
         PRINTFORMW 「합, 으……응, 쮸웁, 츄웃」
         CFLAG:9041 = 2
     ;그 외
@@ -627,7 +627,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 42
     ;함락 후
-    IF (TALENT:150 || TALENT:160 || TALENT:170)
+    IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
         PRINTFORMW 「어떠한가, 일취월장하지 않았느냐?」
         PRINTFORMW 「좀 더, 격렬하게 해주마…… 응, 후웃, 앗, 하아, 하앗……」
         CFLAG:9042 = 2
@@ -644,7 +644,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 43
     ;Ｃ感覚Lv3以上
-    IF ABL:0 >= 3
+    IF ABL:C감각 >= 3
         PRINTFORMW 「하아, 으, 응, 으응…읏」
         CFLAG:9043 = 2
     ;그 외
@@ -660,7 +660,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 48
     ;함락 후
-    IF (TALENT:150 || TALENT:160 || TALENT:170)
+    IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
         PRINTFORMW 「아니, 이제 와서 머리카락이 더럽혀진다하더라도 아무래도 좋지만은……」
         PRINTFORMW 「소첩의 새집머리에 넣고, 그… 즐거운 것이냐?」
         PRINTFORMW 「뭐어, 즐겁다면 즐기면 되겠지만은……」
@@ -678,7 +678,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 100 && TEQUIP:50
     ;노출벽Lv4以上
-    IF ABL:14 >= 4
+    IF ABL:노출증 >= 4
         PRINTFORMW 「후후, 윤기가 흐르지 않는가…」
         CFLAG:9100 = 3
     ;絶頂経験済み
@@ -699,7 +699,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 111 || SELECTCOM == 620
     ;노출벽Lv4以上
-    IF ABL:14 >= 4
+    IF ABL:노출증 >= 4
         ;野外プレイ中＋ギャラリー有り
         IF TEQUIP:52 && TFLAG:151 == 4
             PRINTFORMW 「이 몸이 소변을 누는 모습을, 잔뜩 보거라, 으…읏, 나온다, 나오는구나…앗」
@@ -740,7 +740,7 @@ ENDIF
 ;開始時
 IF SELECTCOM == 172 && TEQUIP:25
     ;Ａ感覚Lv3以上
-    IF ABL:2 >= 3
+    IF ABL:A감각 >= 3
         PRINTFORMW 「응, 하아, 긴 것이… 소첩의 엉덩이에, 전부 들어가 버린겐가……」
         CFLAG:9172 = 2
     ;그 외
@@ -752,7 +752,7 @@ IF SELECTCOM == 172 && TEQUIP:25
 ;脱着時
 ELSEIF SELECTCOM == 172 && TEQUIP:25 == 0
     ;Ａ感覚Lv3以上
-    IF ABL:2 >= 3
+    IF ABL:A감각 >= 3
         PRINTFORMW 「응…읏, 중독되겠구나, 이 감촉에 말이다… 하, 아…앗」
         PRINTFORMW 사샤의 항문은 구슬이 빠져나간 후에도, 배설감을 되새김질하듯 벌렁거리고 있었다
         CFLAG:8852 = 2
@@ -769,7 +769,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 174 && TEQUIP:25
     ;노출벽Lv4以上
-    IF ABL:14 >= 4
+    IF ABL:노출증 >= 4
         PRINTFORMW 「응앗, 들어간다앗……♪」
         CFLAG:9174 = 2
     ;그 외
@@ -786,7 +786,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 174 && TEQUIP:25 == 0
     ;노출벽Lv4以上
-    IF ABL:14 >= 4
+    IF ABL:노출증 >= 4
         ;野外プレイ中＋ギャラリー有り
         IF TEQUIP:52 && TFLAG:151 == 4
             PRINTFORMW 「잘 보고 있거라, 나와, 나온다, 응, 끄으으응…읏!」
@@ -821,12 +821,12 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 180
     ;Ａ感覚Lv2以上
-    IF ABL:2 >= 2
+    IF ABL:A감각 >= 2
         PRINTFORMW 「그런 곳을, 핥다니… 늘어져 버리면… 어쩌려고 그러느냐…앗」
         PRINTFORMW 「핫, 아아, 응앗……」
         CFLAG:9180 = 3
     ;Ａ感覚Lv1
-    ELSEIF ABL:2 == 1
+    ELSEIF ABL:A감각 == 1
         PRINTFORMW 「혀, 혀를, 안쪽으로오…옷」
         CFLAG:9180 = 2
     ;그 외
@@ -842,11 +842,11 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 181
     ;Ａ感覚Lv2以上
-    IF ABL:2 >= 2
+    IF ABL:A감각 >= 2
         PRINTFORMW 「하으읏…읏, 응… 아, 으으…읏」
         CFLAG:9181 = 3
     ;Ａ感覚Lv1
-    ELSEIF ABL:2 == 1
+    ELSEIF ABL:A감각 == 1
         PRINTFORMW 「하읏, 안쪽을 문질러 대는, 것은, 반칙, 이잖…나아……」
         CFLAG:9181 = 2
     ;그 외
@@ -862,7 +862,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 209
     ;함락 후
-    IF (TALENT:150 || TALENT:160 || TALENT:170)
+    IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
         PRINTFORMW 「응후, 츄웃, 할짝… 응후웃…♪」
         CFLAG:9209 = 2
     ;그 외
@@ -878,7 +878,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 230
     ;함락 후
-    IF (TALENT:150 || TALENT:160 || TALENT:170)
+    IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
         PRINTFORMW 「말하자면 보통보다도 더욱 깊숙히 머금고 빤단 말인가… 으음」
         PRINTFORMW 「으그읏, 부읍, 쥬웁, 푸푸, 쥬릅, 으으음……」
         CFLAG:9230 = 2
@@ -930,7 +930,7 @@ IF SELECTCOM == 212
     ;그 외
     ELSE
         ;Ｎ拡張経験50以上
-        IF EXP:35 >= 50
+        IF EXP:B확장경험 >= 50
             PRINTFORMW 「딱히 손대지 않아도, 젖이 느끼고 있다는 느낌이라고나 할까… 응」
         ELSE
             PRINTFORMW 「으으응… 후으, 응…읏」
@@ -950,7 +950,7 @@ IF SELECTCOM == 213
     ;그 외
     ELSE
         ;Ｎ拡張経験50以上
-        IF EXP:35 >= 50
+        IF EXP:B확장경험 >= 50
             IF RAND:3 == 0
                 PRINTFORMW 「거기, 잇, 거기닷, 젖꼭지를, 문지르며…언!」
             ELSEIF RAND:2 == 0
@@ -976,10 +976,10 @@ IF SELECTCOM == 215
     ;그 외
     ELSE
         ;Ｎ拡張経験181以上
-        IF EXP:35 >= 181
+        IF EXP:B확장경험 >= 181
             PRINTFORMW 「주인에게 개발된 젖구멍이네. 더 자세히 보시게…」
         ;Ｎ拡張経験76以上
-        ELSEIF EXP:35 >= 76
+        ELSEIF EXP:B확장경험 >= 76
             PRINTFORMW 「응… 주인에게 걸리면 젖구멍도 성기나 마찬가지로구만」
         ELSE
             PRINTFORMW 「꽤 야무지게 나빠졌구만…」
@@ -1012,7 +1012,7 @@ SIF TEQUIP:42
 SIF EQUIP:14 || TFLAG:899 > 0 || TFLAG:898 == 1
     RETURN 0
 ;[정신붕괴] [괴뢰]시 대사를 스킵한다
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;--------------------------------------------------
 ;特定조수, 主人時に特殊조수口上を呼び出す
@@ -1057,7 +1057,7 @@ SIF TEQUIP:42
 SIF EQUIP:14 || TFLAG:899 > 0 || TFLAG:898 == 1
     RETURN 0
 ;[정신붕괴] [괴뢰]시 대사를 스킵한다
-SIF TALENT:167 || TALENT:168
+SIF TALENT:정신붕괴 || TALENT:괴뢰
     RETURN 0
 ;--------------------------------------------------
 ;特定조수, 主人時に特殊조수口上を呼び出す
@@ -1077,7 +1077,7 @@ SIF TALENT:167 || TALENT:168
 ;-------------------------------------------------
 ;IF TFLAG:42 == 3 && CFLAG:8098 == 0
 ;    ;연모
-;    IF (TALENT:150 || TALENT:160 || TALENT:170)
+;    IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
 ;        PRINTFORMW 
 ;    ELSE
 ;        PRINTFORMW 
@@ -1094,13 +1094,13 @@ SIF TALENT:167 || TALENT:168
 ;-------------------------------------------------
 IF TFLAG:200 == 130
     ;음란
-    IF TALENT:170
+    IF TALENT:음란
         PRINTFORMW 마지막 조교를 마친 사샤는 가랑이에 뺨을 부비면서 새 주인이 오기를 기다리고 있다
         PRINTFORMW 「응~, 이 씩씩한 물건과도 이별이란 말인가. 섭섭하구만……」
         PRINTFORMW 그렇게 중얼거린 입술이, 물었어도 가지 못할 만큼 가볍게 귀두에 닿는다
         PRINTFORMW 「응…… 감사의 키스야. 다음의 여자아이도 기분 좋게 해주게나」
     ;연모 또는 복종
-    ELSEIF TALENT:150 || TALENT:160
+    ELSEIF TALENT:연모 || TALENT:복종
         PRINTFORMW 「하아…… 결국, 혼자 춤춘 꼴에 지나지 않누만」
         PRINTFORMW 「정말이지, 스스로도 어처구니 없도다……」
     ;그 외
@@ -1115,7 +1115,7 @@ ENDIF
 ;-------------------------------------------------
 IF TFLAG:200 == 140
     ;함락 후
-    IF (TALENT:150 || TALENT:160 || TALENT:170)
+    IF (TALENT:연모 || TALENT:복종 || TALENT:음란)
         PRINTFORMW 「잠자는 동안에도 몸이 삐걱거렸단 말이다.  이래서야 자면서 몸을 뒤척이지도 못하겠구먼…?」
         PRINTFORMW 「소첩이 어땠냔 말인가? 아아, 이 삐친 머리라면 잘 정리해도 삐져나와서 말이지」
         CFLAG:8240 = 2
@@ -1145,7 +1145,7 @@ PRINTL …………
 PRINTL ………
 PRINTW ……
 ;인기＋노출벽 Lv4 이상＋사샤를 찍은 비디오의 최고 매각치가 15000원 이상
-IF TALENT:94 && ABL:14 >= 4 && CFLAG:82 >= 15000
+IF TALENT:인기 && ABL:노출증 >= 4 && CFLAG:최고금액_비디오 >= 15000
     PRINTFORMW 「음, 매번 엄청난 양이로군」
     PRINTFORMW 책상 위에 산을 만드는 편지들을 보고 사샤는 만족스러운 듯이 말했다.
     PRINTFORMW 「자 읽어보도록 하지. 주인도 같이 읽도록 해라. 우리 앞으로 온 편지 정도는 읽어 줘야지」
@@ -1203,7 +1203,7 @@ PRINTL …………
 PRINTL ………
 PRINTW ……
 ;Ｖ経験がＡ経験より多い（オトコは勿論ＮＧ）
-IF EXP:0 > EXP:1 && TALENT:120 == 0
+IF EXP:V경험 > EXP:A경험 && TALENT:남자 == 0
     PRINTFORMW 「…으응…읏, 우…아아……」
     PRINTFORMW 사샤의 콧구멍에서, 힘없이 소리가 새어나왔다.
     PRINTFORMW 무엇을 할지 생각하며 30분간 보지를 휘저어댄 결과였다.
@@ -1233,7 +1233,7 @@ ELSE
     PRINTFORML 사샤는 자신의 엉덩이에 손가락이 들어가 온몸을 누볐던 쾌감에 시달린다.
     PRINTFORMW 절정 직전의 항문이, 두 손가락을 물어뜯듯이 죄어왔다.
     PRINTFORMW 「흥헤아아아앗, 엉덩이이이잇, 앗, 아이잇, 하아아아아♪」
-    IF TALENT:120 == 0
+    IF TALENT:남자 == 0
         PRINTFORMW 괄약근은 손가락에 달라붙어 심장이 뛰듯 맥박을 전달했고, 리듬에 맞춰 애액을 내뿜었다.
         PRINTFORMW 「하앗, 하아앗……하아, 엉덩이에서 물이 뚝뚝…♪」
     ELSE

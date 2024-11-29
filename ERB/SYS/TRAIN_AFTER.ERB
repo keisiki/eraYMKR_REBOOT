@@ -29,8 +29,8 @@ ELSEIF TEQUIP:94
 ENDIF
 
 ;애액 채취 이벤트
-IF FLAG:12 & 8
-    SIF TEQUIP:10 == 0 && PALAM:10 >= 30000 && PALAM:13 >= 50000 && (CFLAG:10 & 4) == 0 && (ITEM:81 > 0 || NOITEM) && TALENT:120 == 0
+IF FLAG:SHOP이벤트확장 & 8
+    SIF TEQUIP:10 == 0 && PALAM:10 >= 30000 && PALAM:13 >= 50000 && (CFLAG:수집품채취여부 & 4) == 0 && (ITEM:81 > 0 || NOITEM) && TALENT:남자 == 0
         CALL SWEET_POTATO_LW
 ENDIF
 
@@ -71,7 +71,7 @@ SIF TFLAG:165 > 0
     CALL SELL_DINNER_ASPARAGUS
 
 ;気力・体力の上昇チェック
-SIF FLAG:14 & 2
+SIF FLAG:조교모드 & 2
     CALL EVENT_GROWTH
 
 ;전시품 입수 이벤트의 처리--------------------------
@@ -113,10 +113,10 @@ SIF TFLAG:125
 ;--------------------------------------------------
 ;一定時間調教を行っていれば日常の珠取得判定をリセット
 ;調教時間の経過しないEASYおよびデバッグモード時は無条件でリセット
-SIF (TFLAG:107 > 20 && FLAG:3 > 2) || (TFLAG:107 > 10 && FLAG:3 == 2) || FLAG:3 == 1 || TALENT:998
+SIF (TFLAG:107 > 20 && FLAG:난이도 > 2) || (TFLAG:107 > 10 && FLAG:난이도 == 2) || FLAG:난이도 == 1 || TALENT:Debug
     FLAG:997 = 0
 ;[中毒扇動]判定用(一定時間調教を行っており、欲情が10000以上のときオンになる)
-SIF ASSI >= 0 && TALENT:ASSI:86 && TFLAG:107 > 20 && PALAM:13 > 9999
+SIF ASSI >= 0 && TALENT:ASSI:중독선동 && TFLAG:107 > 20 && PALAM:13 > 9999
     TFLAG:995 = 1
 
 ;마이너스 파라미터에 따른 스트레스 가산
@@ -134,7 +134,7 @@ SIF (EX:0+EX:1+EX:2+EX:3+EX:10+EX:11+EX:12+EX:13) > 0
     CALL PRINT_ORGASM
 
 ;CONFIG에서 호감도 표시가 ＯＮ일 때만 그 조교 중에 변화한 호감도를 표시한다
-IF FLAG:12 & 4
+IF FLAG:SHOP이벤트확장 & 4
     PRINTFORM 이번 조교로 %CALLNAME:TARGET%의 호감도는 
     IF TFLAG:238 == 0
         PRINTL 변하지 않았습니다.
@@ -144,7 +144,7 @@ IF FLAG:12 & 4
 ENDIF
 
 ;사용한 콘돔을 파기
-CFLAG:75 = 0
+CFLAG:사용후콘돔 = 0
 
 BEGIN ABLUP
 
@@ -177,7 +177,7 @@ ENDIF
 #FUNCTION
 VARSET LOCALS,""
 SPLIT "0,1,10,100,1000,2000,3000,5000,8000,12000,18000,25000,40000,75000,99999",",",LOCALS
-GETPALAMLV PALAM:ARG, (TALENT:150 || TALENT:160 || TALENT:170) ? 14 # 13
+GETPALAMLV PALAM:ARG, (TALENT:연모 || TALENT:복종 || TALENT:음란) ? 14 # 13
 LOCAL = TOINT(LOCALS:RESULT)
 SIF RESULT == 1 && PALAM:ARG >= PALAMLV:1*3
     LOCAL += 1
@@ -189,7 +189,7 @@ SIF RESULT == 3 && PALAM:ARG >= PALAMLV:3*2
 IF ARG >= 0 && ARG <= 3
     LOCAL = MIN(LOCAL + EX:ARG * 1000, 99999)
 ELSEIF ARG == 20 || ARG == 21 || ARG == 22
-    IF LOCAL > 99999 && FLAG:3 > 4
+    IF LOCAL > 99999 && FLAG:난이도 > 4
         LOCAL = 99999
     ELSEIF LOCAL > 10000
         LOCAL = 10000
@@ -359,7 +359,7 @@ ELSE
     TIMES LOCAL:1 , 1.60
 ENDIF
 ;残り気力の割合
-LOCAL = (BASE:1 / MAXBASE:1) * 100
+LOCAL = (BASE:기력 / MAXBASE:기력) * 100
 IF LOCAL < 2
     TIMES LOCAL:1 , 0.75
 ELSEIF LOCAL < 4
@@ -393,29 +393,29 @@ ELSE
     TIMES LOCAL:1 , 1.60
 ENDIF
 ;屈服刻印
-IF MARK:2 >= 3
+IF MARK:굴복각인 >= 3
     TIMES LOCAL:1 , 1.75
-ELSEIF MARK:2 == 2
+ELSEIF MARK:굴복각인 == 2
     TIMES LOCAL:1 , 1.50
-ELSEIF MARK:2 == 1
+ELSEIF MARK:굴복각인 == 1
     TIMES LOCAL:1 , 1.25
 ENDIF
 
 ;[臆病]
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL:1 , 1.50
 ;[自制心]
-SIF TALENT:20
+SIF TALENT:자제심
     TIMES LOCAL:1 , 0.75
 ;[悲観的]
-SIF TALENT:26
+SIF TALENT:비관적
     TIMES LOCAL:1 , 0.75
 
-CFLAG:65 += LOCAL:1
-SIF TALENT:MASTER:998 && LOCAL:1
+CFLAG:스트레스 += LOCAL:1
+SIF TALENT:MASTER:Debug && LOCAL:1
     PRINTFORML 스트레스＋{LOCAL:1}
 ;ストレス値は100万以上にはならない
-CFLAG:65 = LIMIT(CFLAG:65, 0, 999999)
+CFLAG:스트레스 = LIMIT(CFLAG:스트레스, 0, 999999)
 
 ;--------------------------------------------------
 ;조교 종료시의 절정 표시 처리

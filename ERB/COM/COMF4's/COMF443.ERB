@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:443 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;対象が요우무のときは반령이 調教可能なキャラでなおかつ主人や助手をしていない状態でないと使えない
 IF NO:TARGET == 19
@@ -20,13 +20,13 @@ IF NO:TARGET == 19
         SIF LOCAL == MASTER || LOCAL == ASSI
             CONTINUE
         ;妊娠していたら除外
-        SIF TALENT:LOCAL:140 == 1
+        SIF TALENT:LOCAL:임신 == 1
             CONTINUE
         ;失踪中などこの場にいないなら除外
-        SIF CFLAG:LOCAL:4
+        SIF CFLAG:LOCAL:조교관외
             CONTINUE
         ;反発刻印もしくは恐怖刻印３がある場合は除外(拒絶する)
-        SIF MARK:LOCAL:8 > 2 || MARK:LOCAL:9
+        SIF MARK:LOCAL:공포각인 > 2 || MARK:LOCAL:반발각인
             CONTINUE
         ;반령だったらLOCAL:1に+1
         SIF NO:LOCAL == 65
@@ -43,13 +43,13 @@ ELSEIF NO:TARGET == 70
         SIF LOCAL == MASTER || LOCAL == ASSI
             CONTINUE
         ;妊娠していたら除外
-        SIF TALENT:LOCAL:140 == 1
+        SIF TALENT:LOCAL:임신 == 1
             CONTINUE
         ;失踪中などこの場にいないなら除外
-        SIF CFLAG:LOCAL:4
+        SIF CFLAG:LOCAL:조교관외
             CONTINUE
         ;反発刻印もしくは恐怖刻印３がある場合は除外(拒絶する)
-        SIF MARK:LOCAL:8 > 2 || MARK:LOCAL:9
+        SIF MARK:LOCAL:공포각인 > 2 || MARK:LOCAL:반발각인
             CONTINUE
         ;반령(요우키)だったらLOCAL:1に+1
         SIF NO:LOCAL == 99
@@ -62,7 +62,7 @@ ELSE
     RETURN 0
 ENDIF
 ;助手可または恋慕または奉仕精神４이상または순종 · 기교 · 奉仕精神が全て3이상
-SIF CFLAG:1 < 2 && TALENT:150 == 0 && ABL:13 < 4 && (ABL:10 < 3 || ABL:12 < 3 || ABL:13 < 3)
+SIF CFLAG:매각가능 < 2 && TALENT:연모 == 0 && ABL:봉사정신 < 4 && (ABL:순종 < 3 || ABL:기교 < 3 || ABL:봉사정신 < 3)
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -86,10 +86,10 @@ CALL TRAIN_MESSAGE_COM443
 DOWNBASE:0 += 0
 
 IF TEQUIP:72 > 0
-    DOWNBASE:1 += 30
+    DOWNBASE:기력 += 30
     TEQUIP:72 = 0
 ELSE
-    DOWNBASE:1 += 40
+    DOWNBASE:기력 += 40
     TEQUIP:72 = 6
 ENDIF
 RETURN 1
@@ -102,8 +102,8 @@ PRINTL <유명의 고륜 발동 중>
 LOCALS:0 = 요우무
 LOCALS:1 = 요우키
 
-DOWNBASE:0 += DOWNBASE:1 * 4 / 5
-DOWNBASE:1 += 20
+DOWNBASE:0 += DOWNBASE:기력 * 4 / 5
+DOWNBASE:기력 += 20
 
 SOURCE:15 += 300
 IF (SELECTCOM >= 40 && SELECTCOM <= 59) || (SELECTCOM >= 300 && SELECTCOM <= 309) || SELECTCOM == 602 || SELECTCOM == 603 || SELECTCOM == 610
@@ -131,7 +131,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM443
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 LOCALS:0 = 요우무
@@ -145,7 +145,7 @@ IF PREVCOM != 440 && PREVCOM != 441 && PREVCOM != 442 && PREVCOM != 443 && PREVC
     ENDIF
 ENDIF
 IF TEQUIP:72 > 0
-    PRINTFORMW %LOCALS:((NO:TARGET == 70) > 0)%\@(TALENT:150) ? 에게 유명의 고륜을 그만두게 했다. # (은)는 유명의 고륜을 그만두었다. \@
+    PRINTFORMW %LOCALS:((NO:TARGET == 70) > 0)%\@(TALENT:연모) ? 에게 유명의 고륜을 그만두게 했다. # (은)는 유명의 고륜을 그만두었다. \@
 ELSE
-    PRINTFORMW %LOCALS:((NO:TARGET == 70) > 0)%\@(TALENT:150) ? (은)는 유명의 고륜을 사용했다. # 에 유명의 고륜을 사용하게 했다.\@
+    PRINTFORMW %LOCALS:((NO:TARGET == 70) > 0)%\@(TALENT:연모) ? (은)는 유명의 고륜을 사용했다. # 에 유명의 고륜을 사용하게 했다.\@
 ENDIF

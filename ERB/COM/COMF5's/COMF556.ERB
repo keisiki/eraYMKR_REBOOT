@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:556 > 0
     RETURN 0
 ;신사적인 촉수계 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 4096) == 0
+SIF (FLAG:커맨드확장 & 4096) == 0
     RETURN 0
 ;아이템進化の秘法を持っているか, 아이템なし設定でないとダメ
 SIF ITEM:59 == 0 && NOITEM == 0
@@ -18,19 +18,19 @@ SIF ITEM:59 == 0 && NOITEM == 0
 SIF TEQUIP:90 == 0
     RETURN 0
 ;조교자는 촉수사역LV4이상 필요
-SIF ABL:PLAYER:98 < 4
+SIF ABL:PLAYER:촉수사역 < 4
     RETURN 0
 ;촉수가 [放電촉수]を得ていないとダメ
-SIF (FLAG:75 & 4) == 0
+SIF (FLAG:촉수능력 & 4) == 0
     RETURN 0
 ;촉수가 [極細촉수]を得ていないとダメ
-SIF (FLAG:75 & 16) == 0
+SIF (FLAG:촉수능력 & 16) == 0
     RETURN 0
 ;촉수가 [遠隔精密制御]を得ていないとダメ
-SIF (FLAG:75 & 512) == 0
+SIF (FLAG:촉수능력 & 512) == 0
     RETURN 0
 ;機械でないとダメ
-SIF TALENT:206 == 0
+SIF TALENT:기계 == 0
     RETURN 0
 RETURN 1
 
@@ -45,7 +45,7 @@ COM_NAME = 촉수 치키치키
 CALL TRAIN_MESSAGE_COM556
 
 DOWNBASE:0 += 20
-DOWNBASE:1 += 80
+DOWNBASE:기력 += 80
 
 ;PALAM:고통을 본다
 IF PALAM:16 < PALAMLV:1
@@ -65,18 +65,18 @@ ENDIF
 LOCAL:1 = 1000
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     TIMES LOCAL:1 , 1.80
     LOCAL:2 = 5000
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     TIMES LOCAL:1 , 1.50
     LOCAL:2 = 3000
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     TIMES LOCAL:1 , 1.20
     LOCAL:2 = 2000
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     LOCAL:2 = 1000
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     TIMES LOCAL:1 , 0.80
     LOCAL:2 = 500
 ELSE
@@ -85,18 +85,18 @@ ELSE
 ENDIF
 
 ;ABL:촉수 중독을 본다
-IF ABL:35 == 0
+IF ABL:촉수중독 == 0
     TIMES LOCAL:2 , 1.50
     LOCAL:3 = 0
-ELSEIF ABL:35 == 1
+ELSEIF ABL:촉수중독 == 1
     TIMES LOCAL:2 , 1.20
     LOCAL:3 = 10
-ELSEIF ABL:35 == 2
+ELSEIF ABL:촉수중독 == 2
     LOCAL:3 = 30
-ELSEIF ABL:35 == 3
+ELSEIF ABL:촉수중독 == 3
     TIMES LOCAL:2 , 0.80
     LOCAL:3 = 60
-ELSEIF ABL:35 == 4
+ELSEIF ABL:촉수중독 == 4
     TIMES LOCAL:2 , 0.60
     LOCAL:3 = 100
 ELSE
@@ -128,7 +128,7 @@ RETURN 1
 PRINTL <촉수 해킹 실행중>
 
 DOWNBASE:0 += 10
-DOWNBASE:1 += 20
+DOWNBASE:기력 += 20
 
 ;쾌CVAB의 획득 소스 합계를 달성감, 쿄우준 추가, 욕정 추가, 중독 충족에 가산한다
 LOCAL:1 = SOURCE:0 + SOURCE:1 + SOURCE:2 + SOURCE:3
@@ -147,15 +147,15 @@ SOURCE:3 += (SOURCE:3 < 1) ?  0 # LOCAL:2
 FOR LOCAL, 30, 33
     IF SOURCE:LOCAL
         ;ABL:촉수 중독을 본다
-        IF ABL:35 == 0
+        IF ABL:촉수중독 == 0
             TIMES SOURCE:LOCAL , 0.90
-        ELSEIF ABL:35 == 1
+        ELSEIF ABL:촉수중독 == 1
             TIMES SOURCE:LOCAL , 0.75
-        ELSEIF ABL:35 == 2
+        ELSEIF ABL:촉수중독 == 2
             TIMES SOURCE:LOCAL , 0.50
-        ELSEIF ABL:35 == 3
+        ELSEIF ABL:촉수중독 == 3
             TIMES SOURCE:LOCAL , 0.35
-        ELSEIF ABL:35 == 4
+        ELSEIF ABL:촉수중독 == 4
             TIMES SOURCE:LOCAL , 0.20
         ELSE
             TIMES SOURCE:LOCAL , 0.10
@@ -180,19 +180,19 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     LOCAL:3 = 30
     LOCAL:4 = 20
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     LOCAL:3 = 80
     LOCAL:4 = 40
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     LOCAL:3 = 160
     LOCAL:4 = 80
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     LOCAL:3 = 320
     LOCAL:4 = 160
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     LOCAL:3 = 700
     LOCAL:4 = 320
 ELSE
@@ -201,17 +201,17 @@ ELSE
 ENDIF
 
 ;복종
-IF TALENT:160
+IF TALENT:복종
     TIMES LOCAL:3 , 1.50
     TIMES LOCAL:4 , 1.20
 ENDIF
 
 ;MARK:공포 각인을 본다
-IF MARK:8 == 1
+IF MARK:공포각인 == 1
     TIMES LOCAL:4 , 1.20
-ELSEIF MARK:8 == 2
+ELSEIF MARK:공포각인 == 2
     TIMES LOCAL:4 , 1.50
-ELSEIF MARK:8 >= 3
+ELSEIF MARK:공포각인 >= 3
     TIMES LOCAL:4 , 2.00
 ENDIF
 
@@ -228,7 +228,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM556
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

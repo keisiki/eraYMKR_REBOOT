@@ -3,9 +3,9 @@
 ;=============================================================================
 @ABLUP33
 DRAWLINE
-IF TALENT:120 == 0
+IF TALENT:남자 == 0
     RETURN 0
-ELSEIF ABL:33 >= 5
+ELSEIF ABL:BL중독 >= 5
     JUMP ABLUP_MAX
 ENDIF
 
@@ -13,7 +13,7 @@ ENDIF
 SIF COST33(3)
     PRINTFORM %EXPNAME:50% {COST33(3)} 이상, 그리고 
 ;奉仕精神が必要
-PRINTFORML %ABLNAME:13% {ABL:33 + 1}LV 이상, 그리고 
+PRINTFORML %ABLNAME:13% {ABL:BL중독 + 1}LV 이상, 그리고 
 
 PRINTFORM [0] - %PALAMNAME:0%의 구슬×{COST33(0)}, %PALAMNAME:13%의 구슬×{COST33(1)}, %PALAMNAME:14%의 구슬×{COST33(1)}, %EXPNAME:13% {COST33(2)} 이상……
 CALL SHOW_ISABLUP_COMMON, CAN33(0)
@@ -34,8 +34,8 @@ ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-ABL:33 += 1
-PRINTFORMW %ABLNAME:33%의 레벨이 %조사처리(TOSTR(ABL:33),"가")% 되었습니다.
+ABL:BL중독 += 1
+PRINTFORMW %ABLNAME:33%의 레벨이 %조사처리(TOSTR(ABL:BL중독),"가")% 되었습니다.
 
 @AUTO_ABLUP33
 #LOCALSIZE 1
@@ -48,14 +48,14 @@ ELSE
     RETURN 0
 ENDIF
 
-ABL:33 += 1
+ABL:BL중독 += 1
 RETURN 1
 
 ;--------------------------------------------------
 ;レベルアップに必要な珠計算, レベルアップ予告処理
 ;--------------------------------------------------
 @ISABLUP33
-SIF ABL:33 >= 5 || TALENT:120 == 0
+SIF ABL:BL중독 >= 5 || TALENT:남자 == 0
     RETURN 0
 
 CALLF CALC_COST33, "CALC"
@@ -74,34 +74,34 @@ SIF ARGS == "GET"
 ;必要な条件の算出
 VARSET LOCAL, 0
 
-IF ABL:33 == 0
+IF ABL:BL중독 == 0
     LOCAL:0 = 10000
     LOCAL:1 = 3000
     LOCAL:2 = 1000
-ELSEIF ABL:33 == 1
+ELSEIF ABL:BL중독 == 1
     LOCAL:0 = 25000
     LOCAL:1 = 8000
     LOCAL:2 = 1500
-ELSEIF ABL:33 == 2
+ELSEIF ABL:BL중독 == 2
     LOCAL:0 = 50000
     LOCAL:1 = 15000
     LOCAL:2 = 2500
-ELSEIF ABL:33 == 3
+ELSEIF ABL:BL중독 == 3
     LOCAL:0 = 100000
     LOCAL:1 = 30000
     LOCAL:2 = 5000
     ;一線越えない
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 2.00
         TIMES LOCAL:1 , 2.00
         TIMES LOCAL:2 , 2.00
     ENDIF
-ELSEIF ABL:33 == 4
+ELSEIF ABL:BL중독 == 4
     LOCAL:0 = 300000
     LOCAL:1 = 55000
     LOCAL:2 = 8000
     ;一線越えない
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         TIMES LOCAL:0 , 3.00
         TIMES LOCAL:1 , 3.00
         TIMES LOCAL:2 , 3.00
@@ -109,24 +109,24 @@ ELSEIF ABL:33 == 4
 ENDIF
 
 ;倒錯的
-IF TALENT:80
+IF TALENT:도착적
     TIMES LOCAL:0 , 0.75
     TIMES LOCAL:1 , 0.75
     TIMES LOCAL:2 , 0.75
 ENDIF
 ;両刀
-IF TALENT:83
+IF TALENT:바이
     TIMES LOCAL:0 , 0.25
     TIMES LOCAL:1 , 0.25
     TIMES LOCAL:2 , 0.25
 ENDIF
 ;中毒しやすい
-IF TALENT:84
+IF TALENT:중독되기쉬움
     TIMES LOCAL:0 , 0.50
     TIMES LOCAL:1 , 0.50
     TIMES LOCAL:2 , 0.50
 ;中毒しにくい
-ELSEIF TALENT:85
+ELSEIF TALENT:중독되기어려움
     TIMES LOCAL:0 , 1.50
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
@@ -139,8 +139,8 @@ IF TFLAG:995 == 1
 ENDIF
 
 ;ＬＶ２이상に上げるときは異常経験必要（素質：[両刀][中毒しやすい]なら無視できる）
-SIF ABL:33 >= 2 && TALENT:83 == 0 && TALENT:84 == 0
-    LOCAL:3 = ABL:33 - 1
+SIF ABL:BL중독 >= 2 && TALENT:바이 == 0 && TALENT:중독되기쉬움 == 0
+    LOCAL:3 = ABL:BL중독 - 1
 
 RETURNF 0
 
@@ -154,11 +154,11 @@ SIF ARGS == "GET"
     RETURNF LOCAL:ARG
 VARSET LOCAL, 0
 ;異常経験が必要な場合
-SIF EXP:50 < COST33(3)
+SIF EXP:이상경험 < COST33(3)
     LOCAL:0 |= 2
 
 ;奉仕精神が必要
-SIF ABL:13 < ABL:33 + 1
+SIF ABL:봉사정신 < ABL:BL중독 + 1
     LOCAL:0 |= 4
 
 ;快Ｃ의 구슬で上げる
@@ -171,7 +171,7 @@ SIF JUEL:13 < COST33(1)
 SIF JUEL:14 < COST33(1)
     LOCAL:0 |= 1
 ;ＢＬ経験が必要
-SIF EXP:13 < COST33(2)
+SIF EXP:BL경험 < COST33(2)
     LOCAL:0 |= 2
 
 RETURNF (LOCAL:0 == 0)

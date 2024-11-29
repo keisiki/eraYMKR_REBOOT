@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:14 > 0
     RETURN 0
 ;강력 아이템·커맨드 무효시는 안 됨
-SIF (FLAG:13 & 2) == 0
+SIF (FLAG:아이템확장 & 2) == 0
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
@@ -21,7 +21,7 @@ SIF TEQUIP:55 && TEQUIP:55 != 12 && TEQUIP:55 != 15
 SIF TEQUIP:58
     RETURN 0
 ;훈도시 착용중의 경우 조교자의 기교 4이상 필수
-SIF TEQUIP:59 == 17 && ABL:PLAYER:12 < 4
+SIF TEQUIP:59 == 17 && ABL:PLAYER:기교 < 4
     RETURN 0
 ;촉수 조교 중에는 불가
 SIF TEQUIP:90
@@ -33,14 +33,14 @@ SIF TEQUIP:30 == 1
 SIF ITEM:15 == 0 && NOITEM == 0
     RETURN 0
 ;조교 대상이 [소인]의 경우는 주인이 [금단의 지식] 소유가 아니면 안 됨
-SIF TALENT:127 && TALENT:MASTER:56 == 0
+SIF TALENT:소인 && TALENT:MASTER:금단의지식 == 0
     RETURN 0
 ;대상으로 페니스가 있다면 안 됨
 SIF EXIST_BAR(TARGET)
     RETURN 0
 ;ASSI의 경우, 기교 3이상이 아니면 사용할 수 없다.
 IF ASSIPLAY
-    SIF ABL:ASSI:12 < 3
+    SIF ABL:ASSI:기교 < 3
         RETURN 0
 ENDIF
 ;다른 C계 장착도구 사용중은 불가
@@ -78,21 +78,21 @@ ENDIF
 CALL TRAIN_MESSAGE_COM14
 
 DOWNBASE:0 += 10
-DOWNBASE:1 += 80
+DOWNBASE:기력 += 80
 
 SOURCE:12 = 120
 SOURCE:31 = 70
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 200
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 400
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 900
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 1600
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 2400
 ELSE
     SOURCE:0 = 3000
@@ -113,15 +113,15 @@ IF TEQUIP:30
     TEQUIP:30 = 0
 ELSE
     IF TEQUIP:90
-        STAIN:3 |= 2
-        STAIN:3 |= 4
+        STAIN:보지 |= 2
+        STAIN:보지 |= 4
     ENDIF
     TEQUIP:30 = 1
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 SIF PLAYER == MASTER && TEQUIP:30 == 1
@@ -155,18 +155,18 @@ ELSE
 ENDIF
 
 DOWNBASE:0 += 5
-DOWNBASE:1 += 20
+DOWNBASE:기력 += 20
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     LOCAL = 40
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     LOCAL = 120
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     LOCAL = 250
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     LOCAL = 450
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     LOCAL = 600
 ELSE
     LOCAL = 750
@@ -186,15 +186,15 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL , 1.20
 ELSE
     TIMES LOCAL , 1.30
@@ -224,7 +224,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM14
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 ;토리코 모드에서의 직접 호출 대비
@@ -241,20 +241,20 @@ ENDIF
 PRINTL
 IF TEQUIP:90
     IF TEQUIP:30
-        IF ABL:35 > 2
+        IF ABL:촉수중독 > 2
             PRINTFORML 촉수는 %CALLNAME:TARGET%의 클리 고문을 그만두었다.
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 아직 모자란다는 표정을 지었다….
-        ELSEIF MARK:9 > 1
+        ELSEIF MARK:반발각인 > 1
             PRINTFORML 촉수는 %CALLNAME:TARGET%의 클리 고문을 그만두었다.
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 촉수에게 더럽혀진 부분을 곤란한 표정으로 응시하고 있다….
         ELSE
             PRINTFORMW 촉수는 %CALLNAME:TARGET%의 클리 고문을 그만두었다.
         ENDIF
     ELSE
-        IF ABL:35 > 2
+        IF ABL:촉수중독 > 2
             PRINTFORML 세세하게 나눠진 촉수가 %CALLNAME:TARGET%의 클리토리스를 쥐어짜기 시작하자, 
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 그 자극을 전신으로 느끼면서 요염한 \@(TEQUIP:42) ? 행동으로 # 소리를 내어 \@, %조사선택(CALLNAME:PLAYER, "를")% 기쁘게 했다….
-        ELSEIF MARK:9 > 1
+        ELSEIF MARK:반발각인 > 1
             PRINTFORML 세세하게 나눠진 촉수가 %CALLNAME:TARGET%의 클리토리스를 쥐어짜기 시작했다.
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 어떻게든 촉수를 피해보려고 몸을 꼬고 있다….
         ELSE
@@ -263,16 +263,16 @@ IF TEQUIP:90
     ENDIF
 ELSE
     IF TEQUIP:30
-        IF MARK:9 > 1
+        IF MARK:반발각인 > 1
             PRINTFORMW %조사선택(CALLNAME:PLAYER, "가")% 미처 손을 쓰기도 전에, %조사선택(CALLNAME:TARGET, "는")% %조사선택(COM_TOOL_NAME, "를")% 벗어 던졌다….
-        ELSEIF TALENT:153 && ASSIPLAY == 0
+        ELSEIF TALENT:상애 && ASSIPLAY == 0
             PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %조사선택(CALLNAME:TARGET, "로")%부터 %조사선택(COM_TOOL_NAME, "를")% 벗겼다.
             PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 다음엔 어디를 괴롭혀줄 지를 기대하며 %조사선택(CALLNAME:PLAYER, "를")% 뜨거운 시선으로 바라보고 있다….
         ELSE
             PRINTFORMW %조사선택(CALLNAME:PLAYER, "는")% %조사선택(CALLNAME:TARGET, "로")%부터 %조사선택(COM_TOOL_NAME, "를")% 벗겼다….
         ENDIF
     ELSE
-        IF MARK:9 > 1
+        IF MARK:반발각인 > 1
             PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% 거부하는 %조사선택(CALLNAME:TARGET, "를")% 억눌렀다.
             PRINTFORMW 그리고, %CALLNAME:TARGET%의 비부에 %조사선택(COM_TOOL_CALLNAME, "를")% 달았다….
         ELSE

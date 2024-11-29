@@ -9,10 +9,10 @@
 SIF DITEMTYPE:999:141 > 0
     RETURN 0
 ;Ｃ계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 1) == 0
+SIF (FLAG:커맨드확장 & 1) == 0
     RETURN 0
 ;요도개발경험이 1이하일 경우, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && EXP:46 <= 1
+SIF FLAG:VA이상조교필터 & 4 && EXP:요도개발경험 <= 1
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
@@ -33,18 +33,18 @@ SIF TEQUIP:32 == 1
 SIF ITEM:25 == 0 && NOITEM == 0
     RETURN 0
 ;남자일 경우, 기교3이상이 아니면 쓸 수 없다
-SIF TALENT:120 && ABL:12 < 3
+SIF TALENT:남자 && ABL:기교 < 3
     RETURN 0
 ;ASSI일 경우, 기교4이상이 아니면 쓸 수 없다。
 IF ASSIPLAY
-    SIF ABL:ASSI:12 < 4
+    SIF ABL:ASSI:기교 < 4
         RETURN 0
 ENDIF
 ;그밖의 Ｕ계 장착구 사용 중에는 불가
 SIF (TEQUIP:32 && TEQUIP:32 != 1)
     RETURN 0
 ;남자일 경우, Ｃ계 장착구 사용 중에는 불가
-SIF (TEQUIP:30 || TEQUIP:31) && TALENT:120
+SIF (TEQUIP:30 || TEQUIP:31) && TALENT:남자
     RETURN 0
 ;욕실 플레이 중에는 플레이 매트가 없으면 불가
 SIF TEQUIP:53 && ITEM:42 == 0 && NOITEM == 0
@@ -93,47 +93,47 @@ ENDIF
 LOCAL:1 = 40
 
 ;EXP:U확장 경험을 본다
-IF EXP:34 < EXPLV:1
+IF EXP:U확장경험 < EXPLV:1
     TIMES LOCAL:1 , 3.00
-ELSEIF EXP:34 < EXPLV:2
+ELSEIF EXP:U확장경험 < EXPLV:2
     TIMES LOCAL:1 , 2.50
-ELSEIF EXP:34 < EXPLV:3
+ELSEIF EXP:U확장경험 < EXPLV:3
     TIMES LOCAL:1 , 2.00
-ELSEIF EXP:34 < EXPLV:4
+ELSEIF EXP:U확장경험 < EXPLV:4
     TIMES LOCAL:1 , 1.00
-ELSEIF EXP:34 < EXPLV:5
+ELSEIF EXP:U확장경험 < EXPLV:5
     TIMES LOCAL:1 , 0.80
 ELSE
     TIMES LOCAL:1 , 0.60
 ENDIF
 
 ;겁쟁이
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL:1 , 2.00
 ;감정결여
-SIF TALENT:22
+SIF TALENT:감정결여
     TIMES LOCAL:1 , 0.60
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES LOCAL:1 , 2.00
 
 DOWNBASE:0 += LOCAL:1
-DOWNBASE:1 += LOCAL:1 * 2
+DOWNBASE:기력 += LOCAL:1 * 2
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     SOURCE:0 = 80
     SOURCE:22 = 300
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     SOURCE:0 = 250
     SOURCE:22 = 800
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     SOURCE:0 = 600
     SOURCE:22 = 1400
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     SOURCE:0 = 1000
     SOURCE:22 = 1800
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     SOURCE:0 = 1300
     SOURCE:22 = 2100
 ELSE
@@ -142,31 +142,31 @@ ELSE
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 < 1
+IF ABL:마조끼 < 1
     SOURCE:20 = 2000
     SOURCE:22 += 200
     SOURCE:30 = 1000
     SOURCE:31 = 1000
     SOURCE:32 = 2000
-ELSEIF ABL:21 < 2
+ELSEIF ABL:마조끼 < 2
     SOURCE:20 = 1600
     SOURCE:22 += 500
     SOURCE:30 = 2000
     SOURCE:31 = 1000
     SOURCE:32 = 1000
-ELSEIF ABL:21 < 3
+ELSEIF ABL:마조끼 < 3
     SOURCE:20 = 1200
     SOURCE:22 += 800
     SOURCE:30 = 1000
     SOURCE:31 = 1000
     SOURCE:32 = 500
-ELSEIF ABL:21 < 4
+ELSEIF ABL:마조끼 < 4
     SOURCE:20 = 800
     SOURCE:22 += 1200
     SOURCE:30 = 500
     SOURCE:31 = 500
     SOURCE:32 = 100
-ELSEIF ABL:21 < 5
+ELSEIF ABL:마조끼 < 5
     SOURCE:20 = 600
     SOURCE:22 += 1500
     SOURCE:30 = 250
@@ -212,41 +212,41 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:0 , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:0 , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:0 , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:0 , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:0 , 1.20
 ELSE
     TIMES SOURCE:0 , 1.30
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
 ;요도광
-SIF TALENT:175
+SIF TALENT:요도광
     TIMES SOURCE:0 , 1.20
 
 ;C민감, 둔감을 본다
 ;쾌C자체의 체크는 다음에 정리해 준다
-IF TALENT:101
+IF TALENT:C둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:22 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:100
+ELSEIF TALENT:C민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:22 , 0.60
     TIMES SOURCE:31 , 0.60
 ENDIF
 
 ;처녀로 정조관념
-SIF TALENT:0 == 1 && TALENT:30
+SIF TALENT:처녀 == 1 && TALENT:정조관념
     SOURCE:22 /= 3
 
 IF (FLAG:1100 & 1) && TEQUIP:90 == 0
@@ -283,11 +283,11 @@ ELSE
 ENDIF
 
 ;방뇨 레벨 증가
-CFLAG:31 += LOCAL:2
-SIF BASE:4
-    BASE:4 = 0
+CFLAG:방뇨레벨 += LOCAL:2
+SIF BASE:뇨의
+    BASE:뇨의 = 0
 TCVAR:46 += LOCAL:2
-SIF (EXP:46 + TCVAR:46) <= 5
+SIF (EXP:요도개발경험 + TCVAR:46) <= 5
     TCVAR:50 += 1
 
 ;커맨드 속성：촉수
@@ -320,44 +320,44 @@ ENDIF
 LOCAL:3 = 20
 
 ;EXP:U확장 경험을 본다
-IF EXP:34 < EXPLV:1
+IF EXP:U확장경험 < EXPLV:1
     TIMES LOCAL:3 , 3.00
-ELSEIF EXP:34 < EXPLV:2
+ELSEIF EXP:U확장경험 < EXPLV:2
     TIMES LOCAL:3 , 2.50
-ELSEIF EXP:34 < EXPLV:3
+ELSEIF EXP:U확장경험 < EXPLV:3
     TIMES LOCAL:3 , 2.00
-ELSEIF EXP:34 < EXPLV:4
+ELSEIF EXP:U확장경험 < EXPLV:4
     TIMES LOCAL:3 , 1.00
-ELSEIF EXP:34 < EXPLV:5
+ELSEIF EXP:U확장경험 < EXPLV:5
     TIMES LOCAL:3 , 0.80
 ELSE
     TIMES LOCAL:3 , 0.60
 ENDIF
 
 ;겁쟁이
-SIF TALENT:10
+SIF TALENT:겁쟁이
     TIMES LOCAL:3 , 2.00
 ;감정결여
-SIF TALENT:22
+SIF TALENT:감정결여
     TIMES LOCAL:3 , 0.60
 
 DOWNBASE:0 += LOCAL:3
-DOWNBASE:1 += LOCAL:3 * 2
+DOWNBASE:기력 += LOCAL:3 * 2
 
 ;ABL:C감각을 본다
-IF ABL:0 == 0
+IF ABL:C감각 == 0
     LOCAL = 80
     LOCAL:1 = 300
-ELSEIF ABL:0 == 1
+ELSEIF ABL:C감각 == 1
     LOCAL = 250
     LOCAL:1 = 800
-ELSEIF ABL:0 == 2
+ELSEIF ABL:C감각 == 2
     LOCAL = 600
     LOCAL:1 = 1400
-ELSEIF ABL:0 == 3
+ELSEIF ABL:C감각 == 3
     LOCAL = 1000
     LOCAL:1 = 1800
-ELSEIF ABL:0 == 4
+ELSEIF ABL:C감각 == 4
     LOCAL = 1300
     LOCAL:1 = 2100
 ELSE
@@ -366,19 +366,19 @@ ELSE
 ENDIF
 
 ;EXP:요도 경험을 본다
-IF EXP:46 < EXPLV:1
+IF EXP:요도개발경험 < EXPLV:1
     TIMES LOCAL , 0.50
     LOCAL:2 = 2000
-ELSEIF EXP:46 < EXPLV:2
+ELSEIF EXP:요도개발경험 < EXPLV:2
     TIMES LOCAL , 1.00
     LOCAL:2 = 300
-ELSEIF EXP:46 < EXPLV:3
+ELSEIF EXP:요도개발경험 < EXPLV:3
     TIMES LOCAL , 1.10
     LOCAL:2 = 50
-ELSEIF EXP:46 < EXPLV:4
+ELSEIF EXP:요도개발경험 < EXPLV:4
     TIMES LOCAL , 1.20
     LOCAL:2 = 10
-ELSEIF EXP:46 < EXPLV:5
+ELSEIF EXP:요도개발경험 < EXPLV:5
     TIMES LOCAL , 1.40
     LOCAL:2 = 0
 ELSE
@@ -418,41 +418,41 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL , 0.80
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL , 0.90
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL , 1.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL , 1.10
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL , 1.20
 ELSE
     TIMES LOCAL , 1.30
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES LOCAL:2 , 2.00
 ;요도광
-SIF TALENT:175
+SIF TALENT:요도광
     TIMES LOCAL , 1.20
 
 ;C민감, 둔감을 본다
 ;쾌C자체의 체크는 다음에 정리해 준다
-IF TALENT:101
+IF TALENT:C둔감
     TIMES LOCAL , 1.50
     TIMES LOCAL:1 , 1.50
     TIMES LOCAL:2 , 1.50
-ELSEIF TALENT:100
+ELSEIF TALENT:C민감
     TIMES LOCAL , 0.60
     TIMES LOCAL:1 , 0.60
     TIMES LOCAL:2 , 0.60
 ENDIF
 
 ;처녀로 정조관념
-SIF TALENT:0 == 1 && TALENT:30
+SIF TALENT:처녀 == 1 && TALENT:정조관념
     LOCAL:1 /= 3
 
 LOCAL:3 = LOCAL:1
@@ -476,17 +476,17 @@ SOURCE:31 += LOCAL:3
 
 ;카테터 삽입중 때는 강제적으로 뇨의를 개최되는 효과도(=방뇨 레벨 증가)
 IF TEQUIP:12
-    CFLAG:31 += 2
+    CFLAG:방뇨레벨 += 2
 ELSE
-    CFLAG:31 += 1
+    CFLAG:방뇨레벨 += 1
 ENDIF
 
 CALL EQUIP_MESSAGE_COM141
 
 TCVAR:46 += 3
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 ;촉수 경험 플래그
@@ -499,7 +499,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM141
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -513,14 +513,14 @@ IF TEQUIP:32 == 1
     PRINTL 빠져 나온 순간, 뜨거운 물보라가 포물선을 그리며 뿜어 나왔다.
     PRINTL
 
-    IF ABL:14 >= 5 && TALENT:45
+    IF ABL:노출증 >= 5 && TALENT:오줌싸개버릇
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 마음 깊숙이 적셔오는 쾌감에 허우적대고 있다.
         PRINTFORML %CALLNAME:TARGET%의 해방감으로 느슨해진 표정으로 퓩퓩 오줌을 싸면서 애액을 줄줄 흘리고 있다….
-    ELSEIF ABL:14 >= 4
+    ELSEIF ABL:노출증 >= 4
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 해방된 즐거움에 넋을 잃은 표정으로, 아직도 퓩퓩 하고 오줌을 싸고 있는 자신의 요도구를 응시하고 있다.
-    ELSEIF ABL:14 == 3
+    ELSEIF ABL:노출증 == 3
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 부끄러움보다 해방감 쪽이 컸는지, 안심한 표정을 짓고 있다.
-    ELSEIF ABL:14 >= 1
+    ELSEIF ABL:노출증 >= 1
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 몸을 기역자로 꺾은채로, 아직 남아있는 잔뇨감에 번민하고 있다….
     ELSE
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 치욕감에 새빨갛게 된 얼굴을 돌려버렸다.
@@ -543,7 +543,7 @@ WAIT
 
 [IF ENABLE_KOJO_EQUIP_MESSAGE]
 CALL KOJO_EQUIP_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 [ENDIF]
 
@@ -556,17 +556,17 @@ ELSE
 ENDIF
 PRINTL 넣은 채로 계속 괴롭혀지고 있다.
 PRINTL
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 요도에 들어있는 이물을 받아들일 수 없는지, 고뇌의 표정을 짓고 있다.
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 질끈 눈을 감고 결사적으로 오줌을 참고 있다.
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 오줌을 참으려 얼굴을 붉게 불들이고 허벅지를 모으고 있다.
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 하복부의 격통에 시달리면서도, 때때로 황홀한 표정을 짓고 있다.
-ELSEIF ABL:21 >= 5 && TALENT:45
+ELSEIF ABL:마조끼 >= 5 && TALENT:오줌싸개버릇
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 요도의 자극을 마음껏 만끽하고 있다.
-    PRINTFORML %CALLNAME:TARGET%의 입은 쾌감으로 헤 벌려지고 \@(TALENT:120) ? 거기에서 # 거기와 질구에서\@ 끈적한 군침이 방울져 떨어지고 있다.
+    PRINTFORML %CALLNAME:TARGET%의 입은 쾌감으로 헤 벌려지고 \@(TALENT:남자) ? 거기에서 # 거기와 질구에서\@ 끈적한 군침이 방울져 떨어지고 있다.
 ELSE
     PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 요의와 요도통을 쾌감으로 느끼고 있는지, 넋을 잃은 표정을 하고 있다….
 ENDIF

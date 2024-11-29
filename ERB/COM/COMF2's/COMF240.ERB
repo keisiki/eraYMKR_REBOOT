@@ -9,17 +9,17 @@
 SIF DITEMTYPE:999:240 > 0
     RETURN 0
 ;고문계, 정신조작계 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16) == 0
+SIF (FLAG:커맨드확장 & 16) == 0
     RETURN 0
 ;이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4
+SIF FLAG:VA이상조교필터 & 4
     RETURN 0
 ;승마 중에는 불가
 SIF TEQUIP:43
     RETURN 0
 ;순종5미만의 ASSI일 경우, 実行できない(새드 · 狂気 · 망신 · 복종のどれかがあればＯＫ)
 IF ASSIPLAY
-    SIF ABL:ASSI:10 < 5 && TALENT:ASSI:81 == 0 && TALENT:ASSI:158 == 0 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF ABL:ASSI:순종 < 5 && TALENT:ASSI:새드 == 0 && TALENT:ASSI:광기 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 RETURN 1
@@ -36,8 +36,8 @@ TFLAG:201 = 0
 
 ;실제로는 고통이 있기 (위해)때문에 좀 더 체력 기력을 갖고 있고 쉰다
 ;임신, 포란중, 회란이라면 소모는 보다 격렬해진다
-DOWNBASE:0 += (TALENT:140 || TALENT:143 || TALENT:145) ?  110 # 80
-DOWNBASE:1 += (TALENT:140 || TALENT:143 || TALENT:145) ?  80 # 60
+DOWNBASE:0 += (TALENT:임신 || TALENT:포란중 || TALENT:회란) ?  110 # 80
+DOWNBASE:기력 += (TALENT:임신 || TALENT:포란중 || TALENT:회란) ?  80 # 60
 
 SOURCE:31 = 800
 
@@ -55,7 +55,7 @@ ELSE
 ENDIF
 
 ;임신, 포란중, 회란이라면 고통은 보다 커진다
-SIF TALENT:140 || TALENT:143 || TALENT:145
+SIF TALENT:임신 || TALENT:포란중 || TALENT:회란
     TIMES SOURCE:20 , 1.80
 
 ;PALAM:공포를 본다
@@ -72,16 +72,16 @@ ELSEIF PALAM:17 >= PALAMLV:4
 ENDIF
 
 ;마조나 왕M소유에는 오히려 포상
-SIF TALENT:178
+SIF TALENT:초M
     SOURCE:18 = 600
-SIF TALENT:82
+SIF TALENT:마조
     SOURCE:18 = 300
 
 ;조교자가 새드이나 왕S소유라면 파괴력증
-IF TALENT:PLAYER:177
+IF TALENT:PLAYER:초S
     SOURCE:20 += 300
     SOURCE:31 += 100
-ELSEIF TALENT:PLAYER:81
+ELSEIF TALENT:PLAYER:새드
     SOURCE:20 += 150
     SOURCE:31 += 50
 ENDIF
@@ -97,7 +97,7 @@ ENDIF
 ;이뇨제를 사용하고 있으면(자) 흘려
 IF TEQUIP:12
     TCVAR:6 += 1
-    BASE:4 = 0
+    BASE:뇨의 = 0
     TFLAG:32 = 1
     TFLAG:201 = 2
     TFLAG:198 |= 2
@@ -115,7 +115,7 @@ IF TEQUIP:25 == 7
     ELSE
         LOCAL = 1
     ENDIF
-    IF FLAG:14 & 256
+    IF FLAG:조교모드 & 256
         TCVAR:7 += 0
     ELSE
         TCVAR:7 += LOCAL
@@ -137,24 +137,24 @@ IF BASE:0 < 600
     TFLAG:201 = 5
     TFLAG:198 |= 16
     BASE:0 = 500
-    DOWNBASE:1 += 1200
+    DOWNBASE:기력 += 1200
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 2
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 2
 ENDIF
 
 ;관장에 의한 배설 첫체험은 이상 경험＋1
-IF TFLAG:198 & 4 && (CFLAG:20 & 2) == 0
+IF TFLAG:198 & 4 && (CFLAG:첫시츄에이션 & 2) == 0
     TCVAR:50 += 1
-    CFLAG:20 |= 2
+    CFLAG:첫시츄에이션 |= 2
 ENDIF
 ;기절할 정도로 짓밟고 되는 것도 이상이라고 할 수 있으므로 이상 경험＋1
-IF TFLAG:198 & 16 && (CFLAG:22 & 2) == 0
+IF TFLAG:198 & 16 && (CFLAG:첫가학 & 2) == 0
     TCVAR:50 += 1
-    CFLAG:22 |= 2
+    CFLAG:첫가학 |= 2
 ENDIF
 RETURN 1
 
@@ -163,7 +163,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM240
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -184,20 +184,20 @@ IF TEQUIP:12
     PRINTFORMW %CALLNAME:TARGET%의 고간에서 주륵주륵 노란 물이 흘러내리고 있다.
 ENDIF
 ;배설물/이물 역류
-IF FLAG:14 & 256
+IF FLAG:조교모드 & 256
     IF TEQUIP:25 == 7
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 복부에의 충격을 결국 참지 못하고, 관장물을 흘려 버렸다.
         PRINTL
         IF BASE:0 >= 600
-            IF ABL:21 == 0
+            IF ABL:마조끼 == 0
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 억울함과 치욕이 가득한 표정을 짓고 있다.
-            ELSEIF ABL:21 == 1
+            ELSEIF ABL:마조끼 == 1
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 비지땀을 흘리며 아랫배에 남아있는 배설감을 견디고 있다.
-            ELSEIF ABL:21 == 2
+            ELSEIF ABL:마조끼 == 2
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 부끄러워하면서도, 해방감에 편안한 표정을 짓고 있다.
-            ELSEIF ABL:21 == 3
+            ELSEIF ABL:마조끼 == 3
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 항문을 통과하는 액체의 감각에 때때로 허덕이며 음란한 소리를 내고 있다.
-            ELSEIF ABL:21 == 4
+            ELSEIF ABL:마조끼 == 4
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 넋을 잃은 표정으로 애널에서 토해내는 이물질을 즐기고 있다.
             ELSE
                 PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 이물을 쏟아내는 감각과 치욕을 마음껏 맛보고 있다.
@@ -210,15 +210,15 @@ ELSE
         PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 복부에의 충격에 결국 참지 못하고, 배설물을 흘려 버렸다.
         PRINTL
         IF BASE:0 >= 600
-            IF ABL:21 == 0
+            IF ABL:마조끼 == 0
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 억울함과 치욕이 가득한 표정을 짓고 있다.
-            ELSEIF ABL:21 == 1
+            ELSEIF ABL:마조끼 == 1
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 비지땀을 흘리며 아랫배에 남아있는 배설감을 견디고 있다.
-            ELSEIF ABL:21 == 2
+            ELSEIF ABL:마조끼 == 2
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 부끄러워하면서도, 해방감에 편안한 표정을 짓고 있다.
-            ELSEIF ABL:21 == 3
+            ELSEIF ABL:마조끼 == 3
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 항문을 통과하는 배설물의 감각에 때때로 허덕이며 음란한 소리를 내고 있다.
-            ELSEIF ABL:21 == 4
+            ELSEIF ABL:마조끼 == 4
                 PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 넋을 잃은 표정으로 배설감을 즐기고 있다.
             ELSE
                 PRINTFORML %조사선택(CALLNAME:TARGET, "는")% 배설감과 치욕을 마음껏 맛보고 있다.
@@ -241,7 +241,7 @@ IF BASE:0 < 600
     PRINTW 약간 힘 조절을 틀려버린 것 같다….
     PRINTL 역시 이 상태로는 조교를 계속하기 힘들 것이다.
     PRINTFORMW %조사선택(CALLNAME:MASTER, "는")% 기절한 %조사선택(CALLNAME:TARGET, "를")% 안아 안쪽의 방으로 옮겼다.
-ELSEIF TEQUIP:25 == 7 && ABL:21 >= 2
+ELSEIF TEQUIP:25 == 7 && ABL:마조끼 >= 2
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 차이는 것의 충격에 비틀거렸지만, 쾌감도 맛보았다.
 ELSE
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 괴로운 신음을 내며 풀썩 마루에 쓰러져버렸다.

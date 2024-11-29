@@ -58,7 +58,7 @@ ENDIF
 ;========================================================
 @EVENTTRAIN
 ;대사 표시를 OFF했을 경우에는 돌아온다
-SIF FLAG:11 <= 0
+SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 SIF NO:TARGET != 82
     RETURN 0
@@ -99,7 +99,7 @@ CFLAG:5201 = 1
 @K82_MESSAGE_START_2
     ;感度変化開始
     ;もう一度
-    IF TALENT:150 == 1 && CFLAG:7002 == 3 && CFLAG:7001 == 1 && CFLAG:7003 == 0
+    IF TALENT:연모 == 1 && CFLAG:7002 == 3 && CFLAG:7001 == 1 && CFLAG:7003 == 0
         PRINTFORML 「저ー%CALLNAME:MASTER%ー
         PRINTFORMW  예전에 청-아가 말했던 것이 기억났다ー！」
         PRINTFORML 이야기를 들어보자 %CALLNAME:TARGET%의 몸을 조사했을 때 발견했던 회로에 대한 이야기였다…
@@ -114,7 +114,7 @@ CFLAG:5201 = 1
         CFLAG:7002 = 1
         CFLAG:7003 = 1
     ;연모
-    ELSEIF TALENT:150 == 1 && CFLAG:7001 == 1 && CFLAG:7003 == 0
+    ELSEIF TALENT:연모 == 1 && CFLAG:7001 == 1 && CFLAG:7003 == 0
         PRINTFORML 「아, 저─기 %CALLNAME:MASTER%…
         PRINTFORML 청─아가 전에 한 말이 생각났다」
         PRINTFORMW 아무래도 %CALLNAME:TARGET%를 만든 인물이 그녀의 몸에 장치를 설계해놓은 것 같다
@@ -150,7 +150,7 @@ CFLAG:5201 = 1
             GOTO INPUT_LOOP_2
         ENDIF
     ;従順LV3以上、굴복각인LV3、あなたが禁断の知識持ち
-    ELSEIF ABL:10 >= 3 && MARK:2 == 3 && TALENT:MASTER:56 == 1 && CFLAG:7001 == 1 && CFLAG:7003 == 0
+    ELSEIF ABL:순종 >= 3 && MARK:굴복각인 == 3 && TALENT:MASTER:금단의지식 == 1 && CFLAG:7001 == 1 && CFLAG:7003 == 0
         PRINTFORML %조사처리(CALLNAME:MASTER,"는")% %CALLNAME:TARGET%를 조교하려 다가갔을 때 문득 떠올렸다
         PRINTFORMW %CALLNAME:MASTER%의 지식을 사용한다면 %CALLNAME:TARGET%의 제 기능을 못하는 신경계를 살아있을 때처럼 되돌릴 수 있지 않을까?
         PRINTFORML 「저ー%CALLNAME:MASTER%ー, 왜 끙끙 대고ー있는 거냐ー？」
@@ -182,15 +182,15 @@ CFLAG:5201 = 1
         ELSE
             GOTO INPUT_LOOP_3
         ENDIF
-    ELSEIF MARK:9 == 3
-        IF TALENT:150 == 1
+    ELSEIF MARK:반발각인 == 3
+        IF TALENT:연모 == 1
             PRINTFORMW 「다ー가ー오ー지ー마ー！！」
         ELSE
             PRINTFORML 「다ー가ー오ー지ー마ー！！」
             PRINTFORMW %CALLNAME:TARGET%는 입을 크게 벌리고 으르렁대며 %조사처리(CALLNAME:MASTER,"를")% 위협했다.
         ENDIF
     ;연모
-    ELSEIF TALENT:150 == 1
+    ELSEIF TALENT:연모 == 1
         ;感度変化ON
         IF CFLAG:7002 == 1
             IF RAND:7 == 0 && CFLAG:7010 >= 1
@@ -233,7 +233,7 @@ CFLAG:5201 = 1
                     ENDIF
                 ELSEIF CFLAG:7012 == 3
                     ;음란or음고
-                    IF TALENT:170 == 1 || TALENT:173 == 1
+                    IF TALENT:음란 == 1 || TALENT:음고 == 1
                         PRINTFORM 「에헤헤…%CALLNAME:MASTER%에게 사랑받으면서, 엉덩이 쑤셔지는 거 좋아하게 되버렸다…
                         SETCOLOR 0xFF0000
                         PRINTFORM %UNICODE(0x2665)%
@@ -313,7 +313,7 @@ CFLAG:5201 = 1
             PRINTFORMW %CALLNAME:TARGET%는 애가 타는지 %CALLNAME:MASTER%를 보자마자 옷을 벗기 시작했다
         ENDIF
     ;굴복각인lv3
-    ELSEIF MARK:2 == 3
+    ELSEIF MARK:굴복각인 == 3
         PRINTFORML 「응ー, 오ー늘도 인건가ー？질리지도 않는 건가ー」
         PRINTFORMW %CALLNAME:TARGET%는 투덜투덜 불평하면서도 솔직하게 옷을 벗었다
     ;従順LV3
@@ -328,7 +328,7 @@ CFLAG:5201 = 1
 ;========================================================
 @EVENTEND
 ;대사 표시를 OFF했을 경우에는 돌아온다
-SIF FLAG:11 <= 0
+SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 SIF NO:TARGET != 82
     RETURN 0
@@ -348,14 +348,14 @@ TRYCALL K82_MESSAGE_END
 ;調教終了時の口上
 ;--------------------------------------------------
 @K82_MESSAGE_END
-IF MARK:9 == 3
-    IF TALENT:150 == 1
+IF MARK:반발각인 == 3
+    IF TALENT:연모 == 1
         PRINTFORMW 「마…만지지ー마！！」
     ELSE
         PRINTFORMW 「오ー지ー마！！」
     ENDIF
 ;연모
-ELSEIF TALENT:150 == 1
+ELSEIF TALENT:연모 == 1
     ;全MAX
     IF CFLAG:7002 == 4
         IF RAND:5 == 0
@@ -377,8 +377,8 @@ ELSEIF TALENT:150 == 1
                 RESETCOLOR
                 PRINTFORML 」
                 PRINTFORMW %CALLNAME:TARGET%는 부족하다는 듯이 자신의 질을 애무하고 있다…
-                EXP:10 += 1
-                EXP:0 += 1
+                EXP:자위경험 += 1
+                EXP:V경험 += 1
             ELSE
                 PRINTFORM 「다…다음은 나한테도…
                 SETCOLOR 0xFF0000
@@ -412,8 +412,8 @@ ELSEIF TALENT:150 == 1
                 RESETCOLOR
                 PRINTFORML 」
                 PRINTFORMW %CALLNAME:MASTER%에게 사랑을 다 받자 추욱 늘어진 %CALLNAME:TARGET%는 엉덩이에 자극이 부족했던 모양인지 힘없이 손가락을 움직여 달래고 있었다…
-                EXP:10 += 1
-                EXP:1 += 1
+                EXP:자위경험 += 1
+                EXP:A경험 += 1
                 PRINTFORML A経験+1
                 PRINTFORMW 自慰経験+1
             ELSEIF TFLAG:12 >= 0
@@ -459,7 +459,7 @@ ELSEIF TALENT:150 == 1
                     PRINTFORMW 유두를 자극하며 스스로 달래고 있다…
                 ENDIF
                 
-                EXP:10 += 1
+                EXP:자위경험 += 1
                 PRINTFORMW 自慰経験+1
             ELSE
                 PRINTFORM 「이번에도…가득…
@@ -468,7 +468,7 @@ ELSEIF TALENT:150 == 1
                 RESETCOLOR
                 PRINTFORML 」
                 PRINTFORMW %CALLNAME:TARGET%는 히죽 웃고는 %CALLNAME:MASTER%에게 입맞춤했다…
-                EXP:23 += 1
+                EXP:키스경험 += 1
                 PRINTFORMW キス経験+1
             ENDIF
         ELSEIF RAND:2 == 0
@@ -479,7 +479,7 @@ ELSEIF TALENT:150 == 1
                 RESETCOLOR
                 PRINTFORML 」
                 PRINTFORMW %CALLNAME:TARGET%는 입 주위에 묻은 정액을 황홀한 표정으로 핥으며 맛보고 있다…
-                EXP:4 += 1
+                EXP:정액경험 += 1
                 PRINTFORMW 精液経験+1
             ELSE
                 PRINTFORML 「므ー, 더 많이 정ー액 줘ー
@@ -488,7 +488,7 @@ ELSEIF TALENT:150 == 1
                 RESETCOLOR
                 PRINTFORML 」
                 PRINTFORMW %CALLNAME:TARGET%은 아직 맛보기에도 부족하다는 모습으로 %조사처리(CALLNAME:MASTER,"를")% 물고 있다…
-                EXP:22 += 1
+                EXP:펠라경험 += 1
                 PRINTFORMW フェラ経験+1
             ENDIF
             
@@ -626,10 +626,10 @@ ELSEIF TALENT:150 == 1
 
                 IF CFLAG:7000 == 1
                     IF CFLAG:7010 == 3
-                        TALENT:102 = 1
+                        TALENT:V민감 = 1
                         PRINTFORMW %CALLNAME:TARGET%은 V 민감을 얻었습니다
                     ELSEIF CFLAG:7010 == 1
-                        TALENT:103 = 0
+                        TALENT:V둔감 = 0
                         PRINTFORMW %CALLNAME:TARGET%은 V 둔감을 잃었습니다
                     ENDIF
                 ENDIF
@@ -720,10 +720,10 @@ ELSEIF TALENT:150 == 1
 
             IF CFLAG:7000 == 1
                 IF CFLAG:7012 == 3
-                    TALENT:104 = 1
+                    TALENT:A민감 = 1
                     PRINTFORMW %CALLNAME:TARGET%는 A 민감을 얻었습니다
                 ELSEIF CFLAG:7012 == 1
-                    TALENT:105 = 0
+                    TALENT:A둔감 = 0
                     PRINTFORMW %CALLNAME:TARGET%는 A 둔감을 잃었습니다
                 ENDIF
             ENDIF
@@ -803,10 +803,10 @@ ELSEIF TALENT:150 == 1
 
             IF CFLAG:7000 == 1
                 IF CFLAG:7014 == 3
-                    TALENT:100 = 1
+                    TALENT:C민감 = 1
                     PRINTFORMW %CALLNAME:TARGET%은 C 민감을 얻었습니다
                 ELSEIF CFLAG:7014 == 1
-                    TALENT:101 = 0
+                    TALENT:C둔감 = 0
                     PRINTFORMW %CALLNAME:TARGET%은 C 둔감을 잃었습니다
                 ENDIF
             ENDIF
@@ -886,10 +886,10 @@ ELSEIF TALENT:150 == 1
 
             IF CFLAG:7000 == 1
                 IF CFLAG:7016 == 3
-                    TALENT:106 = 1
+                    TALENT:B민감 = 1
                     PRINTFORMW %CALLNAME:TARGET%는 B 민감을 얻었습니다
                 ELSEIF CFLAG:7016 == 1
-                    TALENT:107 = 0
+                    TALENT:B둔감 = 0
                     PRINTFORMW %CALLNAME:TARGET%는 B 둔감을 잃었습니다
                 ENDIF
             ENDIF
@@ -904,7 +904,7 @@ ELSEIF TALENT:150 == 1
                     PRINTFORMW 느끼고 있는 것 같진 않지만
                 ENDIF
             PRINTFORM %CALLNAME:MASTER%의 노력과 사랑을 충분히 받아서
-                IF CFLAG:7018 == 2 && ABL:21 == 5
+                IF CFLAG:7018 == 2 && ABL:마조끼 == 5
                     PRINTFORMW 생전보다도 더욱 쾌락을 느낄 수 있게 되었다
                 ELSEIF CFLAG:7018 == 2
                     PRINTFORMW 완전히 통각이 돌아온 것 같다
@@ -914,7 +914,7 @@ ELSEIF TALENT:150 == 1
                     PRINTFORMW 조금은 느낄 수 있게 됐다
                 ENDIF
             PRINTFORM 「에헤헤, %CALLNAME:MASTER%한테 맞아서
-                IF CFLAG:7018 == 2 && ABL:21 == 5
+                IF CFLAG:7018 == 2 && ABL:마조끼 == 5
                     PRINTFORM 머리 새하얗게 되버린다…
                     SETCOLOR 0xFF0000
                     PRINTFORM %UNICODE(0x2665)%%UNICODE(0x2665)%
@@ -937,7 +937,7 @@ ELSEIF TALENT:150 == 1
                 ENDIF
             PRINTFORM %CALLNAME:TARGET%는
                 IF CFLAG:7020 == 3
-                    IF CFLAG:7018 == 2 && ABL:21 == 5
+                    IF CFLAG:7018 == 2 && ABL:마조끼 == 5
                         PRINTFORML 통증이 쾌락을 주는 자극이 되어버려서 이성이 완전히 마비된 건지
                         PRINTFORMW 말을 제대로 못하는 상태에서도 %CALLNAME:MASTER%에게 자극을 계속 요구했다…
                     ELSE
@@ -945,21 +945,21 @@ ELSEIF TALENT:150 == 1
                         PRINTFORMW 부끄러움과 기쁨이 뒤섞인 얼굴로 %CALLNAME:MASTER%에게 말했다…
                     ENDIF
                 ELSEIF CFLAG:7020 == 2
-                    IF CFLAG:7018 == 2 && ABL:21 == 5
+                    IF CFLAG:7018 == 2 && ABL:마조끼 == 5
                         PRINTFORML 꽤 자유롭게 지을 수 있게 된 얼굴 표정이 쾌락으로 변한 통증으로 경련하면서도
                         PRINTFORMW 말이 제대로 나오지 않지만 억지로 %CALLNAME:MASTER%에게 말했다…
                     ELSE
                         PRINTFORMW 많이 부드러워진 표정으로 %CALLNAME:MASTER%에게 말했다…
                     ENDIF
                 ELSEIF CFLAG:7020 == 1
-                    IF CFLAG:7018 == 2 && ABL:21 == 5
+                    IF CFLAG:7018 == 2 && ABL:마조끼 == 5
                         PRINTFORML 표정은 여전히 굳어있지만 통증이 쾌락으로 변한 탓에 이성이 완전히 맛이 간 건지
                         PRINTFORMW 말을 제대로 못하는 상태에서도 %CALLNAME:MASTER%에게 말했다…
                     ELSE
                         PRINTFORMW 아직 표정은 굳어있지만 즐거운 목소리로 그렇게 말했다…
                     ENDIF
                 ELSE
-                    IF CFLAG:7018 == 2 && ABL:21 == 5
+                    IF CFLAG:7018 == 2 && ABL:마조끼 == 5
                         PRINTFORML 표정은 여전히 굳어있지만 통증이 쾌락으로 변한 탓에 이성이 완전히 날아가버린 건지
                         PRINTFORMW 말을 제대로 못하는 상태에서도 %CALLNAME:MASTER%에게 말했다…
                     ELSE
@@ -972,7 +972,7 @@ ELSEIF TALENT:150 == 1
         
             IF CFLAG:7000 == 1
                 IF CFLAG:7018 == 3
-                    TALENT:82 = 1
+                    TALENT:마조 = 1
                     PRINTFORMW %CALLNAME:TARGET%는 마조를 취득했습니다
                 ENDIF
             ENDIF
@@ -988,7 +988,7 @@ ELSEIF TALENT:150 == 1
                     PRINTFORMW 정액의 맛을 느끼고 있는 것 같진 않지만
                 ENDIF
             PRINTFORM %CALLNAME:MASTER%의 사랑을 충분히 받아서
-                IF CFLAG:7020 == 2 && ABL:31 == 5
+                IF CFLAG:7020 == 2 && ABL:정액중독 == 5
                     PRINTFORMW 완전히 정액의 맛에 빠져버린 것 같다
                 ELSEIF CFLAG:7020 == 2
                     PRINTFORMW 생전보다도 강력하게 정액의 맛을 느낄 수 있게 됐다
@@ -998,7 +998,7 @@ ELSEIF TALENT:150 == 1
                     PRINTFORMW 미각을 조금은 느낄 수 있게 됐다
                 ENDIF
             PRINTFORM 「에헤헤, %CALLNAME:MASTER%에게 가득 입에 싸넣어져서
-                IF CFLAG:7020 == 2 && ABL:31 == 5
+                IF CFLAG:7020 == 2 && ABL:정액중독 == 5
                     PRINTFORM 머리 새하얗게 되버렸다…
                     SETCOLOR 0xFF0000
                     PRINTFORM %UNICODE(0x2665)%%UNICODE(0x2665)%
@@ -1021,7 +1021,7 @@ ELSEIF TALENT:150 == 1
                 ENDIF
             PRINTFORM %CALLNAME:TARGET%는
                 IF CFLAG:7020 == 3
-                    IF ABL:31 == 5
+                    IF ABL:정액중독 == 5
                         PRINTFORML 완전히 버릇이 되버린 정액의 맛에 의해 이성이 완전히 맛이 간 건지
                         PRINTFORMW 말을 제대로 못하는 상태에서도 %CALLNAME:MASTER%에게 정액을 계속 요구해왔다…
                     ELSE
@@ -1029,21 +1029,21 @@ ELSEIF TALENT:150 == 1
                         PRINTFORMW 부끄러움과 기쁨이 뒤섞인 얼굴로 %CALLNAME:MASTER%에게 말했다…
                     ENDIF
                 ELSEIF CFLAG:7020 == 2
-                    IF  ABL:31 == 5
+                    IF  ABL:정액중독 == 5
                         PRINTFORML 꽤 자유롭게 표정을 지을 수 있게 된 얼굴이 경련하느라
                         PRINTFORMW 말이 제대로 나오지 않지만 억지로 %CALLNAME:MASTER%에게 말했다…
                     ELSE
                         PRINTFORMW 많이 부드러워진 표정으로 %CALLNAME:MASTER%에게 말했다…
                     ENDIF
                 ELSEIF CFLAG:7020 == 1
-                    IF ABL:21 == 5
+                    IF ABL:마조끼 == 5
                         PRINTFORML 표정은 여전히 굳어있지만 정액의 맛에 이성이 완전히 맛이 간 건지
                         PRINTFORMW 말을 제대로 못하는 상태에서도 %CALLNAME:MASTER%에게 말했다…
                     ELSE
                         PRINTFORMW 아직 굳어있는 표정이지만 즐거운 목소리로 그렇게 말했다…
                     ENDIF
                 ELSE
-                    IF ABL:21 == 5
+                    IF ABL:마조끼 == 5
                         PRINTFORML 표정은 여전히 굳어있지만 정액의 맛에 이성이 완전히 날아가버린 건지
                         PRINTFORMW 말을 제대로 못하는 상태에서도 %CALLNAME:MASTER%에게 말했다…
                     ELSE
@@ -1140,7 +1140,7 @@ ELSEIF TALENT:150 == 1
             PRINTFORMW %CALLNAME:TARGET%는 만족한 모습으로 %CALLNAME:MASTER%에게 몸을 기댔다…
         ENDIF
     ENDIF
-ELSEIF MARK:2 == 3
+ELSEIF MARK:굴복각인 == 3
     PRINTFORML 「이제…끝인건가ー？」
 ELSE
     PRINTFORML 「겨우…끝인가ー…」
@@ -1172,9 +1172,9 @@ ENDIF
 
 ;妊娠処理
 IF CFLAG:7022 <= 1 && CFLAG:7000 == 1
-    IF CFLAG:71 >= 0 || CFLAG:72 >= 0
-        CFLAG:71 = 0
-        CFLAG:72 = 0
+    IF CFLAG:마스터의질싸 >= 0 || CFLAG:조수노예질싸 >= 0
+        CFLAG:마스터의질싸 = 0
+        CFLAG:조수노예질싸 = 0
     ENDIF
 ENDIF
 
@@ -1197,7 +1197,7 @@ SIF TFLAG:899 >= 1
 ;커맨드 첫회 판정을 갱신
 CALL COM_FLAG
 ;PANCTION 내의 장비품 대사 보완 함수를 사용한다
-SIF FLAG:10 == 1
+SIF FLAG:조교시텍스트표시 == 1
     TRYCALL EQUIPTEXT
 ;커맨드 대사 호출
 TRYCALLFORM KOJO_82_TRAIN_MESSAGE_S_COM_{SELECTCOM}
@@ -1218,7 +1218,7 @@ SIF TEQUIP:42
 SIF TFLAG:899 >= 1 || TFLAG:898 >= 1
     RETURN 0
 ;정신붕괴の場合は戻る
-SIF TALENT:167
+SIF TALENT:정신붕괴
     RETURN 0
 
 ;처녀喪失時のメッセージ呼び出し
@@ -1260,7 +1260,7 @@ IF TFLAG:2
         ELSEIF CFLAG:7018 == 0
             PRINTFORMW 「오？, 뭘 한거냐ー？」
         ENDIF
-    ELSEIF TALENT:150 == 1
+    ELSEIF TALENT:연모 == 1
         PRINTFORM 「에헤헤ー
         SETCOLOR 0xFF0000
         PRINTFORM %UNICODE(0x2665)%
@@ -1283,7 +1283,7 @@ ELSE
         ELSE
             PRINTFORMW %CALLNAME:TARGET%는 처녀상실의 아픔을 느끼지 못하지만 눈물을 흘리고 있다…
         ENDIF
-    ELSEIF TALENT:150 == 1
+    ELSEIF TALENT:연모 == 1
         PRINTFORMW 「싫어…이런거…」
     ELSE
         PRINTFORMW 「뭔가 했던건가ー？」
@@ -1362,7 +1362,7 @@ ELSEIF CFLAG:5300 == 1 && SELECTCOM == 146 && CFLAG:7001 == 0
 ELSE
     ;尿道挿入
     IF SELECTCOM == 146
-        IF TALENT:175 == 1
+        IF TALENT:요도광 == 1
             PRINTFORM 「아그읏…
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
@@ -1472,14 +1472,14 @@ ELSE
     ELSEIF CFLAG:7001 == 1
         PRINTFORML %CALLNAME:TARGET%는 절정에 다다랐을 텐데도
         PRINTFORMW 아직 조교가 부족한 것인지 그 자극을 인식하질 못하는 것 같다…
-    ELSEIF CFLAG:7001 == 0 && TALENT:150 == 1
-        IF ABL:0 == 5
+    ELSEIF CFLAG:7001 == 0 && TALENT:연모 == 1
+        IF ABL:C감각 == 5
             PRINTFORM 「크리토리스…조아…하…
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
             RESETCOLOR
             PRINTFORMW 」
-        ELSEIF ABL:0 >= 3
+        ELSEIF ABL:C감각 >= 3
             PRINTFORM 「아직…뷰우…족…
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
@@ -1493,13 +1493,13 @@ ELSE
             PRINTFORMW 」
         ENDIF
     ELSE
-        IF ABL:0 == 5
+        IF ABL:C감각 == 5
             PRINTFORM 「이…이제…그마…
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
             RESETCOLOR
             PRINTFORMW 」
-        ELSEIF ABL:0 >= 3
+        ELSEIF ABL:C감각 >= 3
             PRINTFORMW 「이제…그마…」
         ELSE
             PRINTFORMW 「또…또 찌릿하고…」
@@ -1525,7 +1525,7 @@ IF CFLAG:5301 == 0
 ELSE
     ;触手
     IF CFLAG:7038 == 1
-        IF ABL:35 == 5
+        IF ABL:촉수중독 == 5
             PRINTFORM 「이긱
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
@@ -1543,7 +1543,7 @@ ELSE
             PRINTFORM %UNICODE(0x2665)%%UNICODE(0x2665)%
             RESETCOLOR
             PRINTFORMW 」
-        ELSEIF ABL:35 >= 3
+        ELSEIF ABL:촉수중독 >= 3
             PRINTFORM 「잇, 기잇
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
@@ -1617,8 +1617,8 @@ ELSE
                 PRINTFORMW %CALLNAME:TARGET%는 절정을 느끼질 못하는 거 같다…
             ENDIF
         ELSE
-            IF TALENT:150 == 1
-                IF ABL:1 >= 3
+            IF TALENT:연모 == 1
+                IF ABL:V감각 >= 3
                     PRINTFORM 「응힛
                     SETCOLOR 0xFF0000
                     PRINTFORM %UNICODE(0x2665)%
@@ -1640,7 +1640,7 @@ ELSE
                     PRINTFORML 」
                 ENDIF
             ELSE
-                IF ABL:1 >= 3
+                IF ABL:V감각 >= 3
                 
                 ELSE
                 
@@ -1718,8 +1718,8 @@ ELSE
         PRINTFORMW %조사처리(CALLNAME:MASTER,"와")%의 특훈 성과로 %CALLNAME:TARGET%는 질로 쾌감을 느낄 수 있게 된 것 같다…
     ELSEIF CFLAG:7001 == 1 
         PRINTFORML %CALLNAME:TARGET%는 절정때문에 질이 격렬하게 수축하고 있지만 아직 조교가 부족해서 그 자극을 인식하지는 못하는 것 같다…
-    ELSEIF CFLAG:7001 == 0 && TALENT:150 == 1
-        IF ABL:1 == 5
+    ELSEIF CFLAG:7001 == 0 && TALENT:연모 == 1
+        IF ABL:V감각 == 5
             PRINTFORM 「보지…기분 좋다ー
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
@@ -1784,15 +1784,15 @@ ELSE
         PRINTFORMW %조사처리(CALLNAME:MASTER,"와")%의 특훈 성과로 %CALLNAME:TARGET%는 애널로 절정을 느낄 수 있게 된 것 같다…
     ELSEIF CFLAG:7002 == 1 || CFLAG:7002 == 3 || CFLAG:7001 == 1
         PRINTFORMW %CALLNAME:TARGET%의 애널은 절정에 달해서 페니스를 죄어오고 있지만, 아직 조교가 부족한 건지 그 자극을 인식하진 못하는 것 같다…
-    ELSEIF TALENT:150 == 1
-        IF ABL:2 == 5
+    ELSEIF TALENT:연모 == 1
+        IF ABL:A감각 == 5
             PRINTFORM 「엉덩이…엉덩이잇
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
             RESETCOLOR
             PRINTFORML 」
             PRINTFORMW %CALLNAME:TARGET%는 절정하면서도 개의치않고 허리를 흔들고 있다…
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORM 「엉덩이가…기분 좋아…
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%%UNICODE(0x2665)%
@@ -1802,14 +1802,14 @@ ELSE
             PRINTFORMW 「또…엉덩이…가ー…」
         ENDIF
     ELSE
-        IF ABL:2 == 5
+        IF ABL:A감각 == 5
             PRINTFORM 「싫엇…시러어어어어
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
             RESETCOLOR
             PRINTFORML 」
             PRINTFORMW %CALLNAME:TARGET%는 애널로 절정한다는 사실을 못 견디겠다는 듯 도리질을 하고 있다…
-        ELSEIF ABL:2 >= 3
+        ELSEIF ABL:A감각 >= 3
             PRINTFORM 「엉덩이…다시 와…앗…
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
@@ -1860,8 +1860,8 @@ ELSE
         PRINTFORMW %조사처리(CALLNAME:MASTER,"와")%의 특훈 성과로 %CALLNAME:TARGET%는 가슴으로 절정을 느낄 수 있게 된 것 같다…
     ELSEIF CFLAG:7001 == 1
         PRINTFORMW %CALLNAME:TARGET%는 가슴으로 절정에 달했을 게 분명하지만 그 자극을 인식하질 못하는 것 같다…
-    ELSEIF TALENT:150 == 1
-        IF ABL:3 == 5
+    ELSEIF TALENT:연모 == 1
+        IF ABL:B감각 == 5
             PRINTFORM 「아히잇…응…
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
@@ -1871,7 +1871,7 @@ ELSE
             PRINTFORM %UNICODE(0x2665)%
             RESETCOLOR
             PRINTFORMW 」
-        ELSEIF ABL:3 >= 3
+        ELSEIF ABL:B감각 >= 3
             PRINTFORM 「아…하앗
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
@@ -1885,13 +1885,13 @@ ELSE
             PRINTFORMW 「또…또 가슴…가버…려…」
         ENDIF
     ELSE
-        IF ABL:3 == 5
+        IF ABL:B감각 == 5
             PRINTFORM 「젖꼭지…조아…하…
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
             RESETCOLOR
             PRINTFORMW 」
-        ELSEIF ABL:3 >= 3
+        ELSEIF ABL:B감각 >= 3
             PRINTFORM 「그ー마ー…히읏…
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
@@ -1968,8 +1968,8 @@ ELSE
             PRINTFORML 「오ー, 정─액 또 나오고 있다ー」
             PRINTFORMW %CALLNAME:TARGET%는 사정의 감각이란 걸 잘 모르는 건지 정액을 손으로 만지작거리고 있다…
         ENDIF
-    ELSEIF TALENT:150 == 1
-        IF ABL:37 >= 3
+    ELSEIF TALENT:연모 == 1
+        IF ABL:사정중독 >= 3
             PRINTFORM 「에헤헤…
             SETCOLOR 0xFF0000
             PRINTFORM %UNICODE(0x2665)%
@@ -2040,7 +2040,7 @@ IF TFLAG:35
         ELSE
             PRINTFORMW %CALLNAME:TARGET%의 안에 가득 쌌지만 여전히 반응이 없다…
         ENDIF
-    ELSEIF TALENT:150 == 1
+    ELSEIF TALENT:연모 == 1
         PRINTFORM 「에헤헤ー
         SETCOLOR 0xFF0000
         PRINTFORM %UNICODE(0x2665)%
@@ -2074,7 +2074,7 @@ IF TFLAG:35
         ELSE
             PRINTFORMW %CALLNAME:TARGET%의 애널에 잔뜩 싸봤지만 역시 느끼질 못하는 것 같다…
         ENDIF
-    ELSEIF TALENT:150 == 1
+    ELSEIF TALENT:연모 == 1
         PRINTFORM 「에헤헤…
         SETCOLOR 0xFF0000
         PRINTFORM %UNICODE(0x2665)%
@@ -2131,7 +2131,7 @@ IF GROUPMATCH (SELECTCOM, 41, 54, 230, 303, 304, 601, 602, 604, 610)
             RESETCOLOR
             PRINTFORMW 」
         ENDIF
-    ELSEIF TALENT:150 == 1
+    ELSEIF TALENT:연모 == 1
         PRINTFORM 「오ー, 입 속…　가득…
         SETCOLOR 0xFF0000
         PRINTFORM %UNICODE(0x2665)%
@@ -2288,7 +2288,7 @@ IF TFLAG:25 > 0 && SELECTCOM == 146
         ELSE
             PRINTFORMW %CALLNAME:TARGET%의 방광에 정액을 쌌으나 전혀 느끼질 못하는 것 같다…
         ENDIF
-    ELSEIF TALENT:150 == 1
+    ELSEIF TALENT:연모 == 1
         PRINTFORM 「뭐ー, 이런 곳에 잔뜩 싸다니ー…
         SETCOLOR 0xFF0000
         PRINTFORM %UNICODE(0x2665)%
@@ -2335,7 +2335,7 @@ SIF TEQUIP:42
 SIF TFLAG:899 >= 1 || TFLAG:898 >= 1
     RETURN 0
 ;정신붕괴の場合は戻る
-SIF TALENT:167
+SIF TALENT:정신붕괴
     RETURN 0
 ;刻印取得口上呼び出し
 FOR LOCAL, 0, 7
@@ -2484,7 +2484,7 @@ TRYCALLFORM K82_MESSAGE_EVENT_{(TFLAG:200)}
 @SINGLE_ENDING_K82
 DRAWLINE
     ;%CALLNAME:TARGET% 친애, 카센을 노예로 데리고 있고, 청아, 후토, 미코를 노예로 데리고 있지 않음, MASTER가 선인이나 봉래인이 아닐 경우, 금단의 지식 가지고 있음 
-    IF TALENT:TARGET:152 && GETCHARA(80)>=0 && ITEM:183 == 0 && ITEM:185 == 0 && ITEM:186 == 0 && TALENT:MASTER:49 == 0 && TALENT:MASTER:225 == 0 && TALENT:MASTER:56 == 1
+    IF TALENT:TARGET:친애 && GETCHARA(80)>=0 && ITEM:183 == 0 && ITEM:185 == 0 && ITEM:186 == 0 && TALENT:MASTER:봉래인 == 0 && TALENT:MASTER:선인 == 0 && TALENT:MASTER:금단의지식 == 1
     WAIT
     PRINTFORMW ――― %CALLNAME:TARGET%와 카센 엔딩 조건 달성―――
     PRINTFORMW …………
@@ -2581,7 +2581,7 @@ DRAWLINE
         PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} %CALLNAME:TARGET%·카센 해피엔딩 『버드나무』
         PRINTFORML
         PRINTFORML
-        TALENT:MASTER:225 = 1
+        TALENT:MASTER:선인 = 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 시해선이 될 수 있었습니다!
     ;카센이 %조사처리(CALLNAME:MASTER,"를")% 연모하고 있지 않을 경우
         ELSE
@@ -2623,12 +2623,12 @@ DRAWLINE
         PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} %CALLNAME:TARGET%·카센 노말엔딩 『튜베로즈』
         PRINTFORML
         PRINTFORML
-        TALENT:MASTER:214 = 1
+        TALENT:MASTER:오니 = 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 오니가 되고 말았습니다…
         ENDIF
     ENDIF
     ;선인 소질을 가진 캐릭터가 청아이고, 미코, 후토, 카센을 노예로 두고 있지 않을 경우
-    IF TALENT:TARGET:152 && GETCHARA(83)>=0 && ITEM:180 == 0 && ITEM:185 == 0 && ITEM:186 == 0 && TALENT:MASTER:49 == 0 && TALENT:MASTER:225 == 0 && TALENT:MASTER:56 == 1
+    IF TALENT:TARGET:친애 && GETCHARA(83)>=0 && ITEM:180 == 0 && ITEM:185 == 0 && ITEM:186 == 0 && TALENT:MASTER:봉래인 == 0 && TALENT:MASTER:선인 == 0 && TALENT:MASTER:금단의지식 == 1
     WAIT
     PRINTFORMW ――― %CALLNAME:TARGET%와 청아 엔딩 조건 달성―――
     PRINTFORMW …………
@@ -2716,7 +2716,7 @@ DRAWLINE
         PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} %CALLNAME:TARGET%·곽청아 해피엔딩 『붉은 라일락』
         PRINTFORML
         PRINTFORML
-        TALENT:MASTER:225 = 1
+        TALENT:MASTER:선인 = 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 시해선이 될 수 있었습니다!
     ;청아가 %조사처리(CALLNAME:MASTER,"를")% 연모하고 있지 않았을 경우
         ELSE
@@ -2753,12 +2753,12 @@ DRAWLINE
         PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} %CALLNAME:TARGET%·곽청아 노말엔딩 『회나무꽃』
         PRINTFORML
         PRINTFORML
-        TALENT:MASTER:226 = 1
+        TALENT:MASTER:강시 = 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 강시가 되고 말았습니다…
         ENDIF
     ENDIF
     ;선인 소질을 가진 캐릭터가 후토이고, 미코, 카센, 청아를 노예로 두고 있지 않을 경우
-    IF TALENT:TARGET:152 && GETCHARA(85)>=0 && ITEM:180 == 0 && ITEM:183 == 0 && ITEM:186 == 0 && TALENT:MASTER:49 == 0 && TALENT:MASTER:225 == 0 && TALENT:MASTER:56 == 1
+    IF TALENT:TARGET:친애 && GETCHARA(85)>=0 && ITEM:180 == 0 && ITEM:183 == 0 && ITEM:186 == 0 && TALENT:MASTER:봉래인 == 0 && TALENT:MASTER:선인 == 0 && TALENT:MASTER:금단의지식 == 1
     WAIT
     PRINTFORMW ――― %CALLNAME:TARGET%와 후토 엔딩 조건 달성―――
     PRINTFORMW …………
@@ -2865,7 +2865,7 @@ DRAWLINE
         PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} %CALLNAME:TARGET%·후토 해피엔딩 『딸기꽃』
         PRINTFORML
         PRINTFORML
-        TALENT:MASTER:225 = 1
+        TALENT:MASTER:선인 = 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 시해선이 될 수 있었습니다!
     ;후토가 %조사처리(CALLNAME:MASTER,"를")% 연모하고 있지 않았을 경우
         ELSE
@@ -2901,12 +2901,12 @@ DRAWLINE
         PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} %CALLNAME:TARGET%·후토 노말엔딩 『로벨리아』
         PRINTFORML
         PRINTFORML
-        TALENT:MASTER:207 = 1
+        TALENT:MASTER:영체 = 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 영체가 되고 말았습니다…
         ENDIF
     ENDIF
     ;선인 소질을 가진 캐릭터가 미코이고, 청아, 후토, 카센을 노예로 두고 있지 않을 경우
-    IF TALENT:TARGET:152 && GETCHARA(86)>=0 && ITEM:180 == 0 && ITEM:183 == 0 && ITEM:185 == 0 && TALENT:MASTER:49 == 0 && TALENT:MASTER:225 == 0 && TALENT:MASTER:56 == 1
+    IF TALENT:TARGET:친애 && GETCHARA(86)>=0 && ITEM:180 == 0 && ITEM:183 == 0 && ITEM:185 == 0 && TALENT:MASTER:봉래인 == 0 && TALENT:MASTER:선인 == 0 && TALENT:MASTER:금단의지식 == 1
     WAIT
     PRINTFORMW ――― %CALLNAME:TARGET%와 미코 엔딩 조건 달성―――
     PRINTFORMW …………
@@ -2979,7 +2979,7 @@ DRAWLINE
         PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} %CALLNAME:TARGET%·미코 해피엔딩 『호랑가시나무』
         PRINTFORML
         PRINTFORML
-        TALENT:MASTER:225 = 1
+        TALENT:MASTER:선인 = 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 시해선이 될 수 있었습니다!
     ;미코가 %조사처리(CALLNAME:MASTER,"를")% 연모하고 있지 않았을 경우
         ELSE
@@ -3008,12 +3008,12 @@ DRAWLINE
         PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} %CALLNAME:TARGET%·미코 노말엔딩 『아스파라거스』
         PRINTFORML
         PRINTFORML
-        TALENT:MASTER:208 = 1
+        TALENT:MASTER:인형 = 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 인형이 되고 말았습니다…
         ENDIF
     ENDIF
     ;%조사처리(CALLNAME:MASTER,"가")% 선인소질을 지니고 있고, 금단의 지식을 가졌을 경우
-    IF TALENT:TARGET:152 && TALENT:MASTER:225 && TALENT:MASTER:56 == 1
+    IF TALENT:TARGET:친애 && TALENT:MASTER:선인 && TALENT:MASTER:금단의지식 == 1
     PRINTFORMW ―――단독 엔딩 조건 달성―――
     PRINTFORMW …………
     PRINTFORMW ………
@@ -3141,7 +3141,7 @@ DRAWLINE
     PRINTFORMW 　　　　　　　　―― Ending No.{1000+NO:TARGET} %CALLNAME:TARGET% 진 엔딩 『아네모네』
     PRINTFORML
     PRINTFORML
-    TALENT:TARGET:225 = 1
+    TALENT:TARGET:선인 = 1
     PRINTFORMW %CALLNAME:TARGET%는 시해선이 될 수 있었습니다!
 ELSE
 PRINTFORMW ―――단독 엔딩 조건 달성―――

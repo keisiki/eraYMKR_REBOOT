@@ -6,7 +6,7 @@
 ;LOCAL:1 = 비디오의 처리　0-판다,1-색시와 감상,2-보관한다 (촬영 확장이 유효할 때만. 무효일 때에는 팔 수밖에 없다)
 @SELL_VIDEO
 ;컨피그에서 촬영 확장 기능을 유효로 하고 있는지 아닌지로 변화
-IF FLAG:15 & 128
+IF FLAG:커맨드확장 & 128
     ;ビデオを嫁と見る？YESなら口上へ, NOならビデオ売却, 一度見たビデオは消滅します
     IF TFLAG:121 > 1
         CALL LOOKVIDEO_1
@@ -18,7 +18,7 @@ ENDIF
 ;テープの減数は촬영後処理のため
 IF TEQUIP:50 && NOITEM == 0
     ITEM:75 -= 1
-    SIF FLAG:13 & 16 && MONEY:0 >= ITEMPRICE:75
+    SIF FLAG:아이템확장 & 16 && MONEY:0 >= ITEMPRICE:75
         CALL FILL_PLURAL_ITEM, 75
 ENDIF
 
@@ -29,21 +29,21 @@ SIF TFLAG:121 == 1
 LOCAL = CALC_VIDEO_PRICE(LOCAL:1)
 
 ;ビデオのボーナス
-IF FLAG:15 & 128
+IF FLAG:커맨드확장 & 128
     LOCAL = VIDEO_EDIT_BONUS(LOCAL)
 ELSE
     TIMES LOCAL , 1.50
 ENDIF
 
 ;토리코모드 보정
-IF FLAG:5000 & 2
+IF FLAG:토리코모드 & 2
     TIMES LOCAL , 0.2
     LOCAL = MIN(LOCAL, 700)
 ENDIF
 
 
 ;HARD 모드 이상
-SIF FLAG:3 >= 3 && LOCAL > 75000
+SIF FLAG:난이도 >= 3 && LOCAL > 75000
     LOCAL = 75000
 ;売却価格が1圓未満の場合は売り物にならないので処理終了(嫁と一緒に鑑賞や保管や경험値獲得処理もしない)
 IF LOCAL < 1
@@ -51,7 +51,7 @@ IF LOCAL < 1
     RETURN 0
 ENDIF
 
-IF FLAG:15 & 128
+IF FLAG:커맨드확장 & 128
     ;ビデオを売却する場合
     IF LOCAL:1 == 0
         ;イベント口上呼び出し
@@ -63,7 +63,7 @@ IF FLAG:15 & 128
         ;ビデオで稼いだ最高金額判定処理
         SIF MONEY:1 > MONEY:970
             CALL NEW_HIGH_INCOME_ALL, 970
-        SIF MONEY:1 > CFLAG:82
+        SIF MONEY:1 > CFLAG:최고금액_비디오
             CALL NEW_HIGH_INCOME_SLAVE, 82
         CALL TOTAL_INCOME_SLAVE, MONEY:1
         ;--------------------------------------------------
@@ -76,28 +76,28 @@ IF FLAG:15 & 128
     SELECTCASE FLAG:61
         ;촬영자 주인
         CASE 1
-            EXP:MASTER:71 += (ITEM:58) ? 2 # 1
-            EXP:ASSI:72 += 1
+            EXP:MASTER:촬영경험 += (ITEM:58) ? 2 # 1
+            EXP:ASSI:피사경험 += 1
             PRINTFORML 주인촬영경험＋\@(ITEM:58) ? 2 # 1\@
             PRINTL 조수피사경험＋1
         ;촬영자 조수
         CASE 2
-            EXP:ASSI:71 += (ITEM:58) ? 2 # 1
-            EXP:MASTER:72 += 1
+            EXP:ASSI:촬영경험 += (ITEM:58) ? 2 # 1
+            EXP:MASTER:피사경험 += 1
             PRINTFORML 조수촬영경험＋\@(ITEM:58) ? 2 # 1\@
             PRINTL 주인피사경험＋1
         ;床置き촬영
         CASEELSE
-            EXP:MASTER:71 += (ITEM:58) ? 2 # 1
-            EXP:MASTER:72 += 1
+            EXP:MASTER:촬영경험 += (ITEM:58) ? 2 # 1
+            EXP:MASTER:피사경험 += 1
             PRINTFORML 주인촬영경험＋\@(ITEM:58) ? 2 # 1\@
             PRINTL 주인피사경험＋1
     ENDSELECT
-    EXP:72 += 1
+    EXP:피사경험 += 1
     PRINTL 노예피사경험＋1
 
     ;주인の촬영기능アップ可能通知処理
-    SIF BUY_SKILL_MASTER_CAMERA_PRICE() > 0 && ABL:MASTER:71 < 5
+    SIF BUY_SKILL_MASTER_CAMERA_PRICE() > 0 && ABL:MASTER:촬영기능 < 5
         PRINTFORML %조사처리(CALLNAME:MASTER,"는")% 촬영의 기술을 좀 더 연마할 수 있을 것 같은 기분이 들었다.
 ELSE
     ;イベント口上呼び出し
@@ -109,7 +109,7 @@ ELSE
     ;ビデオで稼いだ最高金額判定処理
     SIF MONEY:1 > MONEY:970
         CALL NEW_HIGH_INCOME_ALL, 970
-    SIF MONEY:1 > CFLAG:82
+    SIF MONEY:1 > CFLAG:최고금액_비디오
         CALL NEW_HIGH_INCOME_SLAVE, 82
     CALL TOTAL_INCOME_SLAVE, MONEY:1
     ;--------------------------------------------------
@@ -135,7 +135,7 @@ SIF ASSI >= 0
     LOCAL:2 = NO:ASSI
 
 ;eratohoYMかABNORMAL모드에서는 비디오 매매가에 출연 캐릭터의 가격의 일부를 가산 (노예と조수のみ)
-IF FLAG:4 == 0 || FLAG:4 == 1
+IF FLAG:게임모드 == 0 || FLAG:게임모드 == 1
     LOCAL:3 += MIN(ITEMPRICE:(100 + LOCAL:1) / 10, 1000)
     SIF ARG == 0
         PRINTFORML 출연자　　：%CALLNAME:TARGET, 28, LEFT%　＋{MIN(ITEMPRICE:(100 + LOCAL:1) / 10, 1000), 7}원
@@ -2043,7 +2043,7 @@ FOR COUNT, 40, 39+TFLAG:121
 
     IF ARG == 0
         ;토리코모드
-        IF FLAG:5000 & 2
+        IF FLAG:토리코모드 & 2
             LOCAL:99 = (LOCAL:3 - COUNT:1) / 5
             PRINTFORML 촬영장면{COUNT-39, 2}：%VIDEO_COMF(FLAG:COUNT), 28, LEFT%　\@SIGN(LOCAL:99) == 1 ?  ＋ # －\@{ABS(LOCAL:99 ), 7}원
         ;일반모드
@@ -2059,7 +2059,7 @@ LOCAL:3 = MAX(LOCAL:3, 0)
 ;매각치 조정
 ;-------------------------------------------------
 ;HARD 모드 이상
-IF FLAG:3 >= 3
+IF FLAG:난이도 >= 3
     LOCAL:3 = TABLE_CALC(LOCAL:3, 5000, 2)
     LOCAL:3 = TABLE_CALC(LOCAL:3, 10000, 5)
     LOCAL:3 = TABLE_CALC(LOCAL:3, 50000, 10)
@@ -2095,8 +2095,8 @@ ENDIF
 ;処女喪失シーンがあれば加算
 IF TFLAG:120 & 1
     LOCAL:3 += 10000
-    CFLAG:11 |= 4
-    EXP:50 += 1
+    CFLAG:VA이상경험변동 |= 4
+    EXP:이상경험 += 1
     PRINTFORML 비디오에는 %CALLNAME:TARGET%의 처녀상실 신이 기록되어 있다.
     PRINTFORML %EXPNAME:50%＋1
 ENDIF
@@ -2114,73 +2114,73 @@ RETURNF LOCAL:3
 @VIDEO_TALENT_BONUS, ARG
 #FUNCTION
 ;[自制心]를 본다
-SIF TALENT:20 && ABL:11 < 4
+SIF TALENT:자제심 && ABL:욕망 < 4
     TIMES ARG , 0.75
 ;[無関心]를 본다
-SIF TALENT:21
+SIF TALENT:무관심
     TIMES ARG , 0.70
 ;[感情乏しい]를 본다
-SIF TALENT:22
+SIF TALENT:감정결여
     TIMES ARG , 0.70
 ;[目立ちたがり]를 본다
-SIF TALENT:28 && ABL:14 >= 4
+SIF TALENT:튀고싶어함 && ABL:노출증 >= 4
     TIMES ARG , 1.20
 ;[恥じらい]를 본다
-SIF TALENT:35
+SIF TALENT:부끄럼쟁이
     TIMES ARG , 1.15
 
 ;[魅力]를 본다
-SIF TALENT:90
+SIF TALENT:매력
     TIMES ARG , 1.25
 ;[謎の魅力]를 본다
-SIF TALENT:92
+SIF TALENT:수수께끼의매력
     TIMES ARG , 1.25
 ;[小悪魔]를 본다
-SIF TALENT:93
+SIF TALENT:소악마
     TIMES ARG , 1.20
 ;[人気]를 본다
-SIF TALENT:94
+SIF TALENT:인기
     TIMES ARG , 1.50
 
 ;[動物耳]를 본다
-SIF TALENT:116
+SIF TALENT:동물귀
     TIMES ARG , 1.30
 ;[ふたなり]를 본다
-SIF TALENT:121
+SIF TALENT:후타나리
     TIMES ARG , 1.10
 ;[소인]를 본다
-SIF TALENT:127
+SIF TALENT:소인
     TIMES ARG , 1.10
 ;[작은체형]를 본다
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES ARG , 1.10
 ;[母乳体質]를 본다
-SIF TALENT:134
+SIF TALENT:모유체질
     TIMES ARG , 1.20
 ;[烙印]를 본다
-SIF TALENT:161
+SIF TALENT:낙인
     TIMES ARG , 0.50
 ;[精神崩壊]をみる
-SIF TALENT:167
+SIF TALENT:정신붕괴
     TIMES ARG , 0.25
 
 ;[요정]을 본다
-SIF TALENT:200
+SIF TALENT:요정
     TIMES ARG , 1.10
 ;[요호]를 본다
-SIF TALENT:211
+SIF TALENT:요호
     TIMES ARG , 1.20
 ;[오니]를 본다
-SIF TALENT:214
+SIF TALENT:오니
     TIMES ARG , 1.20
 ;[누에]를 본다
-SIF TALENT:217
+SIF TALENT:누에
     TIMES ARG , 1.50
 ;[하쿠레이의 무녀]를 본다
-SIF TALENT:218
+SIF TALENT:하쿠레이의무녀
     TIMES ARG , 1.30
 ;[카제하후리]를 본다
-SIF TALENT:219
+SIF TALENT:카제하후리
     TIMES ARG , 1.25
 RETURNF ARG
 
@@ -2193,54 +2193,54 @@ RETURNF ARG
 @VIDEO_EDIT_BONUS, ARG
 #FUNCTION
 ;노예의 피사경험을 본다
-SIF EXP:72 >= EXPLV:3
+SIF EXP:피사경험 >= EXPLV:3
     TIMES ARG , 1.10
 
 ;촬영자를 본다
 ;주인
 IF FLAG:61 == 1
     ;촬영기능을 본다
-    IF ABL:MASTER:71 == 0
+    IF ABL:MASTER:촬영기능 == 0
         TIMES ARG , 0.70
-    ELSEIF ABL:MASTER:71 == 1
+    ELSEIF ABL:MASTER:촬영기능 == 1
         TIMES ARG , 0.80
-    ELSEIF ABL:MASTER:71 == 2
+    ELSEIF ABL:MASTER:촬영기능 == 2
         TIMES ARG , 0.90
-    ELSEIF ABL:MASTER:71 == 3
+    ELSEIF ABL:MASTER:촬영기능 == 3
         TIMES ARG , 1.00
-    ELSEIF ABL:MASTER:71 == 4
+    ELSEIF ABL:MASTER:촬영기능 == 4
         TIMES ARG , 1.25
     ELSE
         TIMES ARG , 1.50
     ENDIF
     ;보도자
-    SIF TALENT:MASTER:196
+    SIF TALENT:MASTER:보도자
         TIMES ARG , 1.25
 ;조수
 ELSEIF FLAG:61 == 2
     ;촬영기능을 본다
-    IF ABL:ASSI:71 == 0
+    IF ABL:ASSI:촬영기능 == 0
         TIMES ARG , 0.70
-    ELSEIF ABL:ASSI:71 == 1
+    ELSEIF ABL:ASSI:촬영기능 == 1
         TIMES ARG , 0.80
-    ELSEIF ABL:ASSI:71 == 2
+    ELSEIF ABL:ASSI:촬영기능 == 2
         TIMES ARG , 0.90
-    ELSEIF ABL:ASSI:71 == 3
+    ELSEIF ABL:ASSI:촬영기능 == 3
         TIMES ARG , 1.00
-    ELSEIF ABL:ASSI:71 == 4
+    ELSEIF ABL:ASSI:촬영기능 == 4
         TIMES ARG , 1.25
     ELSE
         TIMES ARG , 1.50
     ENDIF
     ;보도자
-    SIF TALENT:ASSI:196
+    SIF TALENT:ASSI:보도자
         TIMES ARG , 1.25
 ;床置き時々手ぶれ
-ELSEIF TALENT:MASTER:189 == 0
+ELSEIF TALENT:MASTER:가전제품지식 == 0
     ;주인の피사경험が20回以下の場合減額(주인が[家電使役知識]持ちなら除外)
-    IF EXP:MASTER:72 <= 10
+    IF EXP:MASTER:피사경험 <= 10
         TIMES ARG , 0.80
-    ELSEIF EXP:MASTER:72 <= 20
+    ELSEIF EXP:MASTER:피사경험 <= 20
         TIMES ARG , 0.90
     ENDIF
 ENDIF
@@ -2250,15 +2250,15 @@ SIF ITEM:58
     TIMES ARG , 1.20
 
 ;現在不人気のジャンル
-IF GET_GENRE(FLAG:77) >= 8
+IF GET_GENRE(FLAG:현재비디오유행) >= 8
     TIMES ARG , 1.50
-ELSEIF GET_GENRE(FLAG:77) >= 5
+ELSEIF GET_GENRE(FLAG:현재비디오유행) >= 5
     TIMES ARG , 1.25
 ENDIF
 ;現在人気のジャンル
-IF GET_GENRE(FLAG:78) >= 8
+IF GET_GENRE(FLAG:현재비디오불유행) >= 8
     TIMES ARG , 0.50
-ELSEIF GET_GENRE(FLAG:78) >= 5
+ELSEIF GET_GENRE(FLAG:현재비디오불유행) >= 5
     TIMES ARG , 0.75
 ENDIF
 RETURNF ARG
@@ -2273,8 +2273,8 @@ LOCAL = 0
 PRINTFORML %조사처리(CALLNAME:TARGET,"과")%의 난행을 녹화한 비디오를…
 PRINTL [0] - 판다
 PRINTFORML [1] - %조사처리(CALLNAME:TARGET,"과")% 같이 감상한다
-IF FLAG:12 & 8
-    PRINTFORML [2] - 비디오를 전시실에 보관한다\@(CFLAG:10 & 128) ? (%CALLNAME:TARGET%의 비디오는 보관되고 있습니다) # (%CALLNAME:TARGET%의 비디오는 없습니다)\@
+IF FLAG:SHOP이벤트확장 & 8
+    PRINTFORML [2] - 비디오를 전시실에 보관한다\@(CFLAG:수집품채취여부 & 128) ? (%CALLNAME:TARGET%의 비디오는 보관되고 있습니다) # (%CALLNAME:TARGET%의 비디오는 없습니다)\@
 ELSE
     PRINTL [2] - 비디오를 보관한다(최대 한 편까지)
 ENDIF
@@ -2287,7 +2287,7 @@ ELSEIF RESULT == 1
     LOCAL = 1
 ELSEIF RESULT == 2
     LOCAL = 2
-    SIF FLAG:12 & 8
+    SIF FLAG:SHOP이벤트확장 & 8
         TFLAG:996 |= 32
 ELSE
     GOTO INPUT_LOOP

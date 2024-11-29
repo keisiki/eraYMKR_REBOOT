@@ -9,26 +9,26 @@
 SIF DITEMTYPE:999:81 > 0
     RETURN 0
 ;강력 아이템·커맨드 무효시는 안 됨
-SIF (FLAG:13 & 2) == 0
+SIF (FLAG:아이템확장 & 2) == 0
     RETURN 0
 ;주사계 커맨드를 유효하게 하지 않으면 안 됨
-SIF (FLAG:15 & 64) == 0
+SIF (FLAG:커맨드확장 & 64) == 0
     RETURN 0
 ;V조교 필터가 오프가 되지 않으면 안 됨
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
 ;약물내성이라면 안 됨
-SIF TALENT:44
+SIF TALENT:약물내성
     RETURN 0
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;기계라면 안 됨
-SIF TALENT:206
+SIF TALENT:기계
     RETURN 0
 ;기교 3 이하의 ASSI의 경우 주사할 수 없다(바늘 다루기라면 OK)
 IF ASSIPLAY
-    SIF ABL:ASSI:12 <= 3 && TALENT:ASSI:53 == 0
+    SIF ABL:ASSI:기교 <= 3 && TALENT:ASSI:바느질 == 0
         RETURN 0
 ENDIF
 ;주사 세트와 미약을 가지고 있는지, 아이템 없음 설정이 아니면 안 됨
@@ -73,21 +73,21 @@ COM_NAME = 보지 주사
 CALL TRAIN_MESSAGE_COM081
 
 ;조제 지식이 있으면 소비를 억제한다
-LOCAL:3 = (TALENT:MASTER:55) ?  1 # 0
-SIF ASSI >= 0 && TALENT:ASSI:55
+LOCAL:3 = (TALENT:MASTER:조합지식) ?  1 # 0
+SIF ASSI >= 0 && TALENT:ASSI:조합지식
     LOCAL:3 = 1
 
 ;조교 대상으로 미약중독이 있으면 소비를 억제한다
 IF LOCAL:3
-    LOCAL:1 = (TALENT:46) ?  250 # 500
-    LOCAL:2 = (TALENT:46) ?  150 # 300
+    LOCAL:1 = (TALENT:미약중독) ?  250 # 500
+    LOCAL:2 = (TALENT:미약중독) ?  150 # 300
 ELSE
-    LOCAL:1 = (TALENT:46) ?  400 # 800
-    LOCAL:2 = (TALENT:46) ?  250 # 500
+    LOCAL:1 = (TALENT:미약중독) ?  400 # 800
+    LOCAL:2 = (TALENT:미약중독) ?  250 # 500
 ENDIF
 
 DOWNBASE:0 += LOCAL:1
-DOWNBASE:1 += LOCAL:2
+DOWNBASE:기력 += LOCAL:2
 
 SOURCE:1 = 500
 SOURCE:24 = 500
@@ -99,36 +99,36 @@ IF TEQUIP:90
     TFLAG:90 = 1
 ELSEIF NOITEM == 0
     ITEM:61 -= 1
-    SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+    SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
         CALL FILL_PLURAL_ITEM, 61
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:31 , 3.00
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:31 , 2.50
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:31 , 2.00
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:31 , 1.50
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:31 , 1.00
 ELSE
     TIMES SOURCE:31 , 0.80
 ENDIF
 
 ;ABL:V감각을 본다
-IF ABL:1 == 0
+IF ABL:V감각 == 0
     TIMES SOURCE:1 , 0.50
-ELSEIF ABL:1 == 1
+ELSEIF ABL:V감각 == 1
     TIMES SOURCE:1 , 1.00
-ELSEIF ABL:1 == 2
+ELSEIF ABL:V감각 == 2
     TIMES SOURCE:1 , 1.50
-ELSEIF ABL:1 == 3
+ELSEIF ABL:V감각 == 3
     TIMES SOURCE:1 , 2.00
     EX:1 += RAND:2
-ELSEIF ABL:1 == 4
+ELSEIF ABL:V감각 == 4
     TIMES SOURCE:1 , 2.50
     EX:1 += 1
 ELSE
@@ -137,19 +137,19 @@ ELSE
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     TIMES SOURCE:24 , 0.80
     TIMES DOWNBASE:0 , 1.20
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     TIMES SOURCE:24 , 1.10
     TIMES DOWNBASE:0 , 1.10
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     TIMES SOURCE:24 , 1.30
     TIMES DOWNBASE:0 , 1.00
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     TIMES SOURCE:24 , 1.50
     TIMES DOWNBASE:0 , 0.90
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     TIMES SOURCE:24 , 1.70
     TIMES DOWNBASE:0 , 0.80
 ELSE
@@ -174,13 +174,13 @@ ENDIF
 TEQUIP:11 = 1
 
 ;반항적
-SIF TALENT:11
+SIF TALENT:반항적
     TIMES SOURCE:20 , 1.10
 ;저항
-SIF TALENT:34
+SIF TALENT:저항
     TIMES SOURCE:20 , 1.10
 ;미약중독
-IF TALENT:46
+IF TALENT:미약중독
     SOURCE:24 += 500
     TIMES SOURCE:1 , 1.50
     TIMES SOURCE:31 , 1.50
@@ -189,10 +189,10 @@ ELSE
     SOURCE:42 = 2 + RAND:5
 ENDIF
 ;V민감
-IF TALENT:102
-    IF ABL:1 <= 3
+IF TALENT:V민감
+    IF ABL:V감각 <= 3
         TIMES SOURCE:1 , 1.80
-    ELSEIF ABL:1 == 4
+    ELSEIF ABL:V감각 == 4
         TIMES SOURCE:1 , 2.00
         EX:1 += RAND:2
     ELSE
@@ -200,11 +200,11 @@ IF TALENT:102
         EX:1 += RAND:3
     ENDIF
 ;V둔감
-ELSEIF TALENT:103
-    IF ABL:1 <= 3
+ELSEIF TALENT:V둔감
+    IF ABL:V감각 <= 3
         TIMES SOURCE:1 , 0.70
         EX:1 -= (EX:1 > 1) ?  1 # 0
-    ELSEIF ABL:1 == 4
+    ELSEIF ABL:V감각 == 4
         TIMES SOURCE:1 , 0.75
         EX:1 -= (EX:1 > 1) ?  1 # 0
     ELSE
@@ -214,9 +214,9 @@ ENDIF
 
 ;쿠스코 사용중에 절정 회수 증가
 IF TEQUIP:21
-    IF ABL:1 >= 5
+    IF ABL:V감각 >= 5
         EX:1 += 2
-    ELSEIF ABL:1 == 4
+    ELSEIF ABL:V감각 == 4
         EX:1 += 1
     ELSE
         TIMES SOURCE:1 , 1.50
@@ -228,14 +228,14 @@ IF TEQUIP:90
     TIMES SOURCE:31 , 0.80
     LOCAL:1 -= 200
     DOWNBASE:0 -= LOCAL:1
-    DOWNBASE:1 -= 400
+    DOWNBASE:기력 -= 400
 ENDIF
 
 ;조교자에게 바늘 다루기
-SIF TALENT:PLAYER:53
+SIF TALENT:PLAYER:바느질
     TIMES SOURCE:20 , 0.90
 ;조교자에게 유치
-SIF TALENT:PLAYER:131
+SIF TALENT:PLAYER:유치
     TIMES SOURCE:20 , 1.20
 
 ;레이센이나 에이린에 의한 사용
@@ -252,9 +252,9 @@ IF EX:1 > 0
     TCVAR:0 += 1
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 2
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 2
 ENDIF
 
@@ -262,7 +262,7 @@ ENDIF
 TCVAR:40 += 2
 
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && ABL:21 >= 3
+SIF ASSIPLAY == 0 && ABL:마조끼 >= 3
     TFLAG:50 += 1
 
 RETURN 1
@@ -272,18 +272,18 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM081
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 PRINTFORM %CALLNAME:TARGET%의 
-SIF TALENT:102
+SIF TALENT:V민감
     PRINT 민감한 
 IF TEQUIP:21
     PRINT 쿠스코로 무방비가 된 자궁구에 
 ELSEIF TFLAG:899 >= 1
     PRINT 실신해 무방비가 된 질을 열어 자궁구에 
-ELSEIF ABL:1 >= 4
+ELSEIF ABL:V감각 >= 4
     PRINT 거대화된 질 벽에 
 ELSE
     PRINT 벌렁대는 질구에 
@@ -291,16 +291,16 @@ ENDIF
 PRINTL 주사바늘을 꽂았다….
 PRINTL
 PRINTFORM %조사선택(CALLNAME:TARGET, "는")% 
-IF ABL:1 >= 5
+IF ABL:V감각 >= 5
     PRINT 몸 안쪽에서 올라오는 격통감에 몸을 비틀고 
-ELSEIF ABL:1 >= 3
+ELSEIF ABL:V감각 >= 3
     PRINT 엄청난 쾌감에 몸이 불타오르며 
 ELSE
     PRINT 격통과 솟구치는 감각에 신음하면서 
 ENDIF
 IF PALAM:13 >= PALAMLV:5
     PRINT 울부짖으면서 
-    IF ABL:14 >= 3 && TEQUIP:40 == 0
+    IF ABL:노출증 >= 3 && TEQUIP:40 == 0
         PRINT 양 손으로 보짓살을 벌려대고 
     ELSE
         PRINT 당신에게 매달려 

@@ -46,7 +46,7 @@ CALL VALUE_WORKSHOP_INIT
 ;行動内容確認
 REPEAT CHARANUM
     ;工房に居ないならスキップ
-    SIF CFLAG:COUNT:4 != 3
+    SIF CFLAG:COUNT:조교관외 != 3
         CONTINUE
     SELECTCASE CFLAG:COUNT:690
         CASE 0
@@ -70,7 +70,7 @@ IF LOCAL:0 > 0
     LOCAL:10 = 0
     REPEAT CHARANUM
         ;工房に居ないならスキップ
-        SIF CFLAG:COUNT:4 != 3
+        SIF CFLAG:COUNT:조교관외 != 3
             CONTINUE
         ;作業があるならスキップ
         SIF CFLAG:COUNT:690 != 0 && CFLAG:COUNT:690 != 5
@@ -84,7 +84,7 @@ ENDIF
 IF LOCAL:1 > 0
     REPEAT CHARANUM
         ;工房に居ないならスキップ
-        SIF CFLAG:COUNT:4 != 3
+        SIF CFLAG:COUNT:조교관외 != 3
             CONTINUE
         ;作業が工作技能講座実施中でないならスキップ
         SIF CFLAG:COUNT:690 != 1
@@ -96,7 +96,7 @@ ENDIF
 ;IF LOCAL:3 > 0
 ;    REPEAT CHARANUM
 ;        ;工房に居ないならスキップ
-;        SIF CFLAG:COUNT:4 != 3
+;        SIF CFLAG:COUNT:조교관외 != 3
 ;            CONTINUE
 ;        ;作業が工作技能講座受講中でないならスキップ
 ;        SIF CFLAG:COUNT:690 != 2
@@ -177,28 +177,28 @@ ENDIF
 ;“何もしない”も選択のひとつ
 LOCAL:0 = 1
 ;工作技能が無く、先生がいて、生徒が先生の数以上にいる場合、授業にまぎれられる
-IF ABL:COUNT:73 == 0 && ARG:1 > 0 && ARG:2 > ARG:1
+IF ABL:COUNT:공작기능 == 0 && ARG:1 > 0 && ARG:2 > ARG:1
     LOCAL:0 += 1
     LOCAL:1 = 1
 ELSE
     LOCAL:1 = 0
 ENDIF
 ;工作技能が1以上あり、先生がいて、生徒が先生の数以上にいる場合、授業をサポートできる
-IF ABL:COUNT:73 > 0 && ARG:1 > 0 && ARG:2 > ARG:1
+IF ABL:COUNT:공작기능 > 0 && ARG:1 > 0 && ARG:2 > ARG:1
     LOCAL:0 += 1
     LOCAL:2 = 1
 ELSE
     LOCAL:2 = 0
 ENDIF
 ;工作技能が3以上あり、工作作業中のメンバーがいる場合、作業をサポートできる
-IF ABL:COUNT:73 > 0 && ARG:3 > 0
+IF ABL:COUNT:공작기능 > 0 && ARG:3 > 0
     LOCAL:0 += 1
     LOCAL:3 = 1
 ELSE
     LOCAL:3 = 0
 ENDIF
 ;工作技能が3以上あり、部屋が十分に広く(先生と製作作業者はそれぞれ2人分のスペースが必要)、高性能道具開発状態フラグ管理フラグが開発中である場合、何かの開発を完了できる
-IF ABL:COUNT:73 > 0 && FLAG:1100 > (FLAG:1130 + ARG:1 + ARG:3) && ((CFLAG:COUNT:799 & 2) || (CFLAG:COUNT:799 & 4))
+IF ABL:COUNT:공작기능 > 0 && FLAG:1100 > (FLAG:1130 + ARG:1 + ARG:3) && ((CFLAG:COUNT:799 & 2) || (CFLAG:COUNT:799 & 4))
     LOCAL:0 += 1
     LOCAL:4 = 1
 ELSE
@@ -296,7 +296,7 @@ IF ARG:0 == 0
         SIF LOCAL:1 < 0
             BREAK
         ;生徒が一人でなく、工房にいればカウント
-        SIF CFLAG:(LOCAL:1):4 == 3 && CFLAG:(LOCAL:1):692 == -1
+        SIF CFLAG:(LOCAL:1):조교관외 == 3 && CFLAG:(LOCAL:1):692 == -1
             LOCAL:0 += 1
     WEND
 ENDIF
@@ -311,7 +311,7 @@ WHILE 1
     SIF LOCAL:1 < 0
         BREAK
     ;生徒が一人でなく、工房にいればカウント
-    SIF CFLAG:(LOCAL:1):4 == 3 && CFLAG:(LOCAL:1):692 == -1
+    SIF CFLAG:(LOCAL:1):조교관외 == 3 && CFLAG:(LOCAL:1):692 == -1
         LOCAL:2 -= 1
     ;乱数で示された者になった時点で脱出
     SIF LOCAL:2 == 0
@@ -358,7 +358,7 @@ IF ARG:0 == 0
         SIF LOCAL:1 < 0
             BREAK
         ;念のため工房での作業であることを確認
-        SIF CFLAG:(LOCAL:1):4 == 3
+        SIF CFLAG:(LOCAL:1):조교관외 == 3
             LOCAL:0 += 1
     WEND
 ENDIF
@@ -376,7 +376,7 @@ WHILE 1
     SIF LOCAL:1 < 0
         BREAK
     ;念のため工房での作業であることを確認
-    SIF CFLAG:(LOCAL:1):4 == 3
+    SIF CFLAG:(LOCAL:1):조교관외 == 3
         LOCAL:2 -= 1
     ;乱数で示された者になった時点で脱出
     SIF LOCAL:2 == 0
@@ -419,7 +419,7 @@ RETURN 0
 @RESULT_WORKSHOP_OTHERS
 FOR LOCAL:0, 0, CHARANUM
     ;工房に居なければスキップ
-    SIF CFLAG:(LOCAL:0):4 != 3
+    SIF CFLAG:(LOCAL:0):조교관외 != 3
         CONTINUE
     ;表示済みであればスキップ
     SIF CFLAG:(LOCAL:0):691 & 1p9

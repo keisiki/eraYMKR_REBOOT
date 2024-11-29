@@ -9,16 +9,16 @@
 SIF DITEMTYPE:999:437 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;고문계, 정신조작계커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16) == 0
+SIF (FLAG:커맨드확장 & 16) == 0
     RETURN 0
 ;Ｖ조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 1
+SIF FLAG:VA이상조교필터 & 1
     RETURN 0
-;Ｖ확장경험이 0일 경우, 이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && EXP:32 == 0
+;V확장경험이 0일 경우, 이상계 조교 필터가 오프되어 있지 않으면 불가
+SIF FLAG:VA이상조교필터 & 4 && EXP:V확장경험 == 0
     RETURN 0
 ;조교자もしくは조교 대상이 天子でないとダメ
 SIF NO:TARGET != 52 && NO:PLAYER != 52
@@ -33,23 +33,23 @@ SIF TEQUIP:90
 SIF TEQUIP:20 == 2
     RETURN 1
 ;남자라면 안 됨
-SIF TALENT:120
+SIF TALENT:남자
     RETURN 0
 ;ASSI일 경우, 순종3이상이거나 새드, または망신か복종じゃないとできない。
 IF ASSIPLAY
-    SIF ABL:ASSI:10 < 4 && TALENT:ASSI:81 == 0 && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF ABL:ASSI:순종 < 4 && TALENT:ASSI:새드 == 0 && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
         RETURN 0
 ENDIF
 ;[작은체형]なら순종이 4이상かつ마조끼が4이상じゃないと実行できない
-IF TALENT:128
-    SIF ABL:10 <= 3 || ABL:21 <= 3
+IF TALENT:작은체형
+    SIF ABL:순종 <= 3 || ABL:마조끼 <= 3
         RETURN 0
 ENDIF
 ;조교 대상이 [소인]일 경우에는 주인이 금단의 지식 보유자가 아니면 불가
-SIF TALENT:127 && TALENT:MASTER:56 == 0
+SIF TALENT:소인 && TALENT:MASTER:금단의지식 == 0
     RETURN 0
-;일정의 Ｖ경험이 필요
-SIF EXP:0 < EXPLV:3
+;일정의 V경험이 필요
+SIF EXP:V경험 < EXPLV:3
     RETURN 0
 ;그밖의 Ｖ계 장착구 사용 중에는 불가
 SIF (TEQUIP:20 && TEQUIP:20 != 2) || TEQUIP:21
@@ -85,18 +85,18 @@ CALL TRAIN_MESSAGE_COM437
 
 IF TEQUIP:20 == 2
     DOWNBASE:0 += 400
-    DOWNBASE:1 += 300
+    DOWNBASE:기력 += 300
 
     ;ABL:V감각을 본다
-    IF ABL:1 == 0
+    IF ABL:V감각 == 0
         SOURCE:1 = 2000
-    ELSEIF ABL:1 == 1
+    ELSEIF ABL:V감각 == 1
         SOURCE:1 = 2500
-    ELSEIF ABL:1 == 2
+    ELSEIF ABL:V감각 == 2
         SOURCE:1 = 3000
-    ELSEIF ABL:1 == 3
+    ELSEIF ABL:V감각 == 3
         SOURCE:1 = 4000
-    ELSEIF ABL:1 == 4
+    ELSEIF ABL:V감각 == 4
         SOURCE:1 = 5000
     ELSE
         SOURCE:1 = 6000
@@ -108,20 +108,20 @@ IF TEQUIP:20 == 2
     ENDIF
 ELSE
     DOWNBASE:0 += 50
-    DOWNBASE:1 += 150
+    DOWNBASE:기력 += 150
 
     SOURCE:20 = 1200
     
     ;ABL:V감각을 본다
-    IF ABL:1 == 0
+    IF ABL:V감각 == 0
         SOURCE:1 = 10
-    ELSEIF ABL:1 == 1
+    ELSEIF ABL:V감각 == 1
         SOURCE:1 = 50
-    ELSEIF ABL:1 == 2
+    ELSEIF ABL:V감각 == 2
         SOURCE:1 = 100
-    ELSEIF ABL:1 == 3
+    ELSEIF ABL:V감각 == 3
         SOURCE:1 = 200
-    ELSEIF ABL:1 == 4
+    ELSEIF ABL:V감각 == 4
         SOURCE:1 = 600
     ELSE
         SOURCE:1 = 1000
@@ -129,13 +129,13 @@ ELSE
 ENDIF
 
 ;EXP:V경험을 본다
-IF EXP:0 < EXPLV:3
+IF EXP:V경험 < EXPLV:3
     TIMES SOURCE:1 , 1.00
     SOURCE:20 += 50
-ELSEIF EXP:0 < EXPLV:4
+ELSEIF EXP:V경험 < EXPLV:4
     TIMES SOURCE:1 , 1.10
     SOURCE:20 += 10
-ELSEIF EXP:0 < EXPLV:5
+ELSEIF EXP:V경험 < EXPLV:5
     TIMES SOURCE:1 , 1.20
     SOURCE:20 += 0
 ELSE
@@ -180,26 +180,26 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:1 , 0.70
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:1 , 0.80
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:1 , 0.90
 ELSE
     TIMES SOURCE:1 , 1.00
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES SOURCE:20 , 2.00
 
 ;V민감, 둔감을 본다
 ;쾌V자체의 체크는 다음에 정리해 준다
-IF TALENT:103
+IF TALENT:V둔감
     TIMES SOURCE:20 , 1.50
     TIMES SOURCE:31 , 1.50
-ELSEIF TALENT:102
+ELSEIF TALENT:V민감
     TIMES SOURCE:20 , 0.60
     TIMES SOURCE:31 , 0.60
 ENDIF
@@ -213,7 +213,7 @@ IF TEQUIP:20 == 2
     TEQUIP:20 = 0
 ELSE
     TCVAR:0 += 5
-    SIF EXP:32 == 0
+    SIF EXP:V확장경험 == 0
         TCVAR:50 += 1
     TCVAR:32 += 1
     TEQUIP:20 = 2
@@ -231,18 +231,18 @@ PRINTL <요석 삽입 중>
 TFLAG:1 = 1
 
 DOWNBASE:0 += 20
-DOWNBASE:1 += 60
+DOWNBASE:기력 += 60
 
 ;ABL:V감각을 본다
-IF ABL:1 == 0
+IF ABL:V감각 == 0
     LOCAL = 20
-ELSEIF ABL:1 == 1
+ELSEIF ABL:V감각 == 1
     LOCAL = 60
-ELSEIF ABL:1 == 2
+ELSEIF ABL:V감각 == 2
     LOCAL = 150
-ELSEIF ABL:1 == 3
+ELSEIF ABL:V감각 == 3
     LOCAL = 250
-ELSEIF ABL:1 == 4
+ELSEIF ABL:V감각 == 4
     LOCAL = 400
 ELSE
     LOCAL = 600
@@ -250,13 +250,13 @@ ENDIF
 
 ;EXP:V경험을 본다
 ;처녀는 있을 수 없다
-IF EXP:0 < EXPLV:3
+IF EXP:V경험 < EXPLV:3
     TIMES LOCAL , 1.00
     LOCAL:1 = 100
-ELSEIF EXP:0 < EXPLV:4
+ELSEIF EXP:V경험 < EXPLV:4
     TIMES LOCAL , 1.10
     LOCAL:1 = 50
-ELSEIF EXP:0 < EXPLV:5
+ELSEIF EXP:V경험 < EXPLV:5
     TIMES LOCAL , 1.20
     LOCAL:1 = 10
 ELSE
@@ -301,22 +301,22 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL , 0.70
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL , 0.80
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL , 0.90
 ELSE
     TIMES LOCAL , 1.00
 ENDIF
 
 ;[작은체형]
-SIF TALENT:128
+SIF TALENT:작은체형
     TIMES LOCAL:1 , 2.00
 
 ;정조관념(처녀는 있을 수 없다)
-SIF TALENT:30
+SIF TALENT:정조관념
     TIMES LOCAL:2, 3.00
 
 SOURCE:1 += LOCAL
@@ -340,7 +340,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM437
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -357,7 +357,7 @@ ELSE
         PRINT 잔뜩 
     SIF PALAM:10 >= PALAMLV:3
         PRINT 점액으로 미끌거리는 
-    IF TALENT:128
+    IF TALENT:작은체형
         PRINT 어린 균열에 
     ELSE
         PRINT 보지에 

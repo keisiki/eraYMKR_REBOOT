@@ -9,15 +9,15 @@
 SIF DITEMTYPE:999:328 > 0
     RETURN 0
 ;조교자奉仕 · ウフフ系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 2048) == 0
+SIF (FLAG:커맨드확장 & 2048) == 0
     RETURN 0
 ;直前が助手によるセックス系でありかつその조수가 オトコではない場合
 ;이상계 조교 필터가 오프되어 있지 않으면 불가
-SIF FLAG:2 & 4 && TFLAG:102 && ASSIPLAY && TALENT:PLAYER:120 == 0
+SIF FLAG:VA이상조교필터 & 4 && TFLAG:102 && ASSIPLAY && TALENT:PLAYER:남자 == 0
     RETURN 0
 ;순종4미만 · 레즈끼(BL끼)3미만의 ASSI일 경우, 조교 대상이 동성이라면 실행할 수 없다(망신か복종ならＯＫ)
 IF ASSIPLAY
-    SIF (ABL:ASSI:10 < 4 || ((TALENT:120 == 0 && TALENT:ASSI:120 == 0 && ABL:ASSI:22 < 3) || (TALENT:120 && TALENT:ASSI:120 && ABL:ASSI:23 < 3))) && TALENT:ASSI:151 == 0 && TALENT:ASSI:160 == 0
+    SIF (ABL:ASSI:순종 < 4 || ((TALENT:남자 == 0 && TALENT:ASSI:남자 == 0 && ABL:ASSI:레즈끼 < 3) || (TALENT:남자 && TALENT:ASSI:남자 && ABL:ASSI:BL끼 < 3))) && TALENT:ASSI:망신 == 0 && TALENT:ASSI:복종 == 0
     RETURN 0
 ENDIF
 ;욕실 플레이 중에는 플레이 매트가 없으면 불가
@@ -77,15 +77,15 @@ IF LOCAL:1 > 0
     LOCAL = 0
 
     ;ABL:기교를 본다
-    IF ABL:12 == 0
+    IF ABL:기교 == 0
         LOCAL = 1500
-    ELSEIF ABL:12 == 1
+    ELSEIF ABL:기교 == 1
         LOCAL = 1600
-    ELSEIF ABL:12 == 2
+    ELSEIF ABL:기교 == 2
         LOCAL = 1800
-    ELSEIF ABL:12 == 3
+    ELSEIF ABL:기교 == 3
         LOCAL = 2000
-    ELSEIF ABL:12 == 4
+    ELSEIF ABL:기교 == 4
         LOCAL = 2400
     ELSE
         LOCAL = 3000
@@ -102,13 +102,13 @@ IF LOCAL:1 > 0
     LOCAL = EJACULATIONCHECK_ABL_0_1(PLAYER, LOCAL)
 
     SIF EXIST_PENIS(PLAYER)
-        BASE:PLAYER:2 += LOCAL
+        BASE:PLAYER:사정 += LOCAL
 ENDIF
 
 ;-------------------------------------------------
 ;소스의 계산
 ;-------------------------------------------------
-DOWNBASE:1 += 40
+DOWNBASE:기력 += 40
 
 ;쾌C
 SOURCE:0 = 0
@@ -167,27 +167,27 @@ ELSEIF LOCAL:1 == 4
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES SOURCE:11 , 1.00
     TIMES SOURCE:19 , 1.00
     TIMES SOURCE:18 , 1.00
     TIMES SOURCE:17 , 1.00
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES SOURCE:11 , 1.20
     TIMES SOURCE:19 , 1.40
     TIMES SOURCE:18 , 1.40
     TIMES SOURCE:17 , 1.10
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES SOURCE:11 , 1.60
     TIMES SOURCE:19 , 2.20
     TIMES SOURCE:18 , 2.20
     TIMES SOURCE:17 , 1.30
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES SOURCE:11 , 2.20
     TIMES SOURCE:19 , 3.40
     TIMES SOURCE:18 , 3.40
     TIMES SOURCE:17 , 1.60
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES SOURCE:11 , 3.00
     TIMES SOURCE:19 , 5.00
     TIMES SOURCE:18 , 5.00
@@ -200,27 +200,27 @@ ELSE
 ENDIF
 
 ;ABL:욕망을 본다
-IF ABL:11 == 0
+IF ABL:욕망 == 0
     TIMES SOURCE:11 , 1.00
     TIMES SOURCE:15 , 1.00
     TIMES SOURCE:19 , 1.00
     TIMES SOURCE:18 , 1.00
-ELSEIF ABL:11 == 1
+ELSEIF ABL:욕망 == 1
     TIMES SOURCE:11 , 1.10
     TIMES SOURCE:15 , 1.20
     TIMES SOURCE:19 , 1.10
     TIMES SOURCE:18 , 1.10
-ELSEIF ABL:11 == 2
+ELSEIF ABL:욕망 == 2
     TIMES SOURCE:11 , 1.20
     TIMES SOURCE:15 , 1.60
     TIMES SOURCE:19 , 1.30
     TIMES SOURCE:18 , 1.30
-ELSEIF ABL:11 == 3
+ELSEIF ABL:욕망 == 3
     TIMES SOURCE:11 , 1.40
     TIMES SOURCE:15 , 2.20
     TIMES SOURCE:19 , 1.60
     TIMES SOURCE:18 , 1.60
-ELSEIF ABL:11 == 4
+ELSEIF ABL:욕망 == 4
     TIMES SOURCE:11 , 1.60
     TIMES SOURCE:15 , 3.00
     TIMES SOURCE:19 , 2.00
@@ -233,19 +233,19 @@ ELSE
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 >= 3
+IF ABL:마조끼 >= 3
     TIMES SOURCE:18 , 1.50
     TIMES SOURCE:17 , 1.50
 ENDIF
 
 ;TALENT:음란을 본다
-IF TALENT:174
+IF TALENT:음유
     TIMES SOURCE:19 , 1.50
     TIMES SOURCE:18 , 1.20
 ENDIF
 
 ;조교자의 TALENT:혀사용을 본다
-IF TALENT:PLAYER:52
+IF TALENT:PLAYER:혀놀림
     TIMES SOURCE:19 , 1.20
     TIMES SOURCE:18 , 1.50
 ENDIF
@@ -257,19 +257,19 @@ SIF TEQUIP:11
 ;삽입 시한정의 처리
 IF LOCAL:1 > 0
     ;ABL:V감각을 본다
-    IF ABL:1 == 0
+    IF ABL:V감각 == 0
         SOURCE:1 = 50
         SOURCE:11 += 50
-    ELSEIF ABL:1 == 1
+    ELSEIF ABL:V감각 == 1
         SOURCE:1 = 150
         SOURCE:11 += 100
-    ELSEIF ABL:1 == 2
+    ELSEIF ABL:V감각 == 2
         SOURCE:1 = 300
         SOURCE:11 += 200
-    ELSEIF ABL:1 == 3
+    ELSEIF ABL:V감각 == 3
         SOURCE:1 = 600
         SOURCE:11 += 300
-    ELSEIF ABL:1 == 4
+    ELSEIF ABL:V감각 == 4
         SOURCE:1 = 1000
         SOURCE:11 += 500
     ELSE
@@ -278,21 +278,21 @@ IF LOCAL:1 > 0
     ENDIF
 
     ;EXP:V경험을 본다
-    IF EXP:0 < EXPLV:1
+    IF EXP:V경험 < EXPLV:1
         TIMES SOURCE:1 , 0.20
         SOURCE:20 = 3500
-        SIF ASSIPLAY && TALENT:PLAYER:120 == 0
+        SIF ASSIPLAY && TALENT:PLAYER:남자 == 0
             TCVAR:50 += 1
-    ELSEIF EXP:0 < EXPLV:2
+    ELSEIF EXP:V경험 < EXPLV:2
         TIMES SOURCE:1 , 0.60
         SOURCE:20 = 250
-    ELSEIF EXP:0 < EXPLV:3
+    ELSEIF EXP:V경험 < EXPLV:3
         TIMES SOURCE:1 , 1.00
         SOURCE:20 = 50
-    ELSEIF EXP:0 < EXPLV:4
+    ELSEIF EXP:V경험 < EXPLV:4
         TIMES SOURCE:1 , 1.10
         SOURCE:20 = 10
-    ELSEIF EXP:0 < EXPLV:5
+    ELSEIF EXP:V경험 < EXPLV:5
         TIMES SOURCE:1 , 1.20
         SOURCE:20 = 0
     ELSE
@@ -308,19 +308,19 @@ IF LOCAL:1 > 0
     ELSEIF LOCAL:1 == 2
         ;쾌B가 들어간다
         ;ABL:B감각을 본다
-        IF ABL:3 == 0
+        IF ABL:B감각 == 0
             SOURCE:3 = 40
             SOURCE:11 += 50
-        ELSEIF ABL:3 == 1
+        ELSEIF ABL:B감각 == 1
             SOURCE:3 = 150
             SOURCE:11 += 200
-        ELSEIF ABL:3 == 2
+        ELSEIF ABL:B감각 == 2
             SOURCE:3 = 400
             SOURCE:11 += 400
-        ELSEIF ABL:3 == 3
+        ELSEIF ABL:B감각 == 3
             SOURCE:3 = 700
             SOURCE:11 += 600
-        ELSEIF ABL:3 == 4
+        ELSEIF ABL:B감각 == 4
             SOURCE:3 = 1000
             SOURCE:11 += 1000
         ELSE
@@ -331,15 +331,15 @@ IF LOCAL:1 > 0
     ELSEIF LOCAL:1 == 3
         ;쾌C가 들어간다
         ;ABL:C감각을 본다
-        IF ABL:0 == 0
+        IF ABL:C감각 == 0
             SOURCE:0 = 40
-        ELSEIF ABL:0 == 1
+        ELSEIF ABL:C감각 == 1
             SOURCE:0 = 160
-        ELSEIF ABL:0 == 2
+        ELSEIF ABL:C감각 == 2
             SOURCE:0 = 500
-        ELSEIF ABL:0 == 3
+        ELSEIF ABL:C감각 == 3
             SOURCE:0 = 900
-        ELSEIF ABL:0 == 4
+        ELSEIF ABL:C감각 == 4
             SOURCE:0 = 1400
         ELSE
             SOURCE:0 = 2100
@@ -348,19 +348,19 @@ IF LOCAL:1 > 0
     ELSEIF LOCAL:1 == 4
         ;쾌B가 들어간다
         ;ABL:B감각을 본다
-        IF ABL:3 == 0
+        IF ABL:B감각 == 0
             SOURCE:3 = 50
             LOCAL:2 = 50
-        ELSEIF ABL:3 == 1
+        ELSEIF ABL:B감각 == 1
             SOURCE:3 = 200
             LOCAL:2 = 150
-        ELSEIF ABL:3 == 2
+        ELSEIF ABL:B감각 == 2
             SOURCE:3 = 500
             LOCAL:2 = 250
-        ELSEIF ABL:3 == 3
+        ELSEIF ABL:B감각 == 3
             SOURCE:3 = 900
             LOCAL:2 = 350
-        ELSEIF ABL:3 == 4
+        ELSEIF ABL:B감각 == 4
             SOURCE:3 = 1300
             LOCAL:2 = 600
         ELSE
@@ -369,7 +369,7 @@ IF LOCAL:1 > 0
         ENDIF
 
         ;TALENT:음유를 본다
-        IF TALENT:174
+        IF TALENT:음유
             TIMES SOURCE:3 , 1.20
             TIMES LOCAL:2 , 1.20
         ENDIF
@@ -378,14 +378,14 @@ IF LOCAL:1 > 0
 
     ;V경험을 수반하는 커맨드의 플래그(처녀막 재생 대응)
     TFLAG:1 = 1
-    SIF TALENT:0 && TALENT:150 && ASSIPLAY == 0
-        TFLAG:2 = TALENT:0
+    SIF TALENT:처녀 && TALENT:연모 && ASSIPLAY == 0
+        TFLAG:2 = TALENT:처녀
 
     TCVAR:0 += 1
     IF PLAYER == MASTER
         TCVAR:42 += 1
         SIF EXIST_BAR(MASTER)
-            CFLAG:173 += 1
+            CFLAG:주인에게V바친회수 += 1
     ENDIF
 
     ;-------------------------------------------------
@@ -395,7 +395,7 @@ IF LOCAL:1 > 0
 
     ;사정시의 처리
     IF TFLAG:91 >= 1
-        IF ABL:10 >= 3 && ABL:11 >= 3 && FLAG:10
+        IF ABL:순종 >= 3 && ABL:욕망 >= 3 && FLAG:조교시텍스트표시
             IF LOCAL:1 == 1 || LOCAL:1 == 2
                 PRINTFORML %조사선택(CALLNAME:TARGET, "는")% %CALLNAME:PLAYER%의 어깨로 해가 보고 붙도록 달라붙어 왔다….
             ELSE
@@ -415,12 +415,12 @@ IF LOCAL:1 > 0
 
     ;사정에 관계없이 행해지는 처리는 여기로부터
     ;노예의 V⇔조교자의 P의 불결이 이동
-    STAIN:3 |= STAIN:PLAYER:2
-    STAIN:PLAYER:2 |= STAIN:3
+    STAIN:보지 |= STAIN:PLAYER:자지
+    STAIN:PLAYER:자지 |= STAIN:보지
 ENDIF
 
 ;반발 각인에 의한 패널티
-IF MARK:9 >= 2
+IF MARK:반발각인 >= 2
     TIMES SOURCE:11 , 0.50
     TIMES SOURCE:15 , 0.80
     TIMES SOURCE:32 , 2.00
@@ -430,9 +430,9 @@ ENDIF
 ;조교시 메시지 표시
 CALL TRAIN_MESSAGE_COM328
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 3
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 3
 ENDIF
 RETURN 1
@@ -442,7 +442,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM328
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -456,7 +456,7 @@ IF TFLAG:99 == 1
     ENDIF
     PRINTFORML 삽입한 채로 엎어지듯이 하며, %CALLNAME:TARGET%의 목덜미에 입맞추고
     PRINTFORM 허리를 천천히 움직이면서 %CALLNAME:TARGET%의 
-    IF MARK:2 >= 2 || MARK:9 < 2 || TALENT:150
+    IF MARK:굴복각인 >= 2 || MARK:반발각인 < 2 || TALENT:연모
         PRINTW 귓전에 달콤하게 속삭였다….
     ELSE
         PRINTW 귓구멍에 살그머니 혀끝을 가져갔다….
@@ -470,11 +470,11 @@ ELSEIF TFLAG:99 == 2
     ENDIF
     PRINTFORML 삽입한 채로 뒤로부터 껴안아 %CALLNAME:TARGET%의 목덜미에 입맞추고,
     PRINTFORM 허리를 천천히 움직이면서 %CALLNAME:TARGET%의 
-    IF TALENT:112 || TALENT:113
+    IF TALENT:거유 || TALENT:폭유
         PRINT 손바닥으로 감싸기 힘들 정도로 같은 큰 가슴을 비볐다….
-    ELSEIF TALENT:111
+    ELSEIF TALENT:빈유
         PRINT 작게 흔들리는 가슴의 끄트머리를 손가락으로 잡고 돌렸다….
-    ELSEIF TALENT:110
+    ELSEIF TALENT:절벽
         PRINT 평평한 가슴의 작은 돌기를 손가락으로 튕겼다….
     ELSE
         PRINT 부드러운 가슴을 양손바닥으로 어루만지고 돌렸다….
@@ -497,11 +497,11 @@ ELSEIF TFLAG:99 == 4
         PRINT 페니스 밴드를 
     ENDIF
     PRINTFORML 삽입한 채로 %조사선택(CALLNAME:TARGET, "를")% 꼭 껴안아,
-    IF TALENT:112 || TALENT:113
+    IF TALENT:거유 || TALENT:폭유
         PRINT 손바닥으로 감싸기 힘들 정도로 같은 큰 가슴을 비비고, 
-    ELSEIF TALENT:111
+    ELSEIF TALENT:빈유
         PRINT 작게 흔들리는 가슴의 끄트머리를 손가락으로 집어 짜며, 
-    ELSEIF TALENT:110
+    ELSEIF TALENT:절벽
         PRINT 평평한 가슴의 작은 돌기를 손가락으로 튕기며, 
     ELSE
         PRINT 부드러운 가슴을 양손바닥으로 어루만지고 돌리며, 
@@ -509,7 +509,7 @@ ELSEIF TFLAG:99 == 4
     PRINTW 허리를 움직이면서 목덜미와 귓불의 뒤에 몇 번이나 키스를 했다….
 ;통상
 ELSE
-    IF MARK:2 >= 2 || MARK:9 < 2 || TALENT:150
+    IF MARK:굴복각인 >= 2 || MARK:반발각인 < 2 || TALENT:연모
         PRINTFORM %조사선택(CALLNAME:TARGET, "를")% 껴안아 
     ELSE
         PRINTFORM 날뛰는 %조사선택(CALLNAME:TARGET, "를")% 억눌러 

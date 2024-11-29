@@ -5,8 +5,8 @@
 PRINTFORMW 【%CALLNAME:MASTER% 창관 신장개업】
 FLAG:3000 |= 1048576
 ;１週目と, 二週目以降で初期人気が異なる.
-IF FLAG:6 > 1
-    FLAG:3005 = FLAG:30
+IF FLAG:주회수 > 1
+    FLAG:3005 = FLAG:함락총계
     IF FLAG:3005 > 0
         IF FLAG:3005 < 50
             FLAG:3005 /= 2
@@ -22,8 +22,8 @@ IF FLAG:6 > 1
     ENDIF
 ELSE
     FLAG:3005 = 30
-    FLAG:3005 += FLAG:30
-    FLAG:3005 += FLAG:30
+    FLAG:3005 += FLAG:함락총계
+    FLAG:3005 += FLAG:함락총계
     SIF FLAG:3005 > 100
         FLAG:3005 = 100
 ENDIF
@@ -51,7 +51,7 @@ REPEAT CHARANUM
     SIF COUNT == MASTER && (FLAG:3000 & 67108864) == 0
         CONTINUE
     ;失踪中などこの場にいないなら除外
-    SIF CFLAG:COUNT:4 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
 
     CALLF SET_LIST, LOCAL:2, COUNT
@@ -76,7 +76,7 @@ REPEAT 20
     
     SIF LOCAL:10 == 0
         CONTINUE
-    SIF CFLAG:(LOCAL:10):4 == 1
+    SIF CFLAG:(LOCAL:10):조교관외 == 1
         CONTINUE
     IF (LOCAL:10) == TARGET
         PRINT ☆
@@ -84,17 +84,17 @@ REPEAT 20
     ELSEIF LOCAL:10 == ASSI
         PRINT ★
         LOCAL:3 |= 32
-    ELSEIF CFLAG:(LOCAL:10):4 == 4
+    ELSEIF CFLAG:(LOCAL:10):조교관외 == 4
         PRINT ◆
         LOCAL:3 |= 1
-    ELSEIF CFLAG:(LOCAL:10):4 == 8
+    ELSEIF CFLAG:(LOCAL:10):조교관외 == 8
         CONTINUE
-    ELSEIF CFLAG:(LOCAL:10):4 == 16
+    ELSEIF CFLAG:(LOCAL:10):조교관외 == 16
         CONTINUE
-    ELSEIF CFLAG:(LOCAL:10):4 & 1024
+    ELSEIF CFLAG:(LOCAL:10):조교관외 & 1024
         PRINT ▼
         LOCAL:3 |= 16
-    ELSEIF CFLAG:(LOCAL:10):4 == 2048 || CFLAG:(LOCAL:10):4 == 4096
+    ELSEIF CFLAG:(LOCAL:10):조교관외 == 2048 || CFLAG:(LOCAL:10):조교관외 == 4096
         PRINT ▽
         LOCAL:3 |= 8
     ELSE
@@ -107,11 +107,11 @@ REPEAT 20
 REND
 IF LOCAL:3 >= 1
     PRINT 　　　☆:조교중 ★:조수
-    SIF FLAG:15 & 4096 && FLAG:75 & 32768 && LOCAL:3 & 1
+    SIF FLAG:커맨드확장 & 4096 && FLAG:촉수능력 & 32768 && LOCAL:3 & 1
         PRINT  ◆:촉수유폐중
     SIF LOCAL:3 & 16
         PRINT  ▼:매춘중
-    SIF FLAG:79 & 1 && LOCAL:3 & 8
+    SIF FLAG:허브농원 & 1 && LOCAL:3 & 8
         PRINT  ▽:농사중
     PRINTL 　임을 표시하고 있습니다.
 ENDIF
@@ -167,7 +167,7 @@ ELSEIF FLAG:3004 == 32
 ENDIF
 SIF FLAG:3000 & 8388608
     PRINTL  [1004]  창관 랭킹 체크
-IF FLAG:4 == 4
+IF FLAG:게임모드 == 4
     PRINTL  [1005]  증축한다  (1회 50000원)
 ELSE
     PRINTL  [1005]  증축한다  (1회 80000원)
@@ -219,10 +219,10 @@ ELSEIF RESULT == 1004 && FLAG:3000 & 8388608
     CALL SPRING_RANKING
     GOTO SPRING
 ELSEIF RESULT == 1005
-    IF FLAG:4 == 4 && MONEY < 50000
+    IF FLAG:게임모드 == 4 && MONEY < 50000
         PRINTL 자금이 부족합니다.
         GOTO SPRING
-    ELSEIF MONEY < 80000 && FLAG:4 != 4
+    ELSEIF MONEY < 80000 && FLAG:게임모드 != 4
         PRINTL 자금이 부족합니다.
         GOTO SPRING
     ENDIF
@@ -236,10 +236,10 @@ ENDIF
 IF RESULT < 0 || RESULT >= CHARANUM
     GOTO INPUT_LOOP
 ENDIF
-IF CFLAG:RESULT:1501 > 0
-    LOCAL@SPRING_DUMMY:1 = CFLAG:RESULT:1501
-    CFLAG:RESULT:1501 = 0
-    CFLAG:RESULT:4 -= 1024
+IF CFLAG:RESULT:매춘상태 > 0
+    LOCAL@SPRING_DUMMY:1 = CFLAG:RESULT:매춘상태
+    CFLAG:RESULT:매춘상태 = 0
+    CFLAG:RESULT:조교관외 -= 1024
     FLAG:3001 -= 1
 ELSE
     LOCAL@SPRING_DUMMY:1 = 0
@@ -258,35 +258,35 @@ IF FLAG:3001 > ITEM:90
     CALL SPRING_OUT
     GOTO SPRING
 ENDIF
-IF CFLAG:RESULT:1501 == 0 && FLAG:3001 == ITEM:90
+IF CFLAG:RESULT:매춘상태 == 0 && FLAG:3001 == ITEM:90
     PRINTW 이 이상 매춘을 시킬 수 없습니다. 창관을 확장해주세요.
     GOTO SPRING
 ENDIF
-IF BASE:RESULT:0 <= 500
+IF BASE:RESULT:체력 <= 500
     PRINTW 체력이 500 이하이기 때문에 매춘을 할 수 없습니다.
     GOTO SPRING
 ENDIF
-IF MARK:RESULT:9
+IF MARK:RESULT:반발각인
     PRINTW 반발감정이 심해서 매춘을 할 수 없습니다.
     GOTO SPRING
 ENDIF
-IF TALENT:RESULT:146
+IF TALENT:RESULT:기생
     PRINTW 촉수기생 중에는 매춘을 할 수 없습니다.
     GOTO SPRING
 ENDIF
-IF TALENT:RESULT:145
+IF TALENT:RESULT:회란
     PRINTW 알이 뱃속에 있는 동안에는 매춘을 할 수 없습니다.
     GOTO SPRING
 ENDIF
-IF CFLAG:RESULT:4 == 2
+IF CFLAG:RESULT:조교관외 == 2
     PRINTW 육아 중에는 매춘을 할 수 없습니다.
     GOTO SPRING
 ENDIF
-LOCAL@SPRING_DUMMY:0 = ABL:RESULT:10
-LOCAL@SPRING_DUMMY:0 += ABL:RESULT:11
-LOCAL@SPRING_DUMMY:0 += ABL:RESULT:12
-LOCAL@SPRING_DUMMY:0 += ABL:RESULT:13
-LOCAL@SPRING_DUMMY:0 += ABL:RESULT:14
+LOCAL@SPRING_DUMMY:0 = ABL:RESULT:순종
+LOCAL@SPRING_DUMMY:0 += ABL:RESULT:욕망
+LOCAL@SPRING_DUMMY:0 += ABL:RESULT:기교
+LOCAL@SPRING_DUMMY:0 += ABL:RESULT:봉사정신
+LOCAL@SPRING_DUMMY:0 += ABL:RESULT:노출증
 IF LOCAL@SPRING_DUMMY:0 < 7
     PRINTW 조교가 부족합니다. 좀 더 키우지 않으면 상품으로 쓸 수 없습니다.
     GOTO SPRING
@@ -298,12 +298,12 @@ ELSEIF RESULT == ASSI
     ASSI = -1
     LOCAL@SPRING_DUMMY:1 = 101
 ENDIF
-IF TALENT:RESULT:140
+IF TALENT:RESULT:임신
     PRINTFORML ※※※※※※※※※경고※※※※※※※※※
     PRINTFORML 【임신】 중의 매춘행위는 굉장히 위험합니다.
     PRINTFORMW ※※※※※※※※※경고※※※※※※※※※
 ENDIF
-IF TALENT:RESULT:158 || TALENT:RESULT:161 || TALENT:RESULT:163 || TALENT:RESULT:167 || TALENT:RESULT:168 || TALENT:RESULT:169
+IF TALENT:RESULT:광기 || TALENT:RESULT:낙인 || TALENT:RESULT:흠집 || TALENT:RESULT:정신붕괴 || TALENT:RESULT:괴뢰 || TALENT:RESULT:괴조인격
     PRINTFORML ※※※※※※※※※※※※경고※※※※※※※※※※※※※※
     PRINTFORML 붕괴 계열 소질 때문에 상품으로서의 가치가 매우 저하합니다.
     PRINTFORMW ※※※※※※※※※※※※경고※※※※※※※※※※※※※※
@@ -313,39 +313,39 @@ PRINTFORML %조사처리(NAME:COUNT,"를")% 어떻게 하겠습니까?
 
 PRINTLC [0] 매춘하지 않음
 PRINTLC [1] 소프트 매춘
-LOCAL@SPRING_DUMMY:0 = ABL:COUNT:0
-LOCAL@SPRING_DUMMY:0 += ABL:COUNT:3
+LOCAL@SPRING_DUMMY:0 = ABL:COUNT:C감각
+LOCAL@SPRING_DUMMY:0 += ABL:COUNT:B감각
 SIF LOCAL@SPRING_DUMMY:0 >= 5
     PRINTLC [2] ＣＢ매춘
-SIF ABL:COUNT:2 >= 3 && TALENT:COUNT:127 == 0
+SIF ABL:COUNT:A감각 >= 3 && TALENT:COUNT:소인 == 0
     PRINTLC [3] Ａ매춘
-SIF (EXP:COUNT:0 > 30 || TALENT:COUNT:260 == 1) && ABL:COUNT:10 > 1 && ABL:COUNT:11 > 1 && ABL:COUNT:13 > 1 && ABL:COUNT:14 > 1 && TALENT:COUNT:127 == 0 && TALENT:COUNT:120 == 0
+SIF (EXP:COUNT:V경험 > 30 || TALENT:COUNT:창부 == 1) && ABL:COUNT:순종 > 1 && ABL:COUNT:욕망 > 1 && ABL:COUNT:봉사정신 > 1 && ABL:COUNT:노출증 > 1 && TALENT:COUNT:소인 == 0 && TALENT:COUNT:남자 == 0
     PRINTLC [4] Ｖ매춘
-SIF ABL:COUNT:10 > 1 && ABL:COUNT:13 >= 3 && MARK:COUNT:2 >= 2 && EXP:COUNT:76 >= 30 && FLAG:3000 & 1
+SIF ABL:COUNT:순종 > 1 && ABL:COUNT:봉사정신 >= 3 && MARK:COUNT:굴복각인 >= 2 && EXP:COUNT:매춘경험 >= 30 && FLAG:3000 & 1
     PRINTLC [5] 집단시간
-LOCAL@SPRING_DUMMY:2 = ABL:COUNT:1
-LOCAL@SPRING_DUMMY:2 += ABL:COUNT:2
-SIF ABL:COUNT:10 > 1 && LOCAL@SPRING_DUMMY:2 >= 5 && MARK:COUNT:2 >= 3 && ABL:COUNT:13 >= 3 && EXP:COUNT:76 >= 30 && EXP:COUNT:77 >= 40 && (EXP:COUNT:0 > 0 || TALENT:COUNT:260 == 1) && FLAG:3000 & 1 && TALENT:COUNT:127 == 0 && TALENT:COUNT:120 == 0
+LOCAL@SPRING_DUMMY:2 = ABL:COUNT:V감각
+LOCAL@SPRING_DUMMY:2 += ABL:COUNT:A감각
+SIF ABL:COUNT:순종 > 1 && LOCAL@SPRING_DUMMY:2 >= 5 && MARK:COUNT:굴복각인 >= 3 && ABL:COUNT:봉사정신 >= 3 && EXP:COUNT:매춘경험 >= 30 && EXP:COUNT:창관인기 >= 40 && (EXP:COUNT:V경험 > 0 || TALENT:COUNT:창부 == 1) && FLAG:3000 & 1 && TALENT:COUNT:소인 == 0 && TALENT:COUNT:남자 == 0
     PRINTLC [6] 난교
-SIF TALENT:COUNT:260 == 1
+SIF TALENT:COUNT:창부 == 1
     PRINTLC [7] 세트 매춘(2명까지)
-IF FLAG:3004 == 1 && TALENT:COUNT:0 && TALENT:COUNT:120 == 0
+IF FLAG:3004 == 1 && TALENT:COUNT:처녀 && TALENT:COUNT:남자 == 0
     PRINTLC [8] 처녀경매
-ELSEIF FLAG:3004 == 2 && ABL:COUNT:13 >= 2
+ELSEIF FLAG:3004 == 2 && ABL:COUNT:봉사정신 >= 2
     PRINTLC [8] 입식파티
-ELSEIF FLAG:3004 == 10 && TALENT:COUNT:0 == 0 && ABL:COUNT:10 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF FLAG:3004 == 10 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTLC [8] S서당 플레이
-ELSEIF FLAG:3004 == 11 && TALENT:COUNT:0 == 0 && ABL:COUNT:10 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF FLAG:3004 == 11 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTLC [8] S병원 플레이
-ELSEIF FLAG:3004 == 12 && TALENT:COUNT:0 == 0 && ABL:COUNT:10 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF FLAG:3004 == 12 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTLC [8] S풀장 플레이
-ELSEIF FLAG:3004 == 20 && ABL:COUNT:10 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF FLAG:3004 == 20 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTLC [8] 난교 파티
-ELSEIF FLAG:3004 == 30 && TALENT:COUNT:0 == 0 && ABL:COUNT:10 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF FLAG:3004 == 30 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTLC [8] 일부다처제 플레이
-ELSEIF FLAG:3004 == 31 && TALENT:COUNT:0 == 0 && ABL:COUNT:20 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF FLAG:3004 == 31 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:새드끼 >= 4 && TALENT:COUNT:남자 == 0
     PRINTLC [8] 승천직전 SM투어
-ELSEIF FLAG:3004 == 32 && TALENT:COUNT:121 && TALENT:COUNT:120 == 0
+ELSEIF FLAG:3004 == 32 && TALENT:COUNT:후타나리 && TALENT:COUNT:남자 == 0
     PRINTLC [8] 정액 목욕탕 투어
 ENDIF
 ;個別専用売春行為を実装するならここ
@@ -360,110 +360,110 @@ INPUT
 
 IF RESULT == 0
     PRINTW 매춘을 해제합니다.
-    IF TALENT:COUNT:262
+    IF TALENT:COUNT:매춘중독
         PRINTFORML %조사처리(CALLNAME:COUNT,"는")% 매춘에 참가하고 싶다며 울부짖고 있다.
         PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:COUNT,"를")% 억지로 창관업무에서 빼버렸다.
         PRINTFORMW 반발각인 Lv3을 취득
-        MARK:COUNT:9 = 3
+        MARK:COUNT:반발각인 = 3
     ENDIF
 ELSEIF RESULT == 1
     PRINTW 만지기 엄금 매춘을 행합니다.
-    CFLAG:COUNT:1501 = 1
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 1
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 2 && LOCAL@SPRING_DUMMY:0 >= 5
-    IF TALENT:COUNT:120 == 0
+    IF TALENT:COUNT:남자 == 0
         PRINTW 삽입 엄금의 매춘을 실시합니다.
     ELSE
         PRINTW OK의 매춘을 실시합니다.
     ENDIF
-    CFLAG:COUNT:1501 = 2
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 2
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 3 && ABL:COUNT:2 >= 3 && TALENT:COUNT:127 == 0
+ELSEIF RESULT == 3 && ABL:COUNT:A감각 >= 3 && TALENT:COUNT:소인 == 0
     PRINTW Ａ를 메인으로 한 매춘을 행합니다.
-    CFLAG:COUNT:1501 = 3
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 3
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 4 && (EXP:COUNT:0 > 30 || TALENT:COUNT:260 == 1) && ABL:COUNT:10 > 1 && ABL:COUNT:11 > 1 && ABL:COUNT:13 > 1 && ABL:COUNT:14 > 1 && TALENT:COUNT:127 == 0 && TALENT:COUNT:120 == 0
+ELSEIF RESULT == 4 && (EXP:COUNT:V경험 > 30 || TALENT:COUNT:창부 == 1) && ABL:COUNT:순종 > 1 && ABL:COUNT:욕망 > 1 && ABL:COUNT:봉사정신 > 1 && ABL:COUNT:노출증 > 1 && TALENT:COUNT:소인 == 0 && TALENT:COUNT:남자 == 0
     PRINTW 통상 매춘을 행합니다.
-    CFLAG:COUNT:1501 = 4
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 4
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 5 && ABL:COUNT:10 > 1 && ABL:COUNT:13 >= 3 && MARK:COUNT:2 >= 2 && EXP:COUNT:76 >= 30 && FLAG:3000 & 1
+ELSEIF RESULT == 5 && ABL:COUNT:순종 > 1 && ABL:COUNT:봉사정신 >= 3 && MARK:COUNT:굴복각인 >= 2 && EXP:COUNT:매춘경험 >= 30 && FLAG:3000 & 1
     PRINTL 삽입 엄금의 다수 상대 매춘을 행합니다.
-    CFLAG:COUNT:1501 = 5
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 5
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 6 && ABL:COUNT:10 > 1 && LOCAL@SPRING_DUMMY:2 >= 5 && MARK:COUNT:2 >= 3 && ABL:COUNT:13 >= 3 && EXP:COUNT:76 >= 30 && EXP:COUNT:77 >= 40 && (EXP:COUNT:0 > 0 || TALENT:COUNT:260 == 1) && FLAG:3000 & 1 && TALENT:COUNT:127 == 0 && TALENT:COUNT:120 == 0
+ELSEIF RESULT == 6 && ABL:COUNT:순종 > 1 && LOCAL@SPRING_DUMMY:2 >= 5 && MARK:COUNT:굴복각인 >= 3 && ABL:COUNT:봉사정신 >= 3 && EXP:COUNT:매춘경험 >= 30 && EXP:COUNT:창관인기 >= 40 && (EXP:COUNT:V경험 > 0 || TALENT:COUNT:창부 == 1) && FLAG:3000 & 1 && TALENT:COUNT:소인 == 0 && TALENT:COUNT:남자 == 0
     PRINTL 다수 상대 매춘을 행합니다.
-    CFLAG:COUNT:1501 = 6
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 6
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 7 && TALENT:COUNT:260 == 1
+ELSEIF RESULT == 7 && TALENT:COUNT:창부 == 1
     PRINTL 2인 세트의 매춘을 행합니다.
-    CFLAG:COUNT:1501 = 7
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 7
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 8 && FLAG:3004 == 1 && TALENT:COUNT:0
+ELSEIF RESULT == 8 && FLAG:3004 == 1 && TALENT:COUNT:처녀
     PRINTL 처녀 옥션에 참가합니다.
-    CFLAG:COUNT:1501 = 8
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 8
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 8 && FLAG:3004 == 2 && ABL:COUNT:13 >= 2
+ELSEIF RESULT == 8 && FLAG:3004 == 2 && ABL:COUNT:봉사정신 >= 2
     PRINTL 입식 파티에 참가합니다.
-    CFLAG:COUNT:1501 = 9
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 9
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 8 && FLAG:3004 == 10 && TALENT:COUNT:0 == 0 && ABL:COUNT:10 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF RESULT == 8 && FLAG:3004 == 10 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL 서당을 빌려서 되는대로 난교하는 이벤트에 참가합니다.
-    CFLAG:COUNT:1501 = 10
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 10
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 8 && FLAG:3004 == 11 && TALENT:COUNT:0 == 0 && ABL:COUNT:10 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF RESULT == 8 && FLAG:3004 == 11 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL 보건소를 통째로 빌려서 되는대로 난교하는 이벤트에 참가합니다.
-    CFLAG:COUNT:1501 = 11
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 11
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 8 && FLAG:3004 == 12 && TALENT:COUNT:0 == 0 && ABL:COUNT:10 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF RESULT == 8 && FLAG:3004 == 12 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL 호수를 통째로 대절해서 되는대로 난교하는 이벤트에 참가합니다.
-    CFLAG:COUNT:1501 = 12
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 12
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 8 && FLAG:3004 == 20 && ABL:COUNT:10 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF RESULT == 8 && FLAG:3004 == 20 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL 난교 파티에 참가합니다.
-    CFLAG:COUNT:1501 = 13
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 13
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 8 && FLAG:3004 == 30 && TALENT:COUNT:0 == 0 && ABL:COUNT:10 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF RESULT == 8 && FLAG:3004 == 30 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:순종 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL VIP에 대한 봉사활동에 참가합니다.
-    CFLAG:COUNT:1501 = 14
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 14
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 8 && FLAG:3004 == 31 && TALENT:COUNT:0 == 0 && ABL:COUNT:20 >= 4 && TALENT:COUNT:120 == 0
+ELSEIF RESULT == 8 && FLAG:3004 == 31 && TALENT:COUNT:처녀 == 0 && ABL:COUNT:새드끼 >= 4 && TALENT:COUNT:남자 == 0
     PRINTL VIP에 대한 과격하기 짝이 없는 봉사활동에 참가합니다.
-    CFLAG:COUNT:1501 = 15
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 15
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
-ELSEIF RESULT == 8 && FLAG:3004 == 32 && TALENT:COUNT:121 && TALENT:COUNT:120 == 0
+ELSEIF RESULT == 8 && FLAG:3004 == 32 && TALENT:COUNT:후타나리 && TALENT:COUNT:남자 == 0
     PRINTL VIP가 들어가는 정액 목욕탕을 만들기 위해 노력합니다.
-    CFLAG:COUNT:1501 = 16
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = 16
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ;ELSEIF RESULT == 9 && Z == 1
 ;    TFLAG:200 = 1700
 ;    E = 0
 ;    CALL SELF_KOJO_COUNT
-;    CFLAG:COUNT:1501 = 17
-;    CFLAG:COUNT:4 |= 1024
+;    CFLAG:COUNT:매춘상태 = 17
+;    CFLAG:COUNT:조교관외 |= 1024
 ;    FLAG:3001 += 1
 ELSEIF RESULT == 100 && LOCAL@SPRING_DUMMY:1 == 100
     TARGET = COUNT
 ELSEIF RESULT == 100 && LOCAL@SPRING_DUMMY:1 == 101
     ASSI = COUNT
 ELSEIF RESULT == 100 && LOCAL@SPRING_DUMMY:1 != 0
-    CFLAG:COUNT:1501 = LOCAL@SPRING_DUMMY:1
-    CFLAG:COUNT:4 |= 1024
+    CFLAG:COUNT:매춘상태 = LOCAL@SPRING_DUMMY:1
+    CFLAG:COUNT:조교관외 |= 1024
     FLAG:3001 += 1
 ELSEIF RESULT == 100
     GOTO SPRING
@@ -478,13 +478,13 @@ GOTO SPRING
 LOCAL = 0
 REPEAT CHARANUM
 ;セット売春の人を数えます
-SIF CFLAG:COUNT:1501 == 7
+SIF CFLAG:COUNT:매춘상태 == 7
     LOCAL += 1
 REND
 
 
 @SPRING_WIDE
-IF FLAG:4 == 4
+IF FLAG:게임모드 == 4
     MONEY -= 50000
 ELSE
     MONEY -= 80000
@@ -499,7 +499,7 @@ SIF (FLAG:3000 & 2) == 0
     PRINTL [2] 여러 가지 기구를 비치한다.
 SIF (FLAG:3000 & 4) == 0
     PRINTL [3] 비디오 판매 코너를 설치한다.
-SIF (FLAG:3000 & 8) == 0 && TALENT:MASTER:149 == 1
+SIF (FLAG:3000 & 8) == 0 && TALENT:MASTER:촉수사역술 == 1
     PRINTL [4] 촉수 방을 설치한다.
 PRINTL [100] 그만둔다
 
@@ -518,12 +518,12 @@ ELSEIF RESULT == 2 && (FLAG:3000 & 2) == 0
 ELSEIF RESULT == 3 && (FLAG:3000 & 4) == 0
     PRINTFORMW 매춘 상황을 찍은 비디오를 선물로서 사서 돌아갈 수 있게 되었습니다.
     FLAG:3000 |= 4
-ELSEIF RESULT == 4 && (FLAG:3000 & 8) == 0 && TALENT:MASTER:149 == 1
+ELSEIF RESULT == 4 && (FLAG:3000 & 8) == 0 && TALENT:MASTER:촉수사역술 == 1
     PRINTFORMW 촉수 방을 설치해서 보다 유니크한 요구에도 응답할 수 있게 되었습니다.
     FLAG:3000 |= 8
 ELSEIF RESULT == 100
     PRINTL 
-    IF FLAG:4 == 4
+    IF FLAG:게임모드 == 4
         MONEY += 50000
     ELSE
         MONEY += 80000
@@ -630,9 +630,9 @@ ELSE
 ENDIF
 
 REPEAT CHARANUM
-    IF CFLAG:COUNT:1501 == 8
-        CFLAG:COUNT:1501 = 0
-        CFLAG:COUNT:4 -= 1024
+    IF CFLAG:COUNT:매춘상태 == 8
+        CFLAG:COUNT:매춘상태 = 0
+        CFLAG:COUNT:조교관외 -= 1024
         FLAG:3001 -= 1
     ENDIF
 REND
@@ -642,9 +642,9 @@ $INPUT_AFTER
 @SPRING_OUT
 
 REPEAT CHARANUM
-    IF CFLAG:COUNT:1501
-        CFLAG:COUNT:1501 = 0
-        CFLAG:COUNT:4 -= 1024
+    IF CFLAG:COUNT:매춘상태
+        CFLAG:COUNT:매춘상태 = 0
+        CFLAG:COUNT:조교관외 -= 1024
     ENDIF
 REND
 FLAG:3001 = 0
@@ -897,12 +897,12 @@ ELSEIF RESULT == 3
     ELSE
         PRINTFORMW 주인이 자신도 봄팔이를 하기로 했습니다.
         FLAG:3000 |= 67108864
-        IF ABL:MASTER:10 == 0 && ABL:MASTER:11 == 0 && ABL:MASTER:13 == 0 && ABL:MASTER:14 == 0
+        IF ABL:MASTER:순종 == 0 && ABL:MASTER:욕망 == 0 && ABL:MASTER:봉사정신 == 0 && ABL:MASTER:노출증 == 0
             PRINTFORMW ※주인의 능력치를 설정했습니다.
-            ABL:MASTER:10 = 2
-            ABL:MASTER:11 = 1
-            ABL:MASTER:13 = 1
-            ABL:MASTER:14 = 1
+            ABL:MASTER:순종 = 2
+            ABL:MASTER:욕망 = 1
+            ABL:MASTER:봉사정신 = 1
+            ABL:MASTER:노출증 = 1
         ENDIF
     ENDIF
 ELSEIF RESULT == 4

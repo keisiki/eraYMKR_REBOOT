@@ -12,15 +12,15 @@
 @GET_ABLE_ASSI
 #FUNCTION
 ;이번 주위에서 이미 계산 완료라면 가격만 반사한다
-SIF LOCAL:1 == FLAG:6
+SIF LOCAL:1 == FLAG:주회수
     RETURNF LOCAL
 LOCAL = 0
 FOR COUNT, 1, CHARANUM
-    SIF CFLAG:COUNT:1 == 2 && CFLAG:COUNT:4 != 1
+    SIF CFLAG:COUNT:매각가능 == 2 && CFLAG:COUNT:조교관외 != 1
         LOCAL++
 NEXT
 ;계산 완료 플래그
-LOCAL:1 = FLAG:6
+LOCAL:1 = FLAG:주회수
 RETURNF LOCAL
 
 ;-------------------------------------------------
@@ -550,7 +550,7 @@ RETURN (LOCAL >= 5 && LOCAL:1 >= 5)
 VARSET LOCAL, 0
 
 ;주인의 기교나 촬영 기능이 5 미만이라면 안 나옴
-SIF ABL:MASTER:12 < 5 || ABL:MASTER:71 < 5
+SIF ABL:MASTER:기교 < 5 || ABL:MASTER:촬영기능 < 5
     RETURN 0
 ;아야야야야 체크
 LOCAL += (CHECK_FEMALE_CHARA(32) && CHECK_CHARA_ASSI(32) && TALENT:GETCHARA(32):160 && ABL:GETCHARA(32):12 >= 5 && ABL:GETCHARA(32):71 >= 5)
@@ -620,7 +620,7 @@ SIF (GET_ABLE_ASSI() < 10)
     RETURN 0
 
 ;주인이 [요정지식] 이나 [요정]이 없으면 안 됨 - 일단 임시로 이 조건은 빼놓음
-;SIF !(TALENT:MASTER:57 || TALENT:MASTER:200)
+;SIF !(TALENT:MASTER:요정지식 || TALENT:MASTER:요정)
 ;    RETURN 0
 
 ;여성 캐릭터 열거
@@ -748,7 +748,7 @@ RETURN (LOCAL >= 5) ? ((LOCAL:1 >= 3) ? 2 # 1) # 0
 @ENDING_JUDGE29
 VARSET LOCAL, 0
 ;주인의 기교나 촬영 기능이 5 미만이라면 안 나옴
-SIF ABL:MASTER:12 < 5 || ABL:MASTER:71 < 5
+SIF ABL:MASTER:기교 < 5 || ABL:MASTER:촬영기능 < 5
     RETURN 0
 ;아야, 하타테 체크
 LOCAL += (CHECK_FEMALE_CHARA(32) && CHECK_CHARA_ASSI(32) && TALENT:GETCHARA(32):160 && ABL:GETCHARA(32):12 >= 5 && ABL:GETCHARA(32):71 >= 5)
@@ -1001,7 +1001,7 @@ SIF CHARANUM < 11
     RETURN 0
 
 FOR COUNT, 1, CHARANUM
-    LOCAL += ((TALENT:COUNT:150 || TALENT:COUNT:170) && (TALENT:COUNT:94 || ABL:COUNT:71 >= 5) && CFLAG:COUNT:4 != 1)
+    LOCAL += ((TALENT:COUNT:연모 || TALENT:COUNT:음란) && (TALENT:COUNT:인기 || ABL:COUNT:촬영기능 >= 5) && CFLAG:COUNT:조교관외 != 1)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (10 - LOCAL)
         RETURN 0
@@ -1020,7 +1020,7 @@ SIF CHARANUM < 11
     RETURN 0
 
 FOR COUNT, 1, CHARANUM
-    LOCAL += (CFLAG:COUNT:1 == 2 && TALENT:COUNT:134 && (ABL:COUNT:3 >= 5 || ABL:COUNT:34 >= 3) && CFLAG:COUNT:4 != 1)
+    LOCAL += (CFLAG:COUNT:매각가능 == 2 && TALENT:COUNT:모유체질 && (ABL:COUNT:B감각 >= 5 || ABL:COUNT:분유중독 >= 3) && CFLAG:COUNT:조교관외 != 1)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (10 - LOCAL)
         RETURN 0
@@ -1039,7 +1039,7 @@ SIF CHARANUM < 11
     RETURN 0
 
 FOR COUNT, 1, CHARANUM
-    LOCAL += (TALENT:COUNT:151 && TALENT:COUNT:153 == 0 && TALENT:COUNT:161 == 0 && TALENT:COUNT:162 == 0 && TALENT:COUNT:167 == 0 && TALENT:COUNT:168 == 0 && TALENT:COUNT:169 == 0 && TALENT:COUNT:180 == 0 && CFLAG:COUNT:4 != 1)
+    LOCAL += (TALENT:COUNT:망신 && TALENT:COUNT:상애 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:예속 == 0 && TALENT:COUNT:정신붕괴 == 0 && TALENT:COUNT:괴뢰 == 0 && TALENT:COUNT:괴조인격 == 0 && TALENT:COUNT:음마 == 0 && CFLAG:COUNT:조교관외 != 1)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (10 - LOCAL)
         RETURN 0
@@ -1059,7 +1059,7 @@ SIF CHARANUM < 51
 
 FOR COUNT, 1, CHARANUM
     ;S패치 등을 고려하면 NO의 조건은 조금만 더 고쳐봐야 할지도
-    LOCAL += (TALENT:COUNT:150 && (NO:COUNT < 148 || NO:COUNT == 220 || NO:COUNT == 221 || NO:COUNT == 222 || NO:COUNT == 223 || NO:COUNT == 224 || NO:COUNT == 225 || NO:COUNT == 226 || NO:COUNT == 227) && CFLAG:COUNT:4 != 1)
+    LOCAL += (TALENT:COUNT:연모 && (NO:COUNT < 148 || NO:COUNT == 220 || NO:COUNT == 221 || NO:COUNT == 222 || NO:COUNT == 223 || NO:COUNT == 224 || NO:COUNT == 225 || NO:COUNT == 226 || NO:COUNT == 227) && CFLAG:COUNT:조교관외 != 1)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (50 - LOCAL)
         RETURN 0
@@ -1131,7 +1131,7 @@ SIF CHARANUM < 11
     RETURN 0
 
 FOR COUNT, 1, CHARANUM
-    LOCAL += (TALENT:COUNT:180 && CFLAG:COUNT:4 != 1)
+    LOCAL += (TALENT:COUNT:음마 && CFLAG:COUNT:조교관외 != 1)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (10 - LOCAL)
         RETURN 0
@@ -1150,7 +1150,7 @@ SIF CHARANUM < 11
     RETURN 0
 
 FOR COUNT, 1, CHARANUM
-    LOCAL += (TALENT:COUNT:169 && CFLAG:COUNT:4 != 1)
+    LOCAL += (TALENT:COUNT:괴조인격 && CFLAG:COUNT:조교관외 != 1)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (10 - LOCAL)
         RETURN 0
@@ -1239,7 +1239,7 @@ VARSET LOCAL, 0
 SIF (GET_ABLE_ASSI() < 10)
     RETURN 0
 
-RETURN (FLAG:33 <= 0 && FLAG:66 <= 0 && FLAG:67 <= 0)
+RETURN (FLAG:현산제물총계 <= 0 && FLAG:66 <= 0 && FLAG:67 <= 0)
 
 ;-------------------------------------------------
 ;대부호 엔딩 판정
@@ -1260,14 +1260,14 @@ RETURN (MONEY >= (MONEY:100*10))
 VARSET LOCAL, 0
 
 ;주인의 요리 기능이 4 미만이라면 볼 필요 없음
-SIF ABL:MASTER:70 < 4
+SIF ABL:MASTER:요리기능 < 4
     RETURN 0
 ;조수 가능 인원수가 부족하다면 불가
 SIF (GET_ABLE_ASSI() < 10)
     RETURN 0
 
 FOR COUNT, 1, CHARANUM
-    LOCAL += ((TALENT:COUNT:150 || TALENT:COUNT:160) && (ABL:COUNT:70 >= 5 && EXP:COUNT:70 >= 200) && CFLAG:COUNT:4 != 1)
+    LOCAL += ((TALENT:COUNT:연모 || TALENT:COUNT:복종) && (ABL:COUNT:요리기능 >= 5 && EXP:COUNT:조리경험 >= 200) && CFLAG:COUNT:조교관외 != 1)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (10 - LOCAL)
         RETURN 0
@@ -1282,17 +1282,17 @@ RETURN (LOCAL >= 10)
 VARSET LOCAL, 0
 
 ;주인이 가창 기능이든 조교사 Lv이든 안 가지고 있으면 못 봄
-SIF !(ABL:MASTER:72 || ABL:MASTER:99)
+SIF !(ABL:MASTER:가창기능 || ABL:MASTER:조교사Lv)
     RETURN 0
 ;주인이 [매력], [매혹], [수수께끼의 매력], [고무], [대범함] 모두 다 가지고 있지 않으면 못 봄
-SIF !(TALENT:MASTER:90 || TALENT:MASTER:91 || TALENT:MASTER:92 || TALENT:MASTER:95 || TALENT:MASTER:98)
+SIF !(TALENT:MASTER:매력 || TALENT:MASTER:매혹 || TALENT:MASTER:수수께끼의매력 || TALENT:MASTER:고무 || TALENT:MASTER:대범함)
     RETURN 0
 ;조수 가능 인원수가 부족하다면 불가
 SIF (GET_ABLE_ASSI() < 10)
     RETURN 0
 
 FOR COUNT, 1, CHARANUM
-    LOCAL += ((TALENT:COUNT:150 || TALENT:COUNT:160) && (ABL:COUNT:72 >= 5 && TALENT:COUNT:94) && CFLAG:COUNT:4 != 1)
+    LOCAL += ((TALENT:COUNT:연모 || TALENT:COUNT:복종) && (ABL:COUNT:가창기능 >= 5 && TALENT:COUNT:인기) && CFLAG:COUNT:조교관외 != 1)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (10 - LOCAL)
         RETURN 0
@@ -1307,7 +1307,7 @@ RETURN (LOCAL >= 10)
 VARSET LOCAL, 0
 
 ;술 목욕탕 없으면 못 봄
-SIF !(FLAG:74 & 128)
+SIF !(FLAG:욕탕개조 & 128)
     RETURN 0
 ;아이템 없음 설정이거나 술을 모든 종류 가지고 있지 않으면 못 봄
 SIF !(NOITEM || (ITEM:600 && ITEM:601 && ITEM:602 && ITEM:603 && ITEM:604 && ITEM:605))
@@ -1318,8 +1318,8 @@ SIF !(CHECK_CHARA(23) && CHECK_CHARA(60))
 
 ;필수인 스이카 · 유기 외에 대상 조수 가능 캐릭터를 열거
 FOR COUNT, 1, CHARANUM
-    SIF NO:COUNT != 23 && NO:COUNT != 60 && CFLAG:COUNT:4 != 1
-        LOCAL += (ABL:COUNT:12 > 4 || ABL:COUNT:70 > 4)
+    SIF NO:COUNT != 23 && NO:COUNT != 60 && CFLAG:COUNT:조교관외 != 1
+        LOCAL += (ABL:COUNT:기교 > 4 || ABL:COUNT:요리기능 > 4)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (8 - LOCAL)
         RETURN 0
@@ -1388,18 +1388,18 @@ RETURN (LOCAL >= 10 && LOCAL:1 >= 10)
 VARSET LOCAL, 0
 
 ;순애 이벤트 무효라면 못 봄
-SIF (FLAG:12 & 32) == 0
+SIF (FLAG:SHOP이벤트확장 & 32) == 0
     RETURN 0
 ;주인이 광기 보유자라면 기각
-SIF TALENT:MASTER:158
+SIF TALENT:MASTER:광기
     RETURN 0
 ;주인이 강간하거나 당했을 경우에는 기각
-SIF (EXP:MASTER:80 || EXP:MASTER:81 || EXP:MASTER:82 || EXP:MASTER:83)
+SIF (EXP:MASTER:강간경험 || EXP:MASTER:피강간경험 || EXP:MASTER:피윤간경험 || EXP:MASTER:피간쾌락경험)
     RETURN 0
 
 FOR COUNT, 1, CHARANUM
-    IF CFLAG:COUNT:4 != 1 && (TALENT:COUNT:152 || TALENT:COUNT:153) & (CFLAG:COUNT:11 & 2) == 0 && (CFLAG:COUNT:11 & 4) == 0 && MARK:COUNT:3 == 0 && MARK:COUNT:8 == 0 && MARK:COUNT:9 == 0 && MARK:COUNT:96 == 0 && MARK:COUNT:97 == 0 && (CFLAG:COUNT:17 & 2) == 0
-        SIF TALENT:COUNT:157 == 0 && TALENT:COUNT:161 == 0 && TALENT:COUNT:163 == 0 && TALENT:COUNT:39 == 0 && EXP:COUNT:53 == 0 && EXP:COUNT:56 == 0 && EXP:COUNT:76 == 0 && EXP:COUNT:80 == 0 && EXP:COUNT:81 == 0 && EXP:COUNT:82 == 0 && EXP:COUNT:83 == 0
+    IF CFLAG:COUNT:조교관외 != 1 && (TALENT:COUNT:친애 || TALENT:COUNT:상애) & (CFLAG:COUNT:VA이상경험변동 & 2) == 0 && (CFLAG:COUNT:VA이상경험변동 & 4) == 0 && MARK:COUNT:약물각인 == 0 && MARK:COUNT:공포각인 == 0 && MARK:COUNT:반발각인 == 0 && MARK:COUNT:96 == 0 && MARK:COUNT:97 == 0 && (CFLAG:COUNT:이벤트취득붕괴 & 2) == 0
+        SIF TALENT:COUNT:질투 == 0 && TALENT:COUNT:낙인 == 0 && TALENT:COUNT:흠집 == 0 && TALENT:COUNT:약점 == 0 && EXP:COUNT:촉수경험 == 0 && EXP:COUNT:동물성애경험 == 0 && EXP:COUNT:매춘경험 == 0 && EXP:COUNT:강간경험 == 0 && EXP:COUNT:피강간경험 == 0 && EXP:COUNT:피윤간경험 == 0 && EXP:COUNT:피간쾌락경험 == 0
             LOCAL++
     ENDIF
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
@@ -1420,7 +1420,7 @@ SIF SPECIALTENTACLE_CHECK() || CHARATENTACLE_CHECK()
     RETURN 0
 
 ;그 주차 중에, 촉수에게 산제물을 바쳤으면 기각
-SIF FLAG:33 > 0
+SIF FLAG:현산제물총계 > 0
     RETURN 0
 
 ;여성 캐릭터 열거
@@ -1455,11 +1455,11 @@ SIF CHARANUM < 11
     RETURN 0
 
 ;주인이 봉래인이 아니면 기각
-SIF TALENT:MASTER:49 == 0
+SIF TALENT:MASTER:봉래인 == 0
     RETURN 0
 
 FOR COUNT, 1, CHARANUM
-    LOCAL += ((TALENT:COUNT:49 || MARK:COUNT:10 > 2) && CFLAG:COUNT:4 != 1)
+    LOCAL += ((TALENT:COUNT:봉래인 || MARK:COUNT:불사각인 > 2) && CFLAG:COUNT:조교관외 != 1)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (10 - LOCAL)
         RETURN 0
@@ -1567,7 +1567,7 @@ SIF CHARANUM < 11
     RETURN 0
 
 FOR COUNT, 1, CHARANUM
-    LOCAL += (CFLAG:COUNT:1 == 2 && (TALENT:COUNT:135 || TALENT:COUNT:136) && EXP:COUNT:32 >= 10 && EXP:COUNT:51 >= 1 && CFLAG:COUNT:4 != 1)
+    LOCAL += (CFLAG:COUNT:매각가능 == 2 && (TALENT:COUNT:난생 || TALENT:COUNT:산란체질) && EXP:COUNT:V확장경험 >= 10 && EXP:COUNT:산란경험 >= 1 && CFLAG:COUNT:조교관외 != 1)
     ;조건이 만족될 가능성이 없어진 시점에서 돌아온다
     SIF (CHARANUM - 1) - COUNT < (10 - LOCAL)
         RETURN 0

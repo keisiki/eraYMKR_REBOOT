@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:406 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;조교자가 유카가 아니면 불가
 SIF NO:PLAYER != 34
@@ -21,7 +21,7 @@ SIF TEQUIP:90
 SIF TEQUIP:40 == 5
     RETURN 1
 ;조교자의 기교가 3無いとできない
-SIF ABL:PLAYER:12 < 3
+SIF ABL:PLAYER:기교 < 3
     RETURN 0
 ;縄で緊縛中, 거미줄でグルグル巻きはダメ
 SIF TEQUIP:40 && TEQUIP:40 != 5
@@ -50,15 +50,15 @@ CALL TRAIN_MESSAGE_COM406
 ;-------------------------------------------------
 
 ;緊縛経験が高いと消費減少
-IF EXP:31 < EXPLV:3
+IF EXP:긴박경험 < EXPLV:3
     DOWNBASE:0 += 100
-    DOWNBASE:1 += 150
-ELSEIF EXP:31 < EXPLV:4
+    DOWNBASE:기력 += 150
+ELSEIF EXP:긴박경험 < EXPLV:4
     DOWNBASE:0 += 80
-    DOWNBASE:1 += 120
+    DOWNBASE:기력 += 120
 ELSE
     DOWNBASE:0 += 60
-    DOWNBASE:1 += 90
+    DOWNBASE:기력 += 90
 ENDIF
 
 LOCAL:1 = 250
@@ -94,34 +94,34 @@ ELSE
 ENDIF
 
 ;ABL:순종을 본다
-IF ABL:10 == 0
+IF ABL:순종 == 0
     TIMES LOCAL:1 , 0.40
-ELSEIF ABL:10 == 1
+ELSEIF ABL:순종 == 1
     TIMES LOCAL:1 , 0.60
-ELSEIF ABL:10 == 2
+ELSEIF ABL:순종 == 2
     TIMES LOCAL:1 , 0.80
-ELSEIF ABL:10 == 3
+ELSEIF ABL:순종 == 3
     TIMES LOCAL:1 , 1.00
-ELSEIF ABL:10 == 4
+ELSEIF ABL:순종 == 4
     TIMES LOCAL:1 , 1.10
 ELSE
     TIMES LOCAL:1 , 1.20
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     TIMES LOCAL:1 , 0.80
     TIMES LOCAL:2 , 0.80
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     TIMES LOCAL:1 , 1.00
     TIMES LOCAL:2 , 1.00
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     TIMES LOCAL:1 , 1.30
     TIMES LOCAL:2 , 1.30
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     TIMES LOCAL:1 , 1.60
     TIMES LOCAL:2 , 1.60
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     TIMES LOCAL:1 , 2.00
     TIMES LOCAL:2 , 2.00
 ELSE
@@ -130,7 +130,7 @@ ELSE
 ENDIF
 
 ;도착적
-SIF TALENT:80
+SIF TALENT:도착적
     TIMES LOCAL:1 , 2.00
 
 ;アイマスク装着または暗闇展開時は効果上昇
@@ -165,15 +165,15 @@ RETURN 1
 PRINTL <가시줄기 결박 중>
 
 ;緊縛経験が高いと消費減少
-IF EXP:31 < EXPLV:3
+IF EXP:긴박경험 < EXPLV:3
     DOWNBASE:0 += 50
-    DOWNBASE:1 += 100
-ELSEIF EXP:31 < EXPLV:4
+    DOWNBASE:기력 += 100
+ELSEIF EXP:긴박경험 < EXPLV:4
     DOWNBASE:0 += 40
-    DOWNBASE:1 += 80
+    DOWNBASE:기력 += 80
 ELSE
     DOWNBASE:0 += 30
-    DOWNBASE:1 += 60
+    DOWNBASE:기력 += 60
 ENDIF
 
 ;PALAM:苦痛をみる
@@ -190,22 +190,22 @@ ELSE
 ENDIF
 
 ;ABL:마조끼를 본다
-IF ABL:21 == 0
+IF ABL:마조끼 == 0
     LOCAL = 60
-ELSEIF ABL:21 == 1
+ELSEIF ABL:마조끼 == 1
     LOCAL = 180
-ELSEIF ABL:21 == 2
+ELSEIF ABL:마조끼 == 2
     LOCAL = 300
-ELSEIF ABL:21 == 3
+ELSEIF ABL:마조끼 == 3
     LOCAL = 480
-ELSEIF ABL:21 == 4
+ELSEIF ABL:마조끼 == 4
     LOCAL = 700
 ELSE
     LOCAL = 850
 ENDIF
 
 ;도착적
-SIF TALENT:80
+SIF TALENT:도착적
     TIMES LOCAL , 2.00
 
 ;PALAM:욕정을 본다
@@ -226,13 +226,13 @@ SOURCE:12 += LOCAL
 SOURCE:22 += LOCAL
 SOURCE:31 += LOCAL
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 ;주인 경험 플래그
-SIF ASSIPLAY == 0 && ABL:21 >= 2
+SIF ASSIPLAY == 0 && ABL:마조끼 >= 2
     TFLAG:50 += 1
 
 TCVAR:31 += 3
@@ -244,7 +244,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM406
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
@@ -252,7 +252,7 @@ IF TEQUIP:40 == 5
     PRINTFORMW %조사선택(CALLNAME:TARGET, "를")% 묶었던 나무줄기는 순식간에 시들었다.
 ELSE
     PRINT 갑자기 마루에서 튀어나온 나무줄기가 
-    SIF TALENT:128
+    SIF TALENT:작은체형
         PRINT 가녀린 
     PRINTFORML %CALLNAME:TARGET%의 몸을 자비 없이 묶고 조였다.
     PRINTL

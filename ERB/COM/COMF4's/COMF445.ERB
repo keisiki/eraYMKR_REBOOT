@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:445 > 0
     RETURN 0
 ;캐릭터 전용 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 16384) == 0
+SIF (FLAG:커맨드확장 & 16384) == 0
     RETURN 0
 ;対象, または조교자가 霖之助でないとダメ
 SIF NO:TARGET != 26 && NO:TARGET != 69 && NO:PLAYER != 26 && NO:PLAYER != 69
@@ -18,7 +18,7 @@ SIF NO:TARGET != 26 && NO:TARGET != 69 && NO:PLAYER != 26 && NO:PLAYER != 69
 SIF PREVCOM != -1
     RETURN 0
 ;対象だった場合, 反発刻印があったらダメ
-SIF GROUPMATCH(NO:TARGET, 26, 69) && MARK:9 < 0
+SIF GROUPMATCH(NO:TARGET, 26, 69) && MARK:반발각인 < 0
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -43,41 +43,41 @@ CALL TRAIN_MESSAGE_COM445
 ;린노스케나 케이네를 조교
 IF GROUPMATCH(NO:TARGET, 26, 69)
     DOWNBASE:0 += 10
-    DOWNBASE:1 += 10
-    DOWNBASE:MASTER:1 += 333
+    DOWNBASE:기력 += 10
+    DOWNBASE:MASTER:기력 += 333
     SIF ASSI >= 0
-        DOWNBASE:ASSI:1 += 333
+        DOWNBASE:ASSI:기력 += 333
     SOURCE:16 = 80000
-    SIF FLAG:4 <= 1
-        CFLAG:2 += 99
+    SIF FLAG:게임모드 <= 1
+        CFLAG:호감도 += 99
 
     ;주인 및 존재하면 조수의 수강 회수(여기는 조수는 도망가지 않는다)
-    CFLAG:MASTER:55 += 1
+    CFLAG:MASTER:조교설교잡학수강수 += 1
     SIF ASSI >= 0 && EQUIP:ASSI:14 == 0
-        CFLAG:ASSI:55 += 1
+        CFLAG:ASSI:조교설교잡학수강수 += 1
 ;린노스케나 케이네가 조교
 ELSE
     DOWNBASE:0 += 50
-    DOWNBASE:1 += 9999
+    DOWNBASE:기력 += 9999
     SOURCE:25 = 6000
 
     ;ABL:순종을 본다
-    IF ABL:10 == 0
+    IF ABL:순종 == 0
         TIMES SOURCE:25 , 1.00
-    ELSEIF ABL:10 == 1
+    ELSEIF ABL:순종 == 1
         TIMES SOURCE:25 , 0.50
-    ELSEIF ABL:10 == 2
+    ELSEIF ABL:순종 == 2
         TIMES SOURCE:25 , 0.40
-    ELSEIF ABL:10 == 3
+    ELSEIF ABL:순종 == 3
         TIMES SOURCE:25 , 0.30
-    ELSEIF ABL:10 == 4
+    ELSEIF ABL:순종 == 4
         TIMES SOURCE:25 , 0.20
     ELSE
         TIMES SOURCE:25 , 0.10
     ENDIF
 
     ;조교 대상의 수강 회수(조수가 있었다고 해도 도망치는 w)
-    CFLAG:55 += 1
+    CFLAG:조교설교잡학수강수 += 1
 ENDIF
 TFLAG:107 = 999
 RETURN 1
@@ -87,7 +87,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM445
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

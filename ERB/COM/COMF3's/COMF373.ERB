@@ -9,17 +9,17 @@
 SIF DITEMTYPE:999:373 > 0
     RETURN 0
 ;特殊風呂系커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 1024) == 0
+SIF (FLAG:커맨드확장 & 1024) == 0
     RETURN 0
 ;風呂を改装していないとダメ
-SIF (FLAG:74 & 16384) == 0
+SIF (FLAG:욕탕개조 & 16384) == 0
     RETURN 0
 ;해제는 언제든 가능
 SIF TEQUIP:55 == 15
     RETURN 1
 ;みすちー, あやや, うにゅほまたは動物耳持ちは순종이 2이상 없으면 안 됨
-IF NO:TARGET == 25 || NO:TARGET == 32 || NO:TARGET == 63 || TALENT:116
-    SIF ABL:0 < 2
+IF NO:TARGET == 25 || NO:TARGET == 32 || NO:TARGET == 63 || TALENT:동물귀
+    SIF ABL:C감각 < 2
         RETURN 0
 ENDIF
 ;수면 중에는 불가
@@ -94,27 +94,27 @@ ENDIF
 CALL TRAIN_MESSAGE_COM373
 
 DOWNBASE:0 += 20
-DOWNBASE:1 += 60
+DOWNBASE:기력 += 60
 
 IF TEQUIP:55 == 15
     TEQUIP:55 = 0
     RETURN 1
 ENDIF
 
-LOCAL:2 = MAX(CFLAG:2 / 250, 20)
+LOCAL:2 = MAX(CFLAG:호감도 / 250, 20)
 SOURCE:11 = LOCAL:2
 SOURCE:19 = 280
 
 ;노출벽
-IF ABL:14 == 0
+IF ABL:노출증 == 0
     SOURCE:12 = 20
-ELSEIF ABL:14 == 1
+ELSEIF ABL:노출증 == 1
     SOURCE:12 = 50
-ELSEIF ABL:14 == 2
+ELSEIF ABL:노출증 == 2
     SOURCE:12 = 120
-ELSEIF ABL:14 == 3
+ELSEIF ABL:노출증 == 3
     SOURCE:12 = 190
-ELSEIF ABL:14 == 4
+ELSEIF ABL:노출증 == 4
     SOURCE:12 = 270
 ELSE
     SOURCE:12 = 360
@@ -152,22 +152,22 @@ ENDIF
 
 TFLAG:155 += (TFLAG:155 < 10) ?  1 # 0
 DOWNBASE:0 += 10 + 10 * TFLAG:155
-DOWNBASE:1 += 20 + 20 * TFLAG:155
+DOWNBASE:기력 += 20 + 20 * TFLAG:155
 
-LOCAL:1 = MAX(CFLAG:2 / 500, 10)
+LOCAL:1 = MAX(CFLAG:호감도 / 500, 10)
 LOCAL:2 = 180
 LOCAL:3 = 35 * TFLAG:155
 
 ;노출벽
-IF ABL:14 == 0
+IF ABL:노출증 == 0
     LOCAL:4 = 10
-ELSEIF ABL:14 == 1
+ELSEIF ABL:노출증 == 1
     LOCAL:4 = 20
-ELSEIF ABL:14 == 2
+ELSEIF ABL:노출증 == 2
     LOCAL:4 = 50
-ELSEIF ABL:14 == 3
+ELSEIF ABL:노출증 == 3
     LOCAL:4 = 90
-ELSEIF ABL:14 == 4
+ELSEIF ABL:노출증 == 4
     LOCAL:4 = 140
 ELSE
     LOCAL:4 = 200
@@ -197,7 +197,7 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM373
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL

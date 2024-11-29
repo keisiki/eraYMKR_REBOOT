@@ -9,7 +9,7 @@
 SIF DITEMTYPE:999:115 > 0
     RETURN 0
 ;수치 플레이계 확장 커맨드를 유효로 하지 않으면 불가
-SIF (FLAG:15 & 512) == 0
+SIF (FLAG:커맨드확장 & 512) == 0
     RETURN 0
 ;수면 중에는 불가
 SIF EQUIP:14
@@ -18,7 +18,7 @@ SIF EQUIP:14
 SIF TFLAG:899 > 0
     RETURN 0
 ;조수가 훈도시 착용 중일 경우 助手に기교4이상 필수
-SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:59 == 17 && ABL:ASSI:12 < 4
+SIF ASSI >= 0 && ASSIPLAY && TEQUIP:ASSI:59 == 17 && ABL:ASSI:기교 < 4
     RETURN 0
 ;眼隠しと耳栓両方つけていた場合は意味がないので実行できない
 SIF TEQUIP:41 && TEQUIP:45
@@ -51,15 +51,15 @@ CALL TRAIN_MESSAGE_COM115
 LOCAL =0
 
 ;플레이어의 기교를 본다
-IF ABL:PLAYER:12 == 0
+IF ABL:PLAYER:기교 == 0
     LOCAL = 800
-ELSEIF ABL:PLAYER:12 == 1
+ELSEIF ABL:PLAYER:기교 == 1
     LOCAL = 1600
-ELSEIF ABL:PLAYER:12 == 2
+ELSEIF ABL:PLAYER:기교 == 2
     LOCAL = 2400
-ELSEIF ABL:PLAYER:12 == 3
+ELSEIF ABL:PLAYER:기교 == 3
     LOCAL = 3200
-ELSEIF ABL:PLAYER:12 == 4
+ELSEIF ABL:PLAYER:기교 == 4
     LOCAL = 4000
 ELSE
     LOCAL = 4800
@@ -69,40 +69,40 @@ ENDIF
 LOCAL = EJACULATIONCHECK_ABL_0_2(PLAYER, LOCAL)
 
 ;C감각이 거론되지 않는 주인 또한 남자의 경우 2배(로 해 두는＆그런데도 10000에는 닿지 않는다우후후)
-SIF ASSIPLAY == 0 && TALENT:PLAYER:120
+SIF ASSIPLAY == 0 && TALENT:PLAYER:남자
     TIMES LOCAL , 2.00
 
 SIF EXIST_PENIS(PLAYER)
-    BASE:PLAYER:2 += LOCAL
+    BASE:PLAYER:사정 += LOCAL
 
 ;-------------------------------------------------
 ;소스의 계산
 ;-------------------------------------------------
 DOWNBASE:0 += 5
-DOWNBASE:1 += 10
+DOWNBASE:기력 += 10
 
 SOURCE:12 = 500
 SOURCE:30 = 100
 SOURCE:31 = 400
 
 ;ABL:자위 중독을 본다
-IF ABL:30 == 0
+IF ABL:자위중독 == 0
     SOURCE:15 = 25
     SOURCE:22 = 100
     TIMES SOURCE:30 , 4.00
-ELSEIF ABL:30 == 1
+ELSEIF ABL:자위중독 == 1
     SOURCE:15 = 50
     SOURCE:22 = 80
     TIMES SOURCE:30 , 2.50
-ELSEIF ABL:30 == 2
+ELSEIF ABL:자위중독 == 2
     SOURCE:15 = 75
     SOURCE:22 = 70
     TIMES SOURCE:30 , 1.50
-ELSEIF ABL:30 == 3
+ELSEIF ABL:자위중독 == 3
     SOURCE:15 = 100
     SOURCE:22 = 60
     TIMES SOURCE:30 , 1.00
-ELSEIF ABL:30 == 4
+ELSEIF ABL:자위중독 == 4
     SOURCE:15 = 125
     SOURCE:22 = 50
     TIMES SOURCE:30 , 0.50
@@ -129,7 +129,7 @@ ENDIF
 ;독심의 경우 에로 있고 기분이 옮기는지 과시하고 효과 업(2배)
 ;-------------------------------------------------
 ;캐릭터 전용 커맨드가 온의 경우, 대상이[연모]와 마음의 눈을 닫지 않은[깨닫고]소유라면 변화
-IF TALENT:213 == 1 && TALENT:150 && (FLAG:15 & 16384)
+IF TALENT:사토리 == 1 && TALENT:연모 && (FLAG:커맨드확장 & 16384)
     TIMES SOURCE:15 , 2.00
     TIMES SOURCE:18 , 2.00
 ENDIF
@@ -145,19 +145,19 @@ IF TFLAG:91 >= 1
     TIMES SOURCE:15 , 3.00
 
     ;ABL:정액 중독을 본다
-    IF ABL:31 == 0
+    IF ABL:정액중독 == 0
         SOURCE:24 = 0
         TIMES SOURCE:22, 2.00
-    ELSEIF ABL:31 == 1
+    ELSEIF ABL:정액중독 == 1
         SOURCE:24 = 200
         TIMES SOURCE:22, 1.60
-    ELSEIF ABL:31 == 2
+    ELSEIF ABL:정액중독 == 2
         SOURCE:24 = 600
         TIMES SOURCE:22, 1.00
-    ELSEIF ABL:31 == 3
+    ELSEIF ABL:정액중독 == 3
         SOURCE:24 = 1500
         TIMES SOURCE:22, 0.70
-    ELSEIF ABL:31 == 4
+    ELSEIF ABL:정액중독 == 4
         SOURCE:24 = 3000
         TIMES SOURCE:22, 0.40
     ELSE
@@ -177,22 +177,22 @@ ENDIF
 ;사정에 관계없이 행해지는 처리는 여기로부터
 ;조교자의 손가락⇔조교자의 P의 불결이 이동
 IF EXIST_PENIS(PLAYER)
-    STAIN:PLAYER:1 |= STAIN:PLAYER:2
-    STAIN:PLAYER:2 |= STAIN:PLAYER:1
+    STAIN:PLAYER:손 |= STAIN:PLAYER:자지
+    STAIN:PLAYER:자지 |= STAIN:PLAYER:손
 ;조교자의 손가락⇔조교자의 V의 불결이 이동
 ELSE
-    STAIN:PLAYER:3 |= STAIN:PLAYER:2
-    STAIN:PLAYER:2 |= STAIN:PLAYER:3
+    STAIN:PLAYER:보지 |= STAIN:PLAYER:자지
+    STAIN:PLAYER:자지 |= STAIN:PLAYER:보지
 ENDIF
 
-IF TALENT:120 == 0 && TALENT:PLAYER:120 == 0
+IF TALENT:남자 == 0 && TALENT:PLAYER:남자 == 0
     TCVAR:12 += 1
-ELSEIF TALENT:120 && TALENT:PLAYER:120
+ELSEIF TALENT:남자 && TALENT:PLAYER:남자
     TCVAR:13 += 1
 ENDIF
 
 ;조교자가 후타나리
-SIF TALENT:PLAYER:121
+SIF TALENT:PLAYER:후타나리
     SOURCE:22 /= 2
 
 ;자위 경험
@@ -205,29 +205,29 @@ RETURN 1
 ;--------------------------------------------------
 @TRAIN_MESSAGE_COM115
 CALL KOJO_TRAIN_MESSAGE_COM
-SIF FLAG:10 == 0 || CFLAG:99 == 1 || RESULT != 0
+SIF FLAG:조교시텍스트표시 == 0 || CFLAG:지문소거판정 == 1 || RESULT != 0
     RETURN 0
 
 PRINTL
 ;연모 득도함응에 과시하면(자) 득도함응도 대흥분
-IF TALENT:213 == 1 && TALENT:150 && (FLAG:15 & 16384)
+IF TALENT:사토리 == 1 && TALENT:연모 && (FLAG:커맨드확장 & 16384)
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 과시하듯이 눈앞에서 자위를 시작했다.
     PRINTFORMW 자위 행위로 흥분하고 있는 %조사선택(CALLNAME:PLAYER, "를")% 보며 %CALLNAME:TARGET%도 한층 더 격렬하게 욕정하고 있다….
 ;반발 Lv2 이상 소유이지만 욕정이 튀고 있는[해방][쾌감에 솔직]를 가지지 않는 비함락 노예 상대에게
-ELSEIF MARK:9 > 1 && PALAM:13 >= PALAMLV:3 && TALENT:33 == 0 && TALENT:70 == 0 && TALENT:150 == 0 && TALENT:160 == 0 && TALENT:170 == 0
+ELSEIF MARK:반발각인 > 1 && PALAM:13 >= PALAMLV:3 && TALENT:해방 == 0 && TALENT:쾌감에솔직 == 0 && TALENT:연모 == 0 && TALENT:복종 == 0 && TALENT:음란 == 0
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 과시하듯이 눈앞에서 자위를 시작했다.
     PRINTFORML 자위 행위로 흥분하고 있는 %조사선택(CALLNAME:PLAYER, "를")% 불쾌하게 보고 있는 %조사선택(CALLNAME:TARGET, "지만")%, 
     PRINTW 그 신체가 격렬히 욕정하고 있다는 것은 숨길 수 없었다….
 ;자위 중독 소유로[자위하기 쉬운]이 있어 공포 각인이 없는 경우
-ELSEIF ABL:30 > 0 && TALENT:60 && MARK:8 <= 0
+ELSEIF ABL:자위중독 > 0 && TALENT:자위하기쉬움 && MARK:공포각인 <= 0
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 과시하듯이 눈앞에서 자위를 시작했다.
     PRINTFORMW %조사선택(CALLNAME:TARGET, "는")% 자위 행위로 흥분하고 있는 %조사선택(CALLNAME:PLAYER, "를")% 부러운 듯이 보고 있다….
 ;[정신 붕괴]하고 있는 경우
-ELSEIF TALENT:167
+ELSEIF TALENT:정신붕괴
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 과시하듯이 눈앞에서 자위를 시작했다.
     PRINTFORMW 그러나, 자위 행위로 흥분하고 있는 %CALLNAME:PLAYER%에게 %조사선택(CALLNAME:TARGET, "는")% 흥미가 없는 것 같다….
 ;조교자가 대상의 진짜의 부모인 경우(2세대 이상전은 고려하지 않는다)
-ELSEIF (NO:TARGET == 148 || NO:TARGET == 149) && (CFLAG:3105 == CFLAG:PLAYER:3109 || CFLAG:3107 == CFLAG:PLAYER:3109)
+ELSEIF (NO:TARGET == 148 || NO:TARGET == 149) && (CFLAG:친모CSV번호 == CFLAG:PLAYER:CSV번호 || CFLAG:아빠CSV번호 == CFLAG:PLAYER:CSV번호)
     PRINTFORML %조사선택(CALLNAME:PLAYER, "는")% %CALLNAME:TARGET%에게 과시하듯이 눈앞에서 자위를 시작했다.
     PRINTFORMW 친부모의 자위행위를 보게 되어 %조사선택(CALLNAME:TARGET, "는")% 깊은 충격을 받으면서도 성적 흥분을 느끼고 있는 것 같다….
 ;그 외

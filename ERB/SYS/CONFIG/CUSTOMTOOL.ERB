@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 ;中毒者曰く：
 ;調教器具を改造したり、改造した調教器具を使ったりしたときの処理群
-;CSVにABL:73「工作技能」を追加したので本当ににとり以外も高性能道具使えるように。
+;CSVにABL:공작기능「工作技能」を追加したので本当ににとり以外も高性能道具使えるように。
 ;ペニスバンドの性能向上は見送り：女主人問題。というかペニバンのがティンコより良いって悲しいだろjk
 ;
 ;以下関数群
@@ -125,7 +125,7 @@ IF    LOCAL:0 > -1
     ELSEIF LOCAL:1 == 1
         ;上質／高性能を使用する場合
         IF LOCAL:13 & 2
-            IF TALENT:(LOCAL:11):210
+            IF TALENT:(LOCAL:11):캇파
                 LOCALS:0 = 캇파제
             ELSE
                 LOCALS:0 = 고성능
@@ -327,7 +327,7 @@ LOCAL:1 = FLAG:1111
 LOCAL:2 = FLAG:1112
 LOCAL:3 = LOCAL:0 + 700
 LOCAL:4 = FLAG:1113
-IF ABL:(LOCAL:1):73 > 0
+IF ABL:(LOCAL:1):공작기능 > 0
     ;主人なら無条件で主人専用道具を使おうとする
     IF LOCAL:2 == 0
         IF CFLAG:(LOCAL:1):(LOCAL:3) & 8
@@ -345,9 +345,9 @@ IF ABL:(LOCAL:1):73 > 0
         ;調教対象の場合
         IF LOCAL:2 == 1
             ;[ドＭ]か[マゾ]か『[従順]Lv3以上＆[マゾっ気]Lv3以上』を確認＆開発状況確認
-            IF (TALENT:(LOCAL:1):178 || TALENT:(LOCAL:1):82 || (ABL:(LOCAL:1):10 > 3 && ABL:(LOCAL:1):21 > 3)) && (CFLAG:(LOCAL:1):(LOCAL:3) & 4)
+            IF (TALENT:(LOCAL:1):초M || TALENT:(LOCAL:1):마조 || (ABL:(LOCAL:1):순종 > 3 && ABL:(LOCAL:1):마조끼 > 3)) && (CFLAG:(LOCAL:1):(LOCAL:3) & 4)
                 ;[ドＭ]か[マゾ]か『[マゾっ気]＋[従順]が8以上』で[露出癖]Lv2以上かつ特製品開発済みなら専用道具
-                IF (TALENT:(LOCAL:1):178 || TALENT:(LOCAL:1):82 || (ABL:(LOCAL:1):10 + ABL:(LOCAL:1):21) > 8) && ABL:(LOCAL:1):14 > 1 && (CFLAG:(LOCAL:1):(LOCAL:3) & 8)
+                IF (TALENT:(LOCAL:1):초M || TALENT:(LOCAL:1):마조 || (ABL:(LOCAL:1):순종 + ABL:(LOCAL:1):마조끼) > 8) && ABL:(LOCAL:1):노출증 > 1 && (CFLAG:(LOCAL:1):(LOCAL:3) & 8)
                     FLAG:1120 = 2
                     RETURN 2
                 ;それ以外なら高性能／上質
@@ -363,11 +363,11 @@ IF ABL:(LOCAL:1):73 > 0
         ;助手の場合
         ELSE
             ;『[ドＳ]か[サド]か[サドっ気]Lv3以上』かつ『[技巧]がLv4以上』かつ専用開発済みならば専用道具
-            IF (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):20 > 3) && ABL:(LOCAL:1):12 > 4 && (CFLAG:(LOCAL:1):(LOCAL:3) & 8)
+            IF (TALENT:(LOCAL:1):초S || TALENT:(LOCAL:1):새드 || ABL:(LOCAL:1):새드끼 > 3) && ABL:(LOCAL:1):기교 > 4 && (CFLAG:(LOCAL:1):(LOCAL:3) & 8)
                 FLAG:1120 = 2
                 RETURN 2
             ;『[ドＳ]か[サド]か[サドっ気]Lv3以上』かつ『[技巧]がLv2以上』かつ改良済みならば高性能／上質
-            ELSEIF (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):20 > 3) && ABL:(LOCAL:1):12 > 2 && (CFLAG:(LOCAL:1):(LOCAL:3) & 4)
+            ELSEIF (TALENT:(LOCAL:1):초S || TALENT:(LOCAL:1):새드 || ABL:(LOCAL:1):새드끼 > 3) && ABL:(LOCAL:1):기교 > 2 && (CFLAG:(LOCAL:1):(LOCAL:3) & 4)
                 FLAG:1120 = 1
                 RETURN 1
             ;でなきゃ通常品
@@ -381,9 +381,9 @@ IF ABL:(LOCAL:1):73 > 0
         ;調教対象の場合
         IF LOCAL:2 == 1
             ;自分に自分の改造道具を使用するには[従順]Lv3以上が必要
-            IF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):10 > 2)
+            IF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):순종 > 2)
                 ;調教対象の特製品使用にはさらに[露出癖]Lv2以上が必要
-                IF (CFLAG:(LOCAL:1):(LOCAL:3) & 8) && (ABL:(LOCAL:1):14 > 1)
+                IF (CFLAG:(LOCAL:1):(LOCAL:3) & 8) && (ABL:(LOCAL:1):노출증 > 1)
                     FLAG:1120 = 2
                     RETURN 2
                 ;それ以外なら高性能／上質
@@ -399,11 +399,11 @@ IF ABL:(LOCAL:1):73 > 0
         ;助手の場合
         ELSE
             ;助手の特製品使用には[技巧]Lv3と『[ドＳ]か[サド]か[サドっ気]Lv4以上』か特製品開発時より1Lv高い工作技能が必要
-            IF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):12 > 2) && (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):20 > 3 || (LOCAL:4 & 2 == 0 && ABL:(LOCAL:1):73 > 3) || (LOCAL:4 & 2 == 2 && ABL:(LOCAL:1):73 > 4))
+            IF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):기교 > 2) && (TALENT:(LOCAL:1):초S || TALENT:(LOCAL:1):새드 || ABL:(LOCAL:1):새드끼 > 3 || (LOCAL:4 & 2 == 0 && ABL:(LOCAL:1):공작기능 > 3) || (LOCAL:4 & 2 == 2 && ABL:(LOCAL:1):공작기능 > 4))
                 FLAG:1120 = 2
                 RETURN 2
             ;助手の高性能／上質道具を使用するには[技巧]Lv2と『[ドＳ]か[サド]か[サドっ気]Lv2以上』か開発時より1Lv高い工作技能が必要
-            ELSEIF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):12 > 1) && (TALENT:(LOCAL:1):177 || TALENT:(LOCAL:1):81 || ABL:(LOCAL:1):20 > 1 || (LOCAL:4 & 2 == 0 && ABL:(LOCAL:1):73 > 2) || (LOCAL:4 & 2 == 2 && ABL:(LOCAL:1):73 > 3))
+            ELSEIF (CFLAG:(LOCAL:1):(LOCAL:3) & 4) && (ABL:(LOCAL:1):기교 > 1) && (TALENT:(LOCAL:1):초S || TALENT:(LOCAL:1):새드 || ABL:(LOCAL:1):새드끼 > 1 || (LOCAL:4 & 2 == 0 && ABL:(LOCAL:1):공작기능 > 2) || (LOCAL:4 & 2 == 2 && ABL:(LOCAL:1):공작기능 > 3))
                 FLAG:1120 = 1
                 RETURN 1
             ;でなきゃ通常品
@@ -476,7 +476,7 @@ REPEAT FLAG:1114
         PRINTL [특제품]
     ELSEIF LOCAL:3 == 1
         IF FLAG:1115 & 2
-            IF TALENT:(LOCAL:2):210
+            IF TALENT:(LOCAL:2):캇파
                 PRINTL [캇파제]
             ELSE
                 PRINTL [고성능]
@@ -551,7 +551,7 @@ IF ITEMPRICE:(LOCAL:0) > 0
         SIF LOCAL:3 <= 0
             CONTINUE
         ;判定対象が工作技能Lv2以上かつ助手可能の場合工作の可能性あり
-        IF ABL:(LOCAL:3):73 > 1 && CFLAG:(LOCAL:3):1 > 1
+        IF ABL:(LOCAL:3):공작기능 > 1 && CFLAG:(LOCAL:3):매각가능 > 1
             LOCAL:11 = 0
             LOCAL:12 = 0
             ;対象の道具が未開発の場合
@@ -559,32 +559,32 @@ IF ITEMPRICE:(LOCAL:0) > 0
                 ;SM用品の場合
                 IF LOCAL:1 & 4
                     ;技巧Lv2以上＋サドっ気Lv3以上
-                    SIF ABL:(LOCAL:3):12 > 1 && ABL:(LOCAL:3):20 > 2
+                    SIF ABL:(LOCAL:3):기교 > 1 && ABL:(LOCAL:3):새드끼 > 2
                         LOCAL:11 += 1
                     ;技巧Lv2＋サド系(ドＳorサド)
-                    SIF ABL:(LOCAL:3):12 > 1 && (TALENT:(LOCAL:3):177 || TALENT:(LOCAL:3):81)
+                    SIF ABL:(LOCAL:3):기교 > 1 && (TALENT:(LOCAL:3):초S || TALENT:(LOCAL:3):새드)
                         LOCAL:11 += 2
                     ;従順Lv3以上＋マゾっ気Lv3以上＋自慰中毒Lv1以上
-                    SIF ABL:(LOCAL:3):10 > 2 && ABL:(LOCAL:3):21 > 2 && ABL:(LOCAL:3):30
+                    SIF ABL:(LOCAL:3):순종 > 2 && ABL:(LOCAL:3):마조끼 > 2 && ABL:(LOCAL:3):자위중독
                         LOCAL:11 += 4
                     ;自慰中毒LV1＋マゾ系(ドＭor
-                    SIF ABL:(LOCAL:3):10 > 1 && (TALENT:(LOCAL:3):178 || TALENT:(LOCAL:3):82)
+                    SIF ABL:(LOCAL:3):순종 > 1 && (TALENT:(LOCAL:3):초M || TALENT:(LOCAL:3):마조)
                         LOCAL:11 += 8
                 ;SM用品ではない場合
                 ELSE
                     ;自慰中毒Lv1以上
-                    SIF ABL:(LOCAL:3):30
+                    SIF ABL:(LOCAL:3):자위중독
                         LOCAL:11 = 16
                 ENDIF
                 ;電動製品の場合
                 IF LOCAL:1 & 2
                     ;工作技能Lv3
-                    SIF ABL:(LOCAL:3):73 > 2
+                    SIF ABL:(LOCAL:3):공작기능 > 2
                         LOCAL:12 = 1
                 ;非電動製品の場合
                 ELSE
                     ;工作技能Lv2
-                    SIF ABL:(LOCAL:3):73 > 1
+                    SIF ABL:(LOCAL:3):공작기능 > 1
                         LOCAL:12 = 2
                 ENDIF
                 IF LOCAL:11 > 0 && LOCAL:12 > 0
@@ -599,35 +599,35 @@ IF ITEMPRICE:(LOCAL:0) > 0
                 ;SM用品の場合
                 IF LOCAL:1 & 4
                     ;技巧Lv3以上＋サドッ気Lv3以上＋(技巧＋サドっ気)Lv8以上
-                    SIF ABL:(LOCAL:3):12 > 2 && ABL:(LOCAL:3):20 > 2 && (ABL:(LOCAL:3):12 + ABL:(LOCAL:3):20) > 7 
+                    SIF ABL:(LOCAL:3):기교 > 2 && ABL:(LOCAL:3):새드끼 > 2 && (ABL:(LOCAL:3):기교 + ABL:(LOCAL:3):새드끼) > 7 
                         LOCAL:11 += 1
                     ;技巧Lv4以上＋サド系(ドＳorサド)
-                    SIF ABL:(LOCAL:3):12 > 3 && (TALENT:(LOCAL:3):177 || TALENT:(LOCAL:3):81)
+                    SIF ABL:(LOCAL:3):기교 > 3 && (TALENT:(LOCAL:3):초S || TALENT:(LOCAL:3):새드)
                         LOCAL:11 += 2
                     ;従順Lv3以上＋マゾっ気Lv3以上＋(従順＋マゾっ気)Lv8以上＋自慰中毒Lv3以上
-                    SIF ABL:(LOCAL:3):10 > 2 && ABL:(LOCAL:3):21 > 2 && (ABL:(LOCAL:3):10 + ABL:(LOCAL:3):21) > 7 && ABL:(LOCAL:3):30 > 2
+                    SIF ABL:(LOCAL:3):순종 > 2 && ABL:(LOCAL:3):마조끼 > 2 && (ABL:(LOCAL:3):순종 + ABL:(LOCAL:3):마조끼) > 7 && ABL:(LOCAL:3):자위중독 > 2
                         LOCAL:11 += 4
                     ;自慰中毒LV3以上＋マゾ系(ドＭorマゾ）
-                    SIF ABL:(LOCAL:3):30 > 2 && (TALENT:(LOCAL:3):178 || TALENT:(LOCAL:3):82)
+                    SIF ABL:(LOCAL:3):자위중독 > 2 && (TALENT:(LOCAL:3):초M || TALENT:(LOCAL:3):마조)
                         LOCAL:11 += 8
                 ;SM用品ではない場合
                 ELSE
                     ;自慰中毒Lv3以上＆陥落系素質か淫乱系素質(恋慕or妄信or親愛or相愛or服従or烙印or隷属or使い魔or淫乱or淫核or淫壷or淫尻or淫乳or尿道狂orキス魔orドＳorドＭor即落ち)
-                    SIF ABL:(LOCAL:3):10 > 2 && (TALENT:(LOCAL:3):150 || TALENT:(LOCAL:3):151 || TALENT:(LOCAL:3):152 || TALENT:(LOCAL:3):153 || TALENT:(LOCAL:3):160 || TALENT:(LOCAL:3):161 || TALENT:(LOCAL:3):162 || TALENT:(LOCAL:3):164 || TALENT:(LOCAL:3):170 || TALENT:(LOCAL:3):171 || TALENT:(LOCAL:3):172 || TALENT:(LOCAL:3):173 || TALENT:(LOCAL:3):174 || TALENT:(LOCAL:3):175 || TALENT:(LOCAL:3):176 || TALENT:(LOCAL:3):177 || TALENT:(LOCAL:3):178 || TALENT:(LOCAL:3):179)
+                    SIF ABL:(LOCAL:3):순종 > 2 && (TALENT:(LOCAL:3):연모 || TALENT:(LOCAL:3):망신 || TALENT:(LOCAL:3):친애 || TALENT:(LOCAL:3):상애 || TALENT:(LOCAL:3):복종 || TALENT:(LOCAL:3):낙인 || TALENT:(LOCAL:3):예속 || TALENT:(LOCAL:3):사역마 || TALENT:(LOCAL:3):음란 || TALENT:(LOCAL:3):음핵／음경 || TALENT:(LOCAL:3):음호 || TALENT:(LOCAL:3):음고 || TALENT:(LOCAL:3):음유 || TALENT:(LOCAL:3):요도광 || TALENT:(LOCAL:3):키스마 || TALENT:(LOCAL:3):초S || TALENT:(LOCAL:3):초M || TALENT:(LOCAL:3):즉각함락)
                         LOCAL:11 = 16
                     ;自慰中毒Lv5以上
-                    SIF ABL:(LOCAL:3):30 > 4
+                    SIF ABL:(LOCAL:3):자위중독 > 4
                         LOCAL:11 = 16
                 ENDIF
                 ;電動製品の場合
                 IF LOCAL:1 & 2
                     ;工作技能Lv4
-                    SIF ABL:(LOCAL:3):73 > 3
+                    SIF ABL:(LOCAL:3):공작기능 > 3
                         LOCAL:12 = 1
                 ;非電動製品の場合
                 ELSE
                     ;工作技能Lv3
-                    SIF ABL:(LOCAL:3):73 > 2
+                    SIF ABL:(LOCAL:3):공작기능 > 2
                         LOCAL:12 = 2
                 ENDIF
                 IF LOCAL:11 > 0 && LOCAL:12 > 0
@@ -818,7 +818,7 @@ IF ARG:0 != 0
 ENDIF
 LOCAL:9 = 0
 ;調査対象開発レベルを設定 (0⇒0、1⇒4)
-IF ABL:73 > 0
+IF ABL:공작기능 > 0
     IF CFLAG:799 & 4
         LOCAL:0 = 4
     ELSEIF CFLAG:799 & 2
@@ -878,13 +878,13 @@ IF LOCAL:3 > 0
     ELSE
         FLAG:1121 = 1
     ENDIF
-    IF CFLAG:4 == 0
+    IF CFLAG:조교관외 == 0
         ;呼び出しが調教前であれば口上とフラグチェック
         FLAG:1110 = LOCAL:1
         IF LOCAL:0 == 4
             CALL KOJO_DEVELOPED_CUSTOMTOOL_PLUS
             CFLAG:(LOCAL:2) = 12
-            EXP:74 += 2
+            EXP:공작경험 += 2
             LOCAL:1--
             PRINTFORML %CALLNAME:TARGET%의 %ITEMNAME:(LOCAL:1)%의 성능이 더 오른 것 같다.
             LOCAL:1++
@@ -901,7 +901,7 @@ IF LOCAL:3 > 0
         ELSE
             CALL KOJO_DEVELOPED_CUSTOMTOOL
             CFLAG:(LOCAL:2) = 4
-            EXP:74 += 1
+            EXP:공작경험 += 1
             LOCAL:1--
             PRINTFORML %CALLNAME:TARGET%의 %ITEMNAME:(LOCAL:1)%의 성능이 더 오른 것 같다.
             LOCAL:1++
@@ -909,7 +909,7 @@ IF LOCAL:3 > 0
             SIF LOCAL:3 == 1
                 CFLAG:799 -= 2
         ENDIF
-    ELSEIF CFLAG:4 == 3
+    ELSEIF CFLAG:조교관외 == 3
         ;呼び出しが工房である場合の口上とフラグチェック
         FLAG:1110 = LOCAL:1
         ;特製品を作成しているなら作業番号を切り替える
@@ -984,11 +984,11 @@ IF LOCAL:1 == 0
         ;特製品
         IF FLAG:(LOCAL:5) == TARGET
             ;調教対象特製品であれば自慰中毒に合わせて倍率変化
-            IF ABL:30 == 5
+            IF ABL:자위중독 == 5
                 TIMES LOCAL:4 , 1.75
-            ELSEIF ABL:30 == 4
+            ELSEIF ABL:자위중독 == 4
                 TIMES LOCAL:4 , 1.50
-            ELSEIF ABL:30 == 3
+            ELSEIF ABL:자위중독 == 3
                 TIMES LOCAL:4 , 1.35
             ELSE
                 TIMES LOCAL:4 , 1.25
@@ -1013,11 +1013,11 @@ ELSE
         ;特製品
         IF FLAG:(LOCAL:5) == TARGET
             ;調教対象特製品であれば自慰中毒に合わせて倍率変化
-            IF ABL:30 == 5
+            IF ABL:자위중독 == 5
                 TIMES LOCAL:4 , 1.75
-            ELSEIF ABL:30 == 4
+            ELSEIF ABL:자위중독 == 4
                 TIMES LOCAL:4 , 1.50
-            ELSEIF ABL:30 == 3
+            ELSEIF ABL:자위중독 == 3
                 TIMES LOCAL:4 , 1.35
             ELSE
                 TIMES LOCAL:4 , 1.25
@@ -1025,11 +1025,11 @@ ELSE
             LOCAL:6 = 2
         ELSEIF FLAG:(LOCAL:5) == PLAYER
             ;調教者特製品であれば技巧レベルに合わせて倍率変化
-            IF ABL:PLAYER:12 == 5
+            IF ABL:PLAYER:기교 == 5
                 TIMES LOCAL:4 , 1.75
-            ELSEIF ABL:PLAYER:12 == 4
+            ELSEIF ABL:PLAYER:기교 == 4
                 TIMES LOCAL:4 , 1.50
-            ELSEIF ABL:PLAYER:12 == 3
+            ELSEIF ABL:PLAYER:기교 == 3
                 TIMES LOCAL:4 , 1.35
             ELSE
                 TIMES LOCAL:4 , 1.25

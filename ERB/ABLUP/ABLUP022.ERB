@@ -3,9 +3,9 @@
 ;=============================================================================
 @ABLUP22
 DRAWLINE
-IF TALENT:120
+IF TALENT:남자
     RETURN 0
-ELSEIF ABL:22 >= 5
+ELSEIF ABL:레즈끼 >= 5
     JUMP ABLUP_MAX
 ENDIF
 
@@ -41,8 +41,8 @@ ELSE
     GOTO INPUT_LOOP
 ENDIF
 
-ABL:22 += 1
-PRINTFORMW %ABLNAME:22%의 레벨이 %조사처리(TOSTR(ABL:22),"가")% 되었습니다.
+ABL:레즈끼 += 1
+PRINTFORMW %ABLNAME:22%의 레벨이 %조사처리(TOSTR(ABL:레즈끼),"가")% 되었습니다.
 
 @AUTO_ABLUP22
 #LOCALSIZE 1
@@ -56,14 +56,14 @@ ELSE
     RETURN 0
 ENDIF
 
-ABL:22 += 1
+ABL:레즈끼 += 1
 RETURN 1
 
 ;--------------------------------------------------
 ;レベルアップに必要な珠計算、レベルアップ予告処理
 ;--------------------------------------------------
 @ISABLUP22
-SIF ABL:22 >= 5 || TALENT:120
+SIF ABL:레즈끼 >= 5 || TALENT:남자
     RETURN 0
 
 CALLF CALC_COST22, "CALC"
@@ -82,39 +82,39 @@ SIF ARGS == "GET"
 ;必要な条件の算出
 VARSET LOCAL, 0
 
-IF ABL:22 == 0
+IF ABL:레즈끼 == 0
     LOCAL:0 = 200
     LOCAL:1 = 0
     LOCAL:2 = 1000
     LOCAL:3 = 50
-ELSEIF ABL:22 == 1
+ELSEIF ABL:레즈끼 == 1
     LOCAL:0 = 1000
     LOCAL:1 = 0
     LOCAL:2 = 5000
     LOCAL:3 = 200
-ELSEIF ABL:22 == 2
+ELSEIF ABL:레즈끼 == 2
     LOCAL:0 = 3000
     LOCAL:1 = 1000
     LOCAL:2 = 0
     LOCAL:3 = 500
-ELSEIF ABL:22 == 3
+ELSEIF ABL:레즈끼 == 3
     LOCAL:0 = 8000
     LOCAL:1 = 2000
     LOCAL:2 = 0
     LOCAL:3 = 1000
     ;一線越えない
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         LOCAL:0 *= 2
         LOCAL:1 *= 2
         LOCAL:3 *= 2
     ENDIF
-ELSEIF ABL:22 == 4
+ELSEIF ABL:레즈끼 == 4
     LOCAL:0 = 20000
     LOCAL:1 = 5000
     LOCAL:2 = 0
     LOCAL:3 = 2000
     ;一線越えない
-    IF TALENT:27
+    IF TALENT:일선을넘지않음
         LOCAL:0 *= 3
         LOCAL:1 *= 3
         LOCAL:3 *= 3
@@ -122,14 +122,14 @@ ELSEIF ABL:22 == 4
 ENDIF
 
 ;倒錯的
-IF TALENT:80
+IF TALENT:도착적
     TIMES LOCAL:0 , 0.75
     TIMES LOCAL:1 , 0.75
     TIMES LOCAL:2 , 0.75
     TIMES LOCAL:3 , 0.75
 ENDIF
 ;両刀
-IF TALENT:83
+IF TALENT:바이
     TIMES LOCAL:0 , 0.25
     TIMES LOCAL:1 , 0.25
     TIMES LOCAL:2 , 0.25
@@ -137,8 +137,8 @@ IF TALENT:83
 ENDIF
 
 ;ＬＶ３から４、４から５に上げるときは異常経験必要（素質：[両刀]なら無視できる）
-SIF ABL:22 >= 3 && TALENT:83 == 0
-    LOCAL:4 = ABL:22 - 2
+SIF ABL:레즈끼 >= 3 && TALENT:바이 == 0
+    LOCAL:4 = ABL:레즈끼 - 2
 
 RETURNF 0
 
@@ -152,13 +152,13 @@ SIF ARGS == "GET"
     RETURNF LOCAL:ARG
 VARSET LOCAL, 0
 ;異常経験が必要な場合
-IF EXP:50 < COST22(4)
+IF EXP:이상경험 < COST22(4)
     LOCAL:0 |= 2
     LOCAL:1 |= 2
 ENDIF
 
 ;レズ経験が必要
-IF EXP:12 < COST22(3)
+IF EXP:레즈경험 < COST22(3)
     LOCAL:0 |= 2
     LOCAL:1 |= 2
 ENDIF

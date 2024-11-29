@@ -194,18 +194,18 @@ GOTO CHARA_BUY_PAGE
 ;캐릭터 추가 및 초기 설정의 처리로
 CALL CHARA_STATE_BASIC, ARG
 ;구입 인원수 추가
-FLAG:39 += 1
+FLAG:구입총계 += 1
 ;입수 방법의 기록(액봉투 패치 변경 ＆추가)
 CSTR:3  = \@(TFLAG:209 == 1) ? 액봉투에 들어있었음 # 노예상에게 구입\@
 ;구입된 날을 기록
-CFLAG:3111 = DAY
+CFLAG:구입한날 = DAY
 
 ;구입 가능한 노예의 인원수 산출
 LOCAL = CALC_SLAVE_CAPACITY() - CHARANUM
 IF ARG == 8 && FLAG:570 & 1 && LOCAL > 0
     CALL ROYALFLARE, LOCAL
     PRINTW  
-ELSEIF ARG == 8 && TALENT:MASTER:834
+ELSEIF ARG == 8 && TALENT:MASTER:지옥의훈장
     PRINTFORMW ＜파츄리를 구입한 덕에, 파츄리의 Spell Card를 구입할 수 있게 되었습니다＞
 ELSEIF ARG == 14
     PRINTFORMW ＜앨리스를 구입한 덕에, 상하이 · 호라이 · 골리아테 인형을 살 수 있게 되었습니다＞
@@ -274,7 +274,7 @@ TFLAG:209 = 0
 
 IF FLAG:570 & 8
     FLAG:570 &= 55
-    FLAG:0 = 1
+    FLAG:휴식 = 1
     BEGIN TURNEND
     RETURN 1
 ENDIF
@@ -378,10 +378,10 @@ FOR COUNT, 100, 600
     ITEMSALES:COUNT = ITEMPRICE:COUNT
 NEXT
 ;난이도가 LUNATIC 미만이면 헬코 컷
-SIF FLAG:3 < 4
+SIF FLAG:난이도 < 4
     ITEMSALES:597 = 0
 ;지옥의 훈장이 없다면 세이세이히메 컷
-SIF TALENT:MASTER:834 == 0
+SIF TALENT:MASTER:지옥의훈장 == 0
     ITEMSALES:598 = 0
 ;아나타와 자식 컷
 ITEMSALES:100 = 0
@@ -398,7 +398,7 @@ ITEMSALES:196 = 0
 ITEMSALES:197 = 0
 ITEMSALES:199 = 0
 ;비비트를 구입하려면 신사적인 촉수의 ON과 진화의 비법을 소지하는 것이 필요하다.
-SIF (FLAG:15 & 4096) == 0 || (ITEM:59 == 0 && NOITEM == 0)
+SIF (FLAG:커맨드확장 & 4096) == 0 || (ITEM:59 == 0 && NOITEM == 0)
     ITEMSALES:236 = 0
 
 ;앨리스가 있으면

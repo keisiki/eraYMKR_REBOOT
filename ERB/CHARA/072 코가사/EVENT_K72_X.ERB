@@ -49,57 +49,57 @@ SIF RESULT
 
 
 ;친애인가 이어받아 캐릭터나 사토코 엔드 후라면 면제된다
-IF TALENT:152 == 0 && CFLAG:18 == 0 && CFLAG:9003 != 7
+IF TALENT:친애 == 0 && CFLAG:계승여부 == 0 && CFLAG:9003 != 7
     ;도구 포인트의 산출
     LOCAL = 0
     ;굴복 각인 Lv2로 1포인트, Lv3로 3포인트
-    IF MARK:2 == 2
+    IF MARK:굴복각인 == 2
         LOCAL += 1
-    ELSEIF MARK:2 >= 3
+    ELSEIF MARK:굴복각인 >= 3
         LOCAL += 3
     ENDIF
     ;순종 Lv4로 1포인트, Lv5로 3포인트
-    IF ABL:10 == 4
+    IF ABL:순종 == 4
         LOCAL += 1
-    ELSEIF ABL:10 >= 5
+    ELSEIF ABL:순종 >= 5
         LOCAL += 3
     ENDIF
     ;이상 경험  3이후,  1마다 1포인트
-    IF EXP:50 >= 3
-        LOCAL += (EXP:50)-2
+    IF EXP:이상경험 >= 3
+        LOCAL += (EXP:이상경험)-2
     ENDIF
     ;공포 각인 Lv3로 2포인트
-    IF MARK:8 >= 3
+    IF MARK:공포각인 >= 3
         LOCAL += 2
     ENDIF
     ;새디즘기분 Lv5나 드 S가 아닌 경우, 애무·성교계 커멘드 실행수와 봉사계 커멘드 실행수를 비교
-    IF ABL:20 < 5 && TALENT:177 == 0
+    IF ABL:새드끼 < 5 && TALENT:초S == 0
         ;봉사가 3배 이상 많으면+5포인트
         IF CFLAG:9003 > (3*CFLAG:9002)
             LOCAL += 5
             ;새디즘기분 Lv3 이상이라면 경감
-            SIF ABL:20 > 2
+            SIF ABL:새드끼 > 2
                 LOCAL -= 2
         ;봉사가 2배 이상 많으면+3포인트
         ELSEIF CFLAG:9003 > (2*CFLAG:9002)
             LOCAL += 3
             ;새디즘기분 Lv3 이상이라면 경감
-            SIF ABL:20 > 2
+            SIF ABL:새드끼 > 2
                 LOCAL -= 2
         ;봉사 쪽이 많으면+1포인트
         ELSEIF CFLAG:9003 > CFLAG:9002
             LOCAL += 1
             ;새디즘기분 Lv3 이상이라면 경감
-            SIF ABL:20 > 2
+            SIF ABL:새드끼 > 2
                 LOCAL -= 1
         ENDIF
     ENDIF
     ;애정 경험  200마다―1포인트(덤)
-    LOCAL -= (EXP:21)/200
+    LOCAL -= (EXP:애정경험)/200
 
     ;연모라면 10포인트, 비연모라면 6포인트 이상으로 굴종
-    IF LOCAL > 9 || (LOCAL > 5 && TALENT:150 == 0)
-        IF FLAG:11 > 0
+    IF LOCAL > 9 || (LOCAL > 5 && TALENT:연모 == 0)
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORMW 「%MASTERNAME%…」
             PRINTFORMW 코가사의 모습이 이상하다. …어쩐지, 깊은 생각에 빠진 표정을 하고 있다.
             PRINTFORMW 「나, %MASTERNAME%의 물건이예요. 요전에, 어쩐지, 쿵하고 납득해버렸어」
@@ -124,8 +124,8 @@ IF TALENT:152 == 0 && CFLAG:18 == 0 && CFLAG:9003 != 7
         CFLAG:9001 = 1
         RETURN 1
     ;연모 때 8포인트, 비연모 때 5포인트 이상이 된다고 경고
-    ELSEIF (LOCAL > 7 || (LOCAL > 4 && TALENT:150 == 0)) && CFLAG:9004 == 0
-        IF FLAG:11 > 0
+    ELSEIF (LOCAL > 7 || (LOCAL > 4 && TALENT:연모 == 0)) && CFLAG:9004 == 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「%MASTERNAME%… 나, 사양하고 있지 않아?」
             PRINTFORMW 코가사가 걱정스러운 듯이 그렇게 말한다. 반대로 걱정이 된다.
             PRINTFORMW 「응, 아무것도 아니지만 …어쩐지, %조사처리(MASTERNAME,"로")%부터 애정을 받고 싶어」
@@ -141,8 +141,8 @@ IF TALENT:152 == 0 && CFLAG:18 == 0 && CFLAG:9003 != 7
         CFLAG:9004 = 1
         RETURN 1
     ;순종 Lv4 이상으로 경고
-    ELSEIF ABL:10 > 3 && CFLAG:9005 == 0
-        IF FLAG:11 > 0
+    ELSEIF ABL:순종 > 3 && CFLAG:9005 == 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「%MASTERNAME%에겐 이길 수 없지요…무슨 말을 해도 무심코 들어버리게 되니까」
             PRINTFORMW 「으응…오히려, 명령받고 싶어져버려. 등이 근질근질해」
             PRINTFORMW 최근 온순하게 되었다고 생각했던, 코가사가 그런 일을 말하기 시작했다.
@@ -156,8 +156,8 @@ IF TALENT:152 == 0 && CFLAG:18 == 0 && CFLAG:9003 != 7
         CFLAG:9005 = 1
         RETURN 1
     ;새디즘기분 Lv2 이하로, 봉사 쪽이 많다고 경고
-    ELSEIF CFLAG:9003 > CFLAG:9002 && ABL:20 < 3 && CFLAG:9006 == 0
-        IF FLAG:11 > 0
+    ELSEIF CFLAG:9003 > CFLAG:9002 && ABL:새드끼 < 3 && CFLAG:9006 == 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「%MASTERNAME%, 오늘은 어디로 봉사해? 입?」
             PRINTFORMW 「왜? 나의 신체로 기분 좋고 나름대로 왔잖아?」
             PRINTFORMW 그렇게 말하면 최근, 코가사에게 봉사시키만 한 것 같은 생각이 든다.
@@ -170,8 +170,8 @@ IF TALENT:152 == 0 && CFLAG:18 == 0 && CFLAG:9003 != 7
         CFLAG:9006 = 1
         RETURN 1
     ;이상 경험 2이상으로 경고
-    ELSEIF EXP:50 > 1 && CFLAG:9007 == 0
-        IF FLAG:11 > 0
+    ELSEIF EXP:이상경험 > 1 && CFLAG:9007 == 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「%MASTERNAME%… 오늘은, 어떤 일 하는거야?」
             PRINTFORMW 「나, 망가지면 쓰레기통으로 가는거야. 망가져 버리면, 버려지겠지? 그것은 곤란해」
             PRINTFORMW 확실히, 코가사에겐 우산의 도리에 맞지 않은 일을 시키고 있다.
@@ -194,7 +194,7 @@ RETURN 0
 @KOJO_72_X2
 ;범용화하고 있다
 IF CFLAG:9001 == 3
-    IF FLAG:11 > 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORML 「와 줬구나」
         PRINTFORMW 벽옥색의 양눈이 탁해져버려 야무지지 못하게 웃는 코가사.
         PRINTFORM 「아, 아, 응응…응, 사용할 수 있으니까, 아무쪼록…
@@ -229,8 +229,8 @@ ENDIF
 LOCAL = 1
 ;-------------------------------------------------
 
-IF LOCAL && TALENT:150 && CFLAG:6001 == 0
-    IF FLAG:11 > 0
+IF LOCAL && TALENT:연모 && CFLAG:6001 == 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORML 「주인님, 와 줬구나…너무 좋아, 입니다」
         PRINTFORMW 넋을 잃은 눈으로 우산의 다리를 가슴에 안아, 선 채로 맞이하는 코가사.
         PRINTFORMW 「어째서 서있냐니…? 어째선지 모르게,에요」
@@ -258,8 +258,8 @@ ENDIF
 LOCAL = 1
 ;-------------------------------------------------
 
-IF LOCAL && TALENT:152 && CFLAG:6002 == 0
-    IF FLAG:11 > 0
+IF LOCAL && TALENT:친애 && CFLAG:6002 == 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORML 「주인님, 최근…너무 상냥해」
         PRINTFORMW 코가사부휘어짐이라고 중얼거리고 나서, 깜짝 얼굴을 올렸다.
         PRINTFORMW 「아아니, 그런, 미안해! 우산따위가 너무 지나쳤어」
@@ -272,9 +272,9 @@ IF LOCAL && TALENT:152 && CFLAG:6002 == 0
         PRINTFORMW 그리운…옛 코가사를 생각해 내는 우는 방법이다.
         PRINTFORMW 「늦어버렸어. 이제, 여자 아이로써의 코가사에는 돌아오고 싶지 않아. 돌아올 수 없다구, 주인님에게 말해져도」
         PRINTFORM 「그러니까 들리지 않는걸. 자 주인님, 고물우산
-        SIF TALENT:0 == 0
+        SIF TALENT:처녀 == 0
             PRINTFORM 으로써 오나홀
-        SIF TALENT:121
+        SIF TALENT:후타나리
             PRINTFORM 으로써 바이브
         PRINTFORMW 의 코가사를 사용해 주세요」
         PRINTFORMW 「자」
@@ -297,16 +297,16 @@ ENDIF
 LOCAL = 0
 ;-------------------------------------------------
 
-IF LOCAL && TALENT:170 && CFLAG:6003 == 0
+IF LOCAL && TALENT:음란 && CFLAG:6003 == 0
     ;연모
-    IF TALENT:150
-        IF FLAG:11 > 0
+    IF TALENT:연모
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORM 
             PRINTFORM 
         ENDIF
     ;그 이외
     ELSE
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORM 
             PRINTFORM 
         ENDIF
@@ -335,10 +335,10 @@ ENDIF
 LOCAL = 1
 ;-------------------------------------------------
 
-IF LOCAL && MARK:9
+IF LOCAL && MARK:반발각인
     ;Lv3
-    IF MARK:9 >= 3 && CFLAG:6031 < 3
-        IF FLAG:11 > 0
+    IF MARK:반발각인 >= 3 && CFLAG:6031 < 3
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「주인님에게 된다면, 이 정도 일은」
             PRINTFORMW 많이 여윈 코가사지만, %조사처리(CALLNAME:MASTER,"가")% 오면 출렁하고 일어났다.
             PRINTFORMW 「뭐든지 따를테니까…그러니까, 버리지 마」
@@ -354,16 +354,16 @@ ENDIF
 ;조교 개시시 범용
 ;-------------------------------------------------
 ;음란·비처녀·뚜껑이든지
-IF TALENT:170 && TALENT:0 == 0 && TALENT:121
-    IF FLAG:11 > 0
+IF TALENT:음란 && TALENT:처녀 == 0 && TALENT:후타나리
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORML 「10종 만능 나이프란게 있잖아. 그렇다면, 10종 만능 우산도 괜찮다고 생각해」
         PRINTFORMW 「우산, 보지, 엉덩이, 자지에, 입, 손, 발, 가슴, 머리카락, 어, 응, 겨드랑이?」
         PRINTFORMW 「주인님이 전부 사용했으면 좋겠어…♪」
     ENDIF
     RETURN 1
 ;비처녀
-ELSEIF TALENT:0 == 0
-    IF FLAG:11 > 0
+ELSEIF TALENT:처녀 == 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORML 「지금까지 쭉, 자신을 요괴 우산이라고 생각하고 있었는데」
         PRINTFORMW 침대 위에서 엎드린 채로, 엉덩이를 향하면서 코가사는 말한다.
         PRINTFORML 「 나는… 요괴 오나홀이었는가도, 알려지겠네」
@@ -372,7 +372,7 @@ ELSEIF TALENT:0 == 0
     RETURN 1
 ;그 이외
 ELSE
-    IF FLAG:11 > 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORML 「주인님, 어서 와」
         PRINTFORMW 「오늘도 코가사를 사용해 주는거야? 기뻐…」
         PRINTFORMW 「손이야? 입? …다리, 사용하는거야?」
@@ -424,7 +424,7 @@ IF A == 0
         LOCAL = CFLAG:9015
     ;Lv1
     IF CFLAG:9010 == 0
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「원통하도다―!」
             PRINTFORMW 코가사의 방에 들어가자, 한쪽 발을 세운채 혀를 내밀어 위협하고 있을 생각을 하고 있던 소녀에게 조우한다.
             PRINTFORMW 「놀랐다!」
@@ -441,7 +441,7 @@ IF A == 0
         RETURN 101
     ;Lv2·타이벤트의 어떤 것인가가 Lv2 이상
     ELSEIF CFLAG:9010 == 1 && LOCAL >= 2
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 딸랑딸랑, 꼬꼬, 딸랑딸랑.
             PRINTFORMW 코가사의 방에서, 기색 좋은 소리가 들려 온다.
             PRINTFORMW ――나막신을 신고 바쁘게 돌아다니는 소리다.
@@ -459,7 +459,7 @@ IF A == 0
         RETURN 102
     ;Lv3·타이벤트의 어떤 것인가가 Lv3 이상
     ELSEIF CFLAG:9010 == 2 && LOCAL >= 3
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML ――.
             PRINTFORMW 문을 열자, 코끝에 미지근한 것이 접했다.
             PRINTFORML 「원통하도다―! 읏!」
@@ -481,7 +481,7 @@ IF A == 0
         RETURN 103
     ;Lv4·타이벤트의 어떤 것인가가 Lv4 이상
     ELSEIF CFLAG:9010 == 3 && LOCAL >= 4
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「원통해 어택!」
             PRINTFORMW 문을 열자, 코가사가 우산을 돌리면서 기세 좋게 돌진해 왔다.
             PRINTFORML 「꺄 아 아!」
@@ -501,7 +501,7 @@ IF A == 0
         RETURN 104
     ;Lv5·타이벤트의 어떤 것인가가 Lv5
     ELSEIF CFLAG:9010 == 4 && LOCAL == 5
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「아돌―!」
             PRINTFORMW 닫은 우산의 끝을 이쪽으로 향하고 기세 좋게 덤벼들어 오는 코가사.
             PRINTFORML 「우와앗」
@@ -524,7 +524,7 @@ IF A == 0
         A = RAND:5
         ;Lv1 리메이크
         IF A == 0
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「스승―…히끅, 히끅」
                 PRINTFORMW 비장한 표정으로 히끅 히끅 말하는 코가사, 또 이상한 일로 울고 있었던 것일까.
                 PRINTFORMW 「딸꾹질이, 히끅, 멈, 끅, 멈추지 않아요─히끅」
@@ -540,7 +540,7 @@ IF A == 0
             RETURN 201
         ;Lv2 리메이크
         ELSEIF A == 1
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 딸랑, 딸랑 딸랑. 
                 PRINTFORMW 코가사의 방으로부터 흐뭇한 소리가 난다. 또 뭔가 장치를 하고 있는 걸까.
                 PRINTFORMW 덜컥, 탓, 와르르르. 
@@ -556,8 +556,8 @@ IF A == 0
             ENDIF
             RETURN 202
         ;Lv3 리메이크·요리 기능 Lv2 이상
-        ELSEIF A == 2 && ABL:70 >= 2
-            IF FLAG:11 > 0
+        ELSEIF A == 2 && ABL:요리기능 >= 2
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 「스승, 기다렸어요―」
                 PRINTFORMW 문을 열면, 구수한 냄새가 코를 간질인다. 
                 PRINTFORML 「곤약으로 두부된장구이를 만들어 보았어요오」
@@ -570,8 +570,8 @@ IF A == 0
                 PRINTFORMW 「히야아아 뜨, 뜨거워어엇!? …훌쩍훌쩍」
             ENDIF
             PRINTFORML  
-            EXP:10 += 1
-            EXP:70 += 2
+            EXP:자위경험 += 1
+            EXP:조리경험 += 2
             PRINTFORML 조리경험＋2
             PRINTFORMW 자위경험＋1
             IF GLOBALEVENT(72, 7)
@@ -581,7 +581,7 @@ IF A == 0
             RETURN 203
         ;Lv4 리메이크
         ELSEIF A == 3
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 「여기서 새로운 방법!」
                 PRINTFORMW 쑤욱! 하고 우산을 내밀어 결정 포즈를 취하는 코가사.
                 PRINTFORML 「우산 회전이라면 이렇게 옆으로 돌면, 원심력으로～!」
@@ -599,7 +599,7 @@ IF A == 0
             RETURN 204
         ;Lv5 리메이크
         ELSEIF A == 4
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 「훌쩍훌쩍」
                 PRINTFORMW 코가사의 방에 들어가면, 예의 가지같은 우산을 안아 코가사가 무언가 하고 있다.
                 PRINTFORML 「우산 검법의 연습을 하다가, 깨져 버렸어」
@@ -623,7 +623,7 @@ IF A == 0
 ELSEIF A == 1
     TRYCALL KOGASA_ASSI
     B = 0
-    SIF CHARANUM < CALC_SLAVE_CAPACITY() && FLAG:4 < 50
+    SIF CHARANUM < CALC_SLAVE_CAPACITY() && FLAG:게임모드 < 50
         B = 1
     C = 0
     REPEAT CHARANUM
@@ -632,7 +632,7 @@ ELSEIF A == 1
     REND
     ;Lv1·조수 경험 없음
     IF CFLAG:9011 == 0 && ISASSI == 0
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「스승에게 놀래켜질 뿐은 재미없어요」
             PRINTFORMW 코가사가 또 뭔가 이상한 것을 말하기 시작했다.
             PRINTFORMW 「있지 않아? 그 밖에도, 나 같은 아이」
@@ -667,7 +667,7 @@ ELSEIF A == 1
         RETURN 111
     ;Lv1·조수 경험 있어
     ELSEIF CFLAG:9011 == 0
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「스승에게 놀래켜질 뿐은 재미없어요」
             PRINTFORMW 코가사가 또 뭔가 이상한 것을 말하기 시작했다.
             PRINTFORMW 「또, 다른 아이를 놀래키는 것, 하고싶어─」
@@ -682,8 +682,8 @@ ELSEIF A == 1
         ENDIF
         RETURN 111
     ;Lv3·기교＋새디즘기분＋레즈비언기합계 6이상, 조교 가능한 노예가 있는, 그 노예의 C감각·욕망 각 2이상, 체력 1000이상
-    ELSEIF CFLAG:9011 == 2 && LOCAL@KOGASA_ASSI && (ABL:12 + ABL:20 + ABL:22) >= 6 && ABL:LOCAL@KOGASA_ASSI:0 >= 2 && ABL:LOCAL@KOGASA_ASSI:11 >= 2 && BASE:LOCAL@KOGASA_ASSI:0 >= 1000
-        IF FLAG:11 > 0
+    ELSEIF CFLAG:9011 == 2 && LOCAL@KOGASA_ASSI && (ABL:기교 + ABL:새드끼 + ABL:레즈끼) >= 6 && ABL:LOCAL@KOGASA_ASSI:0 >= 2 && ABL:LOCAL@KOGASA_ASSI:11 >= 2 && BASE:LOCAL@KOGASA_ASSI:0 >= 1000
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 『여기, 어때? 몸이 놀라지요, 후후후』
             PRINTFORMW 「히야, 앗, 아앗… 안돼…」
             PRINTFORML 코가사의 방에는 먼저 온 손님이 있었다. …누구인가 하고 생각하면 %조사처리(CALLNAME:LOCAL@KOGASA_ASSI,"이다")%.
@@ -708,7 +708,7 @@ ELSEIF A == 1
         PALAM:15 += (100+RAND:300)
         
         BASE:0 -= RAND:400
-        BASE:1 -= (MAXBASE:0-BASE:0+RAND:400)
+        BASE:기력 -= (MAXBASE:0-BASE:0+RAND:400)
         
         
         TRYCALL ASSI_CHANGE
@@ -721,22 +721,22 @@ ELSEIF A == 1
         ENDIF
         RETURN 113
     ;Lv5·기교 4이상, 새디즘기분·레즈비언기 각 2이상, 노예에 빈 곳이 있다
-    ELSEIF CFLAG:9011 == 4 && B && ABL:12 >= 4 && ABL:20 >= 2 && ABL:22 >= 2
-        LOCAL = FLAG:4
-        FLAG:4 = 50
+    ELSEIF CFLAG:9011 == 4 && B && ABL:기교 >= 4 && ABL:새드끼 >= 2 && ABL:레즈끼 >= 2
+        LOCAL = FLAG:게임모드
+        FLAG:게임모드 = 50
         LOCAL:1 = 0
         LOCAL:2 = TARGET
-        IF FLAG:12 & 512
-            FLAG:12 -= 512
+        IF FLAG:SHOP이벤트확장 & 512
+            FLAG:SHOP이벤트확장 -= 512
             LOCAL:1 = 1
         ENDIF
         ADDCHARA 171
         TARGET = CHARANUM-1
         CALL CHARA_RANDOM_STATE
-        FLAG:4 = LOCAL
+        FLAG:게임모드 = LOCAL
         SIF LOCAL:1
-            FLAG:12 |= 512
-        IF FLAG:11 > 0
+            FLAG:SHOP이벤트확장 |= 512
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 『앗 스승, 근무 수고하셨습니다』
             PRINTFORMW 「앗아아, 코가사 씨, 거기, 기분 좋아…」
             PRINTFORMW 또냐.
@@ -759,43 +759,43 @@ ELSEIF A == 1
         ASSI = LOCAL:2
 
         ;마을 소녀를 적당? 에 조교합니다
-        ABL:10 += (2+RAND:2)
-        ABL:11 += (2+RAND:2)
-        ABL:12 += (1+RAND:2)
-        ABL:13 += RAND:3
-        ABL:0 += (2+RAND:2)
-        ABL:3 += RAND:3
-        ABL:14 += RAND:3
-        ABL:20 += RAND:2
-        ABL:21 += RAND:3
-        ABL:22 += (2+RAND:2)
-        ABL:30 += RAND:1
-        IF TALENT:ASSI:121
-            ABL:31 += (1+RAND:2)
-            MARK:2 += 1
-            MARK:0 += 1
-            EXP:4 += (3+RAND:20)
-            IF RAND:3 || TALENT:0 == 0
-                TALENT:0 = 0
-                EXP:0 += (3+RAND:20)
+        ABL:순종 += (2+RAND:2)
+        ABL:욕망 += (2+RAND:2)
+        ABL:기교 += (1+RAND:2)
+        ABL:봉사정신 += RAND:3
+        ABL:C감각 += (2+RAND:2)
+        ABL:B감각 += RAND:3
+        ABL:노출증 += RAND:3
+        ABL:새드끼 += RAND:2
+        ABL:마조끼 += RAND:3
+        ABL:레즈끼 += (2+RAND:2)
+        ABL:자위중독 += RAND:1
+        IF TALENT:ASSI:후타나리
+            ABL:정액중독 += (1+RAND:2)
+            MARK:굴복각인 += 1
+            MARK:고통각인 += 1
+            EXP:정액경험 += (3+RAND:20)
+            IF RAND:3 || TALENT:처녀 == 0
+                TALENT:처녀 = 0
+                EXP:V경험 += (3+RAND:20)
             ENDIF
         ENDIF
-        IF TALENT:0 == 0
-            ABL:1 += (2+RAND:2)
-            EXP:0 += (3+RAND:10)
+        IF TALENT:처녀 == 0
+            ABL:V감각 += (2+RAND:2)
+            EXP:V경험 += (3+RAND:10)
         ENDIF
-        MARK:2 += 1
-        MARK:9 = 0
-        MARK:1 = 2
-        EXP:2 += (2+RAND:30)
-        EXP:12 += (2+RAND:30)
-        EXP:11 += (2+RAND:10)
-        EXP:10 += (EXP:11+RAND:10)
+        MARK:굴복각인 += 1
+        MARK:반발각인 = 0
+        MARK:쾌락각인 = 2
+        EXP:절정경험 += (2+RAND:30)
+        EXP:레즈경험 += (2+RAND:30)
+        EXP:조교자위경험 += (2+RAND:10)
+        EXP:자위경험 += (EXP:조교자위경험+RAND:10)
         
-        TALENT:16 = 0
-        TALENT:17 = 0
-        TALENT:70 = 1
-        TALENT:71 = 0
+        TALENT:프라이드가높음 = 0
+        TALENT:프라이드가낮음 = 0
+        TALENT:쾌감에솔직 = 1
+        TALENT:쾌감을부정 = 0
         
         RELATION:72 = 200
         
@@ -818,7 +818,7 @@ ELSEIF A == 1
         PALAM:15 += (1000+RAND:3000)
         
         BASE:0 -= RAND:500
-        BASE:1 -= (MAXBASE:0-BASE:0+RAND:200)
+        BASE:기력 -= (MAXBASE:0-BASE:0+RAND:200)
         
         TARGET = LOCAL:2
         CFLAG:9011 = 5
@@ -836,7 +836,7 @@ ELSEIF A == 1
         A = RAND:5
         ;Lv1 리메이크
         IF A == 0
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「놀래키는 것은 환상향의 평화로 연결돼」
                 PRINTFORMW 납득한 것 같은 얼굴로 의미불명의 말을 되뇌이는 코가사.
                 PRINTFORMW 「잔뜩 놀래켜주면, 처음엔 싫다든가 죽어라든가 말하고 있던 아이도」
@@ -855,7 +855,7 @@ ELSEIF A == 1
             GOTO KOGASA_LOOP
         ;Lv3 리메이크·요점 아이마스크·볼 개그·미약·줄, 조교 가능한 노예가 있는, 그 노예의 C감각·욕망 각 3이상, 체력 1000이상
         ELSEIF A == 2 && LOCAL@KOGASA_ASSI && ((ITEM:29 && ITEM:30 && ITEM:31 && ITEM:61) || NOITEM) && ABL:LOCAL@KOGASA_ASSI:0 >= 3 && ABL:LOCAL@KOGASA_ASSI:11 >= 3 && BASE:LOCAL@KOGASA_ASSI:0 >= 1000
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 「읍, 읍―! 으읍―웃!?」
                 PRINTFORMW 문을 열면, 아이마스크와 볼재갈을 한 여자가 사타구니를 벌린 채로 묶여있었다.
                 PRINTFORML 『스승 늦어―, 조금만 더 하면 %조사처리(CALLNAME:LOCAL@KOGASA_ASSI,"가")% 정말로 미쳐버리는 것이었어?』
@@ -874,7 +874,7 @@ ELSEIF A == 1
             
             IF NOITEM == 0
                 ITEM:61 -= 1
-                SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+                SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
                     CALL FILL_PLURAL_ITEM, 61
             ENDIF
             CFLAG:9101 = 4
@@ -888,21 +888,21 @@ ELSEIF A == 1
             GOTO KOGASA_LOOP
         ;Lv5 리메이크·노예에 빈 곳이 있는, 납치한 딸(아가씨)가 수중에 없는, 주인에 페니스가 있는, 요점 아이마스크
         ELSEIF A == 4 && B && C == 0 && EXIST_PENIS(MASTER) &&(ITEM:30 || NOITEM)
-            LOCAL = FLAG:4
-            FLAG:4 = 50
+            LOCAL = FLAG:게임모드
+            FLAG:게임모드 = 50
             LOCAL:1 = 0
             LOCAL:2 = TARGET
-            IF FLAG:12 & 512
-                FLAG:12 -= 512
+            IF FLAG:SHOP이벤트확장 & 512
+                FLAG:SHOP이벤트확장 -= 512
                 LOCAL:1 = 1
             ENDIF
             ADDCHARA 171
             TARGET = CHARANUM-1
             CALL CHARA_RANDOM_STATE
-            FLAG:4 = LOCAL
+            FLAG:게임모드 = LOCAL
             SIF LOCAL:1
-                FLAG:12 |= 512
-            IF FLAG:11 > 0
+                FLAG:SHOP이벤트확장 |= 512
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 『스승, 스승』
                 PRINTFORMW 코가사의 방 앞에서, 코가사가 작은 소리로 불러세웠다. …또 돌아다니고 있던 건가.
                 PRINTFORMW 『조용히 따라와줘. 내 방, 소리 내면 안 돼요』
@@ -924,35 +924,35 @@ ELSEIF A == 1
             ASSI = LOCAL:2
 
             ;마을의 딸(아가씨)를 적당? 에 조교합니다
-            ABL:10 += (2+RAND:2)
-            ABL:11 += (2+RAND:2)
-            ABL:12 += (1+RAND:2)
-            ABL:13 += RAND:3
-            ABL:0 += (2+RAND:2)
-            ABL:3 += RAND:3
-            ABL:14 += RAND:3
-            ABL:20 += RAND:2
-            ABL:21 += RAND:3
-            ABL:22 += (2+RAND:2)
-            ABL:30 += RAND:1
+            ABL:순종 += (2+RAND:2)
+            ABL:욕망 += (2+RAND:2)
+            ABL:기교 += (1+RAND:2)
+            ABL:봉사정신 += RAND:3
+            ABL:C감각 += (2+RAND:2)
+            ABL:B감각 += RAND:3
+            ABL:노출증 += RAND:3
+            ABL:새드끼 += RAND:2
+            ABL:마조끼 += RAND:3
+            ABL:레즈끼 += (2+RAND:2)
+            ABL:자위중독 += RAND:1
             
             ;억지로 처녀에게
-            TALENT:0 = 1
-            ABL:1 = 0
-            EXP:0 = 0
+            TALENT:처녀 = 1
+            ABL:V감각 = 0
+            EXP:V경험 = 0
 
-            MARK:2 += 1
-            MARK:9 = 0
-            MARK:1 = 2
-            EXP:2 += (2+RAND:30)
-            EXP:12 += (2+RAND:30)
-            EXP:11 += (2+RAND:10)
-            EXP:10 += (EXP:11+RAND:10)
+            MARK:굴복각인 += 1
+            MARK:반발각인 = 0
+            MARK:쾌락각인 = 2
+            EXP:절정경험 += (2+RAND:30)
+            EXP:레즈경험 += (2+RAND:30)
+            EXP:조교자위경험 += (2+RAND:10)
+            EXP:자위경험 += (EXP:조교자위경험+RAND:10)
             
-            TALENT:16 = 0
-            TALENT:17 = 0
-            TALENT:70 = 1
-            TALENT:71 = 0
+            TALENT:프라이드가높음 = 0
+            TALENT:프라이드가낮음 = 0
+            TALENT:쾌감에솔직 = 1
+            TALENT:쾌감을부정 = 0
             
             RELATION:72 = 200
             
@@ -975,7 +975,7 @@ ELSEIF A == 1
             PALAM:15 += (1000+RAND:3000)
             
             BASE:0 -= RAND:200
-            BASE:1 -= (MAXBASE:0-BASE:0+RAND:200)
+            BASE:기력 -= (MAXBASE:0-BASE:0+RAND:200)
             
             TARGET = LOCAL:2
             CFLAG:9011 = 5
@@ -995,7 +995,7 @@ ELSEIF A == 2
     CALL COM_ORDER, 6,1
     ;Lv1
     IF CFLAG:9012 == 0
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「스승은, 어떤 일 하고 있는 사람이야?」
             PRINTFORMW 여자아이를 범해 헤롱헤롱하게 만든 후 팔아서 돈을 벌어, 라고 솔직하게 가르쳐 주었다.
             PRINTFORMW 「그건 놀랍군요! 그치만 나, 팔리지 않아. 인기 없는 우산인걸, 훌쩍훌쩍」
@@ -1011,11 +1011,11 @@ ELSEIF A == 2
         ENDIF
         RETURN 121
     ;Lv2용 처리·먼저 연모가 되어 있으면(자) 플래그를 세운다
-    ELSEIF CFLAG:9012 == 1 && TALENT:150
+    ELSEIF CFLAG:9012 == 1 && TALENT:연모
         CFLAG:9012 = 2
     ;Lv3·호감도 500이상
-    ELSEIF CFLAG:9012 == 2 && CFLAG:2 >= 500
-        IF FLAG:11 > 0
+    ELSEIF CFLAG:9012 == 2 && CFLAG:호감도 >= 500
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 방에 들어가면, 코가사가 외눈박이가 되어 있었다. 
             PRINTFORMW …아니 다르다. 오른쪽 눈을 감고 왼쪽 눈의 주위를 다홍색으로 크게 칠해 놓았다. 
             PRINTFORMW 「놀랐어?」
@@ -1031,8 +1031,8 @@ ELSEIF A == 2
         ENDIF
         RETURN 123
     ;Lv4·호감도 800이상
-    ELSEIF CFLAG:9012 == 3 && CFLAG:2 >= 800
-        IF FLAG:11 > 0
+    ELSEIF CFLAG:9012 == 3 && CFLAG:호감도 >= 800
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「스승, 스승」
             PRINTFORMW 신기한 표정으로 코가사가 말을 건네 왔다. 
             PRINTFORMW 「나는, 스승의 물건이야? 스승의 우산이 되는 걸로, 괜찮을까」
@@ -1051,8 +1051,8 @@ ELSEIF A == 2
         ENDIF
         RETURN 124
     ;Lv5·호감도 1500이상, 연모 있어, 키스 실행가능
-    ELSEIF CFLAG:9012 == 4 && CFLAG:2 >= 1500 && TALENT:150 && RESULT
-        IF FLAG:11 > 0
+    ELSEIF CFLAG:9012 == 4 && CFLAG:호감도 >= 1500 && TALENT:연모 && RESULT
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORMW 방에 들어가면, 코가사와 눈이 맞았다. 
             PRINTFORMW 철렁, 했다. 두드러지는 큰 눈동자, 은은한 주홍빛으로 물든 뺨과 하얀 피부. 점처럼 새빨간 입술. 
             PRINTFORMW 「놀랐어?」
@@ -1080,7 +1080,7 @@ ELSEIF A == 2
         A = RAND:5
         ;Lv1 리메이크
         IF A == 0
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 「스승은 나를 어디서 주워 왔어? 역이라든지?」
                 PRINTFORMW …역이라니 어디의?
                 PRINTFORMW 「…사왔어!? 버려져 있던 게 아니라!?」
@@ -1101,7 +1101,7 @@ ELSEIF A == 2
             GOTO KOGASA_LOOP
         ;Lv3 리메이크
         ELSEIF A == 2
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 「스승, 신작품! 이걸로 모두 깜짝 놀라는거야!」
                 PRINTFORMW 오늘의 코가사는 파란 페인트로 얼굴을 칠해놓았다. 기분 나빠. 
                 PRINTFORMW 「어라, 놀라지 않아…훌쩍훌쩍」
@@ -1124,7 +1124,7 @@ ELSEIF A == 2
             RETURN 223
         ;Lv4 리메이크
         ELSEIF A == 3
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 「꿈?」
                 PRINTFORMW 코가사에게, 꿈은 없는 것인지 물어 보았다. 
                 PRINTFORMW 「사들여져, 소중하게, 그래도 너덜너덜이 될 때 까지 사용되는 거야」
@@ -1144,7 +1144,7 @@ ELSEIF A == 2
             RETURN 224
         ;Lv5 리메이크·키스 실행가능
         ELSEIF A == 4 && RESULT
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 방에 들어가면, 코가사는 거울 앞에서 화장하고 있었다. 
                 PRINTFORMW 「아앗, 스승 안 돼! 여자아이의 비밀의 시간인데」
                 PRINTFORMW 아니 알까보냐. 
@@ -1171,7 +1171,7 @@ ELSEIF A == 3
     CALL COM_ORDER, 124,1
     ;Lv1
     IF CFLAG:9013 == 0
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「원―망―스―러―워―」
             PRINTFORMW 방에 들어가면, 어쩐지 어둡다. 그리고 코가사가 거꾸로 매달려 있었다. 
             PRINTFORML 「놀―라―버―려―라―」
@@ -1199,7 +1199,7 @@ ELSEIF A == 3
         RETURN 131
     ;Lv2·로터 자위 실행가능·로터를 소지
     ELSEIF CFLAG:9013 == 1 && RESULT && ITEM
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORMW 곤란했다. 
             PRINTFORMW ――아무래도 로터를 없애 버린 것 같다. 
             PRINTFORML 「스승―, 무슨 일이야?」
@@ -1229,8 +1229,8 @@ ELSEIF A == 3
         ENDIF
         RETURN 132
     ;Lv3·바이브 사용 회수 5회 이상＆바이브를 소지＆V감각 3이상
-    ELSEIF CFLAG:9013 == 2 && CFLAG:7012 >= 5 && (ITEM:3 || NOITEM) && ABL:1 > 2
-        IF FLAG:11 > 0
+    ELSEIF CFLAG:9013 == 2 && CFLAG:7012 >= 5 && (ITEM:3 || NOITEM) && ABL:V감각 > 2
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「스승, 들어봐 들어봐!」
             PRINTFORMW 코가사가 무언가 기쁜 듯이, 손에 든 바이브를 휘두르며 떠들고 있다. 
             PRINTFORMW 보관해둔 장소를 가르쳐준 기억은 없지만…. 
@@ -1246,7 +1246,7 @@ ELSEIF A == 3
         RETURN 133
     ;Lv4·바이브를 소지
     ELSEIF CFLAG:9013 == 3 && (ITEM:3 || NOITEM)
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORMW ――어라？
             PRINTFORMW 평소같이 조교 도구를 준비하고 있던 %CALLNAME:MASTER%였지만, 문득 위화감을 느꼈다. 
             PRINTFORMW …도구가 부족하다. 또 코가사인가？
@@ -1265,8 +1265,8 @@ ELSEIF A == 3
         ENDIF
         RETURN 134
     ;Lv5·Lv4로부터 3일 이상 경과＆바이브를 비소지＆코가사이 비처녀(재생 포함하고)＆코가사의 체력 1000이상
-    ELSEIF CFLAG:9013 == 4 && CFLAG:9110+3 < DAY && ! ITEM:3 && ! TALENT:0 && BASE:0 >= 1000
-        IF FLAG:11 > 0
+    ELSEIF CFLAG:9013 == 4 && CFLAG:9110+3 < DAY && ! ITEM:3 && ! TALENT:처녀 && BASE:0 >= 1000
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORMW 코가사의 방. 
             PRINTFORMW 분홍색 머리카락의 소녀가 코가사를 억눌러, 핏줄 선 페니스를 밀어 붙이고 있었다. 
             PRINTFORMW 『앗, 안녕 주인님! 나 두고와졌던 바이브입니다』
@@ -1287,24 +1287,24 @@ ELSEIF A == 3
         CALLNAME:ASSI = 바이브 요괴
         NAME:ASSI = 바이브 요괴
         NICKNAME:ASSI = 유쾌한 분실 바이브
-        TALENT:ASSI:121 = 1
-        TALENT:ASSI:24 = 0
-        TALENT:ASSI:30 = 0
-        TALENT:ASSI:52 = 0
-        TALENT:ASSI:33 = 1
-        TALENT:ASSI:37 = 1
-        TALENT:ASSI:36 = 1
-        TALENT:ASSI:43 = 1
-        TALENT:ASSI:58 = 1
-        TALENT:ASSI:63 = 1
-        TALENT:ASSI:64 = 1
+        TALENT:ASSI:후타나리 = 1
+        TALENT:ASSI:보수적 = 0
+        TALENT:ASSI:정조관념 = 0
+        TALENT:ASSI:혀놀림 = 0
+        TALENT:ASSI:해방 = 1
+        TALENT:ASSI:남성혐오 = 1
+        TALENT:ASSI:부끄럼없음 = 1
+        TALENT:ASSI:젖기어려움 = 1
+        TALENT:ASSI:음구지식 = 1
+        TALENT:ASSI:헌신적 = 1
+        TALENT:ASSI:불결무시 = 1
         CFLAG:ASSI:3201 = 0
         CFLAG:ASSI:3202 = 1
-        ABL:ASSI:0 = 3
-        ABL:ASSI:12 = 4
-        ABL:ASSI:13 = 3
-        ABL:ASSI:10 = 3
-        ABL:ASSI:11 = 3
+        ABL:ASSI:C감각 = 3
+        ABL:ASSI:기교 = 4
+        ABL:ASSI:봉사정신 = 3
+        ABL:ASSI:순종 = 3
+        ABL:ASSI:욕망 = 3
         
         PALAM:1 += 2000+RAND:3000
         PALAM:10 += 3000+RAND:5000
@@ -1327,7 +1327,7 @@ ELSEIF A == 3
         A = RAND:5
         ;Lv1 리메이크
         IF A == 0
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 「스승―, 놀라라―」
                 PRINTFORMW 방에 들어가자, 코가사가 공이 되어 있었다. 
                 PRINTFORMW …냉정하게 관찰하니 줄이다. 줄로 빙빙 감겨 구르고 있었다. 
@@ -1346,8 +1346,8 @@ ELSEIF A == 3
             ENDIF
             RETURN 231
         ;Lv2 리메이크·로터 소지·비처녀(재생하고 있지 않는 한 비처녀일 것이지만 일단)
-        ELSEIF A == 1 && ! TALENT:0 && ITEM
-            IF FLAG:11 > 0
+        ELSEIF A == 1 && ! TALENT:처녀 && ITEM
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 곤란하다. 로터가 눈에 띄지 않는다. 코가사가 알고 있지 않을까. 
                 PRINTFORMW 부자연스럽게 그런 것을 말하면서 방에 들어간다. 
                 PRINTFORM 「로터 쨩? 우응, 앗, 몰라요. 아, 아앙, 으응…」
@@ -1370,9 +1370,9 @@ ELSEIF A == 3
                 PRINTW ※※도구 이벤트 No7를 클리어 체크에 등록했습니다※※
             ENDIF
             RETURN 232
-        ;Lv3 리메이크·어널 바이브 소지
+        ;Lv3 리메이크·애널 바이브 소지
         ELSEIF A == 2 && ITEM:9
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 「스승, 바이브 쨩은 버렸더니 요괴가 되어 버렸던 거군요」
                 PRINTFORMW 신기한 얼굴로, 어디서 꺼냈는지 애널바이브를 보고 탄식하는 코가사. 
                 PRINTFORMW 「으응, 흥미는 있어요, 있긴 한데」
@@ -1386,7 +1386,7 @@ ELSEIF A == 3
             RETURN 223
         ;Lv4 리메이크·저온 초 5개(살) 이상 소지
         ELSEIF A == 3 && (ITEM:80 > 4 || NOITEM)
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORML 「원망스러워어어…」
                 PRINTFORMW ――이번은 꽤 분위기가 있다. 
                 PRINTFORMW 방을 어둡게 해서, 툭툭하고 초의 불빛으로, 붉은 혀가 빛난다. 
@@ -1397,7 +1397,7 @@ ELSEIF A == 3
             ENDIF
             IF NOITEM == 0
                 ITEM:80 -= 4
-                SIF FLAG:13 & 4 && MONEY:0 >= 4*ITEMPRICE:80
+                SIF FLAG:아이템확장 & 4 && MONEY:0 >= 4*ITEMPRICE:80
                     CALL FILL_PLURAL_ITEM, 61
             ENDIF
             CFLAG:9102 = 11
@@ -1409,8 +1409,8 @@ ELSEIF A == 3
             ENDIF
             RETURN 234
         ;Lv5 리메이크·바이브를 소지·비처녀·체력 1000이상·전회로부터 5일 이상 경과
-        ELSEIF A == 4 && ITEM:3 && ! TALENT:0 && BASE:0 >= 1000 && CFLAG:9110+5 < DAY
-            IF FLAG:11 > 0
+        ELSEIF A == 4 && ITEM:3 && ! TALENT:처녀 && BASE:0 >= 1000 && CFLAG:9110+5 < DAY
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「그런데 말이야, 스승도 참 너무한거야」
                 PRINTFORMW 『응응, 물건의 기분을 알아주지 않는거네』
                 PRINTFORMW 「소중하게 가득 사용해주지 않으면 안되는걸. …아, 스승, 얏호―」
@@ -1429,24 +1429,24 @@ ELSEIF A == 3
             CALLNAME:ASSI = 바이브 요괴
             NAME:ASSI = 바이브 요괴
             NICKNAME:ASSI = 유쾌한 분실 바이브
-            TALENT:ASSI:121 = 1
-            TALENT:ASSI:24 = 0
-            TALENT:ASSI:30 = 0
-            TALENT:ASSI:52 = 0
-            TALENT:ASSI:33 = 1
-            TALENT:ASSI:37 = 1
-            TALENT:ASSI:36 = 1
-            TALENT:ASSI:43 = 1
-            TALENT:ASSI:58 = 1
-            TALENT:ASSI:63 = 1
-            TALENT:ASSI:64 = 1
+            TALENT:ASSI:후타나리 = 1
+            TALENT:ASSI:보수적 = 0
+            TALENT:ASSI:정조관념 = 0
+            TALENT:ASSI:혀놀림 = 0
+            TALENT:ASSI:해방 = 1
+            TALENT:ASSI:남성혐오 = 1
+            TALENT:ASSI:부끄럼없음 = 1
+            TALENT:ASSI:젖기어려움 = 1
+            TALENT:ASSI:음구지식 = 1
+            TALENT:ASSI:헌신적 = 1
+            TALENT:ASSI:불결무시 = 1
             CFLAG:ASSI:3201 = 0
             CFLAG:ASSI:3202 = 1
-            ABL:ASSI:0 = 3
-            ABL:ASSI:12 = 4
-            ABL:ASSI:13 = 3
-            ABL:ASSI:10 = 3
-            ABL:ASSI:11 = 3
+            ABL:ASSI:C감각 = 3
+            ABL:ASSI:기교 = 4
+            ABL:ASSI:봉사정신 = 3
+            ABL:ASSI:순종 = 3
+            ABL:ASSI:욕망 = 3
             
             PALAM:1 += 2000+RAND:3000
             PALAM:10 += 3000+RAND:5000
@@ -1476,7 +1476,7 @@ ELSEIF A == 4
             PALAM:13 -= 500
             GOTO KOGASA_LOOP
         ENDIF
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORML 「음―음―, 으응―, 으으음―」
             PRINTFORMW 코가사의 방에 들어가자, 알몸이 되어 오른손으로 클리토리스를 만지고 있었다. 
             PRINTFORML 「아, %CALLNAME:MASTER%. 놀랐어!?」
@@ -1585,7 +1585,7 @@ RETURN 0
 ;코가사 이외의 여성 캐릭터를 랜덤에 선택한다
 LOCAL = 0
 REPEAT CHARANUM
-    SIF RAND:2 && NO:COUNT != 72 && COUNT != MASTER && TALENT:COUNT:120 == 0 && MARK:COUNT:90 == 0 && CFLAG:COUNT:4 == 0
+    SIF RAND:2 && NO:COUNT != 72 && COUNT != MASTER && TALENT:COUNT:남자 == 0 && MARK:COUNT:90 == 0 && CFLAG:COUNT:조교관외 == 0
         LOCAL = COUNT
 REND
 RETURN 0
@@ -1595,7 +1595,7 @@ RETURN 0
 @KOGASA_ASSI_2
 ;Lv2·매각 가능해 Lv1 때에 허가하고 있는 or조수 경험이 있다
 DRAWLINE
-IF FLAG:11 > 0
+IF FLAG:캐릭터대사표시 > 0
     PRINTFORML 『원망스러워―!』
     PRINTFORMW %CALLNAME%의 방 앞에 도착하자, 복도의 그늘로부터 코가사가 튀어 나왔다. 
     PRINTFORMW …기다려, 밖으로부터 잠긴 방에 있어야 할 코가사가, 왜 여기에 있어. 
@@ -1609,17 +1609,17 @@ IF FLAG:11 > 0
 ENDIF
 ;조수 경험이 없는 경우
 IF ISASSI:RESULT == 0
-    IF FLAG:11 > 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORMW 본래, 노예끼리 결탁하는 것을 막기 위해, 반항하지 않게 될 때까진 조수로 쓰지 않지만. 
         PRINTFORMW 방을 빠져나갔으면서, 이런 곳에서 이런 말을 하고 있는 우산이다. 
     ENDIF
         PRINTFORML  
         PRINTFORML ――코가사가 조수 가능하게 되었습니다――
         PRINTFORMW  
-    SIF FLAG:11 > 0
+    SIF FLAG:캐릭터대사표시 > 0
         PRINTFORMW …뭐 좋은가. 
 ENDIF
-IF FLAG:11 > 0
+IF FLAG:캐릭터대사표시 > 0
     IF ASSI > 0
         PRINTFORMW 그러고 보니, 조수로서 데려온 %CALLNAME:ASSI%의 모습이 보이지 않는다. 
         PRINTFORMW 『%CALLNAME:ASSI% 씨라면, 안전한 곳에서 주무시게 해주었습니다』
@@ -1632,7 +1632,7 @@ ENDIF
 GETCHARA 72
 ASSI = RESULT
 CFLAG:ASSI:9011 = 2
-CFLAG:ASSI:1 = 2
+CFLAG:ASSI:매각가능 = 2
 IF GLOBALEVENT(72, 11)
     PRINTL  
     PRINTW ※※조수 이벤트 No2를 클리어 체크에 등록했습니다※※
@@ -1642,7 +1642,7 @@ RETURN 1
 
 @KOGASA_ASSI_4
 ;Lv4·욕망 4이상
-IF FLAG:11 > 0
+IF FLAG:캐릭터대사표시 > 0
     DRAWLINE
     PRINTFORML 「Welcome・원망스러워 가게!!」
     PRINTFORMW 실례했습니다, 착각했습니다. 
@@ -1668,7 +1668,7 @@ RETURN 1
 @KOGASA_ASSI_2A
 ;Lv2 리메이크·요미약
 DRAWLINE
-IF FLAG:11 > 0
+IF FLAG:캐릭터대사표시 > 0
     PRINTFORML 『스승 늦―어!』
     PRINTFORMW %CALLNAME%의 방에 들어가자, 부르지 않은 코가사가 맞이해왔다. …이제 익숙해졌어. 
     PRINTFORMW 「…쿠…이런」
@@ -1683,7 +1683,7 @@ IF FLAG:11 > 0
 ENDIF
 IF NOITEM == 0
     ITEM:61 -= 1
-    SIF FLAG:13 & 4 && MONEY:0 >= ITEMPRICE:61
+    SIF FLAG:아이템확장 & 4 && MONEY:0 >= ITEMPRICE:61
         CALL FILL_PLURAL_ITEM, 61
 ENDIF
 ASSI = TARGET
@@ -1698,7 +1698,7 @@ RETURN 1
 
 @KOGASA_ASSI_4A
 ;Lv4 리메이크
-IF FLAG:11 > 0
+IF FLAG:캐릭터대사표시 > 0
     DRAWLINE
     PRINTFORMW ――큥, 샤―. 
     PRINTFORMW %CALLNAME%의 조교에 앞서 몸을 깨끗이 하기 위해, 샤워를 하는 %CALLNAME:MASTER%. 
@@ -1729,7 +1729,7 @@ RETURN 1
 SIF TARGET < 0 || NO != 72 || CFLAG:9012 == 0 || CFLAG:9001
     RETURN 0
 ;Lv2·호감도 200이상, 발생 확률 50%·정말로 연모라면 나오지 않는다
-IF CFLAG:9012 == 1 && CFLAG:2 >= 200 && RAND:2 && TALENT:150 == 0
+IF CFLAG:9012 == 1 && CFLAG:호감도 >= 200 && RAND:2 && TALENT:연모 == 0
     PRINTFORMW %조사처리(CALLNAME:TARGET,"이")% 이쪽을 보는 눈이 이상하다…
     PRINTFORML %조사처리(CALLNAME:TARGET,"은")% %조사처리(CALLNAME:MASTER,"와")%의 행위에 즐거움을 느끼고 있는 것 같다…
     PRINTFORMW %조사처리(NAME:TARGET,"은")% [연모]를 얻었다
@@ -1745,7 +1745,7 @@ IF CFLAG:9012 == 1 && CFLAG:2 >= 200 && RAND:2 && TALENT:150 == 0
         PRINTW ※※애정 이벤트 No2를 클리어 체크에 등록했습니다※※
     ENDIF
 ;Lv2 리메이크·발생 확률 3%·정말로 음마라면 나오지 않는다
-ELSEIF CFLAG:9012 == 5 && RAND:100 < 3 && TALENT:180 == 0
+ELSEIF CFLAG:9012 == 5 && RAND:100 < 3 && TALENT:음마 == 0
     PRINTFORMW %CALLNAME:TARGET%의 눈초리가 이상하다…
     PRINTFORML %조사처리(CALLNAME:TARGET,"은")% 몸도 마음도 완전히 타락해 퇴보 할 수 없는 영역에 발을 디뎌 버린 것 같다
     PRINTFORML %조사처리(CALLNAME:TARGET,"은")% 마치 유혹하는 듯한 눈으로 올려보면서, %CALLNAME:MASTER%의 몸에 기대왔다…
@@ -1818,7 +1818,7 @@ IF CFLAG:RESULT:9101 || CFLAG:RESULT:9102
         TEQUIP:42 = 1
 
         BASE:0 -= RAND:800
-        BASE:1 -= (MAXBASE:0-BASE:0+RAND:800)
+        BASE:기력 -= (MAXBASE:0-BASE:0+RAND:800)
         ASSIPLAY = 1
         PLAYER = ASSI
         DRAWLINE
@@ -1845,7 +1845,7 @@ ENDIF
 IF SATOKO(ASSI)
     ;첫회
     IF CFLAG:9103 == 2
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORMW 「내 이야기? 상관 없지만, 별로 재미있진 않아?」
             PRINTFORMW 「고물상에서 팔리고 있었지만. 이런 디자인이라. 쭉 팔리지 않고 남았어」
             PRINTFORMW 「날이 지나도, 매물로 나온 우산 일 뿐. 비가 내려도, 펼쳐져 본 적 없어」
@@ -1865,7 +1865,7 @@ IF SATOKO(ASSI)
         RETURN 1
     ;2회째
     ELSEIF CFLAG:9103 == 3
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORMW 「나를 받은 여자아이의 이야기? …응, 잘 기억하고 있어」
             PRINTFORMW 「양가의 아가씨 같아, 처음은 나를 소중히 여겨 주었지만」
             PRINTFORMW 「그렇지만, 한 번도 사용해주지 않았어. 흑」
@@ -1892,14 +1892,14 @@ RETURN 0
 IF CFLAG:9103 == 7
     ;조수가 사토코
     IF SATOKO(ASSI)
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORMW 『안녕하세요, 코가사 씨. 손질하러 왔어요』
             PRINTFORMW 「우웃… %조사처리(MASTERNAME,"를")% 놓치는 건 싫은데」
             PRINTFORMW 「소유자의 %CALLNAME%에게 손대어지면, 녹아 버릴 정도로 기분이 좋은걸」
         ENDIF
     ;그 이외
     ELSE
-        IF FLAG:11 > 0
+        IF FLAG:캐릭터대사표시 > 0
             PRINTFORM 
             PRINTFORM 
         ENDIF
@@ -1910,7 +1910,7 @@ ENDIF
 @KOJO_72_X_COMEVENT
 ;정애계 이벤트 Lv5·및 리메이크(키스 한다)
 IF CFLAG:9102 == 7
-    IF FLAG:11 > 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORML 「으응, 응후… 낼름…♪」
         PRINTFORMW 두 명의 입술이, 서로 아쉬운 듯, 떨어졌다가는 다시 달라붙는다. 
         PRINTFORMW 이 날은, 조교 개시가 꽤 늦었다. 
@@ -1918,7 +1918,7 @@ IF CFLAG:9102 == 7
     RETURN 1
 ;정애계 이벤트 Lv3 리메이크(샤워)
 ELSEIF CFLAG:9102 == 8
-    IF FLAG:11 > 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORMW 코가사를 억눌러, 새파란 얼굴에 샤워를 퍼붓는다. 
         PRINTFORMW 「부베베바보바부부베베베바바바보」
         PRINTFORMW …가까이서 샤워를 받으면서 말하지 마. 
@@ -1929,14 +1929,14 @@ ELSEIF CFLAG:9102 == 8
     RETURN 1
 ;도구계 이벤트 Lv2(로터 자위)
 ELSEIF CFLAG:9102 == 10
-    IF FLAG:11 > 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORM 「아우웅, 스승, 이 도구 기분 좋구나, 하앙…
         CALL HEARTBW
         PRINTFORMW 다리를 벌리고 쑥 내민 허리를 흔들어 넋을 잃고 있는 코가사. 
         PRINTFORMW 손바닥을 팬티 위로 대고, 클리토리스에 로터를 꽉 누르고 있는 것 같다. 
         PRINTFORMW …그런 일 하면 정말로 느껴버릴테지. 
         PRINTFORMW 「이번엔, 안에 푸욱 들어가는 도구도 사용해 보고 싶어요, 후아」
-        IF TALENT:0
+        IF TALENT:처녀
             PRINTFORMW 이 우산, 처녀가 아니었던 걸까. 
             PRINTFORMW 「스승이 천천히 다루어준다면 괜찮아」
         ENDIF
@@ -1946,7 +1946,7 @@ ELSEIF CFLAG:9102 == 10
     RETURN 1
 ;도구계 이벤트 Lv4 리메이크(초)
 ELSEIF CFLAG:9102 == 11
-    IF FLAG:11 > 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORMW 「싫어어어어, 앗뜨거, 뜨거워…우우…흑」
         PRINTFORMW 「우산은 기름종이야. 화기엄금. 훌쩍훌쩍」
         PRINTFORMW 자업자득이라고 하는 거다. 
@@ -1954,7 +1954,7 @@ ELSEIF CFLAG:9102 == 11
     RETURN 1
 ;음행계 이벤트 Lv1(자위)
 ELSEIF CFLAG:9102 == 12
-    IF FLAG:11 > 0
+    IF FLAG:캐릭터대사표시 > 0
         PRINTFORMW 「후에? %MASTERNAME%, 가르쳐 주는거야?」
         PRINTFORMW 「에, 가죽? 무려, 나의 콩 씨는 우산 모양이었던 건가!」
         PRINTFORMW 아무래도 포피를 몰랐던 것 같다. 
@@ -1973,7 +1973,7 @@ ELSEIF CFLAG:9102 == 9
     IF SELECTCOM == 614
         ;정상위
         IF PREVCOM == 20
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「후에……?」
                 PRINTFORMW 신체를 떼어 놓아져, 허리아래에 베개를 넣자, 일순간 딱 하는 코가사. 
                 PRINTFORMW 『이렇게 해서 아래로부터 하면…자, 딱 맞는군요. 읏차, 자』
@@ -1982,7 +1982,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;후배위
         ELSEIF PREVCOM == 21
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 『자, 잡았다. 이 바보 우산놈, 미쳐버리는 게 좋아』
                 PRINTFORMW 등 뒤로부터 코가사의 가슴을 안아, 딱맞게 감싸 움직임을 멈춘다. 
                 PRINTFORMW 「에, 아, 아아, 아, 긁혀지고 있을 뿐인데, 거기, 거기는…앗♪」
@@ -1994,7 +1994,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;대면좌위
         ELSEIF PREVCOM == 22
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 『긁히고 있어? 강하게 해줄테니, 자, 밖으로부터 눌러줄 테니까』
                 PRINTFORM 「아, 안돼 안돼, 손, 안돼, 안됀다니까…
                 CALL HEARTBW
@@ -2005,7 +2005,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;배면좌위
         ELSEIF PREVCOM == 23
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 『히히히, 주인님 보고 있나요? 이 바보우산 완전히 망가져버렸어요』
                 PRINTFORMW 배면자위로 과시해 오기 때문에, 오히려 빠끔히 연 바이브 요괴의 여성기에 눈이 간다. 
                 PRINTFORMW 『이크 주인님, 나 단순한 바이브니까 그쪽은 금지입니다. 그보다 이 녀석을…』
@@ -2016,7 +2016,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;기승위
         ELSEIF PREVCOM == 24
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 『너 자, 바이브오나는 좀 더 능숙하게 해 훈 없으면 』
                 PRINTFORMW 「이다, 다 아라고, 와, 간, , 있고 히」
                 PRINTFORMW 『브릿지 할 생각으로 요일인것 같은 차이』
@@ -2033,7 +2033,7 @@ ELSEIF CFLAG:9102 == 9
     ELSEIF SELECTCOM == 615
         ;정상위
         IF PREVCOM == 20
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「다리 여세요. …바보 우산 응. 이러해요 ,  하늘」
                 PRINTFORMW 바이브 요괴는  힘껏 ,  코가사의 무릎의 뒤를 잡아 양다리를 위에 들어 올렸다.
                 PRINTFORMW 「무렵와 죄다 보임. 보기 흉하구나 고물우산 ,  이봐…♪」
@@ -2046,7 +2046,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;후배위
         ELSEIF PREVCOM == 21
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「히우아아!」
                 PRINTFORMW 바이브 요괴는 연결된 채로 ,  코가사의 무릎의 뒤를 간질간질하며 간질였다.
                 PRINTFORMW 당연히 코가사의 허리는 스르륵하고 떨어져 괴롭히며 떠 움직이는 페니스를 최안쪽까지 맞이해 버린다.
@@ -2058,7 +2058,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;대면좌위
         ELSEIF PREVCOM == 22
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「등뼈의 것,  허리의 뒤의 구덩이가 무엇을 위해에 있을까 알고 있나」
                 PRINTFORMW 양손으로 허리를 안고 그 구덩이를 무로 ,  , 라고 손가락끝으로 압박한다.
                 PRINTFORM 「네 ,  아…,  ,  그것 ,  히 , 나 , 나 ,  무슨, 아아아 만나는 아아앗
@@ -2069,7 +2069,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;배면좌위
         ELSEIF PREVCOM == 23
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「아아앙 ,  이 자세는 안쪽은 시 어렵구나 ,  어쩔 수 없다 ,  좀 더 허리 내리세요」
                 PRINTFORMW 「히아 , ,  …」
                 PRINTFORMW 「끝부분의 로터만 최강으로 넣어 할 테니까…배안 부들부들 요 소매치기 당해 주세요」
@@ -2080,7 +2080,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;기승위
         ELSEIF PREVCOM == 24
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「허리 들어 있지 않잖아 ,  이제(벌써) 앉아. 허리 떨어뜨려 안쪽까지질네없음 있어라」
                 PRINTFORMW 「,  아아의 , 나 ,  다리 잡지 말고 ,  아 ,  아아아…」
                 PRINTFORMW 「그대로 전후에 허리 흔들어인. 있고~있고 느낌에 바보가 될 수 있는 난걸까로」
@@ -2096,7 +2096,7 @@ ELSEIF CFLAG:9102 == 9
     ELSE
         ;정상위
         IF SELECTCOM == 20
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「%MASTERNAME%,  도와 ,  히,  ,  아아아 ,  두인 체하며 …」
                 PRINTFORMW 「자 ,  천천히(느긋하게) 움직여 할게요…이 바보 우산째 ,  벌로 좋아하고 있을 뿐이 아닌가」
                 PRINTFORMW 바이브 요괴는 깊은 stroke로 느긋하게 허리를 전후 시킨다.
@@ -2105,7 +2105,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;후배위
         ELSEIF SELECTCOM == 21
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「엉덩이 향하여…이렇게 해서 바이브 넣었다 (일)것은 있어? 자신은 하기 어렵지만 키 군이야―」
                 PRINTFORMW 「히아아…, 나 ,  허리 ,  아래로부터 ,  와 ,  이것 ,  키구 ,  안다…♪」
                 PRINTFORMW 코가사의 엉덩이를 잡아 끌어 들여 무릎을 사용해 아래로부터 찌른다. 훌륭한 허리의 사용법이다.
@@ -2114,7 +2114,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;대면좌위
         ELSEIF SELECTCOM == 22
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 『 안아 주는…이봐요, 연결된 채로 』
                 PRINTFORMW 「하아, 하아……! 히,!」
                 PRINTFORMW 『 쉴 수 있다고 생각했어? 나 바이브니까…이대로 질겅질겅으로 해 주기 때문에 』
@@ -2124,7 +2124,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;배면좌위
         ELSEIF SELECTCOM == 23
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「의지하세요 ,  이봐요. 가슴 만지작거려 줄 테니까」
                 PRINTFORMW 「히,  ,  아아앙 ,  안돼 ,  연결된 채로는 ,  망가지기 때문에 아아」
                 PRINTFORMW 「우산의 물방울을 떨어뜨릴 때 라고 흔들지요. 이봐요 ,  이렇게 해서 해요」
@@ -2134,7 +2134,7 @@ ELSEIF CFLAG:9102 == 9
             ENDIF
         ;기승위
         ELSEIF SELECTCOM == 24
-            IF FLAG:11 > 0
+            IF FLAG:캐릭터대사표시 > 0
                 PRINTFORMW 「바이브라고 말해도 ,  여자를 기쁘게 하는 자원봉사는 잠깐만」
                 PRINTFORMW 위로 향해 엎드려 누워 ,  코가사를 위에 이끌면서 투덜대는 바이브 요괴.
                 PRINTFORMW 「움직이세요 ,  이봐요. 할 수 있는 것이겠죠 ,  같은 도구 이니까」
@@ -2181,7 +2181,7 @@ IF NO == 72
         CFLAG:9102 = 0
     ;도구계 이벤트 Lv5
     ELSEIF CFLAG:9102 == 9
-        IF RAND:2 && SELECTCOM != 614 && SELECTCOM != 615 && FLAG:15 & 2
+        IF RAND:2 && SELECTCOM != 614 && SELECTCOM != 615 && FLAG:커맨드확장 & 2
             NEXTCOM = SELECTCOM
         ELSE
             NEXTCOM = 20+RAND:5

@@ -13,8 +13,8 @@ CALLNAME:ARG = %CSVCALLNAME(NO:ARG,0)%
 CSTR:ARG:32 = %CSVCSTR(NO:ARG, 32, 0)%
 CSTR:ARG:33 = %CSVCSTR(NO:ARG, 33, 0)%
 ;체력, 기력의 최대치는 초기치로 되돌린다
-MAXBASE:ARG:0 = CSVBASE(NO:ARG, 0, 0)
-MAXBASE:ARG:1 = CSVBASE(NO:ARG, 1, 0)
+MAXBASE:ARG:체력 = CSVBASE(NO:ARG, 0, 0)
+MAXBASE:ARG:기력 = CSVBASE(NO:ARG, 1, 0)
 ;상성 초기화 · 각종 소질도 초기치로 되돌린다(최악의 경우 정합성에 관해서는 불문함)
 REPEAT 500
     RELATION:ARG:COUNT = CSVRELATION(NO:ARG, COUNT, 0)
@@ -22,24 +22,24 @@ REPEAT 500
         TALENT:ARG:COUNT = CSVTALENT(NO:ARG, COUNT, 0)
 REND
 ;모종의 방법으로 종족이 바뀐 플래그, 체력 상승 · 기력 상승의 누계분을 기억하고 있는 CFLAG 초기화
-CFLAG:ARG:5 = 0
-CFLAG:ARG:6 = 0
-CFLAG:ARG:7 = 0
+CFLAG:ARG:종족변경 = 0
+CFLAG:ARG:체력상승 = 0
+CFLAG:ARG:기력상승 = 0
 ;신체측정 플래그를 재운다(다음 번 신체측정을 실행하기 때문)
-CFLAG:ARG:8 = 0
+CFLAG:ARG:신체측정예약 = 0
 ;소질 변동을 기억하고 잇는 CFLAG 초기화
-CFLAG:ARG:12 = 0
-CFLAG:ARG:13 = 0
+CFLAG:ARG:트라우마판정 = 0
+CFLAG:ARG:소실이벤트 = 0
 ;비대음핵 플래그 리셋([비대음핵] 때는 제외하고)
-IF TALENT:ARG:1 == 0
-    BASE:ARG:7 = 0
-    MAXBASE:ARG:7 = 0
+IF TALENT:ARG:비대음핵 == 0
+    BASE:ARG:음핵 = 0
+    MAXBASE:ARG:음핵 = 0
 ENDIF
 ;범용 대사(역 대사)의 성격 설정 CFLAG 초기화
-CFLAG:ARG:43 = 0
-CFLAG:ARG:44 = 0
+CFLAG:ARG:범용대사용인격 = 0
+CFLAG:ARG:범용역대사용인격 = 0
 ;행선지 가능 플래그도 리셋
-CFLAG:ARG:300 = CSVCFLAG(NO:ARG, 300, 0)
+CFLAG:ARG:외출가능장소 = CSVCFLAG(NO:ARG, 300, 0)
 ;일상생활 플래그의 일부를 리셋(체력기력 상승분)
 CFLAG:ARG:1600 = 0
 CFLAG:ARG:1601 = 0
@@ -52,7 +52,7 @@ MARK:ARG:80 = 0
 ;요정화 플래그 리셋(이것도 되감기므로)
 MARK:ARG:87 = 0
 ;SP 캐릭터 플래그 삭제
-CFLAG:ARG:0 = 0
+CFLAG:ARG:SP캐릭터 = 0
 
 ;=============================================================================
 ;EX화 사탕의 캐릭터별 소질 변동 처리
@@ -68,106 +68,106 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 레이무 님이 되었다�
 NAME:TARGET = 레이무 님
 CALLNAME:TARGET = 레이무 님
 NICKNAME:TARGET = 귀무녀
-CFLAG:0 = 2
+CFLAG:SP캐릭터 = 2
 ;記念日、結婚 · 契約 · 陥落(これは淫乱がないときだけ)の日時を抹消
-CFLAG:3113 = 0
-CFLAG:3114 = 0
-SIF TALENT:170 == 0
-    CFLAG:3115 = 0
+CFLAG:결혼기념일 = 0
+CFLAG:계약기념일 = 0
+SIF TALENT:음란 == 0
+    CFLAG:함락된날 = 0
 ;체력+500,기력+300
 MAXBASE:0 += 500
-MAXBASE:1 += 300
+MAXBASE:기력 += 300
 ;일선을 넘지 않음을 없애던 플래그를 없앤다
-SIF CFLAG:13 & 64
-    CFLAG:13 -= 64
+SIF CFLAG:소실이벤트 & 64
+    CFLAG:소실이벤트 -= 64
 ;삭감 소질：楽観的,일선을 넘지 않음,貞操無頓着,痛みに強い,弱味,淫乱と淫魔以外の淫乱系,恋慕系,服従系,崩壊系,○민감
-TALENT:25 = 0
-TALENT:27 = 0
-TALENT:31 = 0
-TALENT:33 = 0
-TALENT:35 = 0
-TALENT:39 = 0
-TALENT:41 = 0
-TALENT:42 = 0
-TALENT:100 = 0
-TALENT:102 = 0
-TALENT:104 = 0
-TALENT:106 = 0
+TALENT:낙관적 = 0
+TALENT:일선을넘지않음 = 0
+TALENT:정조관둔감 = 0
+TALENT:해방 = 0
+TALENT:부끄럼쟁이 = 0
+TALENT:약점 = 0
+TALENT:아픔에강함 = 0
+TALENT:젖기쉬움 = 0
+TALENT:C민감 = 0
+TALENT:V민감 = 0
+TALENT:A민감 = 0
+TALENT:B민감 = 0
 REPEAT 4
     LOCAL = 1
     POWER LOCAL, 2, COUNT
     IF TALENT:(150+COUNT)
-        CFLAG:14 -= LOCAL
+        CFLAG:이벤트취득연모 -= LOCAL
         TALENT:(150+COUNT) = 0
     ENDIF
 REND
-SIF TALENT:160
-    CFLAG:15 -= 1
-TALENT:160 = 0
-IF TALENT:161
-    TALENT:161 = 0
-    TALENT:163 = 1
-    SIF CFLAG:15 & 2
-        CFLAG:15 -= 2
+SIF TALENT:복종
+    CFLAG:이벤트취득복종 -= 1
+TALENT:복종 = 0
+IF TALENT:낙인
+    TALENT:낙인 = 0
+    TALENT:흠집 = 1
+    SIF CFLAG:이벤트취득복종 & 2
+        CFLAG:이벤트취득복종 -= 2
 ENDIF
-SIF TALENT:162
-    CFLAG:15 -= 4
-TALENT:162 = 0
-SIF TALENT:167
-    CFLAG:17 -= 4
-TALENT:167 = 0
-SIF TALENT:168
-    CFLAG:17 -= 8
-TALENT:168 = 0
-SIF TALENT:169
-    CFLAG:17 -= 32
-TALENT:169 = 0
+SIF TALENT:예속
+    CFLAG:이벤트취득복종 -= 4
+TALENT:예속 = 0
+SIF TALENT:정신붕괴
+    CFLAG:이벤트취득붕괴 -= 4
+TALENT:정신붕괴 = 0
+SIF TALENT:괴뢰
+    CFLAG:이벤트취득붕괴 -= 8
+TALENT:괴뢰 = 0
+SIF TALENT:괴조인격
+    CFLAG:이벤트취득붕괴 -= 32
+TALENT:괴조인격 = 0
 FOR COUNT,1,10
     LOCAL = 1
     POWER LOCAL, 2, COUNT
     IF TALENT:(170+COUNT)
-        CFLAG:16 -= LOCAL
+        CFLAG:이벤트취득음란 -= LOCAL
         TALENT:(170+COUNT) = 0
     ENDIF
 NEXT
 ;추가 소질 : 반항적,気丈,건방짐,프라이드 높음,抑圧,저항,恥薄い,濡れにくい,薬毒耐性,汚れ無視,
 ;快感の否定,淫乱,倒錯的,サド,Ｃ둔감,V둔감,Ａ둔감,Ｂ둔감,狂気
-TALENT:11 = 1
-IF TALENT:13
-    TALENT:13 = 0
-    SIF CFLAG:12 & 2048
-        CFLAG:12 -= 2048
+TALENT:반항적 = 1
+IF TALENT:솔직함
+    TALENT:솔직함 = 0
+    SIF CFLAG:트라우마판정 & 2048
+        CFLAG:트라우마판정 -= 2048
 ENDIF
-TALENT:12 = 1
-TALENT:15 = 1
-TALENT:16 = 1
-TALENT:32 = 1
-TALENT:34 = 1
-TALENT:36 = 1
-TALENT:43 = 1
-TALENT:44 = 1
-TALENT:64 = 1
-TALENT:71 = 1
-TALENT:80 = 1
-TALENT:81 = 1
-TALENT:101 = 1
-TALENT:103 = 1
-TALENT:105 = 1
-TALENT:107 = 1
-TALENT:158 = 1
-SIF TALENT:170 == 0
-    CFLAG:16 |= 1
-TALENT:170 = 1
+TALENT:꿋꿋함 = 1
+TALENT:건방짐 = 1
+TALENT:프라이드가높음 = 1
+TALENT:억압 = 1
+TALENT:저항 = 1
+TALENT:부끄럼없음 = 1
+TALENT:젖기어려움 = 1
+TALENT:약물내성 = 1
+TALENT:불결무시 = 1
+TALENT:쾌감을부정 = 1
+TALENT:도착적 = 1
+TALENT:새드 = 1
+TALENT:C둔감 = 1
+TALENT:V둔감 = 1
+TALENT:A둔감 = 1
+TALENT:B둔감 = 1
+TALENT:광기 = 1
+SIF TALENT:음란 == 0
+    CFLAG:이벤트취득음란 |= 1
+TALENT:음란 = 1
 ;공통 이벤트도 포함해, 순종 소멸
-ABL:10 = (ABL:10 > 0) ? 1 # 0
+ABL:순종 = (ABL:순종 > 0) ? 1 # 0
 ;技巧1追加
-ABL:12 = MIN(ABL:12 + 1, 5)
+ABL:기교 = MIN(ABL:기교 + 1, 5)
 ;好感度大幅減少
-CFLAG:2 = MIN(CFLAG:2, 5000) / 10
+CFLAG:호감도 = MIN(CFLAG:호감도, 5000) / 10
 ;恐怖の相性10
 VARSET RELATION:TARGET:0, 10, 2, 200
 ;移動可能場所にあなた館追加
-CFLAG:300 |= 524288
+CFLAG:외출가능장소 |= 524288
 RETURN 1
 
 ;--------------------------------------------------
@@ -183,19 +183,19 @@ CALLNAME:TARGET = 마리사
 NICKNAME:TARGET = 마법과 홍몽으로 이루어진 존재
 ;체력-400(단, 최저치 600),기력-200(단, 최저치 600)
 MAXBASE:0 = MAX(MAXBASE:0 - 400, 600)
-MAXBASE:1 = MAX(MAXBASE:1 - 200, 600)
+MAXBASE:기력 = MAX(MAXBASE:기력 - 200, 600)
 ;삭감 소질 : 쾌감에 솔직
-TALENT:70 = 0
+TALENT:쾌감에솔직 = 0
 ;추가 소질 : 気丈,舌使い
-TALENT:12 = 1
-TALENT:52 = 1
+TALENT:꿋꿋함 = 1
+TALENT:혀놀림 = 1
 ;능력의 변동
-ABL:0 = MAX(ABL:0, 1)
-ABL:12 = MAX(ABL:12, 1)
+ABL:C감각 = MAX(ABL:C감각, 1)
+ABL:기교 = MAX(ABL:기교, 1)
 ;절정経験が5未満なら5に増加
-EXP:2 = MAX(EXP:2, 5)
+EXP:절정경험 = MAX(EXP:절정경험, 5)
 ;自慰経験が60未満なら60に増加
-EXP:10 = MAX(EXP:10, 60)
+EXP:자위경험 = MAX(EXP:자위경험, 60)
 ;상성 변동
 RELATION:9 = 0
 RELATION:69 = 0
@@ -212,34 +212,34 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% EX루미아가 되었다＞
 NAME:TARGET = ＥＸ루미아
 ;체력+200,기력+500
 MAXBASE:0 += 200
-MAXBASE:1 += 500
+MAXBASE:기력 += 500
 ;유치를 없애던 플래그를 없앤다
-SIF CFLAG:13 & 128
-    CFLAG:13 -= 128
+SIF CFLAG:소실이벤트 & 128
+    CFLAG:소실이벤트 -= 128
 ;삭감 소질 : 프라이드 낮음,好奇心,貞操無頓着,恥薄い,쾌감에 솔직,작은체형,빈유(절벽),유치
-TALENT:17 = 0
-TALENT:23 = 0
-TALENT:31 = 0
-TALENT:36 = 0
-TALENT:70 = 0
-TALENT:110 = 0
-TALENT:111 = 0
-TALENT:127 = 0
-TALENT:128 = 0
-TALENT:131 = 0
+TALENT:프라이드가낮음 = 0
+TALENT:호기심 = 0
+TALENT:정조관둔감 = 0
+TALENT:부끄럼없음 = 0
+TALENT:쾌감에솔직 = 0
+TALENT:절벽 = 0
+TALENT:빈유 = 0
+TALENT:소인 = 0
+TALENT:작은체형 = 0
+TALENT:유치 = 0
 ;추가 소질 : 気丈,프라이드 높음,自制心,保守的,貞操観念,痛みに強い,汚臭민감,献身的,サド,中毒しやすい,魅力,月光浴
-TALENT:12 = 1
-TALENT:16 = 1
-TALENT:20 = 1
-TALENT:24 = 1
-TALENT:30 = 1
-TALENT:41 = 1
-TALENT:62 = 1
-TALENT:63 = 1
-TALENT:81 = 1
-TALENT:84 = 1
-TALENT:90 = 1
-TALENT:115 = 1
+TALENT:꿋꿋함 = 1
+TALENT:프라이드가높음 = 1
+TALENT:자제심 = 1
+TALENT:보수적 = 1
+TALENT:정조관념 = 1
+TALENT:아픔에강함 = 1
+TALENT:냄새민감 = 1
+TALENT:헌신적 = 1
+TALENT:새드 = 1
+TALENT:중독되기쉬움 = 1
+TALENT:매력 = 1
+TALENT:월광욕 = 1
 RETURN 1
 
 ;--------------------------------------------------
@@ -255,24 +255,24 @@ NAME:TARGET = ＥＸ대요정
 ;체력+500
 MAXBASE:0 += 500
 BASE:0 = MAXBASE:0
-BASE:1 = MAXBASE:1
+BASE:기력 = MAXBASE:기력
 ;삭감 소질：솔직함,프라이드 낮음(있었을 경우),절벽,빈유,[소인],작은체형
-TALENT:13 = 0
-TALENT:17 = 0
-TALENT:110 = 0
-TALENT:111 = 0
-TALENT:127 = 0
-TALENT:128 = 0
+TALENT:솔직함 = 0
+TALENT:프라이드가낮음 = 0
+TALENT:절벽 = 0
+TALENT:빈유 = 0
+TALENT:소인 = 0
+TALENT:작은체형 = 0
 ;추가 소질 : 건방짐,프라이드 높음,Ｃ민감,거유(폭유 외)
-TALENT:15 = 1
-TALENT:16 = 1
-TALENT:100 = 1
-SIF TALENT:113 == 0
-    TALENT:112 = 1
-;경험 추가:Ｖ확장경험,Ａ확장경험,Ｕ확장경험(10 미만일 경우, 각각 10까지 증가)
-EXP:32 = MAX(EXP:32, 10)
-EXP:33 = MAX(EXP:33, 10)
-EXP:34 = MAX(EXP:34, 10)
+TALENT:건방짐 = 1
+TALENT:프라이드가높음 = 1
+TALENT:C민감 = 1
+SIF TALENT:폭유 == 0
+    TALENT:거유 = 1
+;경험 추가:V확장경험,A확장경험,U확장경험(10 미만일 경우, 각각 10까지 증가)
+EXP:V확장경험 = MAX(EXP:V확장경험, 10)
+EXP:A확장경험 = MAX(EXP:A확장경험, 10)
+EXP:U확장경험 = MAX(EXP:U확장경험, 10)
 ;상성 변동
 RELATION:5 = 300
 
@@ -288,24 +288,24 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 어드벤트 치르노가 �
 NAME:TARGET = 어드벤트 치르노
 ;체력+500,기력+200
 MAXBASE:0 += 500
-MAXBASE:1 += 200
+MAXBASE:기력 += 200
 ;유치를 없애던 플래그를 없앤다
-SIF CFLAG:13 & 128
-    CFLAG:13 -= 128
+SIF CFLAG:소실이벤트 & 128
+    CFLAG:소실이벤트 -= 128
 ;삭감 소질：習得遅い,유치,回復遅い,妖精
-TALENT:51 = 0
-TALENT:131 = 0
-TALENT:138 = 0
-TALENT:200 = 0
+TALENT:습득느림 = 0
+TALENT:유치 = 0
+TALENT:회복느림 = 0
+TALENT:요정 = 0
 ;추가 소질 : 楽観的,저항,痛みに強い,献身的,両刀(武器的な意味合いで),人気,鼓舞,回復早い
-TALENT:25 = 1
-TALENT:34 = 1
-TALENT:41 = 1
-TALENT:63 = 1
-TALENT:83 = 1
-TALENT:94 = 1
-TALENT:95 = 1
-TALENT:137 = 1
+TALENT:낙관적 = 1
+TALENT:저항 = 1
+TALENT:아픔에강함 = 1
+TALENT:헌신적 = 1
+TALENT:바이 = 1
+TALENT:인기 = 1
+TALENT:고무 = 1
+TALENT:회복빠름 = 1
 ;종족 변수 변경
 CSTR:32 = 인간
 CSTR:33 = 인간
@@ -335,32 +335,32 @@ PRINTFORMW ＜%CALLNAME:TARGET%의 모습이 붉게 변화했다＞
 ;원래 2배 치르노인데, 최근에는 아치치르노 쪽이 좀 더 익숙하니 아치치르노로 해야 되는 건 아닐까
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 2배 치르노가 되었다＞
 NAME:TARGET = 2배 치르노
-CFLAG:0 = 2
+CFLAG:SP캐릭터 = 2
 ;체력+200,기력+500
 MAXBASE:0 += 200
-MAXBASE:1 += 500
+MAXBASE:기력 += 500
 ;삭감 소질：習得遅い
-TALENT:51 = 0
+TALENT:습득느림 = 0
 ;추가 소질 : 해방,恥薄い,習得早い,舌使い,禁断の知識,汚臭둔감,汚れ無視,サド,両刀,中毒しやすい,소악마,鼓舞,回復早い
-TALENT:33 = 1
-TALENT:36 = 1
-TALENT:50 = 1
-TALENT:52 = 1
-TALENT:56 = 1
-TALENT:61 = 1
-TALENT:64 = 1
-TALENT:81 = 1
-TALENT:83 = 1
-TALENT:84 = 1
-TALENT:93 = 1
-TALENT:95 = 1
-TALENT:137 = 1
+TALENT:해방 = 1
+TALENT:부끄럼없음 = 1
+TALENT:습득빠름 = 1
+TALENT:혀놀림 = 1
+TALENT:금단의지식 = 1
+TALENT:냄새둔감 = 1
+TALENT:불결무시 = 1
+TALENT:새드 = 1
+TALENT:바이 = 1
+TALENT:중독되기쉬움 = 1
+TALENT:소악마 = 1
+TALENT:고무 = 1
+TALENT:회복빠름 = 1
 ;능력의 변동
-ABL:11 = MAX(ABL:11, 3)
-ABL:12 = MAX(ABL:12, 2)
-ABL:14 = MAX(ABL:14, 1)
-ABL:22 = MAX(ABL:22, 3)
-ABL:30 = MAX(ABL:30, 1)
+ABL:욕망 = MAX(ABL:욕망, 3)
+ABL:기교 = MAX(ABL:기교, 2)
+ABL:노출증 = MAX(ABL:노출증, 1)
+ABL:레즈끼 = MAX(ABL:레즈끼, 3)
+ABL:자위중독 = MAX(ABL:자위중독, 1)
 ;상성 변동
 RELATION:40 = 150
 RETURN 1
@@ -376,19 +376,19 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 라바스 코아가 되었�
 NAME:TARGET = 라바스 코아
 ;체력+28000,기력+9000(체력：30000　기력：10000は某ラスボスのHPより)
 MAXBASE:0 += 28000
-MAXBASE:1 += 9000
+MAXBASE:기력 += 9000
 ;삭감 소질：V민감
-TALENT:102 = 0
+TALENT:V민감 = 0
 ;추가 소질 : 반항적,프라이드 높음,楽観的,痛みに強い,汚臭둔감,V둔감,Ｂ민감,구현,回復早い
-TALENT:11 = 1
-TALENT:16 = 1
-TALENT:25 = 1
-TALENT:41 = 1
-TALENT:62 = 1
-TALENT:103 = 1
-TALENT:106 = 1
-TALENT:123 = 1
-TALENT:137 = 1
+TALENT:반항적 = 1
+TALENT:프라이드가높음 = 1
+TALENT:낙관적 = 1
+TALENT:아픔에강함 = 1
+TALENT:냄새민감 = 1
+TALENT:V둔감 = 1
+TALENT:B민감 = 1
+TALENT:구현 = 1
+TALENT:회복빠름 = 1
 RETURN 1
 
 ;--------------------------------------------------
@@ -400,25 +400,25 @@ RETURN 1
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 어딘지 모르게 커진 것 같다＞
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 거대악마 빅 코아가 되었다＞
 NAME:TARGET = 빅 코아
-CFLAG:0 = 2
+CFLAG:SP캐릭터 = 2
 ;기력+500
-MAXBASE:1 += 500
+MAXBASE:기력 += 500
 ;삭감 소질：소악마
-TALENT:93 = 0
+TALENT:소악마 = 0
 ;추가 소질 : 처녀,大乳導,人気,大甲斐性,Ｂ민감,거유,巨躯
 ;강제적으로 거유,巨躯にする
-TALENT:0 = 1
-TALENT:93 = 1
-TALENT:94 = 1
-TALENT:98 = 1
-TALENT:106 = 1
-TALENT:110 = 0
-TALENT:111 = 0
-TALENT:112 = 1
-TALENT:113 = 0
-TALENT:127 = 0
-TALENT:128 = 0
-TALENT:129 = 1
+TALENT:처녀 = 1
+TALENT:소악마 = 1
+TALENT:인기 = 1
+TALENT:대범함 = 1
+TALENT:B민감 = 1
+TALENT:절벽 = 0
+TALENT:빈유 = 0
+TALENT:거유 = 1
+TALENT:폭유 = 0
+TALENT:소인 = 0
+TALENT:작은체형 = 0
+TALENT:거구 = 1
 RETURN 1
 
 ;--------------------------------------------------
@@ -431,19 +431,19 @@ RETURN 1
 PRINTFORMW ＜%CALLNAME:TARGET%의 마음은 수정과 같이 투명하게 비치고 있다 ……＞
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 크리스탈 소악마가 되었다＞
 NAME:TARGET = 크리스탈 코아
-CFLAG:0 = 3
+CFLAG:SP캐릭터 = 3
 ;체력+500,기력+500
 MAXBASE:0 += 500
-MAXBASE:1 += 500
+MAXBASE:기력 += 500
 ;삭감 소질：Ｃ둔감
-TALENT:101 = 0
+TALENT:C둔감 = 0
 ;추가 소질 : 처녀,Ｃ민감, 촉수사역술
 ;강제적으로 거유,巨躯にする
-TALENT:0 = 1
-TALENT:100 = 1
-TALENT:149 = 1
+TALENT:처녀 = 1
+TALENT:C민감 = 1
+TALENT:촉수사역술 = 1
 ;촉수사역Lv3
-ABL:98 = MAX(ABL:98, 3)
+ABL:촉수사역 = MAX(ABL:촉수사역, 3)
 RETURN 1
 
 ;--------------------------------------------------
@@ -457,72 +457,72 @@ NAME:TARGET = 꼬마 앨리스
 NICKNAME:TARGET = 죽음의 소녀
 ;체력-500(단, 최저치 600),기력+300
 MAXBASE:0 = MAX(MAXBASE:0 - 500, 600)
-MAXBASE:1 += 300
+MAXBASE:기력 += 300
 ;삭감 소질1：調合知識,倒錯的,Ｃ민감,Ｂ민감,[소인],大柄
-TALENT:55 = 0
-TALENT:80 = 0
-TALENT:100 = 0
-TALENT:106 = 0
-TALENT:127 = 0
-TALENT:129 = 0
+TALENT:조합지식 = 0
+TALENT:도착적 = 0
+TALENT:C민감 = 0
+TALENT:B민감 = 0
+TALENT:소인 = 0
+TALENT:거구 = 0
 ;삭감 소질2：淫乱,淫核,淫壷,淫尻,淫乳,キス魔,マゾ,妊娠,懐卵,恋慕,妄信,親愛,相愛,服従,烙印,隷属
-TALENT:140 = 0
-TALENT:145 = 0
+TALENT:임신 = 0
+TALENT:회란 = 0
 REPEAT 4
     LOCAL = 1
     POWER LOCAL, 2, COUNT
     IF TALENT:(150+COUNT)
-        CFLAG:14 -= LOCAL
+        CFLAG:이벤트취득연모 -= LOCAL
         TALENT:(150+COUNT) = 0
     ENDIF
 REND
-SIF TALENT:160
-    CFLAG:15 -= 1
-TALENT:160 = 0
-IF TALENT:161
-    TALENT:161 = 0
-    TALENT:163 = 1
-    SIF CFLAG:15 & 2
-        CFLAG:15 -= 2
+SIF TALENT:복종
+    CFLAG:이벤트취득복종 -= 1
+TALENT:복종 = 0
+IF TALENT:낙인
+    TALENT:낙인 = 0
+    TALENT:흠집 = 1
+    SIF CFLAG:이벤트취득복종 & 2
+        CFLAG:이벤트취득복종 -= 2
 ENDIF
-SIF TALENT:162
-    CFLAG:15 -= 4
-TALENT:162 = 0
+SIF TALENT:예속
+    CFLAG:이벤트취득복종 -= 4
+TALENT:예속 = 0
 FOR COUNT,0,9
     LOCAL = 1
     POWER LOCAL, 2, COUNT
     IF TALENT:(170+COUNT)
-        CFLAG:16 -= LOCAL
+        CFLAG:이벤트취득음란 -= LOCAL
         TALENT:(170+COUNT) = 0
     ENDIF
 NEXT
 ;추가 소질 : 처녀,好奇心,習得早い,禁断の知識,작은체형,빈유,유치
 ;강제적으로 빈유にする
-TALENT:0 = 1
-TALENT:23 = 1
-TALENT:50 = 1
-TALENT:56 = 1
-TALENT:128 = 1
-TALENT:131 = 1
-TALENT:110 = 0
-TALENT:111 = 1
-TALENT:112 = 0
-TALENT:113 = 0
+TALENT:처녀 = 1
+TALENT:호기심 = 1
+TALENT:습득빠름 = 1
+TALENT:금단의지식 = 1
+TALENT:작은체형 = 1
+TALENT:유치 = 1
+TALENT:절벽 = 0
+TALENT:빈유 = 1
+TALENT:거유 = 0
+TALENT:폭유 = 0
 ;능력과 경험을 리셋
 REPEAT 100
-    IF COUNT == 10 && ABL:10 > 0
-        ABL:10 = 1
+    IF COUNT == 10 && ABL:순종 > 0
+        ABL:순종 = 1
     ELSE
         ABL:COUNT = 0
     ENDIF
     EXP:COUNT = 0
 REND
 ;欲望、技巧、レズっ気の数値を調整
-ABL:11 = 1
-ABL:12 = 1
-ABL:22 = 3
+ABL:욕망 = 1
+ABL:기교 = 1
+ABL:레즈끼 = 3
 ;호감도 리셋
-CFLAG:2 = 0
+CFLAG:호감도 = 0
 ;상성을 변화
 REPEAT 200
     IF COUNT == 1 || COUNT == 2 || COUNT == 119
@@ -534,9 +534,9 @@ REPEAT 200
     ENDIF
 REND
 ;記念日、結婚 · 契約 · 陥落の日時を抹消
-CFLAG:3113 = 0
-CFLAG:3114 = 0
-CFLAG:3115 = 0
+CFLAG:결혼기념일 = 0
+CFLAG:계약기념일 = 0
+CFLAG:함락된날 = 0
 
 ;종족치를 마계인 100%로 세트
 FOR LOCAL , 3200 , 3400
@@ -558,45 +558,45 @@ PRINTFORMW ＜기분 탓인지 %CALLNAME:TARGET%의 얼굴이 생기를 띤 것 
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 인간으로 돌아왔다＞
 ;체력-400(단, 최저치 600),기력-200(단, 최저치 600)
 MAXBASE:0 = MAX(MAXBASE:0 - 400, 600)
-MAXBASE:1 = MAX(MAXBASE:1 - 200, 600)
+MAXBASE:기력 = MAX(MAXBASE:기력 - 200, 600)
 ;무관심을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 4
-    CFLAG:13 -= 4
+SIF CFLAG:소실이벤트 & 4
+    CFLAG:소실이벤트 -= 4
 ;삭감 소질：프라이드 높음,무관심,貞操無頓着,痛みに強い,濡れにくい,魅力,魅惑,소악마,霊体
-TALENT:16 = 0
-TALENT:21 = 0
-TALENT:31 = 0
-TALENT:41 = 0
-TALENT:43 = 0
-TALENT:90 = 0
-TALENT:91 = 0
-TALENT:93 = 0
-TALENT:207 = 0
+TALENT:프라이드가높음 = 0
+TALENT:무관심 = 0
+TALENT:정조관둔감 = 0
+TALENT:아픔에강함 = 0
+TALENT:젖기어려움 = 0
+TALENT:매력 = 0
+TALENT:매혹 = 0
+TALENT:소악마 = 0
+TALENT:영체 = 0
 ;추가 소질 : 처녀,臆病,프라이드 낮음,好奇心,悲観的,일선을 넘지 않음,貞操観念,抑圧,恥じらい,濡れやすい,禁断の知識,献身的,謎の魅力,回復遅い
-TALENT:0 = 1
-TALENT:10 = 1
-TALENT:17 = 1
-TALENT:23 = 1
-TALENT:26 = 1
-TALENT:27 = 1
-TALENT:30 = 1
-TALENT:32 = 1
-TALENT:35 = 1
-TALENT:42 = 1
-TALENT:56 = 1
-TALENT:63 = 1
-TALENT:92 = 1
-TALENT:138 = 1
+TALENT:처녀 = 1
+TALENT:겁쟁이 = 1
+TALENT:프라이드가낮음 = 1
+TALENT:호기심 = 1
+TALENT:비관적 = 1
+TALENT:일선을넘지않음 = 1
+TALENT:정조관념 = 1
+TALENT:억압 = 1
+TALENT:부끄럼쟁이 = 1
+TALENT:젖기쉬움 = 1
+TALENT:금단의지식 = 1
+TALENT:헌신적 = 1
+TALENT:수수께끼의매력 = 1
+TALENT:회복느림 = 1
 ;종족 변수 변경
 CSTR:32 = 인간
 CSTR:33 = 인간
 ;능력의 변동
 ;감각계의 능력을 리셋
-VARSET ABL:TARGET:0, 0, 0, 10
-ABL:10 = MAX(ABL:10, 1)
-ABL:11 = MAX(ABL:11 - 1, 0)
+VARSET ABL:TARGET:C감각, 0, 0, 10
+ABL:순종 = MAX(ABL:순종, 1)
+ABL:욕망 = MAX(ABL:욕망 - 1, 0)
 ;이상경험이 2 미만이라면 2로 끌어올림
-EXP:50 = MAX(EXP:50, 2)
+EXP:이상경험 = MAX(EXP:이상경험, 2)
 ;상성을 변화
 REPEAT 200
     IF COUNT == 19
@@ -627,31 +627,31 @@ PRINTFORMW ＜%CALLNAME:TARGET%의 머리칼이 아름다운 칠흑의 빛으로
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 봉래인이 아니게 되었다＞
 ;체력-500(단, 최저치 600),기력-200(단, 최저치 600)
 MAXBASE:0 = MAX(MAXBASE:0 - 500, 600)
-MAXBASE:1 = MAX(MAXBASE:1 - 200, 600)
+MAXBASE:기력 = MAX(MAXBASE:기력 - 200, 600)
 ;반항적을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 8
-    CFLAG:13 -= 8
+SIF CFLAG:소실이벤트 & 8
+    CFLAG:소실이벤트 -= 8
 ;저항을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 2
-    CFLAG:13 -= 2
+SIF CFLAG:소실이벤트 & 2
+    CFLAG:소실이벤트 -= 2
 ;삭감 소질：반항적、저항、蓬莱人、倒錯的、구현
-TALENT:11 = 0
-TALENT:34 = 0
-TALENT:49 = 0
-TALENT:80 = 0
-TALENT:123 = 0
+TALENT:반항적 = 0
+TALENT:저항 = 0
+TALENT:봉래인 = 0
+TALENT:도착적 = 0
+TALENT:구현 = 0
 ;추가 소질 : 처녀,気丈,貞操観念,恥じらい
-TALENT:0 = 1
-TALENT:12 = 1
-TALENT:30 = 1
-TALENT:35 = 1
+TALENT:처녀 = 1
+TALENT:꿋꿋함 = 1
+TALENT:정조관념 = 1
+TALENT:부끄럼쟁이 = 1
 ;능력의 변동
 ;감각계의 능력을 리셋
-VARSET ABL:TARGET:0, 0, 0, 10
-ABL:10 = MAX(ABL:10, 1)
-ABL:11 = MAX(ABL:11 - 1, 0)
+VARSET ABL:TARGET:C감각, 0, 0, 10
+ABL:순종 = MAX(ABL:순종, 1)
+ABL:욕망 = MAX(ABL:욕망 - 1, 0)
 ;이상경험이 3 미만이라면 3으로 끌어올림
-EXP:50 = MAX(EXP:50, 3)
+EXP:이상경험 = MAX(EXP:이상경험, 3)
 ;상성을 변화
 VARSET RELATION:TARGET:0, 0, 0, 200
 
@@ -667,24 +667,24 @@ PRINTFORMW ＜%CALLNAME:TARGET%의 이름은 alshflzh로 고정되었다＞
 NAME:TARGET = dkzl alshflzh
 CALLNAME:TARGET = alshflzh
 ;해방를 없애던 플래그를 없앤다
-SIF CFLAG:13 & 2048
-    CFLAG:13 -= 2048
+SIF CFLAG:소실이벤트 & 2048
+    CFLAG:소실이벤트 -= 2048
 ;삭감 소질：해방,楽観的,쾌감에 솔직,절벽,빈유
-TALENT:25 = 0
-TALENT:33 = 0
-TALENT:70 = 0
-TALENT:110 = 0
-TALENT:111 = 0
+TALENT:낙관적 = 0
+TALENT:해방 = 0
+TALENT:쾌감에솔직 = 0
+TALENT:절벽 = 0
+TALENT:빈유 = 0
 ;추가 소질 : 반항적,悲観的,中毒しやすい
-TALENT:11 = 1
-TALENT:26 = 1
-TALENT:84 = 1
+TALENT:반항적 = 1
+TALENT:비관적 = 1
+TALENT:중독되기쉬움 = 1
 ;공통 이벤트도 포함해, 순종 소멸
-ABL:10 = (ABL:10 > 0) ? 1 # 0
+ABL:순종 = (ABL:순종 > 0) ? 1 # 0
 ;奉仕精神も低下
-ABL:13 = 0
+ABL:봉사정신 = 0
 ;이상경험이 2 미만이라면 2로 끌어올림
-EXP:50 = MAX(EXP:50, 2)
+EXP:이상경험 = MAX(EXP:이상경험, 2)
 ;상성 변동
 RELATION:37 = 150
 RELATION:MASTER = 50
@@ -695,7 +695,7 @@ RELATION:MASTER = 50
 ;某ネット検閲ソフトの萌え擬人化がにとりそっくりだったというネタより.流石○国.
 ;外部パッチのものを参考.風紀
 @EX_CHARA40
-IF CFLAG:99 == 0
+IF CFLAG:지문소거판정 == 0
     PRINTW ……
     PRINTW 「아, 아―……응, 일본어 말할 수 있어」
     PRINTW ……
@@ -710,28 +710,28 @@ CALLNAME:TARGET = 그린댐
 ;체력+400
 MAXBASE:0 += 400
 ;삭감 소질：臆病,好奇心,濡れやすい,習得早い,自慰しやすい,汚臭둔감,쾌감에 솔직,Ａ민감,河童
-TALENT:10 = 0
-TALENT:23 = 0
-TALENT:42 = 0
-TALENT:50 = 0
-TALENT:60 = 0
-TALENT:61 = 0
-TALENT:70 = 0
-TALENT:104 = 0
-TALENT:210 = 0
+TALENT:겁쟁이 = 0
+TALENT:호기심 = 0
+TALENT:젖기쉬움 = 0
+TALENT:습득빠름 = 0
+TALENT:자위하기쉬움 = 0
+TALENT:냄새둔감 = 0
+TALENT:쾌감에솔직 = 0
+TALENT:A민감 = 0
+TALENT:캇파 = 0
 ;추가 소질 : 반항적,프라이드 높음,ツンデレ,保守的,일선을 넘지 않음,目立ちたがり,男嫌い,習得遅い,汚臭민감,快感の否定V민감
-TALENT:0 = 1
-TALENT:11 = 1
-TALENT:16 = 1
-TALENT:18 = 1
-TALENT:24 = 1
-TALENT:27 = 1
-TALENT:28 = 1
-TALENT:37 = 1
-TALENT:51 = 1
-TALENT:62 = 1
-TALENT:71 = 1
-TALENT:102 = 1
+TALENT:처녀 = 1
+TALENT:반항적 = 1
+TALENT:프라이드가높음 = 1
+TALENT:츤데레 = 1
+TALENT:보수적 = 1
+TALENT:일선을넘지않음 = 1
+TALENT:튀고싶어함 = 1
+TALENT:남성혐오 = 1
+TALENT:습득느림 = 1
+TALENT:냄새민감 = 1
+TALENT:쾌감을부정 = 1
+TALENT:V민감 = 1
 ;상성 변동
 REPEAT 150
     SIF COUNT != NO:MASTER
@@ -749,65 +749,65 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 사로잡혀 있던 상식�
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 사나에 님이 되었다＞
 NAME:TARGET = 사나에 님
 CALLNAME:TARGET = 사나에 님
-CFLAG:0 = 2
+CFLAG:SP캐릭터 = 2
 ;恋慕も淫乱もない場合陥落の日時を抹消
-SIF TALENT:150 == 0 && TALENT:170 == 0
-    CFLAG:3115 = 0
+SIF TALENT:연모 == 0 && TALENT:음란 == 0
+    CFLAG:함락된날 = 0
 ;기력+250
-MAXBASE:1 += 250
+MAXBASE:기력 += 250
 ;해방를 없애던 플래그를 없앤다
-SIF CFLAG:13 & 2048
-    CFLAG:13 -= 2048
+SIF CFLAG:소실이벤트 & 2048
+    CFLAG:소실이벤트 -= 2048
 ;삭감 소질1：大人しい,献身的,魅力,Ｃ민감,V민감
-TALENT:14 = 0
-TALENT:63 = 0
-TALENT:90 = 0
-TALENT:100 = 0
-TALENT:102 = 0
+TALENT:얌전함 = 0
+TALENT:헌신적 = 0
+TALENT:매력 = 0
+TALENT:C민감 = 0
+TALENT:V민감 = 0
 ;삭감 소질2：솔직함,프라이드 낮음,해방,弱味,痛みに強い,濡れやすい,習得早い,服従系
-TALENT:13 = 0
-TALENT:17 = 0
-TALENT:33 = 0
-TALENT:39 = 0
-TALENT:41 = 0
-TALENT:42 = 0
-TALENT:50 = 0
-SIF TALENT:160
-    CFLAG:15 -= 1
-TALENT:160 = 0
-IF TALENT:161
-    TALENT:161 = 0
-    TALENT:163 = 1
-    SIF CFLAG:15 & 2
-        CFLAG:15 -= 2
+TALENT:솔직함 = 0
+TALENT:프라이드가낮음 = 0
+TALENT:해방 = 0
+TALENT:약점 = 0
+TALENT:아픔에강함 = 0
+TALENT:젖기쉬움 = 0
+TALENT:습득빠름 = 0
+SIF TALENT:복종
+    CFLAG:이벤트취득복종 -= 1
+TALENT:복종 = 0
+IF TALENT:낙인
+    TALENT:낙인 = 0
+    TALENT:흠집 = 1
+    SIF CFLAG:이벤트취득복종 & 2
+        CFLAG:이벤트취득복종 -= 2
 ENDIF
-SIF TALENT:162
-    CFLAG:15 -= 4
-TALENT:162 = 0
+SIF TALENT:예속
+    CFLAG:이벤트취득복종 -= 4
+TALENT:예속 = 0
 ;추가 소질 : 臆病,반항적,気丈,건방짐,프라이드 높음,ツンデレ,自制心,悲観的,抑圧,저항,痛みに弱い,濡れにくい,習得遅い,中毒しやすい,黄昏の怪物
-TALENT:10 = 1
-TALENT:11 = 1
-TALENT:12 = 1
-TALENT:15 = 1
-TALENT:16 = 1
-TALENT:18 = 1
-TALENT:20 = 1
-TALENT:26 = 1
-TALENT:32 = 1
-TALENT:34 = 1
-TALENT:40 = 1
-TALENT:43 = 1
-TALENT:51 = 1
-TALENT:84 = 1
-TALENT:221 = 1
+TALENT:겁쟁이 = 1
+TALENT:반항적 = 1
+TALENT:꿋꿋함 = 1
+TALENT:건방짐 = 1
+TALENT:프라이드가높음 = 1
+TALENT:츤데레 = 1
+TALENT:자제심 = 1
+TALENT:비관적 = 1
+TALENT:억압 = 1
+TALENT:저항 = 1
+TALENT:아픔에약함 = 1
+TALENT:젖기어려움 = 1
+TALENT:습득느림 = 1
+TALENT:중독되기쉬움 = 1
+TALENT:황혼의괴물 = 1
 ;능력의 변동
-ABL:12 = (ABL:12 < 1) ? 1 # ABL:12
-ABL:11 = 0
-ABL:13 = 0
-ABL:22 = MAX(ABL:22 - 1 ,0)
-ABL:10 = MAX(ABL:10, 1)
+ABL:기교 = (ABL:기교 < 1) ? 1 # ABL:기교
+ABL:욕망 = 0
+ABL:봉사정신 = 0
+ABL:레즈끼 = MAX(ABL:레즈끼 - 1 ,0)
+ABL:순종 = MAX(ABL:순종, 1)
 ;自慰経験が40未満なら40に増加
-EXP:10 = MAX(EXP:10, 40)
+EXP:자위경험 = MAX(EXP:자위경험, 40)
 ;상성 변동
 RELATION:1 = 10
 RELATION:43 = 200
@@ -824,21 +824,21 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 야타가라스의 힘을 �
 ;체력-500(단, 최저치 600),기력-200(단, 최저치 600)
 MAXBASE:0 = MAX(MAXBASE:0 - 500, 600)
 ;반항적을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 8
-    CFLAG:13 -= 8
+SIF CFLAG:소실이벤트 & 8
+    CFLAG:소실이벤트 -= 8
 ;삭감 소질：반항적、일광욕、구현
-TALENT:11 = 0
-TALENT:114 = 0
-TALENT:123 = 0
+TALENT:반항적 = 0
+TALENT:일광욕 = 0
+TALENT:구현 = 0
 ;추가 소질 : 솔직함
-TALENT:13 = 1
+TALENT:솔직함 = 1
 ;능력의 변동
 ;감각계의 능력을 리셋
-VARSET ABL:TARGET:0, 0, 0, 10
-ABL:10 = MAX(ABL:10, 1)
-ABL:11 = MAX(ABL:11 - 1, 0)
+VARSET ABL:TARGET:C감각, 0, 0, 10
+ABL:순종 = MAX(ABL:순종, 1)
+ABL:욕망 = MAX(ABL:욕망 - 1, 0)
 ;이상경험이 1 미만이라면 1로 끌어올림
-EXP:50 = MAX(EXP:50, 1)
+EXP:이상경험 = MAX(EXP:이상경험, 1)
 ;상성을 변화
 REPEAT 200
     IF COUNT == 61
@@ -871,28 +871,28 @@ PRINTFORMW ＜%CALLNAME:TARGET%의 이름은 dlclfls이 되었다＞
 NAME:TARGET = znahdl dlclfls
 CALLNAME:TARGET = 들클플스
 ;일선을 넘지 않음을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 64
-    CFLAG:13 -= 64
+SIF CFLAG:소실이벤트 & 64
+    CFLAG:소실이벤트 -= 64
 ;삭감 소질：꿋꿋함, 정조관념, 일선을 넘지 않음, 부끄럼쟁이, 민감소질
-TALENT:12 = 0
-TALENT:27 = 0
-TALENT:30 = 0
-TALENT:35 = 0
-TALENT:102 = 0
-TALENT:106 = 0
+TALENT:꿋꿋함 = 0
+TALENT:일선을넘지않음 = 0
+TALENT:정조관념 = 0
+TALENT:부끄럼쟁이 = 0
+TALENT:V민감 = 0
+TALENT:B민감 = 0
 ;추가 소질 :  프라이드가 낮음, 무관심, 비관적, 정조무관심, 눈에띄고 싶어함, 약점, 민감을 전부 둔감으로
-TALENT:17 = 1
-TALENT:21 = 1
-TALENT:26 = 1
-TALENT:28 = 1
-TALENT:31 = 1
-TALENT:39 = 1
-TALENT:103 = 1
-TALENT:107 = 1
+TALENT:프라이드가낮음 = 1
+TALENT:무관심 = 1
+TALENT:비관적 = 1
+TALENT:튀고싶어함 = 1
+TALENT:정조관둔감 = 1
+TALENT:약점 = 1
+TALENT:V둔감 = 1
+TALENT:B둔감 = 1
 ;공통 이벤트도 포함해, 순종 소멸
-ABL:10 = (ABL:10 > 0) ? 1 # 0
+ABL:순종 = (ABL:순종 > 0) ? 1 # 0
 ;이상경험이 2 미만이라면 2로 끌어올림
-EXP:50 = MAX(EXP:50, 2)
+EXP:이상경험 = MAX(EXP:이상경험, 2)
 ;상성 변동
 RELATION:74 = 300
 
@@ -905,45 +905,45 @@ PRINTFORMW ＜%CALLNAME:TARGET%의 얼굴이 생기를 띤 것 같다……＞
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 인간모습으로 돌아왔다＞
 ;체력-400(단, 최저치 600),기력-200(단, 최저치 600)
 MAXBASE:0 = MAX(MAXBASE:0 - 2400, 600)
-MAXBASE:1 = MAX(MAXBASE:1 - 200, 600)
+MAXBASE:기력 = MAX(MAXBASE:기력 - 200, 600)
 ;무관심을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 4
-    CFLAG:13 -= 4
+SIF CFLAG:소실이벤트 & 4
+    CFLAG:소실이벤트 -= 4
 ;제거소질 무관심,감정결여,비관적,선안넘음,정조관념무ㅡ,억압,
-TALENT:21 = 0
-TALENT:22 = 0
-TALENT:26 = 0
-TALENT:27 = 0
-TALENT:31 = 0
-TALENT:32 = 0
-TALENT:41 = 0
-TALENT:43 = 0
-TALENT:44 = 0
-TALENT:51 = 0
-TALENT:226 = 0
+TALENT:무관심 = 0
+TALENT:감정결여 = 0
+TALENT:비관적 = 0
+TALENT:일선을넘지않음 = 0
+TALENT:정조관둔감 = 0
+TALENT:억압 = 0
+TALENT:아픔에강함 = 0
+TALENT:젖기어려움 = 0
+TALENT:약물내성 = 0
+TALENT:습득느림 = 0
+TALENT:강시 = 0
 ;습득 소질 : 
-TALENT:0 = 1
-TALENT:10 = 1
-TALENT:23 = 1
-TALENT:26 = 1
-TALENT:30 = 1
-TALENT:35 = 1
-TALENT:38 = 1
-TALENT:42 = 1
-TALENT:70 = 1
-TALENT:106 = 1
-TALENT:102 = 1
-TALENT:138 = 1
+TALENT:처녀 = 1
+TALENT:겁쟁이 = 1
+TALENT:호기심 = 1
+TALENT:비관적 = 1
+TALENT:정조관념 = 1
+TALENT:부끄럼쟁이 = 1
+TALENT:여성혐오 = 1
+TALENT:젖기쉬움 = 1
+TALENT:쾌감에솔직 = 1
+TALENT:B민감 = 1
+TALENT:V민감 = 1
+TALENT:회복느림 = 1
 ;종족 변수 변경
 CSTR:32 = 인간
 CSTR:33 = 인간
 ;능력의 변동
 ;감각계의 능력을 리셋
-VARSET ABL:TARGET:0, 0, 0, 10
-ABL:10 = MAX(ABL:10, 1)
-ABL:11 = MAX(ABL:11 - 1, 0)
+VARSET ABL:TARGET:C감각, 0, 0, 10
+ABL:순종 = MAX(ABL:순종, 1)
+ABL:욕망 = MAX(ABL:욕망 - 1, 0)
 ;이상경험이 2 미만이라면 2로 끌어올림
-EXP:50 = MAX(EXP:50, 2)
+EXP:이상경험 = MAX(EXP:이상경험, 2)
 ;상성을 변화
 REPEAT 200
 RELATION:COUNT = 0
@@ -968,46 +968,46 @@ NAME:TARGET = 카시와데노미노이라츠메
 CALLNAME:TARGET = 미노이라츠메
 ;체력 -500(단 최저값 600), 기력 -200(단 최저값 600)
 MAXBASE:0 = MAX(MAXBASE:0 - 500, 600)
-MAXBASE:1 = MAX(MAXBASE:1 - 200, 600)
+MAXBASE:기력 = MAX(MAXBASE:기력 - 200, 600)
 ;무관심을 순애 모드에서 지우던 플래그를 지운다
-;SIF CFLAG:13 & 4
-;    CFLAG:13 -= 4
+;SIF CFLAG:소실이벤트 & 4
+;    CFLAG:소실이벤트 -= 4
 ;소멸 소질：반항적, 무관심, 보수적, 낙관적, 자제심, 젖기 어려움, 약물내성, 냄새둔감, 월광욕, 회복빠름, 전신둔감, 강시
-TALENT:11 = 0
-TALENT:20 = 0
-TALENT:21 = 0
-TALENT:24 = 0
-TALENT:25 = 0
-TALENT:43 = 0
-TALENT:44 = 0
-TALENT:61 = 0
-TALENT:115 = 0
-TALENT:101 = 0
-TALENT:103 = 0
-TALENT:105 = 0
-TALENT:107 = 0
-TALENT:137 = 0
-TALENT:226 = 0
+TALENT:반항적 = 0
+TALENT:자제심 = 0
+TALENT:무관심 = 0
+TALENT:보수적 = 0
+TALENT:낙관적 = 0
+TALENT:젖기어려움 = 0
+TALENT:약물내성 = 0
+TALENT:냄새둔감 = 0
+TALENT:월광욕 = 0
+TALENT:C둔감 = 0
+TALENT:V둔감 = 0
+TALENT:A둔감 = 0
+TALENT:B둔감 = 0
+TALENT:회복빠름 = 0
+TALENT:강시 = 0
 ;추가 소질: 쾌감에 솔직, 젖기 쉬움, 해방, 부끄럼없음, 냄새민감, 수수께끼의 매력, V민감, 음란, 광기
-TALENT:33 = 1
-TALENT:36 = 1
-TALENT:42 = 1
-TALENT:62 = 1
-TALENT:70 = 1
-TALENT:92 = 1
-TALENT:102 = 1
-TALENT:158 = 1
-TALENT:170 = 1
+TALENT:해방 = 1
+TALENT:부끄럼없음 = 1
+TALENT:젖기쉬움 = 1
+TALENT:냄새민감 = 1
+TALENT:쾌감에솔직 = 1
+TALENT:수수께끼의매력 = 1
+TALENT:V민감 = 1
+TALENT:광기 = 1
+TALENT:음란 = 1
 ;종족 변수 변경
 CSTR:32 = 인간
 CSTR:33 = 인간
 ;능력의 변동
 ;감각계의 능력을 리셋
-VARSET ABL:TARGET:0, 0, 0, 10
-ABL:10 = MAX(ABL:10, 1)
-ABL:11 = 5
+VARSET ABL:TARGET:C감각, 0, 0, 10
+ABL:순종 = MAX(ABL:순종, 1)
+ABL:욕망 = 5
 ;이상경험이 2 미만이라면 2로 끌어올림
-EXP:50 = MAX(EXP:50, 2)
+EXP:이상경험 = MAX(EXP:이상경험, 2)
 REPEAT 200
     IF COUNT == 83
         RELATION:COUNT = 120
@@ -1037,38 +1037,38 @@ PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 생전의 기억을 되찾�
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 토지코노이라츠메가 되었다＞
 NAME:TARGET = 토지코노이라츠메
 ;반항적을 순애 모드에서 지우던 플래그를 지운다
-SIF CFLAG:13 & 8
-    CFLAG:13 -= 8
+SIF CFLAG:소실이벤트 & 8
+    CFLAG:소실이벤트 -= 8
 ;원래의 느긋한 아가씨에서 태자님 일직선의 얀데레 소녀가 되어버린다
 ;삭감 소질：낙관적, 냄새둔감, 영체, V둔감, B둔감
-TALENT:25 = 0
-TALENT:61 = 0
-TALENT:103 = 0
-TALENT:107 = 0
-TALENT:207 = 0
+TALENT:낙관적 = 0
+TALENT:냄새둔감 = 0
+TALENT:V둔감 = 0
+TALENT:B둔감 = 0
+TALENT:영체 = 0
 ;추가 소질 :  솔직, 반항적 복귀, 프라이드가 낮음, 질투하기 쉬움, 비관적, 정조관념, 조합지식, 헌신적, 중독되기 쉬움, 회복느림, 작은체형, B민감
-TALENT:11 = 1
-TALENT:13 = 1
-TALENT:17 = 1
-TALENT:19 = 1
-TALENT:26 = 1
-TALENT:30 = 1
-TALENT:55 = 1
-TALENT:63 = 1
-TALENT:84 = 1
-TALENT:106 = 1
-TALENT:128 = 1
-TALENT:138 = 1
+TALENT:반항적 = 1
+TALENT:솔직함 = 1
+TALENT:프라이드가낮음 = 1
+TALENT:질투하기쉬움 = 1
+TALENT:비관적 = 1
+TALENT:정조관념 = 1
+TALENT:조합지식 = 1
+TALENT:헌신적 = 1
+TALENT:중독되기쉬움 = 1
+TALENT:B민감 = 1
+TALENT:작은체형 = 1
+TALENT:회복느림 = 1
 ;종족 변수 변경
 CSTR:32 = 인간
 CSTR:33 = 인간
 ;능력의 변동
 ;감각계의 능력을 리셋
-VARSET ABL:TARGET:0, 0, 0, 10
-ABL:10 = MAX(ABL:10, 1)
-ABL:11 = MAX(ABL:11 - 1, 0)
+VARSET ABL:TARGET:C감각, 0, 0, 10
+ABL:순종 = MAX(ABL:순종, 1)
+ABL:욕망 = MAX(ABL:욕망 - 1, 0)
 ;이상경험이 2 미만이라면 2로 끌어올림
-EXP:50 = MAX(EXP:50, 2)
+EXP:이상경험 = MAX(EXP:이상경험, 2)
 REPEAT 200
     IF COUNT == 82
         RELATION:COUNT = 80
@@ -1100,19 +1100,19 @@ PRINTFORMW ＜%CALLNAME:TARGET%의 분위기가 바뀐 것 같다……＞
 PRINTFORMW ＜%조사처리(CALLNAME:TARGET,"는")% 가지고 있던 츤데레 정신을 표출했다＞
 NAME:TARGET = 사쿠라자키 히라노(신판)
 ;삭감 소질：낙관적, 정조관둔감
-TALENT:25 = 0
-TALENT:41 = 0
+TALENT:낙관적 = 0
+TALENT:아픔에강함 = 0
 ;추가 소질 : 반항적, 프라이드 높음, 츤데레
-TALENT:11 = 1
-TALENT:16 = 1
-TALENT:18 = 1
+TALENT:반항적 = 1
+TALENT:프라이드가높음 = 1
+TALENT:츤데레 = 1
 ;능력의 변동
 ;공통 이벤트도 포함해, 순종 소멸
-ABL:10 = (ABL:10 > 0) ? 1 # 0
+ABL:순종 = (ABL:순종 > 0) ? 1 # 0
 ;봉사정신도 저하
-ABL:13 = 0
+ABL:봉사정신 = 0
 ;이상경험이 1 미만이라면 1로 끌어올림
-EXP:50 = MAX(EXP:50, 1)
+EXP:이상경험 = MAX(EXP:이상경험, 1)
 
 ;=============================================================================
 ;XEXTRA 모드의 ＥＸ화 캐릭터 개별 처리
@@ -1125,16 +1125,16 @@ NO:TARGET = 0
 NAME:TARGET = 츠미부쿠로
 CALLNAME:TARGET = 츠미부쿠로
 MAXBASE:0 = 2500
-MAXBASE:1 = 2000
-MAXBASE:2 = 10000
-ABL:11 = 2
-ABL:12 = 2
-ABL:13 = 5
-ABL:14 = 2
-ABL:21 = 5
-TALENT:82 = 1
-TALENT:120 = 1
-TALENT:178 = 1
+MAXBASE:기력 = 2000
+MAXBASE:사정 = 10000
+ABL:욕망 = 2
+ABL:기교 = 2
+ABL:봉사정신 = 5
+ABL:노출증 = 2
+ABL:마조끼 = 5
+TALENT:마조 = 1
+TALENT:남자 = 1
+TALENT:초M = 1
 RELATION:22 = 500
 
 ;-------------------------------------------------
@@ -1145,22 +1145,22 @@ NO:TARGET = 0
 NAME:TARGET = 카도케지
 CALLNAME:TARGET = 카도케지
 MAXBASE:0 = 1600
-MAXBASE:1 = 1300
-ABL:12 = 1
-TALENT:0 = 1
-TALENT:11 = 1
-TALENT:15 = 1
-TALENT:23 = 1
-TALENT:25 = 1
-TALENT:28 = 1
-TALENT:30 = 1
-TALENT:42 = 1
-TALENT:50 = 1
-TALENT:52 = 1
-TALENT:61 = 1
-TALENT:80 = 1
-TALENT:100 = 1
-TALENT:128 = 1
+MAXBASE:기력 = 1300
+ABL:기교 = 1
+TALENT:처녀 = 1
+TALENT:반항적 = 1
+TALENT:건방짐 = 1
+TALENT:호기심 = 1
+TALENT:낙관적 = 1
+TALENT:튀고싶어함 = 1
+TALENT:정조관념 = 1
+TALENT:젖기쉬움 = 1
+TALENT:습득빠름 = 1
+TALENT:혀놀림 = 1
+TALENT:냄새둔감 = 1
+TALENT:도착적 = 1
+TALENT:C민감 = 1
+TALENT:작은체형 = 1
 
 ;-------------------------------------------------
 ;XEXTRA 모드：타카히로
@@ -1170,14 +1170,14 @@ NO:TARGET = 0
 NAME:TARGET = 타카히로
 CALLNAME:TARGET = 타카히로
 MAXBASE:0 = 2500
-MAXBASE:1 = 2000
-MAXBASE:2 = 10000
-ABL:12 = 2
-ABL:13 = 1
-ABL:72 = 3
-EXP:73 = 50
-TALENT:28 = 1
-TALENT:120 = 1
+MAXBASE:기력 = 2000
+MAXBASE:사정 = 10000
+ABL:기교 = 2
+ABL:봉사정신 = 1
+ABL:가창기능 = 3
+EXP:가창경험 = 50
+TALENT:튀고싶어함 = 1
+TALENT:남자 = 1
 RELATION:16 = 150
 RELATION:17 = 150
 RELATION:18 = 150
@@ -1191,16 +1191,16 @@ NO:TARGET = 0
 NAME:TARGET = 쟈미
 CALLNAME:TARGET = 쟈미
 MAXBASE:0 = 1200
-MAXBASE:1 = 3800
-MAXBASE:2 = 10000
-ABL:11 = 2
-ABL:12 = 2
-EXP:10 = 30
-TALENT:31 = 1
-TALENT:64 = 1
-TALENT:81 = 1
-TALENT:116 = 1
-TALENT:120 = 1
+MAXBASE:기력 = 3800
+MAXBASE:사정 = 10000
+ABL:욕망 = 2
+ABL:기교 = 2
+EXP:자위경험 = 30
+TALENT:정조관둔감 = 1
+TALENT:불결무시 = 1
+TALENT:새드 = 1
+TALENT:동물귀 = 1
+TALENT:남자 = 1
 
 ;-------------------------------------------------
 ;XEXTRA 모드：레이무 님
@@ -1210,32 +1210,32 @@ NO:TARGET = 1
 NAME:TARGET = 레이무 님
 CALLNAME:TARGET = 레이무님
 MAXBASE:0 = 2500
-MAXBASE:1 = 1500
-ABL:12 = 1
-EXP:50 = 255
-TALENT:0 = 1
-TALENT:11 = 1
-TALENT:12 = 1
-TALENT:15 = 1
-TALENT:16 = 1
-TALENT:32 = 1
-TALENT:34 = 1
-TALENT:36 = 1
-TALENT:43 = 1
-TALENT:44 = 1
-TALENT:53 = 1
-TALENT:64 = 1
-TALENT:71 = 1
-TALENT:80 = 1
-TALENT:81 = 1
-TALENT:92 = 1
-TALENT:94 = 1
-TALENT:101 = 1
-TALENT:103 = 1
-TALENT:105 = 1
-TALENT:107 = 1
-TALENT:158 = 1
-TALENT:170 = 1
+MAXBASE:기력 = 1500
+ABL:기교 = 1
+EXP:이상경험 = 255
+TALENT:처녀 = 1
+TALENT:반항적 = 1
+TALENT:꿋꿋함 = 1
+TALENT:건방짐 = 1
+TALENT:프라이드가높음 = 1
+TALENT:억압 = 1
+TALENT:저항 = 1
+TALENT:부끄럼없음 = 1
+TALENT:젖기어려움 = 1
+TALENT:약물내성 = 1
+TALENT:바느질 = 1
+TALENT:불결무시 = 1
+TALENT:쾌감을부정 = 1
+TALENT:도착적 = 1
+TALENT:새드 = 1
+TALENT:수수께끼의매력 = 1
+TALENT:인기 = 1
+TALENT:C둔감 = 1
+TALENT:V둔감 = 1
+TALENT:A둔감 = 1
+TALENT:B둔감 = 1
+TALENT:광기 = 1
+TALENT:음란 = 1
 VARSET RELATION:TARGET:0, 10, 2, 200
 
 ;-------------------------------------------------
@@ -1246,22 +1246,22 @@ NO:TARGET = 2
 NAME:TARGET = 구작 마리사
 CALLNAME:TARGET = 마리사
 MAXBASE:0 = 1900
-MAXBASE:1 = 1300
-ABL:0 = 1
-ABL:11 = 1
-ABL:12 = 1
-EXP:2 = 5
-EXP:10 = 60
-TALENT:0 = 1
-TALENT:12 = 1
-TALENT:15 = 1
-TALENT:23 = 1
-TALENT:28 = 1
-TALENT:50 = 1
-TALENT:52 = 1
-TALENT:55 = 1
-TALENT:59 = 1
-TALENT:111 = 1
+MAXBASE:기력 = 1300
+ABL:C감각 = 1
+ABL:욕망 = 1
+ABL:기교 = 1
+EXP:절정경험 = 5
+EXP:자위경험 = 60
+TALENT:처녀 = 1
+TALENT:꿋꿋함 = 1
+TALENT:건방짐 = 1
+TALENT:호기심 = 1
+TALENT:튀고싶어함 = 1
+TALENT:습득빠름 = 1
+TALENT:혀놀림 = 1
+TALENT:조합지식 = 1
+TALENT:치료 = 1
+TALENT:빈유 = 1
 RELATION:1 = 200
 RELATION:100 = 200
 
@@ -1273,28 +1273,28 @@ NO:TARGET = 2
 NAME:TARGET = 초마리사
 CALLNAME:TARGET = 마리사
 MAXBASE:0 = 3000
-MAXBASE:1 = 1000
-;ABL:10 = 1
-EXP:50 = 255
-TALENT:0 = 1
-TALENT:12 = 1
-TALENT:14 = 1
-TALENT:20 = 1
-TALENT:24 = 1
-TALENT:25 = 1
-TALENT:27 = 1
-TALENT:30 = 1
-TALENT:41 = 1
-TALENT:43 = 1
-TALENT:50 = 1
-TALENT:59 = 1
-TALENT:63 = 1
-TALENT:71 = 1
-TALENT:101 = 1
-TALENT:103 = 1
-TALENT:105 = 1
-TALENT:107 = 1
-TALENT:137 = 1
+MAXBASE:기력 = 1000
+;ABL:순종 = 1
+EXP:이상경험 = 255
+TALENT:처녀 = 1
+TALENT:꿋꿋함 = 1
+TALENT:얌전함 = 1
+TALENT:자제심 = 1
+TALENT:보수적 = 1
+TALENT:낙관적 = 1
+TALENT:일선을넘지않음 = 1
+TALENT:정조관념 = 1
+TALENT:아픔에강함 = 1
+TALENT:젖기어려움 = 1
+TALENT:습득빠름 = 1
+TALENT:치료 = 1
+TALENT:헌신적 = 1
+TALENT:쾌감을부정 = 1
+TALENT:C둔감 = 1
+TALENT:V둔감 = 1
+TALENT:A둔감 = 1
+TALENT:B둔감 = 1
+TALENT:회복빠름 = 1
 RELATION:1 = 200
 RELATION:100 = 200
 
@@ -1306,19 +1306,19 @@ NO:TARGET = 3
 NAME:TARGET = ＥＸ루미아
 CALLNAME:TARGET = 루미아
 MAXBASE:0 = 2200
-MAXBASE:1 = 1500
-TALENT:0 = 1
-TALENT:12 = 1
-TALENT:20 = 1
-TALENT:24 = 1
-TALENT:30 = 1
-TALENT:41 = 1
-TALENT:62 = 1
-TALENT:63 = 1
-TALENT:84 = 1
-TALENT:90 = 1
-TALENT:115 = 1
-CFLAG:0 = 1
+MAXBASE:기력 = 1500
+TALENT:처녀 = 1
+TALENT:꿋꿋함 = 1
+TALENT:자제심 = 1
+TALENT:보수적 = 1
+TALENT:정조관념 = 1
+TALENT:아픔에강함 = 1
+TALENT:냄새민감 = 1
+TALENT:헌신적 = 1
+TALENT:중독되기쉬움 = 1
+TALENT:매력 = 1
+TALENT:월광욕 = 1
+CFLAG:SP캐릭터 = 1
 
 ;-------------------------------------------------
 ;XEXTRA 모드：ＥＸ대요정
@@ -1328,26 +1328,26 @@ NO:TARGET = 4
 NAME:TARGET = ＥＸ대요정
 CALLNAME:TARGET = 대요정
 MAXBASE:0 = 2500
-MAXBASE:1 = 1000
-ABL:0 = 1
-;ABL:10 = 1
-ABL:11 = 1
-EXP:2 = 1
-EXP:10 = 3
-EXP:32 = 10
-EXP:33 = 10
-EXP:34 = 10
-TALENT:0 = 1
-TALENT:10 = 1
-TALENT:14 = 1
-TALENT:15 = 1
-TALENT:16 = 1
-TALENT:23 = 1
-TALENT:35 = 1
-TALENT:37 = 1
-TALENT:100 = 1
-TALENT:112 = 1
-TALENT:200 = 1
+MAXBASE:기력 = 1000
+ABL:C감각 = 1
+;ABL:순종 = 1
+ABL:욕망 = 1
+EXP:절정경험 = 1
+EXP:자위경험 = 3
+EXP:V확장경험 = 10
+EXP:A확장경험 = 10
+EXP:U확장경험 = 10
+TALENT:처녀 = 1
+TALENT:겁쟁이 = 1
+TALENT:얌전함 = 1
+TALENT:건방짐 = 1
+TALENT:프라이드가높음 = 1
+TALENT:호기심 = 1
+TALENT:부끄럼쟁이 = 1
+TALENT:남성혐오 = 1
+TALENT:C민감 = 1
+TALENT:거유 = 1
+TALENT:요정 = 1
 RELATION:5 = 300
 
 ;-------------------------------------------------
@@ -1358,34 +1358,34 @@ NO:TARGET = 4
 NAME:TARGET = Ｂ대요정
 CALLNAME:TARGET = 대요정
 MAXBASE:0 = 2200
-MAXBASE:1 = 1200
-ABL:0 = 1
-ABL:11 = 1
-ABL:12 = 1
-ABL:20 = 5
-EXP:2 = 5
-EXP:10 = 30
-EXP:30 = 20
-EXP:31 = 20
-EXP:39 = 100
-TALENT:0 = 1
-TALENT:15 = 1
-TALENT:16 = 1
-TALENT:23 = 1
-TALENT:33 = 1
-TALENT:37 = 1
-TALENT:41 = 1
-TALENT:52 = 1
-TALENT:53 = 1
-TALENT:71 = 1
-TALENT:80 = 1
-TALENT:81 = 1
-TALENT:84 = 1
-TALENT:93 = 1
-TALENT:100 = 1
-TALENT:158 = 1
-TALENT:177 = 1
-TALENT:200 = 1
+MAXBASE:기력 = 1200
+ABL:C감각 = 1
+ABL:욕망 = 1
+ABL:기교 = 1
+ABL:새드끼 = 5
+EXP:절정경험 = 5
+EXP:자위경험 = 30
+EXP:고통쾌락경험 = 20
+EXP:긴박경험 = 20
+EXP:SM교육경험 = 100
+TALENT:처녀 = 1
+TALENT:건방짐 = 1
+TALENT:프라이드가높음 = 1
+TALENT:호기심 = 1
+TALENT:해방 = 1
+TALENT:남성혐오 = 1
+TALENT:아픔에강함 = 1
+TALENT:혀놀림 = 1
+TALENT:바느질 = 1
+TALENT:쾌감을부정 = 1
+TALENT:도착적 = 1
+TALENT:새드 = 1
+TALENT:중독되기쉬움 = 1
+TALENT:소악마 = 1
+TALENT:C민감 = 1
+TALENT:광기 = 1
+TALENT:초S = 1
+TALENT:요정 = 1
 RELATION:5 = 300
 
 ;-------------------------------------------------
@@ -1396,22 +1396,22 @@ NO:TARGET = 5
 NAME:TARGET = 어드벤트 치르노
 CALLNAME:TARGET = 치르노
 MAXBASE:0 = 2500
-MAXBASE:1 = 1300
-TALENT:0 = 1
-TALENT:15 = 1
-TALENT:23 = 1
-TALENT:25 = 1
-TALENT:28 = 1
-TALENT:34 = 1
-TALENT:41 = 1
-TALENT:42 = 1
-TALENT:63 = 1
-TALENT:83 = 1
-TALENT:94 = 1
-TALENT:95 = 1
-TALENT:102 = 1
-TALENT:128 = 1
-TALENT:137 = 1
+MAXBASE:기력 = 1300
+TALENT:처녀 = 1
+TALENT:건방짐 = 1
+TALENT:호기심 = 1
+TALENT:낙관적 = 1
+TALENT:튀고싶어함 = 1
+TALENT:저항 = 1
+TALENT:아픔에강함 = 1
+TALENT:젖기쉬움 = 1
+TALENT:헌신적 = 1
+TALENT:바이 = 1
+TALENT:인기 = 1
+TALENT:고무 = 1
+TALENT:V민감 = 1
+TALENT:작은체형 = 1
+TALENT:회복빠름 = 1
 RELATION:4 = 200
 RELATION:6 = 150
 RELATION:12 = 200
@@ -1438,41 +1438,41 @@ NO:TARGET = 5
 NAME:TARGET = 2배 치르노
 CALLNAME:TARGET = 치르노
 MAXBASE:0 = 2200
-MAXBASE:1 = 1600
-ABL:1 = 3
-ABL:2 = 2
-ABL:3 = 2
-;ABL:10 = 1
-ABL:11 = 2
-ABL:14 = 1
-ABL:21 = 3
-EXP:2 = 100
-EXP:10 = 100
-EXP:40 = 25
-EXP:50 = 1
-TALENT:0 = 1
-TALENT:15 = 1
-TALENT:23 = 1
-TALENT:28 = 1
-TALENT:33 = 1
-TALENT:36 = 1
-TALENT:42 = 1
-TALENT:50 = 1
-TALENT:52 = 1
-TALENT:56 = 1
-TALENT:61 = 1
-TALENT:64 = 1
-TALENT:81 = 1
-TALENT:83 = 1
-TALENT:84 = 1
-TALENT:93 = 1
-TALENT:95 = 1
-TALENT:102 = 1
-TALENT:111 = 1
-TALENT:128 = 1
-TALENT:131 = 1
-TALENT:137 = 1
-TALENT:200 = 1
+MAXBASE:기력 = 1600
+ABL:V감각 = 3
+ABL:A감각 = 2
+ABL:B감각 = 2
+;ABL:순종 = 1
+ABL:욕망 = 2
+ABL:노출증 = 1
+ABL:마조끼 = 3
+EXP:절정경험 = 100
+EXP:자위경험 = 100
+EXP:약물경험 = 25
+EXP:이상경험 = 1
+TALENT:처녀 = 1
+TALENT:건방짐 = 1
+TALENT:호기심 = 1
+TALENT:튀고싶어함 = 1
+TALENT:해방 = 1
+TALENT:부끄럼없음 = 1
+TALENT:젖기쉬움 = 1
+TALENT:습득빠름 = 1
+TALENT:혀놀림 = 1
+TALENT:금단의지식 = 1
+TALENT:냄새둔감 = 1
+TALENT:불결무시 = 1
+TALENT:새드 = 1
+TALENT:바이 = 1
+TALENT:중독되기쉬움 = 1
+TALENT:소악마 = 1
+TALENT:고무 = 1
+TALENT:V민감 = 1
+TALENT:빈유 = 1
+TALENT:작은체형 = 1
+TALENT:유치 = 1
+TALENT:회복빠름 = 1
+TALENT:요정 = 1
 RELATION:4 = 200
 RELATION:12 = 200
 RELATION:15 = 50
@@ -1491,21 +1491,21 @@ NO:TARGET = 14
 NAME:TARGET = 꼬마 앨리스
 CALLNAME:TARGET = 앨리스
 MAXBASE:0 = 1500
-MAXBASE:1 = 1500
-ABL:11 = 1
-ABL:12 = 1
-ABL:22 = 3
-TALENT:0 = 1
-TALENT:11 = 1
-TALENT:16 = 1
-TALENT:23 = 1
-TALENT:50 = 1
-TALENT:56 = 1
-TALENT:60 = 1
-TALENT:84 = 1
-TALENT:110 = 1
-TALENT:128 = 1
-TALENT:131 = 1
+MAXBASE:기력 = 1500
+ABL:욕망 = 1
+ABL:기교 = 1
+ABL:레즈끼 = 3
+TALENT:처녀 = 1
+TALENT:반항적 = 1
+TALENT:프라이드가높음 = 1
+TALENT:호기심 = 1
+TALENT:습득빠름 = 1
+TALENT:금단의지식 = 1
+TALENT:자위하기쉬움 = 1
+TALENT:중독되기쉬움 = 1
+TALENT:절벽 = 1
+TALENT:작은체형 = 1
+TALENT:유치 = 1
 RELATION:1 = 200
 RELATION:2 = 200
 RELATION:34 = 80
@@ -1527,25 +1527,25 @@ NO:TARGET = 20
 NAME:TARGET = 사이교우지 유유코(생전)
 CALLNAME:TARGET = 유유코
 MAXBASE:0 = 1600
-MAXBASE:1 = 1300
-;ABL:10 = 1
-EXP:50 = 2
-TALENT:0 = 1
-TALENT:10 = 1
-TALENT:14 = 1
-TALENT:17 = 1
-TALENT:23 = 1
-TALENT:26 = 1
-TALENT:27 = 1
-TALENT:30 = 1
-TALENT:32 = 1
-TALENT:35 = 1
-TALENT:42 = 1
-TALENT:56 = 1
-TALENT:63 = 1
-TALENT:92 = 1
-TALENT:112 = 1
-TALENT:138 = 1
+MAXBASE:기력 = 1300
+;ABL:순종 = 1
+EXP:이상경험 = 2
+TALENT:처녀 = 1
+TALENT:겁쟁이 = 1
+TALENT:얌전함 = 1
+TALENT:프라이드가낮음 = 1
+TALENT:호기심 = 1
+TALENT:비관적 = 1
+TALENT:일선을넘지않음 = 1
+TALENT:정조관념 = 1
+TALENT:억압 = 1
+TALENT:부끄럼쟁이 = 1
+TALENT:젖기쉬움 = 1
+TALENT:금단의지식 = 1
+TALENT:헌신적 = 1
+TALENT:수수께끼의매력 = 1
+TALENT:거유 = 1
+TALENT:회복느림 = 1
 RELATION:19 = 110
 RELATION:22 = 120
 RELATION:70 = 200
@@ -1565,36 +1565,36 @@ NO:TARGET = 27
 NAME:TARGET = 테위 사부
 CALLNAME:TARGET = 테위
 MAXBASE:0 = 2000
-MAXBASE:1 = 1000
-ABL:12 = 2
-TALENT:0 = 1
-TALENT:15 = 1
-TALENT:20 = 1
-TALENT:21 = 1
-TALENT:27 = 1
-TALENT:34 = 1
-TALENT:36 = 1
-TALENT:37 = 1
-TALENT:43 = 1
-TALENT:51 = 1
-TALENT:56 = 1
-TALENT:62 = 1
-TALENT:70 = 1
-TALENT:81 = 1
-TALENT:90 = 1
-TALENT:92 = 1
-TALENT:93 = 1
-TALENT:94 = 1
-TALENT:95 = 1
-TALENT:101 = 1
-TALENT:103 = 1
-TALENT:105 = 1
-TALENT:107 = 1
-TALENT:111 = 1
-TALENT:116 = 1
-TALENT:128 = 1
-TALENT:138 = 1
-TALENT:158 = 1
+MAXBASE:기력 = 1000
+ABL:기교 = 2
+TALENT:처녀 = 1
+TALENT:건방짐 = 1
+TALENT:자제심 = 1
+TALENT:무관심 = 1
+TALENT:일선을넘지않음 = 1
+TALENT:저항 = 1
+TALENT:부끄럼없음 = 1
+TALENT:남성혐오 = 1
+TALENT:젖기어려움 = 1
+TALENT:습득느림 = 1
+TALENT:금단의지식 = 1
+TALENT:냄새민감 = 1
+TALENT:쾌감에솔직 = 1
+TALENT:새드 = 1
+TALENT:매력 = 1
+TALENT:수수께끼의매력 = 1
+TALENT:소악마 = 1
+TALENT:인기 = 1
+TALENT:고무 = 1
+TALENT:C둔감 = 1
+TALENT:V둔감 = 1
+TALENT:A둔감 = 1
+TALENT:B둔감 = 1
+TALENT:빈유 = 1
+TALENT:동물귀 = 1
+TALENT:작은체형 = 1
+TALENT:회복느림 = 1
+TALENT:광기 = 1
 
 ;-------------------------------------------------
 ;XEXTRA 모드：미노리코(稔子)
@@ -1604,23 +1604,23 @@ NO:TARGET = 38
 NAME:TARGET = alshflzh
 CALLNAME:TARGET = alshflzh
 MAXBASE:0 = 2000
-MAXBASE:1 = 1000
-ABL:1 = 1
-ABL:11 = 1
-ABL:12 = 1
-ABL:22 = 1
-EXP:0 = 50
-EXP:2 = 20
-EXP:4 = 10
-EXP:20 = 10
-EXP:22 = 10
-TALENT:11 = 1
-TALENT:26 = 1
-TALENT:28 = 1
-TALENT:31 = 1
-TALENT:83 = 1
-TALENT:84 = 1
-TALENT:94 = 1
+MAXBASE:기력 = 1000
+ABL:V감각 = 1
+ABL:욕망 = 1
+ABL:기교 = 1
+ABL:레즈끼 = 1
+EXP:V경험 = 50
+EXP:절정경험 = 20
+EXP:정액경험 = 10
+EXP:봉사쾌락경험 = 10
+EXP:펠라경험 = 10
+TALENT:반항적 = 1
+TALENT:비관적 = 1
+TALENT:튀고싶어함 = 1
+TALENT:정조관둔감 = 1
+TALENT:바이 = 1
+TALENT:중독되기쉬움 = 1
+TALENT:인기 = 1
 RELATION:37 = 150
 
 ;-------------------------------------------------
@@ -1631,19 +1631,19 @@ NO:TARGET = 40
 NAME:TARGET = 그린댐
 CALLNAME:TARGET = 그린댐
 MAXBASE:0 = 2400
-MAXBASE:1 = 1000
-TALENT:0 = 1
-TALENT:11 = 1
-TALENT:16 = 1
-TALENT:18 = 1
-TALENT:24 = 1
-TALENT:27 = 1
-TALENT:28 = 1
-TALENT:37 = 1
-TALENT:51 = 1
-TALENT:62 = 1
-TALENT:71 = 1
-TALENT:102 = 1
+MAXBASE:기력 = 1000
+TALENT:처녀 = 1
+TALENT:반항적 = 1
+TALENT:프라이드가높음 = 1
+TALENT:츤데레 = 1
+TALENT:보수적 = 1
+TALENT:일선을넘지않음 = 1
+TALENT:튀고싶어함 = 1
+TALENT:남성혐오 = 1
+TALENT:습득느림 = 1
+TALENT:냄새민감 = 1
+TALENT:쾌감을부정 = 1
+TALENT:V민감 = 1
 RELATION:40 = 80
 
 ;-------------------------------------------------
@@ -1654,31 +1654,31 @@ NO:TARGET = 42
 NAME:TARGET = 사나에 님
 CALLNAME:TARGET = 사나에 님
 MAXBASE:0 = 2000
-MAXBASE:1 = 1750
-ABL:12 = 1
-ABL:30 = 1
-EXP:10 = 50
-EXP:12 = 10
-EXP:50 = 1
-TALENT:0 = 1
-TALENT:10 = 1
-TALENT:11 = 1
-TALENT:12 = 1
-TALENT:15 = 1
-TALENT:16 = 1
-TALENT:18 = 1
-TALENT:20 = 1
-TALENT:24 = 1
-TALENT:26 = 1
-TALENT:27 = 1
-TALENT:30 = 1
-TALENT:32 = 1
-TALENT:34 = 1
-TALENT:35 = 1
-TALENT:40 = 1
-TALENT:43 = 1
-TALENT:51 = 1
-TALENT:84 = 1
+MAXBASE:기력 = 1750
+ABL:기교 = 1
+ABL:자위중독 = 1
+EXP:자위경험 = 50
+EXP:레즈경험 = 10
+EXP:이상경험 = 1
+TALENT:처녀 = 1
+TALENT:겁쟁이 = 1
+TALENT:반항적 = 1
+TALENT:꿋꿋함 = 1
+TALENT:건방짐 = 1
+TALENT:프라이드가높음 = 1
+TALENT:츤데레 = 1
+TALENT:자제심 = 1
+TALENT:보수적 = 1
+TALENT:비관적 = 1
+TALENT:일선을넘지않음 = 1
+TALENT:정조관념 = 1
+TALENT:억압 = 1
+TALENT:저항 = 1
+TALENT:부끄럼쟁이 = 1
+TALENT:아픔에약함 = 1
+TALENT:젖기어려움 = 1
+TALENT:습득느림 = 1
+TALENT:중독되기쉬움 = 1
 RELATION:1 = 10
 RELATION:43 = 200
 RELATION:44 = 200
@@ -1691,29 +1691,29 @@ NO:TARGET = 61
 NAME:TARGET = 과묵 사토링
 CALLNAME:TARGET = 사토리
 MAXBASE:0 = 1300
-MAXBASE:1 = 2000
-ABL:11 = 2
-ABL:14 = 2
-ABL:21 = 2
-ABL:22 = 1
-EXP:50 = 1
-TALENT:0 = 1
-TALENT:13 = 1
-TALENT:15 = 1
-TALENT:23 = 1
-TALENT:31 = 1
-TALENT:33 = 1
-TALENT:36 = 1
-TALENT:50 = 1
-TALENT:60 = 1
-TALENT:70 = 1
-TALENT:80 = 1
-TALENT:81 = 1
-TALENT:83 = 1
-TALENT:84 = 1
-TALENT:111 = 1
-TALENT:128 = 1
-TALENT:213 = 1
+MAXBASE:기력 = 2000
+ABL:욕망 = 2
+ABL:노출증 = 2
+ABL:마조끼 = 2
+ABL:레즈끼 = 1
+EXP:이상경험 = 1
+TALENT:처녀 = 1
+TALENT:솔직함 = 1
+TALENT:건방짐 = 1
+TALENT:호기심 = 1
+TALENT:정조관둔감 = 1
+TALENT:해방 = 1
+TALENT:부끄럼없음 = 1
+TALENT:습득빠름 = 1
+TALENT:자위하기쉬움 = 1
+TALENT:쾌감에솔직 = 1
+TALENT:도착적 = 1
+TALENT:새드 = 1
+TALENT:바이 = 1
+TALENT:중독되기쉬움 = 1
+TALENT:빈유 = 1
+TALENT:작은체형 = 1
+TALENT:사토리 = 1
 RELATION:62 = 200
 RELATION:63 = 120
 RELATION:64 = 200
@@ -1726,25 +1726,25 @@ NO:TARGET = 156
 NAME:TARGET = 쥴리앙
 CALLNAME:TARGET = 쥴리앙
 MAXBASE:0 = 2000
-MAXBASE:1 = 1000
-;ABL:10 = 1
-ABL:13 = 1
-TALENT:0 = 1
-TALENT:13 = 1
-TALENT:14 = 1
-TALENT:20 = 1
-TALENT:24 = 1
-TALENT:30 = 1
-TALENT:35 = 1
-TALENT:40 = 1
-TALENT:42 = 1
-TALENT:48 = 1
-TALENT:53 = 1
-TALENT:62 = 1
-TALENT:63 = 1
-TALENT:90 = 1
-TALENT:128 = 1
-TALENT:200 = 1
+MAXBASE:기력 = 1000
+;ABL:순종 = 1
+ABL:봉사정신 = 1
+TALENT:처녀 = 1
+TALENT:솔직함 = 1
+TALENT:얌전함 = 1
+TALENT:자제심 = 1
+TALENT:보수적 = 1
+TALENT:정조관념 = 1
+TALENT:부끄럼쟁이 = 1
+TALENT:아픔에약함 = 1
+TALENT:젖기쉬움 = 1
+TALENT:주정 = 1
+TALENT:바느질 = 1
+TALENT:냄새민감 = 1
+TALENT:헌신적 = 1
+TALENT:매력 = 1
+TALENT:작은체형 = 1
+TALENT:요정 = 1
 RELATION:1 = 150
 
 ;=============================================================================

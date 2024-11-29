@@ -156,23 +156,23 @@ IF CFLAG:8002 == 0
         IF RESULT == 0
             PRINTFORMW 텐시쨩은 처녀 모드로 플레이합니다.
             ;(別人註)初期素質が処女なのでコメントアウト.引継ぎもこれで対応.
-;            TALENT:0 = 1
+;            TALENT:처녀 = 1
         ;実はちょっとナイショで…テヘ♪
         ELSEIF RESULT == 1
             PRINTFORMW 텐시쨩 마지 빗치 모드로 플레이합니다.
             PRINTFORMW 각종 경험의 값이 변화, 처녀를 잃었습니다.
-            TALENT:0 = 0
+            TALENT:처녀 = 0
             ;セックス系コマンドの初回判定用
             CFLAG:7006 = 1
             ;素質変更条件による分岐
             IF CFLAG:8001 >= 1
-                EXP:Ｖ경험 = 30
-                ABL:1 = 1
-                EXP:Ａ경험 = 3
+                EXP:V경험 = 30
+                ABL:V감각 = 1
+                EXP:A경험 = 3
                 EXP:절정경험 = 10
                 EXP:이상경험 = 1
-                EXP:81 = 1
-                EXP:82 = 1
+                EXP:피강간경험 = 1
+                EXP:피윤간경험 = 1
             ENDIF
         ELSE
             GOTO INPUT_LOOP_2
@@ -310,7 +310,7 @@ ENDIF
 
 ;紫が助手だった場合（CFLAG:7007）
 IF ASSIPLAY == 1 && ASSI:22 == 1 && CFLAG:7007 == 0
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 『안녕♪』
         PRINTFORMW 「켁! 유카리!?」
         IF CFLAG:7006 == 1
@@ -342,7 +342,7 @@ IF ASSIPLAY == 1 && ASSI:22 == 1 && CFLAG:7007 == 0
     ENDIF
     RETURN 1
 ELSEIF ASSIPLAY == 1 && ASSI:22 == 1 && CFLAG:7007 == 1
-    IF TALENT:150 == 1 && TALENT:ASSI:150 == 1
+    IF TALENT:연모 == 1 && TALENT:ASSI:연모 == 1
         IF RELATION:22 > 140
             PRINTFORMW 『안녕♪ 기분은 어ㄸ …꺅』
             PRINTFORMW 「유카리～♪ 기다렸어♪… 잔뜩 괴롭혀 줘♪」
@@ -364,10 +364,10 @@ ENDIF
 ;調教開始時１回のみ CFLAG:7000
 ;-------------------------------------------------
 ;연모or복종or음란
-IF CFLAG:7000 < 3 && ( TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 ) && ( TALENT:초Ｍ == 1 || ABL:자위중독 >= 3 )
+IF CFLAG:7000 < 3 && ( TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 ) && ( TALENT:초M == 1 || ABL:자위중독 >= 3 )
     CFLAG:7000 = 3
-    ;초Ｍである
-    IF TALENT:초Ｍ == 1
+    ;초Mである
+    IF TALENT:초M == 1
         PRINTFORMW 「나 이젠, 평범한 섹스로는 만족할 수 없어」
         PRINTFORMW %CALLNAME:TARGET%가 %CALLNAME:MASTER%에게 달라붙어 키스를 했다.
         PRINTFORMW %CALLNAME:MASTER%도 거기에 응해 텐시를 껴안은 채로 혀를 엮었다.
@@ -408,8 +408,8 @@ ENDIF
 ;-------------------------------------------------
 ;調教開始時 CFLAGなし
 ;-------------------------------------------------
-;연모or복종or음란かつ초Ｍである
-IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 && TALENT:초Ｍ == 1
+;연모or복종or음란かつ초Mである
+IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 && TALENT:초M == 1
     IF RAND:3 == 0
         PRINTFORMW 「앗, %CALLNAME:MASTER%! 와 줬네!」
         PRINTFORMW %CALLNAME:TARGET%는 %조사처리(CALLNAME:MASTER,"을")% 보자마자 단숨에 달려들었다.
@@ -460,7 +460,7 @@ ELSEIF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 && ABL:자
     PRINTFORMW 　윤활　　＋3000
     PRINTFORMW 　욕정　　＋3000
     
-    EXP:10 += 1
+    EXP:자위경험 += 1
     PALAM:10 += 3000
     PALAM:13 += 3000
     
@@ -471,7 +471,7 @@ ELSEIF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"이")% 방에 들어오자 %CALLNAME:TARGET%는 꽃이 피는 듯한 미소를 띄우며,
         PRINTFORMW %CALLNAME:MASTER%의 옆으로 달려왔다.
         PRINTFORMW 「오늘은 어떤 걸 할거야?」
-    ELSEIF RAND:2 == 0 && TALENT:0 == 0 && EXP:22 > 0 && EXP:1 > 0
+    ELSEIF RAND:2 == 0 && TALENT:처녀 == 0 && EXP:펠라경험 > 0 && EXP:A경험 > 0
         PRINTFORMW 「아, 어서 오세요♪ 입으로 하실래요? 아니면 보지? 그것도 아니면 엉덩이로?」
         PRINTFORMW 방에 들어오자 마자 %CALLNAME:TARGET%가 사랑스럽고도, 또 음란한 표정으로 %CALLNAME:MASTER%에게 아양을 떨었다.
         PRINTFORMW 그 표정이 너무나도 사랑스러워서 %조사처리(CALLNAME:MASTER,"은")% 곧바로 %CALLNAME:TARGET%를 그 자리에서 덮쳤다.
@@ -541,7 +541,7 @@ ENDIF
 ;--------------------------------------------------
 ;반항적な奴隷には躾が必要だよなァ♪
 ;主人が새드かつ対象の반발각인が2以上,순종が３以下,能力変動ONでこの調教中嘔吐か脱糞をしている場合
-IF MARK:반발각인 >= 2 && CFLAG:7004 > 0 && CFLAG:7003 == 1 && ABL:10 < 4 && BASE:0 < 1000 && TALENT:MASTER:81 == 1 && CFLAG:7005 == 0
+IF MARK:반발각인 >= 2 && CFLAG:7004 > 0 && CFLAG:7003 == 1 && ABL:순종 < 4 && BASE:0 < 1000 && TALENT:MASTER:새드 == 1 && CFLAG:7005 == 0
     PRINTFORMW 「하아… 하아…… 흐읏… 별거… 아… 니네…」
     PRINTFORMW 격렬한 조교를 받았음에도 불구하고 여전히 반항적인 태도를 취하려고 하고 있다.
     PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 주위를 둘러보며 가학적인 미소를 지었다.
@@ -558,7 +558,7 @@ IF MARK:반발각인 >= 2 && CFLAG:7004 > 0 && CFLAG:7003 == 1 && ABL:10 < 4 && 
     PRINTFORMW 「후에… 훌쩍… 용서해 주는 거야?」
     PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 『그래. 뭐든지 할거지?』 라고 말하며 웃음을 보였다.
     PRINTFORMW 그 모습을 보며 안심한 %CALLNAME:TARGET%가 한숨을 내쉬었다.
-    IF TALENT:MASTER:120 == 1
+    IF TALENT:MASTER:남자 == 1
         PRINTFORMW 『그럼 빨리 치워라. 손은 쓰지 말고.』
     ELSE
         PRINTFORMW 『그러면 어서 치우도록 해. 손은 쓰지 말고 말이야.』
@@ -576,14 +576,14 @@ IF MARK:반발각인 >= 2 && CFLAG:7004 > 0 && CFLAG:7003 == 1 && ABL:10 < 4 && 
     PRINTFORML 
     PRINTFORMW 「웁… 다… 했습… 흐윽…」
     PRINTFORMW %CALLNAME:TARGET%는 몇 번이나 토해냈지만 긴 시간을 들여서 결국은 오물을 전부 처리했다.
-    IF TALENT:MASTER:120 == 1
+    IF TALENT:MASTER:남자 == 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 『잘했다. 장하구나.』 라고 말하며 %CALLNAME:TARGET%의 머리를 상냥하게 쓰다듬었다.
     ELSE
         PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 『잘했어. 장하네.』 라고 말하며 %CALLNAME:TARGET%의 머리를 상냥하게 쓰다듬었다.
     ENDIF
     PRINTFORMW 「에… 에헤헤… 칭찬해… 준거야?」
     PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% %CALLNAME:TARGET%에게 셔츠를 입히고 안아줬다.
-    IF TALENT:MASTER:120 == 1
+    IF TALENT:MASTER:남자 == 1
         PRINTFORMW 『기분 나쁘겠지. 화장실까지 데려다 주마.』
     ELSE
         PRINTFORMW 『기분 나쁘지? 화장실까지 데려다 줄게.』
@@ -612,7 +612,7 @@ IF MARK:반발각인 >= 2 && CFLAG:7004 > 0 && CFLAG:7003 == 1 && ABL:10 < 4 && 
     PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 알약과 물을 건네주며 『이상한 것은 넣지 않았다.』 라고 말하며 마시게 했다.
     PRINTFORMW 「음… 꿀꺽… 위약? 이거, 이쿠가 가끔씩 먹고 있던 거 같은데」
     PRINTFORMW %CALLNAME:TARGET%는 상자 위에 올려진 알약의 포장을 보며 물었다.
-    IF TALENT:MASTER:120 == 1
+    IF TALENT:MASTER:남자 == 1
         PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 『미안했다.』 라며 머리를 숙였다.
     ELSE
         PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% 『용서해 달라고 말하지는 않겠지만, 좀 지나쳤네.』 라고 말하며 텐시를 바라봤다.
@@ -642,15 +642,15 @@ IF MARK:반발각인 >= 2 && CFLAG:7004 > 0 && CFLAG:7003 == 1 && ABL:10 < 4 && 
     BASE:0 = 10
     PRINTFORML 
     PRINTFORMW %CALLNAME:TARGET%는 「건방짐」을 잃었다.
-    TALENT:15 = 0
+    TALENT:건방짐 = 0
     PRINTFORMW %CALLNAME:TARGET%의 반발각인이 내려갔다.
     MARK:반발각인 -= 2
-    IF ABL:10 < 5
+    IF ABL:순종 < 5
         PRINTFORMW %CALLNAME:TARGET%의 순종이 올랐다.
-        ABL:10 += 1
+        ABL:순종 += 1
     ENDIF
     PRINTFORMW 이상경험＋３
-    EXP:50 += 3
+    EXP:이상경험 += 3
     PRINTFORMW 순종의 구슬, 굴복의 구슬, 고통의 구슬, 공포의 구슬＋3000
     JUEL:12 += 3000
     JUEL:14 += 3000
@@ -685,11 +685,11 @@ ELSEIF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
         PRINTFORMW 「또…… 와 줄래……?」
         PRINTFORMW 당신은 %CALLNAME:TARGET%의 말에 고개를 끄덕이며 다다가서 키스를 주고 받은 뒤에 방을 나왔다.
     ;処女
-    ELSEIF TALENT:0 == 1
+    ELSEIF TALENT:처녀 == 1
         PRINTFORMW 「하아…… 하아…… 나를 안아줬으면 좋겠어…… %CALLNAME:MASTER%……」
         PRINTFORMW %CALLNAME:TARGET%는 자신의 음핵을 문지르면서 당신의 이름을 부르고 있다.
-    ;초Ｍである
-    ELSEIF TALENT:초Ｍ == 1
+    ;초Mである
+    ELSEIF TALENT:초M == 1
         PRINTFORMW 「좀 더 괴롭혀 줘! 때리고 꼬집고 묶어 줘!」
         PRINTFORMW 「%조사처리(CALLNAME:MASTER,"이")% 원한다면 온 몸을 토막내도 좋아!」
         PRINTFORMW %CALLNAME:TARGET%는 젖은 눈동자로 외쳤다.
@@ -705,9 +705,9 @@ ELSEIF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
         PRINTFORMW %CALLNAME:TARGET%는 %조사처리(CALLNAME:MASTER,"을")% 밀쳐내고 체력을 소모했다고는 생각할 수 없는 속도로 화장실로 달려갔다.
         PRINTFORML 
         PRINTFORML 
-        PRINTFORMW 조교배설경험＋１, 치정의 구슬 {MARK:4 * 1500}개 획득
-        EXP:7 += 1
-        JUEL:15 += (MARK:4 * 1500)
+        PRINTFORMW 조교배설경험＋１, 치정의 구슬 {MARK:치욕각인 * 1500}개 획득
+        EXP:조교배설경험 += 1
+        JUEL:15 += (MARK:치욕각인 * 1500)
     ;その他の場合
     ELSE
         PRINTFORMW 「또…… 와줄거지……?」
@@ -733,11 +733,11 @@ ELSE
         PRINTFORMW %CALLNAME:TARGET%는 %조사처리(CALLNAME:MASTER,"을")% 밀쳐내고 체력을 소모했다고는 생각할 수 없는 속도로 화장실로 달려갔다.
         PRINTFORML 
         PRINTFORML 
-        PRINTFORMW 조교배설경험＋１, 치정의 구슬 {MARK:4 * 200}개 획득
-        EXP:7 += 1
-        JUEL:15 += (MARK:4 * 200)
+        PRINTFORMW 조교배설경험＋１, 치정의 구슬 {MARK:치욕각인 * 200}개 획득
+        EXP:조교배설경험 += 1
+        JUEL:15 += (MARK:치욕각인 * 200)
     ELSE
-        IF MARK:2 >= 2
+        IF MARK:굴복각인 >= 2
             PRINTFORMW 「흥…… 이제 오지 않으면 기쁘겠는데」
             PRINTFORMW %CALLNAME:TARGET%가 그렇게 내뱉었다.
             PRINTFORMW 「%CALLNAME:MASTER%한테 이런 저런 일을 당하면… 이상해져 버릴 것 같으니까…」
@@ -1063,8 +1063,8 @@ IF SELECTCOM == 2
         IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
             ;前コマンドアナルフィスト
             IF PREVCOM == 232
-                ;Ａ확장경험 30以上
-                IF EXP:Ａ확장경험 > 30
+                ;A확장경험 30以上
+                IF EXP:A확장경험 > 30
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"은")% %CALLNAME:TARGET%의 탈장된 항문을 어루만졌다.
                     PRINTFORMW 「읏♪ 햐앙♪ 이거 좋아앙!」
                     PRINTFORMW 손으로 가볍게 만졌을 뿐인데도 %CALLNAME:TARGET%는 바기나에서 물을 뿜으며 절정했다.
@@ -1093,8 +1093,8 @@ IF SELECTCOM == 2
                 ENDIF
             ;効果[アナル要石装着]
             ELSEIF TEQUIP:25 == 2
-                ;Ａ확장경험 30以上
-                IF EXP:Ａ확장경험 >= 30
+                ;A확장경험 30以上
+                IF EXP:A확장경험 >= 30
                     PRINTFORMW 「흐읏♪ 하아앙♪」
                     PRINTFORMW 깊숙히 꽂힌 요석을 움직이자 %CALLNAME:TARGET%는 흰자위를 드러내며 물을 뿜었다.
                     PRINTFORMW 확장되고 부드러워진 애널이 울퉁불퉁한 돌에 들러 붙고 있다.
@@ -1449,7 +1449,7 @@ IF SELECTCOM == 4
     ;初めて
     IF CFLAG:8204 == 0
         ;処女
-        IF TALENT:0 == 1 && EXP:Ｖ경험 == 1
+        IF TALENT:처녀 == 1 && EXP:V경험 == 1
             ;연모or복종or음란＋순종Lv5
             IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 && ABL:순종 >= 5
                 PRINTFORMW 「엣, 손가락…… 으로? 처녀막을?」
@@ -1519,7 +1519,7 @@ IF SELECTCOM == 6
     ;初めて
     IF CFLAG:8206 == 0
         ;키스경험が0 // 이거 연모일 때도 이 대사 나오는 거냐 그럼?? 음... 어째 좀...
-        IF CFLAG:172 == 0
+        IF CFLAG:주인과조교키스수 == 0
             PRINTFORMW 「잠깐… 기다려! 하지… 읍…」
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"은")% 싫어하는 %CALLNAME:TARGET%를 강제로 껴안아 키스했다.
             PRINTFORMW 「으읍… 하아… 하아… 이럴 수가… 처음이었는데…」
@@ -1536,7 +1536,7 @@ IF SELECTCOM == 6
         ;연모or복종or음란
         IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
             ;天子,口汚れがある場合.何気に乙女ですｗ
-            IF STAIN:TARGET:0 >= 1 && CFLAG:7002 == 0
+            IF STAIN:TARGET:입 >= 1 && CFLAG:7002 == 0
                 PRINTFORMW 「자… 잠깐 기다려 봐… 여러가지로 더러운데 괜찮아?」
                 PRINTFORMW 텐시가 깜짝 놀라서 물었지만 %조사처리(CALLNAME:PLAYER,"은")% 괜찮다고 답했다.
                 PRINTFORMW 「바보… 이상한 맛이 나도 몰라…」
@@ -2682,8 +2682,8 @@ IF SELECTCOM == 10
         RETURN 0
     ;２回目以降
     ELSE
-        IF TALENT:150 == 1
-            IF RAND:3 == 0 && CFLAG:20 & 128
+        IF TALENT:연모 == 1
+            IF RAND:3 == 0 && CFLAG:첫시츄에이션 & 128
                 PRINTFORMW 「앙♪… 로터 기분 좋아♪ 클리토리스를 좀 더 괴롭혀 줘♪」
                 PRINTFORMW 포피가 까진 클리토리스에 로터를 문지를 때마다 %CALLNAME:TARGET%는 쾌감으로 몸을 떨고 있다.
             ELSEIF RAND:2 == 0
@@ -2878,7 +2878,7 @@ IF SELECTCOM == 20
             ;縄あり
             IF TEQUIP:40 >= 1
                 ;복종か음란（연모持ち含む）
-                IF TALENT:160 == 1 || TALENT:170 == 1
+                IF TALENT:복종 == 1 || TALENT:음란 == 1
                     PRINTFORMW 「에헤헤… 드디어 넣어 주는 거네♪ 저기♪ 빨리이♪」
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"이")% %CALLNAME:TARGET%에게 삽입하겠다고 고하자 %CALLNAME:TARGET%는 기쁜 얼굴로 삽입을 졸랐다.
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"은")% 그 요구에 응해 남자를 모르는 텐시의 은밀한 장소에 페니스를 찔러 넣었다.
@@ -2891,7 +2891,7 @@ IF SELECTCOM == 20
                     PRINTFORMW 「응♪… 하아♪… 좀 더 세게… 해 줘어♪… 좀 더… 아프게… 해 줘♪」
                     PRINTFORMW %CALLNAME:TARGET%가 눈물을 흘리면서도 더욱 더 요구하자 %조사처리(CALLNAME:PLAYER,"은")% 피스톤질을 더욱 세차게 반복했다…
                 ;연모のみ（복종,음란なし）
-                ELSEIF TALENT:150 && TALENT:160 == 0 && TALENT:170 == 0
+                ELSEIF TALENT:연모 && TALENT:복종 == 0 && TALENT:음란 == 0
                     PRINTFORMW 「에헤헤… 드디어 받아 주는 거네♪… 그치만, 이런 모습으로…」
                     PRINTFORMW %CALLNAME:TARGET%는 속박된 채로 처음을 잃는 것에 약한 저항감을 보이고 있다.
                     PRINTFORMW 「가능하면 풀어 주… 읍♪ 츄우…… ――흐읏!!!」
@@ -2922,7 +2922,7 @@ IF SELECTCOM == 20
             ;縄無し
             ELSE
                 ;복종か음란（연모持ち含む）
-                IF TALENT:160 == 1 || TALENT:170 == 1
+                IF TALENT:복종 == 1 || TALENT:음란 == 1
                     PRINTFORMW 「에헤헤… 드디어 넣어 주는 거네♪ 저기♪ 빨리이♪」
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"이")% %CALLNAME:TARGET%에게 삽입하겠다고 고하자 %CALLNAME:TARGET%는 기쁜 얼굴로 다리를 벌렸다.
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"은")% 그 요구에 응해 남자를 모르는 텐시의 은밀한 장소에 페니스를 찔러 넣었다.
@@ -2935,7 +2935,7 @@ IF SELECTCOM == 20
                     PRINTFORMW 「응♪… 하아♪… 좀 더 세게… 해 줘어♪… 좀 더… 아프게… 해 줘♪」
                     PRINTFORMW %CALLNAME:TARGET%가 눈물을 흘리면서도 더욱 더 요구하자 %조사처리(CALLNAME:PLAYER,"은")% 피스톤을 더욱 세차게 반복했다…
                 ;연모のみ（복종,음란なし）
-                ELSEIF TALENT:150 && TALENT:160 == 0 && TALENT:170 == 0
+                ELSEIF TALENT:연모 && TALENT:복종 == 0 && TALENT:음란 == 0
                     PRINTFORMW 「에헤헤… 드디어 받아 주는 거네♪… 언제든지 넣어도 괜찮으니까…」
                     PRINTFORMW %CALLNAME:TARGET%는 자기 스스로 음부를 벌려 %CALLNAME:PLAYER%에게 처녀를 빼앗기는 것을 기대하고 있다.
                     PRINTFORMW 「저기…♪ 빨리이… 응… 츄우… 읏♪ 왔다아♪」
@@ -2973,7 +2973,7 @@ IF SELECTCOM == 20
             ;縄あり
             IF TEQUIP:40 >= 1
                 ;연모
-                IF TALENT:150 == 1
+                IF TALENT:연모 == 1
                     IF CFLAG:7006 == 0
                         PRINTFORMW 「아… 드디어 %CALLNAME:PLAYER%의 것을 넣어 주는 거네♪」
                         PRINTFORMW %CALLNAME:TARGET%는 묶인 채로도 환한 미소를 지으며 삽입을 애타게 기다리고 있다.
@@ -3030,7 +3030,7 @@ IF SELECTCOM == 20
             ;縄無し
             ELSE
                 ;연모
-                IF TALENT:150 == 1
+                IF TALENT:연모 == 1
                     IF CFLAG:7006 == 0
                         PRINTFORMW 「아… 드디어 %CALLNAME:PLAYER%의 것을 넣어 주는 거네♪」
                         PRINTFORMW %CALLNAME:TARGET%는 환한 미소를 지으며 삽입을 애타게 기다리고 있다.
@@ -3093,14 +3093,14 @@ IF SELECTCOM == 20
     ELSE
         TRYCALL K52_INSERT_V
         ;陥落している場合,陥落向け喘ぎ声
-        IF TALENT:150 == 1 ||TALENT:160 == 1 || TALENT:170 == 1
+        IF TALENT:연모 == 1 ||TALENT:복종 == 1 || TALENT:음란 == 1
             TRYCALL K52_PANT_VOICE_RENBO
             IF TFLAG:11 > 0
                 TRYCALL K52_SPERM_WANT
             ENDIF
         ELSE
             ;쾌락각인3かつV감각3以上.もしくは淫壺持ってる
-            IF TALENT:172 == 1 || (MARK:쾌락각인 ==3 && ABL:1 >= 2)
+            IF TALENT:음호 == 1 || (MARK:쾌락각인 ==3 && ABL:V감각 >= 2)
                 TRYCALL K52_PANT_VOICE_NORMAL
                 IF TFLAG:11 > 0
                     TRYCALL K52_SPERM_WANT
@@ -3125,7 +3125,7 @@ IF SELECTCOM == 21
             ;縄あり
             IF TEQUIP:40 >= 1
                 ;복종か음란（연모持ち含む）
-                IF TALENT:160 == 1 || TALENT:170 == 1
+                IF TALENT:복종 == 1 || TALENT:음란 == 1
                     PRINTFORMW 「에헤헤… 드디어 넣어 주는 거네♪ 저기♪ 빨리이♪」
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"이")% %CALLNAME:TARGET%에게 삽입하겠다고 고하자 %CALLNAME:TARGET%는 기쁜 얼굴로 삽입을 졸랐다.
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"은")% 그 요구에 응해 뒤에서 남자를 모르는 텐시의 은밀한 장소에 페니스를 찔러 넣었다.
@@ -3138,7 +3138,7 @@ IF SELECTCOM == 21
                     PRINTFORMW 「응♪… 하아♪… 처음부터 뒤로 하다니이♪ 굉장해… 좀 더 범해 줘어♪」
                     PRINTFORMW %CALLNAME:TARGET%가 눈물을 흘리면서도 더욱 더 요구하자 %조사처리(CALLNAME:PLAYER,"은")% 피스톤질을 더욱 세차게 반복했다…
                 ;연모のみ（복종,음란なし）
-                ELSEIF TALENT:150 && TALENT:160 == 0 && TALENT:170 == 0
+                ELSEIF TALENT:연모 && TALENT:복종 == 0 && TALENT:음란 == 0
                     PRINTFORMW 「에헤헤… 드디어 받아 주는 거네♪… 그치만, 첫경험이 이런 꼴로 후배위라니…」
                     PRINTFORMW %CALLNAME:TARGET%는 속박된 채로 처음을 잃는 것에 저항감을 보이고 있다.
                     PRINTFORMW 「엄청 흥분… 읍♪ 츄우…… ――흐읏!!!」
@@ -3169,7 +3169,7 @@ IF SELECTCOM == 21
             ;縄無し
             ELSE
                 ;복종か음란（연모持ち含む）
-                IF TALENT:160 == 1 || TALENT:170 == 1
+                IF TALENT:복종 == 1 || TALENT:음란 == 1
                     PRINTFORMW 「에헤헤… 드디어 넣어 주는 거네♪ 저기♪ 빨리이♪」
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"이")% %CALLNAME:TARGET%에게 삽입하겠다고 고하자 %CALLNAME:TARGET%는 기쁜 얼굴로 허리를 내밀었다.
                     PRINTFORMW %조사처리(CALLNAME:PLAYER,"은")% 그 요구에 응해 뒤에서 남자를 모르는 텐시의 은밀한 장소에 페니스를 찔러 넣었다.
@@ -3182,7 +3182,7 @@ IF SELECTCOM == 21
                     PRINTFORMW 「응♪… 하아♪… 좀 더 세게… 해 줘어♪… 좀 더… 아프게… 해 줘♪」
                     PRINTFORMW %CALLNAME:TARGET%가 눈물을 흘리면서도 더욱 더 요구하자 %조사처리(CALLNAME:PLAYER,"은")% 피스톤을 더욱 세차게 반복했다…
                 ;연모のみ（복종,음란なし）
-                ELSEIF TALENT:150 && TALENT:160 == 0 && TALENT:170 == 0
+                ELSEIF TALENT:연모 && TALENT:복종 == 0 && TALENT:음란 == 0
                     PRINTFORMW 「에헤헤… 드디어 받아 주는 거네♪… 언제든지 넣어도 괜찮으니까…」
                     PRINTFORMW %CALLNAME:TARGET%는 자기 스스로 음부를 벌려 %CALLNAME:PLAYER%에게 처녀를 빼앗기는 것을 기대하고 있다.
                     PRINTFORMW 「저기…♪ 빨리이… 응… 츄우… 읏♪ 왔다아♪」
@@ -3219,7 +3219,7 @@ IF SELECTCOM == 21
             ;縄あり
             IF TEQUIP:40 >= 1
                 ;연모
-                IF TALENT:150 == 1
+                IF TALENT:연모 == 1
                     IF CFLAG:7006 == 0
                         PRINTFORMW 「아… 드디어 %CALLNAME:PLAYER%의 것을 넣어 주는 거네♪」
                         PRINTFORMW %CALLNAME:TARGET%는 묶인 채로도 환한 미소를 지으며 삽입을 애타게 기다리고 있다.
@@ -3276,7 +3276,7 @@ IF SELECTCOM == 21
             ;縄無し
             ELSE
                 ;연모
-                IF TALENT:150 == 1
+                IF TALENT:연모 == 1
                     IF CFLAG:7006 == 0
                         PRINTFORMW 「아… 드디어 %CALLNAME:PLAYER%의 것을 넣어 주는 거네♪」
                         PRINTFORMW %CALLNAME:TARGET%는 환한 미소를 지으며 삽입을 애타게 기다리고 있다.
@@ -3339,11 +3339,11 @@ IF SELECTCOM == 21
     ELSE
         TRYCALL K52_INSERT_V
         ;陥落している場合,陥落向け喘ぎ声
-        IF TALENT:150 == 1 ||TALENT:160 == 1 || TALENT:170 == 1
+        IF TALENT:연모 == 1 ||TALENT:복종 == 1 || TALENT:음란 == 1
             TRYCALL K52_PANT_VOICE_RENBO
         ELSE
             ;쾌락각인3かつV감각3以上.もしくは淫壺持ってる
-            IF TALENT:172 == 1 || (MARK:쾌락각인 ==3 && ABL:1 >= 2)
+            IF TALENT:음호 == 1 || (MARK:쾌락각인 ==3 && ABL:V감각 >= 2)
                 TRYCALL K52_PANT_VOICE_NORMAL
                 IF TFLAG:11 > 0
                     TRYCALL K52_SPERM_WANT
@@ -3531,7 +3531,7 @@ IF SELECTCOM == 41
                 PRINTFORMW %CALLNAME:TARGET%는 믿을 수 없다는 표정으로 당신을 쳐다봤다.
                 PRINTFORMW 「으으… 어쩔 수 없네… 조금만이야…」
                 ;アナル汁付き
-                IF CFLAG:7001 == 1 || STAIN:MASTER:2 & 8
+                IF CFLAG:7001 == 1 || STAIN:MASTER:자지 & 8
                     PRINTFORMW 「으엑… 써… 똥이 묻은 채잖아… 흐윽…」
                     PRINTFORMW %CALLNAME:TARGET%는 울면서 %CALLNAME:PLAYER%의 페니스에 혀를 감았다.
                 ENDIF
@@ -3539,7 +3539,7 @@ IF SELECTCOM == 41
                 PRINTFORMW 「딸꾹…… 입으로!? 으으… 싫은데에에에… 하웁…」
                 PRINTFORMW %CALLNAME:TARGET%는 눈물을 머금고 페니스를 물었다.
                 ;アナル汁付き // 위에랑 랜덤인 주제에 반응차 무엇?
-                IF CFLAG:7001 == 1 || STAIN:MASTER:2 & 8
+                IF CFLAG:7001 == 1 || STAIN:MASTER:자지 & 8
                     PRINTFORMW 「――!? 우웩! 켁… 콜록!」
                     PRINTFORMW 역시 첫 펠라로 장액투성이의 페니스는 무리였는지 %CALLNAME:TARGET%가 무심코 구토했다.
                     PRINTFORMW 「케흐흑… 계속 해야해…? 이젠… 싫어…」
@@ -3549,7 +3549,7 @@ IF SELECTCOM == 41
         ENDIF
         CFLAG:8256= 1
     ;기교ＬＶ２以上,봉사정신ＬＶ２以上
-    IF ABL:12 >= 2 && ABL:13 >= 2
+    IF ABL:기교 >= 2 && ABL:봉사정신 >= 2
         CFLAG:7001 = 0
         RETURN 0
     ;その他の場合
@@ -3604,7 +3604,7 @@ IF SELECTCOM == 41
             ;アナル汁付き
             IF CFLAG:7001 == 1
                 ;기교ＬＶ２以上,봉사정신ＬＶ２以上
-                IF ABL:12 >= 2 && ABL:13 >= 2
+                IF ABL:기교 >= 2 && ABL:봉사정신 >= 2
                     ;乱数分岐:3
                     IF RAND:3 == 0
                         PRINTFORMW 「으으… 똥이 묻어 있다고… 아으…」
@@ -3679,7 +3679,7 @@ IF SELECTCOM == 41
             CFLAG:8256 = 2
         ENDIF
         ;기교ＬＶ２以上,봉사정신ＬＶ２以上
-        IF ABL:12 >= 2 && ABL:13 >= 2
+        IF ABL:기교 >= 2 && ABL:봉사정신 >= 2
             CFLAG:7001 = 0
             RETURN 0
         ;その他の場合
@@ -3734,7 +3734,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 45
     ;トンでもないアナル
-    IF CFLAG:8246 > 0 && CFLAG:8441 > 0 && TALENT:173 == 1 && EXP:33 >= 30
+    IF CFLAG:8246 > 0 && CFLAG:8441 > 0 && TALENT:음고 == 1 && EXP:A확장경험 >= 30
         PRINTFORMW 「내 헐렁헐렁한 똥구멍, 봐 줘♪… 흐으응!」
         PRINTFORMW %CALLNAME:TARGET%가 눈을 감고 항문에 힘을 주자 배설음과 함께 장이 튀어나왔다.
         PRINTFORMW 「후우――… 하아… 하아♪… 어때? 추잡하지?」
@@ -3743,9 +3743,9 @@ IF SELECTCOM == 45
         PRINTFORMW （!!…다음 조교로 정상위나 후배위로 애널에 삽입하면…!!）
         CFLAG:8246 = 3
     ;연모か복종か음란か
-    ELSEIF TALENT:150 == 1 || TALENT:160 == 1 || TALENT:170 == 1
-        PRINTFORMW 「에헤헤♪ 이쪽\@(TALENT:173 || ABL:2 >= 4) ? 이 기분 좋아… # 에도 \@ 삽입해 줘♪」
-        PRINTFORMW %CALLNAME:TARGET%는 \@(TALENT:173 || ABL:2 >= 4) ? 개발되어 부드러워진 # 아직 딱딱한\@ 애널을 손가락으로 벌려 색기를 더했다.
+    ELSEIF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
+        PRINTFORMW 「에헤헤♪ 이쪽\@(TALENT:음고 || ABL:A감각 >= 4) ? 이 기분 좋아… # 에도 \@ 삽입해 줘♪」
+        PRINTFORMW %CALLNAME:TARGET%는 \@(TALENT:음고 || ABL:A감각 >= 4) ? 개발되어 부드러워진 # 아직 딱딱한\@ 애널을 손가락으로 벌려 색기를 더했다.
     ;その他
     ELSE
         PRINTFORMW 「저… 저의 엉덩이 구멍을… 봐 주세요… 흑…」
@@ -3918,7 +3918,7 @@ IF SELECTCOM == 61
     ;２回目以降
     ELSE
         ;연모,복종,음란のいずれかを持っている
-        IF TALENT:150 == 1 || TALENT:160 == 1 || TALENT:170 == 1
+        IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
             ;약물각인Lv1以上の場合 // 혀꼬인 발음 쓰는 건 어렵네...
             IF MARK:약물각인 >= 1
                 PRINTFORMW 「앗♪… 약 주는 거야?… 에헤헤… 꿀꺽…」
@@ -4038,7 +4038,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 66 && TFLAG:99 == 2
     ;연모
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「주인이 배란유도제 섭취」
     ;그 외의 경우
     ELSE
@@ -4077,7 +4077,7 @@ ENDIF
 ;-------------------------------------------------
 IF SELECTCOM == 67 && TFLAG:99 == 2
     ;연모
-    IF TALENT:150 == 1
+    IF TALENT:연모 == 1
         PRINTFORMW 「주인이 긴급피임약 섭취」
     ;그 외의 경우
     ELSE
@@ -4282,7 +4282,7 @@ IF SELECTCOM == 93
     ;２回目以降
     ELSE
         ;연모持ち
-        IF TALENT:150 == 1
+        IF TALENT:연모 == 1
             ;女教師
             IF TFLAG:146 == 3
                 PRINTFORMW 「오늘은 성교육 시간이야. 우후후～♪ 선생님이 가・르・쳐・줄・게♪」
@@ -5341,7 +5341,7 @@ IF SELECTCOM == 146
         ;연모or복종or음란
         IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
             ;処女である
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
                 PRINTFORMW 「아♪ 드디어 삽입해 주는 거야♪?」
                 PRINTFORMW %CALLNAME:TARGET%가 꽃이 피어나는 듯한 미소를 지으며 당신을 바라봤다.
                 PRINTFORMW %조사처리(CALLNAME:PLAYER,"은")% 아무 말도 하지 않고 %CALLNAME:TARGET%의 요도에 페니스를 삽입했다.
@@ -5368,7 +5368,7 @@ IF SELECTCOM == 146
         ;その他の場合
         ELSE
             ;処女である
-            IF TALENT:0 == 1
+            IF TALENT:처녀 == 1
                 PRINTFORMW 「아…… 하으응…… 뭐…… 뭐야 이거!? 어디에 삽입한 거야!?」
                 PRINTFORMW %CALLNAME:TARGET%는 요도에 삽입되는 것이 처음이라 당황하고 있다.
                 PRINTFORMW 「우와아…… 오줌 구멍……? 들어갔――― 히으읏!?」
@@ -5620,7 +5620,7 @@ IF (SELECTCOM == 174 || SELECTCOM == 176  || SELECTCOM == 177) && TEQUIP:25 == 7
     ;初めて
     IF CFLAG:8381 == 0
         ;연모or복종or음란or음고
-        IF TALENT:150 == 1 || TALENT:160 == 1 || TALENT:170 == 1 || TALENT:173 == 1
+        IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 || TALENT:음고 == 1
             PRINTFORMW 「아아아앙……♪ 뱃속이 꾸륵거리고 있어…♪」
             PRINTFORMW %CALLNAME:TARGET%는 처음하는 관장임에도 불구하고 뱃속의 이물감을 즐기고 있다.
             PRINTFORMW 「이거어♪ 굉장해♪ 나올 것 같아♪」
@@ -5636,9 +5636,9 @@ IF (SELECTCOM == 174 || SELECTCOM == 176  || SELECTCOM == 177) && TEQUIP:25 == 7
     ;２回目以降
     ELSE
         ;연모or복종or음란or음고
-        IF TALENT:150 == 1 || TALENT:160 == 1 || TALENT:170 == 1 || TALENT:173 == 1
+        IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 || TALENT:음고 == 1
             ;배설중독３以上
-            IF ABL:36 >= 3
+            IF ABL:배설중독 >= 3
                 IF RAND:4 == 0
                     PRINTFORMW 「아아아앙……♪ 잔뜩 들어온다아♪ 배가 망가져 버려어♪」
                 ELSEIF RAND:3 == 0
@@ -5677,7 +5677,7 @@ IF (SELECTCOM == 174 || SELECTCOM == 176  || SELECTCOM == 177) && TEQUIP:25 == 7
             ENDIF
         ELSE
             ;배설중독３以上
-            IF ABL:36 >= 3
+            IF ABL:배설중독 >= 3
                 IF RAND:4 == 0
                     PRINTFORMW 「하아――, 하아――…… 괴로… 워… 으그윽……」
                 ELSEIF RAND:3 == 0
@@ -5699,7 +5699,7 @@ IF (SELECTCOM == 174 || SELECTCOM == 176  || SELECTCOM == 177) && TEQUIP:25 == 7
                 ELSE
                     PRINTFORMW 「으아아앗…! 더는 싫어! 뽑아 줘! 뽑아 줘어!」
                 ENDIF
-                PRINTFORMW \@(ABL:2 >= 3) ? 컵 한 잔 분량 # 큰 관장기 하나 분량 \@의 관장액을 주입당한 %CALLNAME:TARGET%는 울부짖으며 저항했다.
+                PRINTFORMW \@(ABL:A감각 >= 3) ? 컵 한 잔 분량 # 큰 관장기 하나 분량 \@의 관장액을 주입당한 %CALLNAME:TARGET%는 울부짖으며 저항했다.
                 PRINTFORMW 텐시는 어쩔 수 없이 고개를 푹 숙이고 웅크려 앉아 변의를 필사적으로 참고 있다.
             ENDIF
         ENDIF
@@ -5732,9 +5732,9 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
     ;初めて // 씨발... 아 씨발 밥도 안먹고 으 씨발..
     IF CFLAG:8382 == 0
         ;연모or복종or음란or음고
-        IF TALENT:150 == 1 || TALENT:160 == 1 || TALENT:170 == 1 || TALENT:173 == 1
+        IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 || TALENT:음고 == 1
             ;노출증３以上かつ배설중독２以上
-            IF ABL:14 >= 3 && ABL:36 >= 2
+            IF ABL:노출증 >= 3 && ABL:배설중독 >= 2
                 PRINTFORMW 「내… 내가 볼일을 보는 걸 보고 싶은 거야? 응♪ 전부 봐 줘♪ 응아아아앗♪」
                 TRYCALL K52_DEFACTION_SOUND
                 PRINTFORMW %CALLNAME:TARGET%는 주저없이 매우 요란한 소리를 내며 %CALLNAME:PLAYER%의 앞에서 배설을 하기 시작했다.
@@ -5808,9 +5808,9 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
     ;２回目以降
     ELSE
         ;연모or복종or음란or음고の場合
-        IF TALENT:150 == 1 || TALENT:160 == 1 || TALENT:170 == 1 || TALENT:173 == 1
+        IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 || TALENT:음고 == 1
             ;노출증３以上かつ배설중독２以上
-            IF ABL:14 >= 3 && ABL:36 >= 2
+            IF ABL:노출증 >= 3 && ABL:배설중독 >= 2
                 PRINTFORMW 「싫다～♪ 또 똥싸는 모습이 보고 싶다니♪ 잘 봐…… 읏♪」
                 TRYCALL K52_DEFACTION_SOUND
                 PRINTFORMW %CALLNAME:TARGET%의 항문에서 매우 요란한 배설음과 함께 그녀에게 걸맞지 않은 양의 배설물이 배출되고 있다.
@@ -5845,7 +5845,7 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
                     TRYCALL K52_DEFACTION_SOUND
                 ENDIF
                 PRINTFORMW \@(CFLAG:7008 > 10) ? %CALLNAME:TARGET%가 굉장한 양의 # \@ 배변을 마치고 숨을 난폭하게 내쉬었다.
-                PRINTFORMW 오물투성이가 된 채로 \@(EXP:33 > 30 && TALENT:173 == 1) ? 튀어나온 항문은 # 새빨갛게 충혈된 항문은 \@ 그 이상으로 점액으로 뒤덥혀 마치 %조사처리(CALLNAME:PLAYER,"을")% 유혹하고 있는 것 처럼 보였다.
+                PRINTFORMW 오물투성이가 된 채로 \@(EXP:A확장경험 > 30 && TALENT:음고 == 1) ? 튀어나온 항문은 # 새빨갛게 충혈된 항문은 \@ 그 이상으로 점액으로 뒤덥혀 마치 %조사처리(CALLNAME:PLAYER,"을")% 유혹하고 있는 것 처럼 보였다.
             ELSE
                 PRINTFORMW 「으, 역시 몇 번씩이나 하고 싶지는 않은데… 어쩔 수 없네… 잘 봐♪」
                 TRYCALL K52_DEFACTION_SOUND
@@ -5881,10 +5881,10 @@ IF SELECTCOM == 174 && TEQUIP:25 == 0
                     TRYCALL K52_DEFACTION_SOUND
                 ENDIF
                 PRINTFORMW \@(CFLAG:7008 > 10) ? %CALLNAME:TARGET%가 굉장한 양의 # \@ 배변을 마치고 숨을 난폭하게 내쉬었다.
-                PRINTFORMW 오물투성이가 된 채로 \@(EXP:33 > 30 && TALENT:173 == 1) ? 튀어나온 항문은 # 새빨갛게 충혈된 항문은 \@ 그 이상으로 점액으로 뒤덥혀 마치 %조사처리(CALLNAME:PLAYER,"을")% 유혹하고 있는 것 처럼 보였다.
+                PRINTFORMW 오물투성이가 된 채로 \@(EXP:A확장경험 > 30 && TALENT:음고 == 1) ? 튀어나온 항문은 # 새빨갛게 충혈된 항문은 \@ 그 이상으로 점액으로 뒤덥혀 마치 %조사처리(CALLNAME:PLAYER,"을")% 유혹하고 있는 것 처럼 보였다.
             ENDIF
         ELSE
-            IF ABL:14 >= 3 && ABL:36 >= 2
+            IF ABL:노출증 >= 3 && ABL:배설중독 >= 2
                 PRINTFORMW 「역시… 안 보면 안 돼? ……맘대로 해… 응…」
                 TRYCALL K52_DEFACTION_SOUND
                 PRINTFORMW %CALLNAME:TARGET%의 항문에서 매우 요란한 배설음과 함께 그녀에게 걸맞지 않은 양의 배설물이 배출되고 있다.
@@ -6618,50 +6618,50 @@ IF SELECTCOM == 227
     PRINTFORMW %조사처리(CALLNAME:MASTER,"은")% %CALLNAME:TARGET%를 어떻게 매도할지 생각했다.
     PRINTFORML 
     
-    ;연모or복종or음란or초Ｍかつ마조끼３以上
-    IF (TALENT:150 == 1 || TALENT:160 == 1 || TALENT:170 == 1 || TALENT:178 == 1) && ABL:21 >= 3
+    ;연모or복종or음란or초Mかつ마조끼３以上
+    IF (TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1 || TALENT:초M == 1) && ABL:마조끼 >= 3
         ;오줌싸개버릇をなじる
-        IF RAND:16  == 0 && TALENT:45 == 1
+        IF RAND:16  == 0 && TALENT:오줌싸개버릇 == 1
             PRINTFORMW ”장소를 가리지 않고 오줌을 싸다니, 천박한 암퇘지구만”
             PRINTFORMW 「네에엣♪ 저… 저는 어디서든 오줌을 싸는 천박한 천인입니다♪」
             PRINTFORMW ”스스로 인정하다니. 이건 벌을 줄 필요가 있군”
         ;음모없음であることをなじる
-        ELSEIF RAND:15 == 0 && TALENT:65 == 1
+        ELSEIF RAND:15 == 0 && TALENT:음모없음 == 1
             PRINTFORMW ”뭐냐. 음모를 깎는 게 그렇게도 좋으냐? 음란한 일을 하는데 방해라서 인가?”
             PRINTFORMW 「네에엣♪ 저는… 야한 일을 잔뜩 하고 싶어서 음모가 없는 게 좋습니다♪」
             PRINTFORMW ”…그야말로 치녀로군. 그래. 네 년에겐 벌이 필요한 것 같다”
         ;精液を飲んだだけでイってしまう体であることをなじる
-        ELSEIF RAND:14 == 0 && TALENT:66 == 1
+        ELSEIF RAND:14 == 0 && TALENT:정애미각 == 1
             PRINTFORMW ”정액을 마신 것만으로도 가는 몸이라니, 원래부터 음란한 년이었지?”
             PRINTFORMW 「네…… 네에… 저는 정액을 마시고 가버리는 음란한 년입니다… 정액을 원해요♪」
             PRINTFORMW ”하. 인정하는건가. 뭐 좋아, 정액을 주도록 하지. 단, 언제 줄지는 너 하기 나름이다”
         ;절벽であることをなじる
-        ELSEIF RAND:13 == 0 && TALENT:110 == 1
+        ELSEIF RAND:13 == 0 && TALENT:절벽 == 1
             PRINTFORMW ”흥. 보잘 것 없는 가슴이군. 빈유는 커녕 빨래판같은 절벽이구만”
             PRINTFORMW 「우으… 신경쓰고 있는데에…」
             PRINTFORMW ”뭐냐. 신경쓰고 있던건가? 가슴이 없으면 다른 곳으로 봉사해라. 이 암퇘지 년아”
         ;폭유で분유중독であることをなじる
-        ELSEIF RAND:12 == 0 && TALENT:113 == 1 && TALENT:134 == 1 && ABL:34 == 1
+        ELSEIF RAND:12 == 0 && TALENT:폭유 == 1 && TALENT:모유체질 == 1 && ABL:분유중독 == 1
             PRINTFORMW ”마치 젖소같구만. 큰데다가 모유까지 흩뿌리다니”
             PRINTFORMW 「아아… 젖을 짜 주세요… 뷰웃- 하고 모유를 짜 주세요♪」
             PRINTFORMW ”뭐냐. 듣지 못한 건가. 머리에 가야할 영양까지도 가슴으로 간거냐?”
         ;후타나리であることをなじる
-        ELSEIF RAND:11 == 0 && TALENT:121 == 1
+        ELSEIF RAND:11 == 0 && TALENT:후타나리 == 1
             PRINTFORMW ”흉한 것을 달고 있구만. 게다가 이런 상황에서 발기한건가?”
             PRINTFORMW 「엣…… 이건 그게… 우우…」
             PRINTFORMW ”뭐냐? 매도당해서 더 커졌다고? 그런가. 네 년, 뼛속까지 변태로군”
         ;음란であることをなじる
-        ELSEIF RAND:10 == 0 && TALENT:170 == 1
+        ELSEIF RAND:10 == 0 && TALENT:음란 == 1
             PRINTFORMW ”이봐 이봐… 꽤나 흥분해 있는데. 매도당한다는 생각만으로도 젖어 버렸나?”
             PRINTFORMW 「하으읏♪ 좀 더 매도해 주세요♪ 매도당하는 것만으로도, 가버릴 것 같아앙♪」
             PRINTFORMW ”중증이군. 밧줄로 묶어서 뒷골목에 방치해도 네 년에겐 포상이겠지?”
         ;창부であることをなじる（Ｓパッチ開放するまで意味なし）
-        ELSEIF RAND:9 == 0 && TALENT:260 == 1
+        ELSEIF RAND:9 == 0 && TALENT:창부 == 1
             PRINTFORMW ”네 년은 누군지도 모르는 남자와 자는 것이 즐겁지?”
             PRINTFORMW 「아…… 아으… 그럴 리… 그럴 리는♪」
             PRINTFORMW ”꼴을 보아하니 부정은 하지 못하는 모양이구나? 이 창녀가”
         ;アナルがとんでもないことになっていることをなじる
-        ELSEIF RAND:8 == 0 && TALENT:173 == 1 && EXP:33 >= 30 && CFLAG:8441 > 0
+        ELSEIF RAND:8 == 0 && TALENT:음고 == 1 && EXP:A확장경험 >= 30 && CFLAG:8441 > 0
             PRINTFORMW ”꽤나 터무니없는 애널이 돼버렸군. 이래서야 오나홀로 밖에 쓸 수 없지 않은가?”
             PRINTFORMW 「그럴… 지도 모르겠네… 그치만, 오나홀이라도 좋으니 써주기를 원해…」
             PRINTFORMW ”잘 말했다. 그 헐렁한 애널은 내가 오나홀로 써주도록 하지. 감사하도록”
@@ -6686,12 +6686,12 @@ IF SELECTCOM == 227
             PRINTFORMW 「밖에서 야한 일… 좋아아… 보여지는 것도 정말 좋아♪」
             PRINTFORMW ”하핫. 과연. 그럼 우선은 음부를 벌려서 자궁구까지 보여 주실까”
         ;동물귀であることをなじる
-        ELSEIF RAND:3 == 0 && TALENT:116 == 1
+        ELSEIF RAND:3 == 0 && TALENT:동물귀 == 1
             PRINTFORMW ”짐승같은 귀를 해서는… 동물은 동물답게 뒤로 범해지는 것이 어울린다”
             PRINTFORMW 「네에엣♪ 후배위 정말 좋아♪ 안까지 쑤컹쑤컹 쑤시는 것도 좋아앙♪」
             PRINTFORMW ”하하핫. 과연 짐승답군. 포상으론 채찍이 적절하겠어”
         ;흠집であることをなじる
-        ELSEIF RAND:2 == 0 && TALENT:163 == 1
+        ELSEIF RAND:2 == 0 && TALENT:흠집 == 1
             PRINTFORMW ”누군지도 모르는 녀석들한테 낙인을 찍히고도 기억하지 못한다니. 굉장한 바보 아가씨로군, 네년은”
             PRINTFORMW 「우우… 상당히 신경쓰고 있는데에… 그래도… 지금은 %CALLNAME:MASTER%의…」
             PRINTFORMW ”누가 말을 해도 된다고 했지? 멍청한 년, 다시 몸으로 교육시켜 줘야겠군”
@@ -6704,33 +6704,33 @@ IF SELECTCOM == 227
     ;その他
     ELSE
         ;오줌싸개버릇をなじる
-        IF RAND:16  == 0 && TALENT:45 == 1
+        IF RAND:16  == 0 && TALENT:오줌싸개버릇 == 1
             PRINTFORMW ”장소를 가리지 않고 오줌을 싸다니, 천박한 암퇘지구만”
             PRINTFORMW 「흥. 당신이 오줌 구멍을 만져댄 탓이잖아!?」
             PRINTFORMW ”호오… 말대답을 하다니 좋은 배짱이군. 다음은 채찍질로 할까?”
         ;음모없음であることをなじる
-        ELSEIF RAND:15 == 0 && TALENT:65 == 1
+        ELSEIF RAND:15 == 0 && TALENT:음모없음 == 1
             PRINTFORMW ”뭐냐. 음모를 깎는 게 그렇게도 좋으냐? 음란한 일을 하는데 방해라서 인가?”
             PRINTFORMW 「아우…… 부정은 할 수 없을… 지도…」
             PRINTFORMW ”인정한건가. 그런 음란한 년에겐 상을 줘야겠군”
         ;精液を飲んだだけでイってしまう体であることをなじる
-        ELSEIF RAND:14 == 0 && TALENT:66 == 1
+        ELSEIF RAND:14 == 0 && TALENT:정애미각 == 1
             PRINTFORMW ”정액을 마신 것만으로도 가는 몸이라니, 원래부터 음란한 년이었지?”
             PRINTFORMW 「큭… 애초에 당신에 이렇게 만든 거잖아」
             PRINTFORMW ”호오, 아직도 반항을 할 여유가 있는건가. 이건 교육이 필요하겠어”
         ;절벽であることをなじる
-        ELSEIF RAND:13 == 0 && TALENT:110 == 1
+        ELSEIF RAND:13 == 0 && TALENT:절벽 == 1
             PRINTFORMW ”흥. 보잘 것 없는 가슴이군. 빈유는 커녕 빨래판같은 절벽이구만”
             PRINTFORMW 「뭐냐구. 가슴은 단순한 장식이잖아. 이쿠는 맨날 무겁다고 말하고 있고」
             PRINTFORMW ”주물러서 암소라고 불리게 해줄까? 꽤나 수고가 들겠지만”
         ;폭유で분유중독であることをなじる
-        ELSEIF RAND:12 == 0 && TALENT:113 == 1 && TALENT:134 == 1 && ABL:34 == 1
+        ELSEIF RAND:12 == 0 && TALENT:폭유 == 1 && TALENT:모유체질 == 1 && ABL:분유중독 == 1
             PRINTFORMW ”마치 젖소같구만. 큰데다가 모유까지 흩뿌리다니”
             PRINTFORMW 「뭐… 뭐라고! 전부 당신이 한 짓이잖아! 나는 나쁘지 않다구!」
             PRINTFORMW ”그건 중요하지 않아. 어찌됐건 지금의 너는 모유를 흘리면서 좋아하는 암퇘지라는 것이지”
         ;후타나리であることをなじる
-        ELSEIF RAND:11 == 0 && TALENT:121 == 1
-            PRINTFORMW ”흉한 것을 달고 있구만.\@(TALENT:PLAYER:120 > 0)  ?  그거, 나보다 큰 거 아닌가? # \@”
+        ELSEIF RAND:11 == 0 && TALENT:후타나리 == 1
+            PRINTFORMW ”흉한 것을 달고 있구만.\@(TALENT:PLAYER:남자 > 0)  ?  그거, 나보다 큰 거 아닌가? # \@”
             PRINTFORMW 「뭐야! 이건 당신이 한 거잖아! 돌려놔!」
             PRINTFORMW ”새삼스레 뭐냐. 성기를 만지면서 사정하고 느껴버리는 년 주제에. 그만 인정해라. 변태”
         ;欲情していることをなじる
@@ -6739,12 +6739,12 @@ IF SELECTCOM == 227
             PRINTFORMW 「그… 그래 맞아… 이상하지♪ 매도당해도 느껴 버려♪」
             PRINTFORMW ”후후… 그런가. 그럼 지금부터 뭘 당해도 느껴 버리는 몸으로 만들어 주지. 아픔도, 굴욕도 말이다”
         ;창부であることをなじる（Ｓパッチ開放するまで意味なし）
-        ELSEIF RAND:9 == 0 && TALENT:260 == 1
+        ELSEIF RAND:9 == 0 && TALENT:창부 == 1
             PRINTFORMW ”어처구니없는 창녀로군. 몸을 파는 것에 쾌락을 느낀다고?”
             PRINTFORMW 「흥. 그래. %CALLNAME:PLAYER% 따위한테 안길 바엔 차라리 그 쪽이 나아!」
             PRINTFORMW ”흐음… 꽤나 반항적인 창녀군. 이건 벌을 줄 보람이 있겠어”
         ;アナルがとんでもないことになっていることをなじる
-        ELSEIF RAND:8 == 0 && TALENT:173 == 1 && EXP:33 >= 30 && CFLAG:8441 > 0
+        ELSEIF RAND:8 == 0 && TALENT:음고 == 1 && EXP:A확장경험 >= 30 && CFLAG:8441 > 0
             PRINTFORMW ”꽤나 터무니없는 애널이 돼버렸군. 이래서야 오나홀로 밖에 쓸 수 없지 않은가?”
             PRINTFORMW 「흐윽… 훌쩍… 이렇게 만든 건 %조사처리(CALLNAME:PLAYER,"이잖")%아아… 흐윽… 이젠 헐렁헐렁하다구… 우에에에에엥…」
             PRINTFORMW ”걱정하지 마라. 이 세상엔 너같은 헐렁헐렁한 애널을 좋아하는 놈은 얼마든지 있으니까 말이지”
@@ -6769,12 +6769,12 @@ IF SELECTCOM == 227
             PRINTFORMW 「딱히 좋아하지는…」
             PRINTFORMW ”어느 쪽이든 상관없다. 금방 좋아하게 될테니. 아니, 더 좋아하게 되는 건가. 하하.”
         ;동물귀であることをなじる
-        ELSEIF RAND:3 == 0 && TALENT:116 == 1
+        ELSEIF RAND:3 == 0 && TALENT:동물귀 == 1
             PRINTFORMW  ”짐승같은 귀를 해서는… 동물 따위에게 옷은 필요 없는 것이 아닌가?”
             PRINTFORMW 「뭐야 진짜! 촉수로 지독하게 범한 다음에 한다는 소리가 그거야? 납득 못해!」
             PRINTFORMW ”꽤나 고생했다만. 조금은 주인의 노력을 칭찬해 줘도 괜찮지 않은가?”
         ;흠집であることをなじる
-        ELSEIF RAND:2 == 0 && TALENT:163 == 1
+        ELSEIF RAND:2 == 0 && TALENT:흠집 == 1
             PRINTFORMW ”누군지도 모르는 녀석들한테 낙인을 찍히고도 기억하지 못한다니. 굉장한 바보 아가씨로군, 네년은”
             PRINTFORMW 「흥. 바보라고 생각하던가. 적어도 나한테 낙인을 찍은 녀석은, 너 따위보단 상당히 나은 녀석이었으니까」
             PRINTFORMW ”그렇게 생각하나? 분명 나보다도 구역질이 나는 악당일지도 모른다만?”
@@ -6782,7 +6782,7 @@ IF SELECTCOM == 227
         ELSE
             PRINTFORMW %조사처리(CALLNAME:PLAYER,"은")% 떠오르는 대로 %CALLNAME:TARGET%를 험하게 매도했다.
             PRINTFORMW ”이… 이건 그런 플레이인 거지? 그런 거지? 그렇다고 말해 줘…”
-            PRINTFORMW %CALLNAME:TARGET%는 매도당할 때마다 굴욕에 떨고있다\@ (ABL:21 >= 3) ? 만, 그 표정은 점점 열락이 섞이기 시작했다 # \@.
+            PRINTFORMW %CALLNAME:TARGET%는 매도당할 때마다 굴욕에 떨고있다\@ (ABL:마조끼 >= 3) ? 만, 그 표정은 점점 열락이 섞이기 시작했다 # \@.
         ENDIF
     ENDIF
     RETURN 0
@@ -6849,7 +6849,7 @@ IF SELECTCOM == 230
 ;前回と今回の調教者が同じで縄使用中でなく前回の調教がイラマチオのとき.
 ;調教者が助手の場合,さらに새드끼LV3以上か욕망LV3以上
 ;デイ-プスロ-ト用口上
-IF PREVCOM == 230 && TEQUIP:40 == 0 && ((ASSIPLAY == 0 && TFLAG:133 == 0) || ((ASSIPLAY == 1 && TFLAG:133 == 1) && (ABL:PLAYER:20 > 2 || ABL:PLAYER:11 > 2)))
+IF PREVCOM == 230 && TEQUIP:40 == 0 && ((ASSIPLAY == 0 && TFLAG:133 == 0) || ((ASSIPLAY == 1 && TFLAG:133 == 1) && (ABL:PLAYER:새드끼 > 2 || ABL:PLAYER:욕망 > 2)))
     ;연모or복종or음란
     IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
         PRINTFORMW 「으웁! ……그렇게 억지로 하지 않아도 해줄 테니까♪ 하웁……」
@@ -6964,21 +6964,21 @@ IF SELECTCOM == 231
     ELSE
         ;연모or복종or음란
         IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
-            ;Ｖ확장경험 50以上
-            IF EXP:Ｖ확장경험 >= 50
+            ;V확장경험 50以上
+            IF EXP:V확장경험 >= 50
                 PRINTFORMW 「이거 엄청 좋아아아아아앙♪ 배꼽 위까지 범해지고 있어어어엇♪」
                 PRINTFORMW 주먹을 집어넣자 %CALLNAME:TARGET%가 짐승같은 소리를 질렀다.
                 PRINTFORMW 「보지 무너져 버려어엇♪ %CALLNAME:TARGET%를 더 망가뜨려 줘어어어!!!」
                 PRINTFORMW %CALLNAME:TARGET%는 여러가지 액체를 흘리며 절정에 이르렀다.
 
-            ;Ｖ확장경험 30以上
-            ELSEIF EXP:Ｖ확장경험 >= 30
+            ;V확장경험 30以上
+            ELSEIF EXP:V확장경험 >= 30
                 PRINTFORMW 「이거 엄청 좋아아아아아앙♪ 보지 뽑혀 버려어어엇♪」
                 PRINTFORMW 주먹을 집어넣자 %CALLNAME:TARGET%가 짐승같은 소리를 질렀다.
                 PRINTFORMW 「으극! 아으윽♪ 으아아아아아앗♪」
                 PRINTFORMW %CALLNAME:TARGET%는 여러가지 액체를 흘리며 절정에 이르렀다.
-            ;Ｖ확장경험 15以上
-            ELSEIF EXP:Ｖ확장경험 >= 15
+            ;V확장경험 15以上
+            ELSEIF EXP:V확장경험 >= 15
                 PRINTFORMW 「흐으앗……♪ 이거 좋아아앙……♪!」
                 PRINTFORMW 주먹을 집어넣자 %CALLNAME:TARGET%가 짐승같은 소리를 질렀다.
                 PRINTFORMW 「아윽! 가버려어엇……♪ 보지 뽑혀 버려어엇♪」
@@ -7053,8 +7053,8 @@ IF SELECTCOM == 232
     ELSE
         ;연모or복종or음란
         IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
-            ;Ａ확장경험 50以上
-            IF EXP:Ａ확장경험 >= 50
+            ;A확장경험 50以上
+            IF EXP:A확장경험 >= 50
                 PRINTFORMW 「이거 엄청 좋아아아아아앙♪ 배꼽 위까지 범해지고 있어어어엇♪」
                 PRINTFORMW %CALLNAME:TARGET%의 애널은 이미 %CALLNAME:PLAYER%의 팔꿈치까지 들어갈 정도로 확정되어 버렸다.
                 PRINTFORMW 「좀 더어……♪ 좀 더 안까지♪ 엉덩이부터 입까지 범해 줘어♪」
@@ -7067,8 +7067,8 @@ IF SELECTCOM == 232
                     PRINTFORMW 튀어나온 항문을 더듬어 주자 %CALLNAME:TARGET%의 몸이 뒤로 휘면서 의식이 날아가려 하고 있다.
                 ENDIF
 
-            ;Ａ확장경험 30以上
-            ELSEIF EXP:Ａ확장경험 >= 30
+            ;A확장경험 30以上
+            ELSEIF EXP:A확장경험 >= 30
                 PRINTFORMW 「이거 엄청 좋아아아아아앙♪ 항문이 닫히지 않게 되어 버려어엇♪」
                 PRINTFORMW 주먹을 집어넣자 %CALLNAME:TARGET%가 짐승같은 소리를 질렀다.
                 PRINTFORMW 「아으윽! 크으응♪ 으아아아아앗♪」
@@ -7109,8 +7109,8 @@ IF SELECTCOM == 232
                 ;その他の場合
                 ELSE
                 ENDIF
-            ;Ａ확장경험 15以上
-            ELSEIF EXP:Ａ확장경험 >= 15
+            ;A확장경험 15以上
+            ELSEIF EXP:A확장경험 >= 15
                 PRINTFORMW 「흐으앗……♪ 이거 좋아아앙……♪!」
                 PRINTFORMW 주먹을 집어넣자 %CALLNAME:TARGET%가 짐승같은 소리를 질렀다.
                 PRINTFORMW 「아윽! 가버려어엇……♪ 엉덩이 망가져 버려어엇♪」
@@ -7197,7 +7197,7 @@ IF SELECTCOM == 238
         PRINTFORMW 파지직! 파직!
         CALL K52_SCREAM_HARD
         PRINTFORMW 과연 천인이라 그런지 아픔에는 강한 모양이다만, 스턴건으로 몇 번 지져주자 %CALLNAME:TARGET%는 얌전하게 기절했다.
-        IF TALENT:178 == 1
+        IF TALENT:초M == 1
             PRINTFORMW 「에헤… 아하… 하…」
             PRINTFORMW %CALLNAME:TARGET%는 전신을 떨면서도 어쩐지 행복한 얼굴로 기절해 있다.
         ELSE
@@ -7266,7 +7266,7 @@ IF SELECTCOM == 241
         PRINTFORMW 무방비한 %CALLNAME:TARGET%의 배에 주먹을 꽂아넣자 %CALLNAME:TARGET%는 \@(TEQUIP:41 == 0) ? 배를 부여잡고  # \@쓰러졌다.
     ENDIF
     
-    IF EXP:33 > 30 && TALENT:173 == 1
+    IF EXP:A확장경험 > 30 && TALENT:음고 == 1
         PRINTFORMW 거기에 더해 새빨간 항문이 칠칠치 못하게 튀어나와 버렸다.
     ENDIF
     
@@ -7275,8 +7275,8 @@ IF SELECTCOM == 241
     IF BASE:0 < 600
         PRINTFORMW 「크… 읍… 아윽……」
         PRINTFORMW 고통이 한계를 넘었는지 %CALLNAME:TARGET%는 눈이 뒤집힌 채로 쓰러졌다.
-    ;초Ｍか마조끼５なら
-    ELSEIF TALENT:178 == 1 || ABL:21 == 5
+    ;초Mか마조끼５なら
+    ELSEIF TALENT:초M == 1 || ABL:마조끼 == 5
         PRINTFORMW 「큭, 하아, 하아, …벌써, 끝이야? 좀 더 격하게 해 줘어♪」
         PRINTFORMW %CALLNAME:TARGET%는 고문에 가까운 조교를 받고도 환희에 찬 표정을 지으며 다음 조교를 기다리고 있다.
     ELSE
@@ -11193,14 +11193,14 @@ IF TFLAG:23 > 0 && SELECTCOM == 146
         ;연모か복종か음란の場合
         IF TALENT:연모 == 1 || TALENT:복종 == 1 || TALENT:음란 == 1
             ;さらに요도광の場合
-            IF TALENT:175 == 1
+            IF TALENT:요도광 == 1
                 PRINTFORMW 「히윽♪ 뜨거운 거 왔다아♪」
                 PRINTFORMW 방광에 정액이 흘러 들어오자 %CALLNAME:TARGET%는 입을 벌린 채로 침을 흘리며 몽롱한 표정을 지었다..
                 PRINTFORMW 페니스를 뽑아내자 칠칠치 못하게 벌려진 채로 경련하는 요도에서 정액이 뚝뚝 떨어졌다…
                 PRINTFORMW 「흐앗♪ 좋아앙♪ 오줌 구멍 좀 더 괴롭혀 줘어♪」
             ELSE
                 ;処女だったら
-                IF TALENT:0 == 1
+                IF TALENT:처녀 == 1
                     PRINTFORMW 「아핫♪… 오줌 구멍에 사정♪」
                     PRINTFORMW %CALLNAME:TARGET%는 요도에서 흘러나오는 정액을 보면서 황홀한 표정으로 %CALLNAME:PLAYER%에게 기댔다.
                     PRINTFORMW 「저기이… 슬슬 여기에도 삽입해 줘어… 더는 참을 수 없을 것 같아…」
@@ -11228,22 +11228,22 @@ ENDIF
 ;-------------------------------------------------
 ;C감각Lv5でＣ絶頂50以上    CFLAG:9015
 ;-------------------------------------------------
-;IF ABL:0 >= 5 && EX:0 >= 50 && NOWEX:0 > 0
+;IF ABL:C감각 >= 5 && EX:0 >= 50 && NOWEX:0 > 0
 ;ENDIF
 ;-------------------------------------------------
 ;V감각Lv5でＶ絶頂50以上    CFLAG:9016
 ;-------------------------------------------------
-;IF ABL:1 >= 5 && EX:1 >= 50 && NOWEX:1 > 0
+;IF ABL:V감각 >= 5 && EX:1 >= 50 && NOWEX:1 > 0
 ;ENDIF
 ;-------------------------------------------------
 ;A감각Lv5でＡ絶頂50以上    CFLAG:9017
 ;-------------------------------------------------
-;IF ABL:2 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
+;IF ABL:A감각 >= 5 && EX:2 >= 50 && NOWEX:2 > 0
 ;ENDIF
 ;-------------------------------------------------
 ;B감각Lv5でＢ絶頂50以上    CFLAG:9018
 ;-------------------------------------------------
-;IF ABL:3 >= 5 && EX:3 >= 50 && NOWEX:3 > 0
+;IF ABL:B감각 >= 5 && EX:3 >= 50 && NOWEX:3 > 0
 ;ENDIF
 ;-------------------------------------------------
 ;四重絶頂    CFLAG:9019
@@ -11470,7 +11470,7 @@ IF TFLAG:99 == 2
 ;野外ライブ成功
 ;-------------------------------------------------
 ELSEIF TFLAG:99 == 1
-    IF TALENT:94 == 1
+    IF TALENT:인기 == 1
         PRINTFORMW 「다들-! 또 와줘서 고마워-! 오늘은 이걸로 마지막이지만, 마음껏 즐겨 줘♪」
         PRINTFORMW 『『『『『우오오오오오오오오오오오오오오!!!!』』』』』
         PRINTFORMW 지금의 %CALLNAME:TARGET%는 마을에서 이름이 알려진 아이돌같은 취급이다.
@@ -11507,7 +11507,7 @@ ELSE
     PRINTFORMW 「우으…… %CALLNAME:TARGET%, 부르겠습니다……」
     PRINTFORMW 관객이 별로 없는 회장에 %CALLNAME:TARGET%의 노래가 울려 퍼졌다…
     ;素質変化ありand음치持ちの場合……음치矯正イベント（1/5の確率）
-    IF RAND:5 == 0 && (CFLAG:7003 == 1 || TALENT:190 == 1)
+    IF RAND:5 == 0 && (CFLAG:7003 == 1 || TALENT:음치 == 1)
         PRINTFORMW ………
         PRINTFORMW ……
         PRINTFORMW …
@@ -11518,9 +11518,9 @@ ELSE
         PRINTFORMW 이 날부터 다음 공연이 있을 때까지, %조사처리(CALLNAME:MASTER,"은")% %CALLNAME:TARGET%의 보컬 트레이닝에 어울려 줬다.
         PRINTFORMW %CALLNAME:TARGET%는 익숙하지 않은 일을 한 탓인지 지쳐 버렸다.
         PRINTFORMW %CALLNAME:TARGET%는 『음치』를 극복했다……만, 조금 쉬게 하는 것이 나을 것 같다……
-        TALENT:190 = 0
-        BASE:TARGET:0 = 500
-        BASE:TARGET:1 = 150
+        TALENT:음치 = 0
+        BASE:TARGET:체력 = 500
+        BASE:TARGET:기력 = 150
     ENDIF
 ENDIF
 
@@ -11528,7 +11528,7 @@ ENDIF
 ;弁当作成
 ;-------------------------------------------------
 @KOJO_52_MESSAGE_SUB_EVENT_SCENE111
-IF (ABL:70 - TALENT:192 + (TALENT:193 * 2)) >= 4
+IF (ABL:요리기능 - TALENT:요리못함 + (TALENT:요리잘함 * 2)) >= 4
     PRINTFORMW 「요리? 응♪ 최선을 다해서 만들어 줄게♪」
     PRINTFORMW %CALLNAME:TARGET%는 미소를 지은 채로 콧노래를 흥얼거리며 주방으로 향했다.
 ELSE
@@ -11537,11 +11537,11 @@ ELSE
     PRINTFORMW …요리인지 숯인지 모를 물체가 나오지 않기를 빌어야 하려나…?
 ENDIF
 
-IF (ABL:70 - TALENT:192 + (TALENT:193 * 2)) >= 4
+IF (ABL:요리기능 - TALENT:요리못함 + (TALENT:요리잘함 * 2)) >= 4
 
     PRINTFORML 
 
-    IF (TSTR:5 == "피치 플랑베" || TSTR:5 == "복숭아 스프" || TSTR:5 == "복숭아 샤베트") && ABL:70 >= 4
+    IF (TSTR:5 == "피치 플랑베" || TSTR:5 == "복숭아 스프" || TSTR:5 == "복숭아 샤베트") && ABL:요리기능 >= 4
         PRINTFORMW 「그러면～ …오옷? 복숭아 캔 발견! 정말～♪ 이런 곳에 숨겨 놓지 않아도 괜찮은데～」
         IF ASSI >= 0 && NO:ASSI == 51
             PRINTFORMW 『큰아가씨, 군것질은 안된다고요?』
@@ -11561,7 +11561,7 @@ IF (ABL:70 - TALENT:192 + (TALENT:193 * 2)) >= 4
     ELSEIF TSTR:5 == "고기감자조림"
         PRINTFORMW 「후흐흥～♪ 이번엔 고기감자조림이야♪」
         PRINTFORMW %CALLNAME:TARGET%는 자랑스럽다는 듯이 가슴을 폈다.
-        SIF TALENT:110 || TALENT:109
+        SIF TALENT:절벽 || TALENT:109
             PRINTFORMW 절벽이지만.
         PRINTFORMW 「 『인생의 반려자를 찾으면 만들어 드리세요♪』 라고 이쿠가 그랬어」
         IF ASSI >= 0 && NO:ASSI == 51
@@ -11605,7 +11605,7 @@ IF (ABL:70 - TALENT:192 + (TALENT:193 * 2)) >= 4
             PRINTFORMW %CALLNAME:TARGET%는 콧노래를 부르며 햄버그를 만들기 시작했다.
         ENDIF
             PRINTFORMW 굉장히 맛있게 먹을 수 있을거란 생각이 들었다…
-    ELSEIF (TSTR:5 == "모유 요리" || TSTR:5 == "부드러운 맛이 날 듯한 모유 요리") && TALENT:134
+    ELSEIF (TSTR:5 == "모유 요리" || TSTR:5 == "부드러운 맛이 날 듯한 모유 요리") && TALENT:모유체질
         IF ASSI >= 0 && NO:ASSI == 9
             PRINTFORMW 「%CALLNAME:TARGET%～, 햄버그에 치즈 넣는다～?」
             PRINTFORMW 글쎄…… 마침 치즈가 다 떨어져 버렸을텐데…
@@ -11613,7 +11613,7 @@ IF (ABL:70 - TALENT:192 + (TALENT:193 * 2)) >= 4
             PRINTFORMW 사쿠야인가… 문제 없다는 게 무슨 뜻이지? ……설마!?
             PRINTFORMW 『눈치채 주신 것 같네요. %CALLNAME:TARGET% 씨의 모유로 만들었답니다. 드세요.』
             PRINTFORMW 사쿠야가 건네준 치즈를 입에 넣자 치즈의 달콤함과 함께 희미한 복숭아의 향이 퍼졌다.
-            SIF TALENT:ASSI:134
+            SIF TALENT:ASSI:모유체질
                 PRINTFORMW 『물론, 저의 것도 준비하고 있어요. 즐거움은 식사할 때… 예요.』
             PRINTFORMW 이건…… 엄청나게 기대가 된다. 요리가 완성되기까지의 시간이 몹시도 길게 느껴졌다.
         ELSE
@@ -11623,7 +11623,7 @@ IF (ABL:70 - TALENT:192 + (TALENT:193 * 2)) >= 4
             PRINTFORMW 그리고는 그 위에 자신의 모유를 뿌렸다.
             PRINTFORMW 「응♪… 조금… 하앗♪… 부족할지도 모르지만…… 먹어 줘♪」
         ENDIF
-    ELSEIF (TSTR:5 == "오믈렛" || TSTR:5 == "추억의 맛이 날 듯한 오믈렛")&& (TALENT:135 || TALENT:136)
+    ELSEIF (TSTR:5 == "오믈렛" || TSTR:5 == "추억의 맛이 날 듯한 오믈렛")&& (TALENT:난생 || TALENT:산란체질)
         PRINTFORMW 「으음～…… 오늘은 재료가 부족하네에…… 그렇지♪」
         PRINTFORMW %CALLNAME:TARGET%는 뭔가가 떠오른 것처럼 고개를 들었다.
         PRINTFORMW 「잠시만 닫을게…… 가능하면 들여다 보지 마」
@@ -11703,7 +11703,7 @@ RETURN 0
 ;朝フェラ    CFLAG:9164
 ;-------------------------------------------------
 @KOJO_52_MESSAGE_SUB_EVENT_SCENE140
-IF TALENT:150 == 1
+IF TALENT:연모 == 1
     PRINTFORMW 「하웁♪…… 쮸웁…… 에헤헤♪ 아침부터 건강하네♪」
 ELSE
     PRINTFORMW 「아웁…… 쮸웁…… 어라, 깼어?」
@@ -11712,7 +11712,7 @@ ENDIF
 ;朝パイズリ    CFLAG:9165
 ;-------------------------------------------------
 @KOJO_52_MESSAGE_SUB_EVENT_SCENE141
-IF TALENT:150 == 1
+IF TALENT:연모 == 1
     PRINTFORMW 「응♪ 앗, 깨워 버렸어?」
 ELSE
     PRINTFORMW 「이 내가 이런 부끄러운 일을 할 줄은… 읏…」
@@ -11721,7 +11721,7 @@ ENDIF
 ;朝騎乗位    CFLAG:9166
 ;-------------------------------------------------
 @KOJO_52_MESSAGE_SUB_EVENT_SCENE142
-IF TALENT:150 == 1
+IF TALENT:연모 == 1
     PRINTFORMW 「흐앙♪…… 아읏♪…… 좋은아침… 하응♪」
 ELSE
     PRINTFORMW 「읏…… 앙…… 앗…… 이건… 그게 말이지… 에헤헤」
@@ -11803,7 +11803,7 @@ ENDIF
 ;添い寝    CFLAG:9182
 ;-------------------------------------------------
 @KOJO_52_MESSAGE_SUB_EVENT_SCENE400
-IF TALENT:150 == 1
+IF TALENT:연모 == 1
     PRINTFORMW 「에헤헤～♪ 같이 자자♪」
 ELSE
     PRINTFORMW 「따…… 딱히 네가 좋은 게 아니야! 사람의 체온이 그리운 것 뿐이라구?」
@@ -11878,7 +11878,7 @@ PRINTFORMW 「하아…… 하아…… 그렇게 격렬하게… 부러워… �
 ;寝ているところを襲撃
 ;-------------------------------------------------
 @KOJO_52_MESSAGE_SUB_EVENT_SCENE421
-IF TALENT:150 == 1
+IF TALENT:연모 == 1
     PRINTFORMW 「에헤헤♪ 잘 먹겠습니다♪」
     PRINTFORMW 「이번엔 이쪽도…… 응?」
 ELSE
@@ -11910,7 +11910,7 @@ PRINTFORMW 「…핫… 뭐… 뭐야 이거-!? 아… 아무도 못 봤겠지�
 ;-------------------------------------------------
 @KOJO_52_MESSAGE_SUB_EVENT_SCENE130
 ;アイドルENDも想定していたりいなかったり // 매각 구상 주제에 해피 엔딩? 와우...
-IF ABL:72 == 5 && EXP:73 >= 50 && TALENT:140 == 0 && TALENT:153 == 0
+IF ABL:가창기능 == 5 && EXP:가창경험 >= 50 && TALENT:임신 == 0 && TALENT:상애 == 0
     PRINTFORMW 「손님? 누구지?」
     PRINTFORMW %CALLNAME:TARGET%를 팔기로 결정하고 노예상에게 연락을 취했지만, 돌아온 대답은 의외였다.
     PRINTFORMW ”%CALLNAME:TARGET%를 한 번 만나보고 싶어 하는 인물이 있다” 라며, 들어본 적 없는 남자의 이름을 가르쳐 주었다.
@@ -12128,7 +12128,7 @@ PRINTFORMW 「…%CALLNAME:MASTER%… 정말 좋아해-♪」
 ;;-------------------------------------------------
 ;IF TFLAG:205 == 1
 ;
-;    IF ABL:72 == 5 && EXP:73 >= 50 && TALENT:140 == 0 && TALENT:153 == 0
+;    IF ABL:가창기능 == 5 && EXP:가창경험 >= 50 && TALENT:임신 == 0 && TALENT:상애 == 0
 ;        PRINTFORMW キンコン!これはテスト用メッセ-ジです
 ;        PRINTFORMW アイドル天子のその後をここに追記するつもりです
 ;        PRINTFORMW ゲ-ム中で出た人いたらスレに報告ちょ!
@@ -12152,7 +12152,7 @@ PRINTFORMW 「응? 정말? 그럼 3개 주세요. 제일 큰 놈으로♪」
 PRINTFORMW 『아하핫-! %CALLNAME:TARGET%쨩은 못 이기겠는걸. 또 필요한 건 있니?』
 PRINTFORMW 「으음-… 감자랑 양파도 주세요.」
 PRINTFORMW 『그래. 오늘 저녁은 카레구나?』
-IF TALENT:122 == 0
+IF TALENT:수상한뿌리 == 0
     PRINTFORMW 「아니, 스튜예요♪ 그이, 내가 만든 스튜를 엄청 좋아하니까♪」
 ELSE
     PRINTFORMW 「네, 나는 매운 건 못 먹어서 단맛이지만. 그이, 카레는 엄청 좋아하니까♪」

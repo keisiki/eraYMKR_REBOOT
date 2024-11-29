@@ -46,7 +46,7 @@ RETURN 1
 ;==================================================
 @EVENTTRAIN
 ;대사 표시를 OFF했을 경우에는 돌아온다
-SIF FLAG:11 <= 0
+SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 SIF NO:TARGET != 248
     RETURN 0
@@ -76,7 +76,7 @@ ENDIF
 
 ;시온이 조수일때
 IF ASSINO() == 249
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 「여긴 어디야?, 넌 대체 누구지?」
         PRINTFORMW 아직 아무것도 모르는 듯한 온몸에 화려한 옷가지와 보석들로 치장한 소년이 내게 물어왔다.
         PRINTFORMW 이에, 나는 내가 바로 너의 새로운 주인이며, 나의 명령에 따라야 한다고 말해주었다.
@@ -109,7 +109,7 @@ IF ASSINO() == 249
         PRINTFORMW 건방진 철부지 소녀의 표정이 점점 공포로 물들어가고 있었다.
     ENDIF
 ELSE
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 「여긴 어디야?, 넌 대체 누구지?」
         PRINTFORMW 아직 아무것도 모르는 듯한 온몸에 화려한 옷가지와 보석들로 치장한 소년이 내게 물어왔다.
         PRINTFORMW 이에, 나는 내가 바로 너의 새로운 주인이며, 나의 명령에 따라야 한다고 말해주었다.
@@ -141,13 +141,13 @@ CFLAG:5201 = 1
 ;시온이 조수
 IF ASSI > 0 && ASSINO() == 249
     ;반발 3
-    IF MARK:9 == 3
+    IF MARK:반발각인 == 3
         PRINTFORMW 「언니라도, 이런건 못참아……!」
         PRINTFORMW 「언니는, 항상 나에게 빌붙어 살았잖아!」
         PRINTFORMW 『미안해, 조온……』
         PRINTFORMW 『하지만, 이젠 너에게 빌붙을 일은 없을꺼야……』
     ;쾌락 3, 공포,반발 0
-    ELSEIF MARK:1 == 3 && MARK:9 == 0 && MARK:8 == 0
+    ELSEIF MARK:쾌락각인 == 3 && MARK:반발각인 == 0 && MARK:공포각인 == 0
         PRINTFORMW 「언니……, 오늘도……?」
         PRINTFORMW 『……기다리고 있었니?』
     ;기타
@@ -156,9 +156,9 @@ IF ASSI > 0 && ASSINO() == 249
         PRINTFORMW 『…………,』
     ENDIF
 ;공포 3, 반발 3미만
-ELSEIF MARK:8 == 3 && MARK:9 < 3
+ELSEIF MARK:공포각인 == 3 && MARK:반발각인 < 3
     ;굴복 3
-    IF MARK:2 == 3
+    IF MARK:굴복각인 == 3
         PRINTFORMW 「이제, 훌쩍, 시키는대로 잘, 흣, 할테니까……」
         PRINTFORMW 공포에 사로잡힌 소녀는 훌쩍거리며 스스로 옷가지를 벗기 시작했다.
     ELSE
@@ -166,9 +166,9 @@ ELSEIF MARK:8 == 3 && MARK:9 < 3
         PRINTFORMW 조온은 체념한 듯 스스로 옷을 벗기 시작했다.
     ENDIF
 ;반발 3
-ELSEIF MARK:9 == 3
+ELSEIF MARK:반발각인 == 3
     ;공포 3
-    IF MARK:8 == 3
+    IF MARK:공포각인 == 3
         PRINTFORMW 「계속 이렇게 괴롭히면 가만 안둘꺼야!」
         PRINTFORMW 조온은 분명 떨리는 목소리로 말했다.
     ;반발만 3
@@ -178,11 +178,11 @@ ELSEIF MARK:9 == 3
         PRINTFORMW 자신의 능력이 차단되었다는 걸 아는지 모르는지 조온은 의기양양하게 말하고 있었다.
     ENDIF
 ;쾌락 3, 공포,반발 0
-ELSEIF MARK:1 == 3 && MARK:9 == 0 && MARK:8 == 0
+ELSEIF MARK:쾌락각인 == 3 && MARK:반발각인 == 0 && MARK:공포각인 == 0
     PRINTFORMW 「어차피 이상한 짓 할꺼잖아……,」
     PRINTFORMW 조온은 스스로 옷가지를 벗어 정리해 두고 있었다.
 ;상애친애연모
-ELSEIF TALENT:150 || TALENT:152 || TALENT:153
+ELSEIF TALENT:연모 || TALENT:친애 || TALENT:상애
     PRINTFORMW 「시작해줘……,」
     PRINTFORMW 조온은 스스로 옷가지를 벗어 정리해 두고 있었다.
 ;기타
@@ -196,7 +196,7 @@ ENDIF
 ;==================================================
 @EVENTEND
 ;대사 표시를 OFF했을 경우에는 돌아온다
-SIF FLAG:11 <= 0
+SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 SIF NO:TARGET != 248
     RETURN 0
@@ -218,7 +218,7 @@ TRYCALL K248_MESSAGE_END
 @K248_MESSAGE_END
 
 ;쾌락 2이상, 연모 친애 상애
-IF MARK:1 >= 2 && (TALENT:150 || TALENT:152 || TALENT:153)
+IF MARK:쾌락각인 >= 2 && (TALENT:연모 || TALENT:친애 || TALENT:상애)
     IF PALAM:13 >= PALAMLV:3
         PRINTFORML 「후아……, 하아……,」
         PRINTFORMW 「또……, 또 하자……, 약속해 줘……,」
@@ -238,7 +238,7 @@ ELSEIF ASSINO() == 249
         PRINTFORMW 눈물을 보이며 뒤도는 조온을 뒤로하고 시온은 나와 방을 나왔다.
     ENDIF
 ;공포3
-ELSEIF MARK:8 == 3
+ELSEIF MARK:공포각인 == 3
     PRINTFORMW 「……내일도 할꺼야……?,」
     PRINTFORMW 두려움에 떠는 조온을 뒤로하고 방을 나왔다.
 ;통상
@@ -353,12 +353,12 @@ CFLAG:5337 = 1
 IF CFLAG:5300 == 0
     ;시온이 조수
     IF ASSI > 0 && ASSINO() == 249
-        IF TALENT:120 || TALENT:121
+        IF TALENT:남자 || TALENT:후타나리
             PRINTFORMW 「자매끼리 이런거 이상해……!!!」
             PRINTFORMW 『조온……! 조온……!』
         ENDIF
     ;남자 혹은 후타(남성의 절정은 C절정판정)
-    ELSEIF TALENT:120 || TALENT:121
+    ELSEIF TALENT:남자 || TALENT:후타나리
         PRINTFORMW 「아앗! 나와버렷!」
         SIF ASSIPLAY && ASSINO() == 249
             PRINTFORMW 「언니, 언니의 안에 싸버렷……!」
@@ -371,11 +371,11 @@ IF CFLAG:5300 == 0
 ;2회째 이후
 ELSE
     ;쾌락 3, 공포,반발 0
-    IF MARK:1 == 3 && MARK:9 == 0 && MARK:8 == 0
+    IF MARK:쾌락각인 == 3 && MARK:반발각인 == 0 && MARK:공포각인 == 0
         PRINTFORMW 「나……, 나와! 클리토리스……, 꺄앗!!」
     ;Ｃ절정 50 이상
     ELSEIF EX:0 >= 50
-        IF TALENT:120
+        IF TALENT:남자
             PRINTFORMW 「흐앗! 갈거같아! 사정할거 같아!!」
         ELSE
             PRINTFORMW 「움찔거려!, 그만!, 아-앗!!」
@@ -396,7 +396,7 @@ IF CFLAG:5301 == 0
 ;2회째 이후
 ELSE
     ;쾌락 3, 공포,반발 0
-    IF MARK:1 == 3 && MARK:9 == 0 && MARK:8 == 0
+    IF MARK:쾌락각인 == 3 && MARK:반발각인 == 0 && MARK:공포각인 == 0
         PRINTFORMW 「안에서……, 가버려……! 안쪽에서 울려와……! 하아앙!!」
     ;Ｖ절정 50 이상
     ELSEIF EX:1 >= 50
@@ -417,7 +417,7 @@ IF CFLAG:5302 == 0
 ;2회째 이후
 ELSE
     ;쾌락 3, 공포,반발 0
-    IF MARK:1 == 3 && MARK:9 == 0 && MARK:8 == 0
+    IF MARK:쾌락각인 == 3 && MARK:반발각인 == 0 && MARK:공포각인 == 0
         PRINTFORMW 「구멍……, 가버려……! 뱃속에서……! 울려!!」
     ;Ａ절정 50 이상
     ELSEIF EX:2 >= 50
@@ -438,7 +438,7 @@ IF CFLAG:5303 == 0
 ;2회째 이후
 ELSE
     ;쾌락 3, 공포,반발 0
-    IF MARK:1 == 3 && MARK:9 == 0 && MARK:8 == 0
+    IF MARK:쾌락각인 == 3 && MARK:반발각인 == 0 && MARK:공포각인 == 0
         PRINTFORMW 「꼭지……, 가슴이……! 하앙……! 오고있어!!」
     ;Ｂ절정 50 이상
     ELSEIF EX:3 >= 50
@@ -455,7 +455,7 @@ ENDIF
 ;처음
 IF CFLAG:5304 == 0
     ;임신중
-    IF TALENT:140
+    IF TALENT:임신
         PRINTFORMW 「나와앗!, 아기우유가앗!!」
     ;약을 썼겠지
     ELSE
@@ -474,7 +474,7 @@ ENDIF
 ;처음
 IF CFLAG:5305 == 0
     ;남자면
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 「하핫!, 나와!」
     ;후타라면
     ELSE
@@ -515,7 +515,7 @@ ENDIF
 ;주인의 페니스
 IF TFLAG:35
     ;남자라면
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 「아앗!, 엉덩이에, 뭔가 들어와……!!」
     ;아니면
     ELSE
@@ -524,7 +524,7 @@ IF TFLAG:35
 ;그 외
 ELSE
     ;남자라면
-    IF TALENT:120
+    IF TALENT:남자
         PRINTFORMW 「나도 엉덩이로 느끼고있어……?」
     ;아니면
     ELSE
@@ -538,7 +538,7 @@ ENDIF
 @K248_MESSAGE_EJAC_PLAYER_10
 ;주인의 페니스
 IF TFLAG:35
-    IF TALENT:150 || TALENT:152 || TALENT:153
+    IF TALENT:연모 || TALENT:친애 || TALENT:상애
         PRINTFORMW 「와줘엇! 와줘!!」
     ELSE
         PRINTFORMW 「후아, 하읏, 으하, 따뜻한 거, 오고있어!!」
@@ -561,7 +561,7 @@ IF ASSIPLAY && ASSINO() == 249
     PRINTFORMW 『조, 조온……!』
     PRINTFORMW 「……!, 키스한것 뿐 인데……?」
 ELSE
-    IF EXP:22 >= 49 && (TALENT:150 || TALENT:152 || TALENT:153)
+    IF EXP:펠라경험 >= 49 && (TALENT:연모 || TALENT:친애 || TALENT:상애)
         PRINTFORMW 「꺄앗, 내 입으로 간거야?」
     ELSE
         PRINTFORMW 「츄하……!, 갑자기 싸면 어떻해……!」
@@ -577,7 +577,7 @@ IF ASSIPLAY && ASSINO() == 249
     PRINTFORMW 『조, 조온……!』
     PRINTFORMW 「손에 잔뜩……,」
 ELSE
-    IF TALENT:150 || TALENT:152 || TALENT:153
+    IF TALENT:연모 || TALENT:친애 || TALENT:상애
         PRINTFORMW 「내손으로 갔구나……, 기뻐……,」
     ELSE
         PRINTFORMW 「으앗……!, 더러워!」
@@ -594,7 +594,7 @@ PRINTFORMW 「흐흣, 후아!」
 ;키스로 사정
 ;-------------------------------------------------
 @K248_MESSAGE_EJAC_PLAYER_14
-IF TALENT:150 || TALENT:152 || TALENT:153 
+IF TALENT:연모 || TALENT:친애 || TALENT:상애 
     PRINTFORMW 「츕츕……, 그렇게 좋았어……?」
 ELSE
     PRINTFORMW 「읍, 츄하……!」
@@ -607,7 +607,7 @@ ENDIF
 ;스마타로 사정
 ;-------------------------------------------------
 @K248_MESSAGE_EJAC_PLAYER_15
-IF ABL:1 >= 2 && MARK:1 == 3
+IF ABL:V감각 >= 2 && MARK:쾌락각인 == 3
     PRINTFORMW 「너……, 넣어줘……」
 ELSE
     PRINTFORMW 「꺄앗……!,」
@@ -826,10 +826,10 @@ SIF TFLAG:899 >= 1
 ;커맨드 첫회 판정을 갱신
 CALL COM_FLAG
 ;PANCTION 내의 장비품 대사 보완 함수를 사용한다
-SIF FLAG:10 == 1
+SIF FLAG:조교시텍스트표시 == 1
     TRYCALL EQUIPTEXT
 ;처녀 상실시의 메시지 호출
-SIF TALENT:0 && TFLAG:1
+SIF TALENT:처녀 && TFLAG:1
     TRYCALL K248_MESSAGE_LOST_VIRGIN
 ;커맨드 대사 호출
 TRYCALLFORM K248_MESSAGE_COM_{SELECTCOM}
@@ -881,9 +881,9 @@ TRYCALLFORM K248_MESSAGE_EVENT_{(TFLAG:200)}
 ;일상생활 이벤트ＯＮ이며 휴식 실행시에 출력됩니다
 ;==================================================
 @DAILY_MESSAGE_248, ARG
-IF MARK:9 >= 3
+IF MARK:반발각인 >= 3
     PRINTFORMW 「휴식? 잔뜩 써주겠어!」
-ELSEIF CFLAG:1610 == 0
+ELSEIF CFLAG:조교여부 == 0
     PRINTFORMW 「일 없으면 그냥 보내주면 좋겠는데……,」
 ELSE
     PRINTFORMW 「오늘 쉬는거야?」
@@ -896,7 +896,7 @@ ENDIF
 ;==================================================
 @IMPRESSION_K248
 ;아직 한 번도 조교하지 않았음
-IF CFLAG:1610 == 0
+IF CFLAG:조교여부 == 0
     IF RAND:3 == 0
         PRINTSINGLEFORM    「하암……,」
     ELSEIF RAND:2 == 0
@@ -906,8 +906,8 @@ IF CFLAG:1610 == 0
     ENDIF
     RETURN 1
 ;반발각인 3
-ELSEIF MARK:9 >= 3
-    IF MARK:2 >= 3
+ELSEIF MARK:반발각인 >= 3
+    IF MARK:굴복각인 >= 3
         IF RAND:3 == 0
             PRINTSINGLEFORM    「가만 안둘꺼야……, 가만 안둘꺼야……,」
         ELSEIF RAND:2 == 0
@@ -926,7 +926,7 @@ ELSEIF MARK:9 >= 3
     ENDIF
     RETURN 1
 ;상애
-ELSEIF TALENT:153
+ELSEIF TALENT:상애
     IF RAND:3 == 0
         PRINTSINGLEFORM    「돈을 주면 나만 바라봐 줄까……?」
     ELSEIF RAND:2 == 0
@@ -936,7 +936,7 @@ ELSEIF TALENT:153
     ENDIF
     RETURN 1
 ;연모
-ELSEIF TALENT:150
+ELSEIF TALENT:연모
     IF RAND:3 == 0
         PRINTSINGLEFORM    「좋아해……,」
     ELSEIF RAND:2 == 0
@@ -946,7 +946,7 @@ ELSEIF TALENT:150
     ENDIF
     RETURN 1
 ;굴복각인 3
-ELSEIF MARK:2 >= 3 && MARK:9 < 3
+ELSEIF MARK:굴복각인 >= 3 && MARK:반발각인 < 3
     IF RAND:3 == 0
         PRINTSINGLEFORM    「아……, 혼자있고 싶어……,」
     ELSEIF RAND:2 == 0
@@ -1027,7 +1027,7 @@ RETURN 0
 ;TARGET = TFLAG:710
 
 ;음란
-;IF TALENT:170
+;IF TALENT:음란
 ;    LOCAL:1 = 1
 ;에피소드 없음
 ;ELSE
