@@ -377,7 +377,7 @@ PRINTFORM 色
 RESETCOLOR
 PRINTFORML [ 4] 색을 설정한다.
 ;;-------------------------------------------------
-;IF FLAG:5001 > 0
+;IF FLAG:색설정 > 0
 ;    PRINTFORML %LOCALS:(FLAG:5001 == 1)%[ 41] 진한 색 사용
 ;;-------------------------------------------------
 ;    PRINTFORML %LOCALS:(FLAG:5001 == 2)%[ 42] 연한 색 사용
@@ -398,15 +398,15 @@ PRINTFORML %LOCALS:((FLAG:토리코모드 & 512) > 0)%[11] 인터럽트 시스�
 ;-------------------------------------------------
 PRINTFORML %LOCALS:((FLAG:토리코모드 & 1024) > 0)%[12] 스케쥴 시스템을 사용한다.
 ;-------------------------------------------------
-PRINTFORML %LOCALS:((FLAG:5003 & 1) > 0)%[13] 경비 시스템을 사용한다. <게임 모드가 바뀝니다>
+PRINTFORML %LOCALS:((FLAG:경비시스템 & 1) > 0)%[13] 경비 시스템을 사용한다. <게임 모드가 바뀝니다>
 ;-------------------------------------------------
 ;경비 시스템 하위메뉴
-SIF (FLAG:5003 & 1) > 0
-    PRINTFORML       ㄴ%LOCALS:((FLAG:5003 & 2) > 0)%[131] 시리즈별 노예 구매 제한을 둔다.
+SIF (FLAG:경비시스템 & 1) > 0
+    PRINTFORML       ㄴ%LOCALS:((FLAG:경비시스템 & 2) > 0)%[131] 시리즈별 노예 구매 제한을 둔다.
 
 ;노모어글레이즈 상태일때는 이 옵션이 뜨지 않는다.
-SIF FLAG:5002 < 1000
-    PRINTFORML %LOCALS:((FLAG:5002%1000)>=100)%[14] 자동저장을 사용한다.
+SIF FLAG:오토세이브 < 1000
+    PRINTFORML %LOCALS:((FLAG:오토세이브%1000)>=100)%[14] 자동저장을 사용한다.
 ;-------------------------------------------------
 PRINTFORML %LOCALS:((FLAG:5005 & 1) > 0)%[15] 임신 및 딸 조교를 쉽게 한다.
 ;-------------------------------------------------
@@ -425,23 +425,23 @@ IF RESULT == 100
 ELSEIF RESULT == 98
     PRINTW 토리코 모드의 기능을 모두 사용할 수 있도록 설정했습니다. (자동저장은 제외)
     FLAG:토리코모드 = LOCAL
-    FLAG:5001 = 4
+    FLAG:색설정 = 4
     FLAG:5010 = 2
-    FLAG:5003 = 3
+    FLAG:경비시스템 = 3
     FLAG:5005 = 1
     ;만약 이로인해 만복도 모드가 켜지면, 지금 만복도 시스템 정보가 없는 캐릭터들을 일괄 세팅 해 준다.
     SIF FLAG:토리코모드 & 32 
         CALL INIT_HUNGERSYSTEM_TORIKOMODE
     ;경비시스템을 처음으로 켠 경우에 한해 한해, 무료 경비원을 지급한다.
-    SIF FLAG:5004 == 0 && FLAG:5003 & 1
+    SIF FLAG:5004 == 0 && FLAG:경비시스템 & 1
         CALL INIT_GUARDSMAN_TORIKOMODE
 
 ELSEIF RESULT == 99
     PRINTW 토리코 모드의 기능을 모두 사용할 수 없도록 설정했습니다.
     FLAG:토리코모드 = 0
-    FLAG:5001 = 0
+    FLAG:색설정 = 0
     FLAG:5010 = 1
-    FLAG:5003 = 0
+    FLAG:경비시스템 = 0
     FLAG:5005 = 0
 ELSEIF RESULT == 0
     PRINTFORMW 파라메터 표시를 \@(FLAG:토리코모드 & 1) ? 오리지날 # 토리코 모드 \@로 합니다.
@@ -503,28 +503,28 @@ ELSEIF RESULT == 12
     PRINTFORMW 스케쥴 시스템을 사용\@(FLAG:토리코모드 & 1024) ? 하지 않습니다 # 합니다 \@.
     FLAG:토리코모드 ^= 1024
 ELSEIF RESULT == 13
-    PRINTFORMW 경비 시스템을 사용\@(FLAG:5003 & 1) ? 하지 않습니다 # 합니다 \@.
-    FLAG:5003 ^= 1
+    PRINTFORMW 경비 시스템을 사용\@(FLAG:경비시스템 & 1) ? 하지 않습니다 # 합니다 \@.
+    FLAG:경비시스템 ^= 1
     ;경비시스템을 처음으로 켠 경우에 한해 한해, 무료 경비원을 지급한다.
-    SIF FLAG:5004 == 0 && FLAG:5003 & 1
+    SIF FLAG:5004 == 0 && FLAG:경비시스템 & 1
         CALL INIT_GUARDSMAN_TORIKOMODE
 ;경비 시스템 하위메뉴
-ELSEIF RESULT == 131 && FLAG:5003 & 1
-    PRINTFORMW 시리즈별 노예 구매 제한을\@(FLAG:5003 & 2) ? 하지 않습니다 # 합니다 \@.
-    FLAG:5003 ^= 2
+ELSEIF RESULT == 131 && FLAG:경비시스템 & 1
+    PRINTFORMW 시리즈별 노예 구매 제한을\@(FLAG:경비시스템 & 2) ? 하지 않습니다 # 합니다 \@.
+    FLAG:경비시스템 ^= 2
 ;자동저장
-ELSEIF RESULT == 14 && FLAG:5002 < 1000
+ELSEIF RESULT == 14 && FLAG:오토세이브 < 1000
     CALL DECODE_SAVEINFO_TORIKOMODE
     IF RESULT:1 == 0
-        FLAG:5002 = FLAG:5002 + 100
+        FLAG:오토세이브 = FLAG:오토세이브 + 100
         PRINTFORMW 자동 저장을 사용합니다.
         CALL SAVEGAME_EX_NOMOREGLAZE_TORIKOMODE
     ELSEIF RESULT:1 == 1
-        FLAG:5002 = FLAG:5002 - 100
+        FLAG:오토세이브 = FLAG:오토세이브 - 100
         PRINTFORMW 자동 저장을 사용하지 않습니다.
     ENDIF
     ;디버그
-    ;PRINTFORML FLAG:5002 ={FLAG:5002}
+    ;PRINTFORML FLAG:오토세이브 ={FLAG:5002}
 ;임신난이도 하락패치
 ELSEIF RESULT == 15
     PRINTFORMW 임신 및 딸 조교를 쉽게 \@(FLAG:5005 & 1) ? 하지 않습니다 # 합니다 \@.

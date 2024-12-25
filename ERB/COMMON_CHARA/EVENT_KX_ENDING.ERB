@@ -10,7 +10,7 @@
 SIF EQUIP:14 || TEQUIP:42 == 1 || TEQUIP:42 == 2 || TFLAG:899 >= 1
     RETURN 0
 ;汎用口上不使用なら戻る
-SIF FLAG:22 == 1
+SIF FLAG:범용대사미사용 == 1
     RETURN 0
 
 IF ASSIPLAY
@@ -714,7 +714,7 @@ RETURN 0
 ;-------------------------------------------------
 @SINGLE_ENDING_X
 ;범용 대사 미사용이라면 돌아간다
-SIF FLAG:22 == 1
+SIF FLAG:범용대사미사용 == 1
     RETURN 0
 
 TRYCALL JINKAKU
@@ -788,7 +788,7 @@ RETURN 0
 ;-------------------------------------------------
 @SLAVE_ENDING_X
 ;범용 대사 미사용이라면 돌아간다
-SIF FLAG:22 == 1
+SIF FLAG:범용대사미사용 == 1
     RETURN 0
 
 TRYCALL JINKAKU
@@ -886,7 +886,7 @@ CFLAG:ARG:일상이벤트강제발생여부 = 0
 SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 ;범용 대사미사용이라면
-SIF FLAG:22 == 1
+SIF FLAG:범용대사미사용 == 1
     RETURN 0
 ;범용 대사 전용 일상 이벤트를 허가하고 있지 않으면????(캐릭터별)
 SIF CFLAG:ARG:5303 == 1
@@ -966,9 +966,9 @@ PRINTFORMW %조사처리(CALLNAME:MASTER,"는")% 깊게 한숨을 쉬면서 떠�
 PRINTL
 PRINTFORMW 그 후도, %CALLNAME:ARG%젓가락 장미구이불 중(안)에서 떨고 있던 것 같다. 곤란한 것이다…
 ;"공포?  ??"(JUEL:17) 취득
-IF FLAG:SHOP이벤트확장 & 128 || ! FLAG:997
+IF FLAG:SHOP이벤트확장 & 128 || ! FLAG:일상패치구슬입수
     CALL COMMON_DAILYJUEL, ARG, 17, 500 + ((RAND:11) * 50), 1
-    FLAG:997 = 1
+    FLAG:일상패치구슬입수 = 1
 ENDIF
 
 ;-------------------------------------------------
@@ -990,10 +990,10 @@ PRINTFORMW 상당히 비싼 쇼핑이었지만, 기뻐하는 %조사처리(CALLN
 MONEY -= LOCAL * 500
 ITEM:(LOCAL:1) += LOCAL
 ;호감도(CFLAG:호감도) 상승,"순종의 구슬"(JUEL:12) 취득
-IF FLAG:SHOP이벤트확장 & 128 || ! FLAG:997
+IF FLAG:SHOP이벤트확장 & 128 || ! FLAG:일상패치구슬입수
     CALL DAILY_LIFE_MOVE_CFLAG, ARG, 2, 150, 0
     CALL COMMON_DAILYJUEL, ARG, 12, 400 + ((ABL:ARG:순종 + RAND:6) * 40), 1
-    FLAG:997 = 1
+    FLAG:일상패치구슬입수 = 1
 ENDIF
 
 ;-------------------------------------------------
@@ -1021,7 +1021,7 @@ ELSE
     PRINTFORMW 당분간, %조사처리(CALLNAME:MASTER,"는")% %조사처리(CALLNAME:ARG,"과")% 장식물을 바라보면서 수다를 즐긴 것에서 만났다…
 ENDIF
 ;호감도(CFLAG:호감도), 스트레스(CFLAG:스트레스), 애정 경험(EXP:애정경험) 상승,"순종의 구슬"(JUEL:12) 취득
-IF FLAG:SHOP이벤트확장 & 128 || ! FLAG:997
+IF FLAG:SHOP이벤트확장 & 128 || ! FLAG:일상패치구슬입수
     IF TALENT:ARG:상애 || TALENT:ARG:친애
         CALL DAILY_LIFE_MOVE_CFLAG, ARG, 2, 150, 0
         CALL COMMON_UP_EXP, ARG, 21, 1, 0
@@ -1035,7 +1035,7 @@ IF FLAG:SHOP이벤트확장 & 128 || ! FLAG:997
         CALL DAILY_LIFE_MOVE_CFLAG, ARG, 2, 50, 0
         CALL COMMON_DAILYJUEL, ARG, 12, 200 + ((ABL:ARG:순종 + RAND:6) * 20), 1
     ENDIF
-    FLAG:997 = 1
+    FLAG:일상패치구슬입수 = 1
 ENDIF
 
 ;=============================================================================
@@ -1046,7 +1046,7 @@ ENDIF
 ;-------------------------------------------------
 @SET_SLAVE_AFTERWARDS_KX, ARG
 ;범용 대사미사용이라면????
-SIF FLAG:22 == 1
+SIF FLAG:범용대사미사용 == 1
     RETURN 0
 ;대상을 퇴피해 TFLAG:710을 대상으로 한다.
 LOCAL = TARGET
@@ -1092,7 +1092,7 @@ RETURN LOCAL:1
 @SHOW_SLAVE_AFTERWARDS_KX, ARG, ARG:1, ARG:2
 ;ARG:2는 원의 Y에 대응(여기에서는 현재미사용)
 ;범용 대사미사용이라면????
-SIF FLAG:22 == 1
+SIF FLAG:범용대사미사용 == 1
     RETURN 0
 
 ;에피소드 없으면????
@@ -1396,7 +1396,7 @@ SIF SELECTCOM == 610 || SELECTCOM == 629 || SELECTCOM == 657
 SIF FLAG:캐릭터대사표시 <= 0
     RETURN 0
 ;범용 대사미사용이라면????
-SIF FLAG:22 == 1
+SIF FLAG:범용대사미사용 == 1
     RETURN 0
 ;자위 중독이 없으면 자위하지 않는다
 SIF ABL:ASSI:자위중독 <= 0

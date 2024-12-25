@@ -19,7 +19,7 @@ FLAG:정액도시락및정음절정패치 = 2
 FLAG:자위은폐발각패치 = 1
 FLAG:변동경험강조패치 = 1
 FLAG:토리코모드 = 1032
-FLAG:5001 = 3
+FLAG:색설정 = 3
 FLAG:5010 = 2
 
 @CONFIGURATION_TORIKOMODE_ON
@@ -34,7 +34,7 @@ FLAG:사정선택기본장소 = 9
 ;토리코모드
 FLAG:토리코모드 = 2047
 ;토리코모드- 칼라
-FLAG:5001 = 4
+FLAG:색설정 = 4
 ;토리코모드 - 임신&딸조교 쉽게
 FLAG:5005 = 1
 ;실신모드
@@ -63,9 +63,9 @@ FLAG:사정선택기본장소 = 9
 ;토리코모드
 FLAG:토리코모드 = 2047
 ;토리코모드- 칼라
-FLAG:5001 = 4
+FLAG:색설정 = 4
 ;토리코모드 - 경비시스템
-FLAG:5003 = 3
+FLAG:경비시스템 = 3
 ;토리코모드 - 임신&딸조교 쉽게
 FLAG:5005 = 1
 ;실신모드
@@ -1743,7 +1743,7 @@ RETURN 1
 #PRI
 
 ;경비 시스템 이벤트 처리
-SIF FLAG:5003 & 1
+SIF FLAG:경비시스템 & 1
     CALL EVENT_KANKIN_MAIN_TORIKOMODE
 
 ;스케쥴의 실행. 기본적으로 낮에 결과 출력. (식사 버프를 받기 위해 이쪽으로 뺌)
@@ -2843,7 +2843,7 @@ ENDIF
 @CONFIG_SETCOLOR_TORIKOMODE
 PRINTFORML 원하는 색의 농도를 입력 해 주세요. 0 :흑백 1:가장 연하게 >>> 5:매우 진하게 >>> 아이쿠 내 눈!!
 INPUT
-FLAG:5001 = RESULT:0
+FLAG:색설정 = RESULT:0
 
 ;………………………………………………
 ; SETCOLOR 커스텀
@@ -2860,9 +2860,9 @@ LOCAL:1 = 192
 LOCAL:2 = 192
 
 ;색 설정에 따른 농도변화
-LOCAL:3 = FLAG:5001*3
-LOCAL:4 = FLAG:5001*3
-LOCAL:5 = FLAG:5001*3
+LOCAL:3 = FLAG:색설정*3
+LOCAL:4 = FLAG:색설정*3
+LOCAL:5 = FLAG:색설정*3
 
 ;색 생성
 ;원색
@@ -3170,13 +3170,13 @@ GOTO LOOP_SELECT_LODETYPE
 
 ;-------------------------------------------------
 ; 오토세이브 옵션을 파싱한다. 
-; FLAG:5002 = X_Y_ZZ
+; FLAG:오토세이브 = X_Y_ZZ
 ; 입력 : 없다
 ; 반환 : 오토세이브 옵션값
 @DECODE_SAVEINFO_TORIKOMODE
-LOCAL:0 = FLAG:5002 / 1000
-LOCAL:1 = (FLAG:5002 % 1000) /100
-LOCAL:2 = (FLAG:5002 % 100)
+LOCAL:0 = FLAG:오토세이브 / 1000
+LOCAL:1 = (FLAG:오토세이브 % 1000) /100
+LOCAL:2 = (FLAG:오토세이브 % 100)
 RESULT:0 = LOCAL:0
 RESULT:1 = LOCAL:1
 RESULT:2 = LOCAL:2
@@ -3185,13 +3185,13 @@ RETURN RESULT:1
 RETURN RESULT:2
 ;-------------------------------------------------
 ; 노모어글레이즈 옵션이 켜져있을 때, 첫 저장위치를 잡아준다
-; FLAG:5002 = X_Y_ZZ
+; FLAG:오토세이브 = X_Y_ZZ
 @SAVEGAME_EX_NOMOREGLAZE_TORIKOMODE
 LOCAL = 0
 
 $LIST_LOOP
 PRINTL 어디에 저장하시겠습니까? 
-IF FLAG:5002 >= 1000
+IF FLAG:오토세이브 >= 1000
     CALL SETCOLOR_TORIKOMODE, "RED", 4
     PRINTL (주의! 이 모드에서는 저장위치를 정하면 바꿀 수 없습니다)
     RESETCOLOR
@@ -3246,7 +3246,7 @@ ELSE
     ;오토세이브가 켜져있다면
     IF RESULT:1 == 1
         ;저장위치를 바꿔준다.
-        FLAG:5002 = FLAG:5002 - (FLAG:5002 % 100) + LOCAL:1
+        FLAG:오토세이브 = FLAG:오토세이브 - (FLAG:오토세이브 % 100) + LOCAL:1
         PRINTFORMW <<오토세이브 작동중 : 앞으로 [{LOCAL:1}]번 슬롯에 자동 저장됩니다.>>
     ELSE
     ENDIF
@@ -3269,7 +3269,7 @@ INPUT
 IF RESULT == 0
     PRINTW 일반 모드로 플레이합니다.
 ELSEIF RESULT == 1
-    FLAG:5002 = 1000
+    FLAG:오토세이브 = 1000
     CALL SETCOLOR_TORIKOMODE, "RED", 5
     FONTBOLD
     PRINTL

@@ -62,7 +62,7 @@ SIF FLAG:게임모드 <= 1
     CALL SHOW_DEADLINE
 
 ;노 모어 글레이즈 옵션표시
-IF (FLAG:5002) /1000 == 1
+IF (FLAG:오토세이브) /1000 == 1
     CALL SETCOLOR_TORIKOMODE, "RED", 3
     PRINT <NO MORE GLAZE>
     RESETCOLOR
@@ -73,7 +73,7 @@ PRINTL
 SIF DAY:7 == 1 && FLAG:아이템확장 & 1024 && ITEM:90
     PRINTFORML ☆매주 일요일은 창관의 날☆
 CALL SHOW_HOUSE
-FLAG:996 = -1
+FLAG:구상유 = -1
 
 IF CFLAG:MASTER:조교관외 == 3
     CALL SHOW_WORKSHOP
@@ -166,7 +166,7 @@ ELSE
         ;대사 존재 여부를 플래그에 넣는다
         RESULT = -1
         TRYCALLFORM TRY_{NO}
-        FLAG:996 = RESULT
+        FLAG:구상유 = RESULT
     ELSE
     ENDIF
 
@@ -202,10 +202,10 @@ ELSE
     ;    PRINTFORM (조수\@(TALENT:ASSI:질투) ? 열애중 #\@:%CALLNAME:ASSI%)　
     DRAWLINE
     PRINTFORM 소지금:
-        SIF FLAG:5001
+        SIF FLAG:색설정
             SETCOLOR 223,164,32
     PRINTFORM {MONEY}
-        SIF FLAG:5001
+        SIF FLAG:색설정
     RESETCOLOR
     PRINTFORM 원
     ;목표 금액 표시
@@ -319,11 +319,11 @@ ELSE
     SIF CHARANUM > 1
         PRINTLC [103] - 능력 상승
     ;조교 대상이 존재하고, 그 대상에 전용 대사가 없을 경우
-    SIF TARGET >= 0 && FLAG:996 <= 0
+    SIF TARGET >= 0 && FLAG:구상유 <= 0
         PRINTLC [105] - 주인의 호칭
     ;조교 대상이 존재하고, 그 대상에 전용 대사가 없을 경우(현재 폐기)
     SIF TARGET >= 0
-    ; && FLAG:996 <= 0
+    ; && FLAG:구상유 <= 0
         PRINTLC [106] - 노예 칭호 변경
     ;조수 가능한 노예가 1명 이상 있을 경우
     SIF LOCAL:0 >= 1
@@ -432,7 +432,7 @@ ELSE
     ENDIF
 
     ;경비 시스템 사용중일때
-    IF FLAG:5003 & 1
+    IF FLAG:경비시스템 & 1
         PRINTLC [182] - 경비원 관리
         IF  CHARANUM > 1
             PRINTLC [183] - 노예 구속
@@ -443,7 +443,7 @@ ELSE
     PRINTLC [191] - 특수능력 취득
 
     ;노모어 글레이즈 옵션에서는 저장하기가 뜨지 않음.
-    SIF (FLAG:5002) / 1000 != 1
+    SIF (FLAG:오토세이브) / 1000 != 1
         PRINTLC [200] - 저장하기
 
     PRINTLC [300] - 불러오기
@@ -525,10 +525,10 @@ ELSE
         RETURN 1
     ELSEIF RESULT == 103 && CHARANUM > 1
         CALL ABL_MANUAL_MENU
-    ELSEIF RESULT == 105 && TARGET >= 0 && FLAG:996 <= 0
+    ELSEIF RESULT == 105 && TARGET >= 0 && FLAG:구상유 <= 0
         CALL COMMAND_MASTER_NAME
     ELSEIF RESULT == 106 && TARGET >= 0
-    ; && FLAG:996 <= 0
+    ; && FLAG:구상유 <= 0
         CALL CHANGE_SLAVE_NICKNAME
     ELSEIF RESULT == 108 && GET_LIST(0) >= 1
         CALL SELECT_ASSI
@@ -640,9 +640,9 @@ ELSE
         CALL LIST_SCHEDULE_TORIKOMODE
 
     ;경비시스템 사용중일때.
-    ELSEIF RESULT == 182 && FLAG:5003 & 1
+    ELSEIF RESULT == 182 && FLAG:경비시스템 & 1
         CALL LIST_GUARDSMAN_TORIKOMODE
-    ELSEIF RESULT == 183 && CHARANUM > 1 && FLAG:5003 & 1
+    ELSEIF RESULT == 183 && CHARANUM > 1 && FLAG:경비시스템 & 1
         CALL LIST_RESTRICTION_TORIKOMODE
 
     ELSEIF RESULT == 190
@@ -651,7 +651,7 @@ ELSE
         CALL TROPHY_FEAT_GET
     ELSEIF RESULT == 200
         ;노모어 글레이즈 옵션에서는 저장이 안됨.
-        IF (FLAG:5002) / 1000 != 1
+        IF (FLAG:오토세이브) / 1000 != 1
             CALL SAVEGAME_EX
         ELSE
             REUSELASTLINE
@@ -766,7 +766,7 @@ IF RESULT != -1 && TARGET != RESULT
     TARGET = LOCAL:5
     RESULT = -1
     TRYCALLFORM TRY_{NO:TARGET}
-    FLAG:996 = RESULT
+    FLAG:구상유 = RESULT
     SIF TARGET == ASSI
         ASSI = -1
     ;조교 대상으로 선택되었다
@@ -787,7 +787,7 @@ ELSE
     SIF TARGET > 0
         CALL SELF_KOJO, TARGET, 128, -1
     TARGET = -1
-    FLAG:996 = -1
+    FLAG:구상유 = -1
 ENDIF
 
 ;-------------------------------------------------
@@ -868,7 +868,7 @@ CALL ASSI_CHANGE
 ISASSI:ASSI = 1
 IF ASSI == TARGET
     TARGET = -1
-    FLAG:996 = -1
+    FLAG:구상유 = -1
 ENDIF
 
 ;-------------------------------------------------
@@ -1031,7 +1031,7 @@ GOTO PRINT_PAGE
 @CALC_SLAVE_CAPACITY
 #FUNCTION
 ;챌린지 모드인지 아닌지
-RETURNF (FLAG:게임모드 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:자택증축 + FLAG:94, BORDER_SLAVE_CAPACITY())
+RETURNF (FLAG:게임모드 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:자택증축 + FLAG:자택추가증축, BORDER_SLAVE_CAPACITY())
 
 ;--------------------------------------------------
 ;집의 수용 가능한 노예의 한계 인원수
@@ -1042,7 +1042,7 @@ RETURNF (FLAG:게임모드 >= 50) ? 100 # MIN(FLAG:91 + FLAG:92 + FLAG:자택증
 IF FLAG:자택 == 5
     RETURNF 1000
 ELSEIF FLAG:자택 == 3 || FLAG:자택 == 4
-    RETURNF 501 + FLAG:94
+    RETURNF 501 + FLAG:자택추가증축
 ELSEIF FLAG:자택 == 2
     RETURNF 101
 ELSEIF FLAG:자택 == 1
