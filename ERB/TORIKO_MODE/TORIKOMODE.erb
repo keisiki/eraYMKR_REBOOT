@@ -877,38 +877,32 @@ ENDIF
 ;토리코모드용 할당된 식단 표시 함수
 ;-------------------------------------------------
 @FEEDMENU_BAR_TORIKOMODE, ARG
-;메뉴의 가격을 불러온다.
-CALL CALC_PRICE_MENU_TORIKOMODE
-
 PRINT 방침:
 IF CFLAG:ARG:메뉴 == 0
     CALL SETCOLOR_TORIKOMODE, "RED", 4
     PRINT 굶긴다 
-    PRINTFORM {RESULT:0}원/日
-    RESETCOLOR
+    LOCAL = 0
 ELSEIF CFLAG:ARG:메뉴 == 1
     CALL SETCOLOR_TORIKOMODE, "MAGENTA", 4
     PRINT 싸구려 
-    PRINTFORM {RESULT:1}원/日
-    RESETCOLOR
-
 ELSEIF CFLAG:ARG:메뉴 == 2
     CALL SETCOLOR_TORIKOMODE, "YELLOW", 4
-    PRINT 일반식 
-    PRINTFORM {RESULT:2}원/日
-    RESETCOLOR
+    PRINT 보통 
 ELSEIF CFLAG:ARG:메뉴 == 3
     CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
-    PRINT 영양식 
-    PRINTFORM {RESULT:3}원/日
-    RESETCOLOR
-ELSEIF  CFLAG:ARG:메뉴 == 4
-    CALL SETCOLOR_TORIKOMODE, "GREEN", 4
-    PRINT 특제식 
-    PRINTFORM {RESULT:4}원/日
-    RESETCOLOR
+    PRINT 특제 
 ENDIF
-
+LOCAL = ITEMPRICE:(699+CFLAG:ARG:메뉴)
+IF CFLAG:ARG:식사량 == 1
+    PRINT 하프 식단 
+ELSEIF CFLAG:ARG:식사량 == 2
+    PRINT 식단 
+ELSEIF CFLAG:ARG:식사량 == 3
+    PRINT 곱빼기 식단 
+ENDIF
+LOCAL *= CFLAG:ARG:식사량
+PRINTFORM {LOCAL}원/끼니
+RESETCOLOR
 
 ;-------------------------------------------------
 ;토리코모드용 굶은회수 표시 함수
@@ -950,8 +944,6 @@ ENDIF
 LOCAL:3 = 0
 REPEAT 20
     LOCAL = GET_LIST(COUNT + ARG * 20)
-    SIF LOCAL == 0
-        CONTINUE
     ;주인공 배제
     SIF LOCAL == 0
         CONTINUE
@@ -1040,6 +1032,8 @@ ENDIF
 ; 4 - 특제개별 식사
 
 @FEED_IN_TRAIN_TORIKOMODE
+#DIM DYNAMIC 대피용,2
+#DIM DYNAMIC 회복량,3
 ;선택한 메뉴
 LOCAL:0 = 0
 ;선택한 식사방식
@@ -1058,85 +1052,25 @@ PRINTFORM 현재 %CALLNAME:TARGET%의 상태  >
 CALL HUNGER_BAR_TORIKOMODE, TARGET
 CALL NUTRITION_BAR_TORIKOMODE, TARGET
 WAIT
-PRINTFORMW 어떤 걸 먹일까…?
+PRINTFORMW 어떤 걸 먹일까…?(굶긴다로 취소)
 
 ;.................................................................................
 ;PHASE1 : 메뉴선택
 ;가격을 계산해서 불러온다.
 CALL CALC_PRICE_MENU_TORIKOMODE
-
-PRINTL (메뉴의 가격은 보유 노예수와 난이도에 따라 상승합니다)
-
-PRINT [1] 저렴한 식사 / 가격:
-CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
-PRINTFORM {RESULT:1}
-RESETCOLOR
-PRINTL 원 / 만복도 UP / 영양상승 小
-
-PRINT [2] 일반적인 식사 / 가격:
-CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
-PRINTFORM {RESULT:2}
-RESETCOLOR
-PRINTL 원 / 만복도 UP / 영양 中
-
-PRINT [3] 영양만점 식사 / 가격:
-CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
-PRINTFORM {RESULT:3}
-RESETCOLOR
-PRINTL 원 / 만복도 UP / 영양상승 大
-
-PRINT [4] 특제개별 식사 / 가격:
-CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
-PRINTFORM {RESULT:4}
-RESETCOLOR
-PRINTL 원 / 만복도 UP / 영양상승 特大
-
-PRINTL [999] 그만둔다
-
-$INPUT_LOOP
-INPUT
-IF RESULT == 1
-    IF MONEY >= RESULT:1
-        PRINTFORMW %조사처리(CALLNAME:TARGET,"를")% 굶어 죽지 않을 정도로 먹입니다.
-        LOCAL:0 = 1
-        LOCAL:10 = RESULT:1
-    ELSE
-        PRINTFORMW 돈이 부족합니다. (현재 잔고:{MONEY})
-        RETURN 0
-    ENDIF
-ELSEIF RESULT == 2
-    IF MONEY >= RESULT:2
-        PRINTFORMW %CALLNAME:TARGET%에게 일반적인 식사를 제공합니다. 후식은 없음.
-        LOCAL:0 = 2
-        LOCAL:10 = RESULT:2
-    ELSE
-        PRINTFORMW 돈이 부족합니다. (현재 잔고:{MONEY})
-        RETURN 0
-    ENDIF
-ELSEIF RESULT == 3
-    IF MONEY >= RESULT:3
-        PRINTFORMW %CALLNAME:TARGET%에게 영양만점의 식사를 제공합니다. 후식은 파르페.
-        LOCAL:0 = 3
-        LOCAL:10 = RESULT:3
-    ELSE
-        PRINTFORMW 돈이 부족합니다. (현재 잔고:{MONEY})
-        RETURN 0
-    ENDIF
-ELSEIF RESULT == 4
-    IF MONEY >= RESULT:4
-        PRINTFORMW %CALLNAME:TARGET%의 식성에 맞는 영양만점의 식사를 제공합니다. 후식은 초이스 가능.
-        LOCAL:0 = 4
-        LOCAL:10 = RESULT:4
-    ELSE
-        PRINTFORMW 돈이 부족합니다. (현재 잔고:{MONEY})
-        RETURN 0
-    ENDIF
-ELSEIF RESULT == 999
-    RETURN 0
-ELSE
-    GOTO INPUT_LOOP
+대피용:0 = CFLAG:메뉴
+대피용:1 = CFLAG:식사량
+CALL RBT_FDS_MENU_SELECTER(TARGET)
+CALL RBT_FDS_COOKING(TARGET)
+회복량:0 = RESULT:1
+회복량:1 = RESULT:2
+회복량:2 = RESULT:3
+IF MONEY < RESULT:4
+    PRINTFORML 돈이 부족합니다. (현재 잔고:{MONEY})
+    GOTO END_PHASE
 ENDIF
-
+LOCAL:0 = CFLAG:메뉴
+LOCAL:10 = RESULT:4
 ;.................................................................................
 ;PHASE2 : 식사방법 설정
 ;어떤 식으로 먹을지를 결정한다.
@@ -1274,8 +1208,8 @@ IF LOCAL:3 ==1
     ;디버그용
     ;PRINTFORML {RESULT:1} 메뉴의 만복도
     ;PRINTFORML {RESULT:2} 메뉴의 영양도
-    CFLAG:TARGET:현재만복도 += RESULT:1
-    CFLAG:TARGET:현재영양도 += RESULT:2
+    CFLAG:TARGET:현재만복도 += 회복량:0
+    CFLAG:TARGET:현재영양도 += 회복량:1
     ;수치 정리.
     CFLAG:TARGET:현재만복도 = LIMIT(CFLAG:TARGET:현재만복도, 0, CFLAG:TARGET:최대만복도)
     CFLAG:TARGET:현재영양도 = LIMIT(CFLAG:TARGET:현재영양도, 0, CFLAG:TARGET:최대영양도)
@@ -1436,6 +1370,10 @@ PRINTFORML 반감 + {LOCAL:13}
 PRINTFORML 굴복 + {LOCAL:14}
 PRINTFORML 억울 + {LOCAL:15}
 PRINTFORML 스트레스 + {LOCAL:16}
+
+$END_PHASE
+CFLAG:메뉴 = 대피용:0
+CFLAG:식사량 = 대피용:1
 
 WAIT
 
@@ -1611,6 +1549,7 @@ REND
 ;………………………………………………
 @SET_DEAFAULT_MENU_TORIKOMODE , ARG
     CFLAG:ARG:메뉴 = 1
+    CFLAG:ARG:식사량 = 2
 
 @SET_DEAFAULT_HUNGER_TORIKOMODE , ARG
 ;위장 크기의 기본값은 2000이며, 소질<덩치>에 따라 변한다.
@@ -1887,8 +1826,7 @@ EATEN_SUM = 0
 DRAWLINE
 
 REPEAT CHARANUM
-
-    SIF COUNT == MASTER || CFLAG:COUNT:조교관외 == 1
+    SIF CFLAG:COUNT:조교관외 == 1
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
@@ -1900,7 +1838,7 @@ REPEAT CHARANUM
 REND
     
 ;총 식비 출력
-PRINTFORMW {CHARANUM-1}명의 식비로 총 {EATEN_SUM}원이 지출되었습니다. 현재 잔고 {MONEY}원.
+PRINTFORMW {CHARANUM}명의 식비로 총 {EATEN_SUM}원이 지출되었습니다. 현재 잔고 {MONEY}원.
 RETURN 0
 
 ;-------------------------------------------------
@@ -1973,23 +1911,16 @@ LOCAL:99 =0
 CALL CALC_PRICE_MENU_TORIKOMODE
 IF FLAG:토리코모드 & 32
     DO
-        ;주인은 공짜.
-        IF (LOCAL:99) == 0
-            ;
-        ELSE
         ;할당된 메뉴로 식를 더해간다.
-            IF CFLAG:(LOCAL:99):메뉴 == 0
-                LOCAL:0 += RESULT:0
-            ELSEIF CFLAG:(LOCAL:99):메뉴 == 1
-                LOCAL:0 += RESULT:1
-            ELSEIF CFLAG:(LOCAL:99):메뉴 == 2
-                LOCAL:0 += RESULT:2
-            ELSEIF CFLAG:(LOCAL:99):메뉴 == 3
-                LOCAL:0 += RESULT:3
-            ELSEIF CFLAG:(LOCAL:99):메뉴 == 4
-                LOCAL:0 += RESULT:4
-            ELSE
-            ENDIF
+        IF CFLAG:(LOCAL:99):메뉴 == 0
+            LOCAL:0 += 0 * CFLAG:(LOCAL:99):식사량
+        ELSEIF CFLAG:(LOCAL:99):메뉴 == 1
+            LOCAL:0 += 25 * CFLAG:(LOCAL:99):식사량
+        ELSEIF CFLAG:(LOCAL:99):메뉴 == 2
+            LOCAL:0 += 75 * CFLAG:(LOCAL:99):식사량
+        ELSEIF CFLAG:(LOCAL:99):메뉴 >= 3
+            LOCAL:0 += 125 * CFLAG:(LOCAL:99):식사량
+        ELSE
         ENDIF
         LOCAL:99 += 1
     LOOP LOCAL:99 < CHARANUM
@@ -1998,7 +1929,7 @@ ENDIF
 
 PRINTFORM 예상 식비는 
 CALL SETCOLOR_TORIKOMODE, "ORENGE", 3
-PRINTFORM {LOCAL:0}원/日
+PRINTFORM {LOCAL:0}원/끼니
 RESETCOLOR
 PRINTFORML 입니다. 현재 잔고 : {MONEY}원.
 ;-------------------------------------------------
@@ -2051,7 +1982,7 @@ ENDIF
 @EATEN_TORIKOMODE, ARG
 ;음식값을 저장하는 변수
 LOCAL:0 = 0
-
+CALL RBT_FDS_INIT(ARG)
 
 ;디버그...
 ;PRINTFORML NO:ARG{NO:ARG} ARG{ARG} %CALLNAME:ARG%...@EATEN_TORIKOMODE, ARG 체크중
@@ -2095,37 +2026,22 @@ IF RESULT:0 == 0
 
 ;밥을 먹기로 했다면
 ELSEIF RESULT:0 == 1
-    ;인원수에 따른 메뉴의 가격을 계산한다.
-    CALL CALC_PRICE_MENU_TORIKOMODE
-    ;디버그
-        ;PRINTFORML CHARANUM {CHARANUM}
-        ;PRINTFORML RESULT:1 {RESULT:1}
-        ;PRINTFORML RESULT:2 {RESULT:2}
-        ;PRINTFORML RESULT:3 {RESULT:3}
-        ;PRINTFORML RESULT:4 {RESULT:4}
-        ;PRINTFORML RESULT:5 {RESULT:5}
-    ;이 캐릭터에 할당된 메뉴를 참조해서, 음식 값을 정한다.
-    IF CFLAG:ARG:메뉴 == 0
-        LOCAL:0 = RESULT:0
-    ELSEIF CFLAG:ARG:메뉴 == 1
-        LOCAL:0 = RESULT:1
-    ELSEIF CFLAG:ARG:메뉴 == 2
-        LOCAL:0 = RESULT:2
-    ELSEIF CFLAG:ARG:메뉴 == 3
-        LOCAL:0 = RESULT:3
-    ELSEIF CFLAG:ARG:메뉴 == 4
-        LOCAL:0 = RESULT:4
-    ELSE
-    ENDIF
-    ;디버그
-    ;PRINTFORML LOCAL:0 {LOCAL:0}
     ;지불할 수 있는지 체크한다.
     ;지불할 돈이 있으면 밥을 먹인다.
     IF MONEY >= LOCAL:0
         ;디버그
         ;PRINTFORML 밥 먹기전 스트레스 CFLAG:ARG:스트레스 {CFLAG:ARG:스트레스}
         ;밥을 먹인다
-        CALL CALC_EAT_MENU_TORIKOMODE, ARG
+        ;(RBT_EDIT)리부트 식사수정
+        CALL RBT_FDS_COOKING(ARG)
+        IF RESULT == -1
+            CALL SETCOLOR_TORIKOMODE, "RED", 3
+            PRINTFORML %ARG는% 식비 부족으로 한 끼 굶었다…
+            RESETCOLOR
+            CFLAG:ARG:굶은끼니 += 1
+            RETURN 0
+        ENDIF
+        ;(RBT_EDIT END)
         ;만복영양 상승.
         ;디버그용
         ;PRINTFORML {RESULT:1} 메뉴의 만복도
@@ -2147,7 +2063,7 @@ ELSEIF RESULT:0 == 1
         CALL CALC_EATEN_FOOD_TORIKOMODE, CFLAG:ARG:메뉴, NO:ARG
         PRINTFORML 먹었습니다.
         ;식비차감
-        MONEY -=LOCAL:0
+        MONEY -= RESULT:4 ;(RBT_EDIT)리부트 식사수정으로 변경
         ;디버그용
             ;PRINTFORML 식비로 {LOCAL:0} 만큼 차감되었음. 현재 돈 {MONEY}
         ;디버그용
@@ -2159,7 +2075,7 @@ ELSEIF RESULT:0 == 1
         ;굶은 회수 초기화
         CFLAG:ARG:굶은끼니 = 0
         ;밥을 먹었을 경우, 소비한 밥값을 보고한다.
-        RETURN LOCAL:0
+        RETURN RESULT:4
 
     ;돈이 없어서 밥을 못 먹을 때
     ELSE
@@ -2213,6 +2129,7 @@ REPEAT CHARANUM
         CONTINUE
     SIF 대상_제외됨(COUNT)
         CONTINUE
+    CALL RBT_FDS_INIT(COUNT)
     CALLF SET_LIST, LOCAL:2, COUNT
     LOCAL:2 += 1
     MARK:COUNT:98 = 1
@@ -2224,6 +2141,11 @@ $PRINT_LIST
 DRAWLINE
 PRINTFORML 방침을 바꾸고 싶은 캐릭터를 선택해 주세요.＜page.{LOCAL+1}＞
 ;토리코모드
+DRAWLINE
+PRINT 　
+CALL ARRANGE_CHARALIST, MASTER
+CALL ARRANGE_CHARALIFE, MASTER, 35
+DRAWLINE
 CALL CHARADATA_LIST_TORIKOMODE, LOCAL, LOCAL:99, 35
 ;예상 식비를 계산, 출력한다.
 DRAWLINE
@@ -2237,6 +2159,8 @@ $INPUT_LOOP_1
 INPUT
 IF RESULT == 1000
     RETURN 0
+ELSEIF RESULT == MASTER
+    CALL SELECT_FEED_MENU_TORIKOMODE, MASTER
 ELSEIF RESULT == 1001 && LOCAL > 0
     LOCAL -= 1
     GOTO PRINT_LIST
@@ -2254,81 +2178,8 @@ RESTART
 ;………………………………………………
 ;개별 캐릭터 메뉴 설정 CFLAG:최대만복도
 ;………………………………………………
-; 0 - 굶긴다
-; 1 - 저렴한 식사
-; 2 - 일반적인 식사
-; 3 - 영양만점 식사
-; 4 - 특제개별 식사
 @SELECT_FEED_MENU_TORIKOMODE, ARG
-PRINTFORML 메뉴를 골라주세요. (메뉴의 가격은 보유 노예수와 난이도에 따라 상승합니다)
-
-;가격을 계산해서 불러온다.
-CALL CALC_PRICE_MENU_TORIKOMODE
-
-;디버그
-;PRINTFORML CHARANUM {CHARANUM}
-;PRINTFORML RESULT:1 {RESULT:1}
-;PRINTFORML RESULT:2 {RESULT:2}
-;PRINTFORML RESULT:3 {RESULT:3}
-;PRINTFORML RESULT:4 {RESULT:4}
-;PRINTFORML RESULT:5 {RESULT:5}
-
-PRINTL 
-
-PRINT [0] 굶긴다 / 가격:
-CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
-PRINTFORM {RESULT:0}
-RESETCOLOR
-PRINTL 원 / 만복도 X / 영양 X / 스트레스 小 상승
-
-PRINT [1] 저렴한 식사 / 가격:
-CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
-PRINTFORM {RESULT:1}
-RESETCOLOR
-PRINTL 원 / 만복도 UP / 영양상승 小
-
-PRINT [2] 일반적인 식사 / 가격:
-CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
-PRINTFORM {RESULT:2}
-RESETCOLOR
-PRINTL 원 / 만복도 UP / 영양 中
-
-PRINT [3] 영양만점 식사 / 가격:
-CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
-PRINTFORM {RESULT:3}
-RESETCOLOR
-PRINTL 원 / 만복도 UP / 영양상승 大
-
-PRINT [4] 특제개별 식사 / 가격:
-CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
-PRINTFORM {RESULT:4}
-RESETCOLOR
-PRINTL 원 / 만복도 UP / 영양상승 特大 / 스트레스 中 하락
-
-PRINTL [999] 메뉴 선택 종료
-
-$INPUT_LOOP
-INPUT
-IF RESULT == 0
-    PRINTFORMW %조사처리(CALLNAME:ARG,"를")% 굶깁니다.
-    CFLAG:ARG:메뉴 = 0
-ELSEIF RESULT == 1
-    PRINTFORMW %조사처리(CALLNAME:ARG,"를")% 굶어 죽지 않을 정도로 먹입니다.
-    CFLAG:ARG:메뉴 = 1
-ELSEIF RESULT == 2
-    PRINTFORMW %CALLNAME:ARG%에게 일반적인 식사를 제공합니다. 후식은 없음.
-    CFLAG:ARG:메뉴 = 2
-ELSEIF RESULT == 3
-    PRINTFORMW %CALLNAME:ARG%에게 영양만점의 식사를 제공합니다. 후식은 파르페.
-    CFLAG:ARG:메뉴 = 3
-ELSEIF RESULT == 4
-    PRINTFORMW %CALLNAME:ARG%의 식성에 맞는 영양만점의 식사를 제공합니다. 후식은 초이스 가능.
-    CFLAG:ARG:메뉴 = 4
-ELSEIF RESULT == 999
-    RETURN 0
-ELSE
-    GOTO INPUT_LOOP
-ENDIF
+CALL RBT_FDS_MENU_SELECTER(ARG)
 
 ;………………………………………………
 ;식단(메뉴) 별 가격 계산
@@ -2615,7 +2466,8 @@ SIF NO:ARG == 20
 
 ;디버그
 ;PRINTFORML 자율식사의 식사확률은 {LOCAL:0}퍼센트
-
+SIF ARG == MASTER
+    LOCAL:0 = 100
 RETURN LOCAL:0
 
 

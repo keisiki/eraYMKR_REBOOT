@@ -1,0 +1,205 @@
+﻿;ReBooT_FooDSystem
+@RBT_FDS_MENU_SELECTER(대상)
+#DIM DYNAMIC 대상
+#DIM DYNAMIC PRINTED
+PRINTED = 0
+PRINTFORML 메뉴를 골라주세요.
+DRAWLINE
+IF CFLAG:대상:메뉴 && CFLAG:대상:식사량 == 0
+    CFLAG:대상:식사량 = 2
+ENDIF
+;-------------------
+CALL RBT_FDS_MENU_VIEWER(대상)
+;-------------------
+DRAWLINE
+PRINTFORML 주방장: %CALLNAME:(FLAG:조리자)%(조리기능:{ABL:(FLAG:조리자):요리기능})
+DRAWLINE
+CALL RBT_FDS_MENULIST
+PRINTED = 21
+$INPUT_LOOP
+INPUT
+IF RESULT == 0
+    PRINTFORMW %조사처리(CALLNAME:대상,"를")% 굶깁니다.
+    CFLAG:대상:메뉴 = 0
+    PRINTED++
+ELSEIF RESULT == 1
+    PRINTFORMW %CALLNAME:대상%에게 빈곤한 식사를 제공합니다. 후식은 없음.
+    CFLAG:대상:메뉴 = 1
+    PRINTED++
+ELSEIF RESULT == 2
+    PRINTFORMW %CALLNAME:대상%에게 일반적인 식사를 제공합니다. 후식은 파르페.
+    CFLAG:대상:메뉴 = 2
+    PRINTED++
+ELSEIF RESULT == 3
+    PRINTFORMW %CALLNAME:대상%의 식성에 맞는 영양만점의 식사를 제공합니다. 후식은 초이스 가능.
+    CFLAG:대상:메뉴 = 3
+    PRINTED++
+ELSEIF RESULT == 4
+    PRINTFORMW %CALLNAME:대상%에게 정량의 반절 분량만큼만 식사를 제공합니다. 배고파…
+    CFLAG:대상:식사량 = 1
+    PRINTED++
+ELSEIF RESULT == 5
+    PRINTFORMW %CALLNAME:대상%에게 정량의 식사를 제공합니다.
+    CFLAG:대상:식사량 = 2
+    PRINTED++
+ELSEIF RESULT == 6
+    PRINTFORMW %CALLNAME:대상%에게 푸짐한 식사를 제공합니다.
+    CFLAG:대상:식사량 = 3
+    PRINTED++
+ELSEIF RESULT == 999
+    RETURN 0
+ELSE
+    PRINTED++
+    GOTO INPUT_LOOP
+ENDIF
+CLEARLINE PRINTED
+RESTART
+
+@RBT_FDS_MENULIST
+PRINTFORML 메뉴
+PRINTFORML [000] 굶긴다　 　　 ／ 재료 소모 없음 ／ 만족도 無 스트레스 大 영양無 만복無
+PRINTFORML [001] 최저한의 식단 ／ 하급 식재 　　 ／ 만족도 下
+PRINTFORML [002] 일반적인 식단 ／ 보통 식재 　　 ／ 만족도 中
+PRINTFORML [003] 특제개별 식단 ／ 고급 식재 　　 ／ 만족도 上
+DRAWLINE
+PRINTFORML 양
+PRINTFORML [004] 반절　　　　  ／ 식재 １개 사용 ／ 영양　 下
+PRINTFORML [005] 정량　　　　  ／ 식재 ２개 사용 ／ 영양　 中
+PRINTFORML [006] 증량　　　　  ／ 식재 ３개 사용 ／ 영양　 上
+DRAWLINE
+PRINTL [999] 메뉴 선택 종료
+
+@RBT_FDS_MENU_VIEWER(대상)
+#DIM DYNAMIC 대상
+RESETCOLOR
+FONTSTYLE 1
+PRINTFORM %CALLNAME:대상%의 식단 :
+SELECTCASE CFLAG:대상:메뉴
+    CASE 0
+        CALL SETCOLOR_TORIKOMODE, "RED", 4
+        PRINTFORM 굶김
+    CASE 1
+        CALL SETCOLOR_TORIKOMODE, "MAGENTA", 4
+        PRINTFORM 싸구려 
+    CASE 2
+        PRINTFORM 일반 
+    CASE 3
+        CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
+        PRINTFORM 특제 
+ENDSELECT
+RESETCOLOR
+IF CFLAG:대상:메뉴
+    SELECTCASE CFLAG:대상:식사량
+        CASE 1
+            CALL SETCOLOR_TORIKOMODE, "RED", 4
+            PRINTFORM 하프
+        CASE 2
+            PRINTFORM 정량 
+        CASE 3
+            CALL SETCOLOR_TORIKOMODE, "SKYBLUE", 4
+            PRINTFORM 곱빼기 
+    ENDSELECT
+ENDIF
+RESETCOLOR
+PRINTFORML 식사
+FONTSTYLE 0
+;-------------------
+PRINTFORM 예상 식재 소비 : 
+SELECTCASE CFLAG:대상:메뉴
+    CASE 0
+        PRINTFORM 없음
+    CASE 1
+        PRINTFORM 하급 식재 
+    CASE 2
+        PRINTFORM 보통 식재 
+    CASE 3
+        PRINTFORM 고급 식재 
+ENDSELECT
+IF CFLAG:대상:메뉴
+    SELECTCASE CFLAG:대상:식사량
+        CASE 1
+            PRINTFORM 1개 
+        CASE 2
+            PRINTFORM 2개 
+        CASE 3
+            PRINTFORM 3개  
+    ENDSELECT
+ENDIF
+SIF CFLAG:대상:메뉴
+    PRINTFORM ({CFLAG:대상:식사량 * ((CFLAG:대상:메뉴 - 1) * 50 + 25)}원/끼니)
+PRINTL
+
+
+@RBT_FDS_COOKING(대상)
+#DIM DYNAMIC 대상
+#DIM DYNAMIC 회복량, 3 ;만복, 영양, 스트레스
+;-------------
+; P1-재료 체크 및 소비
+;-------------
+IF CFLAG:대상:메뉴 > 0 && ITEM:(699 + CFLAG:대상:메뉴) < CFLAG:대상:식사량
+    ;재료부족
+    IF MONEY >= ITEMPRICE:(699 + CFLAG:대상:메뉴) * CFLAG:대상:식사량
+        RESULT:4 = ITEMPRICE:(699 + CFLAG:대상:메뉴) * CFLAG:대상:식사량
+        GOTO PHASE2
+    ENDIF
+    RETURN -1
+ELSE
+    ITEM:(699 + CFLAG:대상:메뉴) -= CFLAG:대상:식사량
+ENDIF
+
+;-------------
+; P2-식단표 별 회복량 체크
+;-------------
+$PHASE2
+SELECTCASE CFLAG:대상:메뉴
+    CASE 0
+        회복량:0 = 0
+        회복량:1 = 0
+        회복량:2 = 100
+    CASE 1
+        회복량:0 = 500 * CFLAG:대상:식사량
+        회복량:1 = 125 * CFLAG:대상:식사량
+        회복량:2 = 000 * CFLAG:대상:식사량
+    CASE 2
+        회복량:0 = 500 * CFLAG:대상:식사량
+        회복량:1 = 250 * CFLAG:대상:식사량
+        회복량:2 = -25 * CFLAG:대상:식사량
+    CASE 3
+        회복량:0 = 500 * CFLAG:대상:식사량
+        회복량:1 = 375 * CFLAG:대상:식사량
+        회복량:2 = -50 * CFLAG:대상:식사량
+ENDSELECT
+
+;-------------
+; P3-조리자 능력 별 편차 적용
+;-------------
+LOCAL = RBT_FDS_COOK_MODIFY(FLAG:조리자)
+LOCAL = (LOCAL * 80 / 100) + (RAND:(LOCAL * 20 / 100) * 2) ; 기대값의 80%는 확정, 난수로 80~120%의 효과를 낸다
+회복량:0 = 회복량:0 * LOCAL / 100
+회복량:1 = 회복량:1 * LOCAL / 100
+회복량:2 = 회복량:2 * LOCAL / 100
+
+;-------------
+; P4-최종 적용값 반환
+;-------------
+RESULT:1 = 회복량:0
+RESULT:2 = 회복량:1
+RESULT:3 = 회복량:2
+
+@RBT_FDS_COOK_MODIFY(ARG)
+#FUNCTION
+LOCAL = MIN(5,ABL:ARG:요리기능)
+RESULT = 100 + (25 * LOCAL * LOCAL + 75 * LOCAL)/10 ; 2.5x^2 + 7.5x + 100과 같다
+;즉
+;0 = 100
+;1 = 110
+;2 = 125
+;3 = 145
+;4 = 170
+;5 = 200
+RETURNF RESULT
+
+@RBT_FDS_INIT(ARG)
+IF CFLAG:ARG:메뉴 != 0 && CFLAG:ARG:식사량 == 0
+    CFLAG:ARG:식사량 = 2
+ENDIF

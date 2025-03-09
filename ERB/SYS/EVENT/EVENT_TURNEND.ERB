@@ -40,9 +40,9 @@ FOR TFLAG:900, 0, CHARANUM
         CALL GARDEN_EFFECT
 
     ;睡眠薬の効果は時間経過で半減.夜の休みを経由した場合は解除
-    IF EQUIP:(TFLAG:900):14
-        EQUIP:(TFLAG:900):14 -= (TIME == 0) ? 25000 # EQUIP:(TFLAG:900):14
-        EQUIP:(TFLAG:900):14 = MAX(EQUIP:(TFLAG:900):14, 0)
+    IF EQUIP:(TFLAG:900):수면제
+        EQUIP:(TFLAG:900):수면제 -= (TIME == 0) ? 25000 # EQUIP:(TFLAG:900):수면제
+        EQUIP:(TFLAG:900):수면제 = MAX(EQUIP:(TFLAG:900):수면제, 0)
     ENDIF
 
     ;触手漬けの直後は回復不能
@@ -397,6 +397,13 @@ FOR TFLAG:900, 0, CHARANUM
     ;EASYは回復する条件に当てはまる場合は気力が全回復する
     SIF FLAG:난이도 == 1 && LOCAL:11
         LOCAL:11 = MAXBASE:(TFLAG:900):기력
+
+    ;(RBT_EDIT)리부트 관리모드 추가20240106
+    IF GETBIT(FLAG:리부트모드설정,3)
+        LOCAL:10 = LOCAL:10 * (회복배율:(TFLAG:900) + 100) / 100
+        LOCAL:11 = LOCAL:11 * (회복배율:(TFLAG:900) + 100) / 100
+    ENDIF
+    ;
 
     ;体力の回復と数値是正
     BASE:(TFLAG:900):체력 = LIMIT(BASE:(TFLAG:900):체력 + LOCAL:10, 0, MAXBASE:(TFLAG:900):체력)
