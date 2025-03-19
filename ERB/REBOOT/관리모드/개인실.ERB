@@ -1,1 +1,197 @@
-﻿
+﻿;--------------------------------------------------------------------------------------------
+;ReBooT RoomSystem
+;--------------------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------------------
+;게임 초기 주어지는 방을 설정
+;버려진 저택 설정에 맞게 다소 낡게 설정
+;--------------------------------------------------------------------------------------------
+@RBT_RS_GAMEINIT(ARG = 11)
+FOR LOCAL,0,1000
+    RS_ROOM:LOCAL:R방주인:0 = -1
+NEXT
+FOR LOCAL,0,ARG
+    CALL RBT_RS_INIT(LOCAL)
+    CALL RBT_RS_POLLUTE(LOCAL,300)
+    CALL RBT_RS_FUNI_UPGRADE(LOCAL, R침대, 1) ;초기 방의 기본 침대/침구 세트는 지급
+    CALL RBT_RS_FUNI_UPGRADE(LOCAL, R침구, 1)
+    CALL RBT_RS_DAMAGE(LOCAL, R침대, 50)
+    CALL RBT_RS_DAMAGE(LOCAL, R침구, 50)
+    LOCAL:1 ++
+NEXT
+;RS_ROOM:0:R방주인:0 = 0
+RETURN LOCAL:1
+
+;--------------------------------------------------------------------------------------------
+;방을 새로 만들때 초기 값을 기입
+;--------------------------------------------------------------------------------------------
+@RBT_RS_INIT(방번호)
+#DIM DYNAMIC 방번호
+RS_ROOM:방번호:R방주인:0 = -1
+RS_ROOM:방번호:R방크기:0 = 1
+
+;--------------------------------------------------------------------------------------------
+;방 이름 반환 함수
+;--------------------------------------------------------------------------------------------
+@RBT_RS_ROOMNAME(방번호)
+#FUNCTIONS
+#DIM DYNAMIC 방번호
+IF RS_ROOM:방번호:R방주인:0 != -1
+    LOCALS '= @"%CALLNAME:(RS_ROOM:방번호:R방주인:0)%의 방"
+ELSE
+    LOCALS '= @"{방번호}번 방"
+ENDIF
+RETURNF LOCALS
+
+;--------------------------------------------------------------------------------------------
+;방의 더러움 증가 함수, 음수 입력으로 청소 가능
+;함수화 하는 이유는 정합성 판정 때문
+;--------------------------------------------------------------------------------------------
+@RBT_RS_POLLUTE(방번호, 강도)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 강도
+RS_ROOM:방번호:R위생도:0 = LIMIT(RS_ROOM:방번호:R위생도:0 + 강도, 0, R_최대오염도)
+
+;--------------------------------------------------------------------------------------------
+;방 확장에 대한 정합성 및 비용 책정
+;--------------------------------------------------------------------------------------------
+@RBT_RS_ROOM_EXPANSION(방번호)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 비용
+IF RS_ROOM:방번호:R방크기:0 + 1 >= R_최대방크기
+    RETURN -1
+ENDIF
+비용 = RS_ROOM:방번호:R방크기:0 * 10000
+RETURN 비용
+
+;--------------------------------------------------------------------------------------------
+;가구를 들여놓을 수 있는 양을 반환
+;--------------------------------------------------------------------------------------------
+@RBT_RS_MAX_FUNITURE(방번호)
+#FUNCTION
+#DIM DYNAMIC 방번호
+; 1을 빼는 이유 = 조교 대상이 있을 공간 1이 필요하다
+RETURNF RS_ROOM:방번호:R방크기:0 - 1
+
+;--------------------------------------------------------------------------------------------
+;가구를 들여놓은 양을 반환
+;--------------------------------------------------------------------------------------------
+@RBT_RS_NOW_FUNITURE(방번호)
+#DIM DYNAMIC 방번호
+FOR LOCAL,10,100
+    TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"존재")
+    IF RESULT == LOCAL
+        TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"현재크기")
+        LOCAL:1 += RESULT
+    ENDIF
+    RESULT = 0
+NEXT
+RETURN LOCAL:1 
+
+;--------------------------------------------------------------------------------------------
+;가구에 데미지 부여
+;--------------------------------------------------------------------------------------------
+@RBT_RS_DAMAGE(방번호,ARG, ARG:1)
+#DIM DYNAMIC 방번호
+TRYCALLFORM RBT_RS_FUNI_{ARG}(방번호,"존재")
+SIF RESULT != ARG
+    RETURN 0
+RS_ROOM:방번호:ARG:1 -= ARG:1
+IF RS_ROOM:방번호:ARG:1 < 0
+    CALL RBT_RS_BROKEN(방번호,ARG)
+ENDIF
+
+;--------------------------------------------------------------------------------------------
+;가구 파괴
+;--------------------------------------------------------------------------------------------
+@RBT_RS_BROKEN(방번호,ARG)
+#DIM DYNAMIC 방번호
+TRYCALLFORM RBT_RS_FUNI_{ARG}(방번호,"존재")
+SIF RESULT != ARG
+    RETURN 0
+RS_ROOM:방번호:ARG:0 = 0 
+RS_ROOM:방번호:ARG:1 = 0
+TRYCALLFORM RBT_RS_FUNI_{ARG}(방번호,"가구명")
+PRINTFORMW %RBT_RS_ROOMNAME(방번호)%의 %조사처리(RESULTS,"가")% 완전히 망가져 못쓰게 되어버렸습니다.
+
+;--------------------------------------------------------------------------------------------
+;방 상태 확인
+;--------------------------------------------------------------------------------------------
+@RBT_RS_VIEW(방번호)
+#DIM DYNAMIC 방번호
+DRAWLINE
+PRINTFORML {방번호}번 방
+PRINTFORML 거주자: \@RS_ROOM:방번호:R방주인:0 != -1 ? %NAME:(RS_ROOM:방번호:R방주인:0)% # 비어있음\@
+DRAWLINE
+;방 크기 묘사
+PRINTFORML %조사처리(RBT_RS_ROOMNAME(방번호),"는")%…
+SELECTCASE RBT_RS_MAX_FUNITURE(방번호)
+    CASE 0
+        PRINTFORML 사람 두 명 간신히 누울 수준이다…
+    CASE 1
+        PRINTFORML 평범한 크기다.
+    CASE 2
+        PRINTFORML 상당히 넓다…
+    CASE IS > 3
+        PRINTFORML 태평양만큼 넓다…
+ENDSELECT
+PRINTL
+;가구 묘사
+PRINTFORML %RBT_RS_ROOMNAME(방번호)%에는…
+FOR LOCAL, R_MIN가구, R_MAX가구
+    VARSET RESULTS
+    TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"강화")
+    IF RESULT > 0
+        TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"상태")
+        SELECTCASE RESULT
+            CASE IS < 25
+                PRINT 망가진 
+            CASE IS < 50
+                PRINT 거의 망가진 
+            CASE IS < 75
+                PRINT 살짝 망가진 
+            CASEELSE
+        ENDSELECT
+        TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"가구명")
+        PRINTFORML %조사처리(RESULTS,"가")% 있다.
+    ENDIF
+NEXT
+DRAWLINE
+CALL RBT_RS_NOW_FUNITURE(방번호)
+PRINTFORML 방 크기: [{RESULT}/{RBT_RS_MAX_FUNITURE(방번호)+1}]
+
+;--------------------------------------------------------------------------------------------
+;방 리스트 확인
+;--------------------------------------------------------------------------------------------
+@RBT_RS_ROOMLIST
+#DIM DYNAMIC 방번호
+DRAWLINE
+FOR LOCAL, 0, 20
+    방번호 = LOCAL + (LOCAL:1 * 20)
+    SIF !RS_ROOM:방번호:R방크기:0
+        CONTINUE
+    PRINTFORML [{방번호,4,RIGHT}] %RBT_RS_ROOMNAME(방번호)%
+NEXT
+DRAWLINE
+PRINTFORML [9999] 돌아간다
+INPUT
+IF RESULT == 9999
+    RETURN
+ELSEIF RESULT >= 0 && RESULT <= 1000
+    CALL RBT_RS_VIEW(RESULT)
+ELSE
+    RESTART
+ENDIF
+RESTART
+;--------------------------------------------------------------------------------------------
+;캐릭터번호로 부터 묵는 방 번호를 반환
+;--------------------------------------------------------------------------------------------
+@RBT_RS_CHARA_TO_ROOMNUM(ARG)
+#FUNCTION
+#DIM DYNAMIC 방번호
+FOR 방번호,0,1000
+    IF RS_ROOM:방번호:R방주인:0 == ARG
+        RETURNF 방번호
+    ENDIF
+NEXT
+RETURNF -1

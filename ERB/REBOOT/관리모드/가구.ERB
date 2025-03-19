@@ -1,0 +1,189 @@
+﻿;--------------------------------------------------------------------------------------------
+;RBT_RS_FUNIture
+;--------------------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------------------
+;가구 업그레이드 정합성 판정
+;--------------------------------------------------------------------------------------------
+@RBT_RS_FUNI_CAN_UPGRADE(방번호, ARGS)
+#DIM DYNAMIC 방번호
+TRYCALLFORM RBT_RS_FUNI_%ARGS%(방번호,"다음크기")
+LOCAL = RESULT
+CALL RBT_RS_NOW_FUNITURE(방번호)
+IF RESULT + LOCAL > RBT_RS_MAX_FUNITURE(방번호)
+    RETURN 0
+ENDIF
+
+TRYCALLFORM RBT_RS_FUNI_%ARGS%(방번호,"강화비용")
+IF RESULT > MONEY
+    RETURN 0
+ENDIF
+
+RETURN 1
+
+;--------------------------------------------------------------------------------------------
+;가구 업그레이드 처리
+;--------------------------------------------------------------------------------------------
+@RBT_RS_FUNI_UPGRADE(방번호, ID, ARG = 0)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC ID
+IF !ARG
+    TRYCALLFORM RBT_RS_FUNI_%ARGS%(방번호,"강화비용")
+    MONEY -= RESULT
+ENDIF
+RS_ROOM:방번호:ID:0 ++
+RS_ROOM:방번호:ID:1 = 100 ;내구도를 초기화
+
+;--------------------------------------------------------------------------------------------
+@RBT_RS_FUNI_10(방번호,ARGS)
+#DIM DYNAMIC 방번호
+CALL RBT_RS_FUNI_침대(방번호,ARGS)
+RETURN RESULT
+
+@RBT_RS_FUNI_침대(방번호,ARGS)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC ID
+#DIM DYNAMIC 크기,5
+#DIM DYNAMIC 업그레이드비용
+#DIM DYNAMIC 만족도배수
+#DIMS DYNAMIC 가구명
+#DIMS DYNAMIC 수식어,5
+;정의부, 이곳만 수정하면 된다
+ID = R침대
+가구명 '= "침대"
+크기:0 = 0
+크기:1 = 0
+크기:2 = 1
+크기:3 = 2
+크기:4 = 99999
+업그레이드비용 = 10000
+만족도배수 = 50
+수식어:0 '= ""
+수식어:1 '= "낡은 "
+수식어:2 '= "평범한 "
+수식어:3 '= "고급스런 "
+수식어:4 '= ""
+
+;이하는 건들필요 없음
+SELECTCASE ARGS
+    CASE "존재"
+        RETURN ID
+    CASE "강화"
+        RETURN RS_ROOM:방번호:ID:0
+    CASE "상태"
+        RETURN RS_ROOM:방번호:ID:1
+    CASE "강화비용"
+        RETURN 업그레이드비용
+    CASE "현재크기"
+        RETURN 크기:(RS_ROOM:방번호:ID:0)
+    CASE "다음크기"
+        RETURN 크기:(RS_ROOM:방번호:ID:0 + 1) - 크기:(RS_ROOM:방번호:ID:0)
+    CASE "만족도배수"
+        RETURN 만족도배수 * RS_ROOM:방번호:ID:0
+    CASE "가구명"
+        RESULTS '= 수식어:(RS_ROOM:방번호:ID:0) + 가구명
+        RETURN
+ENDSELECT
+
+
+;--------------------------------------------------------------------------------------------
+@RBT_RS_FUNI_11(방번호,ARGS)
+#DIM DYNAMIC 방번호
+CALL RBT_RS_FUNI_침구(방번호,ARGS)
+RETURN RESULT
+
+@RBT_RS_FUNI_침구(방번호,ARGS)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC ID
+#DIM DYNAMIC 크기,5
+#DIM DYNAMIC 업그레이드비용
+#DIM DYNAMIC 만족도배수
+#DIMS DYNAMIC 가구명
+#DIMS DYNAMIC 수식어,5
+;정의부, 이곳만 수정하면 된다
+ID = R침구
+가구명 '= "침구"
+크기:0 = 0
+크기:1 = 0
+크기:2 = 0
+크기:3 = 0
+크기:4 = 99999
+업그레이드비용 = 20000
+만족도배수 = 75
+수식어:0 '= ""
+수식어:1 '= "더러운 "
+수식어:2 '= "평범한 "
+수식어:3 '= "포근한 "
+수식어:4 '= ""
+
+;이하는 건들필요 없음
+SELECTCASE ARGS
+    CASE "존재"
+        RETURN ID
+    CASE "강화"
+        RETURN RS_ROOM:방번호:ID:0
+    CASE "상태"
+        RETURN RS_ROOM:방번호:ID:1
+    CASE "강화비용"
+        RETURN 업그레이드비용
+    CASE "현재크기"
+        RETURN 크기:(RS_ROOM:방번호:ID:0)
+    CASE "다음크기"
+        RETURN 크기:(RS_ROOM:방번호:ID:0 + 1) - 크기:(RS_ROOM:방번호:ID:0)
+    CASE "만족도배수"
+        RETURN 만족도배수 * RS_ROOM:방번호:ID:0
+    CASE "가구명"
+        RESULTS '= 수식어:(RS_ROOM:방번호:ID:0) + 가구명
+        RETURN
+ENDSELECT
+
+;--------------------------------------------------------------------------------------------
+@RBT_RS_FUNI_12(방번호,ARGS)
+#DIM DYNAMIC 방번호
+CALL RBT_RS_FUNI_탁자(방번호,ARGS)
+RETURN RESULT
+
+@RBT_RS_FUNI_탁자(방번호,ARGS)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC ID
+#DIM DYNAMIC 크기,5
+#DIM DYNAMIC 업그레이드비용
+#DIM DYNAMIC 만족도배수
+#DIMS DYNAMIC 가구명
+#DIMS DYNAMIC 수식어,5
+;정의부, 이곳만 수정하면 된다
+ID = R탁자
+가구명 '= "탁자"
+크기:0 = 0
+크기:1 = 1
+크기:2 = 2
+크기:3 = 3
+크기:4 = 99999
+업그레이드비용 = 10000
+만족도배수 = 25
+수식어:0 '= ""
+수식어:1 '= "다 부서져가는 "
+수식어:2 '= ""
+수식어:3 '= "깔끔한 "
+수식어:4 '= ""
+
+;이하는 건들필요 없음
+SELECTCASE ARGS
+    CASE "존재"
+        RETURN ID
+    CASE "강화"
+        RETURN RS_ROOM:방번호:ID:0
+    CASE "상태"
+        RETURN RS_ROOM:방번호:ID:1
+    CASE "강화비용"
+        RETURN 업그레이드비용
+    CASE "현재크기"
+        RETURN 크기:(RS_ROOM:방번호:ID:0)
+    CASE "다음크기"
+        RETURN 크기:(RS_ROOM:방번호:ID:0 + 1) - 크기:(RS_ROOM:방번호:ID:0)
+    CASE "만족도배수"
+        RETURN 만족도배수 * RS_ROOM:방번호:ID:0
+    CASE "가구명"
+        RESULTS '= 수식어:(RS_ROOM:방번호:ID:0) + 가구명
+        RETURN
+ENDSELECT
+

@@ -34,6 +34,7 @@ ENDIF
 ;--------------------------------------------------
 @SHOW_SHOP
 ;토리코모드 - 노모어 글레이즈 사용중 게임오버 되었다면, 데이터 로드시 여기로 온다.
+CALL RBT_PATCHER
 CALL DECODE_SAVEINFO_TORIKOMODE
 SIF RESULT:0 == 2
     CALL GAMEOVER_NOMOREGLAZE_TORIKOMODE
@@ -366,6 +367,7 @@ ELSE
         SIF (ITEM:52 || NOITEM) && TFLAG:154 == 0 && ABL:노출증 >= 3 && (TALENT:연모 || ABL:순종 >= 5) && (TIME == 1 || TALENT:흡혈귀 == 0 || (TALENT:흡혈귀 && ITEM:48 ))
             PRINTLC [132] - 야외 라이브 공연
     ENDIF
+    PRINTLC [135] - 방의 상태를 본다
     ;주인이 [자웅가변]을 가지고 있을 경우
     SIF TALENT:MASTER:성별교체
         PRINTLC [140] - 주인 성별 변경
@@ -559,6 +561,9 @@ ELSE
         RETURN 1
     ELSEIF RESULT == 132 && TARGET >= 0 && (ITEM:52 || NOITEM) && TFLAG:154 == 0 && ABL:노출증 >= 3 && (TALENT:연모 || ABL:순종 >= 5)  && (TIME == 1 || TALENT:흡혈귀 == 0 || (TALENT:흡혈귀 && (ITEM:48 || NOITEM))) && FLAG:SHOP이벤트확장 & 16
         CALL CONCERT_JUDGE
+        RETURN 1
+    ELSEIF RESULT == 135
+        CALL RBT_RS_ROOMLIST
         RETURN 1
     ELSEIF RESULT == 140 && TALENT:MASTER:성별교체
         CALL CHANGE_SEX, MASTER
