@@ -4,21 +4,22 @@
 ;--------------------------------------------------------------------------------------------
 ;가구 업그레이드 정합성 판정
 ;--------------------------------------------------------------------------------------------
-@RBT_RS_FUNI_CAN_UPGRADE(방번호, ARGS)
+@RBT_RS_FUNI_CAN_UPGRADE(방번호, ID)
 #DIM DYNAMIC 방번호
-TRYCALLFORM RBT_RS_FUNI_%ARGS%(방번호,"다음크기")
+#DIM DYNAMIC ID
+TRYCALLFORM RBT_RS_FUNI_{ID}(방번호,"다음크기")
 LOCAL = RESULT
 CALL RBT_RS_NOW_FUNITURE(방번호)
 IF RESULT + LOCAL > RBT_RS_MAX_FUNITURE(방번호)
-    RETURN 0
+    RETURN 1
 ENDIF
 
-TRYCALLFORM RBT_RS_FUNI_%ARGS%(방번호,"강화비용")
+TRYCALLFORM RBT_RS_FUNI_{ID}(방번호,"강화비용")
 IF RESULT > MONEY
-    RETURN 0
+    RETURN 2
 ENDIF
 
-RETURN 1
+RETURN 0
 
 ;--------------------------------------------------------------------------------------------
 ;가구 업그레이드 처리
@@ -27,7 +28,7 @@ RETURN 1
 #DIM DYNAMIC 방번호
 #DIM DYNAMIC ID
 IF !ARG
-    TRYCALLFORM RBT_RS_FUNI_%ARGS%(방번호,"강화비용")
+    TRYCALLFORM RBT_RS_FUNI_{ID}(방번호,"강화비용")
     MONEY -= RESULT
 ENDIF
 RS_ROOM:방번호:ID:0 ++
@@ -47,6 +48,7 @@ RETURN RESULT
 #DIM DYNAMIC 만족도배수
 #DIMS DYNAMIC 가구명
 #DIMS DYNAMIC 수식어,5
+#DIMS DYNAMIC 한줄평
 ;정의부, 이곳만 수정하면 된다
 ID = R침대
 가구명 '= "침대"
@@ -62,6 +64,7 @@ ID = R침대
 수식어:2 '= "평범한 "
 수식어:3 '= "고급스런 "
 수식어:4 '= ""
+한줄평 '= "한 명이 눕기 적당한 침대다, 노예의 생활과 조교의 대다수가 이 위에서 이루어진다"
 
 ;이하는 건들필요 없음
 SELECTCASE ARGS
@@ -81,6 +84,9 @@ SELECTCASE ARGS
         RETURN 만족도배수 * RS_ROOM:방번호:ID:0
     CASE "가구명"
         RESULTS '= 수식어:(RS_ROOM:방번호:ID:0) + 가구명
+        RETURN
+    CASE "한줄평"
+        RESULTS '= 한줄평
         RETURN
 ENDSELECT
 
@@ -99,6 +105,7 @@ RETURN RESULT
 #DIM DYNAMIC 만족도배수
 #DIMS DYNAMIC 가구명
 #DIMS DYNAMIC 수식어,5
+#DIMS DYNAMIC 한줄평
 ;정의부, 이곳만 수정하면 된다
 ID = R침구
 가구명 '= "침구"
@@ -114,6 +121,7 @@ ID = R침구
 수식어:2 '= "평범한 "
 수식어:3 '= "포근한 "
 수식어:4 '= ""
+한줄평 '= "적당한 두께의 요와 이불, 겨울 추위에 버티려면 필수"
 
 ;이하는 건들필요 없음
 SELECTCASE ARGS
@@ -134,6 +142,9 @@ SELECTCASE ARGS
     CASE "가구명"
         RESULTS '= 수식어:(RS_ROOM:방번호:ID:0) + 가구명
         RETURN
+    CASE "한줄평"
+        RESULTS '= 한줄평
+        RETURN
 ENDSELECT
 
 ;--------------------------------------------------------------------------------------------
@@ -150,6 +161,7 @@ RETURN RESULT
 #DIM DYNAMIC 만족도배수
 #DIMS DYNAMIC 가구명
 #DIMS DYNAMIC 수식어,5
+#DIMS DYNAMIC 한줄평
 ;정의부, 이곳만 수정하면 된다
 ID = R탁자
 가구명 '= "탁자"
@@ -165,6 +177,7 @@ ID = R탁자
 수식어:2 '= ""
 수식어:3 '= "깔끔한 "
 수식어:4 '= ""
+한줄평 '= "조그마한 탁자, 별 것 아닌것 같지만 노예에겐 상당한 복지"
 
 ;이하는 건들필요 없음
 SELECTCASE ARGS
@@ -184,6 +197,9 @@ SELECTCASE ARGS
         RETURN 만족도배수 * RS_ROOM:방번호:ID:0
     CASE "가구명"
         RESULTS '= 수식어:(RS_ROOM:방번호:ID:0) + 가구명
+        RETURN
+    CASE "한줄평"
+        RESULTS '= 한줄평
         RETURN
 ENDSELECT
 

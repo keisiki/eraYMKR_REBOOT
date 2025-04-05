@@ -55,7 +55,7 @@ RS_ROOM:방번호:R위생도:0 = LIMIT(RS_ROOM:방번호:R위생도:0 + 강도, 
 ;--------------------------------------------------------------------------------------------
 ;방 확장에 대한 정합성 및 비용 책정
 ;--------------------------------------------------------------------------------------------
-@RBT_RS_ROOM_EXPANSION(방번호)
+@RBT_RS_ROOM_EXPANSIONABLE(방번호)
 #DIM DYNAMIC 방번호
 #DIM DYNAMIC 비용
 IF RS_ROOM:방번호:R방크기:0 + 1 >= R_최대방크기
@@ -78,6 +78,7 @@ RETURNF RS_ROOM:방번호:R방크기:0 - 1
 ;--------------------------------------------------------------------------------------------
 @RBT_RS_NOW_FUNITURE(방번호)
 #DIM DYNAMIC 방번호
+VARSET LOCAL
 FOR LOCAL,10,100
     TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"존재")
     IF RESULT == LOCAL
@@ -115,10 +116,124 @@ TRYCALLFORM RBT_RS_FUNI_{ARG}(방번호,"가구명")
 PRINTFORMW %RBT_RS_ROOMNAME(방번호)%의 %조사처리(RESULTS,"가")% 완전히 망가져 못쓰게 되어버렸습니다.
 
 ;--------------------------------------------------------------------------------------------
+;가구 수리
+;--------------------------------------------------------------------------------------------
+@RBT_RS_REPAIR(방번호,ARG)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 수리비
+#DIM DYNAMIC 내구도
+TRYCALLFORM RBT_RS_FUNI_{ARG}(방번호,"존재")
+SIF RESULT != ARG
+    RETURN 0
+TRYCALLFORM RBT_RS_FUNI_{ARG}(방번호,"가구명")
+LOCALS '= RESULTS
+DRAWLINE
+PRINTFORML %LOCALS%의 수리를 진행합니까?
+DRAWLINE
+CALLFORM RBT_RS_FUNI_{ARG}(방번호,"상태")
+내구도 = RESULT
+CALLFORM RBT_RS_FUNI_{ARG}(방번호,"강화비용")
+수리비 = ((100 - 내구도) * RESULT) / 100
+PRINTFORML 내구도: [{내구도}/100] -> [100/100]
+PRINTFORML 소지금: {MONEY}\\
+PRINTFORML 비용 : {수리비}\\
+PRINTFORML 수리 후 남을 자금: {MONEY - 수리비}\\
+DRAWLINE
+IF MONEY < 수리비
+    PRINTFORML 비용이 부족합니다
+    RETURN
+ENDIF
+PRINTFORML [0] 예
+PRINTFORML [1] 아니오
+INPUT
+IF RESULT == 0
+    MONEY -= 수리비
+    RS_ROOM:방번호:ARG:1 = 100
+ENDIF
+
+;--------------------------------------------------------------------------------------------
+;가구 업그레이드 창
+;--------------------------------------------------------------------------------------------
+@RBT_RS_UPGRADE_VIEW(방번호,ARG)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 강화비
+
+TRYCALLFORM RBT_RS_FUNI_{ARG}(방번호,"존재")
+SIF RESULT != ARG
+    RETURN 0
+TRYCALLFORM RBT_RS_FUNI_{ARG}(방번호,"가구명")
+LOCALS '= RESULTS
+PRINTFORML %LOCALS%의 업그레이드를 진행합니까?
+DRAWLINE
+PRINTFORML 소지금: {MONEY}\\
+CALLFORM RBT_RS_FUNI_{ARG}(방번호,"강화비용")
+강화비 = RESULT
+PRINTFORML 비용 : {강화비}\\
+PRINTFORML 수리 후 남을 자금: {MONEY - 강화비}\\
+CALLFORM RBT_RS_FUNI_{ARG}(방번호,"현재크기")
+LOCAL = RESULT
+CALLFORM RBT_RS_FUNI_{ARG}(방번호,"다음크기")
+LOCAL:1 = RESULT
+PRINTFORML 크기: {LOCAL} -> {LOCAL:1} 
+DRAWLINE
+CALL RBT_RS_FUNI_CAN_UPGRADE(방번호,ARG)
+SELECTCASE RESULT
+    CASE 1
+        PRINTFORMW 방에 여유 공간이 부족하여 업그레이드 할 수 없습니다
+        RETURN
+    CASE 2
+        PRINTFORMW 자금이 부족해 업그레이드 할 수 없습니다
+        RETURN
+    CASEELSE
+ENDSELECT
+PRINTFORML [0] 예
+PRINTFORML [1] 아니오
+INPUT
+IF RESULT == 0
+    CALL RBT_RS_FUNI_UPGRADE(방번호, ARG)
+ENDIF
+
+;--------------------------------------------------------------------------------------------
+;방 크기 확장
+;--------------------------------------------------------------------------------------------
+@RBT_RS_ROOM_EXTAND(방번호)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 공사비
+DRAWLINE
+CALL RBT_RS_ROOM_EXPANSIONABLE(방번호)
+IF RESULT == -1
+    PRINTFORML 더 이상 %RBT_RS_ROOMNAME(방번호)%의 확장을 진행할 수 없습니다
+    RETURN
+ENDIF
+공사비 = RESULT
+PRINTFORML %RBT_RS_ROOMNAME(방번호)%에 대한 확장을 진행하시겠습니까?
+PRINTFORML 소지금: {MONEY}\\
+PRINTFORML 공사비: {공사비}\\
+PRINTFORML 공사 후 남을 자금: {MONEY - 공사비}\\
+DRAWLINE
+IF MONEY < 공사비
+    PRINTFORML 비용이 부족합니다
+    RETURN
+ENDIF
+PRINTFORML [0] 예
+PRINTFORML [1] 아니오
+INPUT
+IF RESULT == 0
+    MONEY -= 공사비
+    RS_ROOM:방번호:R방크기:0 += 1
+    PRINTFORMW %RBT_RS_ROOMNAME(방번호)%의 넓이가 {RS_ROOM:방번호:R방크기:0}가 되었습니다
+ENDIF
+
+;--------------------------------------------------------------------------------------------
 ;방 상태 확인
 ;--------------------------------------------------------------------------------------------
 @RBT_RS_VIEW(방번호)
 #DIM DYNAMIC 방번호
+#DIM DYNAMIC TEMPLINE
+#DIMS DYNAMIC 묘사,12
+#DIM DYNAMIC SELECTED
+;총 라인 수는 32줄 정도
+TEMPLINE = LINECOUNT
 DRAWLINE
 PRINTFORML {방번호}번 방
 PRINTFORML 거주자: \@RS_ROOM:방번호:R방주인:0 != -1 ? %NAME:(RS_ROOM:방번호:R방주인:0)% # 비어있음\@
@@ -159,7 +274,93 @@ NEXT
 DRAWLINE
 CALL RBT_RS_NOW_FUNITURE(방번호)
 PRINTFORML 방 크기: [{RESULT}/{RBT_RS_MAX_FUNITURE(방번호)+1}]
+FOR LOCAL, R_MIN가구, R_MAX가구
+    VARSET RESULTS
+    TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"강화")
+    IF RESULT > 0
+        IF LOCAL == SELECTED
+            SETCOLOR 0X00FFFF
+        ENDIF
+        TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"가구명")
+        PRINTBUTTON @"[%RESULTS%] ", LOCAL
+        RESETCOLOR
+    ENDIF
+NEXT
+PRINTL
+DRAWLINE
+FOR LOCAL,0,11
+    PRINTFORML %묘사:LOCAL%
+NEXT
+FOR LOCAL,0,33 - (LINECOUNT - TEMPLINE)
+    PRINTFORML
+NEXT
+DRAWLINE
+;TODO: 방 청결도 표시, 그리고 가구 내구도 감소, 가구 효과 발동, 방 주인 변경, 가구 추가
+PRINTFORMLC \@방번호 <= 0 ? %" " * 13% # [800] 이전 방\@
+PRINTFORMLC  
+PRINTFORMLC  
+PRINTFORMLC  
+PRINTFORMLC \@방번호 >= CALC_SLAVE_CAPACITY() - 1 ? %" " * 13% # [801] 다음 방\@
+PRINTL
+PRINTFORMLC [994] 방 주인 변경
+PRINTFORMLC [995] 업그레이드
+PRINTFORMLC [996] 수리
+PRINTFORMLC [997] 새 가구 도입
+PRINTFORMLC [998] 확장
+PRINTL
+PRINTFORML [999] 돌아간다
+INPUT
+SELECTCASE RESULT
+    CASE 999
+        RETURN
+    CASE 800
+        방번호 = MAX(0,방번호 - 1)
+    CASE 801
+        방번호 = MIN(CALC_SLAVE_CAPACITY(),방번호 + 1)
+    CASE 994
+    
+    CASE 995
+        IF !SELECTED
+            PRINTFORMW 먼저 가구를 선택해 주십시오
+        ENDIF
+        CALL RBT_RS_UPGRADE_VIEW(방번호,SELECTED)
+        GOTO 묘사리프레시
+    CASE 996
+        IF !SELECTED
+            PRINTFORMW 먼저 가구를 선택해 주십시오
+        ENDIF
+        CALL RBT_RS_REPAIR(방번호,SELECTED)
+        GOTO 묘사리프레시
+    CASE 997
 
+    CASE 998
+        CALL RBT_RS_ROOM_EXTAND(방번호)
+    CASEELSE
+        IF SELECTED == RESULT
+            SELECTED = 0
+            VARSET 묘사
+            RESTART
+        ENDIF
+        SELECTED = RESULT
+        $묘사리프레시
+        VARSET 묘사
+        TRYCCALLFORM RBT_RS_FUNI_{SELECTED}(방번호,"강화")
+        CATCH
+            RESTART
+        ENDCATCH
+        CALLFORM RBT_RS_FUNI_{SELECTED}(방번호,"가구명")
+        묘사:0 '= "[" + RESULTS + "]"
+        CALLFORM RBT_RS_FUNI_{SELECTED}(방번호,"상태")
+        묘사:1 '= "내구도: [" + @"{RESULT}" + "／100]"
+        CALLFORM RBT_RS_FUNI_{SELECTED}(방번호,"강화")
+        묘사:2 '= "강화: " + @"{RESULT}" + "단계"
+        CALLFORM RBT_RS_FUNI_{SELECTED}(방번호,"현재크기")
+        묘사:3 '= "크기: " + @"{RESULT}"
+        묘사:4 '= ""
+        CALLFORM RBT_RS_FUNI_{SELECTED}(방번호,"한줄평")
+        묘사:5 '= @"%RESULTS%"
+ENDSELECT
+RESTART
 ;--------------------------------------------------------------------------------------------
 ;방 리스트 확인
 ;--------------------------------------------------------------------------------------------
@@ -177,7 +378,7 @@ PRINTFORML [9999] 돌아간다
 INPUT
 IF RESULT == 9999
     RETURN
-ELSEIF RESULT >= 0 && RESULT <= 1000
+ELSEIF RESULT >= 0 && RESULT <= 1000 && RESULT <= CALC_SLAVE_CAPACITY() - 1
     CALL RBT_RS_VIEW(RESULT)
 ELSE
     RESTART
