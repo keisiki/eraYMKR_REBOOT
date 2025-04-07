@@ -50,6 +50,73 @@ FOR LOCAL,R_MIN가구,R_MAX가구
 NEXT
 
 ;--------------------------------------------------------------------------------------------
+;가구 적용
+;--------------------------------------------------------------------------------------------
+@RBT_RS_FUNI_APPLICATION(ARG)
+IF RBT_RS_CHARA_TO_ROOMNUM() == -1
+    ;노숙자다
+    회복배율:ARG:0 = -50
+ELSE
+    회복배율:ARG:0 = 0
+    SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R침대)
+        CASE 0
+            회복배율:ARG:0 -= 5
+            순종증가배율:ARG:0 -= 5
+        CASE 1
+            회복배율:ARG:0 += 0
+        CASE 2
+            회복배율:ARG:0 += 2
+            호감도증가배율:ARG:0 += 1
+        CASEELSE
+            회복배율:ARG:0 += 5
+            순종증가배율:ARG:0 += 5
+            호감도증가배율:ARG:0 += 5
+    ENDSELECT
+
+    SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R침구)
+        CASE 0
+            회복배율:ARG:0 -= 5
+            순종증가배율:ARG:0 -= 5
+        CASE 1
+            회복배율:ARG:0 += 0
+        CASE 2
+            회복배율:ARG:0 += 2
+            호감도증가배율:ARG:0 += 1
+        CASEELSE
+            회복배율:ARG:0 += 5
+            순종증가배율:ARG:0 += 5
+            호감도증가배율:ARG:0 += 5
+    ENDSELECT
+
+    SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R탁자)
+        CASE 1
+            회복배율:ARG:0 += 1
+        CASE 2
+            회복배율:ARG:0 += 3
+            호감도증가배율:ARG:0 += 1
+        CASE 3
+            회복배율:ARG:0 += 5
+            순종증가배율:ARG:0 += 5
+            호감도증가배율:ARG:0 += 5
+    ENDSELECT
+ENDIF
+
+;--------------------------------------------------------------------------------------------
+;가구 상황 파악용 함수들
+;--------------------------------------------------------------------------------------------
+@RBT_RS_FUNI_UPGREADED(방번호,ID)
+#FUNCTION
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC ID
+RETURNF RS_ROOM:방번호:ID:0
+
+@RBT_RS_FUNI_DURABLITY(방번호,ID)
+#FUNCTION
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC ID
+RETURNF RS_ROOM:방번호:ID:1
+
+;--------------------------------------------------------------------------------------------
 @RBT_RS_FUNI_침대(방번호,ARGS)
 #DIM DYNAMIC 방번호
 CALL RBT_RS_FUNI_10(방번호,ARGS)
@@ -137,7 +204,7 @@ ID = R침구
 수식어:3 '= "포근한 "
 수식어:4 '= ""
 
-SELECTCASE RS_ROOM:방번호:ID:1
+SELECTCASE RS_ROOM:방번호:ID:0
     CASE 1
         한줄평 '= "적당한 두께의 요와 이불, 겨울 추위에 버티려면 필수\br상당히 오래썼는지 군데군데 해어진 부분이 있다"
     CASE 2

@@ -7,6 +7,8 @@
 ;회복 처리 및 각종 체크(얀데레 모드, 미약중독 등)를 여기서 실행한다
 @EVENTTURNEND
 #PRI
+#DIM DYNAMIC 체력회복량
+#DIM DYNAMIC 기력회복량
 ;[중독선동] 효과 종료
 TFLAG:995 = 0
 ;조교 종료
@@ -50,105 +52,105 @@ FOR TFLAG:900, 0, CHARANUM
         TFLAG:156 = 0
         CONTINUE
     ENDIF
-    LOCAL:10 = MAXBASE:(TFLAG:900):체력
-    LOCAL:11 = MAXBASE:(TFLAG:900):기력
+    체력회복량 = MAXBASE:(TFLAG:900):체력
+    기력회복량 = MAXBASE:(TFLAG:900):기력
     IF TIME == 0
-        TIMES LOCAL:10 , 0.15
-        TIMES LOCAL:11 , 0.60
+        TIMES 체력회복량, 0.15
+        TIMES 기력회복량, 0.60
     ELSE
-        TIMES LOCAL:10 , 0.40
-        TIMES LOCAL:11 , 0.80
+        TIMES 체력회복량, 0.40
+        TIMES 기력회복량, 0.80
     ENDIF
 
     ;回復早い, 回復遅い
     IF TALENT:(TFLAG:900):회복빠름
-        TIMES LOCAL:10 , 1.50
+        TIMES 체력회복량, 1.50
     ELSEIF TALENT:(TFLAG:900):회복느림
-        TIMES LOCAL:10 , 0.75
+        TIMES 체력회복량, 0.75
     ENDIF
 
     ;吸血鬼, 蓬莱人, 呪精
     IF TALENT:(TFLAG:900):봉래인
-        LOCAL:10 *= 3
+        체력회복량*= 3
     ELSEIF TALENT:(TFLAG:900):주정 || (TIME == 1 && TALENT:(TFLAG:900):흡혈귀)
-        LOCAL:10 *= 2
+        체력회복량*= 2
     ENDIF
     ;神霊, 半神
     IF TALENT:(TFLAG:900):신령 || TALENT:(TFLAG:900):반신
-        TIMES LOCAL:10 , 1.20
-        TIMES LOCAL:11 , 1.20
+        TIMES 체력회복량, 1.20
+        TIMES 기력회복량, 1.20
     ENDIF
     ;精神崩壊
     IF TALENT:(TFLAG:900):정신붕괴
-        TIMES LOCAL:11 , 0.50
+        TIMES 기력회복량, 0.50
     ;傀儡
     ELSEIF TALENT:(TFLAG:900):괴뢰
-        TIMES LOCAL:11 , 0.75
+        TIMES 기력회복량, 0.75
     ;気丈
     ELSEIF TALENT:(TFLAG:900):꿋꿋함
-        TIMES LOCAL:11 , 1.50
+        TIMES 기력회복량, 1.50
     ENDIF
 
     ;日光浴, 月光浴
     IF (TIME == 0 && TALENT:(TFLAG:900):일광욕) || (TIME == 1 && TALENT:(TFLAG:900):월광욕)
-        LOCAL:10 += 200
-        LOCAL:11 = MAXBASE:(TFLAG:900):기력
+        체력회복량 += 200
+        기력회복량 = MAXBASE:(TFLAG:900):기력
     ENDIF
 
     ;治療(酔いつぶれていなければ)
     SIF TALENT:MASTER:치료 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
-        LOCAL:10 += 200
+        체력회복량 += 200
     SIF ASSI >= 0 && TALENT:ASSI:치료 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기
-        LOCAL:10 += 160
+        체력회복량 += 160
     ;鼓舞(酔いつぶれていなければ)
     SIF ASSI >= 0 && TALENT:ASSI:고무 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기
-        LOCAL:11 += 100
+        기력회복량 += 100
     ;魔術技能(酔いつぶれていなければ)
     SIF TALENT:MASTER:마술기능 && BASE:MASTER:취기 <= MAXBASE:MASTER:취기
-        LOCAL:10 += 100
+        체력회복량 += 100
     SIF ASSI >= 0 && TALENT:ASSI:마술기능 && BASE:ASSI:취기 <= MAXBASE:ASSI:취기
-        LOCAL:10 += 75
+        체력회복량 += 75
 
     ;休憩フラグ（「何もしない」を選択, もしくは調教対象でない）
     IF FLAG:휴식 || TARGET != TFLAG:900
         ;家によって体力の回復量が増加
         IF FLAG:자택 == 4
-            LOCAL:10 += 300
-            LOCAL:11 += 500
+            체력회복량 += 300
+            기력회복량 += 500
         ELSEIF FLAG:자택 == 3
-            LOCAL:10 += 250
-            LOCAL:11 += 400
+            체력회복량 += 250
+            기력회복량 += 400
         ELSEIF FLAG:자택 == 2
-            LOCAL:10 += 200
-            LOCAL:11 += 300
+            체력회복량 += 200
+            기력회복량 += 300
         ELSEIF FLAG:자택 == 1
-            LOCAL:10 += 150
-            LOCAL:11 += 200
+            체력회복량 += 150
+            기력회복량 += 200
         ELSE
-            LOCAL:10 += 100
-            LOCAL:11 += 150
+            체력회복량 += 100
+            기력회복량 += 150
         ENDIF
     ENDIF
 
     ;ボンデージ装着中
     ;体力・気力の回復量が低下し, 代わりに苦痛快楽経験と緊縛経験が増加(くどくなるので表示は無し)
     IF CFLAG:(TFLAG:900):특수장비 & 8
-        TIMES LOCAL:10 , 0.75
-        TIMES LOCAL:11 , 0.90
+        TIMES 체력회복량, 0.75
+        TIMES 기력회복량, 0.90
         EXP:(TFLAG:900):고통쾌락경험 += 3
         EXP:(TFLAG:900):긴박경험 += 6
     ENDIF
 
     ;妊娠・懐卵
     IF TALENT:(TFLAG:900):임신 || TALENT:(TFLAG:900):회란
-        TIMES LOCAL:10 , 0.70
-        TIMES LOCAL:11 , 0.75
+        TIMES 체력회복량, 0.70
+        TIMES 기력회복량, 0.75
     ENDIF
 
     ;寄生(栄養が一部取られているので体力回復量は低下）
     IF TALENT:(TFLAG:900):기생
-        TIMES LOCAL:10 , 0.70
-        TIMES LOCAL:11 , 0.75
+        TIMES 체력회복량, 0.70
+        TIMES 기력회복량, 0.75
         IF BASE:(TFLAG:900):촉수 < MAXBASE:(TFLAG:900):촉수
             ;寄生している触手は触手中毒によって若干成長
             IF ABL:(TFLAG:900):촉수중독 == 0
@@ -176,24 +178,24 @@ FOR TFLAG:900, 0, CHARANUM
     ;強い絆で結ばれているため, 主人の体調が悪いと回復力が一気に低下
     IF TALENT:(TFLAG:900):사역마
         IF BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 4
-            TIMES LOCAL:10 , 0.50
+            TIMES 체력회복량, 0.50
         ELSEIF BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 3
-            TIMES LOCAL:10 , 0.66
+            TIMES 체력회복량, 0.66
         ELSEIF BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 2
-            TIMES LOCAL:10 , 0.75
+            TIMES 체력회복량, 0.75
         ELSE
-            TIMES LOCAL:10 , 0.90
+            TIMES 체력회복량, 0.90
         ENDIF
     ENDIF
 
     ;助手
     ;助手は色々と手伝うので回復力低下(酔いつぶれていたら手伝わない)
     IF ASSI >= 0 && TFLAG:900 == ASSI && BASE:ASSI:취기 <= MAXBASE:ASSI:취기 && EQUIP:ASSI:14 == 0 && CFLAG:ASSI:조교관외 == 0
-        TIMES LOCAL:10 , 0.80
-        TIMES LOCAL:11 , 0.80
+        TIMES 체력회복량, 0.80
+        TIMES 기력회복량, 0.80
     ;助手可能な場合, 吹っ切れているので気力の回復はやや早くなる
     ELSEIF CFLAG:(TFLAG:900):매각가능 == 2
-        TIMES LOCAL:11 , 1.20
+        TIMES 기력회복량, 1.20
     ENDIF
 
     ;토리코모드, 만복도 시스템에 따른 영양보정. 만복도 모드 꺼져있을때는 보정없음.
@@ -202,26 +204,26 @@ FOR TFLAG:900, 0, CHARANUM
     ;영양도가 높을수록 체력회복속도가 빨라짐. 0.5~1.5 배 까지 변동. 계산식을 써도 좋겠으나, 이 함수에 변수를 추가하기 싫기 때문에 지정된 수치로 보정했다.
     IF FLAG:토리코모드 & 32
     ;디버그
-    ;PRINTFORML 만복도 보정 받기 전의 체력회복은 대략 이 단계에서 {LOCAL:10} 정도입니다.
+    ;PRINTFORML 만복도 보정 받기 전의 체력회복은 대략 이 단계에서 {체력회복량} 정도입니다.
 
         IF CFLAG:(TFLAG:900):현재영양도 >= 2500
-            TIMES LOCAL:10, 1.5
+            TIMES 체력회복량, 1.5
         ELSEIF CFLAG:(TFLAG:900):현재영양도 >= 2000
-            TIMES LOCAL:10, 1.25
+            TIMES 체력회복량, 1.25
         ELSEIF CFLAG:(TFLAG:900):현재영양도 >= 1500
-            TIMES LOCAL:10, 1
+            TIMES 체력회복량, 1
         ELSEIF CFLAG:(TFLAG:900):현재영양도 >= 1000
-            TIMES LOCAL:10, 0.8
+            TIMES 체력회복량, 0.8
         ELSEIF CFLAG:(TFLAG:900):현재영양도 >= 500
-            TIMES LOCAL:10, 0.7
+            TIMES 체력회복량, 0.7
         ELSEIF CFLAG:(TFLAG:900):현재영양도 >=  0
-            TIMES LOCAL:10, 0.5
+            TIMES 체력회복량, 0.5
         ELSE
             ;디버그용
             PRINTFORML 에러발생. @EVENTTURNEND의 토리코모드, 만복도 시스템에 따른 영양보정. 에서 버그가 났습니다. CFLAG:(TFLAG:900):현재영양도 가 0보다 작습니다.
         ENDIF
     ;디버그
-    ;PRINTFORML 만복도 보정 받은 후의 체력회복은 대략 이 단계에서 {LOCAL:10} 가 되었습니다.
+    ;PRINTFORML 만복도 보정 받은 후의 체력회복은 대략 이 단계에서 {체력회복량} 가 되었습니다.
     ELSE
     ENDIF
 
@@ -229,32 +231,32 @@ FOR TFLAG:900, 0, CHARANUM
         ;嫉妬
         IF TALENT:(TFLAG:900):질투 && BASE:(TFLAG:900):취기 <= MAXBASE:(TFLAG:900):취기
             ;酔いつぶれていなければ自慰経験が増える(主人には知らせない)
-            TIMES LOCAL:10 , 0.80
-            TIMES LOCAL:11 , 0.80
+            TIMES 체력회복량, 0.80
+            TIMES 기력회복량, 0.80
             EXP:(TFLAG:900):자위경험 += ABL:(TFLAG:900):욕망 * 2
         ENDIF
         ;嫉妬＆狂気だと体力・気力の回復が遅れる
         IF TALENT:(TFLAG:900):질투 && TALENT:(TFLAG:900):광기 && LOCAL:100 > 0
-            LOCAL:10 -= (LOCAL:100 - 1) * 100
-            LOCAL:11 -= (LOCAL:100 - 1) * 50
+            체력회복량 -= (LOCAL:100 - 1) * 100
+            기력회복량 -= (LOCAL:100 - 1) * 50
         ELSEIF LOCAL:100 > 0
-            LOCAL:10 -= LOCAL:100 * 100
-            LOCAL:11 -= LOCAL:100 * 20
+            체력회복량 -= LOCAL:100 * 100
+            기력회복량 -= LOCAL:100 * 20
         ENDIF
     ENDIF
 
     ;睡眠薬の後処理
     ;若干体力の回復量が低下する
     SIF EQUIP:(TFLAG:900):14
-        TIMES LOCAL:10 , 0.90
+        TIMES 체력회복량, 0.90
 
 
     ;薬毒耐性以外のキャラが媚薬中毒になっていると体力・気力の回復量が低下する
     ;また, 日が経つと禁断症状も出てくる
     IF TEQUIP:(TFLAG:900):11 == 0 && TALENT:(TFLAG:900):약물내성 == 0 && TALENT:(TFLAG:900):미약중독
-        LOCAL:10 *= (10 - CFLAG:(TFLAG:900):미약중독레벨)
-        LOCAL:10 /= 10
-        TIMES LOCAL:11 , 0.80
+        체력회복량 *= (10 - CFLAG:(TFLAG:900):미약중독레벨)
+        체력회복량 /= 10
+        TIMES 기력회복량 , 0.80
         SIF TIME != 0 && CFLAG:(TFLAG:900):미약중독레벨 < 7
             CFLAG:(TFLAG:900):미약중독레벨 += 1
     ELSEIF TIME != 0 && TALENT:(TFLAG:900):미약중독 == 0 && CFLAG:(TFLAG:900):미약중독레벨 > 0
@@ -268,26 +270,26 @@ FOR TFLAG:900, 0, CHARANUM
         LOCAL:18 = (BASE:(TFLAG:900):취기 *100) / MAXBASE:(TFLAG:900):취기
         IF LOCAL:18 < 40
             ;微酔
-            LOCAL:10 -= 50
+            체력회복량-= 50
         ELSEIF LOCAL:18 < 80
             ;酩酊
-            LOCAL:10 -= 100
-            LOCAL:11 -= 50
+            체력회복량-= 100
+            기력회복량 -= 50
         ELSEIF LOCAL:18 < 120
             ;泥酔
             CFLAG:(TFLAG:900):상태기록 |= 1
-            LOCAL:10 -= 150
-            LOCAL:11 -= 100
+            체력회복량-= 150
+            기력회복량 -= 100
         ELSEIF LOCAL:18 < 160
             ;狂酔
             CFLAG:(TFLAG:900):상태기록 |= 1
-            LOCAL:10 -= 200
-            LOCAL:11 -= 150
+            체력회복량-= 200
+            기력회복량 -= 150
         ELSE
             ;極酔
             CFLAG:(TFLAG:900):상태기록 |= 1
-            LOCAL:10 -= 300
-            LOCAL:11 -= 200
+            체력회복량-= 300
+            기력회복량 -= 200
         ENDIF
         ;時間経過により酔いが醒める
         LOCAL:18 = (TIME == 0) ? (MAXBASE:(TFLAG:900):취기) / 20 # (MAXBASE:(TFLAG:900):취기 / 5)
@@ -306,12 +308,12 @@ FOR TFLAG:900, 0, CHARANUM
     ;難易度による回復量の違い
     IF FLAG:난이도 == 1
         ;EASYは回復量が増加
-        LOCAL:10 += 200
-        LOCAL:11 += 200
+        체력회복량 += 200
+        기력회복량 += 200
     ELSEIF FLAG:난이도 == 5
         ;PHANTASMは回復量が低下
-        TIMES LOCAL:10 , 0.75
-        TIMES LOCAL:11 , 0.80
+        TIMES 체력회복량, 0.75
+        TIMES 기력회복량, 0.80
     ENDIF
 
     ;料理技能による回復量の違い(EASYの場合は修整なし)
@@ -325,55 +327,55 @@ FOR TFLAG:900, 0, CHARANUM
     ;料理技能別の修整(EASYおよび技能Lv4以上およびコンフィグで弁当ライブOFFなら修整なし)
     IF FLAG:난이도 > 1 && FLAG:SHOP이벤트확장 & 16
         IF LOCAL:13 == 3
-            TIMES LOCAL:10 , 0.90
-            TIMES LOCAL:11 , 0.90
+            TIMES 체력회복량, 0.90
+            TIMES 기력회복량, 0.90
         ELSEIF LOCAL:13 == 2
-            TIMES LOCAL:10 , 0.80
-            TIMES LOCAL:11 , 0.85
+            TIMES 체력회복량, 0.80
+            TIMES 기력회복량, 0.85
         ELSEIF LOCAL:13 == 1
-            TIMES LOCAL:10 , 0.75
-            TIMES LOCAL:11 , 0.80
+            TIMES 체력회복량, 0.75
+            TIMES 기력회복량, 0.80
         ELSEIF LOCAL:13 == 0
-            TIMES LOCAL:10 , 0.70
-            TIMES LOCAL:11 , 0.75
+            TIMES 체력회복량, 0.70
+            TIMES 기력회복량, 0.75
         ENDIF
     ENDIF
 
     ;触手幽閉中は回復しない
     IF CFLAG:(TFLAG:900):조교관외 == 4
-        LOCAL:10 = 0
-        LOCAL:11 = 0
+        체력회복량 = 0
+        기력회복량 = 0
         SIF TIME == 1
             CALL TENTACLE_PRIVATEROOM_TRAINING, TFLAG:900
     ;地下牢収監中は回復効果激減で特殊効果あり
     ELSEIF CFLAG:(TFLAG:900):조교관외 == 16
-        TIMES LOCAL:10 , 0.10
-        TIMES LOCAL:11 , 0.15
+        TIMES 체력회복량, 0.10
+        TIMES 기력회복량, 0.15
         CALL TORTURE_FACILITIES_EFFECT, TFLAG:900
     ;ハーブ開発中は回復効果激減で作業中
     ELSEIF CFLAG:(TFLAG:900):조교관외 == 2048
-        TIMES LOCAL:10 , 0.25
-        TIMES LOCAL:11 , 0.10
+        TIMES 체력회복량, 0.25
+        TIMES 기력회복량, 0.10
         CALL DEVELOP_HARB_TURNEND, TFLAG:900
     ;ハーブ生産中も回復効果激減で作業中
     ELSEIF CFLAG:(TFLAG:900):조교관외 == 4096
-        TIMES LOCAL:10 , 0.10
-        TIMES LOCAL:11 , 0.25
+        TIMES 체력회복량, 0.10
+        TIMES 기력회복량, 0.25
         CALL MAKE_HARB_TURNEND, TFLAG:900
     ;調教で媚薬を使用した後は回復しない([媚薬中毒]持ちは回復量が低下)
     ELSEIF TEQUIP:(TFLAG:900):11
         IF TALENT:(TFLAG:900):미약중독
-            TIMES LOCAL:10 , 0.75
-            TIMES LOCAL:11 , 0.75
+            TIMES 체력회복량, 0.75
+            TIMES 기력회복량, 0.75
         ELSE
-            LOCAL:10 = 0
-            LOCAL:11 = 0
+            체력회복량 = 0
+            기력회복량 = 0
         ENDIF
     ENDIF
         ;娼館では回復しない★
     IF CFLAG:(TFLAG:900):매춘상태
-        LOCAL:10 = 0
-        LOCAL:11 = 0
+        체력회복량 = 0
+        기력회복량 = 0
     ENDIF
     TEQUIP:(TFLAG:900):11 = 0
 
@@ -388,20 +390,20 @@ FOR TFLAG:900, 0, CHARANUM
     ;HARD以上では休憩フラグが立ってなくて, ストレスがあると気力回復に悪影響がある
     IF FLAG:난이도 > 2 && FLAG:휴식 == 0 && CFLAG:(TFLAG:900):스트레스
         CALL STRESS_VITAL, TFLAG:900, LOCAL:11
-        LOCAL:11 = RESULT
+        기력회복량 = RESULT
     ENDIF
 
-    LOCAL:10 = MAX(LOCAL:10, 0)
-    LOCAL:11 = MAX(LOCAL:11, 0)
+    체력회복량 = MAX(LOCAL:10, 0)
+    기력회복량 = MAX(LOCAL:11, 0)
 
     ;EASYは回復する条件に当てはまる場合は気力が全回復する
     SIF FLAG:난이도 == 1 && LOCAL:11
-        LOCAL:11 = MAXBASE:(TFLAG:900):기력
+        기력회복량 = MAXBASE:(TFLAG:900):기력
 
     ;(RBT_EDIT)리부트 관리모드 추가20240106
     IF GETBIT(FLAG:리부트모드설정,3)
-        LOCAL:10 = LOCAL:10 * (회복배율:(TFLAG:900) + 100) / 100
-        LOCAL:11 = LOCAL:11 * (회복배율:(TFLAG:900) + 100) / 100
+        체력회복량 = 체력회복량 * (회복배율(TFLAG:900) + 100) / 100
+        기력회복량 = 기력회복량 * (회복배율(TFLAG:900) + 100) / 100
     ENDIF
     ;
 

@@ -27,8 +27,15 @@ RETURN LOCAL:1
 ;--------------------------------------------------------------------------------------------
 @RBT_RS_INIT(방번호)
 #DIM DYNAMIC 방번호
-RS_ROOM:방번호:R방주인:0 = -1
+CALL RBT_RS_MAKEHOMELESS(방번호)
 RS_ROOM:방번호:R방크기:0 = 1
+
+;--------------------------------------------------------------------------------------------
+;방을 비움
+;--------------------------------------------------------------------------------------------
+@RBT_RS_MAKEHOMELESS(방번호)
+#DIM DYNAMIC 방번호
+RS_ROOM:방번호:R방주인:0 = -1
 
 ;--------------------------------------------------------------------------------------------
 ;방 이름 반환 함수
@@ -311,7 +318,6 @@ FOR LOCAL,0,33 - (LINECOUNT - TEMPLINE)
     PRINTFORML
 NEXT
 DRAWLINE
-;TODO: 가구 효과 발동, 방 주인 변경
 PRINTFORMLC \@방번호 <= 0 ? %" " * 13% # [800] 이전 방\@
 PRINTFORMLC  
 PRINTFORMLC  
@@ -331,10 +337,14 @@ SELECTCASE RESULT
         RETURN
     CASE 800
         방번호 = MAX(0,방번호 - 1)
+        SELECTED = 0
+        VARSET 묘사
     CASE 801
         방번호 = MIN(CALC_SLAVE_CAPACITY(),방번호 + 1)
+        SELECTED = 0
+        VARSET 묘사
     CASE 994
-    
+        CALL RBT_RS_CHANGE_CHARA(방번호)
     CASE 995
         IF !SELECTED
             PRINTFORMW 먼저 가구를 선택해 주십시오
@@ -460,6 +470,7 @@ ENDSELECT
 #DIM DYNAMIC 방번호
 #DIMS DYNAMIC 가구명
 #DIM DYNAMIC 가격
+#DIM DYNAMIC 필요공간
 DRAWLINE
 PRINTFORML 무엇을 사겠습니까? (소지금 {MONEY} 원)
 DRAWLINE
@@ -488,12 +499,62 @@ ELSE
     가구명 '= RESULTS
     CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"강화비용")
     가격 = RESULT
+    CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"다음크기")
+    필요공간 = RESULT
+    CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"현재크기")
+    필요공간 -= RESULT
+    IF 필요공간 > RBT_RS_MAX_FUNITURE(방번호) - RBT_RS_NOW_FUNITURE(방번호)
     IF MONEY >= 가격
         PRINTFORMW <%조사처리(가구명,"를")% 구입했습니다.>
         MONEY -= 가격
         CALL RBT_RS_FUNI_UPGRADE(방번호,LOCAL)
     ELSE
         PRINTFORMW 돈이 부족합니다
+    ENDIF
+ENDIF
+RESTART
+
+
+;--------------------------------------------------------------------------------------------
+;거주자 변경
+;--------------------------------------------------------------------------------------------
+@RBT_RS_CHANGE_CHARA(방번호)
+#DIM DYNAMIC 방번호
+DRAWLINE
+PRINTFORML 현재 방 주인: %RS_ROOM:방번호:R방주인:0 == -1 ? "비어있음" # CALLNAME:(RS_ROOM:방번호:R방주인:0) %
+DRAWLINE
+IF RS_ROOM:방번호:R방주인:0 == -1
+    SETCOLOR 0X555555
+ENDIF
+PRINTFORML [0] 비운다
+RESETCOLOR
+PRINTFORML [1] 입주시킨다
+PRINTFORML [999] 돌아가기
+INPUT
+IF RESULT == 999
+    RETURN
+ELSEIF RESULT == 0
+    CALL RBT_RS_MAKEHOMELESS(방번호)
+ELSE
+    $LOOP1
+    DRAWLINE
+    PRINTFORML 누구를 입주시킵니까?
+    DRAWLINE
+    FOR LOCAL,LOCAL:1 * 20,MIN(CHARANUM,LOCAL:1 * 20 + 20)
+        PRINTFORML [{LOCAL + LOCAL:1 * 20}] %CALLNAME:LOCAL,20,LEFT% 현재거주지:%RBT_RS_CHARA_TO_ROOMNUM(LOCAL) == -1 ? "복도" # RBT_RS_ROOMNAME(RBT_RS_CHARA_TO_ROOMNUM(LOCAL))%
+    NEXT
+    DRAWLINE
+    PRINTFORML [999] 돌아가기
+    INPUT
+    IF RESULT == 999
+    ELSEIF INRANGE(RESULT,0,CHARANUM)
+        LOCAL:2 = RESULT
+        IF RBT_RS_CHARA_TO_ROOMNUM(LOCAL:2) != -1
+            CALL RBT_RS_MAKEHOMELESS(RBT_RS_CHARA_TO_ROOMNUM(LOCAL:2))
+        ENDIF
+        RS_ROOM:방번호:R방주인:0 = LOCAL:2
+    ELSE
+        GOTO LOOP1
     ENDIF
 ENDIF
 RESTART
