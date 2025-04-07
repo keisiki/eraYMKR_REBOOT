@@ -86,7 +86,7 @@ RETURNF RS_ROOM:방번호:R방크기:0 - 1
 @RBT_RS_NOW_FUNITURE(방번호)
 #DIM DYNAMIC 방번호
 VARSET LOCAL
-FOR LOCAL,10,100
+FOR LOCAL,R_MIN가구,R_MAX가구
     TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"존재")
     IF RESULT == LOCAL
         TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"현재크기")
@@ -182,7 +182,7 @@ PRINTFORML 수리 후 남을 자금: {MONEY - 강화비}\\
 CALLFORM RBT_RS_FUNI_{ARG}(방번호,"현재크기")
 LOCAL = RESULT
 CALLFORM RBT_RS_FUNI_{ARG}(방번호,"다음크기")
-LOCAL:1 = RESULT
+LOCAL:1 = LOCAL + RESULT
 PRINTFORML 크기: {LOCAL} -> {LOCAL:1} 
 DRAWLINE
 CALL RBT_RS_FUNI_CAN_UPGRADE(방번호,ARG)
@@ -501,9 +501,11 @@ ELSE
     가격 = RESULT
     CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"다음크기")
     필요공간 = RESULT
-    CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"현재크기")
-    필요공간 -= RESULT
-    IF 필요공간 > RBT_RS_MAX_FUNITURE(방번호) - RBT_RS_NOW_FUNITURE(방번호)
+    CALL RBT_RS_NOW_FUNITURE(방번호)
+    IF 필요공간 > RBT_RS_MAX_FUNITURE(방번호) - RESULT
+        PRINTFORMW 여유공간이 부족합니다
+        RESTART
+    ENDIF
     IF MONEY >= 가격
         PRINTFORMW <%조사처리(가구명,"를")% 구입했습니다.>
         MONEY -= 가격
