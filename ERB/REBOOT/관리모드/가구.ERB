@@ -35,12 +35,27 @@ RS_ROOM:방번호:ID:0 ++
 RS_ROOM:방번호:ID:1 = 100 ;내구도를 초기화
 
 ;--------------------------------------------------------------------------------------------
-@RBT_RS_FUNI_10(방번호,ARGS)
+;가구 내구도 자연감소
+;--------------------------------------------------------------------------------------------
+@RBT_RS_FUNI_WORN(방번호)
 #DIM DYNAMIC 방번호
-CALL RBT_RS_FUNI_침대(방번호,ARGS)
+FOR LOCAL,R_MIN가구,R_MAX가구
+    TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"존재")
+    IF RESULT == LOCAL
+        CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"강화")
+        IF RESULT && RAND:2
+            CALL RBT_RS_DAMAGE(방번호,LOCAL,1)
+        ENDIF
+    ENDIF
+NEXT
+
+;--------------------------------------------------------------------------------------------
+@RBT_RS_FUNI_침대(방번호,ARGS)
+#DIM DYNAMIC 방번호
+CALL RBT_RS_FUNI_10(방번호,ARGS)
 RETURN RESULT
 
-@RBT_RS_FUNI_침대(방번호,ARGS)
+@RBT_RS_FUNI_10(방번호,ARGS)
 #DIM DYNAMIC 방번호
 #DIM DYNAMIC ID
 #DIM DYNAMIC 크기,5
@@ -92,12 +107,12 @@ ENDSELECT
 
 
 ;--------------------------------------------------------------------------------------------
-@RBT_RS_FUNI_11(방번호,ARGS)
+@RBT_RS_FUNI_침구(방번호,ARGS)
 #DIM DYNAMIC 방번호
-CALL RBT_RS_FUNI_침구(방번호,ARGS)
+CALL RBT_RS_FUNI_11(방번호,ARGS)
 RETURN RESULT
 
-@RBT_RS_FUNI_침구(방번호,ARGS)
+@RBT_RS_FUNI_11(방번호,ARGS)
 #DIM DYNAMIC 방번호
 #DIM DYNAMIC ID
 #DIM DYNAMIC 크기,5
@@ -121,7 +136,16 @@ ID = R침구
 수식어:2 '= "평범한 "
 수식어:3 '= "포근한 "
 수식어:4 '= ""
-한줄평 '= "적당한 두께의 요와 이불, 겨울 추위에 버티려면 필수"
+
+SELECTCASE RS_ROOM:방번호:ID:1
+    CASE 1
+        한줄평 '= "적당한 두께의 요와 이불, 겨울 추위에 버티려면 필수\br상당히 오래썼는지 군데군데 해어진 부분이 있다"
+    CASE 2
+        한줄평 '= "적당한 두께의 요와 이불, 겨울 추위에 버티려면 필수"
+    CASE 3
+        한줄평 '= "두툼한 요와 이불, 겨울 추위에 버티려면 필수"
+ENDSELECT
+
 
 ;이하는 건들필요 없음
 SELECTCASE ARGS
@@ -148,12 +172,12 @@ SELECTCASE ARGS
 ENDSELECT
 
 ;--------------------------------------------------------------------------------------------
-@RBT_RS_FUNI_12(방번호,ARGS)
+@RBT_RS_FUNI_탁자(방번호,ARGS)
 #DIM DYNAMIC 방번호
-CALL RBT_RS_FUNI_탁자(방번호,ARGS)
+CALL RBT_RS_FUNI_12(방번호,ARGS)
 RETURN RESULT
 
-@RBT_RS_FUNI_탁자(방번호,ARGS)
+@RBT_RS_FUNI_12(방번호,ARGS)
 #DIM DYNAMIC 방번호
 #DIM DYNAMIC ID
 #DIM DYNAMIC 크기,5
@@ -173,11 +197,11 @@ ID = R탁자
 업그레이드비용 = 10000
 만족도배수 = 25
 수식어:0 '= ""
-수식어:1 '= "다 부서져가는 "
+수식어:1 '= "손때 탄 "
 수식어:2 '= ""
 수식어:3 '= "깔끔한 "
 수식어:4 '= ""
-한줄평 '= "조그마한 탁자, 별 것 아닌것 같지만 노예에겐 상당한 복지"
+한줄평 '= "조그마한 탁자, 별 것 아닌것 같지만 노예에겐 상당한 복지\br식사는 물론 휴식에도 중요하다"
 
 ;이하는 건들필요 없음
 SELECTCASE ARGS

@@ -262,6 +262,7 @@ DRAWLINE
 ;---------------------------------------
 ; 이벤트 - 히스테리
 @EVENT_STRESS_HYSTERIA_TORIKOMODE, ARG
+#DIM DYNAMIC 방번호
 ;다칠지 말지 체크
 LOCAL:0 = RAND:10
 ;얼마나 부실지 체크
@@ -281,14 +282,18 @@ PRINTL
 PRINTFORMW #와장창#
 PRINTFORMW 곤히 잠들려는 찰나, %CALLNAME:ARG%의 방 쪽에서 뭔가 부서지는 소리가 났다.
 PRINTFORM 서둘러 달려가 보니, 방 안에는 
-
+방번호 = RBT_RS_CHARA_TO_ROOMNUM(ARG)
 LOCAL:1 = RAND:5
-SIF LOCAL:0 > 3
+IF LOCAL:0 > 3 && RS_ROOM:(방번호):R탁자:0
     PRINTFORM 반 쯤 쪼개진 책상과 
+    CALL RBT_RS_DAMAGE(방번호,R탁자,30)
+ENDIF
 SIF LOCAL:0 > 2
     PRINTFORM 부서진 거울과 
-SIF LOCAL:0 > 1
+IF LOCAL:0 > 1 && RS_ROOM:(방번호):R침대:0
     PRINTFORM 찢어진 매트리스와 
+    CALL RBT_RS_DAMAGE(방번호,R침대,30)
+ENDIF
 SIF LOCAL:0 > 0
     PRINTFORM 조각조각난 그릇들과 
 PRINTFORMW 깨어진 유리병이 뒹굴고 있었다.
@@ -332,7 +337,7 @@ IF LOCAL:0 < 7
     BASE:ARG:체력 = MAX(BASE:ARG:체력, 400)
     BASE:ARG:기력 -= (LOCAL:3*1)
     BASE:ARG:기력 = MAX(BASE:ARG:기력, 200)
-    PRINTFORML 수리비로 {LOCAL:4}원이 들어, 돈이 {MONEY}가 되었다.
+    ;PRINTFORML 수리비로 {LOCAL:4}원이 들어, 돈이 {MONEY}가 되었다.
     PRINTFORMW 그리고 지쳐버린 %조사처리(CALLNAME:ARG,"는")%, 체력과 기력을 소비했다...
 ;다쳤다면
 ELSE

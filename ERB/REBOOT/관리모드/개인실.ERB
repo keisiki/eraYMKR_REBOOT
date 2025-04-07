@@ -134,9 +134,10 @@ CALLFORM RBT_RS_FUNI_{ARG}(방번호,"상태")
 내구도 = RESULT
 CALLFORM RBT_RS_FUNI_{ARG}(방번호,"강화비용")
 수리비 = ((100 - 내구도) * RESULT) / 100
-PRINTFORML 내구도: [{내구도}/100] -> [100/100]
-PRINTFORML 소지금: {MONEY}\\
-PRINTFORML 비용 : {수리비}\\
+PRINTFORML 내구도: [{내구도}/100] ---> [100/100]
+PRINTFORMLC 소지금: {MONEY}\\
+PRINTFORMLC 비용 : {수리비}\\
+PRINTL
 PRINTFORML 수리 후 남을 자금: {MONEY - 수리비}\\
 DRAWLINE
 IF MONEY < 수리비
@@ -165,10 +166,11 @@ TRYCALLFORM RBT_RS_FUNI_{ARG}(방번호,"가구명")
 LOCALS '= RESULTS
 PRINTFORML %LOCALS%의 업그레이드를 진행합니까?
 DRAWLINE
-PRINTFORML 소지금: {MONEY}\\
+PRINTFORMLC 소지금: {MONEY}\\
 CALLFORM RBT_RS_FUNI_{ARG}(방번호,"강화비용")
 강화비 = RESULT
-PRINTFORML 비용 : {강화비}\\
+PRINTFORMLC 비용 : {강화비}\\
+PRINTL
 PRINTFORML 수리 후 남을 자금: {MONEY - 강화비}\\
 CALLFORM RBT_RS_FUNI_{ARG}(방번호,"현재크기")
 LOCAL = RESULT
@@ -207,8 +209,9 @@ IF RESULT == -1
 ENDIF
 공사비 = RESULT
 PRINTFORML %RBT_RS_ROOMNAME(방번호)%에 대한 확장을 진행하시겠습니까?
-PRINTFORML 소지금: {MONEY}\\
-PRINTFORML 공사비: {공사비}\\
+PRINTFORMLC 소지금: {MONEY}\\
+PRINTFORMLC 공사비: {공사비}\\
+PRINTL
 PRINTFORML 공사 후 남을 자금: {MONEY - 공사비}\\
 DRAWLINE
 IF MONEY < 공사비
@@ -236,7 +239,20 @@ ENDIF
 TEMPLINE = LINECOUNT
 DRAWLINE
 PRINTFORML {방번호}번 방
-PRINTFORML 거주자: \@RS_ROOM:방번호:R방주인:0 != -1 ? %NAME:(RS_ROOM:방번호:R방주인:0)% # 비어있음\@
+PRINTFORMLC 거주자: \@RS_ROOM:방번호:R방주인:0 != -1 ? %NAME:(RS_ROOM:방번호:R방주인:0)% # 비어있음\@
+SELECTCASE (1000 - RS_ROOM:방번호:R위생도:0) / 10
+    CASE IS > 80
+        SETCOLOR 0X00FFFF
+    CASE IS > 50
+        RESETCOLOR
+    CASE IS > 30
+        SETCOLOR 0XFAFA00
+    CASEELSE
+        SETCOLOR 0XFF4040
+ENDSELECT
+PRINTFORMLC 청결도: {(1000 - RS_ROOM:방번호:R위생도:0) / 10}％
+RESETCOLOR
+PRINTL
 DRAWLINE
 ;방 크기 묘사
 PRINTFORML %조사처리(RBT_RS_ROOMNAME(방번호),"는")%…
@@ -295,7 +311,7 @@ FOR LOCAL,0,33 - (LINECOUNT - TEMPLINE)
     PRINTFORML
 NEXT
 DRAWLINE
-;TODO: 방 청결도 표시, 그리고 가구 내구도 감소, 가구 효과 발동, 방 주인 변경, 가구 추가
+;TODO: 가구 효과 발동, 방 주인 변경
 PRINTFORMLC \@방번호 <= 0 ? %" " * 13% # [800] 이전 방\@
 PRINTFORMLC  
 PRINTFORMLC  
@@ -332,7 +348,7 @@ SELECTCASE RESULT
         CALL RBT_RS_REPAIR(방번호,SELECTED)
         GOTO 묘사리프레시
     CASE 997
-
+        CALL RBT_RS_FUNI_SHOP(방번호)
     CASE 998
         CALL RBT_RS_ROOM_EXTAND(방번호)
     CASEELSE
@@ -359,6 +375,17 @@ SELECTCASE RESULT
         묘사:4 '= ""
         CALLFORM RBT_RS_FUNI_{SELECTED}(방번호,"한줄평")
         묘사:5 '= @"%RESULTS%"
+        LOCAL = 5
+        WHILE 1
+            STRFIND 묘사:LOCAL, "\br"
+            IF RESULT == -1
+                BREAK
+            ELSE
+                묘사:(LOCAL + 1) '= SUBSTRING(묘사:LOCAL,RESULT + 2, -1)
+                묘사:LOCAL '= SUBSTRING(묘사:LOCAL,0,RESULT)
+                LOCAL++
+            ENDIF
+        WEND
 ENDSELECT
 RESTART
 ;--------------------------------------------------------------------------------------------
@@ -367,17 +394,31 @@ RESTART
 @RBT_RS_ROOMLIST
 #DIM DYNAMIC 방번호
 DRAWLINE
+PRINTFORML 확인하고 싶은 방을 선택해주세요 <page.{LOCAL:1 + 1}>
+DRAWLINE
 FOR LOCAL, 0, 20
     방번호 = LOCAL + (LOCAL:1 * 20)
     SIF !RS_ROOM:방번호:R방크기:0
         CONTINUE
-    PRINTFORML [{방번호,4,RIGHT}] %RBT_RS_ROOMNAME(방번호)%
+    PRINTFORM [{방번호,4,RIGHT}] %RBT_RS_ROOMNAME(방번호),20,LEFT% 
+    CALL RBT_RS_CLEANESS_COLOR
+    PRINTFORM 청결도:{(1000 - RS_ROOM:방번호:R위생도:0)/10,3,RIGHT}％
+    RESETCOLOR
+    PRINTL
 NEXT
 DRAWLINE
+PRINTFORMLC \@LOCAL:1 <= 0 ?   # [9000] 이전페이지로\@
+PRINTFORMLC   
+PRINTFORMLC \@CALC_SLAVE_CAPACITY() / 20 >= LOCAL:1 + 1 ? [9900] 다음페이지로 # \@
+PRINTL
 PRINTFORML [9999] 돌아간다
 INPUT
 IF RESULT == 9999
     RETURN
+ELSEIF RESULT == 9000 && LOCAL:1 > 0
+    LOCAL:1--
+ELSEIF RESULT == 9900 && CALC_SLAVE_CAPACITY() / 20 >= LOCAL:1 + 1
+    LOCAL:1++
 ELSEIF RESULT >= 0 && RESULT <= 1000 && RESULT <= CALC_SLAVE_CAPACITY() - 1
     CALL RBT_RS_VIEW(RESULT)
 ELSE
@@ -396,3 +437,63 @@ FOR 방번호,0,1000
     ENDIF
 NEXT
 RETURNF -1
+
+;--------------------------------------------------------------------------------------------
+;청결도에 따른 글자색 변경
+;--------------------------------------------------------------------------------------------
+@RBT_RS_CLEANESS_COLOR(ARG)
+SELECTCASE (1000 - RS_ROOM:ARG:R위생도:0) / 10
+    CASE IS > 80
+        SETCOLOR 0X00FFFF
+    CASE IS > 50
+        RESETCOLOR
+    CASE IS > 30
+        SETCOLOR 0XFAFA00
+    CASEELSE
+        SETCOLOR 0XFF4040
+ENDSELECT
+
+;--------------------------------------------------------------------------------------------
+;새 가구 도입
+;--------------------------------------------------------------------------------------------
+@RBT_RS_FUNI_SHOP(방번호)
+#DIM DYNAMIC 방번호
+#DIMS DYNAMIC 가구명
+#DIM DYNAMIC 가격
+DRAWLINE
+PRINTFORML 무엇을 사겠습니까? (소지금 {MONEY} 원)
+DRAWLINE
+FOR LOCAL,R_MIN가구,R_MAX가구
+    TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"존재")
+    IF RESULT == LOCAL
+        CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"강화")
+        IF RESULT != 0
+            CONTINUE
+        ELSE
+            CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"가구명")
+            가구명 '= RESULTS
+            CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"강화비용")
+            PRINTFORML [{LOCAL}] %가구명,10,LEFT%({RESULT}원)
+        ENDIF
+    ENDIF
+NEXT
+DRAWLINE
+PRINTFORML [100] 돌아가기
+INPUT
+IF RESULT == 100
+    RETURN
+ELSE
+    LOCAL = RESULT
+    CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"가구명")
+    가구명 '= RESULTS
+    CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"강화비용")
+    가격 = RESULT
+    IF MONEY >= 가격
+        PRINTFORMW <%조사처리(가구명,"를")% 구입했습니다.>
+        MONEY -= 가격
+        CALL RBT_RS_FUNI_UPGRADE(방번호,LOCAL)
+    ELSE
+        PRINTFORMW 돈이 부족합니다
+    ENDIF
+ENDIF
+RESTART
