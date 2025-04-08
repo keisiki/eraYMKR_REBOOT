@@ -258,6 +258,8 @@ SELECTCASE (1000 - RS_ROOM:방번호:R위생도:0) / 10
         SETCOLOR 0XFF4040
 ENDSELECT
 PRINTFORMLC 청결도: {(1000 - RS_ROOM:방번호:R위생도:0) / 10}％
+PRINT 청소담당자:
+PRINTBUTTON RBT_RS_CLEANINIG_SLAVE(방번호) == -1 ? "없음" # NAME:(RBT_RS_CLEANINIG_SLAVE(방번호)),6974
 RESETCOLOR
 PRINTL
 DRAWLINE
@@ -314,7 +316,7 @@ DRAWLINE
 FOR LOCAL,0,11
     PRINTFORML %묘사:LOCAL%
 NEXT
-FOR LOCAL,0,33 - (LINECOUNT - TEMPLINE)
+FOR LOCAL,0,31 - (LINECOUNT - TEMPLINE)
     PRINTFORML
 NEXT
 DRAWLINE
@@ -361,6 +363,8 @@ SELECTCASE RESULT
         CALL RBT_RS_FUNI_SHOP(방번호)
     CASE 998
         CALL RBT_RS_ROOM_EXTAND(방번호)
+    CASE 6974
+        CALL RBT_RS_CLEANINIG_SLAVE_CHANGE_UI(방번호)
     CASEELSE
         IF SELECTED == RESULT
             SELECTED = 0
@@ -484,7 +488,9 @@ FOR LOCAL,R_MIN가구,R_MAX가구
             CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"가구명")
             가구명 '= RESULTS
             CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"강화비용")
-            PRINTFORML [{LOCAL}] %가구명,10,LEFT%({RESULT}원)
+            가격 = RESULT
+            CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"다음크기")
+            PRINTFORML [{LOCAL}] %가구명,10,LEFT%({가격}원)(크기:{RESULT})
         ENDIF
     ENDIF
 NEXT
@@ -546,9 +552,15 @@ ELSE
         PRINTFORML [{LOCAL + LOCAL:1 * 20}] %CALLNAME:LOCAL,20,LEFT% 현재거주지:%RBT_RS_CHARA_TO_ROOMNUM(LOCAL) == -1 ? "복도" # RBT_RS_ROOMNAME(RBT_RS_CHARA_TO_ROOMNUM(LOCAL))%
     NEXT
     DRAWLINE
+    PRINTFORMLC \@LOCAL:1 <= 0 ?   # [900] 이전페이지\@
+    PRINTFORMLC \@LOCAL:1 * 20 > CHARANUM ?   # [990] 다음페이지\@
     PRINTFORML [999] 돌아가기
     INPUT
     IF RESULT == 999
+    ELSEIF LOCAL:1 > 0 && RESULT == 900
+        LOCAL:1--
+    ELSEIF LOCAL:1 * 20 <= CHARANUM && RESULT == 990
+        LOCAL:1++
     ELSEIF INRANGE(RESULT,0,CHARANUM)
         LOCAL:2 = RESULT
         IF RBT_RS_CHARA_TO_ROOMNUM(LOCAL:2) != -1
@@ -560,3 +572,96 @@ ELSE
     ENDIF
 ENDIF
 RESTART
+
+
+;--------------------------------------------------------------------------------------------
+;청소 실행
+;--------------------------------------------------------------------------------------------
+@RBT_RS_CLEANINIG(방번호,ARG)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 청소력
+SIF 방번호 == -1
+    RETURN
+청소력 = ABL:ARG:기교 * 5
+;더러울수록 청소력이 높아진다
+SELECTCASE (1000 - RS_ROOM:방번호:R위생도:0)/10
+    CASE IS < 30
+        TIMES 청소력, 1.5
+    CASE IS < 50
+        TIMES 청소력, 1.3
+    CASE IS < 80
+        TIMES 청소력, 1.0
+    CASEELSE
+        TIMES 청소력, 0.8
+ENDSELECT
+SIF TALENT:ARG:냄새민감
+    청소력 += 10
+SIF TALENT:ARG:냄새둔감
+    청소력 -= 5
+SIF TALENT:ARG:불결무시
+    청소력 -= 10
+SELECTCASE BASE:ARG:체력 + BASE:ARG:기력
+    CASE IS < 500
+        TIMES 청소력, 0.1
+    CASE IS < 1000
+        TIMES 청소력, 0.8
+    CASE IS < 1500
+        TIMES 청소력, 1.0
+    CASEELSE
+        TIMES 청소력, 1.1
+ENDSELECT
+;50~150% 편차 도입
+청소력 = 청소력 / 2 + RAND:(MAX(1,청소력))
+RS_ROOM:방번호:R위생도:0 = LIMIT(RS_ROOM:방번호:R위생도:0 - 청소력, 0, R_최대오염도)
+
+;--------------------------------------------------------------------------------------------
+;방번호로부터 청소 담당자를 파악
+;--------------------------------------------------------------------------------------------
+@RBT_RS_CLEANINIG_SLAVE(방번호)
+#FUNCTION
+#DIM DYNAMIC 방번호
+FOR LOCAL,0,CHARANUM
+    SIF RS_청소:LOCAL:0 == 방번호
+        RETURNF LOCAL
+NEXT
+RETURNF -1
+
+;--------------------------------------------------------------------------------------------
+;청소지 변경 UI
+;--------------------------------------------------------------------------------------------
+@RBT_RS_CLEANINIG_SLAVE_CHANGE_UI(방번호)
+#DIM DYNAMIC 방번호
+$LOOP1
+DRAWLINE
+PRINTFORML 누구에게 시키겠습니까?
+DRAWLINE
+FOR LOCAL,LOCAL:1 * 20,MIN(CHARANUM,LOCAL:1 * 20 + 20)
+    PRINTFORML [{LOCAL + LOCAL:1 * 20}] %CALLNAME:LOCAL,20,LEFT% 현재청소지:%RS_청소:LOCAL:0 == -1 ? "없음" # RBT_RS_ROOMNAME(RS_청소:LOCAL:0)%
+NEXT
+DRAWLINE
+PRINTFORMLC \@LOCAL:1 <= 0 ?   # [900] 이전페이지\@
+PRINTFORMLC \@LOCAL:1 * 20 > CHARANUM ?   # [990] 다음페이지\@
+PRINTFORML [999] 돌아가기
+INPUT
+IF RESULT == 999
+ELSEIF LOCAL:1 > 0 && RESULT == 900
+    LOCAL:1--
+    GOTO LOOP1
+ELSEIF LOCAL:1 * 20 <= CHARANUM && RESULT == 990
+    LOCAL:1++
+    GOTO LOOP1
+ELSEIF INRANGE(RESULT,0,CHARANUM)
+    CALL RBT_RS_CLEANINIG_SLAVE_CHANGE(RESULT)
+ELSE
+    GOTO LOOP1
+ENDIF
+
+;--------------------------------------------------------------------------------------------
+;청소지 변경
+;--------------------------------------------------------------------------------------------
+@RBT_RS_CLEANINIG_SLAVE_CHANGE(방번호,ARG)
+#DIM DYNAMIC 방번호
+IF RBT_RS_CLEANINIG_SLAVE(방번호) != -1
+    RS_청소:(RBT_RS_CLEANINIG_SLAVE(방번호)):0 = -1
+ENDIF
+RS_청소:(ARG):0 = 방번호
