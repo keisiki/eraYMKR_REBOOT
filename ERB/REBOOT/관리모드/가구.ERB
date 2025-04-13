@@ -79,13 +79,16 @@ ELSE
             순종증가배율:ARG:0 -= 5
         CASE 1
             회복배율:ARG:0 += 0
+            보온정도:ARG:0 += 5
         CASE 2
             회복배율:ARG:0 += 2
             호감도증가배율:ARG:0 += 1
+            보온정도:ARG:0 += 8
         CASEELSE
             회복배율:ARG:0 += 5
             순종증가배율:ARG:0 += 5
             호감도증가배율:ARG:0 += 5
+            보온정도:ARG:0 += 10
     ENDSELECT
 
     SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R탁자)
@@ -103,13 +106,32 @@ ELSE
     SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R난로)
         CASE 1
             회복배율:ARG:0 += 1
+            보온정도:ARG:0 += 5
         CASE 2
             회복배율:ARG:0 += 1
             호감도증가배율:ARG:0 += 1
+            보온정도:ARG:0 += 8
         CASE 3
             회복배율:ARG:0 += 1
             순종증가배율:ARG:0 += 1
             호감도증가배율:ARG:0 += 2
+            보온정도:ARG:0 += 10
+    ENDSELECT
+
+    SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R창문)
+        CASE 1
+            순종증가배율:ARG:0 += 1
+            부정증가배율:ARG:0 -= 1
+            보온정도:ARG:0 += 0
+        CASE 2
+            순종증가배율:ARG:0 += 2
+            부정증가배율:ARG:0 -= 2
+            보온정도:ARG:0 += 5
+        CASE 31
+            순종증가배율:ARG:0 += 3
+            호감도증가배율:ARG:0 += 1
+            부정증가배율:ARG:0 -= 3
+            보온정도:ARG:0 += 10
     ENDSELECT
 ENDIF
 
@@ -342,6 +364,68 @@ SELECTCASE RS_ROOM:방번호:ID:0
         한줄평 '= "쓸만한 라디에이터, 방 전체에 훈훈한 공기를 뿜어낸다\br겨울 찬 바람에도 이불 밖으로 나올 수 있게 도와주는 명물"
     CASE 3
         한줄평 '= "오방난로, 순식간에 따스함이 퍼진다."
+ENDSELECT
+
+;이하는 건들필요 없음
+SELECTCASE ARGS
+    CASE "존재"
+        RETURN ID
+    CASE "강화"
+        RETURN RS_ROOM:방번호:ID:0
+    CASE "상태"
+        RETURN RS_ROOM:방번호:ID:1
+    CASE "강화비용"
+        RETURN 업그레이드비용
+    CASE "현재크기"
+        RETURN 크기:(RS_ROOM:방번호:ID:0)
+    CASE "다음크기"
+        RETURN 크기:(RS_ROOM:방번호:ID:0 + 1) - 크기:(RS_ROOM:방번호:ID:0)
+    CASE "만족도배수"
+        RETURN 만족도배수 * RS_ROOM:방번호:ID:0
+    CASE "가구명"
+        RESULTS '= 수식어:(RS_ROOM:방번호:ID:0) + 가구명
+        RETURN
+    CASE "한줄평"
+        RESULTS '= 한줄평
+        RETURN
+ENDSELECT
+
+@RBT_RS_FUNI_창문(방번호,ARGS)
+#DIM DYNAMIC 방번호
+CALL RBT_RS_FUNI_12(방번호,ARGS)
+RETURN RESULT
+
+@RBT_RS_FUNI_14(방번호,ARGS)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC ID
+#DIM DYNAMIC 크기,5
+#DIM DYNAMIC 업그레이드비용
+#DIM DYNAMIC 만족도배수
+#DIMS DYNAMIC 가구명
+#DIMS DYNAMIC 수식어,5
+#DIMS DYNAMIC 한줄평
+;정의부, 이곳만 수정하면 된다
+ID = R창문
+가구명 '= "창문"
+크기:0 = 0
+크기:1 = 0
+크기:2 = 0
+크기:3 = 0
+크기:4 = 99999
+업그레이드비용 = 10000
+만족도배수 = 75
+수식어:0 '= ""
+수식어:1 '= "얇은 "
+수식어:2 '= "이중 "
+수식어:3 '= "단열 "
+수식어:4 '= ""
+SELECTCASE RS_ROOM:방번호:ID:0
+    CASE 1
+        한줄평 '= "얇다란 유리판 한 장, 창 밖에서 들어오는 햇살이 기분 좋다"
+    CASE 2
+        한줄평 '= "찬 바람을 막아주는 고마운 창문"
+    CASE 3
+        한줄평 '= "밖에 얼음요정이 문대고 있어도 안이 따뜻하다"
 ENDSELECT
 
 ;이하는 건들필요 없음
