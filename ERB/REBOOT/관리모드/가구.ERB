@@ -33,6 +33,8 @@ IF !ARG
 ENDIF
 RS_ROOM:방번호:ID:0 ++
 RS_ROOM:방번호:ID:1 = 100 ;내구도를 초기화
+CALL RBT_RS_FUNI_APPLICATION(RBT_RS_ROOMNUM_TO_CHARA(방번호))
+CALL RBT_RS_FUNI_APPLICATION_ROOM(방번호)
 
 ;--------------------------------------------------------------------------------------------
 ;가구 내구도 자연감소
@@ -53,6 +55,9 @@ NEXT
 ;가구 적용
 ;--------------------------------------------------------------------------------------------
 @RBT_RS_FUNI_APPLICATION(ARG)
+IF ARG == -1
+    RETURN
+ENDIF
 IF RBT_RS_CHARA_TO_ROOMNUM() == -1
     ;노숙자다
     회복배율:ARG:0 = -50
@@ -122,15 +127,43 @@ ELSE
         CASE 1
             순종증가배율:ARG:0 += 1
             부정증가배율:ARG:0 -= 1
-            보온정도:ARG:0 += 0
         CASE 2
             순종증가배율:ARG:0 += 2
             부정증가배율:ARG:0 -= 2
-            보온정도:ARG:0 += 5
         CASE 31
             순종증가배율:ARG:0 += 3
             호감도증가배율:ARG:0 += 1
             부정증가배율:ARG:0 -= 3
+    ENDSELECT
+ENDIF
+
+@RBT_RS_FUNI_APPLICATION_ROOM(ARG)
+보온정도:ARG:0 = 0
+IF RBT_CS_AVER_TEMP(DAY:5) <= 10
+    SELECTCASE RBT_RS_FUNI_UPGREADED(ARG,R창문)
+        CASE 1
+            보온정도:ARG:0 += 0
+        CASE 2
+            보온정도:ARG:0 += 5
+        CASE 31
+            보온정도:ARG:0 += 10
+    ENDSELECT
+    SELECTCASE RBT_RS_FUNI_UPGREADED(ARG,R침구)
+        CASE 0
+        CASE 1
+            보온정도:ARG:0 += 5
+        CASE 2
+            보온정도:ARG:0 += 8
+        CASEELSE
+            보온정도:ARG:0 += 10
+    ENDSELECT
+
+    SELECTCASE RBT_RS_FUNI_UPGREADED(ARG,R난로)
+        CASE 1
+            보온정도:ARG:0 += 5
+        CASE 2
+            보온정도:ARG:0 += 8
+        CASE 3
             보온정도:ARG:0 += 10
     ENDSELECT
 ENDIF
