@@ -1,0 +1,172 @@
+﻿;RBT HEAT SYSTEM
+@RBT_HS_BOILER_VIEW
+#DIM DYNAMIC LINETEMP
+#DIM CONST MAX_TEMP = 35
+#DIM CONST MIN_TEMP = 5
+LINETEMP = LINECOUNT
+PRINTFORML 보일러의 세팅을 어떻게 하겠습니까? (상승한 온도는 익일 반영됩니다)
+DRAWLINE
+ALIGNMENT CENTER
+PRINTFORMLC 현재 기온:{CS_기온,3}℃
+PRINTFORMLC 희망 온도:{희망온도,3}℃
+PRINTL
+PRINTFORMLC 잔여 연료:{ITEM:연료,5} 
+PRINTFORMLC = {ITEM:연료 * 연료효율,8}증기
+PRINTL
+PRINTFORMLC 예상 증기 소모량:
+PRINTFORMLC {RBT_HS_CALC_ALL_ROOM_NEED_STEAM(),8}증기/日
+PRINTL
+DRAWLINE
+SIF 희망온도 <= MIN_TEMP
+    SETCOLOR 0X333333
+PRINTBUTTON "[<<]",100
+PRINTBUTTON "[<]",200
+RESETCOLOR
+PRINTFORM [○]
+SIF 희망온도 >= MAX_TEMP
+    SETCOLOR 0X333333
+PRINTBUTTON "[>]",300
+PRINTBUTTON "[>>]",400
+RESETCOLOR
+ALIGNMENT LEFT
+PRINTFORML
+PRINTFORML [998] 연료 구매
+PRINTFORML [999] 돌아간다
+INPUT
+IF RESULT == 999
+    RETURN
+ELSEIF RESULT == 998
+    CALL RBT_HS_FUEL_SHOP
+ELSEIF RESULT == 100 && 희망온도 > MIN_TEMP
+    희망온도 = MAX(희망온도 - 5, MIN_TEMP)
+ELSEIF RESULT == 200 && 희망온도 > MIN_TEMP
+    희망온도 = MAX(희망온도 - 1, MIN_TEMP)
+ELSEIF RESULT == 300 && 희망온도 < MAX_TEMP
+    희망온도 = MIN(희망온도 + 1, MAX_TEMP)
+ELSEIF RESULT == 400 && 희망온도 < MAX_TEMP
+    희망온도 = MIN(희망온도 + 5, MAX_TEMP)
+ENDIF
+CLEARLINE LINECOUNT - LINETEMP
+RESTART
+
+@RBT_HS_FUEL_SHOP()
+DRAWLINE
+PRINTFORML 얼마나 구매합니까?
+DRAWLINE
+PRINTFORML 오늘의 연료 시세:1연료 = {ITEMPRICE:연료}\\
+PRINTFORML 현재 소지금:{MONEY}\\
+DRAWLINE
+PRINT 구매할 양을 입력해 주십시오(0이하로 캔슬):
+INPUT
+IF RESULT > 0
+    IF MONEY >= ITEMPRICE:연료 * RESULT
+        MONEY -= ITEMPRICE:연료 * RESULT
+        ITEM:연료 += RESULT
+    ELSE
+        PRINTFORMW 돈이 부족합니다
+    ENDIF
+ENDIF
+
+@RBT_HS_SET_FUEL_PRICE()
+LOCAL = GETTIME() / 1000000000
+DUMPRAND
+RANDOMIZE LOCAL
+ITEMPRICE:연료 = (RAND:25 * 2) + 25
+INITRAND
+
+@RBT_HS_CALC_ALL_ROOM_NEED_STEAM()
+#FUNCTION
+VARSET LOCAL
+FOR LOCAL,0,CALC_SLAVE_CAPACITY()
+    LOCAL:1 += RBT_HS_RADIATOR_EST(LOCAL,MAX(0,희망온도 - CS_기온))
+NEXT
+RETURNF LOCAL:1
+
+;------------------------------------
+; 온도상승량에 대한 증기 상승치 예상도
+;------------------------------------
+@RBT_HS_RADIATOR_EST(방번호,온도상승치)
+#FUNCTION
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 온도상승치
+#DIM DYNAMIC 요구증기
+요구증기 = 온도상승치 * 100 / RBT_HS_RADIATOR_EFFICIENCY(방번호)
+IF RBT_RS_ROOMNUM_TO_CHARA(방번호) == -1 || RBT_RS_FUNI_UPGREADED(방번호,R난로) == 0
+    요구증기 = 0
+ENDIF
+RETURNF 요구증기
+
+;------------------------------------
+; 실제로 오르는 양에 대한 계산
+;------------------------------------
+@RBT_HS_RADIATOR_CALC(방번호,증기량)
+#FUNCTION
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 온도상승치
+#DIM DYNAMIC 증기량
+온도상승치 = 증기량 * RBT_HS_RADIATOR_EFFICIENCY(방번호) / 100
+IF RBT_RS_ROOMNUM_TO_CHARA(방번호) == -1 || RBT_RS_FUNI_UPGREADED(방번호,R난로) == 0
+    온도상승치 = 0
+ENDIF
+RETURNF 온도상승치
+
+;효율성 계산
+; 열기 = 효율성 * 증기 / 100
+; 따라서 증기 = 열기 * 100 / 효율성
+@RBT_HS_RADIATOR_EFFICIENCY(방번호)
+#FUNCTION
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 효율성
+효율성 = 100
+SELECTCASE RBT_RS_FUNI_UPGREADED(방번호,R난로)
+    CASE 0
+        TIMES 효율성, 0.00
+    CASE 1
+        TIMES 효율성, 0.60
+    CASE 2
+        TIMES 효율성, 0.8
+    CASE 3
+        TIMES 효율성, 1.00
+ENDSELECT
+SELECTCASE RBT_RS_FUNI_DURABLITY(방번호,R난로)
+    CASE IS < 10
+        TIMES 효율성, 0.6
+    CASE IS < 30
+        TIMES 효율성, 0.7
+    CASE IS < 50
+        TIMES 효율성, 0.8
+ENDSELECT
+RETURNF 효율성
+
+;------------------------------------
+; 하루의 끝에 난방에 의한 보온 효과를 계산하는 함수
+;------------------------------------
+@RBT_HS_HEATING()
+#DIM DYNAMIC 증기
+#DIM DYNAMIC 방번호
+VARSET LOCAL
+LOCAL = RBT_HS_CALC_ALL_ROOM_NEED_STEAM()
+LOCAL = ((LOCAL / 연료효율) + ((LOCAL % 연료효율) ? 1 # 0 ))
+IF LOCAL > ITEM:연료
+    증기 = ITEM:연료 * 연료효율
+    ITEM:연료 = 0
+ELSE
+    증기 = LOCAL * 연료효율
+    ITEM:연료 -= LOCAL
+ENDIF
+VARSET LOCAL
+FOR 방번호,0,CALC_SLAVE_CAPACITY()
+    SIF RBT_RS_ROOMNUM_TO_CHARA(방번호) == -1
+        CONTINUE
+    LOCAL ++
+NEXT
+LOCAL:1 = 증기 / LOCAL
+
+FOR 방번호,0,CALC_SLAVE_CAPACITY()
+    SIF RBT_RS_ROOMNUM_TO_CHARA(방번호) == -1
+        CONTINUE
+    SIF 증기 <= 0
+        BREAK
+    보온정도:방번호:1 = RBT_HS_RADIATOR_CALC(방번호,MIN(LOCAL:1,증기))
+    증기 -= LOCAL:1
+NEXT

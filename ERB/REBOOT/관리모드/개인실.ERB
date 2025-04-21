@@ -15,8 +15,10 @@ FOR LOCAL,0,ARG
     CALL RBT_RS_POLLUTE(LOCAL,300)
     CALL RBT_RS_FUNI_UPGRADE(LOCAL, R침대, 1) ;초기 방의 기본 침대/침구 세트는 지급
     CALL RBT_RS_FUNI_UPGRADE(LOCAL, R침구, 1)
+    CALL RBT_RS_FUNI_UPGRADE(LOCAL, R난로, 1)
     CALL RBT_RS_DAMAGE(LOCAL, R침대, 50)
     CALL RBT_RS_DAMAGE(LOCAL, R침구, 50)
+    CALL RBT_RS_DAMAGE(LOCAL, R난로, 80)
     LOCAL:1 ++
 NEXT
 ;RS_ROOM:0:R방주인:0 = 0
@@ -257,8 +259,8 @@ SELECTCASE (1000 - RS_ROOM:방번호:R위생도:0) / 10
     CASEELSE
         SETCOLOR 0XFF4040
 ENDSELECT
-PRINTFORMLC 청결도: {(1000 - RS_ROOM:방번호:R위생도:0) / 10}％
-PRINTFORMLC 체감 온도:{CS_기온}+{보온정도(방번호)+냉방정도(방번호)} = {CS_기온+보온정도(방번호)+냉방정도(방번호)}℃
+PRINTFORMLC 청결도: {(1000 - RS_ROOM:방번호:R위생도:0) / 10,3}％　　　　　
+PRINTBUTTONLC @"체감 온도:{CS_기온}+{보온정도(방번호)+냉방정도(방번호)} = {CS_기온+보온정도(방번호)+냉방정도(방번호)}℃",9999
 PRINT 청소담당자:
 PRINTBUTTON RBT_RS_CLEANINIG_SLAVE(방번호) == -1 ? "없음" # NAME:(RBT_RS_CLEANINIG_SLAVE(방번호)),6974
 RESETCOLOR
@@ -366,6 +368,8 @@ SELECTCASE RESULT
         CALL RBT_RS_ROOM_EXTAND(방번호)
     CASE 6974
         CALL RBT_RS_CLEANINIG_SLAVE_CHANGE_UI(방번호)
+    CASE 9999
+        CALL RBT_RS_HEATING_REASON_UI(방번호)
     CASEELSE
         IF SELECTED == RESULT
             SELECTED = 0
@@ -408,8 +412,11 @@ RESTART
 ;--------------------------------------------------------------------------------------------
 @RBT_RS_ROOMLIST
 #DIM DYNAMIC 방번호
+
 DRAWLINE
-PRINTFORML 확인하고 싶은 방을 선택해주세요 <page.{LOCAL:1 + 1}>
+PRINTFORM 확인하고 싶은 방을 선택해주세요 <page.{LOCAL:1 + 1}>　　　
+PRINTBUTTON "[공용시설]",100000
+PRINTL
 DRAWLINE
 FOR LOCAL, 0, 20
     방번호 = LOCAL + (LOCAL:1 * 20)
@@ -434,6 +441,8 @@ ELSEIF RESULT == 9000 && LOCAL:1 > 0
     LOCAL:1--
 ELSEIF RESULT == 9900 && CALC_SLAVE_CAPACITY() / 20 >= LOCAL:1 + 1
     LOCAL:1++
+ELSEIF RESULT == 100000
+    CALL RBT_RS_COMMUNAL_ROOM
 ELSEIF RESULT >= 0 && RESULT <= 1000 && RESULT <= CALC_SLAVE_CAPACITY() - 1
     CALL RBT_RS_VIEW(RESULT)
 ELSE
@@ -678,3 +687,57 @@ IF RBT_RS_CLEANINIG_SLAVE(방번호) != -1
     RS_청소:(RBT_RS_CLEANINIG_SLAVE(방번호)):0 = -1
 ENDIF
 RS_청소:(ARG):0 = 방번호
+
+
+;--------------------------------------------------------------------------------------------
+;온도변경 이유 표시 뷰어
+;--------------------------------------------------------------------------------------------
+@RBT_RS_HEATING_REASON_UI(방번호)
+#DIM DYNAMIC 방번호
+DRAWLINE
+PRINTFORML %RBT_RS_ROOMNAME(방번호)%의 온도 변경 요인은…
+PRINTFORML 가구로부터　: {보온정도:방번호:0}℃
+PRINTFORML 보일러로부터: {보온정도:방번호:1}℃
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+PRINTFORMW 입니다.(아무키나 눌러 계속)
+DRAWLINE
+;TODO: 연료 구매에 대한 UI가 필요하다
+
+;--------------------------------------------------------------------------------------------
+;공용공간 관리
+;--------------------------------------------------------------------------------------------
+@RBT_RS_COMMUNAL_ROOM
+DRAWLINE
+PRINTFORML 확인하고 싶은 방을 선택해주세요
+DRAWLINE
+PRINTFORML [100] 보일러실
+PRINTFORML [101] 부엌
+PRINTFORML [102] 욕탕
+PRINTFORML [103] 화장실
+PRINTFORML [104] 창고
+DRAWLINE
+PRINTFORML [999] 돌아간다
+INPUT
+IF RESULT == 999
+    RETURN
+ELSE
+    SELECTCASE RESULT
+        CASE 100
+            CALL RBT_HS_BOILER_VIEW
+        CASE 101
+            PRINTW 미구현.
+        CASE 102
+            PRINTW 미구현.
+        CASE 103
+            PRINTW 미구현.
+        CASE 104
+            PRINTW 미구현.
+    ENDSELECT
+ENDIF
+RESTART
