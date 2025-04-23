@@ -2047,6 +2047,14 @@ ELSEIF RESULT:0 == 1
         ;PRINTFORML {RESULT:1} 메뉴의 만복도
         ;PRINTFORML {RESULT:2} 메뉴의 영양도
         ;PRINTFORML {RESULT:3} 메뉴의 스트레스
+        ;식사 멘트 출력
+        PRINTFORM %조사처리(CALLNAME:ARG,"는")% 
+        CALL CALC_EATEN_FOOD_TORIKOMODE, CFLAG:ARG:메뉴, NO:ARG
+        PRINTFORML 먹었습니다. (취식률:{RESULT:4}％)
+        PRINT   
+        CALL ARRANGE_CHARALIFE(ARG,1)
+        PRINTL
+        PRINTL   ↓
         CFLAG:ARG:현재만복도 += RESULT:1
         CFLAG:ARG:현재영양도 += RESULT:2
         CFLAG:ARG:스트레스 += RESULT:3
@@ -2058,10 +2066,7 @@ ELSEIF RESULT:0 == 1
         CFLAG:ARG:현재만복도 = LIMIT(CFLAG:ARG:현재만복도, 0, CFLAG:ARG:최대만복도)
         CFLAG:ARG:현재영양도 = LIMIT(CFLAG:ARG:현재영양도, 0, CFLAG:ARG:최대영양도)
         CFLAG:ARG:스트레스 = LIMIT(CFLAG:ARG:스트레스, 0, 999999)
-        ;식사 멘트 출력
-        PRINTFORM %조사처리(CALLNAME:ARG,"는")% 
-        CALL CALC_EATEN_FOOD_TORIKOMODE, CFLAG:ARG:메뉴, NO:ARG
-        PRINTFORML 먹었습니다.
+        
         ;식비차감
         MONEY -= RESULT:4 ;(RBT_EDIT)리부트 식사수정으로 변경
         ;디버그용

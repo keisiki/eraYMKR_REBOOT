@@ -194,24 +194,24 @@ LOCAL = MIN(회복량:0,CFLAG:대상:최대만복도 - CFLAG:대상:현재만복
 ;-------------
 SELECTCASE CFLAG:대상:메뉴
     CASE 1
-        LOCAL:1 = 30
-    CASE 2
         LOCAL:1 = 50
-    CASE 3
+    CASE 2
         LOCAL:1 = 70
+    CASE 3
+        LOCAL:1 = 90
 ENDSELECT
 ;배고프면 맛없어도 먹는다, 1랭크 업 효과
-SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도 - CFLAG:대상:현재만복도) < 30
+SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도) <= 40
     LOCAL:1 += 20
-;반대로 배부르면 맛을 더 따진다, 0.5랭크 다운
-SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도 - CFLAG:대상:현재만복도) > 80
-    LOCAL:1 -= 10
+;엄청 배고프면, 추가로 1랭크 업 효과
+SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도) <= 20
+    LOCAL:1 += 20
+;반대로 배부르면 맛을 더 따진다, 1랭크 다운
+SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도) >= 80
+    LOCAL:1 -= 20
 ;짬장 조리기능에 비례해 맛 증가
-LOCAL:1 += ABL:(FLAG:조리자): 요리기능 * 5
-;역수로 변경후 5% 단위 랜덤화
-LOCAL:1 = 100 - LOCAL:1
-SIF LOCAL:1 != 0
-    LOCAL:1 = RAND:(LOCAL:1 / 5) * 5
+LOCAL:1 += ABL:(FLAG:조리자):요리기능 * 10
+LOCAL:1 = LIMIT(LOCAL:1,0,100)
 LOCAL = LOCAL * LOCAL:1 / 100
 ;TODO: 각 개인별 맛 요구량을 설정해서 어떤 애는 싸구려도 잘 먹고 어떤애는 고급 입맛인 경우로 세팅하는게 바람직하지만...
 ;일단은 포괄적으로 구현
@@ -227,6 +227,7 @@ LOCAL = LOCAL * LOCAL:1 / 100
 RESULT:1 = 회복량:0
 RESULT:2 = 회복량:1
 RESULT:3 = 회복량:2
+RESULT:4 = LOCAL
 
 @RBT_FDS_COOK_MODIFY(ARG)
 #FUNCTION
