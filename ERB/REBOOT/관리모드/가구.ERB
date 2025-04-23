@@ -133,6 +133,7 @@ ENDIF
 
 @RBT_RS_FUNI_APPLICATION_ROOM(ARG)
 보온정도:ARG:0 = 0
+냉방정도:ARG:0 = 0
 IF RBT_CS_AVER_TEMP(DAY:5) <= 10
     SELECTCASE RBT_RS_FUNI_UPGREADED(ARG,R창문)
         CASE 1
@@ -151,7 +152,21 @@ IF RBT_CS_AVER_TEMP(DAY:5) <= 10
         CASEELSE
             보온정도:ARG:0 += 10
     ENDSELECT
-    
+ELSEIF RBT_CS_AVER_TEMP(DAY:5) >= 24
+    SELECTCASE RBT_RS_FUNI_UPGREADED(ARG,R창문)
+        CASE 0
+        CASEELSE
+            냉방정도:ARG:0 += 1
+    ENDSELECT
+    SELECTCASE RBT_RS_FUNI_UPGREADED(ARG,R선풍기)
+        CASE 0
+        CASE 1
+            냉방정도:ARG:0 += 2
+        CASE 2
+            냉방정도:ARG:0 += 3
+        CASEELSE
+            냉방정도:ARG:0 += 5
+    ENDSELECT
 ENDIF
 
 ;--------------------------------------------------------------------------------------------
@@ -349,7 +364,7 @@ ENDSELECT
 
 @RBT_RS_FUNI_난로(방번호,ARGS)
 #DIM DYNAMIC 방번호
-CALL RBT_RS_FUNI_12(방번호,ARGS)
+CALL RBT_RS_FUNI_13(방번호,ARGS)
 RETURN RESULT
 
 @RBT_RS_FUNI_13(방번호,ARGS)
@@ -411,7 +426,7 @@ ENDSELECT
 
 @RBT_RS_FUNI_창문(방번호,ARGS)
 #DIM DYNAMIC 방번호
-CALL RBT_RS_FUNI_12(방번호,ARGS)
+CALL RBT_RS_FUNI_14(방번호,ARGS)
 RETURN RESULT
 
 @RBT_RS_FUNI_14(방번호,ARGS)
@@ -440,11 +455,75 @@ ID = R창문
 수식어:4 '= ""
 SELECTCASE RS_ROOM:방번호:ID:0
     CASE 1
-        한줄평 '= "얇다란 유리판 한 장, 창 밖에서 들어오는 햇살이 기분 좋다"
+        한줄평 '= "얇다란 유리판 한 장, 창 밖에서 들어오는 햇살이 기분 좋다, 여름철 환기에도 유용"
     CASE 2
         한줄평 '= "찬 바람을 막아주는 고마운 창문"
     CASE 3
         한줄평 '= "밖에 얼음요정이 문대고 있어도 안이 따뜻하다"
+ENDSELECT
+
+;이하는 건들필요 없음
+SELECTCASE ARGS
+    CASE "존재"
+        RETURN ID
+    CASE "강화"
+        RETURN RS_ROOM:방번호:ID:0
+    CASE "상태"
+        RETURN RS_ROOM:방번호:ID:1
+    CASE "강화비용"
+        RETURN 업그레이드비용
+    CASE "현재크기"
+        RETURN 크기:(RS_ROOM:방번호:ID:0)
+    CASE "다음크기"
+        RETURN 크기:(RS_ROOM:방번호:ID:0 + 1) - 크기:(RS_ROOM:방번호:ID:0)
+    CASE "만족도배수"
+        RETURN 만족도배수 * RS_ROOM:방번호:ID:0
+    CASE "가구명"
+        RESULTS '= 수식어:(RS_ROOM:방번호:ID:0) + 가구명
+        RETURN
+    CASE "한줄평"
+        RESULTS '= 한줄평
+        RETURN
+ENDSELECT
+
+
+
+@RBT_RS_FUNI_선풍기(방번호,ARGS)
+#DIM DYNAMIC 방번호
+CALL RBT_RS_FUNI_15(방번호,ARGS)
+RETURN RESULT
+
+@RBT_RS_FUNI_15(방번호,ARGS)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC ID
+#DIM DYNAMIC 크기,5
+#DIM DYNAMIC 업그레이드비용
+#DIM DYNAMIC 만족도배수
+#DIMS DYNAMIC 가구명
+#DIMS DYNAMIC 수식어,5
+#DIMS DYNAMIC 한줄평
+;정의부, 이곳만 수정하면 된다
+ID = R선풍기
+가구명 '= "선풍기"
+크기:0 = 0
+크기:1 = 0
+크기:2 = 0
+크기:3 = 0
+크기:4 = 99999
+업그레이드비용 = 10000
+만족도배수 = 75
+수식어:0 '= ""
+수식어:1 '= "고물 "
+수식어:2 '= ""
+수식어:3 '= "최신 "
+수식어:4 '= ""
+SELECTCASE RS_ROOM:방번호:ID:0
+    CASE 1
+        한줄평 '= "싸구려 선풍기, 바람도 약하고 시끄럽다"
+    CASE 2
+        한줄평 '= "그럭저럭 쓸 만한 선풍기, 여름 더위를 쓸어내준다"
+    CASE 3
+        한줄평 '= "팬이 없지만 엄청나게 시원한 선풍기"
 ENDSELECT
 
 ;이하는 건들필요 없음
