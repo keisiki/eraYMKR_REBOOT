@@ -170,3 +170,73 @@ FOR 방번호,0,CALC_SLAVE_CAPACITY()
     보온정도:방번호:1 = RBT_HS_RADIATOR_CALC(방번호,MIN(LOCAL:1,증기))
     증기 -= LOCAL:1
 NEXT
+
+
+;------------------------------------
+; 편안한 온도 계산
+;------------------------------------
+@RBT_HS_COMFORT_TEMP(ARG)
+#FUNCTION
+#DIM DYNAMIC 온도
+온도 = 22
+SIF !TALENT:ARG:남자
+    온도 += 2
+SIF TALENT:ARG:임신 || TALENT:ARG:기생
+    온도 -= 1
+SIF TALENT:ARG:유아 || TALENT:ARG:작은체형
+    온도 += 1
+
+RETURNF 온도
+
+@RBT_HS_TEMP_DAMAGE_LEVEL(ARG)
+#FUNCTION
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC NOW_TEMP
+#DIM DYNAMIC 온도편차단계
+LOCAL = RBT_HS_COMFORT_TEMP(ARG)
+방번호 = RBT_RS_CHARA_TO_ROOMNUM(ARG)
+NOW_TEMP = CS_기온+보온정도(방번호)+냉방정도(방번호)
+온도편차단계 = 2
+;TODO: 각종 소질에 의한 온도 편차 변경 시스템 도입 필
+SELECTCASE NOW_TEMP
+    CASE IS < LOCAL - 온도편차단계 * 4 ; 4단계 추위 = 0100
+        RETURNF 4
+    CASE IS < LOCAL - 온도편차단계 * 3 ; 3단계 추위 = 0011
+        RETURNF 3
+    CASE IS < LOCAL - 온도편차단계 * 2 ; 2단계 추위 = 0010
+        RETURNF 2
+    CASE IS < LOCAL - 온도편차단계 * 1 ; 1단계 추위 = 0001
+        RETURNF 1
+    CASE IS < LOCAL + 온도편차단계 * 1 ; 적정온도 = 0000
+        RETURNF 0
+    CASE IS < LOCAL + 온도편차단계 * 2 ; 1단계 더위 = 1001
+        RETURNF 9
+    CASE IS < LOCAL + 온도편차단계 * 3 ; 2단계 더위 = 1010
+        RETURNF 10
+    CASE IS < LOCAL + 온도편차단계 * 4 ; 3단계 더위 = 1011
+        RETURNF 11
+    CASEELSE ; 4단계 더위 = 1100
+        RETURNF 12
+ENDSELECT
+
+@RBT_HS_TEMP_DAMAGE(ARG)
+#DIM DYNAMIC 더위여부
+VARSET LOCAL
+LOCAL = RBT_HS_TEMP_DAMAGE_LEVEL(ARG)
+더위여부 = GETBIT(LOCAL,4)
+CLEARBIT LOCAL,4
+SELECTCASE LOCAL
+    CASE 0
+    CASE 1
+        회복배율:ARG:1 = -10
+        부정증가배율:ARG:1 = 5
+    CASE 2
+        회복배율:ARG:1 = -20
+        부정증가배율:ARG:1 = 10
+    CASE 3
+        회복배율:ARG:1 = -30
+        부정증가배율:ARG:1 = 15
+    CASE 4
+        회복배율:ARG:1 = -50
+        부정증가배율:ARG:1 = 20
+ENDSELECT

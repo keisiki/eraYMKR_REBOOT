@@ -369,7 +369,7 @@ SELECTCASE RESULT
     CASE 6974
         CALL RBT_RS_CLEANINIG_SLAVE_CHANGE_UI(방번호)
     CASE 9999
-        CALL RBT_RS_HEATING_REASON_UI(방번호)
+        CALL RBT_RS_REASON_UI(방번호,"보온")
     CASEELSE
         IF SELECTED == RESULT
             SELECTED = 0
@@ -692,22 +692,99 @@ RS_청소:(ARG):0 = 방번호
 ;--------------------------------------------------------------------------------------------
 ;온도변경 이유 표시 뷰어
 ;--------------------------------------------------------------------------------------------
-@RBT_RS_HEATING_REASON_UI(방번호)
+@RBT_RS_REASON_UI(방번호,변경사항)
 #DIM DYNAMIC 방번호
+#DIMS DYNAMIC 변경사항
+#DIM DYNAMIC 요인,10
+#DIMS DYNAMIC 요인명,10
+#DIMS DYNAMIC 단위
+#DIM DYNAMIC 기본값
+VARSET LOCAL
 DRAWLINE
-PRINTFORML %RBT_RS_ROOMNAME(방번호)%의 온도 변경 요인은…
-PRINTFORML 가구로부터　: {보온정도:방번호:0}℃
-PRINTFORML 보일러로부터: {보온정도:방번호:1}℃
-PRINTFORML 
-PRINTFORML 
-PRINTFORML 
-PRINTFORML 
-PRINTFORML 
-PRINTFORML 
-PRINTFORML 
+요인명:0 '= "가구로부터　"
+요인명:1 '= "기온으로부터"
+요인명:2 '= ""
+요인명:3 '= ""
+요인명:4 '= ""
+요인명:5 '= ""
+요인명:6 '= ""
+요인명:7 '= ""
+요인명:8 '= ""
+요인명:9 '= ""
+SELECTCASE 변경사항
+    CASE "보온"
+        FOR LOCAL,0,10
+            요인:LOCAL = 보온정도:방번호:LOCAL
+        NEXT
+        요인명:1 '= "보일러로부터"
+        PRINTFORML %RBT_RS_ROOMNAME(방번호)%의 온도 변경 요인은…
+        단위 '= "℃"
+        기본값 = CS_기온
+    CASE "냉방"
+        FOR LOCAL,0,10
+            요인:LOCAL = 냉방정도:방번호:LOCAL
+        NEXT
+        PRINTFORML %RBT_RS_ROOMNAME(방번호)%의 온도 변경 요인은…
+        단위 '= "℃"
+        기본값 = CS_기온
+    CASE "호감도"
+        방번호 = RBT_RS_ROOMNUM_TO_CHARA(방번호)
+        FOR LOCAL,0,10
+            요인:LOCAL = 호감도증가배율:방번호:LOCAL
+        NEXT
+        PRINTFORML %CALLNAME:방번호%의 호감도증가배율 요인은…
+        단위 '= "％"
+        기본값 = 100
+    CASE "순종"
+        방번호 = RBT_RS_ROOMNUM_TO_CHARA(방번호)
+        FOR LOCAL,0,10
+            요인:LOCAL = 순종증가배율:방번호:LOCAL
+        NEXT
+        PRINTFORML %CALLNAME:방번호%의 순종증가배율 요인은…
+        단위 '= "％"
+        기본값 = 100
+    CASE "부정"
+        방번호 = RBT_RS_ROOMNUM_TO_CHARA(방번호)
+        FOR LOCAL,0,10
+            요인:LOCAL = 부정증가배율:방번호:LOCAL
+        NEXT
+        PRINTFORML %CALLNAME:방번호%의 부정증가배율 요인은…
+        단위 '= "％"
+        기본값 = 100
+    CASE "회복"
+        방번호 = RBT_RS_ROOMNUM_TO_CHARA(방번호)
+        FOR LOCAL,0,10
+            요인:LOCAL = 회복배율:방번호:LOCAL
+        NEXT
+        PRINTFORML %CALLNAME:방번호%의 회복배율 요인은…
+        단위 '= "％"
+        기본값 = 100
+    CASE "대우"
+        방번호 = RBT_RS_ROOMNUM_TO_CHARA(방번호)
+        FOR LOCAL,0,10
+            요인:LOCAL = 타겟대우:방번호:LOCAL
+        NEXT
+        PRINTFORML %CALLNAME:방번호%의 대우 변동은…
+        단위 '= ""
+        기본값 = 0
+ENDSELECT
+PRINTFORML ○%"기본값",21,LEFT%:{기본값,4,RIGHT}%단위%
+FOR LOCAL,0,10
+    IF 요인:LOCAL != 0
+        PRINTFORM 　*%요인명:LOCAL,20,LEFT%:
+        SIF 요인:LOCAL < 0
+            SETCOLOR 0XBB2222
+        SIF 요인:LOCAL > 0
+            SETCOLOR 0X22BB22
+        PRINTFORML {요인:LOCAL,4,RIGHT}%단위%
+        RESETCOLOR
+        LOCAL:1 += 요인:LOCAL
+    ENDIF
+NEXT
+DRAWLINE
+PRINTFORML ○%"결과",21,LEFT%:{기본값 + LOCAL:1,4}%단위%
 PRINTFORMW 입니다.(아무키나 눌러 계속)
 DRAWLINE
-;TODO: 연료 구매에 대한 UI가 필요하다
 
 ;--------------------------------------------------------------------------------------------
 ;공용공간 관리
