@@ -196,26 +196,28 @@ RETURNF 온도
 LOCAL = RBT_HS_COMFORT_TEMP(ARG)
 방번호 = RBT_RS_CHARA_TO_ROOMNUM(ARG)
 NOW_TEMP = CS_기온+보온정도(방번호)+냉방정도(방번호)
-온도편차단계 = 2
+온도편차단계 = 3
 ;TODO: 각종 소질에 의한 온도 편차 변경 시스템 도입 필
 SELECTCASE NOW_TEMP
-    CASE IS < LOCAL - 온도편차단계 * 4 ; 4단계 추위 = 0100
+    CASE IS <  LOCAL - 온도편차단계 * 5 ; 4단계 추위 = 0100 |  ~10℃
         RETURNF 4
-    CASE IS < LOCAL - 온도편차단계 * 3 ; 3단계 추위 = 0011
+    CASE IS <= LOCAL - 온도편차단계 * 4 ; 3단계 추위 = 0011 |10~13℃
         RETURNF 3
-    CASE IS < LOCAL - 온도편차단계 * 2 ; 2단계 추위 = 0010
+    CASE IS <= LOCAL - 온도편차단계 * 3 ; 2단계 추위 = 0010 |13~16℃
         RETURNF 2
-    CASE IS < LOCAL - 온도편차단계 * 1 ; 1단계 추위 = 0001
+    CASE IS <= LOCAL - 온도편차단계 * 2 ; 1단계 추위 = 0001 |16~19℃
         RETURNF 1
-    CASE IS < LOCAL + 온도편차단계 * 1 ; 적정온도 = 0000
+    CASE IS <= LOCAL - 온도편차단계 * 1 ; 적정  온도 = 0000 |19~22℃
         RETURNF 0
-    CASE IS < LOCAL + 온도편차단계 * 2 ; 1단계 더위 = 1001
+    CASE IS <= LOCAL + 온도편차단계 * 1 ; 적정  온도 = 0000 |22~25℃
+        RETURNF 0
+    CASE IS <= LOCAL + 온도편차단계 * 2 ; 1단계 더위 = 1001 |25~28℃
         RETURNF 9
-    CASE IS < LOCAL + 온도편차단계 * 3 ; 2단계 더위 = 1010
+    CASE IS <= LOCAL + 온도편차단계 * 3 ; 2단계 더위 = 1010 |28~31℃
         RETURNF 10
-    CASE IS < LOCAL + 온도편차단계 * 4 ; 3단계 더위 = 1011
+    CASE IS <= LOCAL + 온도편차단계 * 4 ; 3단계 더위 = 1011 |31~34℃
         RETURNF 11
-    CASEELSE ; 4단계 더위 = 1100
+    CASEELSE                           ; 4단계 더위 = 1100 |34~  ℃
         RETURNF 12
 ENDSELECT
 
