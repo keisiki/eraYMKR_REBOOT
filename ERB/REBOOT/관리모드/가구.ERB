@@ -54,119 +54,59 @@ NEXT
 ;--------------------------------------------------------------------------------------------
 ;가구 적용
 ;--------------------------------------------------------------------------------------------
-@RBT_RS_FUNI_APPLICATION(ARG)
-IF ARG == -1
+@RBT_RS_FUNI_APPLICATION(캐릭터)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 캐릭터
+IF 캐릭터 == -1
     RETURN
 ENDIF
-IF RBT_RS_CHARA_TO_ROOMNUM() == -1
+방번호 = RBT_RS_CHARA_TO_ROOMNUM(캐릭터)
+IF 방번호 == -1
     ;노숙자다
-    회복배율:ARG:0 = -50
+    회복배율:캐릭터:0 = -50
 ELSE
-    회복배율:ARG:0 = 0
-    SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R침대)
-        CASE 0
-            회복배율:ARG:0 -= 5
-            순종증가배율:ARG:0 -= 5
-        CASE 1
-            회복배율:ARG:0 += 0
-        CASE 2
-            회복배율:ARG:0 += 2
-            호감도증가배율:ARG:0 += 1
-        CASEELSE
-            회복배율:ARG:0 += 5
-            순종증가배율:ARG:0 += 5
-            호감도증가배율:ARG:0 += 5
-    ENDSELECT
-
-    SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R침구)
-        CASE 0
-            회복배율:ARG:0 -= 5
-            순종증가배율:ARG:0 -= 5
-        CASE 1
-            회복배율:ARG:0 += 0
-        CASE 2
-            회복배율:ARG:0 += 2
-            호감도증가배율:ARG:0 += 1
-        CASEELSE
-            회복배율:ARG:0 += 5
-            순종증가배율:ARG:0 += 5
-            호감도증가배율:ARG:0 += 5
-    ENDSELECT
-
-    SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R탁자)
-        CASE 1
-            회복배율:ARG:0 += 1
-        CASE 2
-            회복배율:ARG:0 += 3
-            호감도증가배율:ARG:0 += 1
-        CASE 3
-            회복배율:ARG:0 += 5
-            순종증가배율:ARG:0 += 5
-            호감도증가배율:ARG:0 += 5
-    ENDSELECT
-
-    SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R난로)
-        CASE 1
-            회복배율:ARG:0 += 1
-        CASE 2
-            회복배율:ARG:0 += 1
-            호감도증가배율:ARG:0 += 1
-        CASE 3
-            회복배율:ARG:0 += 1
-            순종증가배율:ARG:0 += 1
-            호감도증가배율:ARG:0 += 2
-    ENDSELECT
-
-    SELECTCASE RBT_RS_FUNI_UPGREADED(RBT_RS_CHARA_TO_ROOMNUM(ARG),R창문)
-        CASE 1
-            순종증가배율:ARG:0 += 1
-            부정증가배율:ARG:0 -= 1
-        CASE 2
-            순종증가배율:ARG:0 += 2
-            부정증가배율:ARG:0 -= 2
-        CASE 3
-            순종증가배율:ARG:0 += 3
-            호감도증가배율:ARG:0 += 1
-            부정증가배율:ARG:0 -= 3
-    ENDSELECT
+    호감도증가배율:캐릭터:0 = 0
+    순종증가배율:캐릭터:0 = 0
+    굴복증가배율:캐릭터:0 = 0
+    부정증가배율:캐릭터:0 = 0
+    회복배율:캐릭터:0 = 0
+    FOR LOCAL,R_MIN가구,R_MAX가구
+        TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"존재")
+        SIF RESULT != LOCAL
+            CONTINUE
+        CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"호감도증가배율")
+        호감도증가배율:캐릭터:0 += RESULT
+        CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"순종증가배율")
+        순종증가배율:캐릭터:0 += RESULT
+        CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"굴복증가배율")
+        굴복증가배율:캐릭터:0 += RESULT
+        CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"부정증가배율")
+        부정증가배율:캐릭터:0 += RESULT
+        CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"회복배율")
+        회복배율:캐릭터:0 += RESULT
+    NEXT
 ENDIF
 
-@RBT_RS_FUNI_APPLICATION_ROOM(ARG)
+@RBT_RS_FUNI_APPLICATION_ROOM(방번호)
+#DIM DYNAMIC 방번호
 보온정도:ARG:0 = 0
 냉방정도:ARG:0 = 0
 IF RBT_CS_AVER_TEMP(DAY:5) <= 10
-    SELECTCASE RBT_RS_FUNI_UPGREADED(ARG,R창문)
-        CASE 1
-            보온정도:ARG:0 += 0
-        CASE 2
-            보온정도:ARG:0 += 5
-        CASE 3
-            보온정도:ARG:0 += 10
-    ENDSELECT
-    SELECTCASE RBT_RS_FUNI_UPGREADED(ARG,R침구)
-        CASE 0
-        CASE 1
-            보온정도:ARG:0 += 5
-        CASE 2
-            보온정도:ARG:0 += 8
-        CASEELSE
-            보온정도:ARG:0 += 10
-    ENDSELECT
+    FOR LOCAL,R_MIN가구,R_MAX가구
+        TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"존재")
+        SIF RESULT != LOCAL
+            CONTINUE
+        CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"보온정도")
+        보온정도:방번호:0 += RESULT
+    NEXT
 ELSEIF RBT_CS_AVER_TEMP(DAY:5) >= 24
-    SELECTCASE RBT_RS_FUNI_UPGREADED(ARG,R창문)
-        CASE 0
-        CASEELSE
-            냉방정도:ARG:0 += 1
-    ENDSELECT
-    SELECTCASE RBT_RS_FUNI_UPGREADED(ARG,R선풍기)
-        CASE 0
-        CASE 1
-            냉방정도:ARG:0 += 2
-        CASE 2
-            냉방정도:ARG:0 += 3
-        CASEELSE
-            냉방정도:ARG:0 += 5
-    ENDSELECT
+    FOR LOCAL,R_MIN가구,R_MAX가구
+        TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"존재")
+        SIF RESULT != LOCAL
+            CONTINUE
+        CALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"냉방정도")
+        냉방정도:방번호:0 += RESULT
+    NEXT
 ENDIF
 
 ;--------------------------------------------------------------------------------------------
@@ -199,6 +139,13 @@ RETURN RESULT
 #DIMS DYNAMIC 가구명
 #DIMS DYNAMIC 수식어,5
 #DIMS DYNAMIC 한줄평
+#DIM DYNAMIC 가구호감도증가배율
+#DIM DYNAMIC 가구순종증가배율
+#DIM DYNAMIC 가구굴복증가배율
+#DIM DYNAMIC 가구부정증가배율
+#DIM DYNAMIC 가구회복배율
+#DIM DYNAMIC 가구보온정도
+#DIM DYNAMIC 가구냉방정도
 ;정의부, 이곳만 수정하면 된다
 ID = R침대
 가구명 '= "침대"
@@ -215,6 +162,41 @@ ID = R침대
 수식어:3 '= "고급스런 "
 수식어:4 '= ""
 한줄평 '= "한 명이 눕기 적당한 침대다, 노예의 생활과 조교의 대다수가 이 위에서 이루어진다"
+
+SELECTCASE RS_ROOM:방번호:ID:0
+    CASE 0
+        가구호감도증가배율 = 0
+        가구순종증가배율 = -5
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = -5
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE 1
+        가구호감도증가배율 = 1
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 2
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE 2
+        가구호감도증가배율 = 1 
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0 
+        가구회복배율 = 2
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE IS >= 3
+        가구호감도증가배율 = 5 
+        가구순종증가배율 = 5
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0 
+        가구회복배율 = 5
+        가구보온정도 = 0
+        가구냉방정도 = 0
+ENDSELECT
 
 ;이하는 건들필요 없음
 SELECTCASE ARGS
@@ -238,6 +220,20 @@ SELECTCASE ARGS
     CASE "한줄평"
         RESULTS '= 한줄평
         RETURN
+    CASE "호감도증가배율"
+        RETURN 가구호감도증가배율
+    CASE "순종증가배율"
+        RETURN 가구순종증가배율 
+    CASE "굴복증가배율"
+        RETURN 가구굴복증가배율 
+    CASE "부정증가배율"
+        RETURN 가구부정증가배율 
+    CASE "회복배율"
+        RETURN 가구회복배율 
+    CASE "보온정도"
+        RETURN 가구보온정도 
+    CASE "냉방정도"
+        RETURN 가구냉방정도 
 ENDSELECT
 
 
@@ -256,6 +252,13 @@ RETURN RESULT
 #DIMS DYNAMIC 가구명
 #DIMS DYNAMIC 수식어,5
 #DIMS DYNAMIC 한줄평
+#DIM DYNAMIC 가구호감도증가배율
+#DIM DYNAMIC 가구순종증가배율
+#DIM DYNAMIC 가구굴복증가배율
+#DIM DYNAMIC 가구부정증가배율
+#DIM DYNAMIC 가구회복배율
+#DIM DYNAMIC 가구보온정도
+#DIM DYNAMIC 가구냉방정도
 ;정의부, 이곳만 수정하면 된다
 ID = R침구
 가구명 '= "침구"
@@ -271,6 +274,41 @@ ID = R침구
 수식어:2 '= "평범한 "
 수식어:3 '= "포근한 "
 수식어:4 '= ""
+
+SELECTCASE RS_ROOM:방번호:ID:0
+    CASE 0
+        가구호감도증가배율 = 0 
+        가구순종증가배율 = -5 
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = -5
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE 1
+        가구호감도증가배율 = 0
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 0
+        가구보온정도 = 5
+        가구냉방정도 = 0
+    CASE 2
+        가구호감도증가배율 = 1 
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 2
+        가구보온정도 = 8
+        가구냉방정도 = 0
+    CASE IS >= 3
+        가구호감도증가배율 = 5
+        가구순종증가배율 = 5
+        가구굴복증가배율 = 0 
+        가구부정증가배율 = 0
+        가구회복배율 = 5
+        가구보온정도 = 10
+        가구냉방정도 = 0
+ENDSELECT
 
 SELECTCASE RS_ROOM:방번호:ID:0
     CASE 1
@@ -304,6 +342,20 @@ SELECTCASE ARGS
     CASE "한줄평"
         RESULTS '= 한줄평
         RETURN
+    CASE "호감도증가배율"
+        RETURN 가구호감도증가배율
+    CASE "순종증가배율"
+        RETURN 가구순종증가배율 
+    CASE "굴복증가배율"
+        RETURN 가구굴복증가배율 
+    CASE "부정증가배율"
+        RETURN 가구부정증가배율 
+    CASE "회복배율"
+        RETURN 가구회복배율 
+    CASE "보온정도"
+        RETURN 가구보온정도 
+    CASE "냉방정도"
+        RETURN 가구냉방정도 
 ENDSELECT
 
 ;--------------------------------------------------------------------------------------------
@@ -321,6 +373,13 @@ RETURN RESULT
 #DIMS DYNAMIC 가구명
 #DIMS DYNAMIC 수식어,5
 #DIMS DYNAMIC 한줄평
+#DIM DYNAMIC 가구호감도증가배율
+#DIM DYNAMIC 가구순종증가배율
+#DIM DYNAMIC 가구굴복증가배율
+#DIM DYNAMIC 가구부정증가배율
+#DIM DYNAMIC 가구회복배율
+#DIM DYNAMIC 가구보온정도
+#DIM DYNAMIC 가구냉방정도
 ;정의부, 이곳만 수정하면 된다
 ID = R탁자
 가구명 '= "탁자"
@@ -337,6 +396,41 @@ ID = R탁자
 수식어:3 '= "깔끔한 "
 수식어:4 '= ""
 한줄평 '= "조그마한 탁자, 별 것 아닌것 같지만 노예에겐 상당한 복지\br식사는 물론 휴식에도 중요하다"
+
+SELECTCASE RS_ROOM:방번호:ID:0
+    CASE 0
+        가구호감도증가배율 = 0 
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 0
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE 1
+        가구호감도증가배율 = 0
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 1
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE 2
+        가구호감도증가배율 = 1
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 3
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE IS >= 3
+        가구호감도증가배율 = 5
+        가구순종증가배율 = 5
+        가구굴복증가배율 = 0 
+        가구부정증가배율 = 0
+        가구회복배율 = 5
+        가구보온정도 = 0
+        가구냉방정도 = 0
+ENDSELECT
 
 ;이하는 건들필요 없음
 SELECTCASE ARGS
@@ -360,6 +454,20 @@ SELECTCASE ARGS
     CASE "한줄평"
         RESULTS '= 한줄평
         RETURN
+    CASE "호감도증가배율"
+        RETURN 가구호감도증가배율
+    CASE "순종증가배율"
+        RETURN 가구순종증가배율 
+    CASE "굴복증가배율"
+        RETURN 가구굴복증가배율 
+    CASE "부정증가배율"
+        RETURN 가구부정증가배율 
+    CASE "회복배율"
+        RETURN 가구회복배율 
+    CASE "보온정도"
+        RETURN 가구보온정도 
+    CASE "냉방정도"
+        RETURN 가구냉방정도 
 ENDSELECT
 
 @RBT_RS_FUNI_난로(방번호,ARGS)
@@ -376,6 +484,13 @@ RETURN RESULT
 #DIMS DYNAMIC 가구명
 #DIMS DYNAMIC 수식어,5
 #DIMS DYNAMIC 한줄평
+#DIM DYNAMIC 가구호감도증가배율
+#DIM DYNAMIC 가구순종증가배율
+#DIM DYNAMIC 가구굴복증가배율
+#DIM DYNAMIC 가구부정증가배율
+#DIM DYNAMIC 가구회복배율
+#DIM DYNAMIC 가구보온정도
+#DIM DYNAMIC 가구냉방정도
 ;정의부, 이곳만 수정하면 된다
 ID = R난로
 가구명 '= "라디에이터"
@@ -391,6 +506,41 @@ ID = R난로
 수식어:2 '= ""
 수식어:3 '= "최신식 "
 수식어:4 '= ""
+SELECTCASE RS_ROOM:방번호:ID:0
+    CASE 0
+        가구호감도증가배율 = 0 
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 0
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE 1
+        가구호감도증가배율 = 0
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 1
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE 2
+        가구호감도증가배율 = 0
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 1
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE IS >= 3
+        가구호감도증가배율 = 2
+        가구순종증가배율 = 1
+        가구굴복증가배율 = 0 
+        가구부정증가배율 = 0
+        가구회복배율 = 1
+        가구보온정도 = 0
+        가구냉방정도 = 0
+ENDSELECT
+
 SELECTCASE RS_ROOM:방번호:ID:0
     CASE 1
         한줄평 '= "구형 라디에이터, 근처에 약간의 열기를 뿜어내는게 전부다\br연료 소모량에 비해 얼마 따뜻해지지 않는다"
@@ -422,6 +572,20 @@ SELECTCASE ARGS
     CASE "한줄평"
         RESULTS '= 한줄평
         RETURN
+    CASE "호감도증가배율"
+        RETURN 가구호감도증가배율
+    CASE "순종증가배율"
+        RETURN 가구순종증가배율 
+    CASE "굴복증가배율"
+        RETURN 가구굴복증가배율 
+    CASE "부정증가배율"
+        RETURN 가구부정증가배율 
+    CASE "회복배율"
+        RETURN 가구회복배율 
+    CASE "보온정도"
+        RETURN 가구보온정도 
+    CASE "냉방정도"
+        RETURN 가구냉방정도 
 ENDSELECT
 
 @RBT_RS_FUNI_창문(방번호,ARGS)
@@ -438,6 +602,13 @@ RETURN RESULT
 #DIMS DYNAMIC 가구명
 #DIMS DYNAMIC 수식어,5
 #DIMS DYNAMIC 한줄평
+#DIM DYNAMIC 가구호감도증가배율
+#DIM DYNAMIC 가구순종증가배율
+#DIM DYNAMIC 가구굴복증가배율
+#DIM DYNAMIC 가구부정증가배율
+#DIM DYNAMIC 가구회복배율
+#DIM DYNAMIC 가구보온정도
+#DIM DYNAMIC 가구냉방정도
 ;정의부, 이곳만 수정하면 된다
 ID = R창문
 가구명 '= "창문"
@@ -453,6 +624,42 @@ ID = R창문
 수식어:2 '= "이중 "
 수식어:3 '= "단열 "
 수식어:4 '= ""
+
+SELECTCASE RS_ROOM:방번호:ID:0
+    CASE 0
+        가구호감도증가배율 = 0 
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 0
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE 1
+        가구호감도증가배율 = 0
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 1
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE 2
+        가구호감도증가배율 = 1
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 1
+        가구보온정도 = 1
+        가구냉방정도 = 1
+    CASE IS >= 3
+        가구호감도증가배율 = 2
+        가구순종증가배율 = 1
+        가구굴복증가배율 = 0 
+        가구부정증가배율 = 0
+        가구회복배율 = 1
+        가구보온정도 = 2
+        가구냉방정도 = 2
+ENDSELECT
+
 SELECTCASE RS_ROOM:방번호:ID:0
     CASE 1
         한줄평 '= "얇다란 유리판 한 장, 창 밖에서 들어오는 햇살이 기분 좋다, 여름철 환기에도 유용"
@@ -484,6 +691,20 @@ SELECTCASE ARGS
     CASE "한줄평"
         RESULTS '= 한줄평
         RETURN
+    CASE "호감도증가배율"
+        RETURN 가구호감도증가배율
+    CASE "순종증가배율"
+        RETURN 가구순종증가배율 
+    CASE "굴복증가배율"
+        RETURN 가구굴복증가배율 
+    CASE "부정증가배율"
+        RETURN 가구부정증가배율 
+    CASE "회복배율"
+        RETURN 가구회복배율 
+    CASE "보온정도"
+        RETURN 가구보온정도 
+    CASE "냉방정도"
+        RETURN 가구냉방정도 
 ENDSELECT
 
 
@@ -502,6 +723,13 @@ RETURN RESULT
 #DIMS DYNAMIC 가구명
 #DIMS DYNAMIC 수식어,5
 #DIMS DYNAMIC 한줄평
+#DIM DYNAMIC 가구호감도증가배율
+#DIM DYNAMIC 가구순종증가배율
+#DIM DYNAMIC 가구굴복증가배율
+#DIM DYNAMIC 가구부정증가배율
+#DIM DYNAMIC 가구회복배율
+#DIM DYNAMIC 가구보온정도
+#DIM DYNAMIC 가구냉방정도
 ;정의부, 이곳만 수정하면 된다
 ID = R선풍기
 가구명 '= "선풍기"
@@ -517,6 +745,41 @@ ID = R선풍기
 수식어:2 '= ""
 수식어:3 '= "최신 "
 수식어:4 '= ""
+SELECTCASE RS_ROOM:방번호:ID:0
+    CASE 0
+        가구호감도증가배율 = 0 
+        가구순종증가배율 = 0
+        가구굴복증가배율 = 0
+        가구부정증가배율 = 0
+        가구회복배율 = 0
+        가구보온정도 = 0
+        가구냉방정도 = 0
+    CASE 1
+        가구호감도증가배율 = 0
+        가구순종증가배율 = 1
+        가구굴복증가배율 = 0
+        가구부정증가배율 = -1
+        가구회복배율 = 0
+        가구보온정도 = 0
+        가구냉방정도 = 2
+    CASE 2
+        가구호감도증가배율 = 0
+        가구순종증가배율 = 2
+        가구굴복증가배율 = 0
+        가구부정증가배율 = -2
+        가구회복배율 = 0
+        가구보온정도 = 0
+        가구냉방정도 = 3
+    CASE IS >= 3
+        가구호감도증가배율 = 1
+        가구순종증가배율 = 3
+        가구굴복증가배율 = 0 
+        가구부정증가배율 = -3
+        가구회복배율 = 0
+        가구보온정도 = 0
+        가구냉방정도 = 5
+ENDSELECT
+
 SELECTCASE RS_ROOM:방번호:ID:0
     CASE 1
         한줄평 '= "싸구려 선풍기, 바람도 약하고 시끄럽다"
@@ -548,4 +811,18 @@ SELECTCASE ARGS
     CASE "한줄평"
         RESULTS '= 한줄평
         RETURN
+    CASE "호감도증가배율"
+        RETURN 가구호감도증가배율
+    CASE "순종증가배율"
+        RETURN 가구순종증가배율 
+    CASE "굴복증가배율"
+        RETURN 가구굴복증가배율 
+    CASE "부정증가배율"
+        RETURN 가구부정증가배율 
+    CASE "회복배율"
+        RETURN 가구회복배율 
+    CASE "보온정도"
+        RETURN 가구보온정도 
+    CASE "냉방정도"
+        RETURN 가구냉방정도 
 ENDSELECT
