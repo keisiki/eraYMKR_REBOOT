@@ -100,6 +100,47 @@ FOR LOCAL,0,10
 NEXT
 RETURNF RESULT
 
+
+@CLRMSG(ARGS)
+#DIM DYNAMIC CODEMODE
+#DIMS DYNAMIC STRING,2
+#DIM DYNAMIC POINTER
+#DIMS DYNAMIC CODE,2
+STRING:0 '= ARGS
+WHILE 1
+    IF CODEMODE
+        POINTER = STRFIND(STRING:0, ">")
+        CODE:0 '= SUBSTRING(STRING:0,1,POINTER -1 )
+        STRING:1 '= SUBSTRING(STRING:0,POINTER + 1,-1)
+        STRING:0 '= STRING:1
+        STRING:1 '= ""
+        SPLIT CODE:0, " ", CODE
+        SELECTCASE CODE:0
+            CASE "SETCOLOR"
+                SETCOLOR TOINT(CODE:1)
+            CASE "RESETCOLOR"
+                RESETCOLOR
+            CASE "\n"
+                PRINTL
+        ENDSELECT
+        CODEMODE = 0
+    ELSE
+        POINTER = STRFIND(STRING:0, "<")
+        IF POINTER != -1
+            STRING:1 '= SUBSTRING(STRING:0,POINTER,-1)
+            STRING:0 '= SUBSTRING(STRING:0,0,POINTER)
+            CODEMODE = 1
+        ENDIF
+        PRINTFORM %STRING:0%
+        SIF POINTER == -1
+            BREAK
+        STRING:0 '= STRING:1
+        STRING:1 '= ""
+    ENDIF
+    SIF STRLENS(STRING:0) <= 0
+        BREAK
+WEND
+
 @RBT_SHOW_MULTIPLIER(ARG)
 PRINTFORML □ 수치 증감변화
 SIF 호감도증가배율(ARG)
@@ -132,4 +173,7 @@ IF !GETBIT(FLAG:리부트패치,1)
     NEXT
     ITEM:연료 = 50
     희망온도 = 20
+ENDIF
+IF !GETBIT(FLAG:리부트패치,2)
+    CFLAG:MASTER:조리자 = 1
 ENDIF
