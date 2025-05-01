@@ -141,6 +141,37 @@ WHILE 1
         BREAK
 WEND
 
+@BASE_PERCENT(ARG,ARGS)
+#FUNCTION
+RETURNF BASE:ARG:ARGS * 100 / MAXBASE:ARG:ARGS
+
+@RBT_SWITCH(조건,조건2,ARG:0,ARGS:0,ARG:1 = 0,ARGS:1 = "",ARG:2 = 0,ARGS:2 = "",ARG:3 = 0,ARGS:3 = "")
+#FUNCTIONS
+#DIM DYNAMIC 조건
+#DIMS DYNAMIC 조건2
+#DIM CONST MAX_ARG = 4
+FOR LOCAL,0,MAX_ARG
+    SELECTCASE 조건2
+        CASE "이상"
+            SIF 조건 <= ARG:LOCAL
+                RETURNF ARGS:LOCAL
+        CASE "이하"
+            SIF 조건 >= ARG:LOCAL
+                RETURNF ARGS:LOCAL
+        CASE "초과"
+            SIF 조건 < ARG:LOCAL
+                RETURNF ARGS:LOCAL
+        CASE "미만"
+            SIF 조건 > ARG:LOCAL
+                RETURNF ARGS:LOCAL
+        CASE "일치"
+            SIF 조건 == ARG:LOCAL
+                RETURNF ARGS:LOCAL
+    ENDSELECT
+    
+NEXT
+
+
 @RBT_SHOW_MULTIPLIER(ARG)
 PRINTFORML □ 수치 증감변화
 SIF 호감도증가배율(ARG)
