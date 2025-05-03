@@ -1061,16 +1061,19 @@ CALL CALC_PRICE_MENU_TORIKOMODE
 대피용:0 = CFLAG:메뉴
 대피용:1 = CFLAG:식사량
 CALL RBT_FDS_MENU_SELECTER(TARGET)
-CALL RBT_FDS_COOKING(TARGET)
-회복량:0 = RESULT:1
-회복량:1 = RESULT:2
-회복량:2 = RESULT:3
-IF MONEY < RESULT:4
+CALL RBT_FDS_COOKING(RBT_MENU_TO_STR(CFLAG:메뉴),CFLAG:식사량)
+PRINTFORMW 디버그!:{CFLAG:메뉴},{CFLAG:식사량}|{FS_음식:(CFLAG:메뉴):0}|{FS_음식:(CFLAG:메뉴):1}|{FS_음식:(CFLAG:메뉴):1}|{FS_음식:(CFLAG:메뉴):2}|{FS_음식:(CFLAG:메뉴):3}|{FS_음식:(CFLAG:메뉴):5}
+회복량:0 = FS_음식:(CFLAG:메뉴):1
+회복량:1 = FS_음식:(CFLAG:메뉴):2
+회복량:2 = FS_음식:(CFLAG:메뉴):3
+IF !RESULT
     PRINTFORML 돈이 부족합니다. (현재 잔고:{MONEY})
     GOTO END_PHASE
 ENDIF
+;식비차감
 LOCAL:0 = CFLAG:메뉴
-LOCAL:10 = RESULT:4
+LOCAL:10 = RESULT
+MONEY -= LOCAL:10
 ;.................................................................................
 ;PHASE2 : 식사방법 설정
 ;어떤 식으로 먹을지를 결정한다.
@@ -1186,15 +1189,11 @@ ELSEIF RESULT:0 == 0
     ELSEIF RESULT == 2
         PRINTFORMW 때로는 저쪽의 의견도 존중할 필요가 있을 것이다. 식비는 아깝지만…. %조사처리(CALLNAME:PLAYER,"는")% 강제로 먹이는 걸 포기했다….
         LOCAL:3 = 0
-        ;식비차감
-        MONEY -=LOCAL:10
         PRINTFORML 식비:-{LOCAL:10} / 현재 잔고:{MONEY}
     ;잘못된 값을 넣거나 시간제한.
     ELSE
         PRINTFORMW 결정을 내리지 못한 %조사처리(CALLNAME:PLAYER,"는")% 강제로 먹이는 걸 포기했다….
         LOCAL:3 = 0
-        ;식비차감
-        MONEY -=LOCAL:10
         PRINTFORML 식비:-{LOCAL:10} / 현재 잔고:{MONEY}
     ENDIF
 ELSE
@@ -1261,8 +1260,6 @@ IF LOCAL:3 ==1
     CALL HUNGER_BAR_TORIKOMODE, TARGET
     CALL NUTRITION_BAR_TORIKOMODE, TARGET
     WAIT
-    ;식비차감
-    MONEY -=LOCAL:10
     PRINTFORML 식비:-{LOCAL:10} / 현재 잔고:{MONEY}
     ;배가 가득찼는지 알려줌. (더 못 먹이게)
     IF CFLAG:TARGET:현재만복도 == CFLAG:TARGET:최대만복도
@@ -1790,7 +1787,7 @@ IF FLAG:5010 == 4 && TIME == 0
 ENDIF
 
 ;만복도 시스템 사용중일때만 켜짐. 낮에만 밥을 먹는다.
-IF (FLAG:토리코모드 & 32) && TIME == 1
+IF (FLAG:토리코모드 & 32); && TIME == 1
     ;혹시 캐릭터가 추가되던지 할 경우를 대비해, 여기서 한번 더 체크해보고, 정보 없는 캐릭은 세팅 해 준다.
     CALL INIT_HUNGERSYSTEM_TORIKOMODE
 
@@ -1802,9 +1799,23 @@ IF (FLAG:토리코모드 & 32) && TIME == 1
     WAIT
 
     ;밥을 먹고 회복하고 식비를 지출하고....등등 여기서 다 처리됨.
-    CALL SHOW_LIST_EATEN_TORIKOMODE
-    WAIT
+    LOCAL = 0
+    CALL RBT_FDS_COOKING("특제",RBT_FDS_SEARCH_BY_MEALTYPE("특제",1))
+    LOCAL += RESULT
+    MONEY -= RESULT
+    CALL RBT_FDS_COOKING("일반",RBT_FDS_SEARCH_BY_MEALTYPE("일반",1))
+    LOCAL += RESULT
+    MONEY -= RESULT
+    CALL RBT_FDS_COOKING("싸구려",RBT_FDS_SEARCH_BY_MEALTYPE("싸구려",1))
+    LOCAL += RESULT
+    MONEY -= RESULT
+    CALL RBT_FDS_COOKING("금식",RBT_FDS_SEARCH_BY_MEALTYPE("금식",1))
 
+    CALL SHOW_LIST_EATEN_TORIKOMODE
+    ;총 식비 출력
+    PRINTFORMW {CHARANUM}명의 식비로 총 {LOCAL}원이 지출되었습니다. 현재 잔고 {MONEY}원.
+    WAIT
+    
     ;굶어죽는 엔딩을 체크한다.
     CALL CALC_STARVE_END_TORIKOMODE
 ELSE
@@ -1819,10 +1830,6 @@ SIF RESULT:1 == 1 || RESULT:0 == 1
 ;알아서 밥 먹는거 리스트 출력.
 ;-------------------------------------------------
 @SHOW_LIST_EATEN_TORIKOMODE
-#DIM EATEN_SUM
-
-EATEN_SUM = 0
-
 DRAWLINE
 
 REPEAT CHARANUM
@@ -1831,15 +1838,10 @@ REPEAT CHARANUM
     SIF 대상_제외됨(COUNT)
         CONTINUE
     CALL EATEN_TORIKOMODE(COUNT)
-    EATEN_SUM += RESULT
     PRINT   
     CALL ARRANGE_CHARALIFE(COUNT, 3)
     DRAWLINE
 REND
-    
-;총 식비 출력
-PRINTFORMW {CHARANUM}명의 식비로 총 {EATEN_SUM}원이 지출되었습니다. 현재 잔고 {MONEY}원.
-RETURN 0
 
 ;-------------------------------------------------
 ; 굶어죽기 엔딩 판정.
@@ -2032,21 +2034,9 @@ ELSEIF RESULT:0 == 1
         ;디버그
         ;PRINTFORML 밥 먹기전 스트레스 CFLAG:ARG:스트레스 {CFLAG:ARG:스트레스}
         ;밥을 먹인다
-        ;(RBT_EDIT)리부트 식사수정
-        CALL RBT_FDS_COOKING(ARG)
-        IF RESULT == -1
-            CALL SETCOLOR_TORIKOMODE, "RED", 3
-            PRINTFORML %ARG는% 식비 부족으로 한 끼 굶었다…
-            RESETCOLOR
-            CFLAG:ARG:굶은끼니 += 1
-            RETURN 0
-        ENDIF
-        ;(RBT_EDIT END)
-        ;만복영양 상승.
-        ;디버그용
-        ;PRINTFORML {RESULT:1} 메뉴의 만복도
-        ;PRINTFORML {RESULT:2} 메뉴의 영양도
-        ;PRINTFORML {RESULT:3} 메뉴의 스트레스
+        CALL RBT_FDS_EATING(ARG)
+        SIF RESULT == -1
+            GOTO STAVE
         ;식사 멘트 출력
         PRINTFORM %조사처리(CALLNAME:ARG,"는")% 
         CALL CALC_EATEN_FOOD_TORIKOMODE, CFLAG:ARG:메뉴, NO:ARG
@@ -2058,39 +2048,21 @@ ELSEIF RESULT:0 == 1
         CFLAG:ARG:현재만복도 += RESULT:1
         CFLAG:ARG:현재영양도 += RESULT:2
         CFLAG:ARG:스트레스 += RESULT:3
-        ;디버그용
-        ;PRINTFORML CFLAG:ARG:현재만복도 {CFLAG:ARG:현재만복도}
-        ;PRINTFORML CFLAG:ARG:현재영양도 {CFLAG:ARG:현재영양도}
-        ;PRINTFORML 밥 먹기은 후 스트레스 CFLAG:ARG:스트레스 {CFLAG:ARG:스트레스}
         ;수치 정리.
         CFLAG:ARG:현재만복도 = LIMIT(CFLAG:ARG:현재만복도, 0, CFLAG:ARG:최대만복도)
         CFLAG:ARG:현재영양도 = LIMIT(CFLAG:ARG:현재영양도, 0, CFLAG:ARG:최대영양도)
         CFLAG:ARG:스트레스 = LIMIT(CFLAG:ARG:스트레스, 0, 999999)
-        
-        ;식비차감
-        MONEY -= RESULT:4 ;(RBT_EDIT)리부트 식사수정으로 변경
-        ;디버그용
-            ;PRINTFORML 식비로 {LOCAL:0} 만큼 차감되었음. 현재 돈 {MONEY}
-        ;디버그용
-        ;CALL HUNGER_BAR_TORIKOMODE,  ARG
-        ;CALL NUTRITION_BAR_TORIKOMODE,  ARG
-        ;디버그용
-        ;PRINTFORML {CFLAG:ARG:현재만복도} 현재 만복
-        ;PRINTFORML {CFLAG:ARG:현재영양도} 현재 영양
         ;굶은 회수 초기화
         CFLAG:ARG:굶은끼니 = 0
-        ;밥을 먹었을 경우, 소비한 밥값을 보고한다.
-        RETURN RESULT:4
-
     ;돈이 없어서 밥을 못 먹을 때
     ELSE
+        $STAVE
         CALL SETCOLOR_TORIKOMODE, "RED", 3
         PRINTFORML 식비가 떨어져, %조사처리(CALLNAME:ARG,"는")% 굶어야만 했습니다….
         RESETCOLOR
         ;굶은회수1회 증가
         CFLAG:ARG:굶은끼니 += 1
     ENDIF
-        
 ;메뉴가 굶어라 일 때는...
 ELSEIF RESULT:0 == 2
     ;스트레스 상승
@@ -2103,7 +2075,6 @@ ELSEIF RESULT:0 == 2
     CALL SETCOLOR_TORIKOMODE, "RED", 3
     PRINTFORML %조사처리(CALLNAME:ARG,"는")% 아무것도 먹지 못하고 굶어야 했습니다…. (스트레스 상승)
     RESETCOLOR
-
 ENDIF
 
 ;………………………………………………
@@ -2156,6 +2127,7 @@ CALL CHARADATA_LIST_TORIKOMODE, LOCAL, LOCAL:99, 35
 DRAWLINE
 CALL CALC_FEEN_UPKEEP_TORIKOMODE
 DRAWLINE
+PRINTFORML [0999] 조리자 설정
 PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001] 앞페이지\@
 PRINTLC [1000] 돌아가기
 PRINTFORMLC \@(LOCAL >= LOCAL:2 / 20) ? %" " * 16% # [1009] 다음페이지\@
@@ -2164,6 +2136,8 @@ $INPUT_LOOP_1
 INPUT
 IF RESULT == 1000
     RETURN 0
+ELSEIF RESULT == 999
+    CALL RBT_FDS_SET_COOK
 ELSEIF RESULT == MASTER
     CALL SELECT_FEED_MENU_TORIKOMODE, MASTER
 ELSEIF RESULT == 1001 && LOCAL > 0

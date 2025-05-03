@@ -12,8 +12,6 @@ ENDIF
 CALL RBT_FDS_MENU_VIEWER(대상)
 ;-------------------
 DRAWLINE
-PRINTFORML 주방장: %CALLNAME:(FLAG:조리자)%(조리기능:{ABL:(FLAG:조리자):요리기능})
-DRAWLINE
 CALL RBT_FDS_MENULIST
 PRINTED = 21
 $INPUT_LOOP
@@ -129,109 +127,214 @@ SIF CFLAG:대상:메뉴
     PRINTFORM ({CFLAG:대상:식사량 * ((CFLAG:대상:메뉴 - 1) * 50 + 25)}원/끼니)
 PRINTL
 
+@RBT_FDS_SEARCH_BY_MEALTYPE(식단입력,식사량계산 = 0)
+#FUNCTION
+#DIMS DYNAMIC 식단입력
+#DIM DYNAMIC 식단
+#DIM DYNAMIC 식사량계산
+VARSET LOCAL
+SELECTCASE 식단입력
+    CASE "금식"
+        식단 = 0
+    CASE "싸구려"
+        식단 = 1
+    CASE "일반"
+        식단 = 2
+    CASE "특제"
+        식단 = 3
+    CASE "전체"
+        식단 = 4
+ENDSELECT
+FOR LOCAL,0,CHARANUM
+    SIF 식단 == CFLAG:LOCAL:메뉴 || (CFLAG:LOCAL:메뉴 != 0 && 식단 == 4)
+        LOCAL:1 = 식사량계산 ? LOCAL:1 + CFLAG:LOCAL:식사량 # LOCAL:1 + 1 
+NEXT
+RETURNF LOCAL:1
 
-@RBT_FDS_COOKING(대상)
-#DIM DYNAMIC 대상
+@RBT_FDS_COUNT_COOK()
+#FUNCTION
+VARSET LOCAL
+FOR LOCAL,0,CHARANUM
+    IF CFLAG:LOCAL:조리자
+        LOCAL:1++
+    ENDIF
+NEXT
+RETURNF LOCAL:1
+
+@RBT_FDS_COOK_POWER()
+#FUNCTION
+VARSET LOCAL
+FOR LOCAL,0,CHARANUM
+    IF CFLAG:LOCAL:조리자
+        LOCAL:1 += ABL:LOCAL:요리기능
+    ENDIF
+NEXT
+LOCAL:1 /= MAX(1,RBT_FDS_COUNT_COOK())
+RETURNF LOCAL:1
+
+@RBT_FDS_COOK_ENERGE()
+#FUNCTION
+VARSET LOCAL
+FOR LOCAL,0,CHARANUM
+    IF CFLAG:LOCAL:조리자
+        LOCAL:1 += BASE:LOCAL:기력 * 100 / MAXBASE:LOCAL:기력
+    ENDIF
+NEXT
+LOCAL:1 /= MAX(1,RBT_FDS_COUNT_COOK())
+RETURNF LOCAL:1
+
+@RBT_MENU_TO_STR(ARG)
+#FUNCTIONS
+SELECTCASE ARG
+    CASE 0
+        RETURNF "금식"
+    CASE 1
+        RETURNF "싸구려"
+    CASE 2
+        RETURNF "일반"
+    CASE 3
+        RETURNF "특제"
+    CASE 4
+        RETURNF "전체"
+ENDSELECT
+
+@RBT_FDS_COOKING(식단입력,총량)
 #DIM DYNAMIC 회복량, 3 ;만복, 영양, 스트레스
+#DIMS DYNAMIC 식단입력
+#DIM DYNAMIC 식단
+#DIM DYNAMIC 총량
+#DIM DYNAMIC 맛
+#DIM DYNAMIC 비용
+IF RBT_FDS_COUNT_COOK() <= 0
+    ;PRINTFORMW 마지막 조리자를 해임하여 자동으로 %마스터가% 요리하게 됩니다
+    CFLAG:MASTER:조리자 = 1
+ENDIF
+SELECTCASE 식단입력
+    CASE "금식"
+        식단 = 0
+    CASE "싸구려"
+        식단 = 1
+    CASE "일반"
+        식단 = 2
+    CASE "특제"
+        식단 = 3
+ENDSELECT
 ;-------------
 ; P1-재료 체크 및 소비
 ;-------------
-IF CFLAG:대상:메뉴 > 0 && ITEM:(699 + CFLAG:대상:메뉴) < CFLAG:대상:식사량
-    ;재료부족
-    IF MONEY >= ITEMPRICE:(699 + CFLAG:대상:메뉴) * CFLAG:대상:식사량
-        RESULT:4 = ITEMPRICE:(699 + CFLAG:대상:메뉴) * CFLAG:대상:식사량
-        GOTO PHASE2
+IF 식단
+    IF ITEM:(699 + 식단) < 총량
+        ;재료부족
+        IF MONEY < ITEMPRICE:(699 + 식단) * 총량
+            총량 = MONEY / ITEMPRICE:(699 + 식단)
+        ENDIF
+        비용 = ITEMPRICE:(699 + 식단) * 총량
+    ELSE
+        ITEM:(699 + 식단) -= 총량
     ENDIF
-    RETURN -1
-ELSE
-    ITEM:(699 + CFLAG:대상:메뉴) -= CFLAG:대상:식사량
 ENDIF
-
+IF 총량 <= 0
+    RETURN 0
+ENDIF
 ;-------------
 ; P2-식단표 별 회복량 체크
 ;-------------
-$PHASE2
-SELECTCASE CFLAG:대상:메뉴
+SELECTCASE 식단
     CASE 0
         회복량:0 = 0
         회복량:1 = 0
         회복량:2 = 100
     CASE 1
-        회복량:0 = 500 * CFLAG:대상:식사량
-        회복량:1 = 100 * CFLAG:대상:식사량
-        회복량:2 = 000 * CFLAG:대상:식사량
+        회복량:0 = 500
+        회복량:1 = 100
+        회복량:2 = 000
     CASE 2
-        회복량:0 = 450 * CFLAG:대상:식사량
-        회복량:1 = 200 * CFLAG:대상:식사량
-        회복량:2 = -25 * CFLAG:대상:식사량
+        회복량:0 = 450
+        회복량:1 = 200
+        회복량:2 = -25
     CASE 3
-        회복량:0 = 400 * CFLAG:대상:식사량
-        회복량:1 = 350 * CFLAG:대상:식사량
-        회복량:2 = -50 * CFLAG:대상:식사량
+        회복량:0 = 400
+        회복량:1 = 350
+        회복량:2 = -50
 ENDSELECT
 ;되려 하급 식재일수록 만복만 차고 영양이 부족하게 세팅, 그야말로 정크푸드
+;일단은 1단위 = 반량식사이므로 식사시엔 이 값에 취식량을 곱해야함
 
 ;-------------
 ; P3-조리자 능력 별 편차 적용
+; 조리 실력따라 남기지 않고 다 쓰는 정도의 느낌?
 ;-------------
-LOCAL = RBT_FDS_COOK_MODIFY(FLAG:조리자)
-LOCAL = (LOCAL * 90 / 100) + (RAND:(LOCAL * 10 / 100) * 2) ; 기대값의 90%는 확정, 난수로 90~110%의 효과를 낸다
+LOCAL = RBT_FDS_COOK_MODIFY(RBT_FDS_COOK_POWER())
 회복량:0 = 회복량:0 * LOCAL / 100
 회복량:1 = 회복량:1 * LOCAL / 100
 회복량:2 = 회복량:2 * LOCAL / 100
 
+FOR LOCAL,0,CHARANUM
+    SIF !CFLAG:LOCAL:조리자
+        CONTINUE
+    BASE:LOCAL:체력 = MIN(BASE:LOCAL:체력,LIMIT(BASE:LOCAL:체력 - RBT_FDS_COOK_HARDNESS(LOCAL),500,MAXBASE:LOCAL:체력))
+    BASE:LOCAL:기력 = MIN(BASE:LOCAL:기력,LIMIT(BASE:LOCAL:기력 - RBT_FDS_COOK_HARDNESS(LOCAL) * 2,0,MAXBASE:LOCAL:기력))
+NEXT
 
 ;-------------
-; P4-취식률 결정
+; P4-맛 결정
 ;-------------
-;-------------
-; P4.3-만복도에 의한 감소
-;-------------
-LOCAL = MIN(회복량:0,CFLAG:대상:최대만복도 - CFLAG:대상:현재만복도) * 100 / 회복량:0
-
-;-------------
-; P4.6-맛에 의한 감소
-;-------------
-SELECTCASE CFLAG:대상:메뉴
+SELECTCASE 식단
+    CASE 0
+        맛 = 0
+        GOTO PHASE5
     CASE 1
-        LOCAL:1 = 50
+        맛 = 500
     CASE 2
-        LOCAL:1 = 70
+        맛 = 700
     CASE 3
-        LOCAL:1 = 90
+        맛 = 900
 ENDSELECT
-;배고프면 맛없어도 먹는다, 1랭크 업 효과
-SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도) <= 40
-    LOCAL:1 += 20
-;엄청 배고프면, 추가로 1랭크 업 효과
-SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도) <= 20
-    LOCAL:1 += 20
-;반대로 배부르면 맛을 더 따진다, 1랭크 다운
-SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도) >= 80
-    LOCAL:1 -= 20
 ;짬장 조리기능에 비례해 맛 증가
-LOCAL:1 += ABL:(FLAG:조리자):요리기능 * 10
-LOCAL:1 = LIMIT(LOCAL:1,0,100)
-LOCAL = LOCAL * LOCAL:1 / 100
-;TODO: 각 개인별 맛 요구량을 설정해서 어떤 애는 싸구려도 잘 먹고 어떤애는 고급 입맛인 경우로 세팅하는게 바람직하지만...
-;일단은 포괄적으로 구현
-;-------------
-; P4.9-최종 영양 감소
-;-------------
-회복량:0 = 회복량:0 * LOCAL / 100
-회복량:1 = 회복량:1 * LOCAL / 100
-회복량:2 = 회복량:2 * LOCAL / 100
+맛 += RBT_FDS_COOK_POWER() * 100
+;짬장 기력에 의해 변동
+SELECTCASE RBT_FDS_COOK_ENERGE()
+    CASE IS < 10
+        TIMES 맛, 0.7
+    CASE IS < 30
+        TIMES 맛, 0.8
+    CASE IS < 50
+        TIMES 맛, 0.9
+    CASEELSE
+ENDSELECT
+;식수인원에 비례해 변동
+SELECTCASE RBT_FDS_SEARCH_BY_MEALTYPE("전체") / RBT_FDS_COUNT_COOK()
+    CASE IS < 5
+        ;처리 없음
+    CASE IS < 10
+        TIMES 맛, 0.9
+    CASE IS < 15
+        TIMES 맛, 0.8
+    CASE IS < 20
+        TIMES 맛, 0.7
+    CASE IS < 25
+        TIMES 맛, 0.6
+    CASEELSE
+        TIMES 맛, 0.5
+ENDSELECT
+맛 = 맛*3/4 + RAND:(맛/2) ; 75~125% 편차 생성
+맛 = LIMIT(맛,0,1000)
+
 ;-------------
 ; P5-최종 적용값 반환
 ;-------------
-RESULT:1 = 회복량:0
-RESULT:2 = 회복량:1
-RESULT:3 = 회복량:2
-RESULT:4 = LOCAL
+$PHASE5
+FS_음식:식단:0 = 맛
+FS_음식:식단:1 = 회복량:0
+FS_음식:식단:2 = 회복량:1
+FS_음식:식단:3 = 회복량:2
+FS_음식:식단:4 = 0 ;TODO:독 여부지만 일단은 0으로...
+FS_음식:식단:5 = 총량
+RETURN 비용
 
 @RBT_FDS_COOK_MODIFY(ARG)
 #FUNCTION
-LOCAL = MIN(5,ABL:ARG:요리기능)
+LOCAL = MIN(5,ARG)
 RESULT = (2 * LOCAL * LOCAL) + 100; = 2X^2 + 100
 ;즉
 ;0 = 100
@@ -246,3 +349,121 @@ RETURNF RESULT
 IF CFLAG:ARG:메뉴 != 0 && CFLAG:ARG:식사량 == 0
     CFLAG:ARG:식사량 = 2
 ENDIF
+
+
+;TODO,250428: 대량 조리의 품질감소
+;하는 김에 요리 시스템을 요리함수랑 식사함수로 분리하는 것도 나쁘지 않아...
+;식수인원비례 맛 감소 등등...그리고 초반엔 요리기능이 딸리니까, 대우 비례해서 낮은 대우에서는 낮은 맛에서도 취식률이 올라가지만 스트레스가 상승하는 시스템도 좋겠군
+
+;요리 종류가 식재 3단계니까, 각 요리 별로 생성한 뒤 취식
+@RBT_FDS_EATING(대상)
+#DIM DYNAMIC 대상
+#DIM DYNAMIC 회복량, 3 ;만복, 영양, 스트레스
+#DIM DYNAMIC 취식률
+#DIM DYNAMIC 밥
+
+밥 = CFLAG:대상:메뉴
+SIF FS_음식:밥:5 <= 0
+    RETURN -1
+FS_음식:밥:5 -= CFLAG:대상:식사량
+;-------------
+; P1 - 회복량 세팅
+;-------------
+회복량:0 = FS_음식:밥:1 * CFLAG:대상:식사량
+회복량:1 = FS_음식:밥:2 * CFLAG:대상:식사량
+회복량:2 = FS_음식:밥:3 * CFLAG:대상:식사량
+;-------------
+; P2-취식률 결정
+;-------------
+;-------------
+; P2.3-만복도에 의한 감소
+;-------------
+LOCAL = MIN(회복량:0,CFLAG:대상:최대만복도 - CFLAG:대상:현재만복도) * 100 / 회복량:0
+;-------------
+; P2.6-맛에 의한 감소
+;-------------
+;일단은 맛을 그대로 입력
+취식률 = FS_음식:밥:0
+;배고프면 맛없어도 먹는다, 1랭크 업 효과
+SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도) <= 40
+    취식률 += 200
+;엄청 배고프면, 추가로 1랭크 업 효과
+SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도) <= 20
+    취식률 += 200
+;반대로 배부르면 맛을 더 따진다, 1랭크 다운
+SIF CFLAG:대상:현재만복도 * 100 / (CFLAG:대상:최대만복도) >= 80
+    취식률 -= 200
+취식률 = LIMIT(취식률,0,1000)
+취식률 = 취식률 / 5 * 5 ; 0.5% 단위로 정규화
+LOCAL = LOCAL * 취식률 / 1000
+;TODO: 각 개인별 맛 요구량을 설정해서 어떤 애는 싸구려도 잘 먹고 어떤애는 고급 입맛인 경우로 세팅하는게 바람직하지만...
+;일단은 포괄적으로 구현
+;-------------
+; P2.9-최종 영양 감소
+;-------------
+회복량:0 = 회복량:0 * LOCAL / 100
+회복량:1 = 회복량:1 * LOCAL / 100
+회복량:2 = 회복량:2 * LOCAL / 100
+;-------------
+; P3-최종 적용값 반환
+;-------------
+RESULT:1 = 회복량:0
+RESULT:2 = 회복량:1
+RESULT:3 = 회복량:2
+RESULT:4 = LOCAL
+
+
+;조리자 선택 함수
+@RBT_FDS_SET_COOK()
+#DIM DYNAMIC PAGE
+PRINTFORML 누가 조리하게 할까? (총 조리자 수:{RBT_FDS_COUNT_COOK()}人)
+DRAWLINE
+FOR LOCAL, PAGE * 20, MIN(PAGE * 20 + 20,CHARANUM)
+    IF CFLAG:LOCAL:조리자
+        PRINT ☆
+    ELSE
+        PRINT   
+    ENDIF
+    PRINTFORML [{LOCAL,3,RIGHT}] %CALLNAME:LOCAL,20,LEFT% ♨요리기능:{ABL:LOCAL:요리기능}
+    CALL CLRMSG(@"  체력<SETCOLOR %RBT_SWITCH(BASE_PERCENT(LOCAL,"체력"),"이상",60,TOSTR(C_GREEN),30,TOSTR(C_YELLOW),0,TOSTR(C_RED))%>({BASE:LOCAL:체력}/{MAXBASE:LOCAL:체력})<RESETCOLOR>")
+    CALL CLRMSG(@"  기력<SETCOLOR %RBT_SWITCH(BASE_PERCENT(LOCAL,"기력"),"이상",60,TOSTR(C_GREEN),30,TOSTR(C_YELLOW),0,TOSTR(C_RED))%>({BASE:LOCAL:기력}/{MAXBASE:LOCAL:기력})<RESETCOLOR><\n>")
+    PRINTL
+NEXT
+DRAWLINE
+PRINTFORMLC \@PAGE <= 0 ?   # [900] 이전페이지\@
+PRINTFORMLC \@PAGE * 20 > CHARANUM ?   # [990] 다음페이지\@
+PRINTFORML [999] 돌아간다
+INPUT
+IF RESULT == 999
+    RETURN
+ELSEIF LOCAL:1 > 0 && RESULT == 900
+    PAGE--
+ELSEIF LOCAL:1 * 20 <= CHARANUM && RESULT == 990
+    PAGE++
+ELSEIF INRANGE(RESULT,0,CHARANUM)
+    IF RBT_FDS_COUNT_COOK() <= 1 && CFLAG:RESULT:조리자
+        PRINTFORMW 마지막 조리자를 해임하여 자동으로 %마스터가% 요리하게 됩니다
+        CFLAG:RESULT:조리자 = !CFLAG:RESULT:조리자
+        CFLAG:MASTER:조리자 = 1
+    ELSE
+        CFLAG:RESULT:조리자 = !CFLAG:RESULT:조리자
+    ENDIF
+    
+ENDIF
+RESTART
+
+@RBT_FDS_COOK_HARDNESS(조리자)
+#FUNCTION
+#DIM CONST 공제 = 5
+#DIM DYNAMIC 조리자
+#DIM DYNAMIC 식수인원
+#DIM DYNAMIC 강도
+
+강도 = 100
+식수인원 = MAX(0,RBT_FDS_SEARCH_BY_MEALTYPE("전체") / RBT_FDS_COUNT_COOK() - 공제)
+강도 += 식수인원 * 식수인원 * 5
+;즉, 강도 = 5*식수인원^2 + 100
+강도 = LIMIT(강도,0,1500)
+RETURNF 강도
+
+;TODO250501: 조교중 식사도 손봐야함

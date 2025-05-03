@@ -152,16 +152,16 @@ RETURNF BASE:ARG:ARGS * 100 / MAXBASE:ARG:ARGS
 #DIM CONST MAX_ARG = 4
 FOR LOCAL,0,MAX_ARG
     SELECTCASE 조건2
-        CASE "이상"
+        CASE "이하"
             SIF 조건 <= ARG:LOCAL
                 RETURNF ARGS:LOCAL
-        CASE "이하"
+        CASE "이상"
             SIF 조건 >= ARG:LOCAL
                 RETURNF ARGS:LOCAL
-        CASE "초과"
+        CASE "미만"
             SIF 조건 < ARG:LOCAL
                 RETURNF ARGS:LOCAL
-        CASE "미만"
+        CASE "초과"
             SIF 조건 > ARG:LOCAL
                 RETURNF ARGS:LOCAL
         CASE "일치"
@@ -188,23 +188,3 @@ SIF 타겟대우(ARG)
     PRINTBUTTONC @"만족도:{타겟대우(ARG)}",69740006
 PRINTL
 CUSTOMDRAWLINE ･
-
-@RBT_PATCHER()
-IF !GETBIT(FLAG:리부트패치,1)
-    SETBIT FLAG:리부트패치,1
-    VARSET RS_청소, -1
-    CALL RBT_RS_GAMEINIT(CALC_SLAVE_CAPACITY())
-    FOR LOCAL:1, 0, CHARANUM
-        IF RBT_RS_CHARA_TO_ROOMNUM(LOCAL:1) == -1
-            RS_ROOM:LOCAL:R방주인:0 = LOCAL:1
-            PRINTFORML {LOCAL}번 방에 %CALLNAME:(LOCAL:1)% 배정
-            CALL RBT_RS_CLEANINIG_SLAVE_CHANGE(LOCAL,LOCAL:1)
-            LOCAL++
-        ENDIF
-    NEXT
-    ITEM:연료 = 50
-    희망온도 = 20
-ENDIF
-IF !GETBIT(FLAG:리부트패치,2)
-    CFLAG:MASTER:조리자 = 1
-ENDIF
