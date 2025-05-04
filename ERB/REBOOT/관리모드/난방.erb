@@ -139,6 +139,13 @@ ENDSELECT
 RETURNF 효율성
 
 ;------------------------------------
+; 하루의 끝에 냉/난방에 의한 온도 변화를 계산하는 마스터 함수
+;------------------------------------
+@RBT_HS_AIRCONDITION()
+CALL RBT_HS_HEATING()
+CALL RBT_HS_COOLING()
+
+;------------------------------------
 ; 하루의 끝에 난방에 의한 보온 효과를 계산하는 함수
 ;------------------------------------
 @RBT_HS_HEATING()
@@ -171,6 +178,36 @@ FOR 방번호,0,CALC_SLAVE_CAPACITY()
     증기 -= LOCAL:1
 NEXT
 
+;------------------------------------
+; 하루의 끝에 냉방에 의한 냉방 효과를 계산하는 함수
+;------------------------------------
+@RBT_HS_COOLING()
+#DIM DYNAMIC 더위정도
+#DIM DYNAMIC 가구냉방량,2 ;0 = 강제냉방, 1 = 조절가능한 냉방
+#DIM DYNAMIC 방번호
+FOR LOCAL,0,CHARANUM
+    IF RBT_HS_TEMP_DAMAGE_LEVEL(LOCAL) >= 9 ;더위를 느끼고 있다
+        VARSET 냉방정도
+        방번호 = RBT_RS_CHARA_TO_ROOMNUM(LOCAL)
+        더위정도 = CS_기온+보온정도(방번호)-RBT_HS_COMFORT_TEMP(LOCAL)+ RBT_HS_COMFORT_TEMP_RANGE(LOCAL) + 1
+        CALLFORM RBT_RS_FUNI_15(방번호,"강화") ;선풍기
+        SELECTCASE RESULT
+            CASE 0
+            CASE 1
+                가구냉방량:0 += 3
+                가구냉방량:1 += 1
+            CASE 2
+                가구냉방량:0 += 2
+                가구냉방량:1 += 3
+            CASE 3
+                가구냉방량:0 += 1
+                가구냉방량:1 += 5
+        ENDSELECT
+        ;이외에 여러 가구들 추가하면서 처리하고...
+        냉방정도:방번호:1 = 가구냉방량:0 + MAX(0,MIN(더위정도 - 가구냉방량:0, 가구냉방량:1))
+    ENDIF
+NEXT
+
 
 ;------------------------------------
 ; 편안한 온도 계산
@@ -180,13 +217,22 @@ NEXT
 #DIM DYNAMIC 온도
 온도 = 22
 SIF !TALENT:ARG:남자
-    온도 += 2
+    온도 += 1
 SIF TALENT:ARG:임신 || TALENT:ARG:기생
     온도 -= 1
 SIF TALENT:ARG:유아 || TALENT:ARG:작은체형
     온도 += 1
 
 RETURNF 온도
+
+@RBT_HS_COMFORT_TEMP_RANGE(ARG)
+#FUNCTION
+#DIM DYNAMIC 온도편차단계
+온도편차단계 = 3
+SIF TALENT:ARG:아픔에강함
+    온도편차단계++
+;TODO: 각종 소질에 의한 온도 편차 변경 시스템 도입 필
+RETURNF 온도편차단계
 
 @RBT_HS_TEMP_DAMAGE_LEVEL(ARG)
 #FUNCTION
@@ -196,8 +242,9 @@ RETURNF 온도
 LOCAL = RBT_HS_COMFORT_TEMP(ARG)
 방번호 = RBT_RS_CHARA_TO_ROOMNUM(ARG)
 NOW_TEMP = CS_기온+보온정도(방번호)+냉방정도(방번호)
-온도편차단계 = 3
-;TODO: 각종 소질에 의한 온도 편차 변경 시스템 도입 필
+온도편차단계 = RBT_HS_COMFORT_TEMP_RANGE(ARG)
+
+
 SELECTCASE NOW_TEMP
     CASE IS <  LOCAL - 온도편차단계 * 5 ; 4단계 추위 = 0100 |  ~10℃
         RETURNF 4
