@@ -61,6 +61,7 @@ IF 캐릭터 == -1
     RETURN
 ENDIF
 방번호 = RBT_RS_CHARA_TO_ROOMNUM(캐릭터)
+CALL RBT_RS_SATISFY(캐릭터)
 IF 방번호 == -1
     ;노숙자다
     회복배율:캐릭터:0 = -50
@@ -108,6 +109,35 @@ ELSEIF RBT_CS_AVER_TEMP(DAY:5) >= 24
         냉방정도:방번호:0 += RESULT
     NEXT
 ENDIF
+
+;=========================================================
+;가구로 인한 만족도 적용 함수
+;=========================================================
+@RBT_RS_SATISFY(캐릭터)
+#DIM DYNAMIC 캐릭터
+#DIM DYNAMIC 방번호
+방번호 = RBT_RS_CHARA_TO_ROOMNUM(캐릭터)
+타겟대우:캐릭터:0 = 0
+FOR LOCAL,R_MIN가구,R_MAX가구
+    TRYCALLFORM RBT_RS_FUNI_{LOCAL}(방번호,"존재")
+    SIF RESULT != LOCAL
+        CONTINUE
+    CALL RBT_RS_FUNI_SATISFY(방번호,LOCAL)
+    타겟대우:캐릭터:0 += RESULT
+NEXT
+
+;=========================================================
+;가구 개개의 만족도 계산 함수
+;=========================================================
+@RBT_RS_FUNI_SATISFY(방번호,가구번호)
+#DIM DYNAMIC 방번호
+#DIM DYNAMIC 가구번호
+#DIM DYNAMIC 만족도
+CALLFORM RBT_RS_FUNI_{가구번호}(방번호,"강화")
+만족도 = RESULT * 10
+CALLFORM RBT_RS_FUNI_{가구번호}(방번호,"만족도배수")
+만족도 = 만족도 * RESULT / 100
+RETURN 만족도
 
 ;--------------------------------------------------------------------------------------------
 ;가구 상황 파악용 함수들
