@@ -329,6 +329,7 @@ ELSE
     SIF TARGET >= 0
     ; && FLAG:구상유 <= 0
         PRINTLC [106] - 노예 칭호 변경
+    PRINTLC [107] - 아이템목록
     ;조수 가능한 노예가 1명 이상 있을 경우
     SIF LOCAL:0 >= 1
         PRINTLC [108] - 조수 변경
@@ -535,6 +536,8 @@ ELSE
     ELSEIF RESULT == 106 && TARGET >= 0
     ; && FLAG:구상유 <= 0
         CALL CHANGE_SLAVE_NICKNAME
+    ELSEIF RESULT == 107
+        CALL RBT_ITEMVIEW
     ELSEIF RESULT == 108 && GET_LIST(0) >= 1
         CALL SELECT_ASSI
     ELSEIF RESULT == 109 && (GET_LIST(2) >= 1 || TARGET >= 0) && FLAG:게임모드 != 18
@@ -945,13 +948,14 @@ PRINTFORML 　[0] %CALLNAME:MASTER%(주인)
 DRAWLINE
 
 ;토리코모드
+RBT_STS_만족도뷰플래그 = 1
 IF FLAG:토리코모드 & 1
     CALL CHARADATA_LIST_TORIKOMODE, LOCAL, LOCAL:99, 25
 ELSE
 ;일반모드
 CALL CHARADATA_LIST, LOCAL, LOCAL:99, 25
 ENDIF
-
+RBT_STS_만족도뷰플래그 = 0
 DRAWLINE
 PRINTFORMLC \@(LOCAL <= 0) ? %" " * 16% # [1001] 앞페이지로\@
 PRINTLC [1000] 돌아간다
