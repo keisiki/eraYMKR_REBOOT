@@ -1680,6 +1680,7 @@ RETURN 1
 ;………………………………………………
 @EVENTTURNEND
 #PRI
+#DIM DYNAMIC 식재개수기억,3
 
 ;경비 시스템 이벤트 처리
 SIF FLAG:경비시스템 & 1
@@ -1800,7 +1801,9 @@ IF (FLAG:토리코모드 & 32); && TIME == 1
     ;PHASE2 밥을 먹는 턴이다.
     PRINTFORMW <식사시간!!>
     WAIT
-
+    식재개수기억:0 = ITEM:하급식재 
+    식재개수기억:1 = ITEM:보통식재
+    식재개수기억:2 = ITEM:고급식재
     ;밥을 먹고 회복하고 식비를 지출하고....등등 여기서 다 처리됨.
     LOCAL = 0
     CALL RBT_FDS_COOKING("특제",RBT_FDS_SEARCH_BY_MEALTYPE("특제",1))
@@ -1816,7 +1819,16 @@ IF (FLAG:토리코모드 & 32); && TIME == 1
 
     CALL SHOW_LIST_EATEN_TORIKOMODE
     ;총 식비 출력
-    PRINTFORMW {CHARANUM}명의 식비로 총 {LOCAL}원이 지출되었습니다. 현재 잔고 {MONEY}원.
+    PRINTFORM {CHARANUM}명의 식비로 총 {LOCAL}원
+    PRINTFORM %식재개수기억:0 - ITEM:하급식재 > 0 ? @" 및 하급식재 {식재개수기억:0 - ITEM:하급식재}개"#""%
+    PRINTFORM %식재개수기억:1 - ITEM:보통식재 > 0 ? @" 및 보통식재 {식재개수기억:1 - ITEM:보통식재}개"#""%
+    PRINTFORM %식재개수기억:2 - ITEM:고급식재 > 0 ? @" 및 고급식재 {식재개수기억:2 - ITEM:고급식재}개"#""%
+    PRINTFORM  지출되었습니다. 
+    PRINTFORM 현재 잔고 {MONEY}원. 
+    PRINTFORM %ITEM:하급식재 ? @"하급식재 {ITEM:하급식재}개. "#""%
+    PRINTFORM %ITEM:보통식재 ? @"보통식재 {ITEM:보통식재}개. "#""%
+    PRINTFORM %ITEM:고급식재 ? @"고급식재 {ITEM:고급식재}개. "#""%
+    PRINTW 
     WAIT
     
     ;굶어죽는 엔딩을 체크한다.
